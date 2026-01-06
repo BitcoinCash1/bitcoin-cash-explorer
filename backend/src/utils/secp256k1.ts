@@ -23,7 +23,9 @@ function sqrtMod(x: bigint, P: bigint): bigint {
   return root;
 }
 
-const curveP = BigInt(`0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F`);
+const curveP = BigInt(
+  `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F`
+);
 
 /**
  * This function tells whether the point given is a DER encoded point on the ECDSA curve.
@@ -49,7 +51,6 @@ export function isPoint(pointHex: string): boolean {
   }
 
   // Function modified slightly from noble-curves
-  
 
   // Now we know that pointHex is a 33 or 65 byte hex string.
   const isCompressed = pointHex.length === 66;

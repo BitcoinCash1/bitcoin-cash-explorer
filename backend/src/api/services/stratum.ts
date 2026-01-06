@@ -25,17 +25,19 @@ export interface StratumJob {
 }
 
 function isStratumJob(obj: any): obj is StratumJob {
-  return obj
-    && typeof obj === 'object'
-    && 'pool' in obj
-    && 'prevHash' in obj
-    && 'height' in obj
-    && 'received' in obj
-    && 'version' in obj
-    && 'timestamp' in obj
-    && 'bits' in obj
-    && 'merkleBranches' in obj
-    && 'cleanJobs' in obj;
+  return (
+    obj &&
+    typeof obj === 'object' &&
+    'pool' in obj &&
+    'prevHash' in obj &&
+    'height' in obj &&
+    'received' in obj &&
+    'version' in obj &&
+    'timestamp' in obj &&
+    'bits' in obj &&
+    'merkleBranches' in obj &&
+    'cleanJobs' in obj
+  );
 }
 
 class StratumApi {
@@ -90,14 +92,19 @@ class StratumApi {
 
         this.ws.on('message', (data, isBinary) => {
           try {
-            const parsedMsg = JSON.parse((isBinary ? data : data.toString()) as string);
+            const parsedMsg = JSON.parse(
+              (isBinary ? data : data.toString()) as string
+            );
             this.handleWebsocketMessage(parsedMsg);
           } catch (e) {
-            logger.warn('Failed to parse stratum websocket message: ' + (e instanceof Error ? e.message : e));
+            logger.warn(
+              'Failed to parse stratum websocket message: ' +
+                (e instanceof Error ? e.message : e)
+            );
           }
         });
       }
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      await new Promise((resolve) => setTimeout(resolve, 5000));
     }
   }
 }

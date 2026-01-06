@@ -25,12 +25,18 @@ class HashratesRepository {
     try {
       await DB.query(query);
     } catch (e: any) {
-      logger.err('Cannot save indexed hashrate into db. Reason: ' + (e instanceof Error ? e.message : e), logger.tags.mining);
+      logger.err(
+        'Cannot save indexed hashrate into db. Reason: ' +
+          (e instanceof Error ? e.message : e),
+        logger.tags.mining
+      );
       throw e;
     }
   }
 
-  public async $getRawNetworkDailyHashrate(interval: string | null): Promise<any[]> {
+  public async $getRawNetworkDailyHashrate(
+    interval: string | null
+  ): Promise<any[]> {
     interval = Common.getSqlInterval(interval);
 
     let query = `SELECT
@@ -51,12 +57,18 @@ class HashratesRepository {
       const [rows]: any[] = await DB.query(query);
       return rows;
     } catch (e) {
-      logger.err('Cannot fetch network hashrate history. Reason: ' + (e instanceof Error ? e.message : e), logger.tags.mining);
+      logger.err(
+        'Cannot fetch network hashrate history. Reason: ' +
+          (e instanceof Error ? e.message : e),
+        logger.tags.mining
+      );
       throw e;
     }
   }
 
-  public async $getNetworkDailyHashrate(interval: string | null): Promise<any[]> {
+  public async $getNetworkDailyHashrate(
+    interval: string | null
+  ): Promise<any[]> {
     interval = Common.getSqlInterval(interval);
 
     let query = `SELECT
@@ -78,7 +90,11 @@ class HashratesRepository {
       const [rows]: any[] = await DB.query(query);
       return rows;
     } catch (e) {
-      logger.err('Cannot fetch network hashrate history. Reason: ' + (e instanceof Error ? e.message : e), logger.tags.mining);
+      logger.err(
+        'Cannot fetch network hashrate history. Reason: ' +
+          (e instanceof Error ? e.message : e),
+        logger.tags.mining
+      );
       throw e;
     }
   }
@@ -91,9 +107,13 @@ class HashratesRepository {
 
     try {
       const [rows]: any[] = await DB.query(query);
-      return rows.map(row => row.timestamp);
+      return rows.map((row) => row.timestamp);
     } catch (e) {
-      logger.err('Cannot retrieve indexed weekly hashrate timestamps. Reason: ' + (e instanceof Error ? e.message : e), logger.tags.mining);
+      logger.err(
+        'Cannot retrieve indexed weekly hashrate timestamps. Reason: ' +
+          (e instanceof Error ? e.message : e),
+        logger.tags.mining
+      );
       throw e;
     }
   }
@@ -101,10 +121,14 @@ class HashratesRepository {
   /**
    * Returns the current biggest pool hashrate history
    */
-  public async $getPoolsWeeklyHashrate(interval: string | null): Promise<any[]> {
+  public async $getPoolsWeeklyHashrate(
+    interval: string | null
+  ): Promise<any[]> {
     interval = Common.getSqlInterval(interval);
 
-    const topPoolsId = (await PoolsRepository.$getPoolsInfo('1w')).map((pool) => pool.poolId);
+    const topPoolsId = (await PoolsRepository.$getPoolsInfo('1w')).map(
+      (pool) => pool.poolId
+    );
     if (topPoolsId.length === 0) {
       return [];
     }
@@ -128,7 +152,11 @@ class HashratesRepository {
       const [rows]: any[] = await DB.query(query);
       return rows;
     } catch (e) {
-      logger.err('Cannot fetch weekly pools hashrate history. Reason: ' + (e instanceof Error ? e.message : e), logger.tags.mining);
+      logger.err(
+        'Cannot fetch weekly pools hashrate history. Reason: ' +
+          (e instanceof Error ? e.message : e),
+        logger.tags.mining
+      );
       throw e;
     }
   }
@@ -151,14 +179,18 @@ class HashratesRepository {
 
     let boundaries = {
       firstTimestamp: '1970-01-01',
-      lastTimestamp: '9999-01-01'
+      lastTimestamp: '9999-01-01',
     };
 
     try {
       const [rows]: any[] = await DB.query(query, [pool.id]);
       boundaries = rows[0];
     } catch (e) {
-      logger.err('Cannot fetch hashrate start/end timestamps for this pool. Reason: ' + (e instanceof Error ? e.message : e), logger.tags.mining);
+      logger.err(
+        'Cannot fetch hashrate start/end timestamps for this pool. Reason: ' +
+          (e instanceof Error ? e.message : e),
+        logger.tags.mining
+      );
     }
 
     // Get hashrates entries between boundaries
@@ -170,10 +202,18 @@ class HashratesRepository {
       ORDER by hashrate_timestamp`;
 
     try {
-      const [rows]: any[] = await DB.query(query, [boundaries.firstTimestamp, boundaries.lastTimestamp, pool.id]);
+      const [rows]: any[] = await DB.query(query, [
+        boundaries.firstTimestamp,
+        boundaries.lastTimestamp,
+        pool.id,
+      ]);
       return rows;
     } catch (e) {
-      logger.err('Cannot fetch pool hashrate history for this pool. Reason: ' + (e instanceof Error ? e.message : e), logger.tags.mining);
+      logger.err(
+        'Cannot fetch pool hashrate history for this pool. Reason: ' +
+          (e instanceof Error ? e.message : e),
+        logger.tags.mining
+      );
       throw e;
     }
   }
@@ -192,7 +232,11 @@ class HashratesRepository {
       }
       return rows[0]['number'];
     } catch (e) {
-      logger.err(`Cannot retrieve last indexing run for ${key}. Reason: ` + (e instanceof Error ? e.message : e), logger.tags.mining);
+      logger.err(
+        `Cannot retrieve last indexing run for ${key}. Reason: ` +
+          (e instanceof Error ? e.message : e),
+        logger.tags.mining
+      );
       throw e;
     }
   }
@@ -201,34 +245,57 @@ class HashratesRepository {
    * Delete most recent data points for re-indexing
    */
   public async $deleteLastEntries() {
-    logger.info(`Delete latest hashrates data points from the database`, logger.tags.mining);
+    logger.info(
+      `Delete latest hashrates data points from the database`,
+      logger.tags.mining
+    );
 
     try {
-      const [rows]: any[] = await DB.query(`SELECT MAX(hashrate_timestamp) as timestamp FROM hashrates GROUP BY type`);
+      const [rows]: any[] = await DB.query(
+        `SELECT MAX(hashrate_timestamp) as timestamp FROM hashrates GROUP BY type`
+      );
       for (const row of rows) {
-        await DB.query(`DELETE FROM hashrates WHERE hashrate_timestamp = ?`, [row.timestamp]);
+        await DB.query(`DELETE FROM hashrates WHERE hashrate_timestamp = ?`, [
+          row.timestamp,
+        ]);
       }
       // Re-run the hashrate indexing to fill up missing data
       mining.lastHashrateIndexingDate = null;
       mining.lastWeeklyHashrateIndexingDate = null;
     } catch (e) {
-      logger.err('Cannot delete latest hashrates data points. Reason: ' + (e instanceof Error ? e.message : e), logger.tags.mining);
+      logger.err(
+        'Cannot delete latest hashrates data points. Reason: ' +
+          (e instanceof Error ? e.message : e),
+        logger.tags.mining
+      );
     }
   }
-  
+
   /**
    * Delete hashrates from the database from timestamp
    */
   public async $deleteHashratesFromTimestamp(timestamp: number) {
-    logger.info(`Delete newer hashrates from timestamp ${new Date(timestamp * 1000).toUTCString()} from the database`, logger.tags.mining);
+    logger.info(
+      `Delete newer hashrates from timestamp ${new Date(
+        timestamp * 1000
+      ).toUTCString()} from the database`,
+      logger.tags.mining
+    );
 
     try {
-      await DB.query(`DELETE FROM hashrates WHERE hashrate_timestamp >= FROM_UNIXTIME(?)`, [timestamp]);
+      await DB.query(
+        `DELETE FROM hashrates WHERE hashrate_timestamp >= FROM_UNIXTIME(?)`,
+        [timestamp]
+      );
       // Re-run the hashrate indexing to fill up missing data
       mining.lastHashrateIndexingDate = null;
       mining.lastWeeklyHashrateIndexingDate = null;
     } catch (e) {
-      logger.err('Cannot delete latest hashrates data points. Reason: ' + (e instanceof Error ? e.message : e), logger.tags.mining);
+      logger.err(
+        'Cannot delete latest hashrates data points. Reason: ' +
+          (e instanceof Error ? e.message : e),
+        logger.tags.mining
+      );
     }
   }
 }

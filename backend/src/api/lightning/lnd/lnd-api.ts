@@ -16,40 +16,57 @@ class LndApi implements AbstractLightningApi {
     try {
       this.axiosConfig = {
         headers: {
-          'Grpc-Metadata-macaroon': fs.readFileSync(config.LND.MACAROON_PATH).toString('hex'),
+          'Grpc-Metadata-macaroon': fs
+            .readFileSync(config.LND.MACAROON_PATH)
+            .toString('hex'),
         },
         httpsAgent: new Agent({
-          ca: fs.readFileSync(config.LND.TLS_CERT_PATH)
+          ca: fs.readFileSync(config.LND.TLS_CERT_PATH),
         }),
-        timeout: config.LND.TIMEOUT
+        timeout: config.LND.TIMEOUT,
       };
     } catch (e) {
       config.LIGHTNING.ENABLED = false;
       logger.updateNetwork();
-      logger.err(`Could not initialize LND Macaroon/TLS Cert. Disabling LIGHTNING. ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Could not initialize LND Macaroon/TLS Cert. Disabling LIGHTNING. ` +
+          (e instanceof Error ? e.message : e)
+      );
     }
   }
 
   async $getNetworkInfo(): Promise<ILightningApi.NetworkInfo> {
-    return axios.get<ILightningApi.NetworkInfo>(config.LND.REST_API_URL + '/v1/graph/info', this.axiosConfig)
+    return axios
+      .get<ILightningApi.NetworkInfo>(
+        config.LND.REST_API_URL + '/v1/graph/info',
+        this.axiosConfig
+      )
       .then((response) => response.data);
   }
 
   async $getInfo(): Promise<ILightningApi.Info> {
-    return axios.get<ILightningApi.Info>(config.LND.REST_API_URL + '/v1/getinfo', this.axiosConfig)
+    return axios
+      .get<ILightningApi.Info>(
+        config.LND.REST_API_URL + '/v1/getinfo',
+        this.axiosConfig
+      )
       .then((response) => response.data);
   }
 
   async $getNetworkGraph(): Promise<ILightningApi.NetworkGraph> {
-    const graph = await axios.get<ILightningApi.NetworkGraph>(config.LND.REST_API_URL + '/v1/graph', this.axiosConfig)
+    const graph = await axios
+      .get<ILightningApi.NetworkGraph>(
+        config.LND.REST_API_URL + '/v1/graph',
+        this.axiosConfig
+      )
       .then((response) => response.data);
 
     for (const node of graph.nodes) {
       const nodeFeatures: ILightningApi.Feature[] = [];
-      for (const bit in node.features) {        
+      for (const bit in node.features) {
         nodeFeatures.push({
           bit: parseInt(bit, 10),
-          name: node.features[bit].name,  
+          name: node.features[bit].name,
           is_required: node.features[bit].is_required,
           is_known: node.features[bit].is_known,
         });

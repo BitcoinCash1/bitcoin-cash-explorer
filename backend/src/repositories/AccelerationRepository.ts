@@ -6,66 +6,88 @@ import { IEsploraApi } from '../api/bitcoin/esplora-api.interface';
 import { Common } from '../api/common';
 import config from '../config';
 import blocks from '../api/blocks';
-import accelerationApi, { Acceleration, AccelerationHistory } from '../api/services/acceleration';
+import accelerationApi, {
+  Acceleration,
+  AccelerationHistory,
+} from '../api/services/acceleration';
 import accelerationCosts from '../api/acceleration/acceleration';
 import bitcoinApi from '../api/bitcoin/bitcoin-api-factory';
 import transactionUtils from '../api/transaction-utils';
-import { BlockExtended, MempoolTransactionExtended } from '../mempool.interfaces';
+import {
+  BlockExtended,
+  MempoolTransactionExtended,
+} from '../mempool.interfaces';
 import { makeBlockTemplate } from '../api/mini-miner';
 
 export interface PublicAcceleration {
-  txid: string,
-  height: number,
-  added: number,
+  txid: string;
+  height: number;
+  added: number;
   pool: {
-    id: number,
-    slug: string,
-    name: string,
-  },
-  effective_vsize: number,
-  effective_fee: number,
-  boost_rate: number,
-  boost_cost: number,
+    id: number;
+    slug: string;
+    name: string;
+  };
+  effective_vsize: number;
+  effective_fee: number;
+  boost_rate: number;
+  boost_cost: number;
 }
 
 class AccelerationRepository {
   private bidBoostV2Activated = 831580;
 
-  public async $saveAcceleration(acceleration: AccelerationInfo, block: IEsploraApi.Block, pool_id: number, accelerationData: Acceleration[]): Promise<void> {
+  public async $saveAcceleration(
+    acceleration: AccelerationInfo,
+    block: IEsploraApi.Block,
+    pool_id: number,
+    accelerationData: Acceleration[]
+  ): Promise<void> {
     const accelerationMap: { [txid: string]: Acceleration } = {};
     for (const acc of accelerationData) {
       accelerationMap[acc.txid] = acc;
     }
     try {
-      await DB.query(`
+      await DB.query(
+        `
         INSERT INTO accelerations(txid, requested, added, height, pool, effective_vsize, effective_fee, boost_rate, boost_cost)
         VALUE (?, FROM_UNIXTIME(?), FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?)
         ON DUPLICATE KEY UPDATE
           height = ?
-      `, [
-        acceleration.txSummary.txid,
-        accelerationMap[acceleration.txSummary.txid].added,
-        block.timestamp,
-        block.height,
-        pool_id,
-        acceleration.txSummary.effectiveVsize,
-        acceleration.txSummary.effectiveFee,
-        acceleration.targetFeeRate,
-        acceleration.cost,
-        block.height,
-      ]);
+      `,
+        [
+          acceleration.txSummary.txid,
+          accelerationMap[acceleration.txSummary.txid].added,
+          block.timestamp,
+          block.height,
+          pool_id,
+          acceleration.txSummary.effectiveVsize,
+          acceleration.txSummary.effectiveFee,
+          acceleration.targetFeeRate,
+          acceleration.cost,
+          block.height,
+        ]
+      );
     } catch (e: any) {
-      logger.err(`Cannot save acceleration (${acceleration.txSummary.txid}) into db. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot save acceleration (${acceleration.txSummary.txid}) into db. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
       // We don't throw, not a critical issue if we miss some accelerations
     }
   }
 
-  public async $getAccelerationInfoForTxid(txid: string): Promise<PublicAcceleration | null> {
-    const [rows] = await DB.query(`
+  public async $getAccelerationInfoForTxid(
+    txid: string
+  ): Promise<PublicAcceleration | null> {
+    const [rows] = (await DB.query(
+      `
       SELECT *, UNIX_TIMESTAMP(requested) as requested_timestamp, UNIX_TIMESTAMP(added) as block_timestamp FROM accelerations
       JOIN pools on pools.unique_id = accelerations.pool
       WHERE txid = ?
-    `, [txid]) as RowDataPacket[][];
+    `,
+      [txid]
+    )) as RowDataPacket[][];
     if (rows?.length) {
       const row = rows[0];
       return {
@@ -86,13 +108,20 @@ class AccelerationRepository {
     return null;
   }
 
-  public async $getAccelerationInfo(poolSlug: string | null = null, height: number | null = null, interval: string | null = null): Promise<PublicAcceleration[]> {
+  public async $getAccelerationInfo(
+    poolSlug: string | null = null,
+    height: number | null = null,
+    interval: string | null = null
+  ): Promise<PublicAcceleration[]> {
     if (!interval || !['24h', '3d', '1w', '1m'].includes(interval)) {
       interval = '1m';
     }
     interval = Common.getSqlInterval(interval);
 
-    if (!config.MEMPOOL_SERVICES.ACCELERATIONS || (interval == null && poolSlug == null && height == null)) {
+    if (
+      !config.MEMPOOL_SERVICES.ACCELERATIONS ||
+      (interval == null && poolSlug == null && height == null)
+    ) {
       return [];
     }
 
@@ -100,7 +129,7 @@ class AccelerationRepository {
       SELECT *, UNIX_TIMESTAMP(requested) as requested_timestamp, UNIX_TIMESTAMP(added) as block_timestamp FROM accelerations
       JOIN pools on pools.unique_id = accelerations.pool
     `;
-    let params: any[] = [];
+    const params: any[] = [];
     let hasFilter = false;
 
     if (interval && height === null) {
@@ -127,9 +156,9 @@ class AccelerationRepository {
     query += ` ORDER BY accelerations.added DESC `;
 
     try {
-      const [rows] = await DB.query(query, params) as RowDataPacket[][];
+      const [rows] = (await DB.query(query, params)) as RowDataPacket[][];
       if (rows?.length) {
-        return rows.map(row => ({
+        return rows.map((row) => ({
           txid: row.txid,
           height: row.height,
           added: row.requested_timestamp || row.block_timestamp,
@@ -147,12 +176,18 @@ class AccelerationRepository {
         return [];
       }
     } catch (e) {
-      logger.err(`Cannot query acceleration info. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot query acceleration info. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
 
-  public async $getAccelerationTotals(poolSlug: string | null = null, interval: string | null = null): Promise<{ cost: number, count: number }> {
+  public async $getAccelerationTotals(
+    poolSlug: string | null = null,
+    interval: string | null = null
+  ): Promise<{ cost: number; count: number }> {
     interval = Common.getSqlInterval(interval);
 
     if (!config.MEMPOOL_SERVICES.ACCELERATIONS) {
@@ -163,7 +198,7 @@ class AccelerationRepository {
       SELECT SUM(boost_cost) as total_cost, COUNT(txid) as count FROM accelerations
       JOIN pools on pools.unique_id = accelerations.pool
     `;
-    let params: any[] = [];
+    const params: any[] = [];
     let hasFilter = false;
 
     if (interval) {
@@ -180,13 +215,16 @@ class AccelerationRepository {
     }
 
     try {
-      const [rows] = await DB.query(query, params) as RowDataPacket[][];
+      const [rows] = (await DB.query(query, params)) as RowDataPacket[][];
       return {
         cost: rows[0]?.total_cost || 0,
         count: rows[0]?.count || 0,
       };
     } catch (e) {
-      logger.err(`Cannot query acceleration totals. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot query acceleration totals. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
@@ -201,43 +239,73 @@ class AccelerationRepository {
         return rows[0].number;
       }
     } catch (e: any) {
-      logger.err(`Cannot find last acceleration sync height. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot find last acceleration sync height. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
     }
     return 0;
   }
 
   private async $setLastSyncedHeight(height: number): Promise<void> {
     try {
-      await DB.query(`
+      await DB.query(
+        `
         UPDATE state
         SET number = ?
         WHERE name = 'last_acceleration_block'
-      `, [height]);
+      `,
+        [height]
+      );
     } catch (e: any) {
-      logger.err(`Cannot update last acceleration sync height. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot update last acceleration sync height. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
     }
   }
 
   // modifies block transactions
-  public async $indexAccelerationsForBlock(block: BlockExtended, accelerations: Acceleration[], transactions: MempoolTransactionExtended[]): Promise<void> {
+  public async $indexAccelerationsForBlock(
+    block: BlockExtended,
+    accelerations: Acceleration[],
+    transactions: MempoolTransactionExtended[]
+  ): Promise<void> {
     const blockTxs: { [txid: string]: MempoolTransactionExtended } = {};
     for (const tx of transactions) {
       blockTxs[tx.txid] = tx;
     }
-    const successfulAccelerations = accelerations.filter(acc => acc.pools.includes(block.extras.pool.id));
+    const successfulAccelerations = accelerations.filter((acc) =>
+      acc.pools.includes(block.extras.pool.id)
+    );
     let boostRate: number | null = null;
     for (const acc of successfulAccelerations) {
       if (boostRate === null) {
         boostRate = accelerationCosts.calculateBoostRate(
-          accelerations.map(acc => ({ txid: acc.txid, max_bid: acc.feeDelta })),
+          accelerations.map((acc) => ({
+            txid: acc.txid,
+            max_bid: acc.feeDelta,
+          })),
           transactions
         );
       }
       if (blockTxs[acc.txid]) {
         const tx = blockTxs[acc.txid];
-        const accelerationInfo = accelerationCosts.getAccelerationInfo(tx, boostRate, transactions);
-        accelerationInfo.cost = Math.max(0, Math.min(acc.feeDelta, accelerationInfo.cost));
-        this.$saveAcceleration(accelerationInfo, block, block.extras.pool.id, successfulAccelerations);
+        const accelerationInfo = accelerationCosts.getAccelerationInfo(
+          tx,
+          boostRate,
+          transactions
+        );
+        accelerationInfo.cost = Math.max(
+          0,
+          Math.min(acc.feeDelta, accelerationInfo.cost)
+        );
+        this.$saveAcceleration(
+          accelerationInfo,
+          block,
+          block.extras.pool.id,
+          successfulAccelerations
+        );
       }
     }
     let anyConfirmed = false;
@@ -260,7 +328,10 @@ class AccelerationRepository {
    * [INDEXING] Backfill missing acceleration data
    */
   async $indexPastAccelerations(): Promise<void> {
-    if (config.MEMPOOL.NETWORK !== 'mainnet' || !config.MEMPOOL_SERVICES.ACCELERATIONS) {
+    if (
+      config.MEMPOOL.NETWORK !== 'mainnet' ||
+      !config.MEMPOOL_SERVICES.ACCELERATIONS
+    ) {
       // acceleration history disabled
       return;
     }
@@ -271,10 +342,13 @@ class AccelerationRepository {
       return;
     }
 
-    logger.debug(`Fetching accelerations between block ${lastSyncedHeight} and ${currentHeight}`);
+    logger.debug(
+      `Fetching accelerations between block ${lastSyncedHeight} and ${currentHeight}`
+    );
 
     // Fetch accelerations from mempool.space since the last synced block;
-    const accelerationsByBlock: {[height: number]: AccelerationHistory[]} = {};
+    const accelerationsByBlock: { [height: number]: AccelerationHistory[] } =
+      {};
     const blockHashes = {};
     let done = false;
     let page = 1;
@@ -282,15 +356,20 @@ class AccelerationRepository {
     try {
       while (!done) {
         // don't DDoS the services backend
-        await Common.sleep$(500 + (Math.random() * 1000));
-        const accelerations = await accelerationApi.$fetchAccelerationHistory(page);
+        await Common.sleep$(500 + Math.random() * 1000);
+        const accelerations = await accelerationApi.$fetchAccelerationHistory(
+          page
+        );
         page++;
         if (!accelerations?.length) {
           done = true;
           break;
         }
         for (const acc of accelerations) {
-          if (acc.status !== 'completed_provisional' && acc.status !== 'completed') {
+          if (
+            acc.status !== 'completed_provisional' &&
+            acc.status !== 'completed'
+          ) {
             continue;
           }
           if (!lastSyncedHeight || acc.blockHeight > lastSyncedHeight) {
@@ -306,18 +385,29 @@ class AccelerationRepository {
         }
       }
     } catch (e) {
-      logger.err(`Failed to fetch full acceleration history. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Failed to fetch full acceleration history. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
     }
 
-    logger.debug(`Indexing ${count} accelerations between block ${lastSyncedHeight} and ${currentHeight}`);
+    logger.debug(
+      `Indexing ${count} accelerations between block ${lastSyncedHeight} and ${currentHeight}`
+    );
 
     // process accelerated blocks in order
-    const heights = Object.keys(accelerationsByBlock).map(key => parseInt(key)).sort((a,b) => a - b);
+    const heights = Object.keys(accelerationsByBlock)
+      .map((key) => parseInt(key))
+      .sort((a, b) => a - b);
     for (const height of heights) {
       const accelerations = accelerationsByBlock[height];
       try {
-        const block = await blocks.$getBlock(blockHashes[height]) as BlockExtended;
-        const transactions = (await bitcoinApi.$getTxsForBlock(blockHashes[height])).map(tx => transactionUtils.extendMempoolTransaction(tx));
+        const block = (await blocks.$getBlock(
+          blockHashes[height]
+        )) as BlockExtended;
+        const transactions = (
+          await bitcoinApi.$getTxsForBlock(blockHashes[height])
+        ).map((tx) => transactionUtils.extendMempoolTransaction(tx));
 
         const blockTxs = {};
         for (const tx of transactions) {
@@ -328,14 +418,20 @@ class AccelerationRepository {
         // use Bid Boost V2 if active
         if (height > this.bidBoostV2Activated) {
           boostRate = accelerationCosts.calculateBoostRate(
-            accelerations.map(acc => ({ txid: acc.txid, max_bid: acc.feeDelta })),
+            accelerations.map((acc) => ({
+              txid: acc.txid,
+              max_bid: acc.feeDelta,
+            })),
             transactions
           );
         } else {
           // default to Bid Boost V1 (median block fee rate)
           const template = makeBlockTemplate(
             transactions,
-            accelerations.map(acc => ({ txid: acc.txid, max_bid: acc.feeDelta })),
+            accelerations.map((acc) => ({
+              txid: acc.txid,
+              max_bid: acc.feeDelta,
+            })),
             1,
             Infinity,
             Infinity
@@ -343,24 +439,41 @@ class AccelerationRepository {
           const feeStats = Common.calcEffectiveFeeStatistics(template);
           boostRate = feeStats.medianFee;
         }
-        const accelerationSummaries = accelerations.map(acc => ({
+        const accelerationSummaries = accelerations.map((acc) => ({
           ...acc,
           pools: acc.pools,
-        }))
+        }));
         for (const acc of accelerations) {
           if (blockTxs[acc.txid] && acc.pools.includes(block.extras.pool.id)) {
             const tx = blockTxs[acc.txid];
-            const accelerationInfo = accelerationCosts.getAccelerationInfo(tx, boostRate, transactions);
-            accelerationInfo.cost = Math.max(0, Math.min(acc.feeDelta, accelerationInfo.cost));
-            await this.$saveAcceleration(accelerationInfo, block, block.extras.pool.id, accelerationSummaries);
+            const accelerationInfo = accelerationCosts.getAccelerationInfo(
+              tx,
+              boostRate,
+              transactions
+            );
+            accelerationInfo.cost = Math.max(
+              0,
+              Math.min(acc.feeDelta, accelerationInfo.cost)
+            );
+            await this.$saveAcceleration(
+              accelerationInfo,
+              block,
+              block.extras.pool.id,
+              accelerationSummaries
+            );
           }
         }
         await this.$setLastSyncedHeight(height);
       } catch (e) {
-        logger.err(`Failed to process accelerations for block ${height}. Reason: ` + (e instanceof Error ? e.message : e));
+        logger.err(
+          `Failed to process accelerations for block ${height}. Reason: ` +
+            (e instanceof Error ? e.message : e)
+        );
         return;
       }
-      logger.debug(`Indexed ${accelerations.length} accelerations in block  ${height}`);
+      logger.debug(
+        `Indexed ${accelerations.length} accelerations in block  ${height}`
+      );
     }
 
     await this.$setLastSyncedHeight(currentHeight);
@@ -372,19 +485,29 @@ class AccelerationRepository {
    * Delete accelerations from the database above blockHeight
    */
   public async $deleteAccelerationsFrom(blockHeight: number): Promise<void> {
-    logger.info(`Delete newer accelerations from height ${blockHeight} from the database`);
+    logger.info(
+      `Delete newer accelerations from height ${blockHeight} from the database`
+    );
     try {
       const currentSyncedHeight = await this.$getLastSyncedHeight();
       if (currentSyncedHeight >= blockHeight) {
-        await DB.query(`
+        await DB.query(
+          `
           UPDATE state
           SET number = ?
           WHERE name = 'last_acceleration_block'
-        `, [blockHeight - 1]);
+        `,
+          [blockHeight - 1]
+        );
       }
-      await DB.query(`DELETE FROM accelerations where height >= ${blockHeight}`);
+      await DB.query(
+        `DELETE FROM accelerations where height >= ${blockHeight}`
+      );
     } catch (e) {
-      logger.err('Cannot delete indexed accelerations. Reason: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        'Cannot delete indexed accelerations. Reason: ' +
+          (e instanceof Error ? e.message : e)
+      );
     }
   }
 }

@@ -1,9 +1,12 @@
-export type HeapNode<T> = {
-  element: T
-  child?: HeapNode<T>
-  next?: HeapNode<T>
-  prev?: HeapNode<T>
-} | null | undefined;
+export type HeapNode<T> =
+  | {
+      element: T;
+      child?: HeapNode<T>;
+      next?: HeapNode<T>;
+      prev?: HeapNode<T>;
+    }
+  | null
+  | undefined;
 
 // minimal pairing heap priority queue implementation
 export class PairingHeap<T> {
@@ -21,7 +24,7 @@ export class PairingHeap<T> {
 
   add(element: T): HeapNode<T> {
     const node: HeapNode<T> = {
-      element
+      element,
     };
 
     this.root = this.meld(this.root, node);
@@ -52,13 +55,11 @@ export class PairingHeap<T> {
 
     if (node === this.root) {
       this.root = this.mergePairs(node.child);
-    }
-    else {
+    } else {
       if (node.prev) {
         if (node.prev.child === node) {
           node.prev.child = node.next;
-        }
-        else {
+        } else {
           node.prev.next = node.next;
         }
       }
@@ -87,8 +88,7 @@ export class PairingHeap<T> {
           return;
         }
         node.prev.child = node.next;
-      }
-      else {
+      } else {
         node.prev.next = node.next;
       }
     }
@@ -151,8 +151,7 @@ export class PairingHeap<T> {
           melded.prev = pairs;
         }
         pairs = melded;
-      }
-      else {
+      } else {
         nextCurrent = null;
         current.prev = pairs;
         pairs = current;

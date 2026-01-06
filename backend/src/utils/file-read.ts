@@ -17,7 +17,9 @@ function readFile(filePath: string, bufferSize?: number): string[] {
 
 function extractDateFromLogLine(line: string): number | undefined {
   // Extract time from log: "2021-08-31T12:34:56Z" or "2021-08-31T12:34:56.123456Z"
-  const dateMatch = line.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{6})?Z/);
+  const dateMatch = line.match(
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{6})?Z/
+  );
   if (!dateMatch) {
     return undefined;
   }
@@ -45,7 +47,10 @@ export function getRecentFirstSeen(hash: string): number | undefined {
 
       let bestMatch: number | undefined;
       for (const line of lines) {
-        if (line.includes(`Saw new header hash=${hash}`) || line.includes(`Saw new cmpctblock header hash=${hash}`)) {
+        if (
+          line.includes(`Saw new header hash=${hash}`) ||
+          line.includes(`Saw new cmpctblock header hash=${hash}`)
+        ) {
           return extractDateFromLogLine(line);
         } else if (line.includes(`UpdateTip: new best=${hash}`)) {
           bestMatch = extractDateFromLogLine(line);
@@ -54,7 +59,10 @@ export function getRecentFirstSeen(hash: string): number | undefined {
 
       return bestMatch;
     } catch (e) {
-      logger.err(`Cannot parse block first seen time from Core logs. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot parse block first seen time from Core logs. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
     }
   }
 

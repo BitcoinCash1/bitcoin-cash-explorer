@@ -7,8 +7,7 @@ class ServicesRoutes {
   public initRoutes(app: Application): void {
     app
       .get(config.MEMPOOL.API_URL_PREFIX + 'wallet/:walletId', this.$getWallet)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'treasuries', this.$getTreasuries)
-    ;
+      .get(config.MEMPOOL.API_URL_PREFIX + 'treasuries', this.$getTreasuries);
   }
 
   private async $getWallet(req: Request, res: Response): Promise<void> {

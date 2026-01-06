@@ -11,17 +11,20 @@ describe('Mempool Difficulty Adjustment', () => {
     };
 
     const vectors = [
-      [ // Vector 1 (normal adjustment)
-        [ // Inputs
+      [
+        // Vector 1 (normal adjustment)
+        [
+          // Inputs
           dt('2024-02-02T15:42:06.000Z'), // Last DA time (in seconds)
           dt('2024-02-08T14:43:05.000Z'), // timestamp of 504 blocks ago (in seconds)
           dt('2024-02-11T22:43:01.000Z'), // Current time (now) (in seconds)
-          830027,                         // Current block height
-          7.333505241141637,             // Previous retarget % (Passed through)
-          'mainnet',                      // Network (if testnet, next value is non-zero)
-          0,                              // Latest block timestamp in seconds (only used if difficulty already locked in)
+          830027, // Current block height
+          7.333505241141637, // Previous retarget % (Passed through)
+          'mainnet', // Network (if testnet, next value is non-zero)
+          0, // Latest block timestamp in seconds (only used if difficulty already locked in)
         ],
-        { // Expected Result
+        {
+          // Expected Result
           progressPercent: 71.97420634920636,
           difficultyChange: 8.512745140778843,
           estimatedRetargetDate: 1708004001715,
@@ -36,17 +39,20 @@ describe('Mempool Difficulty Adjustment', () => {
           expectedBlocks: 1338.0916666666667,
         },
       ],
-      [ // Vector 2 (within quarter-epoch overlap)
-        [ // Inputs
+      [
+        // Vector 2 (within quarter-epoch overlap)
+        [
+          // Inputs
           dt('2022-08-18T11:07:00.000Z'), // Last DA time (in seconds)
           dt('2022-08-16T03:16:54.000Z'), // timestamp of 504 blocks ago (in seconds)
           dt('2022-08-19T14:03:53.000Z'), // Current time (now) (in seconds)
-          750134,                         // Current block height
-          0.6280047707459726,             // Previous retarget % (Passed through)
-          'mainnet',                      // Network (if testnet, next value is non-zero)
-          0,                              // Latest block timestamp in seconds (only used if difficulty already locked in)
+          750134, // Current block height
+          0.6280047707459726, // Previous retarget % (Passed through)
+          'mainnet', // Network (if testnet, next value is non-zero)
+          0, // Latest block timestamp in seconds (only used if difficulty already locked in)
         ],
-        { // Expected Result
+        {
+          // Expected Result
           progressPercent: 9.027777777777777,
           difficultyChange: 1.0420538959004633,
           estimatedRetargetDate: 1662009048328,
@@ -61,17 +67,20 @@ describe('Mempool Difficulty Adjustment', () => {
           expectedBlocks: 161.68833333333333,
         },
       ],
-      [ // Vector 3 (testnet)
-        [ // Inputs
+      [
+        // Vector 3 (testnet)
+        [
+          // Inputs
           dt('2022-08-18T11:07:00.000Z'), // Last DA time (in seconds)
           dt('2022-08-16T03:16:54.000Z'), // timestamp of 504 blocks ago (in seconds)
           dt('2022-08-19T14:03:53.000Z'), // Current time (now) (in seconds)
-          750134,                         // Current block height
-          0.6280047707459726,             // Previous retarget % (Passed through)
-          'testnet',                      // Network
+          750134, // Current block height
+          0.6280047707459726, // Previous retarget % (Passed through)
+          'testnet', // Network
           dt('2022-08-19T13:52:46.000Z'), // Latest block timestamp in seconds
         ],
-        { // Expected Result is same other than timeOffset
+        {
+          // Expected Result is same other than timeOffset
           progressPercent: 9.027777777777777,
           difficultyChange: 1.0420538959004633,
           estimatedRetargetDate: 1662009048328,
@@ -87,17 +96,20 @@ describe('Mempool Difficulty Adjustment', () => {
           expectedBlocks: 161.68833333333333,
         },
       ],
-      [ // Vector 4 (mainnet lock-in (epoch ending 788255))
-        [ // Inputs
+      [
+        // Vector 4 (mainnet lock-in (epoch ending 788255))
+        [
+          // Inputs
           dt('2023-04-20T09:57:33.000Z'), // Last DA time (in seconds)
           dt('2022-08-16T03:16:54.000Z'), // timestamp of 504 blocks ago (in seconds)
           dt('2023-05-04T14:54:09.000Z'), // Current time (now) (in seconds)
-          788255,                         // Current block height
-          1.7220298879531821,             // Previous retarget % (Passed through)
-          'mainnet',                      // Network (if testnet, next value is non-zero)
+          788255, // Current block height
+          1.7220298879531821, // Previous retarget % (Passed through)
+          'mainnet', // Network (if testnet, next value is non-zero)
           dt('2023-05-04T14:54:26.000Z'), // Latest block timestamp in seconds
         ],
-        { // Expected Result
+        {
+          // Expected Result
           progressPercent: 99.95039682539682,
           difficultyChange: -1.4512637555574193,
           estimatedRetargetDate: 1683212658129,
@@ -112,7 +124,10 @@ describe('Mempool Difficulty Adjustment', () => {
           expectedBlocks: 2045.66,
         },
       ],
-    ] as [[number, number, number, number, number, string, number], DifficultyAdjustment][];
+    ] as [
+      [number, number, number, number, number, string, number],
+      DifficultyAdjustment,
+    ][];
 
     for (const vector of vectors) {
       const result = calcDifficultyAdjustment(...vector[0]);

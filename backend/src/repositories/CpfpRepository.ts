@@ -5,23 +5,37 @@ import { Ancestor, CpfpCluster } from '../mempool.interfaces';
 import transactionRepository from '../repositories/TransactionRepository';
 
 class CpfpRepository {
-  public async $batchSaveClusters(clusters: { root: string, height: number, txs: Ancestor[], effectiveFeePerVsize: number }[]): Promise<boolean> {
+  public async $batchSaveClusters(
+    clusters: {
+      root: string;
+      height: number;
+      txs: Ancestor[];
+      effectiveFeePerVsize: number;
+    }[]
+  ): Promise<boolean> {
     try {
       const clusterValues: [string, number, Buffer, number][] = [];
-      const txs: { txid: string, cluster: string }[] = [];
+      const txs: { txid: string; cluster: string }[] = [];
 
       for (const cluster of clusters) {
         if (cluster.txs?.length) {
-          const roundedEffectiveFee = Math.round(cluster.effectiveFeePerVsize * 100) / 100;
-          const equalFee = cluster.txs.length > 1 && cluster.txs.reduce((acc, tx) => {
-            return (acc && Math.round(((tx.fee || 0) / (tx.weight / 4)) * 100) / 100 === roundedEffectiveFee);
-          }, true);
+          const roundedEffectiveFee =
+            Math.round(cluster.effectiveFeePerVsize * 100) / 100;
+          const equalFee =
+            cluster.txs.length > 1 &&
+            cluster.txs.reduce((acc, tx) => {
+              return (
+                acc &&
+                Math.round(((tx.fee || 0) / (tx.weight / 4)) * 100) / 100 ===
+                  roundedEffectiveFee
+              );
+            }, true);
           if (!equalFee) {
             clusterValues.push([
               cluster.root,
               cluster.height,
               Buffer.from(this.pack(cluster.txs)),
-              cluster.effectiveFeePerVsize
+              cluster.effectiveFeePerVsize,
             ]);
             for (const tx of cluster.txs) {
               txs.push({ txid: tx.txid, cluster: cluster.root });
@@ -34,7 +48,7 @@ class CpfpRepository {
         return false;
       }
 
-      const queries: { query, params }[] = [];
+      const queries: { query; params }[] = [];
 
       const maxChunk = 100;
       let chunkIndex = 0;
@@ -45,9 +59,10 @@ class CpfpRepository {
             INSERT IGNORE INTO compact_cpfp_clusters(root, height, txs, fee_rate)
             VALUES
         `;
-        query += chunk.map(chunk => {
-          return (' (UNHEX(?), ?, ?, ?)');
-        }) + ';';
+        query +=
+          chunk.map((chunk) => {
+            return ' (UNHEX(?), ?, ?, ?)';
+          }) + ';';
         const values = chunk.flat();
         queries.push({
           query,
@@ -68,7 +83,10 @@ class CpfpRepository {
 
       return true;
     } catch (e: any) {
-      logger.err(`Cannot save cpfp clusters into db. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot save cpfp clusters into db. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
@@ -100,27 +118,31 @@ class CpfpRepository {
       `,
       [height]
     );
-    return clusterRows.map(cluster => {
-      if (cluster?.txs) {
-        cluster.effectiveFeePerVsize = cluster.fee_rate;
-        cluster.txs = this.unpack(cluster.txs);
-        return cluster;
-      } else {
-        return null;
-      }
-    }).filter(cluster => cluster !== null);
+    return clusterRows
+      .map((cluster) => {
+        if (cluster?.txs) {
+          cluster.effectiveFeePerVsize = cluster.fee_rate;
+          cluster.txs = this.unpack(cluster.txs);
+          return cluster;
+        } else {
+          return null;
+        }
+      })
+      .filter((cluster) => cluster !== null);
   }
 
   public async $deleteClustersFrom(height: number): Promise<void> {
-    logger.info(`Delete newer cpfp clusters from height ${height} from the database`);
+    logger.info(
+      `Delete newer cpfp clusters from height ${height} from the database`
+    );
     try {
-      const [rows] = await DB.query(
+      const [rows] = (await DB.query(
         `
           SELECT txs, height, root from compact_cpfp_clusters
           WHERE height >= ?
         `,
         [height]
-      ) as RowDataPacket[][];
+      )) as RowDataPacket[][];
       if (rows?.length) {
         for (const clusterToDelete of rows) {
           const txs = this.unpack(clusterToDelete?.txs);
@@ -137,7 +159,10 @@ class CpfpRepository {
         [height]
       );
     } catch (e: any) {
-      logger.err(`Cannot delete cpfp clusters from db. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot delete cpfp clusters from db. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
@@ -145,13 +170,13 @@ class CpfpRepository {
   public async $deleteClustersAt(height: number): Promise<void> {
     logger.info(`Delete cpfp clusters at height ${height} from the database`);
     try {
-      const [rows] = await DB.query(
+      const [rows] = (await DB.query(
         `
           SELECT txs, height, root from compact_cpfp_clusters
           WHERE height = ?
         `,
         [height]
-      ) as RowDataPacket[][];
+      )) as RowDataPacket[][];
       if (rows?.length) {
         for (const clusterToDelete of rows) {
           const txs = this.unpack(clusterToDelete?.txs);
@@ -168,7 +193,10 @@ class CpfpRepository {
         [height]
       );
     } catch (e: any) {
-      logger.err(`Cannot delete cpfp clusters from db. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot delete cpfp clusters from db. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
@@ -196,7 +224,10 @@ class CpfpRepository {
         );
       }
     } catch (e: any) {
-      logger.err(`Cannot insert cpfp progress marker. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot insert cpfp progress marker. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
@@ -208,7 +239,10 @@ class CpfpRepository {
       const offset = i * 44;
       for (let x = 0; x < 32; x++) {
         // store txid in little-endian
-        view.setUint8(offset + (31 - x), parseInt(tx.txid.slice(x * 2, (x * 2) + 2), 16));
+        view.setUint8(
+          offset + (31 - x),
+          parseInt(tx.txid.slice(x * 2, x * 2 + 2), 16)
+        );
       }
       view.setUint32(offset + 32, tx.weight);
       view.setBigUint64(offset + 36, BigInt(Math.round(tx.fee)));
@@ -222,34 +256,46 @@ class CpfpRepository {
     }
 
     try {
-      const arrayBuffer = buf.buffer.slice(buf.byteOffset, buf.byteOffset + buf.byteLength);
+      const arrayBuffer = buf.buffer.slice(
+        buf.byteOffset,
+        buf.byteOffset + buf.byteLength
+      );
       const txs: Ancestor[] = [];
       const view = new DataView(arrayBuffer);
       for (let offset = 0; offset < arrayBuffer.byteLength; offset += 44) {
-        const txid = Array.from(new Uint8Array(arrayBuffer, offset, 32)).reverse().map(b => b.toString(16).padStart(2, '0')).join('');
+        const txid = Array.from(new Uint8Array(arrayBuffer, offset, 32))
+          .reverse()
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('');
         const weight = view.getUint32(offset + 32);
         const fee = Number(view.getBigUint64(offset + 36));
         txs.push({
           txid,
           weight,
-          fee
+          fee,
         });
       }
       return txs;
     } catch (e) {
-      logger.warn(`Failed to unpack CPFP cluster. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.warn(
+        `Failed to unpack CPFP cluster. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
       return [];
     }
   }
 
   // returns `true` if two sets of CPFP clusters are deeply identical
-  public compareClusters(clustersA: CpfpCluster[], clustersB: CpfpCluster[]): boolean {
+  public compareClusters(
+    clustersA: CpfpCluster[],
+    clustersB: CpfpCluster[]
+  ): boolean {
     if (clustersA.length !== clustersB.length) {
       return false;
     }
 
-    clustersA = clustersA.sort((a,b) => a.root.localeCompare(b.root));
-    clustersB = clustersB.sort((a,b) => a.root.localeCompare(b.root));
+    clustersA = clustersA.sort((a, b) => a.root.localeCompare(b.root));
+    clustersB = clustersB.sort((a, b) => a.root.localeCompare(b.root));
 
     for (let i = 0; i < clustersA.length; i++) {
       if (clustersA[i].root !== clustersB[i].root) {

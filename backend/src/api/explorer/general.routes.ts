@@ -6,14 +6,22 @@ import statisticsApi from './statistics.api';
 import { handleError } from '../../utils/api';
 
 class GeneralLightningRoutes {
-  constructor() { }
+  constructor() {}
 
   public initRoutes(app: Application) {
     app
-      .get(config.MEMPOOL.API_URL_PREFIX + 'lightning/search', this.$searchNodesAndChannels)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'lightning/statistics/latest', this.$getGeneralStats)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'lightning/statistics/:interval', this.$getStatistics)
-    ;
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'lightning/search',
+        this.$searchNodesAndChannels
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'lightning/statistics/latest',
+        this.$getGeneralStats
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'lightning/statistics/:interval',
+        this.$getStatistics
+      );
   }
 
   private async $searchNodesAndChannels(req: Request, res: Response) {
@@ -22,8 +30,12 @@ class GeneralLightningRoutes {
       return;
     }
     try {
-      const nodes = await nodesApi.$searchNodeByPublicKeyOrAlias(req.query.searchText);
-      const channels = await channelsApi.$searchChannelsById(req.query.searchText);
+      const nodes = await nodesApi.$searchNodeByPublicKeyOrAlias(
+        req.query.searchText
+      );
+      const channels = await channelsApi.$searchChannelsById(
+        req.query.searchText
+      );
       res.json({
         nodes: nodes,
         channels: channels,
@@ -35,7 +47,9 @@ class GeneralLightningRoutes {
 
   private async $getStatistics(req: Request, res: Response) {
     try {
-      const statistics = await statisticsApi.$getStatistics(req.params.interval);
+      const statistics = await statisticsApi.$getStatistics(
+        req.params.interval
+      );
       const statisticsCount = await statisticsApi.$getStatisticsCount();
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');

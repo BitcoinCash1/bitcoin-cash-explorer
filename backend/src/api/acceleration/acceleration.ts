@@ -1,6 +1,14 @@
 import logger from '../../logger';
 import { MempoolTransactionExtended } from '../../mempool.interfaces';
-import { GraphTx, getSameBlockRelatives, initializeRelatives, makeBlockTemplate, mempoolComparator, removeAncestors, setAncestorScores } from '../mini-miner';
+import {
+  GraphTx,
+  getSameBlockRelatives,
+  initializeRelatives,
+  makeBlockTemplate,
+  mempoolComparator,
+  removeAncestors,
+  setAncestorScores,
+} from '../mini-miner';
 
 const BLOCK_WEIGHT_UNITS = 4_000_000;
 const MAX_RELATIVE_GRAPH_SIZE = 200;
@@ -16,7 +24,7 @@ export type Acceleration = {
 interface TxSummary {
   txid: string; // txid of the current transaction
   effectiveVsize: number; // Total vsize of the dependency tree
-  effectiveFee: number;  // Total fee of the dependency tree in sats
+  effectiveFee: number; // Total fee of the dependency tree in sats
   ancestorCount: number; // Number of ancestors
 }
 
@@ -35,10 +43,19 @@ class AccelerationCosts {
    * @param accelerationsx
    * @param verboseBlock
    */
-  public calculateBoostRate(accelerations: Acceleration[], blockTxs: MempoolTransactionExtended[]): number {
+  public calculateBoostRate(
+    accelerations: Acceleration[],
+    blockTxs: MempoolTransactionExtended[]
+  ): number {
     // Run GBT ourselves to calculate accurate effective fee rates
     // the list of transactions comes from a mined block, so we already know everything fits within consensus limits
-    const template = makeBlockTemplate(blockTxs, accelerations, 1, Infinity, Infinity);
+    const template = makeBlockTemplate(
+      blockTxs,
+      accelerations,
+      1,
+      Infinity,
+      Infinity
+    );
 
     // initialize working maps for fast tx lookups
     const accMap = {};
@@ -77,7 +94,10 @@ class AccelerationCosts {
         }
         // keep track of the smallest accelerated CPFP cluster for later
         if (isAccelerated) {
-          minAcceleratedPackage = Math.min(minAcceleratedPackage, packageWeight);
+          minAcceleratedPackage = Math.min(
+            minAcceleratedPackage,
+            packageWeight
+          );
         }
       }
       if (!isPrioritized) {
@@ -97,13 +117,20 @@ class AccelerationCosts {
     // upper bound on the "next best rate" of alternatives to including the accelerated transactions
     // (since, if there were any better options, they would have been included instead)
     const spareWeight = BLOCK_WEIGHT_UNITS - totalWeight;
-    const windowOffset = Math.min(Math.max(minAcceleratedPackage, BID_BOOST_MIN_OFFSET, spareWeight), BID_BOOST_MAX_OFFSET);
+    const windowOffset = Math.min(
+      Math.max(minAcceleratedPackage, BID_BOOST_MIN_OFFSET, spareWeight),
+      BID_BOOST_MAX_OFFSET
+    );
     const leftBound = windowOffset;
     const rightBound = windowOffset + BID_BOOST_WINDOW;
     let totalFeeInWindow = 0;
     let totalWeightInWindow = Math.max(0, spareWeight - leftBound);
     let txIndex = blockTxs.length - 1;
-    for (let offset = spareWeight; offset < BLOCK_WEIGHT_UNITS && txIndex >= 0; txIndex--) {
+    for (
+      let offset = spareWeight;
+      offset < BLOCK_WEIGHT_UNITS && txIndex >= 0;
+      txIndex--
+    ) {
       const txid = blockTxs[txIndex].txid;
       const tx = txMap[txid];
       if (excludeMap[txid]) {
@@ -126,7 +153,7 @@ class AccelerationCosts {
       const overlapLeft = Math.max(leftBound, left);
       const overlapRight = Math.min(rightBound, right);
       const overlapUnits = overlapRight - overlapLeft;
-      totalFeeInWindow += (tx.effectiveFeePerVsize * (overlapUnits / 4));
+      totalFeeInWindow += tx.effectiveFeePerVsize * (overlapUnits / 4);
       totalWeightInWindow += overlapUnits;
     }
 
@@ -140,7 +167,6 @@ class AccelerationCosts {
     return averageRate;
   }
 
-
   /**
    * Takes an accelerated mined txid and a target rate
    * Returns the total vsize, fees and acceleration cost (in sats) of the tx and all same-block ancestors
@@ -148,14 +174,22 @@ class AccelerationCosts {
    * @param txid
    * @param medianFeeRate
    */
-  public getAccelerationInfo(tx: MempoolTransactionExtended, targetFeeRate: number, transactions: MempoolTransactionExtended[]): AccelerationInfo {
+  public getAccelerationInfo(
+    tx: MempoolTransactionExtended,
+    targetFeeRate: number,
+    transactions: MempoolTransactionExtended[]
+  ): AccelerationInfo {
     // Get same-block transaction ancestors
     const allRelatives = getSameBlockRelatives(tx, transactions);
     const relativesMap = initializeRelatives(allRelatives);
     const rootTx = relativesMap.get(tx.txid) as GraphTx;
 
     // Calculate cost to boost
-    return this.calculateAccelerationAncestors(rootTx, relativesMap, targetFeeRate);
+    return this.calculateAccelerationAncestors(
+      rootTx,
+      relativesMap,
+      targetFeeRate
+    );
   }
 
   /**
@@ -165,33 +199,46 @@ class AccelerationCosts {
    * @param tx
    * @param ancestors
    */
-  private calculateAccelerationAncestors(tx: GraphTx, relatives: Map<string, GraphTx>, targetFeeRate: number): AccelerationInfo {
+  private calculateAccelerationAncestors(
+    tx: GraphTx,
+    relatives: Map<string, GraphTx>,
+    targetFeeRate: number
+  ): AccelerationInfo {
     // add root tx to the ancestor map
     relatives.set(tx.txid, tx);
 
     // Check for high-sigop transactions (not supported)
-    relatives.forEach(entry => {
+    relatives.forEach((entry) => {
       if (entry.vsize > Math.ceil(entry.weight / 4)) {
         throw new Error(`high_sigop_tx`);
       }
     });
 
     // Initialize individual & ancestor fee rates
-    relatives.forEach(entry => setAncestorScores(entry));
+    relatives.forEach((entry) => setAncestorScores(entry));
 
     // Sort by descending ancestor score
-    let sortedRelatives = Array.from(relatives.values()).sort(mempoolComparator);
+    let sortedRelatives = Array.from(relatives.values()).sort(
+      mempoolComparator
+    );
 
     let includedInCluster: Map<string, GraphTx> | null = null;
 
     // While highest score >= targetFeeRate
     let maxIterations = MAX_RELATIVE_GRAPH_SIZE;
-    while (sortedRelatives.length && sortedRelatives[0].score && sortedRelatives[0].score >= targetFeeRate && maxIterations > 0) {
+    while (
+      sortedRelatives.length &&
+      sortedRelatives[0].score &&
+      sortedRelatives[0].score >= targetFeeRate &&
+      maxIterations > 0
+    ) {
       maxIterations--;
       // Grab the highest scoring entry
       const best = sortedRelatives.shift();
       if (best) {
-        const cluster = new Map<string, GraphTx>(best.ancestors?.entries() || []);
+        const cluster = new Map<string, GraphTx>(
+          best.ancestors?.entries() || []
+        );
         if (best.ancestors.has(tx.txid)) {
           includedInCluster = cluster;
         }
@@ -201,13 +248,17 @@ class AccelerationCosts {
         removeAncestors(cluster, relatives);
 
         // re-sort
-        sortedRelatives = Array.from(relatives.values()).sort(mempoolComparator);
+        sortedRelatives = Array.from(relatives.values()).sort(
+          mempoolComparator
+        );
       }
     }
 
     // sanity check for infinite loops / too many ancestors (should never happen)
     if (maxIterations <= 0) {
-      logger.warn(`acceleration dependency calculation failed: calculateAccelerationAncestors loop exceeded ${MAX_RELATIVE_GRAPH_SIZE} iterations, unable to proceed`);
+      logger.warn(
+        `acceleration dependency calculation failed: calculateAccelerationAncestors loop exceeded ${MAX_RELATIVE_GRAPH_SIZE} iterations, unable to proceed`
+      );
       throw new Error('invalid_tx_dependencies');
     }
 
@@ -217,7 +268,7 @@ class AccelerationCosts {
     if (includedInCluster) {
       let clusterSize = 0;
       let clusterFee = 0;
-      includedInCluster.forEach(entry => {
+      includedInCluster.forEach((entry) => {
         clusterSize += entry.vsize;
         clusterFee += entry.fees.base;
       });
@@ -241,4 +292,4 @@ class AccelerationCosts {
   }
 }
 
-export default new AccelerationCosts;
+export default new AccelerationCosts();

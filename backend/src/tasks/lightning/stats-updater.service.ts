@@ -15,7 +15,9 @@ class LightningStatsUpdater {
   private async $runTasks(): Promise<void> {
     await this.$logStatsDaily();
 
-    setTimeout(() => { this.$runTasks(); }, 1000 * config.LIGHTNING.STATS_REFRESH_INTERVAL);
+    setTimeout(() => {
+      this.$runTasks();
+    }, 1000 * config.LIGHTNING.STATS_REFRESH_INTERVAL);
   }
 
   /**
@@ -26,10 +28,17 @@ class LightningStatsUpdater {
       const date = new Date();
       Common.setDateMidnight(date);
       const networkGraph = await lightningApi.$getNetworkGraph();
-      await LightningStatsImporter.computeNetworkStats(date.getTime() / 1000, networkGraph);
+      await LightningStatsImporter.computeNetworkStats(
+        date.getTime() / 1000,
+        networkGraph
+      );
       logger.debug(`Updated latest network stats`, logger.tags.ln);
     } catch (e) {
-      logger.err(`Exception in $logStatsDaily. Reason: ${(e instanceof Error ? e.message : e)}`);
+      logger.err(
+        `Exception in $logStatsDaily. Reason: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
     }
   }
 }

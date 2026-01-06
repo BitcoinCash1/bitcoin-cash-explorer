@@ -3,7 +3,11 @@ import memPool from './mempool';
 import blocks from './blocks';
 import logger from '../logger';
 import config from '../config';
-import { BlockExtended, BlockSummary, MempoolTransactionExtended } from '../mempool.interfaces';
+import {
+  BlockExtended,
+  BlockSummary,
+  MempoolTransactionExtended,
+} from '../mempool.interfaces';
 import rbfCache from './rbf-cache';
 import transactionUtils from './transaction-utils';
 
@@ -24,8 +28,8 @@ class RedisCache {
   private pauseFlush: boolean = false;
   private cacheQueue: MempoolTransactionExtended[] = [];
   private removeQueue: string[] = [];
-  private rbfCacheQueue: { type: string, txid: string, value: any }[] = [];
-  private rbfRemoveQueue: { type: string, txid: string }[] = [];
+  private rbfCacheQueue: { type: string; txid: string; value: any }[] = [];
+  private rbfRemoveQueue: { type: string; txid: string }[] = [];
   private txFlushLimit: number = 10000;
   private ignoreBlocksCache = false;
 
@@ -33,12 +37,14 @@ class RedisCache {
     if (config.REDIS.ENABLED) {
       this.redisConfig = {
         socket: {
-          path: config.REDIS.UNIX_SOCKET_PATH
+          path: config.REDIS.UNIX_SOCKET_PATH,
         },
         database: NetworkDB[config.MEMPOOL.NETWORK],
       };
       this.$ensureConnected();
-      setInterval(() => { this.$ensureConnected(); }, 10000);
+      setInterval(() => {
+        this.$ensureConnected();
+      }, 10000);
     }
   }
 
@@ -47,7 +53,9 @@ class RedisCache {
       try {
         this.client = createClient(this.redisConfig);
         this.client.on('error', async (e) => {
-          logger.err(`Error in Redis client: ${e instanceof Error ? e.message : e}`);
+          logger.err(
+            `Error in Redis client: ${e instanceof Error ? e.message : e}`
+          );
           this.connected = false;
           await this.client.disconnect();
         });
@@ -58,7 +66,9 @@ class RedisCache {
             if (version !== this.schemaVersion) {
               // schema changed
               // perform migrations or flush DB if necessary
-              logger.info(`Redis schema version changed from ${version} to ${this.schemaVersion}`);
+              logger.info(
+                `Redis schema version changed from ${version} to ${this.schemaVersion}`
+              );
               await this.client.set('schema_version', this.schemaVersion);
             }
             logger.info(`Redis client connected`);
@@ -72,7 +82,9 @@ class RedisCache {
         await this.$onConnected();
         return true;
       } catch (e) {
-        logger.warn('Error connecting to Redis: ' + (e instanceof Error ? e.message : e));
+        logger.warn(
+          'Error connecting to Redis: ' + (e instanceof Error ? e.message : e)
+        );
         return false;
       }
     } else {
@@ -81,7 +93,9 @@ class RedisCache {
         await this.client.get('schema_version');
         return true;
       } catch (e) {
-        logger.warn('Lost connection to Redis: ' + (e instanceof Error ? e.message : e));
+        logger.warn(
+          'Lost connection to Redis: ' + (e instanceof Error ? e.message : e)
+        );
         logger.warn('Attempting to reconnect in 10 seconds');
         this.connected = false;
         return false;
@@ -100,14 +114,20 @@ class RedisCache {
       return;
     }
     if (!this.connected) {
-      logger.warn(`Failed to update blocks in Redis cache: Redis is not connected`);
+      logger.warn(
+        `Failed to update blocks in Redis cache: Redis is not connected`
+      );
       return;
     }
     try {
       await this.client.set('blocks', JSON.stringify(blocks));
       logger.debug(`Saved latest blocks to Redis cache`);
     } catch (e) {
-      logger.warn(`Failed to update blocks in Redis cache: ${e instanceof Error ? e.message : e}`);
+      logger.warn(
+        `Failed to update blocks in Redis cache: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
     }
   }
 
@@ -116,14 +136,20 @@ class RedisCache {
       return;
     }
     if (!this.connected) {
-      logger.warn(`Failed to update block summaries in Redis cache: Redis is not connected`);
+      logger.warn(
+        `Failed to update block summaries in Redis cache: Redis is not connected`
+      );
       return;
     }
     try {
       await this.client.set('block-summaries', JSON.stringify(summaries));
       logger.debug(`Saved latest block summaries to Redis cache`);
     } catch (e) {
-      logger.warn(`Failed to update block summaries in Redis cache: ${e instanceof Error ? e.message : e}`);
+      logger.warn(
+        `Failed to update block summaries in Redis cache: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
     }
   }
 
@@ -147,7 +173,9 @@ class RedisCache {
       return;
     }
     if (!this.connected) {
-      logger.warn(`Failed to add ${this.cacheQueue.length} transactions to Redis cache: Redis not connected`);
+      logger.warn(
+        `Failed to add ${this.cacheQueue.length} transactions to Redis cache: Redis not connected`
+      );
       return;
     }
 
@@ -155,7 +183,7 @@ class RedisCache {
 
     const toAdd = this.cacheQueue.slice(0, this.txFlushLimit);
     try {
-      const msetData = toAdd.map(tx => {
+      const msetData = toAdd.map((tx) => {
         const minified: any = structuredClone(tx);
         delete minified.hex;
         for (const vin of minified.vin) {
@@ -171,9 +199,15 @@ class RedisCache {
       await this.client.MSET(msetData);
       // successful, remove transactions from cache queue
       this.cacheQueue = this.cacheQueue.slice(toAdd.length);
-      logger.debug(`Saved ${toAdd.length} transactions to Redis cache, ${this.cacheQueue.length} left in queue`);
+      logger.debug(
+        `Saved ${toAdd.length} transactions to Redis cache, ${this.cacheQueue.length} left in queue`
+      );
     } catch (e) {
-      logger.warn(`Failed to add ${toAdd.length} transactions to Redis cache: ${e instanceof Error ? e.message : e}`);
+      logger.warn(
+        `Failed to add ${toAdd.length} transactions to Redis cache: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
       this.pauseFlush = true;
     }
   }
@@ -191,11 +225,17 @@ class RedisCache {
       for (let i = 0; i < Math.ceil(toRemove.length / sliceLength); i++) {
         const slice = toRemove.slice(i * sliceLength, (i + 1) * sliceLength);
         try {
-          await this.client.unlink(slice.map(txid => `mempool:tx:${txid}`));
-          numRemoved+= sliceLength;
-          logger.debug(`Deleted ${slice.length} transactions from the Redis cache`);
+          await this.client.unlink(slice.map((txid) => `mempool:tx:${txid}`));
+          numRemoved += sliceLength;
+          logger.debug(
+            `Deleted ${slice.length} transactions from the Redis cache`
+          );
         } catch (e) {
-          logger.warn(`Failed to remove ${slice.length} transactions from Redis cache: ${e instanceof Error ? e.message : e}`);
+          logger.warn(
+            `Failed to remove ${slice.length} transactions from Redis cache: ${
+              e instanceof Error ? e.message : e
+            }`
+          );
           failed = failed.concat(slice);
         }
       }
@@ -212,13 +252,19 @@ class RedisCache {
     }
     if (!this.connected) {
       this.rbfCacheQueue.push({ type, txid, value });
-      logger.warn(`Failed to set RBF ${type} in Redis cache: Redis is not connected`);
+      logger.warn(
+        `Failed to set RBF ${type} in Redis cache: Redis is not connected`
+      );
       return;
     }
     try {
       await this.client.set(`rbf:${type}:${txid}`, JSON.stringify(value));
     } catch (e) {
-      logger.warn(`Failed to set RBF ${type} in Redis cache: ${e instanceof Error ? e.message : e}`);
+      logger.warn(
+        `Failed to set RBF ${type} in Redis cache: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
     }
   }
 
@@ -228,13 +274,19 @@ class RedisCache {
     }
     if (!this.connected) {
       this.rbfRemoveQueue.push({ type, txid });
-      logger.warn(`Failed to remove RBF ${type} from Redis cache: Redis is not connected`);
+      logger.warn(
+        `Failed to remove RBF ${type} from Redis cache: Redis is not connected`
+      );
       return;
     }
     try {
       await this.client.unlink(`rbf:${type}:${txid}`);
     } catch (e) {
-      logger.warn(`Failed to remove RBF ${type} from Redis cache: ${e instanceof Error ? e.message : e}`);
+      logger.warn(
+        `Failed to remove RBF ${type} from Redis cache: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
     }
   }
 
@@ -251,15 +303,23 @@ class RedisCache {
       for (const { type, txid, value } of toAdd) {
         await this.$setRbfEntry(type, txid, value);
       }
-      logger.debug(`Saved ${toAdd.length} queued RBF entries to the Redis cache`);
+      logger.debug(
+        `Saved ${toAdd.length} queued RBF entries to the Redis cache`
+      );
       const toRemove = this.rbfRemoveQueue;
       this.rbfRemoveQueue = [];
       for (const { type, txid } of toRemove) {
         await this.$removeRbfEntry(type, txid);
       }
-      logger.debug(`Removed ${toRemove.length} queued RBF entries from the Redis cache`);
+      logger.debug(
+        `Removed ${toRemove.length} queued RBF entries from the Redis cache`
+      );
     } catch (e) {
-      logger.warn(`Failed to flush RBF cache event queues after reconnecting to Redis: ${e instanceof Error ? e.message : e}`);
+      logger.warn(
+        `Failed to flush RBF cache event queues after reconnecting to Redis: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
     }
   }
 
@@ -268,14 +328,20 @@ class RedisCache {
       return [];
     }
     if (!this.connected) {
-      logger.warn(`Failed to retrieve blocks from Redis cache: Redis is not connected`);
+      logger.warn(
+        `Failed to retrieve blocks from Redis cache: Redis is not connected`
+      );
       return [];
     }
     try {
       const json = await this.client.get('blocks');
       return JSON.parse(json);
     } catch (e) {
-      logger.warn(`Failed to retrieve blocks from Redis cache: ${e instanceof Error ? e.message : e}`);
+      logger.warn(
+        `Failed to retrieve blocks from Redis cache: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
       return [];
     }
   }
@@ -285,14 +351,20 @@ class RedisCache {
       return [];
     }
     if (!this.connected) {
-      logger.warn(`Failed to retrieve blocks from Redis cache: Redis is not connected`);
+      logger.warn(
+        `Failed to retrieve blocks from Redis cache: Redis is not connected`
+      );
       return [];
     }
     try {
       const json = await this.client.get('block-summaries');
       return JSON.parse(json);
     } catch (e) {
-      logger.warn(`Failed to retrieve blocks from Redis cache: ${e instanceof Error ? e.message : e}`);
+      logger.warn(
+        `Failed to retrieve blocks from Redis cache: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
       return [];
     }
   }
@@ -302,20 +374,30 @@ class RedisCache {
       return {};
     }
     if (!this.connected) {
-      logger.warn(`Failed to retrieve mempool from Redis cache: Redis is not connected`);
+      logger.warn(
+        `Failed to retrieve mempool from Redis cache: Redis is not connected`
+      );
       return {};
     }
     const start = Date.now();
     const mempool = {};
     try {
-      const mempoolList = await this.scanKeys<MempoolTransactionExtended>('mempool:tx:*');
+      const mempoolList = await this.scanKeys<MempoolTransactionExtended>(
+        'mempool:tx:*'
+      );
       for (const tx of mempoolList) {
         mempool[tx.key] = tx.value;
       }
-      logger.info(`Loaded mempool from Redis cache in ${Date.now() - start} ms`);
+      logger.info(
+        `Loaded mempool from Redis cache in ${Date.now() - start} ms`
+      );
       return mempool || {};
     } catch (e) {
-      logger.warn(`Failed to retrieve mempool from Redis cache: ${e instanceof Error ? e.message : e}`);
+      logger.warn(
+        `Failed to retrieve mempool from Redis cache: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
     }
     return {};
   }
@@ -325,14 +407,22 @@ class RedisCache {
       return [];
     }
     if (!this.connected) {
-      logger.warn(`Failed to retrieve Rbf ${type}s from Redis cache: Redis is not connected`);
+      logger.warn(
+        `Failed to retrieve Rbf ${type}s from Redis cache: Redis is not connected`
+      );
       return [];
     }
     try {
-      const rbfEntries = await this.scanKeys<MempoolTransactionExtended[]>(`rbf:${type}:*`);
+      const rbfEntries = await this.scanKeys<MempoolTransactionExtended[]>(
+        `rbf:${type}:*`
+      );
       return rbfEntries;
     } catch (e) {
-      logger.warn(`Failed to retrieve Rbf ${type}s from Redis cache: ${e instanceof Error ? e.message : e}`);
+      logger.warn(
+        `Failed to retrieve Rbf ${type}s from Redis cache: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
       return [];
     }
   }
@@ -362,40 +452,52 @@ class RedisCache {
     await memPool.$setMempool(loadedMempool);
     await rbfCache.load({
       txs: rbfTxs,
-      trees: rbfTrees.map(loadedTree => { loadedTree.value.key = loadedTree.key; return loadedTree.value; }),
+      trees: rbfTrees.map((loadedTree) => {
+        loadedTree.value.key = loadedTree.key;
+        return loadedTree.value;
+      }),
       expiring: rbfExpirations,
       mempool: memPool.getMempool(),
       spendMap: memPool.getSpendMap(),
     });
   }
 
-  private inflateLoadedTxs(mempool: { [txid: string]: MempoolTransactionExtended }): void {
+  private inflateLoadedTxs(mempool: {
+    [txid: string]: MempoolTransactionExtended;
+  }): void {
     for (const tx of Object.values(mempool)) {
       for (const vin of tx.vin) {
         if (vin.scriptsig) {
-          vin.scriptsig_asm = transactionUtils.convertScriptSigAsm(vin.scriptsig);
+          vin.scriptsig_asm = transactionUtils.convertScriptSigAsm(
+            vin.scriptsig
+          );
           transactionUtils.addInnerScriptsToVin(vin);
         }
       }
       for (const vout of tx.vout) {
         if (vout.scriptpubkey) {
-          vout.scriptpubkey_asm = transactionUtils.convertScriptSigAsm(vout.scriptpubkey);
+          vout.scriptpubkey_asm = transactionUtils.convertScriptSigAsm(
+            vout.scriptpubkey
+          );
         }
       }
     }
   }
 
-  private async scanKeys<T>(pattern): Promise<{ key: string, value: T }[]> {
+  private async scanKeys<T>(pattern): Promise<{ key: string; value: T }[]> {
     logger.info(`loading Redis entries for ${pattern}`);
     let keys: string[] = [];
-    const result: { key: string, value: T }[] = [];
+    const result: { key: string; value: T }[] = [];
     const patternLength = pattern.length - 1;
     let count = 0;
     const processValues = async (keys): Promise<void> => {
       const values = await this.client.MGET(keys);
       for (let i = 0; i < values.length; i++) {
         if (values[i]) {
-          result.push({ key: keys[i].slice(patternLength), value: JSON.parse(values[i]) });
+          result.push({
+            key: keys[i].slice(patternLength),
+            value: JSON.parse(values[i]),
+          });
           count++;
         }
       }
@@ -403,7 +505,7 @@ class RedisCache {
     };
     for await (const key of this.client.scanIterator({
       MATCH: pattern,
-      COUNT: 100
+      COUNT: 100,
     })) {
       keys.push(key);
       if (keys.length >= 10000) {

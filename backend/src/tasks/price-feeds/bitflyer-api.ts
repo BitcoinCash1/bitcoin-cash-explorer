@@ -8,8 +8,7 @@ class BitflyerApi implements PriceFeed {
   public url: string = 'https://api.bitflyer.com/v1/ticker?product_code=BTC_';
   public urlHist: string = '';
 
-  constructor() {
-  }
+  constructor() {}
 
   public async $fetchPrice(currency): Promise<number> {
     const response = await query(this.url + currency);
@@ -20,7 +19,10 @@ class BitflyerApi implements PriceFeed {
     }
   }
 
-  public async $fetchRecentPrice(currencies: string[], type: 'hour' | 'day'): Promise<PriceHistory> {
+  public async $fetchRecentPrice(
+    currencies: string[],
+    type: 'hour' | 'day'
+  ): Promise<PriceHistory> {
     return [];
   }
 }

@@ -20,7 +20,7 @@ class BackendInfo {
       // Use dummy values if `versionFile` doesn't exist (e.g., during testing)
       versionInfo = {
         version: '?',
-        gitCommit: '?'
+        gitCommit: '?',
       };
     }
     this.backendInfo = {
@@ -32,9 +32,12 @@ class BackendInfo {
       coreVersion: '?',
     };
 
-    this.timer = setInterval(async () => {
-      await this.$updateCoreVersion();
-    }, 10 * 60 * 1000); // every 10 minutes
+    this.timer = setInterval(
+      async () => {
+        await this.$updateCoreVersion();
+      },
+      10 * 60 * 1000
+    ); // every 10 minutes
     this.$updateCoreVersion(); // starting immediately
   }
 
@@ -43,7 +46,11 @@ class BackendInfo {
       const networkInfo = await bitcoinClient.getNetworkInfo();
       this.backendInfo.coreVersion = networkInfo.subversion;
     } catch (e) {
-      logger.err(`Exception in $updateCoreVersion. Reason: ${(e instanceof Error ? e.message : e)}`);
+      logger.err(
+        `Exception in $updateCoreVersion. Reason: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
     }
   }
 

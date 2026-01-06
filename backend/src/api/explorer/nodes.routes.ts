@@ -6,30 +6,75 @@ import { INodesRanking } from '../../mempool.interfaces';
 import { handleError } from '../../utils/api';
 
 class NodesRoutes {
-  constructor() { }
+  constructor() {}
 
   public initRoutes(app: Application) {
     app
-      .get(config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/world', this.$getWorldNodes)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/country/:country', this.$getNodesPerCountry)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/search/:search', this.$searchNode)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/isp-ranking', this.$getISPRanking)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/isp/:isp', this.$getNodesPerISP)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/countries', this.$getNodesCountries)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/rankings', this.$getNodesRanking)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/rankings/liquidity', this.$getTopNodesByCapacity)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/rankings/connectivity', this.$getTopNodesByChannels)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/rankings/age', this.$getOldestNodes)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/:public_key/statistics', this.$getHistoricalNodeStats)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/:public_key/fees/histogram', this.$getFeeHistogram)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/:public_key', this.$getNode)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/group/:name', this.$getNodeGroup)
-    ;
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/world',
+        this.$getWorldNodes
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/country/:country',
+        this.$getNodesPerCountry
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/search/:search',
+        this.$searchNode
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/isp-ranking',
+        this.$getISPRanking
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/isp/:isp',
+        this.$getNodesPerISP
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/countries',
+        this.$getNodesCountries
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/rankings',
+        this.$getNodesRanking
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/rankings/liquidity',
+        this.$getTopNodesByCapacity
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/rankings/connectivity',
+        this.$getTopNodesByChannels
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/rankings/age',
+        this.$getOldestNodes
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX +
+          'lightning/nodes/:public_key/statistics',
+        this.$getHistoricalNodeStats
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX +
+          'lightning/nodes/:public_key/fees/histogram',
+        this.$getFeeHistogram
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/:public_key',
+        this.$getNode
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'lightning/nodes/group/:name',
+        this.$getNodeGroup
+      );
   }
 
   private async $searchNode(req: Request, res: Response) {
     try {
-      const nodes = await nodesApi.$searchNodeByPublicKeyOrAlias(req.params.search);
+      const nodes = await nodesApi.$searchNodeByPublicKeyOrAlias(
+        req.params.search
+      );
       res.json(nodes);
     } catch (e) {
       handleError(req, res, 500, 'Failed to search for node');
@@ -39,7 +84,7 @@ class NodesRoutes {
   private async $getNodeGroup(req: Request, res: Response) {
     try {
       let nodesList;
-      let nodes: any[] = [];
+      const nodes: any[] = [];
       switch (config.MEMPOOL.NETWORK) {
         case 'testnet':
           nodesList = [
@@ -174,7 +219,7 @@ class NodesRoutes {
           ];
       }
 
-      for (let pubKey of nodesList) {
+      for (const pubKey of nodesList) {
         try {
           const node = await nodesApi.$getNode(pubKey);
           if (node) {
@@ -252,7 +297,10 @@ class NodesRoutes {
     }
   }
 
-  private async $getTopNodesByCapacity(req: Request, res: Response): Promise<void> {
+  private async $getTopNodesByCapacity(
+    req: Request,
+    res: Response
+  ): Promise<void> {
     try {
       const topCapacityNodes = await nodesApi.$getTopCapacityNodes(true);
       res.header('Pragma', 'public');
@@ -264,7 +312,10 @@ class NodesRoutes {
     }
   }
 
-  private async $getTopNodesByChannels(req: Request, res: Response): Promise<void> {
+  private async $getTopNodesByChannels(
+    req: Request,
+    res: Response
+  ): Promise<void> {
     try {
       const topCapacityNodes = await nodesApi.$getTopChannelsNodes(true);
       res.header('Pragma', 'public');
@@ -323,7 +374,12 @@ class NodesRoutes {
       );
 
       if (country.length === 0) {
-        handleError(req, res, 404, `This country does not exist or does not host any lightning nodes on clearnet`);
+        handleError(
+          req,
+          res,
+          404,
+          `This country does not exist or does not host any lightning nodes on clearnet`
+        );
         return;
       }
 
@@ -350,7 +406,12 @@ class NodesRoutes {
       );
 
       if (isp.length === 0) {
-        handleError(req, res, 404, `This ISP does not exist or does not host any lightning nodes on clearnet`);
+        handleError(
+          req,
+          res,
+          404,
+          `This ISP does not exist or does not host any lightning nodes on clearnet`
+        );
         return;
       }
 

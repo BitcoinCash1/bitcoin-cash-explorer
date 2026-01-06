@@ -2,7 +2,11 @@
 // does not preserve Dates, Maps, Sets etc
 // does not support recursive objects
 // properties deeper than maxDepth will be shallow cloned
-export function deepClone(obj: any, maxDepth: number = 50, depth: number = 0): any {
+export function deepClone(
+  obj: any,
+  maxDepth: number = 50,
+  depth: number = 0
+): any {
   let cloned = obj;
   if (depth < maxDepth && typeof obj === 'object') {
     cloned = Array.isArray(obj) ? [] : {};

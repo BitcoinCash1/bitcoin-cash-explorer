@@ -10,7 +10,9 @@ class PoolsRepository {
    * Get all pools tagging info
    */
   public async $getPools(): Promise<PoolTag[]> {
-    const [rows] = await DB.query('SELECT id, unique_id as uniqueId, name, addresses, regexes, slug FROM pools');
+    const [rows] = await DB.query(
+      'SELECT id, unique_id as uniqueId, name, addresses, regexes, slug FROM pools'
+    );
     return <PoolTag[]>rows;
   }
 
@@ -18,10 +20,14 @@ class PoolsRepository {
    * Get unknown pool tagging info
    */
   public async $getUnknownPool(): Promise<PoolTag> {
-    let [rows]: any[] = await DB.query('SELECT id, unique_id as uniqueId, name, slug FROM pools where name = "Unknown"');
+    let [rows]: any[] = await DB.query(
+      'SELECT id, unique_id as uniqueId, name, slug FROM pools where name = "Unknown"'
+    );
     if (rows && rows.length === 0 && config.DATABASE.ENABLED) {
       await poolsParser.$insertUnknownPool();
-      [rows] = await DB.query('SELECT id, unique_id as uniqueId, name, slug FROM pools where name = "Unknown"');
+      [rows] = await DB.query(
+        'SELECT id, unique_id as uniqueId, name, slug FROM pools where name = "Unknown"'
+      );
     }
     return <PoolTag>rows[0];
   }
@@ -29,7 +35,9 @@ class PoolsRepository {
   /**
    * Get basic pool info and block count
    */
-  public async $getPoolsInfo(interval: string | null = null): Promise<PoolInfo[]> {
+  public async $getPoolsInfo(
+    interval: string | null = null
+  ): Promise<PoolInfo[]> {
     interval = Common.getSqlInterval(interval);
 
     let query = `
@@ -59,7 +67,10 @@ class PoolsRepository {
       const [rows] = await DB.query(query);
       return <PoolInfo[]>rows;
     } catch (e) {
-      logger.err(`Cannot generate pools stats. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot generate pools stats. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
@@ -67,7 +78,10 @@ class PoolsRepository {
   /**
    * Get basic pool info and block count between two timestamp
    */
-  public async $getPoolsInfoBetween(from: number, to: number): Promise<PoolInfo[]> {
+  public async $getPoolsInfoBetween(
+    from: number,
+    to: number
+  ): Promise<PoolInfo[]> {
     const query = `SELECT COUNT(height) as blockCount, pools.id as poolId, pools.name as poolName
       FROM pools
       LEFT JOIN blocks on pools.id = blocks.pool_id AND blocks.blockTimestamp BETWEEN FROM_UNIXTIME(?) AND FROM_UNIXTIME(?)
@@ -78,7 +92,10 @@ class PoolsRepository {
       const [rows] = await DB.query(query, [from, to]);
       return <PoolInfo[]>rows;
     } catch (e) {
-      logger.err('Cannot generate pools blocks count. Reason: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        'Cannot generate pools blocks count. Reason: ' +
+          (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
@@ -86,7 +103,10 @@ class PoolsRepository {
   /**
    * Get a mining pool info
    */
-  public async $getPool(slug: string, parse: boolean = true): Promise<PoolTag | null> {
+  public async $getPool(
+    slug: string,
+    parse: boolean = true
+  ): Promise<PoolTag | null> {
     const query = `
       SELECT *
       FROM pools
@@ -110,7 +130,10 @@ class PoolsRepository {
 
       return rows[0];
     } catch (e) {
-      logger.err('Cannot get pool from db. Reason: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        'Cannot get pool from db. Reason: ' +
+          (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
@@ -118,7 +141,10 @@ class PoolsRepository {
   /**
    * Get a mining pool info by its unique id
    */
-  public async $getPoolByUniqueId(id: number, parse: boolean = true): Promise<PoolTag | null> {
+  public async $getPoolByUniqueId(
+    id: number,
+    parse: boolean = true
+  ): Promise<PoolTag | null> {
     const query = `
       SELECT *
       FROM pools
@@ -142,88 +168,123 @@ class PoolsRepository {
 
       return rows[0];
     } catch (e) {
-      logger.err('Cannot get pool from db. Reason: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        'Cannot get pool from db. Reason: ' +
+          (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
 
   /**
    * Insert a new mining pool in the database
-   * 
-   * @param pool 
+   *
+   * @param pool
    */
   public async $insertNewMiningPool(pool: any, slug: string): Promise<void> {
     try {
-      await DB.query(`
+      await DB.query(
+        `
         INSERT INTO pools
         SET name = ?, link = ?, addresses = ?, regexes = ?, slug = ?, unique_id = ?`,
-        [pool.name, pool.link, JSON.stringify(pool.addresses), JSON.stringify(pool.regexes), slug, pool.id]
+        [
+          pool.name,
+          pool.link,
+          JSON.stringify(pool.addresses),
+          JSON.stringify(pool.regexes),
+          slug,
+          pool.id,
+        ]
       );
     } catch (e: any) {
-      logger.err(`Cannot insert new mining pool into db. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot insert new mining pool into db. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
     }
   }
 
   /**
    * Rename an existing mining pool
-   * 
+   *
    * @param dbId
    * @param newSlug
-   * @param newName 
+   * @param newName
    */
-  public async $renameMiningPool(dbId: number, newSlug: string, newName: string): Promise<void> {
+  public async $renameMiningPool(
+    dbId: number,
+    newSlug: string,
+    newName: string
+  ): Promise<void> {
     try {
-      await DB.query(`
+      await DB.query(
+        `
         UPDATE pools
         SET slug = ?, name = ?
         WHERE id = ?`,
         [newSlug, newName, dbId]
       );
     } catch (e: any) {
-      logger.err(`Cannot rename mining pool id ${dbId}. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot rename mining pool id ${dbId}. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
     }
   }
 
   /**
    * Update an exisiting mining pool link
-   * 
-   * @param dbId 
-   * @param newLink 
+   *
+   * @param dbId
+   * @param newLink
    */
-  public async $updateMiningPoolLink(dbId: number, newLink: string): Promise<void> {
+  public async $updateMiningPoolLink(
+    dbId: number,
+    newLink: string
+  ): Promise<void> {
     try {
-      await DB.query(`
+      await DB.query(
+        `
         UPDATE pools
         SET link = ?
         WHERE id = ?`,
         [newLink, dbId]
       );
     } catch (e: any) {
-      logger.err(`Cannot update link for mining pool id ${dbId}. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot update link for mining pool id ${dbId}. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
     }
-
   }
 
   /**
    * Update an existing mining pool addresses or coinbase tags
-   * 
-   * @param dbId 
-   * @param addresses 
-   * @param regexes 
+   *
+   * @param dbId
+   * @param addresses
+   * @param regexes
    */
-  public async $updateMiningPoolTags(dbId: number, addresses: string, regexes: string): Promise<void> {
+  public async $updateMiningPoolTags(
+    dbId: number,
+    addresses: string,
+    regexes: string
+  ): Promise<void> {
     try {
-      await DB.query(`
+      await DB.query(
+        `
         UPDATE pools
         SET addresses = ?, regexes = ?
         WHERE id = ?`,
         [JSON.stringify(addresses), JSON.stringify(regexes), dbId]
       );
     } catch (e: any) {
-      logger.err(`Cannot update mining pool id ${dbId}. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot update mining pool id ${dbId}. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
     }
   }
-
 }
 
 export default new PoolsRepository();

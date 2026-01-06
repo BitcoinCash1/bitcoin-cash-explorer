@@ -20,12 +20,18 @@ class TransactionRepository {
         [txid, clusterRoot, clusterRoot]
       );
     } catch (e: any) {
-      logger.err(`Cannot save transaction cpfp cluster into db. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot save transaction cpfp cluster into db. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
 
-  public buildBatchSetQuery(txs: { txid: string, cluster: string }[]): { query, params } {
+  public buildBatchSetQuery(txs: { txid: string; cluster: string }[]): {
+    query;
+    params;
+  } {
     let query = `
           INSERT IGNORE INTO compact_transactions
           (
@@ -34,10 +40,11 @@ class TransactionRepository {
           )
           VALUES
       `;
-    query += txs.map(tx => {
-      return (' (UNHEX(?), UNHEX(?))');
-    }) + ';';
-    const values = txs.map(tx => [tx.txid, tx.cluster]).flat();
+    query +=
+      txs.map((tx) => {
+        return ' (UNHEX(?), UNHEX(?))';
+      }) + ';';
+    const values = txs.map((tx) => [tx.txid, tx.cluster]).flat();
     return {
       query,
       params: values,
@@ -47,12 +54,12 @@ class TransactionRepository {
   public async $batchSetCluster(txs): Promise<void> {
     try {
       const query = this.buildBatchSetQuery(txs);
-      await DB.query(
-        query.query,
-        query.params,
-      );
+      await DB.query(query.query, query.params);
     } catch (e: any) {
-      logger.err(`Cannot save cpfp transactions into db. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot save cpfp transactions into db. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
@@ -76,7 +83,10 @@ class TransactionRepository {
         }
       }
     } catch (e) {
-      logger.err('Cannot get transaction cpfp info from db. Reason: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        'Cannot get transaction cpfp info from db. Reason: ' +
+          (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
@@ -91,7 +101,10 @@ class TransactionRepository {
         [txid]
       );
     } catch (e) {
-      logger.warn('Cannot delete transaction cpfp info from db. Reason: ' + (e instanceof Error ? e.message : e));
+      logger.warn(
+        'Cannot delete transaction cpfp info from db. Reason: ' +
+          (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
@@ -101,7 +114,7 @@ class TransactionRepository {
     const ancestors: Ancestor[] = [];
     let matched = false;
 
-    for (const tx of (cluster?.txs || [])) {
+    for (const tx of cluster?.txs || []) {
       if (tx.txid === txid) {
         matched = true;
       } else if (!matched) {
@@ -119,4 +132,3 @@ class TransactionRepository {
 }
 
 export default new TransactionRepository();
-

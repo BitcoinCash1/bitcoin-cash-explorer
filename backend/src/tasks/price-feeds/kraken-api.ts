@@ -5,13 +5,21 @@ import priceUpdater, { PriceFeed, PriceHistory } from '../price-updater';
 
 class KrakenApi implements PriceFeed {
   public name: string = 'Kraken';
-  public currencies: string[] = ['USD', 'EUR', 'GBP', 'CAD', 'CHF', 'AUD', 'JPY'];
+  public currencies: string[] = [
+    'USD',
+    'EUR',
+    'GBP',
+    'CAD',
+    'CHF',
+    'AUD',
+    'JPY',
+  ];
 
   public url: string = 'https://api.kraken.com/0/public/Ticker?pair=XBT';
-  public urlHist: string = 'https://api.kraken.com/0/public/OHLC?interval={GRANULARITY}&pair=XBT';
+  public urlHist: string =
+    'https://api.kraken.com/0/public/OHLC?interval={GRANULARITY}&pair=XBT';
 
-  constructor() {
-  }
+  constructor() {}
 
   private getTicker(currency) {
     let ticker = `XXBTZ${currency}`;
@@ -24,8 +32,12 @@ class KrakenApi implements PriceFeed {
   public async $fetchPrice(currency): Promise<number> {
     const response = await query(this.url + currency);
     const ticker = this.getTicker(currency);
-    if (response && response['result'] && response['result'][ticker] &&
-      response['result'][ticker]['c'] && response['result'][ticker]['c'].length > 0
+    if (
+      response &&
+      response['result'] &&
+      response['result'][ticker] &&
+      response['result'][ticker]['c'] &&
+      response['result'][ticker]['c'].length > 0
     ) {
       return parseInt(response['result'][ticker]['c'][0], 10);
     } else {
@@ -33,7 +45,10 @@ class KrakenApi implements PriceFeed {
     }
   }
 
-  public async $fetchRecentPrice(currencies: string[], type: 'hour' | 'day'): Promise<PriceHistory> {
+  public async $fetchRecentPrice(
+    currencies: string[],
+    type: 'hour' | 'day'
+  ): Promise<PriceHistory> {
     const priceHistory: PriceHistory = {};
 
     for (const currency of currencies) {
@@ -41,8 +56,12 @@ class KrakenApi implements PriceFeed {
         continue;
       }
 
-      const response = await query(this.urlHist.replace('{GRANULARITY}', '60') + currency);
-      const pricesRaw = response ? response['result'][this.getTicker(currency)] : [];
+      const response = await query(
+        this.urlHist.replace('{GRANULARITY}', '60') + currency
+      );
+      const pricesRaw = response
+        ? response['result'][this.getTicker(currency)]
+        : [];
 
       for (const price of pricesRaw) {
         if (priceHistory[price[0]] === undefined) {
@@ -69,11 +88,15 @@ class KrakenApi implements PriceFeed {
     // CHF weekly price history goes back to timestamp 1575504000 (December 5, 2019)
     // AUD weekly price history goes back to timestamp 1591833600 (June 11, 2020)
 
-    let priceHistory: any = {}; // map: timestamp -> Prices
+    const priceHistory: any = {}; // map: timestamp -> Prices
 
     for (const currency of this.currencies) {
-      const response = await query(this.urlHist.replace('{GRANULARITY}', '10080') + currency);
-      const priceHistoryRaw = response ? response['result'][this.getTicker(currency)] : [];
+      const response = await query(
+        this.urlHist.replace('{GRANULARITY}', '10080') + currency
+      );
+      const priceHistoryRaw = response
+        ? response['result'][this.getTicker(currency)]
+        : [];
 
       for (const price of priceHistoryRaw) {
         if (existingPriceTimes.includes(parseInt(price[0]))) {
@@ -94,11 +117,19 @@ class KrakenApi implements PriceFeed {
         delete priceHistory[time];
         continue;
       }
-      await PricesRepository.$savePrices(parseInt(time, 10), priceHistory[time]);
+      await PricesRepository.$savePrices(
+        parseInt(time, 10),
+        priceHistory[time]
+      );
     }
 
     if (Object.keys(priceHistory).length > 0) {
-      logger.info(`Inserted ${Object.keys(priceHistory).length} Kraken EUR, USD, GBP, JPY, CAD, CHF and AUD weekly price history into db`, logger.tags.mining);
+      logger.info(
+        `Inserted ${
+          Object.keys(priceHistory).length
+        } Kraken EUR, USD, GBP, JPY, CAD, CHF and AUD weekly price history into db`,
+        logger.tags.mining
+      );
     }
   }
 }

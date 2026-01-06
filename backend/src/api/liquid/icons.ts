@@ -4,7 +4,7 @@ import logger from '../../logger';
 class Icons {
   private static FILE_NAME = '/elements/asset_registry_db/icons.json';
   private iconIds: string[] = [];
-  private icons: { [assetId: string]: string; } = {};
+  private icons: { [assetId: string]: string } = {};
 
   constructor() {}
 
@@ -32,7 +32,6 @@ class Icons {
   public getAllIconIds() {
     return this.iconIds;
   }
-
 }
 
 export default new Icons();

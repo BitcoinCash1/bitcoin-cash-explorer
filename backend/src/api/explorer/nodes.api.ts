@@ -2,7 +2,10 @@ import logger from '../../logger';
 import DB from '../../database';
 import { ResultSetHeader } from 'mysql2';
 import { ILightningApi } from '../lightning/lightning-api.interface';
-import { ITopNodesPerCapacity, ITopNodesPerChannels } from '../../mempool.interfaces';
+import {
+  ITopNodesPerCapacity,
+  ITopNodesPerChannels,
+} from '../../mempool.interfaces';
 import { bin2hex } from '../../utils/format';
 
 class NodesApi {
@@ -34,18 +37,27 @@ class NodesApi {
       `;
 
       const [maximums]: any[] = await DB.query(query);
-      
+
       return {
         maxLiquidity: maximums[0].maxLiquidity,
         maxChannels: maximums[0].maxChannels,
-        nodes: nodes.map(node => [
-          node.longitude, node.latitude,
-          node.publicKey, node.alias, node.capacity, node.channels,
-          node.country, node.isoCode
-        ])
+        nodes: nodes.map((node) => [
+          node.longitude,
+          node.latitude,
+          node.publicKey,
+          node.alias,
+          node.capacity,
+          node.channels,
+          node.country,
+          node.isoCode,
+        ]),
       };
     } catch (e) {
-      logger.err(`Can't get world nodes list. Reason: ${e instanceof Error ? e.message : e}`);
+      logger.err(
+        `Can't get world nodes list. Reason: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
     }
   }
 
@@ -69,7 +81,9 @@ class NodesApi {
       `;
       let [rows]: any[] = await DB.query(query, [public_key]);
       if (rows.length === 0) {
-        throw new Error(`This node does not exist, or our node is not seeing it yet`);
+        throw new Error(
+          `This node does not exist, or our node is not seeing it yet`
+        );
       }
 
       const node = rows[0];
@@ -78,7 +92,7 @@ class NodesApi {
       node.city = JSON.parse(node.city);
       node.country = JSON.parse(node.country);
 
-      // Features      
+      // Features
       node.features = JSON.parse(node.features);
       node.featuresBits = null;
       if (node.features) {
@@ -87,7 +101,7 @@ class NodesApi {
           maxBit = Math.max(maxBit, feature.bit);
         }
         maxBit = Math.ceil(maxBit / 4) * 4 - 1;
-        
+
         node.featuresBits = new Array(maxBit + 1).fill(0);
         for (const feature of node.features) {
           node.featuresBits[feature.bit] = 1;
@@ -96,7 +110,9 @@ class NodesApi {
       }
 
       // Active channels and capacity
-      const activeChannelsStats: any = await this.$getActiveChannelsStats(public_key);
+      const activeChannelsStats: any = await this.$getActiveChannelsStats(
+        public_key
+      );
       node.active_channel_count = activeChannelsStats.active_channel_count ?? 0;
       node.capacity = activeChannelsStats.capacity ?? 0;
 
@@ -133,27 +149,39 @@ class NodesApi {
       [rows] = await DB.query(query, [public_key]);
       node.custom_records = {};
       for (const record of rows) {
-        node.custom_records[record.type] = Buffer.from(record.payload, 'binary').toString('hex');
+        node.custom_records[record.type] = Buffer.from(
+          record.payload,
+          'binary'
+        ).toString('hex');
       }
 
       return node;
     } catch (e) {
-      logger.err(`Cannot get node information for ${public_key}. Reason: ${(e instanceof Error ? e.message : e)}`);
+      logger.err(
+        `Cannot get node information for ${public_key}. Reason: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
       throw e;
     }
   }
 
-  public async $getActiveChannelsStats(node_public_key: string): Promise<unknown> {
+  public async $getActiveChannelsStats(
+    node_public_key: string
+  ): Promise<unknown> {
     const query = `
       SELECT count(short_id) as active_channel_count, sum(capacity) as capacity
       FROM channels
       WHERE status = 1 AND (channels.node1_public_key = ? OR channels.node2_public_key = ?)
     `;
-    const [rows]: any[] = await DB.query(query, [node_public_key, node_public_key]);
+    const [rows]: any[] = await DB.query(query, [
+      node_public_key,
+      node_public_key,
+    ]);
     if (rows.length > 0) {
       return {
         active_channel_count: rows[0].active_channel_count,
-        capacity: rows[0].capacity
+        capacity: rows[0].capacity,
       };
     } else {
       return null;
@@ -179,7 +207,12 @@ class NodesApi {
         ) as fee_rate_table
         GROUP BY bucket;
       `;
-      const [inRows]: any[] = await DB.query(inQuery, [node_public_key, node_public_key, node_public_key, node_public_key]);
+      const [inRows]: any[] = await DB.query(inQuery, [
+        node_public_key,
+        node_public_key,
+        node_public_key,
+        node_public_key,
+      ]);
 
       const outQuery = `
         SELECT CASE WHEN fee_rate <= 10.0 THEN CEIL(fee_rate)
@@ -198,14 +231,23 @@ class NodesApi {
         ) as fee_rate_table
         GROUP BY bucket;
       `;
-      const [outRows]: any[] = await DB.query(outQuery, [node_public_key, node_public_key, node_public_key, node_public_key]);
+      const [outRows]: any[] = await DB.query(outQuery, [
+        node_public_key,
+        node_public_key,
+        node_public_key,
+        node_public_key,
+      ]);
 
       return {
         incoming: inRows.length > 0 ? inRows : [],
         outgoing: outRows.length > 0 ? outRows : [],
       };
     } catch (e) {
-      logger.err(`Cannot get node fee distribution for ${node_public_key}. Reason: ${(e instanceof Error ? e.message : e)}`);
+      logger.err(
+        `Cannot get node fee distribution for ${node_public_key}. Reason: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
       throw e;
     }
   }
@@ -232,12 +274,16 @@ class NodesApi {
       const [rows]: any = await DB.query(query, [public_key]);
       return rows;
     } catch (e) {
-      logger.err('$getNodeStats error: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        '$getNodeStats error: ' + (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
 
-  public async $getTopCapacityNodes(full: boolean): Promise<ITopNodesPerCapacity[]> {
+  public async $getTopCapacityNodes(
+    full: boolean
+  ): Promise<ITopNodesPerCapacity[]> {
     try {
       let rows: any;
       let query: string;
@@ -277,12 +323,16 @@ class NodesApi {
 
       return rows;
     } catch (e) {
-      logger.err('$getTopCapacityNodes error: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        '$getTopCapacityNodes error: ' + (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
 
-  public async $getTopChannelsNodes(full: boolean): Promise<ITopNodesPerChannels[]> {
+  public async $getTopChannelsNodes(
+    full: boolean
+  ): Promise<ITopNodesPerChannels[]> {
     try {
       let rows: any;
       let query: string;
@@ -334,14 +384,18 @@ class NodesApi {
 
       return rows;
     } catch (e) {
-      logger.err('$getTopChannelsNodes error: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        '$getTopChannelsNodes error: ' + (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
 
   public async $getOldestNodes(full: boolean): Promise<ITopNodesPerChannels[]> {
     try {
-      let [rows]: any[] = await DB.query('SELECT UNIX_TIMESTAMP(MAX(added)) as maxAdded FROM node_stats');
+      let [rows]: any[] = await DB.query(
+        'SELECT UNIX_TIMESTAMP(MAX(added)) as maxAdded FROM node_stats'
+      );
       const latestDate = rows[0].maxAdded;
 
       let query: string;
@@ -385,7 +439,9 @@ class NodesApi {
 
       return rows;
     } catch (e) {
-      logger.err('$getTopChannelsNodes error: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        '$getTopChannelsNodes error: ' + (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
@@ -394,17 +450,21 @@ class NodesApi {
     try {
       const publicKeySearch = search.replace(/[^a-zA-Z0-9]/g, '') + '%';
       const aliasSearch = search
-        .replace(/[-_.]/g, ' ') // Replace all -_. characters with empty space. Eg: "ln.nicehash" becomes "ln nicehash".  
+        .replace(/[-_.]/g, ' ') // Replace all -_. characters with empty space. Eg: "ln.nicehash" becomes "ln nicehash".
         .replace(/[^a-zA-Z0-9 ]/g, '') // Remove all special characters and keep just A to Z, 0 to 9.
         .split(' ')
-        .filter(key => key.length)
-        .map((search) => '+' + search + '*').join(' ');
+        .filter((key) => key.length)
+        .map((search) => '+' + search + '*')
+        .join(' ');
       // %keyword% is wildcard search and can't be indexed so it's slower as the node database grow. keyword% can be indexed but then you can't search for "Nicehash" and get result for ln.nicehash.com. So we use fulltext index for words "ln, nicehash, com" and nicehash* will find it instantly.
       const query = `SELECT public_key, alias, capacity, channels, status FROM nodes WHERE public_key LIKE ? OR MATCH alias_search AGAINST (? IN BOOLEAN MODE) ORDER BY capacity DESC LIMIT 10`;
       const [rows]: any = await DB.query(query, [publicKeySearch, aliasSearch]);
       return rows;
     } catch (e) {
-      logger.err('$searchNodeByPublicKeyOrAlias error: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        '$searchNodeByPublicKeyOrAlias error: ' +
+          (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
@@ -455,7 +515,7 @@ class NodesApi {
         } else if (ispList[isp2].ids.includes(channel.isp2ID) === false) {
           ispList[isp2].ids.push(channel.isp2ID);
         }
-        
+
         ispList[isp1].capacity += channel.capacity;
         ispList[isp1].channels += 1;
         ispList[isp1].nodes[channel.node1PublicKey] = true;
@@ -463,7 +523,7 @@ class NodesApi {
         ispList[isp2].channels += 1;
         ispList[isp2].nodes[channel.node2PublicKey] = true;
       }
-      
+
       const ispRanking: any[] = [];
       for (const isp of Object.keys(ispList)) {
         ispRanking.push([
@@ -494,7 +554,7 @@ class NodesApi {
       `;
       const [clearnetCapacity]: any = await DB.query(query);
 
-      // Get the total capacity of all channels which have both nodes on Tor 
+      // Get the total capacity of all channels which have both nodes on Tor
       query = `
         SELECT SUM(capacity) as capacity
         FROM (
@@ -513,7 +573,10 @@ class NodesApi {
 
       const clearnetCapacityValue = parseInt(clearnetCapacity[0].capacity, 10);
       const torCapacityValue = parseInt(torCapacity[0].capacity, 10);
-      const unknownCapacityValue = parseInt(totalCapacity[0].capacity) - clearnetCapacityValue - torCapacityValue;
+      const unknownCapacityValue =
+        parseInt(totalCapacity[0].capacity) -
+        clearnetCapacityValue -
+        torCapacityValue;
 
       return {
         clearnetCapacity: clearnetCapacityValue,
@@ -522,7 +585,11 @@ class NodesApi {
         ispRanking: ispRanking,
       };
     } catch (e) {
-      logger.err(`Cannot get LN ISP ranking. Reason: ${e instanceof Error ? e.message : e}`);
+      logger.err(
+        `Cannot get LN ISP ranking. Reason: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
       throw e;
     }
   }
@@ -554,7 +621,11 @@ class NodesApi {
       }
       return rows;
     } catch (e) {
-      logger.err(`Cannot get nodes for country id ${countryId}. Reason: ${e instanceof Error ? e.message : e}`);
+      logger.err(
+        `Cannot get nodes for country id ${countryId}. Reason: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
       throw e;
     }
   }
@@ -617,9 +688,12 @@ class NodesApi {
         rows2[i].subdivision = JSON.parse(rows2[i].subdivision);
       }
       return rows2;
-
     } catch (e) {
-      logger.err(`Cannot get nodes for ISP id ${ISPId}. Reason: ${e instanceof Error ? e.message : e}`);
+      logger.err(
+        `Cannot get nodes for ISP id ${ISPId}. Reason: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
       throw e;
     }
   }
@@ -642,16 +716,22 @@ class NodesApi {
       for (const country of nodesCountPerCountry) {
         nodesPerCountry.push({
           name: JSON.parse(country.names),
-          iso: country.iso_code, 
+          iso: country.iso_code,
           count: country.nodesCount,
-          share: Math.floor(country.nodesCount / nodesWithAS[0].total * 10000) / 100,
+          share:
+            Math.floor((country.nodesCount / nodesWithAS[0].total) * 10000) /
+            100,
           capacity: country.capacity,
-        })
+        });
       }
 
       return nodesPerCountry;
     } catch (e) {
-      logger.err(`Cannot get nodes grouped by AS. Reason: ${e instanceof Error ? e.message : e}`);
+      logger.err(
+        `Cannot get nodes grouped by AS. Reason: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
       throw e;
     }
   }
@@ -662,12 +742,13 @@ class NodesApi {
   public async $saveNode(node: ILightningApi.Node): Promise<void> {
     try {
       // https://github.com/mempool/mempool/issues/3006
-      if ((node.last_update ?? 0) < 1514736061) { // January 1st 2018
+      if ((node.last_update ?? 0) < 1514736061) {
+        // January 1st 2018
         node.last_update = null;
       }
-  
-      const uniqueAddr = [...new Set(node.addresses?.map(a => a.addr))];
-      const formattedSockets = (uniqueAddr.join(',')) ?? '';
+
+      const uniqueAddr = [...new Set(node.addresses?.map((a) => a.addr))];
+      const formattedSockets = uniqueAddr.join(',') ?? '';
 
       const query = `INSERT INTO nodes(
           public_key,
@@ -714,21 +795,31 @@ class NodesApi {
   /**
    * Update node sockets
    */
-  public async $updateNodeSockets(publicKey: string, sockets: {network: string; addr: string}[]): Promise<void> {
-    const uniqueAddr = [...new Set(sockets.map(a => a.addr))];
+  public async $updateNodeSockets(
+    publicKey: string,
+    sockets: { network: string; addr: string }[]
+  ): Promise<void> {
+    const uniqueAddr = [...new Set(sockets.map((a) => a.addr))];
 
-    const formattedSockets = (uniqueAddr.join(',')) ?? '';
+    const formattedSockets = uniqueAddr.join(',') ?? '';
     try {
-      await DB.query(`UPDATE nodes SET sockets = ? WHERE public_key = ?`, [formattedSockets, publicKey]);
+      await DB.query(`UPDATE nodes SET sockets = ? WHERE public_key = ?`, [
+        formattedSockets,
+        publicKey,
+      ]);
     } catch (e) {
-      logger.err(`Cannot update node sockets for ${publicKey}. Reason: ${e instanceof Error ? e.message : e}`);
+      logger.err(
+        `Cannot update node sockets for ${publicKey}. Reason: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
     }
   }
 
   /**
    * Set all nodes not in `nodesPubkeys` as inactive (status = 0)
    */
-   public async $setNodesInactive(graphNodesPubkeys: string[]): Promise<void> {
+  public async $setNodesInactive(graphNodesPubkeys: string[]): Promise<void> {
     if (graphNodesPubkeys.length === 0) {
       return;
     }
@@ -738,14 +829,19 @@ class NodesApi {
         UPDATE nodes
         SET status = 0
         WHERE public_key NOT IN (
-          ${graphNodesPubkeys.map(pubkey => `"${pubkey}"`).join(',')}
+          ${graphNodesPubkeys.map((pubkey) => `"${pubkey}"`).join(',')}
         )
       `);
       if (result[0].changedRows ?? 0 > 0) {
-        logger.debug(`Marked ${result[0].changedRows} nodes as inactive because they are not in the graph`, logger.tags.ln);
+        logger.debug(
+          `Marked ${result[0].changedRows} nodes as inactive because they are not in the graph`,
+          logger.tags.ln
+        );
       }
     } catch (e) {
-      logger.err('$setNodesInactive() error: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        '$setNodesInactive() error: ' + (e instanceof Error ? e.message : e)
+      );
     }
   }
 

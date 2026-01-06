@@ -40,9 +40,9 @@ const emptyRates = {
 
 type PaidCurrencyData = {
   [key: string]: {
-      code: string;
-      value: number;
-  }
+    code: string;
+    value: number;
+  };
 };
 
 type FreeCurrencyData = {
@@ -52,12 +52,16 @@ type FreeCurrencyData = {
 class FreeCurrencyApi implements ConversionFeed {
   private API_KEY = config.FIAT_PRICE.API_KEY;
   private PAID = config.FIAT_PRICE.PAID;
-  private API_URL_PREFIX: string = this.PAID ? `https://api.currencyapi.com/v3/` : `https://api.freecurrencyapi.com/v1/`;
+  private API_URL_PREFIX: string = this.PAID
+    ? `https://api.currencyapi.com/v3/`
+    : `https://api.freecurrencyapi.com/v1/`;
 
-  constructor() { }
+  constructor() {}
 
   public async $getQuota(): Promise<any> {
-    const response = await query(`${this.API_URL_PREFIX}status?apikey=${this.API_KEY}`);
+    const response = await query(
+      `${this.API_URL_PREFIX}status?apikey=${this.API_KEY}`
+    );
     if (response && response['quotas']) {
       return response['quotas'];
     }
@@ -65,7 +69,9 @@ class FreeCurrencyApi implements ConversionFeed {
   }
 
   public async $fetchLatestConversionRates(): Promise<ConversionRates> {
-    const response = await query(`${this.API_URL_PREFIX}latest?apikey=${this.API_KEY}`);
+    const response = await query(
+      `${this.API_URL_PREFIX}latest?apikey=${this.API_KEY}`
+    );
     if (response && response['data']) {
       if (this.PAID) {
         response['data'] = this.convertData(response['data']);
@@ -76,11 +82,15 @@ class FreeCurrencyApi implements ConversionFeed {
   }
 
   public async $fetchConversionRates(date: string): Promise<ConversionRates> {
-    const response = await query(`${this.API_URL_PREFIX}historical?date=${date}&apikey=${this.API_KEY}`, true);
+    const response = await query(
+      `${this.API_URL_PREFIX}historical?date=${date}&apikey=${this.API_KEY}`,
+      true
+    );
     if (response && response['data'] && (response['data'][date] || this.PAID)) {
       if (this.PAID) {
         response['data'] = this.convertData(response['data']);
-        response['data'][response['meta'].last_updated_at.substr(0, 10)] = response['data'];
+        response['data'][response['meta'].last_updated_at.substr(0, 10)] =
+          response['data'];
       }
       return response['data'][date];
     }
@@ -94,7 +104,6 @@ class FreeCurrencyApi implements ConversionFeed {
     }
     return simplifiedData;
   }
-
 }
 
 export default FreeCurrencyApi;

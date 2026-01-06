@@ -100,7 +100,7 @@ cp explorer-config.sample.json explorer-config.json
 Edit `explorer-config.json` as needed. 
 
 In particular, make sure:
-- the correct Bitcoin Core RPC credentials are specified in `CORE_RPC`
+- the correct Bitcoin Cash Node RPC credentials are specified in `CORE_RPC`
 - the correct `BACKEND` is specified in `explorer`:
   - "electrum" for [cculianu/Fulcrum](https://github.com/cculianu/Fulcrum)
   - "none" if you're not using any Electrum Server

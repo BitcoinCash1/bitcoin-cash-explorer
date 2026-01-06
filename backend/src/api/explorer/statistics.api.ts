@@ -20,31 +20,43 @@ class StatisticsApi {
       const [rows]: any = await DB.query(query);
       return rows;
     } catch (e) {
-      logger.err('$getStatistics error: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        '$getStatistics error: ' + (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
 
   public async $getLatestStatistics(): Promise<any> {
     try {
-      const [rows]: any = await DB.query(`SELECT * FROM lightning_stats ORDER BY added DESC LIMIT 1`);
-      const [rows2]: any = await DB.query(`SELECT * FROM lightning_stats WHERE DATE(added) = DATE(NOW() - INTERVAL 7 DAY)`);
+      const [rows]: any = await DB.query(
+        `SELECT * FROM lightning_stats ORDER BY added DESC LIMIT 1`
+      );
+      const [rows2]: any = await DB.query(
+        `SELECT * FROM lightning_stats WHERE DATE(added) = DATE(NOW() - INTERVAL 7 DAY)`
+      );
       return {
         latest: rows[0],
         previous: rows2[0],
       };
     } catch (e) {
-      logger.err('$getLatestStatistics error: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        '$getLatestStatistics error: ' + (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }
 
   public async $getStatisticsCount(): Promise<number> {
     try {
-      const [rows]: any = await DB.query(`SELECT count(*) as count FROM lightning_stats`);
+      const [rows]: any = await DB.query(
+        `SELECT count(*) as count FROM lightning_stats`
+      );
       return rows[0].count;
     } catch (e) {
-      logger.err('$getLatestStatistics error: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        '$getLatestStatistics error: ' + (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }

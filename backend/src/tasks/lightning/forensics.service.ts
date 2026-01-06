@@ -31,12 +31,16 @@ class ForensicsService {
         await this.$runClosedChannelsForensics(false);
         await this.$runOpenedChannelsForensics();
       }
-
     } catch (e) {
-      logger.err('ForensicsService.$runTasks() error: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        'ForensicsService.$runTasks() error: ' +
+          (e instanceof Error ? e.message : e)
+      );
     }
 
-    setTimeout(() => { this.$runTasks(); }, 1000 * config.LIGHTNING.FORENSICS_INTERVAL);
+    setTimeout(() => {
+      this.$runTasks();
+    }, 1000 * config.LIGHTNING.FORENSICS_INTERVAL);
   }
 
   /*
@@ -63,7 +67,9 @@ class ForensicsService {
          └──────────────────┘
   */
 
-  public async $runClosedChannelsForensics(onlyNewChannels: boolean = false): Promise<void> {
+  public async $runClosedChannelsForensics(
+    onlyNewChannels: boolean = false
+  ): Promise<void> {
     // Only Esplora backend can retrieve spent transaction outputs
     if (config.MEMPOOL.BACKEND !== 'esplora') {
       return;
@@ -82,19 +88,33 @@ class ForensicsService {
       const sliceLength = Math.ceil(config.ESPLORA.BATCH_QUERY_BASE_SIZE / 10);
       // process batches of 1000 channels
       for (let i = 0; i < Math.ceil(allChannels.length / sliceLength); i++) {
-        const channels = allChannels.slice(i * sliceLength, (i + 1) * sliceLength);
+        const channels = allChannels.slice(
+          i * sliceLength,
+          (i + 1) * sliceLength
+        );
 
         let allOutspends: IEsploraApi.Outspend[][] = [];
-        const forceClosedChannels: { channel: any, cachedSpends: string[] }[] = [];
+        const forceClosedChannels: { channel: any; cachedSpends: string[] }[] =
+          [];
 
         // fetch outspends in bulk
         try {
-          const outspendTxids = channels.map(channel => channel.closing_transaction_id);
-          allOutspends = await bitcoinApi.$getBatchedOutspendsInternal(outspendTxids);
-          logger.info(`Fetched outspends for ${allOutspends.length} txs from esplora for LN forensics`);
+          const outspendTxids = channels.map(
+            (channel) => channel.closing_transaction_id
+          );
+          allOutspends = await bitcoinApi.$getBatchedOutspendsInternal(
+            outspendTxids
+          );
+          logger.info(
+            `Fetched outspends for ${allOutspends.length} txs from esplora for LN forensics`
+          );
           await Common.sleep$(config.LIGHTNING.FORENSICS_RATE_LIMIT);
         } catch (e) {
-          logger.err(`Failed to call ${config.ESPLORA.REST_API_URL + '/internal/txs/outspends/by-txid'}. Reason ${e instanceof Error ? e.message : e}`);
+          logger.err(
+            `Failed to call ${
+              config.ESPLORA.REST_API_URL + '/internal/txs/outspends/by-txid'
+            }. Reason ${e instanceof Error ? e.message : e}`
+          );
         }
         // fetch spending transactions in bulk and load into txCache
         const newSpendingTxids: { [txid: string]: boolean } = {};
@@ -106,13 +126,15 @@ class ForensicsService {
           }
         }
         const allOutspendTxs = await this.fetchTransactions(
-          allOutspends.flatMap(outspends =>
+          allOutspends.flatMap((outspends) =>
             outspends
-              .filter(outspend => outspend.spent && outspend.txid)
-              .map(outspend => outspend.txid)
+              .filter((outspend) => outspend.spent && outspend.txid)
+              .map((outspend) => outspend.txid)
           )
         );
-        logger.info(`Fetched ${allOutspendTxs.length} out-spending txs from esplora for LN forensics`);
+        logger.info(
+          `Fetched ${allOutspendTxs.length} out-spending txs from esplora for LN forensics`
+        );
 
         // process each outspend
         for (const [index, channel] of channels.entries()) {
@@ -132,11 +154,15 @@ class ForensicsService {
                   continue;
                 }
                 cached.push(spendingTx.txid);
-                const lightningScript = this.findLightningScript(spendingTx.vin[outspend.vin || 0]);
+                const lightningScript = this.findLightningScript(
+                  spendingTx.vin[outspend.vin || 0]
+                );
                 lightningScriptReasons.push(lightningScript);
               }
             }
-            const filteredReasons = lightningScriptReasons.filter((r) => r !== 1);
+            const filteredReasons = lightningScriptReasons.filter(
+              (r) => r !== 1
+            );
             if (filteredReasons.length) {
               if (filteredReasons.some((r) => r === 2 || r === 4)) {
                 // Force closed with penalty
@@ -144,24 +170,38 @@ class ForensicsService {
               } else {
                 // Force closed without penalty
                 reason = 2;
-                await DB.query(`UPDATE channels SET closing_resolved = ? WHERE id = ?`, [true, channel.id]);
+                await DB.query(
+                  `UPDATE channels SET closing_resolved = ? WHERE id = ?`,
+                  [true, channel.id]
+                );
               }
-              await DB.query(`UPDATE channels SET closing_reason = ? WHERE id = ?`, [reason, channel.id]);
+              await DB.query(
+                `UPDATE channels SET closing_reason = ? WHERE id = ?`,
+                [reason, channel.id]
+              );
               // clean up cached transactions
-              cached.forEach(txid => {
+              cached.forEach((txid) => {
                 delete this.txCache[txid];
               });
             } else {
               forceClosedChannels.push({ channel, cachedSpends: cached });
             }
           } catch (e) {
-            logger.err(`$runClosedChannelsForensics() failed for channel ${channel.short_id}. Reason: ${e instanceof Error ? e.message : e}`);
+            logger.err(
+              `$runClosedChannelsForensics() failed for channel ${
+                channel.short_id
+              }. Reason: ${e instanceof Error ? e.message : e}`
+            );
           }
         }
 
         // fetch force-closing transactions in bulk
-        const closingTxs = await this.fetchTransactions(forceClosedChannels.map(x => x.channel.closing_transaction_id));
-        logger.info(`Fetched ${closingTxs.length} closing txs from esplora for LN forensics`);
+        const closingTxs = await this.fetchTransactions(
+          forceClosedChannels.map((x) => x.channel.closing_transaction_id)
+        );
+        logger.info(
+          `Fetched ${closingTxs.length} closing txs from esplora for LN forensics`
+        );
 
         // process channels with no lightning script reasons
         for (const { channel, cachedSpends } of forceClosedChannels) {
@@ -177,7 +217,10 @@ class ForensicsService {
           const sequenceHex: string = closingTx.vin[0].sequence.toString(16);
           const locktimeHex: string = closingTx.locktime.toString(16);
           let reason;
-          if (sequenceHex.substring(0, 2) === '80' && locktimeHex.substring(0, 2) === '20') {
+          if (
+            sequenceHex.substring(0, 2) === '80' &&
+            locktimeHex.substring(0, 2) === '20'
+          ) {
             // Force closed, but we can't be sure if it's a penalty or not
             reason = 2;
           } else {
@@ -189,68 +232,91 @@ class ForensicsService {
               delete this.txCache[txid];
             }
           }
-          await DB.query(`UPDATE channels SET closing_reason = ? WHERE id = ?`, [reason, channel.id]);
+          await DB.query(
+            `UPDATE channels SET closing_reason = ? WHERE id = ?`,
+            [reason, channel.id]
+          );
         }
 
         progress += channels.length;
-        const elapsedSeconds = Math.round((new Date().getTime() / 1000) - this.loggerTimer);
+        const elapsedSeconds = Math.round(
+          new Date().getTime() / 1000 - this.loggerTimer
+        );
         if (elapsedSeconds > 10) {
-          logger.debug(`Updating channel closed channel forensics ${progress}/${allChannels.length}`);
+          logger.debug(
+            `Updating channel closed channel forensics ${progress}/${allChannels.length}`
+          );
           this.loggerTimer = new Date().getTime() / 1000;
         }
       }
       logger.debug(`Closed channels forensics scan complete.`);
     } catch (e) {
-      logger.err('$runClosedChannelsForensics() error: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        '$runClosedChannelsForensics() error: ' +
+          (e instanceof Error ? e.message : e)
+      );
     }
   }
 
   private findLightningScript(vin: IEsploraApi.Vin): number {
-    const topElement = vin.witness?.length > 2 ? vin.witness[vin.witness.length - 2] : null;
-      if (/^OP_IF OP_PUSHBYTES_33 \w{66} OP_ELSE OP_PUSH(NUM_\d+|BYTES_(1 \w{2}|2 \w{4})) OP_CSV OP_DROP OP_PUSHBYTES_33 \w{66} OP_ENDIF OP_CHECKSIG$/.test(vin.inner_witnessscript_asm)) {
-        // https://github.com/lightning/bolts/blob/master/03-transactions.md#commitment-transaction-outputs
-        if (topElement === '01') {
-          // top element is '01' to get in the revocation path
-          // 'Revoked Lightning Force Close';
-          // Penalty force closed
-          return 2;
-        } else {
-          // top element is '', this is a delayed to_local output
-          // 'Lightning Force Close';
-          return 3;
-        }
-      } else if (
-        /^OP_DUP OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUAL OP_IF OP_CHECKSIG OP_ELSE OP_PUSHBYTES_33 \w{66} OP_SWAP OP_SIZE OP_PUSHBYTES_1 20 OP_EQUAL OP_NOTIF OP_DROP OP_PUSHNUM_2 OP_SWAP OP_PUSHBYTES_33 \w{66} OP_PUSHNUM_2 OP_CHECKMULTISIG OP_ELSE OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUALVERIFY OP_CHECKSIG OP_ENDIF (OP_PUSHNUM_1 OP_CSV OP_DROP |)OP_ENDIF$/.test(vin.inner_witnessscript_asm) ||
-        /^OP_DUP OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUAL OP_IF OP_CHECKSIG OP_ELSE OP_PUSHBYTES_33 \w{66} OP_SWAP OP_SIZE OP_PUSHBYTES_1 20 OP_EQUAL OP_IF OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUALVERIFY OP_PUSHNUM_2 OP_SWAP OP_PUSHBYTES_33 \w{66} OP_PUSHNUM_2 OP_CHECKMULTISIG OP_ELSE OP_DROP OP_PUSHBYTES_3 \w{6} OP_CLTV OP_DROP OP_CHECKSIG OP_ENDIF (OP_PUSHNUM_1 OP_CSV OP_DROP |)OP_ENDIF$/.test(vin.inner_witnessscript_asm)
-      ) {
-        // https://github.com/lightning/bolts/blob/master/03-transactions.md#offered-htlc-outputs
-        // https://github.com/lightning/bolts/blob/master/03-transactions.md#received-htlc-outputs
-        if (topElement?.length === 66) {
-          // top element is a public key
-          // 'Revoked Lightning HTLC'; Penalty force closed
-          return 4;
-        } else if (topElement) {
-          // top element is a preimage
-          // 'Lightning HTLC';
-          return 5;
-        } else {
-          // top element is '' to get in the expiry of the script
-          // 'Expired Lightning HTLC';
-          return 6;
-        }
-      } else if (/^OP_PUSHBYTES_33 \w{66} OP_CHECKSIG OP_IFDUP OP_NOTIF OP_PUSHNUM_16 OP_CSV OP_ENDIF$/.test(vin.inner_witnessscript_asm)) {
-        // https://github.com/lightning/bolts/blob/master/03-transactions.md#to_local_anchor-and-to_remote_anchor-output-option_anchors
-        if (topElement) {
-          // top element is a signature
-          // 'Lightning Anchor';
-          return 7;
-        } else {
-          // top element is '', it has been swept after 16 blocks
-          // 'Swept Lightning Anchor';
-          return 8;
-        }
+    const topElement =
+      vin.witness?.length > 2 ? vin.witness[vin.witness.length - 2] : null;
+    if (
+      /^OP_IF OP_PUSHBYTES_33 \w{66} OP_ELSE OP_PUSH(NUM_\d+|BYTES_(1 \w{2}|2 \w{4})) OP_CSV OP_DROP OP_PUSHBYTES_33 \w{66} OP_ENDIF OP_CHECKSIG$/.test(
+        vin.inner_witnessscript_asm
+      )
+    ) {
+      // https://github.com/lightning/bolts/blob/master/03-transactions.md#commitment-transaction-outputs
+      if (topElement === '01') {
+        // top element is '01' to get in the revocation path
+        // 'Revoked Lightning Force Close';
+        // Penalty force closed
+        return 2;
+      } else {
+        // top element is '', this is a delayed to_local output
+        // 'Lightning Force Close';
+        return 3;
       }
-      return 1;
+    } else if (
+      /^OP_DUP OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUAL OP_IF OP_CHECKSIG OP_ELSE OP_PUSHBYTES_33 \w{66} OP_SWAP OP_SIZE OP_PUSHBYTES_1 20 OP_EQUAL OP_NOTIF OP_DROP OP_PUSHNUM_2 OP_SWAP OP_PUSHBYTES_33 \w{66} OP_PUSHNUM_2 OP_CHECKMULTISIG OP_ELSE OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUALVERIFY OP_CHECKSIG OP_ENDIF (OP_PUSHNUM_1 OP_CSV OP_DROP |)OP_ENDIF$/.test(
+        vin.inner_witnessscript_asm
+      ) ||
+      /^OP_DUP OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUAL OP_IF OP_CHECKSIG OP_ELSE OP_PUSHBYTES_33 \w{66} OP_SWAP OP_SIZE OP_PUSHBYTES_1 20 OP_EQUAL OP_IF OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUALVERIFY OP_PUSHNUM_2 OP_SWAP OP_PUSHBYTES_33 \w{66} OP_PUSHNUM_2 OP_CHECKMULTISIG OP_ELSE OP_DROP OP_PUSHBYTES_3 \w{6} OP_CLTV OP_DROP OP_CHECKSIG OP_ENDIF (OP_PUSHNUM_1 OP_CSV OP_DROP |)OP_ENDIF$/.test(
+        vin.inner_witnessscript_asm
+      )
+    ) {
+      // https://github.com/lightning/bolts/blob/master/03-transactions.md#offered-htlc-outputs
+      // https://github.com/lightning/bolts/blob/master/03-transactions.md#received-htlc-outputs
+      if (topElement?.length === 66) {
+        // top element is a public key
+        // 'Revoked Lightning HTLC'; Penalty force closed
+        return 4;
+      } else if (topElement) {
+        // top element is a preimage
+        // 'Lightning HTLC';
+        return 5;
+      } else {
+        // top element is '' to get in the expiry of the script
+        // 'Expired Lightning HTLC';
+        return 6;
+      }
+    } else if (
+      /^OP_PUSHBYTES_33 \w{66} OP_CHECKSIG OP_IFDUP OP_NOTIF OP_PUSHNUM_16 OP_CSV OP_ENDIF$/.test(
+        vin.inner_witnessscript_asm
+      )
+    ) {
+      // https://github.com/lightning/bolts/blob/master/03-transactions.md#to_local_anchor-and-to_remote_anchor-output-option_anchors
+      if (topElement) {
+        // top element is a signature
+        // 'Lightning Anchor';
+        return 7;
+      } else {
+        // top element is '', it has been swept after 16 blocks
+        // 'Swept Lightning Anchor';
+        return 8;
+      }
+    }
+    return 1;
   }
 
   // If a channel open tx spends funds from a another channel transaction,
@@ -264,7 +330,10 @@ class ForensicsService {
       const channels = await channelsApi.$getChannelsWithoutSourceChecked();
 
       // preload open channel transactions
-      await this.fetchTransactions(channels.map(channel => channel.transaction_id), true);
+      await this.fetchTransactions(
+        channels.map((channel) => channel.transaction_id),
+        true
+      );
 
       for (const openChannel of channels) {
         const openTx = this.txCache[openChannel.transaction_id];
@@ -272,16 +341,31 @@ class ForensicsService {
           continue;
         }
         for (const input of openTx.vin) {
-          const closeChannel = await channelsApi.$getChannelByClosingId(input.txid);
+          const closeChannel = await channelsApi.$getChannelByClosingId(
+            input.txid
+          );
           if (closeChannel) {
             // this input directly spends a channel close output
-            await this.$attributeChannelBalances(closeChannel, openChannel, input);
+            await this.$attributeChannelBalances(
+              closeChannel,
+              openChannel,
+              input
+            );
           } else {
-            const prevOpenChannels = await channelsApi.$getChannelsByOpeningId(input.txid);
+            const prevOpenChannels = await channelsApi.$getChannelsByOpeningId(
+              input.txid
+            );
             if (prevOpenChannels?.length) {
               // this input spends a channel open change output
               for (const prevOpenChannel of prevOpenChannels) {
-                await this.$attributeChannelBalances(prevOpenChannel, openChannel, input, null, null, true);
+                await this.$attributeChannelBalances(
+                  prevOpenChannel,
+                  openChannel,
+                  input,
+                  null,
+                  null,
+                  true
+                );
               }
             } else {
               // check if this input spends any swept channel close outputs
@@ -290,59 +374,100 @@ class ForensicsService {
           }
         }
         // calculate how much of the total input value is attributable to the channel open output
-        openChannel.funding_ratio = openTx.vout[openChannel.transaction_vout].value / ((openTx.vout.reduce((sum, v) => sum + v.value, 0) || 1) + openTx.fee);
+        openChannel.funding_ratio =
+          openTx.vout[openChannel.transaction_vout].value /
+          ((openTx.vout.reduce((sum, v) => sum + v.value, 0) || 1) +
+            openTx.fee);
         // save changes to the opening channel, and mark it as checked
         if (openTx?.vin?.length === 1) {
           openChannel.single_funded = true;
         }
-        if (openChannel.node1_funding_balance || openChannel.node2_funding_balance || openChannel.node1_closing_balance || openChannel.node2_closing_balance || openChannel.closed_by) {
+        if (
+          openChannel.node1_funding_balance ||
+          openChannel.node2_funding_balance ||
+          openChannel.node1_closing_balance ||
+          openChannel.node2_closing_balance ||
+          openChannel.closed_by
+        ) {
           await channelsApi.$updateOpeningInfo(openChannel);
         }
         await channelsApi.$markChannelSourceChecked(openChannel.id);
 
         ++progress;
-        const elapsedSeconds = Math.round((new Date().getTime() / 1000) - this.loggerTimer);
+        const elapsedSeconds = Math.round(
+          new Date().getTime() / 1000 - this.loggerTimer
+        );
         if (elapsedSeconds > 10) {
-          logger.debug(`Updating opened channel forensics ${progress}/${channels?.length}`);
+          logger.debug(
+            `Updating opened channel forensics ${progress}/${channels?.length}`
+          );
           this.loggerTimer = new Date().getTime() / 1000;
           this.truncateTempCache();
         }
-        if (Date.now() - runTimer > (config.LIGHTNING.FORENSICS_INTERVAL * 1000)) {
+        if (
+          Date.now() - runTimer >
+          config.LIGHTNING.FORENSICS_INTERVAL * 1000
+        ) {
           break;
         }
       }
 
       logger.debug(`Open channels forensics scan complete.`);
     } catch (e) {
-      logger.err('$runOpenedChannelsForensics() error: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        '$runOpenedChannelsForensics() error: ' +
+          (e instanceof Error ? e.message : e)
+      );
     } finally {
       this.clearTempCache();
     }
   }
 
   // Check if a channel open tx input spends the result of a swept channel close output
-  private async $attributeSweptChannelCloses(openChannel: ILightningApi.Channel, input: IEsploraApi.Vin): Promise<void> {
+  private async $attributeSweptChannelCloses(
+    openChannel: ILightningApi.Channel,
+    input: IEsploraApi.Vin
+  ): Promise<void> {
     const sweepTx = await this.fetchTransaction(input.txid, true);
     if (!sweepTx) {
-      logger.err(`couldn't find input transaction for channel forensics ${openChannel.channel_id} ${input.txid}`);
+      logger.err(
+        `couldn't find input transaction for channel forensics ${openChannel.channel_id} ${input.txid}`
+      );
       return;
     }
     const openContribution = sweepTx.vout[input.vout].value;
     for (const sweepInput of sweepTx.vin) {
       const lnScriptType = this.findLightningScript(sweepInput);
       if (lnScriptType > 1) {
-        const closeChannel = await channelsApi.$getChannelByClosingId(sweepInput.txid);
+        const closeChannel = await channelsApi.$getChannelByClosingId(
+          sweepInput.txid
+        );
         if (closeChannel) {
-          const initiator = (lnScriptType === 2 || lnScriptType === 4) ? 'remote' : (lnScriptType === 3 ? 'local' : null);
-          await this.$attributeChannelBalances(closeChannel, openChannel, sweepInput, openContribution, initiator);
+          const initiator =
+            lnScriptType === 2 || lnScriptType === 4
+              ? 'remote'
+              : lnScriptType === 3
+              ? 'local'
+              : null;
+          await this.$attributeChannelBalances(
+            closeChannel,
+            openChannel,
+            sweepInput,
+            openContribution,
+            initiator
+          );
         }
       }
     }
   }
 
   private async $attributeChannelBalances(
-    prevChannel, openChannel, input: IEsploraApi.Vin, openContribution: number | null = null,
-    initiator: 'remote' | 'local' | null = null, linkedOpenings: boolean = false
+    prevChannel,
+    openChannel,
+    input: IEsploraApi.Vin,
+    openContribution: number | null = null,
+    initiator: 'remote' | 'local' | null = null,
+    linkedOpenings: boolean = false
   ): Promise<void> {
     // figure out which node controls the input/output
     let openSide;
@@ -387,14 +512,18 @@ class ForensicsService {
         outspends = await bitcoinApi.$getOutspends(input.txid);
         await Common.sleep$(config.LIGHTNING.FORENSICS_RATE_LIMIT);
       } catch (e) {
-        logger.err(`Failed to call ${config.ESPLORA.REST_API_URL + '/tx/' + input.txid + '/outspends'}. Reason ${e instanceof Error ? e.message : e}`);
+        logger.err(
+          `Failed to call ${
+            config.ESPLORA.REST_API_URL + '/tx/' + input.txid + '/outspends'
+          }. Reason ${e instanceof Error ? e.message : e}`
+        );
       }
       if (!outspends || !prevChannelTx) {
         return;
       }
       if (!linkedOpenings) {
         if (!prevChannel.outputs || !prevChannel.outputs.length) {
-          prevChannel.outputs = prevChannelTx.vout.map(vout => {
+          prevChannel.outputs = prevChannelTx.vout.map((vout) => {
             return {
               type: 0,
               value: vout.value,
@@ -403,7 +532,10 @@ class ForensicsService {
         }
 
         // preload outspend transactions
-        await this.fetchTransactions(outspends.filter(o => o.spent && o.txid).map(o => o.txid), true);
+        await this.fetchTransactions(
+          outspends.filter((o) => o.spent && o.txid).map((o) => o.txid),
+          true
+        );
 
         for (let i = 0; i < outspends?.length; i++) {
           const outspend = outspends[i];
@@ -411,7 +543,9 @@ class ForensicsService {
           if (outspend.spent && outspend.txid) {
             const spendingTx = this.txCache[outspend.txid];
             if (spendingTx) {
-              output.type = this.findLightningScript(spendingTx.vin[outspend.vin || 0]);
+              output.type = this.findLightningScript(
+                spendingTx.vin[outspend.vin || 0]
+              );
             }
           } else {
             output.type = 0;
@@ -420,9 +554,15 @@ class ForensicsService {
 
         // attribute outputs to each counterparty, and sum up total known balances
         prevChannel.outputs[input.vout].node = prevLocal;
-        const isPenalty = prevChannel.outputs.filter((out) => out.type === 2 || out.type === 4)?.length > 0;
-        const normalOutput = [1,3].includes(prevChannel.outputs[input.vout].type);
-        const mutualClose = ((prevChannel.status === 2 || prevChannel.status === 'closed') && prevChannel.closing_reason === 1);
+        const isPenalty =
+          prevChannel.outputs.filter((out) => out.type === 2 || out.type === 4)
+            ?.length > 0;
+        const normalOutput = [1, 3].includes(
+          prevChannel.outputs[input.vout].type
+        );
+        const mutualClose =
+          (prevChannel.status === 2 || prevChannel.status === 'closed') &&
+          prevChannel.closing_reason === 1;
         let localClosingBalance = 0;
         let remoteClosingBalance = 0;
         for (const output of prevChannel.outputs) {
@@ -436,7 +576,12 @@ class ForensicsService {
             } else {
               remoteClosingBalance += output.value;
             }
-          } else if (normalOutput && (output.type === 1 || output.type === 3 || (mutualClose && prevChannel.outputs.length === 2))) {
+          } else if (
+            normalOutput &&
+            (output.type === 1 ||
+              output.type === 3 ||
+              (mutualClose && prevChannel.outputs.length === 2))
+          ) {
             // local node had one main output, therefore remote node takes the other
             remoteClosingBalance += output.value;
           }
@@ -447,25 +592,32 @@ class ForensicsService {
 
         if (initiator && !linkedOpenings) {
           const initiatorSide = initiator === 'remote' ? prevRemote : prevLocal;
-          prevChannel.closed_by = prevChannel[`node${initiatorSide}_public_key`];
+          prevChannel.closed_by =
+            prevChannel[`node${initiatorSide}_public_key`];
         }
-  
+
         // save changes to the closing channel
         await channelsApi.$updateClosingInfo(prevChannel);
       } else {
         if (prevChannelTx.vin.length <= 1) {
-          prevChannel[`node${prevLocal}_funding_balance`] = prevChannel.capacity;
+          prevChannel[`node${prevLocal}_funding_balance`] =
+            prevChannel.capacity;
           prevChannel.single_funded = true;
           prevChannel.funding_ratio = 1;
           // save changes to the closing channel
           await channelsApi.$updateOpeningInfo(prevChannel);
         }
       }
-      openChannel[`node${openSide}_funding_balance`] = openChannel[`node${openSide}_funding_balance`] + (openContribution || prevChannelTx?.vout[input.vout]?.value || 0);
+      openChannel[`node${openSide}_funding_balance`] =
+        openChannel[`node${openSide}_funding_balance`] +
+        (openContribution || prevChannelTx?.vout[input.vout]?.value || 0);
     }
   }
 
-  async fetchTransaction(txid: string, temp: boolean = false): Promise<IEsploraApi.Transaction | null> {
+  async fetchTransaction(
+    txid: string,
+    temp: boolean = false
+  ): Promise<IEsploraApi.Transaction | null> {
     let tx = this.txCache[txid];
     if (!tx) {
       try {
@@ -476,7 +628,11 @@ class ForensicsService {
         }
         await Common.sleep$(config.LIGHTNING.FORENSICS_RATE_LIMIT);
       } catch (e) {
-        logger.err(`Failed to call ${config.ESPLORA.REST_API_URL + '/tx/' + txid}. Reason ${e instanceof Error ? e.message : e}`);
+        logger.err(
+          `Failed to call ${
+            config.ESPLORA.REST_API_URL + '/tx/' + txid
+          }. Reason ${e instanceof Error ? e.message : e}`
+        );
         return null;
       }
     }
@@ -485,11 +641,16 @@ class ForensicsService {
 
   // fetches a batch of transactions and adds them to the txCache
   // the returned list of txs does *not* preserve ordering or number
-  async fetchTransactions(txids, temp: boolean = false): Promise<(IEsploraApi.Transaction | null)[]> {
+  async fetchTransactions(
+    txids,
+    temp: boolean = false
+  ): Promise<(IEsploraApi.Transaction | null)[]> {
     // deduplicate txids
     const uniqueTxids = [...new Set<string>(txids)];
     // filter out any transactions we already have in the cache
-    const needToFetch: string[] = uniqueTxids.filter(txid => !this.txCache[txid]);
+    const needToFetch: string[] = uniqueTxids.filter(
+      (txid) => !this.txCache[txid]
+    );
     try {
       const txs = await bitcoinApi.$getRawTransactions(needToFetch);
       for (const tx of txs) {
@@ -500,10 +661,14 @@ class ForensicsService {
       }
       await Common.sleep$(config.LIGHTNING.FORENSICS_RATE_LIMIT);
     } catch (e) {
-      logger.err(`Failed to call ${config.ESPLORA.REST_API_URL + '/txs'}. Reason ${e instanceof Error ? e.message : e}`);
+      logger.err(
+        `Failed to call ${config.ESPLORA.REST_API_URL + '/txs'}. Reason ${
+          e instanceof Error ? e.message : e
+        }`
+      );
       return [];
     }
-    return txids.map(txid => this.txCache[txid]);
+    return txids.map((txid) => this.txCache[txid]);
   }
 
   clearTempCache(): void {
@@ -515,7 +680,10 @@ class ForensicsService {
 
   truncateTempCache(): void {
     if (this.tempCached.length > tempCacheSize) {
-      const removed = this.tempCached.splice(0, this.tempCached.length - tempCacheSize);
+      const removed = this.tempCached.splice(
+        0,
+        this.tempCached.length - tempCacheSize
+      );
       for (const txid of removed) {
         delete this.txCache[txid];
       }

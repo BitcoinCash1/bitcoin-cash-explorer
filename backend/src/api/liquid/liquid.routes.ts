@@ -9,34 +9,93 @@ import PricesRepository from '../../repositories/PricesRepository';
 class LiquidRoutes {
   public initRoutes(app: Application) {
     app
-      .get(config.MEMPOOL.API_URL_PREFIX + 'assets/icons', this.getAllLiquidIcon)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'assets/featured', this.$getAllFeaturedLiquidAssets)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'asset/:assetId/icon', this.getLiquidIcon)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'assets/group/:id', this.$getAssetGroup)
-      ;
-    
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'assets/icons',
+        this.getAllLiquidIcon
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'assets/featured',
+        this.$getAllFeaturedLiquidAssets
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'asset/:assetId/icon',
+        this.getLiquidIcon
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'assets/group/:id',
+        this.$getAssetGroup
+      );
+
     if (config.DATABASE.ENABLED) {
       app
-        .get(config.MEMPOOL.API_URL_PREFIX + 'liquid/pegs', this.$getElementsPegs)
-        .get(config.MEMPOOL.API_URL_PREFIX + 'liquid/pegs/month', this.$getElementsPegsByMonth)
-        .get(config.MEMPOOL.API_URL_PREFIX + 'liquid/pegs/list/:count', this.$getPegsList)
-        .get(config.MEMPOOL.API_URL_PREFIX + 'liquid/pegs/volume', this.$getPegsVolumeDaily)
-        .get(config.MEMPOOL.API_URL_PREFIX + 'liquid/pegs/count', this.$getPegsCount)
-        .get(config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves', this.$getFederationReserves)
-        .get(config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves/month', this.$getFederationReservesByMonth)
-        .get(config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves/addresses', this.$getFederationAddresses)
-        .get(config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves/addresses/total', this.$getFederationAddressesNumber)
-        .get(config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves/utxos', this.$getFederationUtxos)
-        .get(config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves/utxos/total', this.$getFederationUtxosNumber)
-        .get(config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves/utxos/expired', this.$getExpiredUtxos)
-        .get(config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves/utxos/emergency-spent', this.$getEmergencySpentUtxos)
-        .get(config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves/utxos/emergency-spent/stats', this.$getEmergencySpentUtxosStats)
-        .get(config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves/status', this.$getFederationAuditStatus)
-        .get(config.MEMPOOL.API_URL_PREFIX + 'historical-price', this.$getHistoricalPrice)
-        ;
+        .get(
+          config.MEMPOOL.API_URL_PREFIX + 'liquid/pegs',
+          this.$getElementsPegs
+        )
+        .get(
+          config.MEMPOOL.API_URL_PREFIX + 'liquid/pegs/month',
+          this.$getElementsPegsByMonth
+        )
+        .get(
+          config.MEMPOOL.API_URL_PREFIX + 'liquid/pegs/list/:count',
+          this.$getPegsList
+        )
+        .get(
+          config.MEMPOOL.API_URL_PREFIX + 'liquid/pegs/volume',
+          this.$getPegsVolumeDaily
+        )
+        .get(
+          config.MEMPOOL.API_URL_PREFIX + 'liquid/pegs/count',
+          this.$getPegsCount
+        )
+        .get(
+          config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves',
+          this.$getFederationReserves
+        )
+        .get(
+          config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves/month',
+          this.$getFederationReservesByMonth
+        )
+        .get(
+          config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves/addresses',
+          this.$getFederationAddresses
+        )
+        .get(
+          config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves/addresses/total',
+          this.$getFederationAddressesNumber
+        )
+        .get(
+          config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves/utxos',
+          this.$getFederationUtxos
+        )
+        .get(
+          config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves/utxos/total',
+          this.$getFederationUtxosNumber
+        )
+        .get(
+          config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves/utxos/expired',
+          this.$getExpiredUtxos
+        )
+        .get(
+          config.MEMPOOL.API_URL_PREFIX +
+            'liquid/reserves/utxos/emergency-spent',
+          this.$getEmergencySpentUtxos
+        )
+        .get(
+          config.MEMPOOL.API_URL_PREFIX +
+            'liquid/reserves/utxos/emergency-spent/stats',
+          this.$getEmergencySpentUtxosStats
+        )
+        .get(
+          config.MEMPOOL.API_URL_PREFIX + 'liquid/reserves/status',
+          this.$getFederationAuditStatus
+        )
+        .get(
+          config.MEMPOOL.API_URL_PREFIX + 'historical-price',
+          this.$getHistoricalPrice
+        );
     }
   }
-
 
   private getLiquidIcon(req: Request, res: Response) {
     const result = icons.getIconByAssetId(req.params.assetId);
@@ -60,7 +119,10 @@ class LiquidRoutes {
 
   private async $getAllFeaturedLiquidAssets(req: Request, res: Response) {
     try {
-      const response = await axios.get(`${config.EXTERNAL_DATA_SERVER.LIQUID_API}/assets/featured`, { responseType: 'stream', timeout: 10000 });
+      const response = await axios.get(
+        `${config.EXTERNAL_DATA_SERVER.LIQUID_API}/assets/featured`,
+        { responseType: 'stream', timeout: 10000 }
+      );
       response.data.pipe(res);
     } catch (e) {
       res.status(500).end();
@@ -69,8 +131,13 @@ class LiquidRoutes {
 
   private async $getAssetGroup(req: Request, res: Response) {
     try {
-      const response = await axios.get(`${config.EXTERNAL_DATA_SERVER.LIQUID_API}/assets/group/${parseInt(req.params.id, 10)}`,
-        { responseType: 'stream', timeout: 10000 });
+      const response = await axios.get(
+        `${config.EXTERNAL_DATA_SERVER.LIQUID_API}/assets/group/${parseInt(
+          req.params.id,
+          10
+        )}`,
+        { responseType: 'stream', timeout: 10000 }
+      );
       response.data.pipe(res);
     } catch (e) {
       res.status(500).end();
@@ -82,7 +149,10 @@ class LiquidRoutes {
       const pegs = await elementsParser.$getPegDataByMonth();
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
-      res.setHeader('Expires', new Date(Date.now() + 1000 * 60 * 60).toUTCString());
+      res.setHeader(
+        'Expires',
+        new Date(Date.now() + 1000 * 60 * 60).toUTCString()
+      );
       res.json(pegs);
     } catch (e) {
       handleError(req, res, 500, 'Failed to get pegs by month');
@@ -94,7 +164,10 @@ class LiquidRoutes {
       const reserves = await elementsParser.$getFederationReservesByMonth();
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
-      res.setHeader('Expires', new Date(Date.now() + 1000 * 60 * 60).toUTCString());
+      res.setHeader(
+        'Expires',
+        new Date(Date.now() + 1000 * 60 * 60).toUTCString()
+      );
       res.json(reserves);
     } catch (e) {
       handleError(req, res, 500, 'Failed to get reserves by month');
@@ -115,7 +188,8 @@ class LiquidRoutes {
 
   private async $getFederationReserves(req: Request, res: Response) {
     try {
-      const currentReserves = await elementsParser.$getCurrentFederationReserves();
+      const currentReserves =
+        await elementsParser.$getCurrentFederationReserves();
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.setHeader('Expires', new Date(Date.now() + 1000 * 30).toUTCString());
@@ -139,7 +213,8 @@ class LiquidRoutes {
 
   private async $getFederationAddresses(req: Request, res: Response) {
     try {
-      const federationAddresses = await elementsParser.$getFederationAddresses();
+      const federationAddresses =
+        await elementsParser.$getFederationAddresses();
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.setHeader('Expires', new Date(Date.now() + 1000 * 30).toUTCString());
@@ -151,7 +226,8 @@ class LiquidRoutes {
 
   private async $getFederationAddressesNumber(req: Request, res: Response) {
     try {
-      const federationAddresses = await elementsParser.$getFederationAddressesNumber();
+      const federationAddresses =
+        await elementsParser.$getFederationAddressesNumber();
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.setHeader('Expires', new Date(Date.now() + 1000 * 30).toUTCString());
@@ -199,7 +275,8 @@ class LiquidRoutes {
 
   private async $getEmergencySpentUtxos(req: Request, res: Response) {
     try {
-      const emergencySpentUtxos = await elementsParser.$getEmergencySpentUtxos();
+      const emergencySpentUtxos =
+        await elementsParser.$getEmergencySpentUtxos();
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.setHeader('Expires', new Date(Date.now() + 1000 * 30).toUTCString());
@@ -211,7 +288,8 @@ class LiquidRoutes {
 
   private async $getEmergencySpentUtxosStats(req: Request, res: Response) {
     try {
-      const emergencySpentUtxos = await elementsParser.$getEmergencySpentUtxosStats();
+      const emergencySpentUtxos =
+        await elementsParser.$getEmergencySpentUtxosStats();
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.setHeader('Expires', new Date(Date.now() + 1000 * 30).toUTCString());
@@ -223,7 +301,9 @@ class LiquidRoutes {
 
   private async $getPegsList(req: Request, res: Response) {
     try {
-      const recentPegs = await elementsParser.$getPegsList(parseInt(req.params?.count));
+      const recentPegs = await elementsParser.$getPegsList(
+        parseInt(req.params?.count)
+      );
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.setHeader('Expires', new Date(Date.now() + 1000 * 30).toUTCString());
@@ -257,12 +337,19 @@ class LiquidRoutes {
     }
   }
 
-  private async $getHistoricalPrice(req: Request, res: Response): Promise<void> {
+  private async $getHistoricalPrice(
+    req: Request,
+    res: Response
+  ): Promise<void> {
     try {
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.setHeader('Expires', new Date(Date.now() + 1000 * 300).toUTCString());
-      if (['testnet', 'signet', 'liquidtestnet', 'testnet4'].includes(config.MEMPOOL.NETWORK)) {
+      if (
+        ['testnet', 'signet', 'liquidtestnet', 'testnet4'].includes(
+          config.MEMPOOL.NETWORK
+        )
+      ) {
         handleError(req, res, 400, 'Prices are not available on testnets.');
         return;
       }
@@ -271,7 +358,10 @@ class LiquidRoutes {
 
       let response;
       if (timestamp && currency) {
-        response = await PricesRepository.$getNearestHistoricalPrice(timestamp, currency);
+        response = await PricesRepository.$getNearestHistoricalPrice(
+          timestamp,
+          currency
+        );
       } else if (timestamp) {
         response = await PricesRepository.$getNearestHistoricalPrice(timestamp);
       } else if (currency) {
@@ -284,7 +374,6 @@ class LiquidRoutes {
       handleError(req, res, 500, 'Failed to get historical prices');
     }
   }
-
 }
 
 export default new LiquidRoutes();

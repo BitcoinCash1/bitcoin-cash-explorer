@@ -16,16 +16,67 @@ class BitcoinBackendRoutes {
 
   public initRoutes(app: Application): void {
     app
-      .get(config.MEMPOOL.API_URL_PREFIX + 'internal/bitcoin-core/' + 'get-mempool-entry', this.disableCache, this.$getMempoolEntry)
-      .post(config.MEMPOOL.API_URL_PREFIX + 'internal/bitcoin-core/' + 'decode-raw-transaction', this.disableCache, this.$decodeRawTransaction)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'internal/bitcoin-core/' + 'get-raw-transaction', this.disableCache, this.$getRawTransaction)
-      .post(config.MEMPOOL.API_URL_PREFIX + 'internal/bitcoin-core/' + 'send-raw-transaction', this.disableCache, this.$sendRawTransaction)
-      .post(config.MEMPOOL.API_URL_PREFIX + 'internal/bitcoin-core/' + 'test-mempool-accept', this.disableCache, this.$testMempoolAccept)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'internal/bitcoin-core/' + 'get-mempool-ancestors', this.disableCache, this.$getMempoolAncestors)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'internal/bitcoin-core/' + 'get-block', this.disableCache, this.$getBlock)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'internal/bitcoin-core/' + 'get-block-hash', this.disableCache, this.$getBlockHash)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'internal/bitcoin-core/' + 'get-block-count', this.disableCache, this.$getBlockCount)
-    ;
+      .get(
+        config.MEMPOOL.API_URL_PREFIX +
+          'internal/bitcoin-core/' +
+          'get-mempool-entry',
+        this.disableCache,
+        this.$getMempoolEntry
+      )
+      .post(
+        config.MEMPOOL.API_URL_PREFIX +
+          'internal/bitcoin-core/' +
+          'decode-raw-transaction',
+        this.disableCache,
+        this.$decodeRawTransaction
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX +
+          'internal/bitcoin-core/' +
+          'get-raw-transaction',
+        this.disableCache,
+        this.$getRawTransaction
+      )
+      .post(
+        config.MEMPOOL.API_URL_PREFIX +
+          'internal/bitcoin-core/' +
+          'send-raw-transaction',
+        this.disableCache,
+        this.$sendRawTransaction
+      )
+      .post(
+        config.MEMPOOL.API_URL_PREFIX +
+          'internal/bitcoin-core/' +
+          'test-mempool-accept',
+        this.disableCache,
+        this.$testMempoolAccept
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX +
+          'internal/bitcoin-core/' +
+          'get-mempool-ancestors',
+        this.disableCache,
+        this.$getMempoolAncestors
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'internal/bitcoin-core/' + 'get-block',
+        this.disableCache,
+        this.$getBlock
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX +
+          'internal/bitcoin-core/' +
+          'get-block-hash',
+        this.disableCache,
+        this.$getBlockHash
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX +
+          'internal/bitcoin-core/' +
+          'get-block-count',
+        this.disableCache,
+        this.$getBlockCount
+      );
   }
 
   /**
@@ -35,9 +86,12 @@ class BitcoinBackendRoutes {
    * @param res
    * @param next
    */
-  private disableCache(req: Request, res: Response, next: NextFunction): void  {
+  private disableCache(req: Request, res: Response, next: NextFunction): void {
     res.setHeader('Pragma', 'no-cache');
-    res.setHeader('Cache-control', 'private, no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
+    res.setHeader(
+      'Cache-control',
+      'private, no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0'
+    );
     res.setHeader('expires', -1);
     next();
   }
@@ -50,7 +104,7 @@ class BitcoinBackendRoutes {
    * @param res
    */
   private static handleException(e: any, fnName: string, res: Response): void {
-    if (typeof(e.code) === 'number') {
+    if (typeof e.code === 'number') {
       res.status(400).send(JSON.stringify(e, ['code']));
     } else {
       const err = `unknown exception in ${fnName}`;
@@ -62,8 +116,14 @@ class BitcoinBackendRoutes {
   private async $getMempoolEntry(req: Request, res: Response): Promise<void> {
     const txid = req.query.txid;
     try {
-      if (typeof(txid) !== 'string' || txid.length !== 64 || !TXID_REGEX.test(txid)) {
-        res.status(400).send(`invalid param txid. must be 64 hexadecimal characters`);
+      if (
+        typeof txid !== 'string' ||
+        txid.length !== 64 ||
+        !TXID_REGEX.test(txid)
+      ) {
+        res
+          .status(400)
+          .send(`invalid param txid. must be 64 hexadecimal characters`);
         return;
       }
       const mempoolEntry = await bitcoinClient.getMempoolEntry(txid);
@@ -77,11 +137,18 @@ class BitcoinBackendRoutes {
     }
   }
 
-  private async $decodeRawTransaction(req: Request, res: Response): Promise<void> {
+  private async $decodeRawTransaction(
+    req: Request,
+    res: Response
+  ): Promise<void> {
     const rawTx = req.body.rawTx;
     try {
-      if (typeof(rawTx) !== 'string' || !RAW_TX_REGEX.test(rawTx)) {
-        res.status(400).send(`invalid param rawTx. must be a string of hexadecimal characters`);
+      if (typeof rawTx !== 'string' || !RAW_TX_REGEX.test(rawTx)) {
+        res
+          .status(400)
+          .send(
+            `invalid param rawTx. must be a string of hexadecimal characters`
+          );
         return;
       }
       const decodedTx = await bitcoinClient.decodeRawTransaction(rawTx);
@@ -99,21 +166,34 @@ class BitcoinBackendRoutes {
     const txid = req.query.txid;
     const verbose = req.query.verbose;
     try {
-      if (typeof(txid) !== 'string' || txid.length !== 64 || !TXID_REGEX.test(txid)) {
-        res.status(400).send(`invalid param txid. must be 64 hexadecimal characters`);
+      if (
+        typeof txid !== 'string' ||
+        txid.length !== 64 ||
+        !TXID_REGEX.test(txid)
+      ) {
+        res
+          .status(400)
+          .send(`invalid param txid. must be 64 hexadecimal characters`);
         return;
       }
-      if (typeof(verbose) !== 'string') {
-        res.status(400).send(`invalid param verbose. must be a string representing an integer`);
+      if (typeof verbose !== 'string') {
+        res
+          .status(400)
+          .send(
+            `invalid param verbose. must be a string representing an integer`
+          );
         return;
       }
       const verboseNumber = parseInt(verbose, 10);
-      if (typeof(verboseNumber) !== 'number') {
+      if (typeof verboseNumber !== 'number') {
         res.status(400).send(`invalid param verbose. must be a valid integer`);
         return;
       }
 
-      const decodedTx = await bitcoinClient.getRawTransaction(txid, verboseNumber);
+      const decodedTx = await bitcoinClient.getRawTransaction(
+        txid,
+        verboseNumber
+      );
       if (!decodedTx) {
         res.status(400).send(`unable to get raw transaction`);
         return;
@@ -124,11 +204,18 @@ class BitcoinBackendRoutes {
     }
   }
 
-  private async $sendRawTransaction(req: Request, res: Response): Promise<void> {
+  private async $sendRawTransaction(
+    req: Request,
+    res: Response
+  ): Promise<void> {
     const rawTx = req.body.rawTx;
     try {
-      if (typeof(rawTx) !== 'string' || !RAW_TX_REGEX.test(rawTx)) {
-        res.status(400).send(`invalid param rawTx. must be a string of hexadecimal characters`);
+      if (typeof rawTx !== 'string' || !RAW_TX_REGEX.test(rawTx)) {
+        res
+          .status(400)
+          .send(
+            `invalid param rawTx. must be a string of hexadecimal characters`
+          );
         return;
       }
       const txHex = await bitcoinClient.sendRawTransaction(rawTx);
@@ -145,13 +232,23 @@ class BitcoinBackendRoutes {
   private async $testMempoolAccept(req: Request, res: Response): Promise<void> {
     const rawTxs = req.body.rawTxs;
     try {
-      if (typeof(rawTxs) !== 'object' || !Array.isArray(rawTxs) || rawTxs.some((tx) => typeof(tx) !== 'string' || !RAW_TX_REGEX.test(tx))) {
-        res.status(400).send(`invalid param rawTxs. must be an array of strings of hexadecimal characters`);
+      if (
+        typeof rawTxs !== 'object' ||
+        !Array.isArray(rawTxs) ||
+        rawTxs.some((tx) => typeof tx !== 'string' || !RAW_TX_REGEX.test(tx))
+      ) {
+        res
+          .status(400)
+          .send(
+            `invalid param rawTxs. must be an array of strings of hexadecimal characters`
+          );
         return;
       }
       const txHex = await bitcoinClient.testMempoolAccept(rawTxs);
-      if (typeof(txHex) !== 'object' || txHex.length === 0) {
-        res.status(400).send(`testmempoolaccept failed for raw txs, got an empty result`);
+      if (typeof txHex !== 'object' || txHex.length === 0) {
+        res
+          .status(400)
+          .send(`testmempoolaccept failed for raw txs, got an empty result`);
         return;
       }
       res.status(200).send(txHex);
@@ -160,20 +257,37 @@ class BitcoinBackendRoutes {
     }
   }
 
-  private async $getMempoolAncestors(req: Request, res: Response): Promise<void> {
+  private async $getMempoolAncestors(
+    req: Request,
+    res: Response
+  ): Promise<void> {
     const txid = req.query.txid;
     const verbose = req.query.verbose;
     try {
-      if (typeof(txid) !== 'string' || txid.length !== 64 || !TXID_REGEX.test(txid)) {
-        res.status(400).send(`invalid param txid. must be 64 hexadecimal characters`);
+      if (
+        typeof txid !== 'string' ||
+        txid.length !== 64 ||
+        !TXID_REGEX.test(txid)
+      ) {
+        res
+          .status(400)
+          .send(`invalid param txid. must be 64 hexadecimal characters`);
         return;
       }
-      if (typeof(verbose) !== 'string' || (verbose !== 'true' && verbose !== 'false')) {
-        res.status(400).send(`invalid param verbose. must be a string ('true' | 'false')`);
+      if (
+        typeof verbose !== 'string' ||
+        (verbose !== 'true' && verbose !== 'false')
+      ) {
+        res
+          .status(400)
+          .send(`invalid param verbose. must be a string ('true' | 'false')`);
         return;
       }
 
-      const ancestors = await bitcoinClient.getMempoolAncestors(txid, verbose === 'true' ? true : false);
+      const ancestors = await bitcoinClient.getMempoolAncestors(
+        txid,
+        verbose === 'true' ? true : false
+      );
       if (!ancestors) {
         res.status(400).send(`unable to get mempool ancestors`);
         return;
@@ -188,17 +302,29 @@ class BitcoinBackendRoutes {
     const blockHash = req.query.hash;
     const verbosity = req.query.verbosity;
     try {
-      if (typeof(blockHash) !== 'string' || blockHash.length !== 64 || !BLOCKHASH_REGEX.test(blockHash)) {
-        res.status(400).send(`invalid param blockHash. must be 64 hexadecimal characters`);
+      if (
+        typeof blockHash !== 'string' ||
+        blockHash.length !== 64 ||
+        !BLOCKHASH_REGEX.test(blockHash)
+      ) {
+        res
+          .status(400)
+          .send(`invalid param blockHash. must be 64 hexadecimal characters`);
         return;
       }
-      if (typeof(verbosity) !== 'string') {
-        res.status(400).send(`invalid param verbosity. must be a string representing an integer`);
+      if (typeof verbosity !== 'string') {
+        res
+          .status(400)
+          .send(
+            `invalid param verbosity. must be a string representing an integer`
+          );
         return;
       }
       const verbosityNumber = parseInt(verbosity, 10);
-      if (typeof(verbosityNumber) !== 'number') {
-        res.status(400).send(`invalid param verbosity. must be a valid integer`);
+      if (typeof verbosityNumber !== 'number') {
+        res
+          .status(400)
+          .send(`invalid param verbosity. must be a valid integer`);
         return;
       }
 
@@ -216,13 +342,19 @@ class BitcoinBackendRoutes {
   private async $getBlockHash(req: Request, res: Response): Promise<void> {
     const blockHeight = req.query.height;
     try {
-      if (typeof(blockHeight) !== 'string') {
-        res.status(400).send(`invalid param blockHeight, must be a string representing an integer`);
+      if (typeof blockHeight !== 'string') {
+        res
+          .status(400)
+          .send(
+            `invalid param blockHeight, must be a string representing an integer`
+          );
         return;
       }
       const blockHeightNumber = parseInt(blockHeight, 10);
-      if (typeof(blockHeightNumber) !== 'number') {
-        res.status(400).send(`invalid param blockHeight. must be a valid integer`);
+      if (typeof blockHeightNumber !== 'number') {
+        res
+          .status(400)
+          .send(`invalid param blockHeight. must be a valid integer`);
         return;
       }
 
@@ -251,4 +383,4 @@ class BitcoinBackendRoutes {
   }
 }
 
-export default new BitcoinBackendRoutes;
+export default new BitcoinBackendRoutes();

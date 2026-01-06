@@ -11,7 +11,10 @@ export async function setupTestDatabase(): Promise<void> {
     await DB.checkDbConnection();
     await databaseMigration.$initializeOrMigrateDatabase();
   } catch (error) {
-    logger.err('Failed to setup test database: ' + (error instanceof Error ? error.message : error));
+    logger.err(
+      'Failed to setup test database: ' +
+        (error instanceof Error ? error.message : error)
+    );
     throw error;
   }
 }
@@ -28,7 +31,7 @@ export async function cleanupTestData(): Promise<void> {
     'blocks_prices',
     'blocks_templates',
     'cpfp_clusters',
-    'blocks',  // blocks references pools
+    'blocks', // blocks references pools
     'difficulty_adjustments',
     'hashrates',
     'prices',
@@ -39,13 +42,13 @@ export async function cleanupTestData(): Promise<void> {
     'transactions',
     'elements_pegs',
     'federation_txos',
-    'pools'
+    'pools',
   ];
 
   try {
     // Disable foreign key checks temporarily for faster cleanup
     await DB.query('SET FOREIGN_KEY_CHECKS = 0');
-    
+
     for (const table of tables) {
       try {
         // Use 'silent' error logging to avoid noise for optional tables that don't exist
@@ -55,7 +58,7 @@ export async function cleanupTestData(): Promise<void> {
         // Silently ignore - no need to log since these are expected for optional features
       }
     }
-    
+
     // Re-enable foreign key checks
     await DB.query('SET FOREIGN_KEY_CHECKS = 1');
   } catch (error) {
@@ -65,7 +68,10 @@ export async function cleanupTestData(): Promise<void> {
     } catch (e) {
       // Ignore
     }
-    logger.err('Failed to cleanup test data: ' + (error instanceof Error ? error.message : error));
+    logger.err(
+      'Failed to cleanup test data: ' +
+        (error instanceof Error ? error.message : error)
+    );
     throw error;
   }
 }
@@ -73,7 +79,10 @@ export async function cleanupTestData(): Promise<void> {
 /**
  * Wait for database to be ready
  */
-export async function waitForDatabase(maxRetries = 30, retryInterval = 1000): Promise<void> {
+export async function waitForDatabase(
+  maxRetries = 30,
+  retryInterval = 1000
+): Promise<void> {
   for (let i = 0; i < maxRetries; i++) {
     try {
       await DB.query('SELECT 1');
@@ -81,7 +90,7 @@ export async function waitForDatabase(maxRetries = 30, retryInterval = 1000): Pr
       return;
     } catch (error) {
       logger.debug(`Waiting for database... attempt ${i + 1}/${maxRetries}`);
-      await new Promise(resolve => setTimeout(resolve, retryInterval));
+      await new Promise((resolve) => setTimeout(resolve, retryInterval));
     }
   }
   throw new Error('Database did not become ready in time');
@@ -96,7 +105,7 @@ export function getTestDatabaseConfig() {
     port: config.DATABASE.PORT,
     database: config.DATABASE.DATABASE,
     username: config.DATABASE.USERNAME,
-    enabled: config.DATABASE.ENABLED
+    enabled: config.DATABASE.ENABLED,
   };
 }
 
@@ -120,7 +129,7 @@ export async function insertTestPool(poolData: {
       poolData.link || '',
       poolData.slug,
       poolData.addresses || '[]',
-      poolData.regexes || '[]'
+      poolData.regexes || '[]',
     ]
   );
   return result.insertId;
@@ -143,7 +152,7 @@ export async function insertTestBlock(blockData: {
   const size = blockData.size || 1000000;
   const weight = blockData.weight || 4000000;
   const txCount = blockData.tx_count || 2000;
-  
+
   await DB.query(
     `INSERT INTO blocks (
       height, hash, blockTimestamp, size, weight, tx_count, 
@@ -170,21 +179,20 @@ export async function insertTestBlock(blockData: {
       '0000000000000000000000000000000000000000000000000000000000000000',
       '0000000000000000000000000000000000000000000000000000000000000000',
       timestamp,
-      0,  // stale = false
+      0, // stale = false
       // Required fields with defaults
-      50000000,  // fees (in sats)
-      JSON.stringify([0, 0, 0, 0, 0, 0, 0]),  // fee_span (JSON array)
-      10000,  // median_fee (in sats)
-      size / txCount,  // avg_tx_size
-      txCount * 2,  // total_inputs (estimate)
-      txCount * 2,  // total_outputs (estimate)
-      2100000000000000,  // total_output_amt (21M BTC in sats, estimate)
-      txCount,  // segwit_total_txs (assume all segwit for test)
-      size,  // segwit_total_size
-      weight,  // segwit_total_weight
-      '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000',  // header (160 chars)
-      0  // utxoset_change
+      50000000, // fees (in sats)
+      JSON.stringify([0, 0, 0, 0, 0, 0, 0]), // fee_span (JSON array)
+      10000, // median_fee (in sats)
+      size / txCount, // avg_tx_size
+      txCount * 2, // total_inputs (estimate)
+      txCount * 2, // total_outputs (estimate)
+      2100000000000000, // total_output_amt (21M BTC in sats, estimate)
+      txCount, // segwit_total_txs (assume all segwit for test)
+      size, // segwit_total_size
+      weight, // segwit_total_weight
+      '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000', // header (160 chars)
+      0, // utxoset_change
     ]
   );
 }
-

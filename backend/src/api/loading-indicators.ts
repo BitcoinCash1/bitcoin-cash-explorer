@@ -2,18 +2,27 @@ import { ILoadingIndicators } from '../mempool.interfaces';
 
 class LoadingIndicators {
   private loadingIndicators: ILoadingIndicators = {
-    'mempool': 0,
+    mempool: 0,
   };
-  private progressChangedCallback: ((loadingIndicators: ILoadingIndicators) => void) | undefined;
+  private progressChangedCallback:
+    | ((loadingIndicators: ILoadingIndicators) => void)
+    | undefined;
 
-  constructor() { }
+  constructor() {}
 
-  public setProgressChangedCallback(fn: (loadingIndicators: ILoadingIndicators) => void) {
+  public setProgressChangedCallback(
+    fn: (loadingIndicators: ILoadingIndicators) => void
+  ) {
     this.progressChangedCallback = fn;
   }
 
-  public setProgress(name: string, progressPercent: number, rounded: boolean = true) {
-    const newProgress = rounded === true ? Math.round(progressPercent) : progressPercent;
+  public setProgress(
+    name: string,
+    progressPercent: number,
+    rounded: boolean = true
+  ) {
+    const newProgress =
+      rounded === true ? Math.round(progressPercent) : progressPercent;
     if (newProgress >= 100) {
       delete this.loadingIndicators[name];
     } else {

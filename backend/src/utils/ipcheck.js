@@ -1,6 +1,6 @@
-var net = require('net');
+var net = require("net");
 
-var IPCheck = module.exports = function(input) {
+var IPCheck = (module.exports = function (input) {
   var self = this;
 
   if (!(self instanceof IPCheck)) {
@@ -9,16 +9,17 @@ var IPCheck = module.exports = function(input) {
 
   self.input = input;
   self.parse();
-};
+});
 
-IPCheck.prototype.parse = function() {
+IPCheck.prototype.parse = function () {
   var self = this;
 
-  if (!self.input || typeof self.input !== 'string') return self.valid = false;
+  if (!self.input || typeof self.input !== "string")
+    return (self.valid = false);
 
   var ip;
 
-  var pos = self.input.lastIndexOf('/');
+  var pos = self.input.lastIndexOf("/");
   if (pos !== -1) {
     ip = self.input.substring(0, pos);
     self.mask = +self.input.substring(pos + 1);
@@ -45,43 +46,42 @@ IPCheck.prototype.parse = function() {
     return;
   }
 
-  self.address = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+  self.address = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 
-  if(self.ipv === 4){
+  if (self.ipv === 4) {
     self.parseIPv4(ip);
-  }else{
+  } else {
     self.parseIPv6(ip);
   }
 };
 
-IPCheck.prototype.parseIPv4 = function(ip) {
+IPCheck.prototype.parseIPv4 = function (ip) {
   var self = this;
 
   // ipv4 addresses live under ::ffff:0:0
   self.address[10] = self.address[11] = 0xff;
 
-  var octets = ip.split('.');
+  var octets = ip.split(".");
   for (var i = 0; i < 4; i++) {
     self.address[i + 12] = parseInt(octets[i], 10);
   }
 };
 
-
 var V6_TRANSITIONAL = /:(\d+\.\d+\.\d+\.\d+)$/;
 
-IPCheck.prototype.parseIPv6 = function(ip) {
+IPCheck.prototype.parseIPv6 = function (ip) {
   var self = this;
 
   var transitionalMatch = V6_TRANSITIONAL.exec(ip);
-  if(transitionalMatch){
+  if (transitionalMatch) {
     self.parseIPv4(transitionalMatch[1]);
     return;
   }
 
-  var bits = ip.split(':');
+  var bits = ip.split(":");
   if (bits.length < 8) {
-    ip = ip.replace('::', Array(11 - bits.length).join(':'));
-    bits = ip.split(':');
+    ip = ip.replace("::", Array(11 - bits.length).join(":"));
+    bits = ip.split(":");
   }
 
   var j = 0;
@@ -92,7 +92,7 @@ IPCheck.prototype.parseIPv6 = function(ip) {
   }
 };
 
-IPCheck.prototype.match = function(cidr) {
+IPCheck.prototype.match = function (cidr) {
   var self = this;
 
   if (!(cidr instanceof IPCheck)) cidr = new IPCheck(cidr);
@@ -109,11 +109,10 @@ IPCheck.prototype.match = function(cidr) {
   }
 
   var shift = 8 - mask;
-  return (self.address[i] >>> shift) === (cidr.address[i] >>> shift);
+  return self.address[i] >>> shift === cidr.address[i] >>> shift;
 };
 
-
-IPCheck.match = function(ip, cidr) {
+IPCheck.match = function (ip, cidr) {
   ip = ip instanceof IPCheck ? ip : new IPCheck(ip);
   return ip.match(cidr);
 };

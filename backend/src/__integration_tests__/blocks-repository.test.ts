@@ -1,5 +1,11 @@
 import BlocksRepository from '../repositories/BlocksRepository';
-import { setupTestDatabase, waitForDatabase, cleanupTestData, insertTestPool, insertTestBlock } from './test-helpers';
+import {
+  setupTestDatabase,
+  waitForDatabase,
+  cleanupTestData,
+  insertTestPool,
+  insertTestBlock,
+} from './test-helpers';
 
 describe('BlocksRepository Integration Tests', () => {
   let defaultPoolId: number;
@@ -16,7 +22,7 @@ describe('BlocksRepository Integration Tests', () => {
       name: 'Unknown',
       slug: 'unknown',
       addresses: '[]',
-      regexes: '[]'
+      regexes: '[]',
     });
   });
 
@@ -25,7 +31,8 @@ describe('BlocksRepository Integration Tests', () => {
   });
 
   test('should insert and retrieve a block', async () => {
-    const blockHash = '00000000000000000001a0e3e9b2e6d6e8a4b0e9b2e6d6e8a4b0e9b2e6d6e8a4';
+    const blockHash =
+      '00000000000000000001a0e3e9b2e6d6e8a4b0e9b2e6d6e8a4b0e9b2e6d6e8a4';
     const height = 800000;
 
     await insertTestBlock({
@@ -36,29 +43,30 @@ describe('BlocksRepository Integration Tests', () => {
       weight: 3999000,
       tx_count: 3000,
       difficulty: 53911173001054.59,
-      poolId: defaultPoolId
+      poolId: defaultPoolId,
     });
 
     const block = await BlocksRepository.$getBlockByHeight(height);
-    
+
     expect(block).toBeDefined();
     expect(block!.height).toBe(height);
     expect(block!.id).toBe(blockHash);
   });
 
   test('should get block by hash', async () => {
-    const blockHash = '00000000000000000002b0e3e9b2e6d6e8a4b0e9b2e6d6e8a4b0e9b2e6d6e8a4';
+    const blockHash =
+      '00000000000000000002b0e3e9b2e6d6e8a4b0e9b2e6d6e8a4b0e9b2e6d6e8a4';
     const height = 800001;
 
     await insertTestBlock({
       height: height,
       hash: blockHash,
       tx_count: 2500,
-      poolId: defaultPoolId
+      poolId: defaultPoolId,
     });
 
     const block = await BlocksRepository.$getBlockByHash(blockHash);
-    
+
     expect(block).toBeDefined();
     expect(block!.id).toBe(blockHash);
     expect(block!.height).toBe(height);
@@ -71,36 +79,37 @@ describe('BlocksRepository Integration Tests', () => {
 
   test('should check for missing blocks in range', async () => {
     // Insert blocks with a gap
-    await insertTestBlock({ 
-      height: 800100, 
+    await insertTestBlock({
+      height: 800100,
       hash: '0000000000000000000100000000000000000000000000000000000000000001',
-      poolId: defaultPoolId
+      poolId: defaultPoolId,
     });
-    await insertTestBlock({ 
-      height: 800102, 
+    await insertTestBlock({
+      height: 800102,
       hash: '0000000000000000000100000000000000000000000000000000000000000003',
-      poolId: defaultPoolId
+      poolId: defaultPoolId,
     });
 
-    const missingBlocks = await BlocksRepository.$getMissingBlocksBetweenHeights(800100, 800102);
-    
+    const missingBlocks =
+      await BlocksRepository.$getMissingBlocksBetweenHeights(800100, 800102);
+
     expect(missingBlocks).toContain(800101);
   });
 
   test('should get latest block height', async () => {
-    await insertTestBlock({ 
-      height: 800200, 
+    await insertTestBlock({
+      height: 800200,
       hash: '0000000000000000000200000000000000000000000000000000000000000001',
-      poolId: defaultPoolId
+      poolId: defaultPoolId,
     });
-    await insertTestBlock({ 
-      height: 800201, 
+    await insertTestBlock({
+      height: 800201,
       hash: '0000000000000000000200000000000000000000000000000000000000000002',
-      poolId: defaultPoolId
+      poolId: defaultPoolId,
     });
 
     const height = await BlocksRepository.$mostRecentBlockHeight();
-    
+
     expect(height).toBe(800201);
   });
 
@@ -110,18 +119,19 @@ describe('BlocksRepository Integration Tests', () => {
       name: 'Test Pool',
       slug: 'test-pool',
       addresses: '[]',
-      regexes: '[]'
+      regexes: '[]',
     });
 
-    const blockHash = '0000000000000000000300000000000000000000000000000000000000000001';
+    const blockHash =
+      '0000000000000000000300000000000000000000000000000000000000000001';
     await insertTestBlock({
       height: 800300,
       hash: blockHash,
-      poolId: testPoolId
+      poolId: testPoolId,
     });
 
     const block = await BlocksRepository.$getBlockByHash(blockHash);
-    
+
     expect(block).toBeDefined();
     expect(block).not.toBeNull();
     // The pool should be populated with the test pool's data
@@ -131,4 +141,3 @@ describe('BlocksRepository Integration Tests', () => {
     }
   });
 });
-

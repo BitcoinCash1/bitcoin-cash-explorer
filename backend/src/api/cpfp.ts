@@ -1,12 +1,32 @@
-import { Ancestor, CpfpCluster, CpfpInfo, CpfpSummary, MempoolTransactionExtended, TransactionExtended } from '../mempool.interfaces';
-import { GraphTx, convertToGraphTx, expandRelativesGraph, initializeRelatives, makeBlockTemplate, mempoolComparator, removeAncestors, setAncestorScores } from './mini-miner';
+import {
+  Ancestor,
+  CpfpCluster,
+  CpfpInfo,
+  CpfpSummary,
+  MempoolTransactionExtended,
+  TransactionExtended,
+} from '../mempool.interfaces';
+import {
+  GraphTx,
+  convertToGraphTx,
+  expandRelativesGraph,
+  initializeRelatives,
+  makeBlockTemplate,
+  mempoolComparator,
+  removeAncestors,
+  setAncestorScores,
+} from './mini-miner';
 import memPool from './mempool';
 import { Acceleration } from './acceleration/acceleration';
 
 const CPFP_UPDATE_INTERVAL = 60_000; // update CPFP info at most once per 60s per transaction
 const MAX_CLUSTER_ITERATIONS = 100;
 
-export function calculateFastBlockCpfp(height: number, transactions: MempoolTransactionExtended[], saveRelatives: boolean = false): CpfpSummary {
+export function calculateFastBlockCpfp(
+  height: number,
+  transactions: MempoolTransactionExtended[],
+  saveRelatives: boolean = false
+): CpfpSummary {
   const clusters: CpfpCluster[] = []; // list of all cpfp clusters in this block
   const clusterMap: { [txid: string]: CpfpCluster } = {}; // map transactions to their cpfp cluster
   let clusterTxs: TransactionExtended[] = []; // working list of elements of the current cluster
@@ -22,9 +42,9 @@ export function calculateFastBlockCpfp(height: number, transactions: MempoolTran
     if (!ancestors[tx.txid]) {
       let totalFee = 0;
       let totalVSize = 0;
-      clusterTxs.forEach(tx => {
+      clusterTxs.forEach((tx) => {
         totalFee += tx?.fee || 0;
-        totalVSize += (tx.weight / 4);
+        totalVSize += tx.weight / 4;
       });
       const effectiveFeePerVsize = totalFee / totalVSize;
       let cluster: CpfpCluster;
@@ -32,12 +52,14 @@ export function calculateFastBlockCpfp(height: number, transactions: MempoolTran
         cluster = {
           root: clusterTxs[0].txid,
           height,
-          txs: clusterTxs.map(tx => { return { txid: tx.txid, weight: tx.weight, fee: tx.fee || 0 }; }),
+          txs: clusterTxs.map((tx) => {
+            return { txid: tx.txid, weight: tx.weight, fee: tx.fee || 0 };
+          }),
           effectiveFeePerVsize,
         };
         clusters.push(cluster);
       }
-      clusterTxs.forEach(tx => {
+      clusterTxs.forEach((tx) => {
         txMap[tx.txid].effectiveFeePerVsize = effectiveFeePerVsize;
         if (cluster) {
           clusterMap[tx.txid] = cluster;
@@ -48,7 +70,7 @@ export function calculateFastBlockCpfp(height: number, transactions: MempoolTran
       ancestors = {};
     }
     clusterTxs.push(tx);
-    tx.vin.forEach(vin => {
+    tx.vin.forEach((vin) => {
       ancestors[vin.txid] = true;
     });
   }
@@ -57,7 +79,10 @@ export function calculateFastBlockCpfp(height: number, transactions: MempoolTran
     let minAncestorRate = tx.effectiveFeePerVsize;
     for (const vin of tx.vin) {
       if (txMap[vin.txid]?.effectiveFeePerVsize) {
-        minAncestorRate = Math.min(minAncestorRate, txMap[vin.txid].effectiveFeePerVsize);
+        minAncestorRate = Math.min(
+          minAncestorRate,
+          txMap[vin.txid].effectiveFeePerVsize
+        );
       }
     }
     // check rounded values to skip cases with almost identical fees
@@ -97,12 +122,22 @@ export function calculateFastBlockCpfp(height: number, transactions: MempoolTran
   };
 }
 
-export function calculateGoodBlockCpfp(height: number, transactions: MempoolTransactionExtended[], accelerations: Acceleration[]): CpfpSummary {
+export function calculateGoodBlockCpfp(
+  height: number,
+  transactions: MempoolTransactionExtended[],
+  accelerations: Acceleration[]
+): CpfpSummary {
   const txMap: { [txid: string]: MempoolTransactionExtended } = {};
   for (const tx of transactions) {
     txMap[tx.txid] = tx;
   }
-  const template = makeBlockTemplate(transactions, accelerations, 1, Infinity, Infinity);
+  const template = makeBlockTemplate(
+    transactions,
+    accelerations,
+    1,
+    Infinity,
+    Infinity
+  );
   const clusters = new Map<string, string[]>();
   for (const tx of template) {
     const cluster = tx.cluster || [];
@@ -122,14 +157,16 @@ export function calculateGoodBlockCpfp(height: number, transactions: MempoolTran
         const ancestors: Ancestor[] = [];
         const descendants: Ancestor[] = [];
         let matched = false;
-        cluster.forEach(relativeTxid => {
+        cluster.forEach((relativeTxid) => {
           if (relativeTxid === txid) {
             matched = true;
           } else {
             const relative = {
               txid: relativeTxid,
               fee: txMap[relativeTxid].fee,
-              weight: (txMap[relativeTxid].adjustedVsize * 4) || txMap[relativeTxid].weight,
+              weight:
+                txMap[relativeTxid].adjustedVsize * 4 ||
+                txMap[relativeTxid].weight,
             };
             if (matched) {
               descendants.push(relative);
@@ -138,27 +175,35 @@ export function calculateGoodBlockCpfp(height: number, transactions: MempoolTran
             }
           }
         });
-        if (mempoolTx.ancestors?.length !== ancestors.length || mempoolTx.descendants?.length !== descendants.length) {
+        if (
+          mempoolTx.ancestors?.length !== ancestors.length ||
+          mempoolTx.descendants?.length !== descendants.length
+        ) {
           mempoolTx.cpfpDirty = true;
         }
-        Object.assign(mempoolTx, { ancestors, descendants, bestDescendant: null, cpfpChecked: true });
+        Object.assign(mempoolTx, {
+          ancestors,
+          descendants,
+          bestDescendant: null,
+          cpfpChecked: true,
+        });
       }
     }
     const root = cluster[cluster.length - 1];
     clusterArray.push({
       root: root,
       height,
-      txs: cluster.reverse().map(txid => ({
+      txs: cluster.reverse().map((txid) => ({
         txid,
         fee: txMap[txid].fee,
-        weight: (txMap[txid].adjustedVsize * 4) || txMap[txid].weight,
+        weight: txMap[txid].adjustedVsize * 4 || txMap[txid].weight,
       })),
       effectiveFeePerVsize: txMap[root].effectiveFeePerVsize,
     });
   }
 
   return {
-    transactions: transactions.map(tx => txMap[tx.txid]),
+    transactions: transactions.map((tx) => txMap[tx.txid]),
     clusters: clusterArray,
     version: 2,
   };
@@ -170,18 +215,23 @@ export function calculateGoodBlockCpfp(height: number, transactions: MempoolTran
  * If the passed transaction is not guaranteed to be in the mempool, set localTx to true: this will
  * prevent updating the CPFP data of other transactions in the cluster
  */
-export function calculateMempoolTxCpfp(tx: MempoolTransactionExtended, mempool: { [txid: string]: MempoolTransactionExtended }, localTx: boolean = false): CpfpInfo {
-  if (tx.cpfpUpdated && Date.now() < (tx.cpfpUpdated + CPFP_UPDATE_INTERVAL)) {
+export function calculateMempoolTxCpfp(
+  tx: MempoolTransactionExtended,
+  mempool: { [txid: string]: MempoolTransactionExtended },
+  localTx: boolean = false
+): CpfpInfo {
+  if (tx.cpfpUpdated && Date.now() < tx.cpfpUpdated + CPFP_UPDATE_INTERVAL) {
     tx.cpfpDirty = false;
     return {
       ancestors: tx.ancestors || [],
       bestDescendant: tx.bestDescendant || null,
       descendants: tx.descendants || [],
-      effectiveFeePerVsize: tx.effectiveFeePerVsize || tx.adjustedFeePerVsize || tx.feePerVsize,
+      effectiveFeePerVsize:
+        tx.effectiveFeePerVsize || tx.adjustedFeePerVsize || tx.feePerVsize,
       sigops: tx.sigops,
       fee: tx.fee,
       adjustedVsize: tx.adjustedVsize,
-      acceleration: tx.acceleration
+      acceleration: tx.acceleration,
     };
   }
 
@@ -189,7 +239,11 @@ export function calculateMempoolTxCpfp(tx: MempoolTransactionExtended, mempool: 
   const graphTx = convertToGraphTx(tx, memPool.getSpendMap());
   ancestorMap.set(tx.txid, graphTx);
 
-  const allRelatives = expandRelativesGraph(mempool, ancestorMap, memPool.getSpendMap());
+  const allRelatives = expandRelativesGraph(
+    mempool,
+    ancestorMap,
+    memPool.getSpendMap()
+  );
   const relativesMap = initializeRelatives(allRelatives);
   const cluster = calculateCpfpCluster(tx.txid, relativesMap);
 
@@ -203,14 +257,32 @@ export function calculateMempoolTxCpfp(tx: MempoolTransactionExtended, mempool: 
 
   if (localTx) {
     tx.effectiveFeePerVsize = effectiveFeePerVsize;
-    tx.ancestors = Array.from(cluster.get(tx.txid)?.ancestors.values() || []).map(ancestor => ({ txid: ancestor.txid, weight: ancestor.weight, fee: ancestor.fees.base }));
-    tx.descendants = Array.from(cluster.values()).filter(entry => entry.txid !== tx.txid && !cluster.get(tx.txid)?.ancestors.has(entry.txid)).map(tx => ({ txid: tx.txid, weight: tx.weight, fee: tx.fees.base }));
+    tx.ancestors = Array.from(
+      cluster.get(tx.txid)?.ancestors.values() || []
+    ).map((ancestor) => ({
+      txid: ancestor.txid,
+      weight: ancestor.weight,
+      fee: ancestor.fees.base,
+    }));
+    tx.descendants = Array.from(cluster.values())
+      .filter(
+        (entry) =>
+          entry.txid !== tx.txid &&
+          !cluster.get(tx.txid)?.ancestors.has(entry.txid)
+      )
+      .map((tx) => ({ txid: tx.txid, weight: tx.weight, fee: tx.fees.base }));
     tx.bestDescendant = null;
   } else {
     for (const tx of cluster.values()) {
       mempool[tx.txid].effectiveFeePerVsize = effectiveFeePerVsize;
-      mempool[tx.txid].ancestors = Array.from(tx.ancestors.values()).map(tx => ({ txid: tx.txid, weight: tx.weight, fee: tx.fees.base }));
-      mempool[tx.txid].descendants = Array.from(cluster.values()).filter(entry => entry.txid !== tx.txid && !tx.ancestors.has(entry.txid)).map(tx => ({ txid: tx.txid, weight: tx.weight, fee: tx.fees.base }));
+      mempool[tx.txid].ancestors = Array.from(tx.ancestors.values()).map(
+        (tx) => ({ txid: tx.txid, weight: tx.weight, fee: tx.fees.base })
+      );
+      mempool[tx.txid].descendants = Array.from(cluster.values())
+        .filter(
+          (entry) => entry.txid !== tx.txid && !tx.ancestors.has(entry.txid)
+        )
+        .map((tx) => ({ txid: tx.txid, weight: tx.weight, fee: tx.fees.base }));
       mempool[tx.txid].bestDescendant = null;
       mempool[tx.txid].cpfpChecked = true;
       mempool[tx.txid].cpfpDirty = true;
@@ -218,36 +290,39 @@ export function calculateMempoolTxCpfp(tx: MempoolTransactionExtended, mempool: 
     }
 
     tx = mempool[tx.txid];
-
   }
 
   return {
     ancestors: tx.ancestors || [],
     bestDescendant: tx.bestDescendant || null,
     descendants: tx.descendants || [],
-    effectiveFeePerVsize: tx.effectiveFeePerVsize || tx.adjustedFeePerVsize || tx.feePerVsize,
+    effectiveFeePerVsize:
+      tx.effectiveFeePerVsize || tx.adjustedFeePerVsize || tx.feePerVsize,
     sigops: tx.sigops,
     fee: tx.fee,
     adjustedVsize: tx.adjustedVsize,
-    acceleration: tx.acceleration
+    acceleration: tx.acceleration,
   };
 }
 
 /**
-   * Given a root transaction and a list of in-mempool ancestors,
-   * Calculate the CPFP cluster
-   * 
-   * @param tx
-   * @param ancestors
-   */
-function calculateCpfpCluster(txid: string, graph: Map<string, GraphTx>): Map<string, GraphTx> {
+ * Given a root transaction and a list of in-mempool ancestors,
+ * Calculate the CPFP cluster
+ *
+ * @param tx
+ * @param ancestors
+ */
+function calculateCpfpCluster(
+  txid: string,
+  graph: Map<string, GraphTx>
+): Map<string, GraphTx> {
   const tx = graph.get(txid);
   if (!tx) {
     return new Map<string, GraphTx>([]);
   }
 
   // Initialize individual & ancestor fee rates
-  graph.forEach(entry => setAncestorScores(entry));
+  graph.forEach((entry) => setAncestorScores(entry));
 
   // Sort by descending ancestor score
   let sortedRelatives = Array.from(graph.values()).sort(mempoolComparator);
@@ -256,9 +331,18 @@ function calculateCpfpCluster(txid: string, graph: Map<string, GraphTx>): Map<st
   let maxIterations = MAX_CLUSTER_ITERATIONS;
   let best = sortedRelatives.shift();
   let bestCluster = new Map<string, GraphTx>(best?.ancestors?.entries() || []);
-  while (sortedRelatives.length && best && (best.txid !== tx.txid && !best.ancestors.has(tx.txid)) && maxIterations > 0) {
+  while (
+    sortedRelatives.length &&
+    best &&
+    best.txid !== tx.txid &&
+    !best.ancestors.has(tx.txid) &&
+    maxIterations > 0
+  ) {
     maxIterations--;
-    if ((best && best.txid === tx.txid) || (bestCluster && bestCluster.has(tx.txid))) {
+    if (
+      (best && best.txid === tx.txid) ||
+      (bestCluster && bestCluster.has(tx.txid))
+    ) {
       break;
     } else {
       // Remove this cluster (it doesn't include our target tx)
@@ -271,7 +355,9 @@ function calculateCpfpCluster(txid: string, graph: Map<string, GraphTx>): Map<st
       // Grab the next highest scoring entry
       best = sortedRelatives.shift();
       if (best) {
-        bestCluster = new Map<string, GraphTx>(best?.ancestors?.entries() || []);
+        bestCluster = new Map<string, GraphTx>(
+          best?.ancestors?.entries() || []
+        );
         bestCluster.set(best?.txid, best);
       }
     }

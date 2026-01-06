@@ -24,8 +24,8 @@ type TaskName = 'blocksPrices' | 'coinStatsIndex';
 class Indexer {
   private runIndexer = true;
   private indexerRunning = false;
-  private tasksRunning: { [key in TaskName]?: boolean; } = {};
-  private tasksScheduled: { [key in TaskName]?: NodeJS.Timeout; } = {};
+  private tasksRunning: { [key in TaskName]?: boolean } = {};
+  private tasksScheduled: { [key in TaskName]?: NodeJS.Timeout } = {};
   private reindexTimeout: NodeJS.Timeout | undefined;
   private coreIndexes: CoreIndex[] = [];
 
@@ -46,13 +46,17 @@ class Indexer {
         synced: indexes[indexName].synced,
         best_block_height: indexes[indexName].best_block_height,
       };
-      logger.info(`Core index '${indexName}' is ${indexes[indexName].synced ? 'synced' : 'not synced'}. Best block height is ${indexes[indexName].best_block_height}`);      
+      logger.info(
+        `Core index '${indexName}' is ${
+          indexes[indexName].synced ? 'synced' : 'not synced'
+        }. Best block height is ${indexes[indexName].best_block_height}`
+      );
       updatedCoreIndexes.push(newState);
 
       if (indexName === 'coinstatsindex' && newState.synced === true) {
         const previousState = this.isCoreIndexReady('coinstatsindex');
         // if (!previousState || previousState.synced === false) {
-          this.runSingleTask('coinStatsIndex');
+        this.runSingleTask('coinStatsIndex');
         // }
       }
     }
@@ -62,9 +66,9 @@ class Indexer {
 
   /**
    * Return the best block height if a core index is available, or 0 if not
-   * 
-   * @param name 
-   * @returns 
+   *
+   * @param name
+   * @returns
    */
   public isCoreIndexReady(name: string): CoreIndex | null {
     for (const index of this.coreIndexes) {
@@ -86,7 +90,8 @@ class Indexer {
   }
 
   private scheduleNextRun(timeout: number): void {
-    if (!this.reindexTimeout) { // Only one future run should be planned, ignore if already scheduled
+    if (!this.reindexTimeout) {
+      // Only one future run should be planned, ignore if already scheduled
       this.reindexTimeout = setTimeout(() => {
         this.reindexTimeout = undefined;
         this.reindex();
@@ -102,11 +107,17 @@ class Indexer {
    * @param {number} timeout - delay in ms
    * @param {boolean} replace - `true` replaces any already scheduled task (works like a debounce), `false` ignores subsequent requests (works like a throttle)
    */
-  public scheduleSingleTask(task: TaskName, timeout: number = 10000, replace = false): void {
+  public scheduleSingleTask(
+    task: TaskName,
+    timeout: number = 10000,
+    replace = false
+  ): void {
     if (this.tasksScheduled[task]) {
-      if (!replace) { //throttle
+      if (!replace) {
+        //throttle
         return;
-      } else { // debounce
+      } else {
+        // debounce
         clearTimeout(this.tasksScheduled[task]);
       }
     }
@@ -114,7 +125,10 @@ class Indexer {
       try {
         await this.runSingleTask(task);
       } catch (e) {
-        logger.err(`Unexpected error in scheduled task ${task}: ` + (e instanceof Error ? e.message : e));
+        logger.err(
+          `Unexpected error in scheduled task ${task}: ` +
+            (e instanceof Error ? e.message : e)
+        );
       } finally {
         clearTimeout(this.tasksScheduled[task]);
       }
@@ -133,39 +147,67 @@ class Indexer {
     this.tasksRunning[task] = true;
 
     switch (task) {
-      case 'blocksPrices': {
-        if (!['testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK) && config.FIAT_PRICE.ENABLED) {
-          let lastestPriceId;
-          try {
-            lastestPriceId = await PricesRepository.$getLatestPriceId();
-          } catch (e) {
-            logger.debug('failed to fetch latest price id from db: ' + (e instanceof Error ? e.message : e));
-          }          if (priceUpdater.historyInserted === false || lastestPriceId === null) {
-            logger.debug(`Blocks prices indexer is waiting for the price updater to complete`, logger.tags.mining);
-            this.scheduleSingleTask(task, 10000);
-          } else {
-            logger.debug(`Blocks prices indexer will run now`, logger.tags.mining);
-            await mining.$indexBlockPrices();
+      case 'blocksPrices':
+        {
+          if (
+            !['testnet', 'signet', 'testnet4'].includes(
+              config.MEMPOOL.NETWORK
+            ) &&
+            config.FIAT_PRICE.ENABLED
+          ) {
+            let lastestPriceId;
+            try {
+              lastestPriceId = await PricesRepository.$getLatestPriceId();
+            } catch (e) {
+              logger.debug(
+                'failed to fetch latest price id from db: ' +
+                  (e instanceof Error ? e.message : e)
+              );
+            }
+            if (
+              priceUpdater.historyInserted === false ||
+              lastestPriceId === null
+            ) {
+              logger.debug(
+                `Blocks prices indexer is waiting for the price updater to complete`,
+                logger.tags.mining
+              );
+              this.scheduleSingleTask(task, 10000);
+            } else {
+              logger.debug(
+                `Blocks prices indexer will run now`,
+                logger.tags.mining
+              );
+              await mining.$indexBlockPrices();
+            }
           }
         }
-      } break;
+        break;
 
-      case 'coinStatsIndex': {
-        logger.debug(`Indexing coinStatsIndex now`);
-        try {
-          await mining.$indexCoinStatsIndex();
-        } catch (e) {
-          logger.debug(`failed to index coinstatsindex: ` + (e instanceof Error ? e.message : e));
+      case 'coinStatsIndex':
+        {
+          logger.debug(`Indexing coinStatsIndex now`);
+          try {
+            await mining.$indexCoinStatsIndex();
+          } catch (e) {
+            logger.debug(
+              `failed to index coinstatsindex: ` +
+                (e instanceof Error ? e.message : e)
+            );
+          }
         }
-      } break;
+        break;
     }
 
     this.tasksRunning[task] = false;
   }
 
   public async $run(): Promise<void> {
-    if (!Common.indexingEnabled() || this.runIndexer === false ||
-      this.indexerRunning === true || mempool.hasPriority()
+    if (
+      !Common.indexingEnabled() ||
+      this.runIndexer === false ||
+      this.indexerRunning === true ||
+      mempool.hasPriority()
     ) {
       return;
     }
@@ -183,14 +225,19 @@ class Indexer {
         try {
           await priceUpdater.$run();
         } catch (e) {
-          logger.err(`Running priceUpdater failed. Reason: ` + (e instanceof Error ? e.message : e));
+          logger.err(
+            `Running priceUpdater failed. Reason: ` +
+              (e instanceof Error ? e.message : e)
+          );
         }
       }
 
       // Do not attempt to index anything unless Bitcoin Core is fully synced
       const blockchainInfo = await bitcoinClient.getBlockchainInfo();
       if (blockchainInfo.blocks !== blockchainInfo.headers) {
-        logger.debug(`Bitcoin Core not fully synced, retrying index run in 10 seconds.`);
+        logger.debug(
+          `Bitcoin Core not fully synced, retrying index run in 10 seconds.`
+        );
         nextRunDelay = retryDelay;
         return;
       }
@@ -202,7 +249,10 @@ class Indexer {
       const chainValid = await blocks.$generateBlockDatabase();
       if (chainValid === false) {
         // Chain of block hash was invalid, so we need to reindex. Stop here and continue at the next iteration
-        logger.warn(`The chain of block hash is invalid, re-indexing invalid data in 10 seconds.`, logger.tags.mining);
+        logger.warn(
+          `The chain of block hash is invalid, re-indexing invalid data in 10 seconds.`,
+          logger.tags.mining
+        );
         nextRunDelay = retryDelay;
         return;
       }
@@ -225,14 +275,19 @@ class Indexer {
       runSuccessful = true;
     } catch (e) {
       nextRunDelay = retryDelay;
-      logger.err(`Indexer failed, trying again in 10 seconds. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Indexer failed, trying again in 10 seconds. Reason: ` +
+          (e instanceof Error ? e.message : e)
+      );
     } finally {
       this.indexerRunning = false;
       const nextRunAt = new Date(Date.now() + nextRunDelay).toUTCString();
       if (runSuccessful) {
         logger.debug(`Indexing completed. Next run planned at ${nextRunAt}`);
       } else {
-        logger.debug(`Indexing did not complete, next run planned at ${nextRunAt}`);
+        logger.debug(
+          `Indexing did not complete, next run planned at ${nextRunAt}`
+        );
       }
       this.scheduleNextRun(nextRunDelay);
     }

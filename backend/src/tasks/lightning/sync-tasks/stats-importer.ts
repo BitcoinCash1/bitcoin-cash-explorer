@@ -16,11 +16,21 @@ class LightningStatsImporter {
 
   async $run(): Promise<void> {
     try {
-      const [channels]: any[] = await DB.query('SELECT short_id from channels;');
-      logger.info(`Caching funding txs for currently existing channels`, logger.tags.ln);
-      await fundingTxFetcher.$fetchChannelsFundingTxs(channels.map(channel => channel.short_id));
+      const [channels]: any[] = await DB.query(
+        'SELECT short_id from channels;'
+      );
+      logger.info(
+        `Caching funding txs for currently existing channels`,
+        logger.tags.ln
+      );
+      await fundingTxFetcher.$fetchChannelsFundingTxs(
+        channels.map((channel) => channel.short_id)
+      );
 
-      if (config.MEMPOOL.NETWORK !== 'mainnet' || config.DATABASE.ENABLED === false) {
+      if (
+        config.MEMPOOL.NETWORK !== 'mainnet' ||
+        config.DATABASE.ENABLED === false
+      ) {
         return;
       }
 
@@ -34,15 +44,20 @@ class LightningStatsImporter {
   /**
    * Generate LN network stats for one day
    */
-  public async computeNetworkStats(timestamp: number,
-    networkGraph: ILightningApi.NetworkGraph, isHistorical: boolean = false): Promise<unknown> {
+  public async computeNetworkStats(
+    timestamp: number,
+    networkGraph: ILightningApi.NetworkGraph,
+    isHistorical: boolean = false
+  ): Promise<unknown> {
     // Node counts and network shares
     let clearnetNodes = 0;
     let torNodes = 0;
     let clearnetTorNodes = 0;
     let unannouncedNodes = 0;
 
-    const [nodesInDbRaw]: any[] = await DB.query(`SELECT public_key FROM nodes`);
+    const [nodesInDbRaw]: any[] = await DB.query(
+      `SELECT public_key FROM nodes`
+    );
     const nodesInDb = {};
     for (const node of nodesInDbRaw) {
       nodesInDb[node.public_key] = node;
@@ -68,12 +83,22 @@ class LightningStatsImporter {
       let hasClearnet = false;
       let isUnnanounced = true;
 
-      for (const socket of (node.addresses ?? [])) {
+      for (const socket of node.addresses ?? []) {
         if (!socket.network?.length && !socket.addr?.length) {
           continue;
         }
-        hasOnion = hasOnion || ['torv2', 'torv3'].includes(socket.network) || socket.addr.indexOf('onion') !== -1 || socket.addr.indexOf('torv2') !== -1 || socket.addr.indexOf('torv3') !== -1;
-        hasClearnet = hasClearnet || ['ipv4', 'ipv6'].includes(socket.network) || [4, 6].includes(isIP(socket.addr.split(':')[0])) || socket.addr.indexOf('ipv4') !== -1 || socket.addr.indexOf('ipv6') !== -1;;
+        hasOnion =
+          hasOnion ||
+          ['torv2', 'torv3'].includes(socket.network) ||
+          socket.addr.indexOf('onion') !== -1 ||
+          socket.addr.indexOf('torv2') !== -1 ||
+          socket.addr.indexOf('torv3') !== -1;
+        hasClearnet =
+          hasClearnet ||
+          ['ipv4', 'ipv6'].includes(socket.network) ||
+          [4, 6].includes(isIP(socket.addr.split(':')[0])) ||
+          socket.addr.indexOf('ipv4') !== -1 ||
+          socket.addr.indexOf('ipv6') !== -1;
       }
       if (hasOnion && hasClearnet) {
         clearnetTorNodes++;
@@ -99,8 +124,10 @@ class LightningStatsImporter {
     const feeRates: number[] = [];
     const baseFees: number[] = [];
     const alreadyCountedChannels = {};
-    
-    const [channelsInDbRaw]: any[] = await DB.query(`SELECT short_id FROM channels`);
+
+    const [channelsInDbRaw]: any[] = await DB.query(
+      `SELECT short_id FROM channels`
+    );
     const channelsInDb = {};
     for (const channel of channelsInDbRaw) {
       channelsInDb[channel.short_id] = channel;
@@ -114,22 +141,28 @@ class LightningStatsImporter {
 
       const tx = await fundingTxFetcher.$fetchChannelOpenTx(short_id);
       if (!tx) {
-        logger.err(`Unable to fetch funding tx for channel ${short_id}. Capacity and creation date is unknown. Skipping channel.`, logger.tags.ln);
+        logger.err(
+          `Unable to fetch funding tx for channel ${short_id}. Capacity and creation date is unknown. Skipping channel.`,
+          logger.tags.ln
+        );
         continue;
       }
 
       // If we don't know about this channel, insert it in db
       if (isHistorical === true && !channelsInDb[short_id]) {
-        await channelsApi.$saveChannel({
-          channel_id: short_id,
-          chan_point: `${tx.txid}:${short_id.split('x')[2]}`,
-          last_update: channel.last_update,
-          node1_pub: channel.node1_pub,
-          node2_pub: channel.node2_pub,
-          capacity: (tx.value * 100000000).toString(),
-          node1_policy: null,
-          node2_policy: null,
-        }, 0);
+        await channelsApi.$saveChannel(
+          {
+            channel_id: short_id,
+            chan_point: `${tx.txid}:${short_id.split('x')[2]}`,
+            last_update: channel.last_update,
+            node1_pub: channel.node1_pub,
+            node2_pub: channel.node2_pub,
+            capacity: (tx.value * 100000000).toString(),
+            node1_policy: null,
+            node2_policy: null,
+          },
+          0
+        );
         channelsInDb[channel.channel_id] = channel;
       }
 
@@ -145,24 +178,29 @@ class LightningStatsImporter {
           channels: 0,
         };
       }
-      
+
       if (!alreadyCountedChannels[short_id]) {
         capacity += Math.round(tx.value * 100000000);
         capacities.push(Math.round(tx.value * 100000000));
         alreadyCountedChannels[short_id] = true;
 
-        nodeStats[channel.node1_pub].capacity += Math.round(tx.value * 100000000);
+        nodeStats[channel.node1_pub].capacity += Math.round(
+          tx.value * 100000000
+        );
         nodeStats[channel.node1_pub].channels++;
-        nodeStats[channel.node2_pub].capacity += Math.round(tx.value * 100000000);
+        nodeStats[channel.node2_pub].capacity += Math.round(
+          tx.value * 100000000
+        );
         nodeStats[channel.node2_pub].channels++;
       }
 
-      if (isHistorical === false) { // Coming from the node
+      if (isHistorical === false) {
+        // Coming from the node
         for (const policy of [channel.node1_policy, channel.node2_policy]) {
           if (policy && parseInt(policy.fee_rate_milli_msat, 10) < 5000) {
             avgFeeRate += parseInt(policy.fee_rate_milli_msat, 10);
             feeRates.push(parseInt(policy.fee_rate_milli_msat, 10));
-          }  
+          }
           if (policy && parseInt(policy.fee_base_msat, 10) < 5000) {
             avgBaseFee += parseInt(policy.fee_base_msat, 10);
             baseFees.push(parseInt(policy.fee_base_msat, 10));
@@ -195,14 +233,20 @@ class LightningStatsImporter {
     avgBaseFee /= Math.max(networkGraph.edges.length, 1);
 
     if (capacities.length > 0) {
-      medCapacity = capacities.sort((a, b) => b - a)[Math.round(capacities.length / 2 - 1)];
+      medCapacity = capacities.sort((a, b) => b - a)[
+        Math.round(capacities.length / 2 - 1)
+      ];
       avgCapacity = Math.round(capacity / Math.max(capacities.length, 1));
     }
     if (feeRates.length > 0) {
-      medFeeRate = feeRates.sort((a, b) => b - a)[Math.round(feeRates.length / 2 - 1)];
+      medFeeRate = feeRates.sort((a, b) => b - a)[
+        Math.round(feeRates.length / 2 - 1)
+      ];
     }
     if (baseFees.length > 0) {
-      medBaseFee = baseFees.sort((a, b) => b - a)[Math.round(baseFees.length / 2 - 1)];
+      medBaseFee = baseFees.sort((a, b) => b - a)[
+        Math.round(baseFees.length / 2 - 1)
+      ];
     }
 
     let query = `INSERT INTO lightning_stats(
@@ -308,7 +352,7 @@ class LightningStatsImporter {
 
     return {
       added: timestamp,
-      node_count: networkGraph.nodes.length
+      node_count: networkGraph.nodes.length,
     };
   }
 
@@ -317,7 +361,9 @@ class LightningStatsImporter {
    */
   async $importHistoricalLightningStats(): Promise<void> {
     if (!config.LIGHTNING.TOPOLOGY_FOLDER) {
-      logger.info(`Lightning topology folder is not set. Not importing historical LN stats`);
+      logger.info(
+        `Lightning topology folder is not set. Not importing historical LN stats`
+      );
       return;
     }
 
@@ -327,7 +373,10 @@ class LightningStatsImporter {
       try {
         fileList = await fsPromises.readdir(this.topologiesFolder);
       } catch (e) {
-        logger.err(`Unable to open topology folder at ${this.topologiesFolder}`, logger.tags.ln);
+        logger.err(
+          `Unable to open topology folder at ${this.topologiesFolder}`,
+          logger.tags.ln
+        );
         throw e;
       }
       // Insert history from the most recent to the oldest
@@ -365,16 +414,26 @@ class LightningStatsImporter {
           continue;
         }
 
-        logger.debug(`Reading ${this.topologiesFolder}/${filename}`, logger.tags.ln);
+        logger.debug(
+          `Reading ${this.topologiesFolder}/${filename}`,
+          logger.tags.ln
+        );
         let fileContent = '';
         try {
-          fileContent = await fsPromises.readFile(`${this.topologiesFolder}/${filename}`, 'utf8');
+          fileContent = await fsPromises.readFile(
+            `${this.topologiesFolder}/${filename}`,
+            'utf8'
+          );
         } catch (e: any) {
-          if (e.errno == -1) { // EISDIR - Ignore directorie
+          if (e.errno == -1) {
+            // EISDIR - Ignore directorie
             totalProcessed++;
             continue;
           }
-          logger.err(`Unable to open ${this.topologiesFolder}/${filename}`, logger.tags.ln);
+          logger.err(
+            `Unable to open ${this.topologiesFolder}/${filename}`,
+            logger.tags.ln
+          );
           totalProcessed++;
           continue;
         }
@@ -384,44 +443,77 @@ class LightningStatsImporter {
           graph = JSON.parse(fileContent);
           graph = await this.cleanupTopology(graph);
         } catch (e) {
-          logger.debug(`Invalid topology file ${this.topologiesFolder}/${filename}, cannot parse the content. Reason: ${e instanceof Error ? e.message : e}`, logger.tags.ln);
+          logger.debug(
+            `Invalid topology file ${
+              this.topologiesFolder
+            }/${filename}, cannot parse the content. Reason: ${
+              e instanceof Error ? e.message : e
+            }`,
+            logger.tags.ln
+          );
           totalProcessed++;
           continue;
         }
-    
+
         if (this.isIncorrectSnapshot(timestamp, graph)) {
-          logger.debug(`Ignoring ${this.topologiesFolder}/${filename}, because we defined it as an incorrect snapshot`);
+          logger.debug(
+            `Ignoring ${this.topologiesFolder}/${filename}, because we defined it as an incorrect snapshot`
+          );
           ++totalProcessed;
           continue;
         }
 
         if (!logStarted) {
-          logger.info(`Founds a topology file that we did not import. Importing historical lightning stats now.`, logger.tags.ln);
+          logger.info(
+            `Founds a topology file that we did not import. Importing historical lightning stats now.`,
+            logger.tags.ln
+          );
           logStarted = true;
         }
-        
-        const datestr = `${new Date(timestamp * 1000).toUTCString()} (${timestamp})`;
-        logger.debug(`${datestr}: Found ${graph.nodes.length} nodes and ${graph.edges.length} channels`, logger.tags.ln);
+
+        const datestr = `${new Date(
+          timestamp * 1000
+        ).toUTCString()} (${timestamp})`;
+        logger.debug(
+          `${datestr}: Found ${graph.nodes.length} nodes and ${graph.edges.length} channels`,
+          logger.tags.ln
+        );
 
         totalProcessed++;
 
         if (processed > 10) {
-          logger.info(`Generating LN network stats for ${datestr}. Processed ${totalProcessed}/${fileList.length} files`, logger.tags.ln);
+          logger.info(
+            `Generating LN network stats for ${datestr}. Processed ${totalProcessed}/${fileList.length} files`,
+            logger.tags.ln
+          );
           processed = 0;
         } else {
-          logger.debug(`Generating LN network stats for ${datestr}. Processed ${totalProcessed}/${fileList.length} files`, logger.tags.ln);
+          logger.debug(
+            `Generating LN network stats for ${datestr}. Processed ${totalProcessed}/${fileList.length} files`,
+            logger.tags.ln
+          );
         }
-        await fundingTxFetcher.$fetchChannelsFundingTxs(graph.edges.map(channel => channel.channel_id.slice(0, -2)));
+        await fundingTxFetcher.$fetchChannelsFundingTxs(
+          graph.edges.map((channel) => channel.channel_id.slice(0, -2))
+        );
         const stat = await this.computeNetworkStats(timestamp, graph, true);
 
         existingStatsTimestamps[timestamp] = stat;
       }
 
       if (totalProcessed > 0) {
-        logger.info(`Lightning network stats historical import completed`, logger.tags.ln);
+        logger.info(
+          `Lightning network stats historical import completed`,
+          logger.tags.ln
+        );
       }
     } catch (e) {
-      logger.err(`Lightning network stats historical failed. Reason: ${e instanceof Error ? e.message : e}`, logger.tags.ln);
+      logger.err(
+        `Lightning network stats historical failed. Reason: ${
+          e instanceof Error ? e.message : e
+        }`,
+        logger.tags.ln
+      );
     }
   }
 
@@ -438,7 +530,7 @@ class LightningStatsImporter {
         const formatted = Common.findSocketNetwork(address);
         addresses.push({
           network: formatted.network,
-          addr: formatted.url
+          addr: formatted.url,
         });
       }
 
@@ -475,7 +567,7 @@ class LightningStatsImporter {
               fee_rate_milli_msat: edge.fee_proportional_millionths,
               max_htlc_msat: edge.htlc_maximum_msat,
               last_update: edge.timestamp,
-              disabled: false,          
+              disabled: false,
             },
             node2_policy: null,
           });
@@ -487,31 +579,67 @@ class LightningStatsImporter {
   }
 
   private isIncorrectSnapshot(timestamp, graph): boolean {
-    if (timestamp >= 1549065600 /* 2019-02-02 */ && timestamp <= 1550620800 /* 2019-02-20 */ && graph.nodes.length < 2600) {
-        return true;
-    }
-    if (timestamp >= 1552953600 /* 2019-03-19 */ && timestamp <= 1556323200 /* 2019-05-27 */ && graph.nodes.length < 4000) {
+    if (
+      timestamp >= 1549065600 /* 2019-02-02 */ &&
+      timestamp <= 1550620800 /* 2019-02-20 */ &&
+      graph.nodes.length < 2600
+    ) {
       return true;
     }
-    if (timestamp >= 1557446400 /* 2019-05-10 */ && timestamp <= 1560470400 /* 2019-06-14 */ && graph.nodes.length < 4000) {
+    if (
+      timestamp >= 1552953600 /* 2019-03-19 */ &&
+      timestamp <= 1556323200 /* 2019-05-27 */ &&
+      graph.nodes.length < 4000
+    ) {
       return true;
     }
-    if (timestamp >= 1561680000 /* 2019-06-28 */ && timestamp <= 1563148800 /* 2019-07-15 */ && graph.nodes.length < 4000) {
+    if (
+      timestamp >= 1557446400 /* 2019-05-10 */ &&
+      timestamp <= 1560470400 /* 2019-06-14 */ &&
+      graph.nodes.length < 4000
+    ) {
       return true;
     }
-    if (timestamp >= 1571270400 /* 2019-11-17 */ && timestamp <= 1580601600 /* 2020-02-02 */ && graph.nodes.length < 4500) {
+    if (
+      timestamp >= 1561680000 /* 2019-06-28 */ &&
+      timestamp <= 1563148800 /* 2019-07-15 */ &&
+      graph.nodes.length < 4000
+    ) {
       return true;
     }
-    if (timestamp >= 1591142400 /* 2020-06-03 */ && timestamp <= 1592006400 /* 2020-06-13 */ && graph.nodes.length < 5500) {
+    if (
+      timestamp >= 1571270400 /* 2019-11-17 */ &&
+      timestamp <= 1580601600 /* 2020-02-02 */ &&
+      graph.nodes.length < 4500
+    ) {
       return true;
     }
-    if (timestamp >= 1632787200 /* 2021-09-28 */ && timestamp <= 1633564800 /* 2021-10-07 */ && graph.nodes.length < 13000) {
+    if (
+      timestamp >= 1591142400 /* 2020-06-03 */ &&
+      timestamp <= 1592006400 /* 2020-06-13 */ &&
+      graph.nodes.length < 5500
+    ) {
       return true;
     }
-    if (timestamp >= 1634256000 /* 2021-10-15 */ && timestamp <= 1645401600 /* 2022-02-21 */ && graph.nodes.length < 17000) {
+    if (
+      timestamp >= 1632787200 /* 2021-09-28 */ &&
+      timestamp <= 1633564800 /* 2021-10-07 */ &&
+      graph.nodes.length < 13000
+    ) {
       return true;
     }
-    if (timestamp >= 1654992000 /* 2022-06-12 */ && timestamp <= 1661472000 /* 2022-08-26 */ && graph.nodes.length < 14000) {
+    if (
+      timestamp >= 1634256000 /* 2021-10-15 */ &&
+      timestamp <= 1645401600 /* 2022-02-21 */ &&
+      graph.nodes.length < 17000
+    ) {
+      return true;
+    }
+    if (
+      timestamp >= 1654992000 /* 2022-06-12 */ &&
+      timestamp <= 1661472000 /* 2022-08-26 */ &&
+      graph.nodes.length < 14000
+    ) {
       return true;
     }
 
@@ -521,7 +649,6 @@ class LightningStatsImporter {
   private async $cleanupIncorrectSnapshot(): Promise<void> {
     // We do not run this one automatically because those stats are not supposed to be inserted in the first
     // place, but I write them here to remind us we manually run those queries
-
     // DELETE FROM lightning_stats
     // WHERE (
     //   UNIX_TIMESTAMP(added) >= 1549065600 AND UNIX_TIMESTAMP(added) <= 1550620800 AND node_count < 2600 OR
@@ -534,7 +661,6 @@ class LightningStatsImporter {
     //   UNIX_TIMESTAMP(added) >= 1634256000 AND UNIX_TIMESTAMP(added) <= 1645401600 AND node_count < 17000 OR
     //   UNIX_TIMESTAMP(added) >= 1654992000 AND UNIX_TIMESTAMP(added) <= 1661472000 AND node_count < 14000
     // )
-
     // DELETE FROM node_stats
     // WHERE (
     //   UNIX_TIMESTAMP(added) >= 1549065600 AND UNIX_TIMESTAMP(added) <= 1550620800 OR
@@ -545,9 +671,9 @@ class LightningStatsImporter {
     //   UNIX_TIMESTAMP(added) >= 1591142400 AND UNIX_TIMESTAMP(added) <= 1592006400 OR
     //   UNIX_TIMESTAMP(added) >= 1632787200 AND UNIX_TIMESTAMP(added) <= 1633564800 OR
     //   UNIX_TIMESTAMP(added) >= 1634256000 AND UNIX_TIMESTAMP(added) <= 1645401600 OR
-    //   UNIX_TIMESTAMP(added) >= 1654992000 AND UNIX_TIMESTAMP(added) <= 1661472000 
+    //   UNIX_TIMESTAMP(added) >= 1654992000 AND UNIX_TIMESTAMP(added) <= 1661472000
     // )
   }
 }
 
-export default new LightningStatsImporter;
+export default new LightningStatsImporter();

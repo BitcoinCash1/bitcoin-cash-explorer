@@ -65,7 +65,10 @@ class StatisticsApi {
     }
   }
 
-  public async $create(statistics: Statistic, convertToDatetime = false): Promise<number | undefined> {
+  public async $create(
+    statistics: Statistic,
+    convertToDatetime = false
+  ): Promise<number | undefined> {
     try {
       const query = `INSERT INTO statistics(
               added,
@@ -116,7 +119,11 @@ class StatisticsApi {
               vsize_1800,
               vsize_2000
             )
-            VALUES (${convertToDatetime ? `FROM_UNIXTIME(${statistics.added})` : statistics.added}, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
+            VALUES (${
+              convertToDatetime
+                ? `FROM_UNIXTIME(${statistics.added})`
+                : statistics.added
+            }, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
       const params: (string | number)[] = [
@@ -220,7 +227,11 @@ class StatisticsApi {
       CAST(avg(vsize_1800) as DOUBLE) as vsize_1800,
       CAST(avg(vsize_2000) as DOUBLE) as vsize_2000 \
       FROM statistics \
-      ${interval === 'all' ? '' : `WHERE added BETWEEN DATE_SUB(NOW(), INTERVAL ${interval}) AND NOW()`} \
+      ${
+        interval === 'all'
+          ? ''
+          : `WHERE added BETWEEN DATE_SUB(NOW(), INTERVAL ${interval}) AND NOW()`
+      } \
       GROUP BY UNIX_TIMESTAMP(added) DIV ${div} \
       ORDER BY statistics.added DESC;`;
   }
@@ -271,7 +282,11 @@ class StatisticsApi {
       vsize_1800,
       vsize_2000 \
       FROM statistics \
-      ${interval === 'all' ? '' : `WHERE added BETWEEN DATE_SUB(NOW(), INTERVAL ${interval}) AND NOW()`} \
+      ${
+        interval === 'all'
+          ? ''
+          : `WHERE added BETWEEN DATE_SUB(NOW(), INTERVAL ${interval}) AND NOW()`
+      } \
       GROUP BY UNIX_TIMESTAMP(added) DIV ${div} \
       ORDER BY statistics.added DESC;`;
   }
@@ -409,7 +424,9 @@ class StatisticsApi {
     }
   }
 
-  private mapStatisticToOptimizedStatistic(statistic: Statistic[]): OptimizedStatistic[] {
+  private mapStatisticToOptimizedStatistic(
+    statistic: Statistic[]
+  ): OptimizedStatistic[] {
     return statistic.map((s) => {
       return {
         added: s.added,
@@ -458,14 +475,17 @@ class StatisticsApi {
           s.vsize_1600,
           s.vsize_1800,
           s.vsize_2000,
-        ]
+        ],
       };
     });
   }
 
-  public mapOptimizedStatisticToStatistic(statistic: OptimizedStatistic[]): Statistic[] {
+  public mapOptimizedStatisticToStatistic(
+    statistic: OptimizedStatistic[]
+  ): Statistic[] {
     return statistic.map((s) => {
-      const completeVsizes = s.vsizes.length === 37 ? [0, ...s.vsizes] : s.vsizes;
+      const completeVsizes =
+        s.vsizes.length === 37 ? [0, ...s.vsizes] : s.vsizes;
       return {
         added: s.added,
         unconfirmed_transactions: s.count,
@@ -514,7 +534,7 @@ class StatisticsApi {
         vsize_1600: completeVsizes[36],
         vsize_1800: completeVsizes[37],
         vsize_2000: completeVsizes[38],
-      }
+      };
     });
   }
 }

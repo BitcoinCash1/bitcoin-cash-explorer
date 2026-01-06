@@ -3,10 +3,16 @@ import path from 'path';
 import config from './config';
 import { createPool, Pool, PoolConnection } from 'mysql2/promise';
 import logger, { LogLevel } from './logger';
-import { FieldPacket, OkPacket, PoolOptions, ResultSetHeader, RowDataPacket } from 'mysql2/typings/mysql';
+import {
+  FieldPacket,
+  OkPacket,
+  PoolOptions,
+  ResultSetHeader,
+  RowDataPacket,
+} from 'mysql2/typings/mysql';
 import { execSync } from 'child_process';
 
- class DB {
+class DB {
   constructor() {
     if (config.DATABASE.SOCKET !== '') {
       this.poolConfig.socketPath = config.DATABASE.SOCKET;
@@ -28,13 +34,25 @@ import { execSync } from 'child_process';
   private checkDBFlag() {
     if (config.DATABASE.ENABLED === false) {
       const stack = new Error().stack;
-      logger.err(`Trying to use DB feature but config.DATABASE.ENABLED is set to false, please open an issue.\nStack trace: ${stack}}`);
+      logger.err(
+        `Trying to use DB feature but config.DATABASE.ENABLED is set to false, please open an issue.\nStack trace: ${stack}}`
+      );
     }
   }
 
-  public async query<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket |
-    OkPacket[] | ResultSetHeader>(query, params?, errorLogLevel: LogLevel | 'silent' = 'debug', connection?: PoolConnection): Promise<[T, FieldPacket[]]>
-  {
+  public async query<
+    T extends
+      | RowDataPacket[][]
+      | RowDataPacket[]
+      | OkPacket
+      | OkPacket[]
+      | ResultSetHeader,
+  >(
+    query,
+    params?,
+    errorLogLevel: LogLevel | 'silent' = 'debug',
+    connection?: PoolConnection
+  ): Promise<[T, FieldPacket[]]> {
     this.checkDBFlag();
     let hardTimeout;
     if (query?.timeout != null) {
@@ -45,23 +63,47 @@ import { execSync } from 'child_process';
     if (hardTimeout > 0) {
       return new Promise((resolve, reject) => {
         const timer = setTimeout(() => {
-          reject(new Error(`DB query failed to return, reject or time out within ${hardTimeout / 1000}s - ${query?.sql?.slice(0, 160) || (typeof(query) === 'string' || query instanceof String ? query?.slice(0, 160) : 'unknown query')}`));
+          reject(
+            new Error(
+              `DB query failed to return, reject or time out within ${
+                hardTimeout / 1000
+              }s - ${
+                query?.sql?.slice(0, 160) ||
+                (typeof query === 'string' || query instanceof String
+                  ? query?.slice(0, 160)
+                  : 'unknown query')
+              }`
+            )
+          );
         }, hardTimeout);
 
         // Use a specific connection if provided, otherwise delegate to the pool
-        const connectionPromise = connection ? Promise.resolve(connection) : this.getPool();
-        connectionPromise.then((pool: PoolConnection | Pool) => {
-          return pool.query(query, params) as Promise<[T, FieldPacket[]]>;
-        }).then(result => {
-          resolve(result);
-        }).catch(error => {
-          if (errorLogLevel !== 'silent') {
-            logger[errorLogLevel](`database query "${query?.sql?.slice(0, 160) || (typeof(query) === 'string' || query instanceof String ? query?.slice(0, 160) : 'unknown query')}" failed!`);
-          }
-          reject(error);
-        }).finally(() => {
-          clearTimeout(timer);
-        });
+        const connectionPromise = connection
+          ? Promise.resolve(connection)
+          : this.getPool();
+        connectionPromise
+          .then((pool: PoolConnection | Pool) => {
+            return pool.query(query, params) as Promise<[T, FieldPacket[]]>;
+          })
+          .then((result) => {
+            resolve(result);
+          })
+          .catch((error) => {
+            if (errorLogLevel !== 'silent') {
+              logger[errorLogLevel](
+                `database query "${
+                  query?.sql?.slice(0, 160) ||
+                  (typeof query === 'string' || query instanceof String
+                    ? query?.slice(0, 160)
+                    : 'unknown query')
+                }" failed!`
+              );
+            }
+            reject(error);
+          })
+          .finally(() => {
+            clearTimeout(timer);
+          });
       });
     } else {
       try {
@@ -69,7 +111,14 @@ import { execSync } from 'child_process';
         return pool.query(query, params);
       } catch (e) {
         if (errorLogLevel !== 'silent') {
-          logger[errorLogLevel](`database query "${query?.sql?.slice(0, 160) || (typeof(query) === 'string' || query instanceof String ? query?.slice(0, 160) : 'unknown query')}" failed!`);
+          logger[errorLogLevel](
+            `database query "${
+              query?.sql?.slice(0, 160) ||
+              (typeof query === 'string' || query instanceof String
+                ? query?.slice(0, 160)
+                : 'unknown query')
+            }" failed!`
+          );
         }
         throw e;
       }
@@ -81,22 +130,38 @@ import { execSync } from 'child_process';
       await connection.rollback();
       await connection.release();
     } catch (e) {
-      logger.warn('Failed to rollback incomplete db transaction: ' + (e instanceof Error ? e.message : e));
+      logger.warn(
+        'Failed to rollback incomplete db transaction: ' +
+          (e instanceof Error ? e.message : e)
+      );
     }
   }
 
-  public async $atomicQuery<T extends RowDataPacket[][] | RowDataPacket[] | OkPacket |
-    OkPacket[] | ResultSetHeader>(queries: { query, params }[], errorLogLevel: LogLevel | 'silent' = 'debug'): Promise<[T, FieldPacket[]][]>
-  {
+  public async $atomicQuery<
+    T extends
+      | RowDataPacket[][]
+      | RowDataPacket[]
+      | OkPacket
+      | OkPacket[]
+      | ResultSetHeader,
+  >(
+    queries: { query; params }[],
+    errorLogLevel: LogLevel | 'silent' = 'debug'
+  ): Promise<[T, FieldPacket[]][]> {
     const pool = await this.getPool();
     let connection;
     try {
       connection = await pool.getConnection();
       await connection.beginTransaction();
 
-      const results: [T, FieldPacket[]][]  = [];
+      const results: [T, FieldPacket[]][] = [];
       for (const query of queries) {
-        const result = await this.query(query.query, query.params, errorLogLevel, connection) as [T, FieldPacket[]];
+        const result = (await this.query(
+          query.query,
+          query.params,
+          errorLogLevel,
+          connection
+        )) as [T, FieldPacket[]];
         results.push(result);
       }
 
@@ -104,7 +169,10 @@ import { execSync } from 'child_process';
 
       return results;
     } catch (e) {
-      logger.warn('Could not complete db transaction, rolling back: ' + (e instanceof Error ? e.message : e));
+      logger.warn(
+        'Could not complete db transaction, rolling back: ' +
+          (e instanceof Error ? e.message : e)
+      );
       if (connection) {
         await this.$rollbackAtomic(connection);
       }
@@ -122,13 +190,18 @@ import { execSync } from 'child_process';
       await this.query('SELECT ?', [1]);
       logger.info('Database connection established.');
     } catch (e) {
-      logger.err('Could not connect to database: ' + (e instanceof Error ? e.message : e));
+      logger.err(
+        'Could not connect to database: ' + (e instanceof Error ? e.message : e)
+      );
       process.exit(1);
     }
   }
 
   public getPidLock(): boolean {
-    const filePath = path.join(config.DATABASE.PID_DIR || __dirname, `/mempool-${config.DATABASE.DATABASE}.pid`);
+    const filePath = path.join(
+      config.DATABASE.PID_DIR || __dirname,
+      `/mempool-${config.DATABASE.DATABASE}.pid`
+    );
     this.enforcePidLock(filePath);
     fs.writeFileSync(filePath, `${process.pid}`);
     return true;
@@ -146,7 +219,9 @@ import { execSync } from 'child_process';
       try {
         cmd = execSync(`ps -p ${pid} -o args=`);
       } catch (e) {
-        logger.warn(`Stale PID file at ${filePath}, but no process running on that PID ${pid}`);
+        logger.warn(
+          `Stale PID file at ${filePath}, but no process running on that PID ${pid}`
+        );
         return;
       }
 
@@ -155,13 +230,18 @@ import { execSync } from 'child_process';
         logger.err(msg);
         throw new Error(msg);
       } else {
-        logger.warn(`Stale PID file at ${filePath}, but the PID ${pid} does not belong to a running mempool instance`);
+        logger.warn(
+          `Stale PID file at ${filePath}, but the PID ${pid} does not belong to a running mempool instance`
+        );
       }
     }
   }
 
   public releasePidLock(): void {
-    const filePath = path.join(config.DATABASE.PID_DIR || __dirname, `/mempool-${config.DATABASE.DATABASE}.pid`);
+    const filePath = path.join(
+      config.DATABASE.PID_DIR || __dirname,
+      `/mempool-${config.DATABASE.DATABASE}.pid`
+    );
     if (fs.existsSync(filePath)) {
       const pid = parseInt(fs.readFileSync(filePath, 'utf-8'));
       // only release our own pid file

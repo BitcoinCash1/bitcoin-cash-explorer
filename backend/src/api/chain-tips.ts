@@ -12,8 +12,13 @@ export interface ChainTip {
   height: number;
   hash: string;
   branchlen: number;
-  status: 'invalid' | 'active' | 'valid-fork' | 'valid-headers' | 'headers-only';
-};
+  status:
+    | 'invalid'
+    | 'active'
+    | 'valid-fork'
+    | 'valid-headers'
+    | 'headers-only';
+}
 
 export interface StaleTip extends ChainTip {
   stale: BlockExtended;
@@ -34,7 +39,11 @@ class ChainTips {
   private blockCache: { [hash: string]: OrphanedBlock } = {};
   private orphansByHeight: { [height: number]: OrphanedBlock[] } = {};
   private indexingOrphanedBlocks = false;
-  private indexingQueue: { blockhash?: string, block?: IEsploraApi.Block, tip: OrphanedBlock }[] = [];
+  private indexingQueue: {
+    blockhash?: string;
+    block?: IEsploraApi.Block;
+    tip: OrphanedBlock;
+  }[] = [];
 
   private staleTipsCacheSize = 50;
   private maxIndexingQueueSize = 100;
@@ -43,9 +52,14 @@ class ChainTips {
     try {
       this.chainTips = await bitcoinClient.getChainTips();
 
-      const activeTipHeight = this.chainTips.find(tip => tip.status === 'active')?.height || (await bitcoinApi.$getBlockHeightTip());
+      const activeTipHeight =
+        this.chainTips.find((tip) => tip.status === 'active')?.height ||
+        (await bitcoinApi.$getBlockHeightTip());
       let minIndexHeight = 0;
-      const indexedBlockAmount = Math.min(config.MEMPOOL.INDEXING_BLOCKS_AMOUNT, activeTipHeight);
+      const indexedBlockAmount = Math.min(
+        config.MEMPOOL.INDEXING_BLOCKS_AMOUNT,
+        activeTipHeight
+      );
       if (indexedBlockAmount > 0) {
         minIndexHeight = Math.max(0, activeTipHeight - indexedBlockAmount + 1);
       }
@@ -82,12 +96,17 @@ class ChainTips {
                   }
                 }
                 // make sure the cached canonical block at this height is correct & up to date
-                if (block.height >= (activeTipHeight - (config.MEMPOOL.INITIAL_BLOCKS_AMOUNT * 4))) {
+                if (
+                  block.height >=
+                  activeTipHeight - config.MEMPOOL.INITIAL_BLOCKS_AMOUNT * 4
+                ) {
                   const cachedBlocks = blocks.getBlocks();
                   for (const cachedBlock of cachedBlocks) {
                     if (cachedBlock.height === block.height) {
                       // ensure this stale block is included in the orphans list
-                      cachedBlock.extras.orphans = Array.from(new Set([...(cachedBlock.extras.orphans || []), orphan]));
+                      cachedBlock.extras.orphans = Array.from(
+                        new Set([...(cachedBlock.extras.orphans || []), orphan])
+                      );
                     }
                   }
                 }
@@ -97,13 +116,15 @@ class ChainTips {
               orphans.push(orphan);
             }
             hash = orphan?.prevhash;
-          } while (hash && (Date.now() < breakAt));
+          } while (hash && Date.now() < breakAt);
           for (const orphan of orphans) {
             newOrphanedBlocks[orphan.hash] = orphan;
           }
         }
         if (Date.now() >= breakAt) {
-          logger.debug(`Breaking orphaned blocks updater after 10s, will continue next block`);
+          logger.debug(
+            `Breaking orphaned blocks updater after 10s, will continue next block`
+          );
           break;
         }
       }
@@ -118,8 +139,14 @@ class ChainTips {
         this.orphansByHeight[orphan.height].push(orphan);
       }
 
-      const heightsToKeep = new Set(this.chainTips.filter(tip => tip.status !== 'active').map(tip => tip.height));
-      const heightsToRemove: number[] = Object.keys(this.staleTips).map(Number).filter(height => !heightsToKeep.has(height));
+      const heightsToKeep = new Set(
+        this.chainTips
+          .filter((tip) => tip.status !== 'active')
+          .map((tip) => tip.height)
+      );
+      const heightsToRemove: number[] = Object.keys(this.staleTips)
+        .map(Number)
+        .filter((height) => !heightsToKeep.has(height));
       for (const height of heightsToRemove) {
         delete this.staleTips[height];
       }
@@ -129,9 +156,15 @@ class ChainTips {
       // index new orphaned blocks in the background
       void this.$indexOrphanedBlocks();
 
-      logger.debug(`Updated orphaned blocks cache. Fetched ${newOrphans} new orphaned blocks. Total ${allOrphans.length}`);
+      logger.debug(
+        `Updated orphaned blocks cache. Fetched ${newOrphans} new orphaned blocks. Total ${allOrphans.length}`
+      );
     } catch (e) {
-      logger.err(`Cannot get fetch orphaned blocks. Reason: ${e instanceof Error ? e.message : e}`);
+      logger.err(
+        `Cannot get fetch orphaned blocks. Reason: ${
+          e instanceof Error ? e.message : e
+        }`
+      );
     }
   }
 
@@ -154,19 +187,30 @@ class ChainTips {
       }
       try {
         let staleBlock: BlockExtended | undefined;
-        const alreadyIndexed = await BlocksSummariesRepository.$isSummaryIndexed(block.id);
-        const needToCache = Object.keys(this.staleTips).length < this.staleTipsCacheSize || block.height > Object.keys(this.staleTips).map(Number).sort((a, b) => b - a)[this.staleTipsCacheSize - 1];
+        const alreadyIndexed =
+          await BlocksSummariesRepository.$isSummaryIndexed(block.id);
+        const needToCache =
+          Object.keys(this.staleTips).length < this.staleTipsCacheSize ||
+          block.height >
+            Object.keys(this.staleTips)
+              .map(Number)
+              .sort((a, b) => b - a)[this.staleTipsCacheSize - 1];
         if (!alreadyIndexed) {
           staleBlock = await blocks.$indexBlock(block.id, block, true);
           await blocks.$indexBlockSummary(block.id, block.height, true);
           // don't DDOS core by indexing too fast
           await Common.sleep$(5000);
         } else if (needToCache) {
-          staleBlock = await blocks.$getBlock(block.id, true) as BlockExtended;
+          staleBlock = (await blocks.$getBlock(
+            block.id,
+            true
+          )) as BlockExtended;
         }
 
         if (staleBlock && needToCache) {
-          const canonicalBlock = await blocks.$indexBlockByHeight(staleBlock.height);
+          const canonicalBlock = await blocks.$indexBlockByHeight(
+            staleBlock.height
+          );
           this.staleTips[staleBlock.height] = {
             height: staleBlock.height,
             hash: staleBlock.id,
@@ -178,14 +222,20 @@ class ChainTips {
           this.trimStaleTipsCache();
         }
       } catch (e) {
-        logger.err(`Failed to index orphaned block ${block.id} at height ${block.height}. Reason: ${e instanceof Error ? e.message : e}`);
+        logger.err(
+          `Failed to index orphaned block ${block.id} at height ${
+            block.height
+          }. Reason: ${e instanceof Error ? e.message : e}`
+        );
       }
     }
     this.indexingOrphanedBlocks = false;
   }
 
   private trimStaleTipsCache(): void {
-    const staleTipHeights = Object.keys(this.staleTips).map(Number).sort((a, b) => b - a);
+    const staleTipHeights = Object.keys(this.staleTips)
+      .map(Number)
+      .sort((a, b) => b - a);
     if (staleTipHeights.length > this.staleTipsCacheSize) {
       const heightsToDiscard = staleTipHeights.slice(this.staleTipsCacheSize);
       for (const height of heightsToDiscard) {
@@ -194,7 +244,9 @@ class ChainTips {
     }
   }
 
-  public getOrphanedBlocksAtHeight(height: number | undefined): OrphanedBlock[] {
+  public getOrphanedBlocksAtHeight(
+    height: number | undefined
+  ): OrphanedBlock[] {
     if (height === undefined) {
       return [];
     }
@@ -224,7 +276,11 @@ class ChainTips {
   }
 
   public isOrphaned(hash: string): boolean {
-    return !!this.orphanedBlocks[hash] || this.blockCache[hash]?.status === 'valid-fork' || this.blockCache[hash]?.status === 'valid-headers';
+    return (
+      !!this.orphanedBlocks[hash] ||
+      this.blockCache[hash]?.status === 'valid-fork' ||
+      this.blockCache[hash]?.status === 'valid-headers'
+    );
   }
 
   public getOrphanedBlock(hash: string): OrphanedBlock | undefined {

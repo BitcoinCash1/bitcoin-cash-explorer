@@ -1,15 +1,22 @@
 import memPool from '../mempool';
 import logger from '../../logger';
-import { TransactionExtended, OptimizedStatistic } from '../../mempool.interfaces';
+import {
+  TransactionExtended,
+  OptimizedStatistic,
+} from '../../mempool.interfaces';
 import { Common } from '../common';
 import statisticsApi from './statistics-api';
 
 class Statistics {
   protected intervalTimer: NodeJS.Timer | undefined;
   protected lastRun: number = 0;
-  protected newStatisticsEntryCallback: ((stats: OptimizedStatistic) => void) | undefined;
+  protected newStatisticsEntryCallback:
+    | ((stats: OptimizedStatistic) => void)
+    | undefined;
 
-  public setNewStatisticsEntryCallback(fn: (stats: OptimizedStatistic) => void) {
+  public setNewStatisticsEntryCallback(
+    fn: (stats: OptimizedStatistic) => void
+  ) {
     this.newStatisticsEntryCallback = fn;
   }
 
@@ -17,15 +24,25 @@ class Statistics {
     logger.info('Starting statistics service');
 
     const now = new Date();
-    const nextInterval = new Date(now.getFullYear(), now.getMonth(), now.getDate(), now.getHours(),
-      Math.floor(now.getMinutes() / 1) * 1 + 1, 0, 0);
+    const nextInterval = new Date(
+      now.getFullYear(),
+      now.getMonth(),
+      now.getDate(),
+      now.getHours(),
+      Math.floor(now.getMinutes() / 1) * 1 + 1,
+      0,
+      0
+    );
     const difference = nextInterval.getTime() - now.getTime();
 
     setTimeout(() => {
       this.runStatistics();
-      this.intervalTimer = setInterval(() => {
-        this.runStatistics(true);
-      }, 1 * 60 * 1000);
+      this.intervalTimer = setInterval(
+        () => {
+          this.runStatistics(true);
+        },
+        1 * 60 * 1000
+      );
     }, difference);
   }
 
@@ -69,12 +86,20 @@ class Statistics {
       return;
     }
 
-    memPoolArray.sort((a, b) => a.effectiveFeePerVsize - b.effectiveFeePerVsize);
-    const totalWeight = memPoolArray.map((tx) => tx.vsize).reduce((acc, curr) => acc + curr) * 4;
-    const totalFee = memPoolArray.map((tx) => tx.fee).reduce((acc, curr) => acc + curr);
+    memPoolArray.sort(
+      (a, b) => a.effectiveFeePerVsize - b.effectiveFeePerVsize
+    );
+    const totalWeight =
+      memPoolArray.map((tx) => tx.vsize).reduce((acc, curr) => acc + curr) * 4;
+    const totalFee = memPoolArray
+      .map((tx) => tx.fee)
+      .reduce((acc, curr) => acc + curr);
 
-    const logFees = [0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 30, 40, 50, 60, 70, 80, 90, 100, 125, 150, 175, 200,
-      250, 300, 350, 400, 500, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000];
+    const logFees = [
+      0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 30, 40, 50, 60, 70, 80, 90, 100,
+      125, 150, 175, 200, 250, 300, 350, 400, 500, 600, 700, 800, 900, 1000,
+      1200, 1400, 1600, 1800, 2000,
+    ];
 
     const weightVsizeFees: { [feePerWU: number]: number } = {};
     const lastItem = logFees.length - 1;
@@ -82,9 +107,12 @@ class Statistics {
     memPoolArray.forEach((transaction) => {
       for (let i = 0; i < logFees.length; i++) {
         if (
-          (Common.isLiquid() && (i === lastItem || transaction.effectiveFeePerVsize * 10 < logFees[i + 1]))
-          ||
-          (!Common.isLiquid() && (i === lastItem || transaction.effectiveFeePerVsize < logFees[i + 1]))
+          (Common.isLiquid() &&
+            (i === lastItem ||
+              transaction.effectiveFeePerVsize * 10 < logFees[i + 1])) ||
+          (!Common.isLiquid() &&
+            (i === lastItem ||
+              transaction.effectiveFeePerVsize < logFees[i + 1]))
         ) {
           if (weightVsizeFees[logFees[i]]) {
             weightVsizeFees[logFees[i]] += transaction.vsize;

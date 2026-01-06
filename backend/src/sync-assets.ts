@@ -8,14 +8,17 @@ import { SocksProxyAgent } from 'socks-proxy-agent';
 const PATH = './';
 
 class SyncAssets {
-  constructor() { }
+  constructor() {}
 
   public async syncAssets$() {
     for (const url of config.MEMPOOL.EXTERNAL_ASSETS) {
       try {
         await this.downloadFile$(url);
       } catch (e) {
-        throw new Error(`Failed to download external asset. ` + (e instanceof Error ? e.message : e));
+        throw new Error(
+          `Failed to download external asset. ` +
+            (e instanceof Error ? e.message : e)
+        );
       }
     }
   }
@@ -31,7 +34,7 @@ class SyncAssets {
               keepAlive: true,
             },
             hostname: config.SOCKS5PROXY.HOST,
-            port: config.SOCKS5PROXY.PORT
+            port: config.SOCKS5PROXY.PORT,
           };
 
           if (config.SOCKS5PROXY.USERNAME && config.SOCKS5PROXY.PASSWORD) {
@@ -41,39 +44,57 @@ class SyncAssets {
 
           const agent = new SocksProxyAgent(socksOptions);
 
-          logger.info(`Downloading external asset ${fileName} over the Tor network...`);
-          return axios.get(url, {
-            headers: {
-              'User-Agent': (config.MEMPOOL.USER_AGENT === 'mempool') ? `mempool/v${backendInfo.getBackendInfo().version}` : `${config.MEMPOOL.USER_AGENT}`
-            },
-            httpAgent: agent,
-            httpsAgent: agent,
-            responseType: 'stream',
-            timeout: 30000
-          }).then(function (response) {
-            const writer = fs.createWriteStream(PATH + fileName);
-            writer.on('finish', () => {
-              logger.info(`External asset ${fileName} saved to ${PATH + fileName}`);
-              resolve(0);
+          logger.info(
+            `Downloading external asset ${fileName} over the Tor network...`
+          );
+          return axios
+            .get(url, {
+              headers: {
+                'User-Agent':
+                  config.MEMPOOL.USER_AGENT === 'mempool'
+                    ? `mempool/v${backendInfo.getBackendInfo().version}`
+                    : `${config.MEMPOOL.USER_AGENT}`,
+              },
+              httpAgent: agent,
+              httpsAgent: agent,
+              responseType: 'stream',
+              timeout: 30000,
+            })
+            .then(function (response) {
+              const writer = fs.createWriteStream(PATH + fileName);
+              writer.on('finish', () => {
+                logger.info(
+                  `External asset ${fileName} saved to ${PATH + fileName}`
+                );
+                resolve(0);
+              });
+              response.data.pipe(writer);
             });
-            response.data.pipe(writer);
-          });
         } else {
-          logger.info(`Downloading external asset ${fileName} over clearnet...`);
-          return axios.get(url, {
-            headers: {
-              'User-Agent': (config.MEMPOOL.USER_AGENT === 'mempool') ? `mempool/v${backendInfo.getBackendInfo().version}` : `${config.MEMPOOL.USER_AGENT}`
-            },
-            responseType: 'stream',
-            timeout: 30000
-          }).then(function (response) {
-            const writer = fs.createWriteStream(PATH + fileName);
-            writer.on('finish', () => {
-              logger.info(`External asset ${fileName} saved to ${PATH + fileName}`);
-              resolve(0);
+          logger.info(
+            `Downloading external asset ${fileName} over clearnet...`
+          );
+          return axios
+            .get(url, {
+              headers: {
+                'User-Agent':
+                  config.MEMPOOL.USER_AGENT === 'mempool'
+                    ? `mempool/v${backendInfo.getBackendInfo().version}`
+                    : `${config.MEMPOOL.USER_AGENT}`,
+              },
+              responseType: 'stream',
+              timeout: 30000,
+            })
+            .then(function (response) {
+              const writer = fs.createWriteStream(PATH + fileName);
+              writer.on('finish', () => {
+                logger.info(
+                  `External asset ${fileName} saved to ${PATH + fileName}`
+                );
+                resolve(0);
+              });
+              response.data.pipe(writer);
             });
-            response.data.pipe(writer);
-          });
         }
       } catch (e: any) {
         reject(e);

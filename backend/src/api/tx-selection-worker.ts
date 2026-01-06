@@ -1,6 +1,9 @@
 import config from '../config';
 import logger from '../logger';
-import { CompactThreadTransaction, AuditTransaction } from '../mempool.interfaces';
+import {
+  CompactThreadTransaction,
+  AuditTransaction,
+} from '../mempool.interfaces';
 import { PairingHeap } from '../utils/pairing-heap';
 import { parentPort } from 'worker_threads';
 
@@ -11,14 +14,14 @@ if (parentPort) {
     if (params.type === 'set') {
       mempool = params.mempool;
     } else if (params.type === 'update') {
-      params.added.forEach(tx => {
+      params.added.forEach((tx) => {
         mempool.set(tx.uid, tx);
       });
-      params.removed.forEach(uid => {
+      params.removed.forEach((uid) => {
         mempool.delete(uid);
       });
     }
-    
+
     const { blocks, rates, clusters } = makeBlockTemplates(mempool);
 
     // return the result to main thread.
@@ -29,17 +32,20 @@ if (parentPort) {
 }
 
 /*
-* Build projected mempool blocks using an approximation of the transaction selection algorithm from Bitcoin Core
-* (see BlockAssembler in https://github.com/bitcoin/bitcoin/blob/master/src/node/miner.cpp)
-*/
-function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>)
-  : { blocks: number[][], rates: Map<number, number>, clusters: Map<number, number[]> } {
+ * Build projected mempool blocks using an approximation of the transaction selection algorithm from Bitcoin Core
+ * (see BlockAssembler in https://github.com/bitcoin/bitcoin/blob/master/src/node/miner.cpp)
+ */
+function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
+  blocks: number[][];
+  rates: Map<number, number>;
+  clusters: Map<number, number[]>;
+} {
   const start = Date.now();
   const auditPool: Map<number, AuditTransaction> = new Map();
   const mempoolArray: AuditTransaction[] = [];
   const cpfpClusters: Map<number, number[]> = new Map();
-  
-  mempool.forEach(tx => {
+
+  mempool.forEach((tx) => {
     tx.dirty = false;
     // initializing everything up front helps V8 optimize property access later
     auditPool.set(tx.uid, {
@@ -85,22 +91,27 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>)
   // (i.e. the package rooted in the transaction with the best ancestor score)
   const blocks: number[][] = [];
   let blockWeight = 4000;
-  let blockSigops = 0;
+  const blockSigops = 0;
   let transactions: AuditTransaction[] = [];
-  const modified: PairingHeap<AuditTransaction> = new PairingHeap((a, b): boolean => {
-    if (a.score === b.score) {
-      // tie-break by uid for stability
-      return a.uid > b.uid;
-    } else {
-      return (a.score || 0) > (b.score || 0);
+  const modified: PairingHeap<AuditTransaction> = new PairingHeap(
+    (a, b): boolean => {
+      if (a.score === b.score) {
+        // tie-break by uid for stability
+        return a.uid > b.uid;
+      } else {
+        return (a.score || 0) > (b.score || 0);
+      }
     }
-  });
+  );
   let overflow: AuditTransaction[] = [];
   let failures = 0;
   let top = 0;
-  while ((top < mempoolArray.length || !modified.isEmpty())) {
+  while (top < mempoolArray.length || !modified.isEmpty()) {
     // skip invalid transactions
-    while (top < mempoolArray.length && (mempoolArray[top].used || mempoolArray[top].modified)) {
+    while (
+      top < mempoolArray.length &&
+      (mempoolArray[top].used || mempoolArray[top].modified)
+    ) {
       top++;
     }
 
@@ -108,7 +119,10 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>)
     let nextTx;
     const nextPoolTx = mempoolArray[top];
     const nextModifiedTx = modified.peek();
-    if (nextPoolTx && (!nextModifiedTx || (nextPoolTx.score || 0) > (nextModifiedTx.score || 0))) {
+    if (
+      nextPoolTx &&
+      (!nextModifiedTx || (nextPoolTx.score || 0) > (nextModifiedTx.score || 0))
+    ) {
       nextTx = nextPoolTx;
       top++;
     } else {
@@ -121,16 +135,34 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>)
 
     if (nextTx && !nextTx?.used) {
       // Check if the package fits into this block
-      if (blocks.length >= 7 || ((blockWeight + nextTx.ancestorWeight < config.MEMPOOL.BLOCK_WEIGHT_UNITS) && (blockSigops + nextTx.ancestorSigops <= 80000))) {
-        const ancestors: AuditTransaction[] = Array.from(nextTx.ancestorMap.values());
+      if (
+        blocks.length >= 7 ||
+        (blockWeight + nextTx.ancestorWeight <
+          config.MEMPOOL.BLOCK_WEIGHT_UNITS &&
+          blockSigops + nextTx.ancestorSigops <= 80000)
+      ) {
+        const ancestors: AuditTransaction[] = Array.from(
+          nextTx.ancestorMap.values()
+        );
         // sort ancestors by dependency graph (equivalent to sorting by ascending ancestor count)
-        const sortedTxSet = [...ancestors.sort((a, b) => { return (a.ancestorMap.size || 0) - (b.ancestorMap.size || 0); }), nextTx];
+        const sortedTxSet = [
+          ...ancestors.sort((a, b) => {
+            return (a.ancestorMap.size || 0) - (b.ancestorMap.size || 0);
+          }),
+          nextTx,
+        ];
         let isCluster = false;
         if (sortedTxSet.length > 1) {
-          cpfpClusters.set(nextTx.uid, sortedTxSet.map(tx => tx.uid));
+          cpfpClusters.set(
+            nextTx.uid,
+            sortedTxSet.map((tx) => tx.uid)
+          );
           isCluster = true;
         }
-        const effectiveFeeRate = Math.min(nextTx.dependencyRate || Infinity, nextTx.ancestorFee / (nextTx.ancestorWeight / 4));
+        const effectiveFeeRate = Math.min(
+          nextTx.dependencyRate || Infinity,
+          nextTx.ancestorFee / (nextTx.ancestorWeight / 4)
+        );
         const used: AuditTransaction[] = [];
         while (sortedTxSet.length) {
           const ancestor = sortedTxSet.pop();
@@ -157,7 +189,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>)
 
         // remove these as valid package ancestors for any descendants remaining in the mempool
         if (used.length) {
-          used.forEach(tx => {
+          used.forEach((tx) => {
             updateDescendants(tx, auditPool, modified, effectiveFeeRate);
           });
         }
@@ -171,13 +203,14 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>)
     }
 
     // this block is full
-    const exceededPackageTries = failures > 1000 && blockWeight > (config.MEMPOOL.BLOCK_WEIGHT_UNITS - 4000);
+    const exceededPackageTries =
+      failures > 1000 && blockWeight > config.MEMPOOL.BLOCK_WEIGHT_UNITS - 4000;
     const queueEmpty = top >= mempoolArray.length && modified.isEmpty();
 
     if ((exceededPackageTries || queueEmpty) && blocks.length < 7) {
       // construct this block
       if (transactions.length) {
-        blocks.push(transactions.map(t => t.uid));
+        blocks.push(transactions.map((t) => t.uid));
       } else {
         break;
       }
@@ -199,11 +232,13 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>)
   }
 
   if (overflow.length > 0) {
-    logger.warn('GBT overflow list unexpectedly non-empty after final block constructed');
+    logger.warn(
+      'GBT overflow list unexpectedly non-empty after final block constructed'
+    );
   }
   // add the final unbounded block if it contains any transactions
   if (transactions.length > 0) {
-    blocks.push(transactions.map(t => t.uid));
+    blocks.push(transactions.map((t) => t.uid));
   }
 
   // get map of dirty transactions
@@ -225,7 +260,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>)
 // recursion unavoidable, but should be limited to depth < 25 by mempool policy
 function setRelatives(
   tx: AuditTransaction,
-  mempool: Map<number, AuditTransaction>,
+  mempool: Map<number, AuditTransaction>
 ): void {
   for (const parent of tx.inputs) {
     const parentTx = mempool.get(parent);
@@ -240,7 +275,7 @@ function setRelatives(
         tx.ancestorMap.set(ancestor.uid, ancestor);
       });
     }
-  };
+  }
   tx.ancestorFee = tx.fee || 0;
   tx.ancestorWeight = tx.weight || 0;
   tx.ancestorSigops = tx.sigops || 0;
@@ -249,7 +284,7 @@ function setRelatives(
     tx.ancestorWeight += ancestor.weight;
     tx.ancestorSigops += ancestor.sigops;
   });
-  tx.score = tx.ancestorFee / ((tx.ancestorWeight / 4) || 1);
+  tx.score = tx.ancestorFee / (tx.ancestorWeight / 4 || 1);
   tx.relativesSet = true;
 }
 
@@ -259,14 +294,14 @@ function updateDescendants(
   rootTx: AuditTransaction,
   mempool: Map<number, AuditTransaction>,
   modified: PairingHeap<AuditTransaction>,
-  clusterRate: number,
+  clusterRate: number
 ): void {
   const descendantSet: Set<AuditTransaction> = new Set();
   // stack of nodes left to visit
   const descendants: AuditTransaction[] = [];
   let descendantTx;
   let tmpScore;
-  rootTx.children.forEach(childTx => {
+  rootTx.children.forEach((childTx) => {
     if (!descendantSet.has(childTx)) {
       descendants.push(childTx);
       descendantSet.add(childTx);
@@ -274,15 +309,22 @@ function updateDescendants(
   });
   while (descendants.length) {
     descendantTx = descendants.pop();
-    if (descendantTx && descendantTx.ancestorMap && descendantTx.ancestorMap.has(rootTx.uid)) {
+    if (
+      descendantTx &&
+      descendantTx.ancestorMap &&
+      descendantTx.ancestorMap.has(rootTx.uid)
+    ) {
       // remove tx as ancestor
       descendantTx.ancestorMap.delete(rootTx.uid);
       descendantTx.ancestorFee -= rootTx.fee;
       descendantTx.ancestorWeight -= rootTx.weight;
       descendantTx.ancestorSigops -= rootTx.sigops;
       tmpScore = descendantTx.score;
-      descendantTx.score = descendantTx.ancestorFee / (descendantTx.ancestorWeight / 4);
-      descendantTx.dependencyRate = descendantTx.dependencyRate ? Math.min(descendantTx.dependencyRate, clusterRate) : clusterRate;
+      descendantTx.score =
+        descendantTx.ancestorFee / (descendantTx.ancestorWeight / 4);
+      descendantTx.dependencyRate = descendantTx.dependencyRate
+        ? Math.min(descendantTx.dependencyRate, clusterRate)
+        : clusterRate;
 
       if (!descendantTx.modifiedNode) {
         descendantTx.modified = true;
@@ -297,7 +339,7 @@ function updateDescendants(
       }
 
       // add this node's children to the stack
-      descendantTx.children.forEach(childTx => {
+      descendantTx.children.forEach((childTx) => {
         // visit each node only once
         if (!descendantSet.has(childTx)) {
           descendants.push(childTx);

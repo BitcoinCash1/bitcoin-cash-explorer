@@ -6,10 +6,10 @@ class GeminiApi implements PriceFeed {
   public currencies: string[] = ['USD', 'EUR', 'GBP', 'SGD'];
 
   public url: string = 'https://api.gemini.com/v1/pubticker/BTC';
-  public urlHist: string = 'https://api.gemini.com/v2/candles/BTC{CURRENCY}/{GRANULARITY}';
+  public urlHist: string =
+    'https://api.gemini.com/v2/candles/BTC{CURRENCY}/{GRANULARITY}';
 
-  constructor() {
-  }
+  constructor() {}
 
   public async $fetchPrice(currency): Promise<number> {
     const response = await query(this.url + currency);
@@ -20,7 +20,10 @@ class GeminiApi implements PriceFeed {
     }
   }
 
-  public async $fetchRecentPrice(currencies: string[], type: 'hour' | 'day'): Promise<PriceHistory> {
+  public async $fetchRecentPrice(
+    currencies: string[],
+    type: 'hour' | 'day'
+  ): Promise<PriceHistory> {
     const priceHistory: PriceHistory = {};
 
     for (const currency of currencies) {
@@ -28,7 +31,11 @@ class GeminiApi implements PriceFeed {
         continue;
       }
 
-      const response = await query(this.urlHist.replace('{GRANULARITY}', type === 'hour' ? '1hr' : '1day').replace('{CURRENCY}', currency));
+      const response = await query(
+        this.urlHist
+          .replace('{GRANULARITY}', type === 'hour' ? '1hr' : '1day')
+          .replace('{CURRENCY}', currency)
+      );
       const pricesRaw = response ? response : [];
 
       for (const price of pricesRaw as any[]) {

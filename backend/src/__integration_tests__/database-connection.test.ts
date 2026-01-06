@@ -1,6 +1,10 @@
 import DB from '../database';
 import config from '../config';
-import { setupTestDatabase, waitForDatabase, getTestDatabaseConfig } from './test-helpers';
+import {
+  setupTestDatabase,
+  waitForDatabase,
+  getTestDatabaseConfig,
+} from './test-helpers';
 
 describe('Database Connection Integration Tests', () => {
   beforeAll(async () => {
@@ -42,4 +46,3 @@ describe('Database Connection Integration Tests', () => {
     expect(config.DATABASE.DATABASE).toBe('mempool_test');
   });
 });
-

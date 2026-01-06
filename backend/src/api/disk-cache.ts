@@ -14,16 +14,18 @@ class DiskCache {
   private rbfCacheSchemaVersion = 1;
 
   private static TMP_FILE_NAME = config.MEMPOOL.CACHE_DIR + '/tmp-cache.json';
-  private static TMP_FILE_NAMES = config.MEMPOOL.CACHE_DIR + '/tmp-cache{number}.json';
+  private static TMP_FILE_NAMES =
+    config.MEMPOOL.CACHE_DIR + '/tmp-cache{number}.json';
   private static FILE_NAME = config.MEMPOOL.CACHE_DIR + '/cache.json';
   private static FILE_NAMES = config.MEMPOOL.CACHE_DIR + '/cache{number}.json';
-  private static TMP_RBF_FILE_NAME = config.MEMPOOL.CACHE_DIR + '/tmp-rbfcache.json';
+  private static TMP_RBF_FILE_NAME =
+    config.MEMPOOL.CACHE_DIR + '/tmp-rbfcache.json';
   private static RBF_FILE_NAME = config.MEMPOOL.CACHE_DIR + '/rbfcache.json';
   private static CHUNK_FILES = 25;
   private isWritingCache = false;
   private ignoreBlocksCache = false;
 
-  private semaphore: { resume: (() => void)[], locks: number } = {
+  private semaphore: { resume: (() => void)[]; locks: number } = {
     resume: [],
     locks: 0,
   };
@@ -47,7 +49,11 @@ class DiskCache {
       return;
     }
     try {
-      logger.debug(`Writing mempool and blocks data to disk cache (${ sync ? 'sync' : 'async' })...`);
+      logger.debug(
+        `Writing mempool and blocks data to disk cache (${
+          sync ? 'sync' : 'async'
+        })...`
+      );
       this.isWritingCache = true;
 
       const mempool = memPool.getMempool();
@@ -63,53 +69,77 @@ class DiskCache {
       const chunkSize = Math.floor(mempoolArray.length / DiskCache.CHUNK_FILES);
 
       if (sync) {
-        fs.writeFileSync(DiskCache.TMP_FILE_NAME, JSON.stringify({
-          network: config.MEMPOOL.NETWORK,
-          cacheSchemaVersion: this.cacheSchemaVersion,
-          blocks: blocks.getBlocks(),
-          blockSummaries: blocks.getBlockSummaries(),
-          mempool: {},
-          mempoolArray: mempoolArray.splice(0, chunkSize),
-        }), { flag: 'w' });
-        for (let i = 1; i < DiskCache.CHUNK_FILES; i++) {
-          fs.writeFileSync(DiskCache.TMP_FILE_NAMES.replace('{number}', i.toString()), JSON.stringify({
+        fs.writeFileSync(
+          DiskCache.TMP_FILE_NAME,
+          JSON.stringify({
+            network: config.MEMPOOL.NETWORK,
+            cacheSchemaVersion: this.cacheSchemaVersion,
+            blocks: blocks.getBlocks(),
+            blockSummaries: blocks.getBlockSummaries(),
             mempool: {},
             mempoolArray: mempoolArray.splice(0, chunkSize),
-          }), { flag: 'w' });
+          }),
+          { flag: 'w' }
+        );
+        for (let i = 1; i < DiskCache.CHUNK_FILES; i++) {
+          fs.writeFileSync(
+            DiskCache.TMP_FILE_NAMES.replace('{number}', i.toString()),
+            JSON.stringify({
+              mempool: {},
+              mempoolArray: mempoolArray.splice(0, chunkSize),
+            }),
+            { flag: 'w' }
+          );
         }
 
         fs.renameSync(DiskCache.TMP_FILE_NAME, DiskCache.FILE_NAME);
         for (let i = 1; i < DiskCache.CHUNK_FILES; i++) {
-          fs.renameSync(DiskCache.TMP_FILE_NAMES.replace('{number}', i.toString()), DiskCache.FILE_NAMES.replace('{number}', i.toString()));
+          fs.renameSync(
+            DiskCache.TMP_FILE_NAMES.replace('{number}', i.toString()),
+            DiskCache.FILE_NAMES.replace('{number}', i.toString())
+          );
         }
       } else {
         await this.$yield();
-        await fsPromises.writeFile(DiskCache.TMP_FILE_NAME, JSON.stringify({
-          network: config.MEMPOOL.NETWORK,
-          cacheSchemaVersion: this.cacheSchemaVersion,
-          blocks: blocks.getBlocks(),
-          blockSummaries: blocks.getBlockSummaries(),
-          mempool: {},
-          mempoolArray: mempoolArray.splice(0, chunkSize),
-        }), { flag: 'w' });
-        for (let i = 1; i < DiskCache.CHUNK_FILES; i++) {
-          await this.$yield();
-          await fsPromises.writeFile(DiskCache.TMP_FILE_NAMES.replace('{number}', i.toString()), JSON.stringify({
+        await fsPromises.writeFile(
+          DiskCache.TMP_FILE_NAME,
+          JSON.stringify({
+            network: config.MEMPOOL.NETWORK,
+            cacheSchemaVersion: this.cacheSchemaVersion,
+            blocks: blocks.getBlocks(),
+            blockSummaries: blocks.getBlockSummaries(),
             mempool: {},
             mempoolArray: mempoolArray.splice(0, chunkSize),
-          }), { flag: 'w' });
+          }),
+          { flag: 'w' }
+        );
+        for (let i = 1; i < DiskCache.CHUNK_FILES; i++) {
+          await this.$yield();
+          await fsPromises.writeFile(
+            DiskCache.TMP_FILE_NAMES.replace('{number}', i.toString()),
+            JSON.stringify({
+              mempool: {},
+              mempoolArray: mempoolArray.splice(0, chunkSize),
+            }),
+            { flag: 'w' }
+          );
         }
 
         await fsPromises.rename(DiskCache.TMP_FILE_NAME, DiskCache.FILE_NAME);
         for (let i = 1; i < DiskCache.CHUNK_FILES; i++) {
-          await fsPromises.rename(DiskCache.TMP_FILE_NAMES.replace('{number}', i.toString()), DiskCache.FILE_NAMES.replace('{number}', i.toString()));
+          await fsPromises.rename(
+            DiskCache.TMP_FILE_NAMES.replace('{number}', i.toString()),
+            DiskCache.FILE_NAMES.replace('{number}', i.toString())
+          );
         }
       }
 
       logger.debug('Mempool and blocks data saved to disk cache');
       this.isWritingCache = false;
     } catch (e) {
-      logger.warn('Error writing to cache file: ' + (e instanceof Error ? e.message : e));
+      logger.warn(
+        'Error writing to cache file: ' + (e instanceof Error ? e.message : e)
+      );
       this.isWritingCache = false;
     }
 
@@ -118,24 +148,38 @@ class DiskCache {
       this.isWritingCache = true;
       const rbfData = rbfCache.dump();
       if (sync) {
-        fs.writeFileSync(DiskCache.TMP_RBF_FILE_NAME, JSON.stringify({
-          network: config.MEMPOOL.NETWORK,
-          rbfCacheSchemaVersion: this.rbfCacheSchemaVersion,
-          rbf: rbfData,
-        }), { flag: 'w' });
+        fs.writeFileSync(
+          DiskCache.TMP_RBF_FILE_NAME,
+          JSON.stringify({
+            network: config.MEMPOOL.NETWORK,
+            rbfCacheSchemaVersion: this.rbfCacheSchemaVersion,
+            rbf: rbfData,
+          }),
+          { flag: 'w' }
+        );
         fs.renameSync(DiskCache.TMP_RBF_FILE_NAME, DiskCache.RBF_FILE_NAME);
       } else {
-        await fsPromises.writeFile(DiskCache.TMP_RBF_FILE_NAME, JSON.stringify({
-          network: config.MEMPOOL.NETWORK,
-          rbfCacheSchemaVersion: this.rbfCacheSchemaVersion,
-          rbf: rbfData,
-        }), { flag: 'w' });
-        await fsPromises.rename(DiskCache.TMP_RBF_FILE_NAME, DiskCache.RBF_FILE_NAME);
+        await fsPromises.writeFile(
+          DiskCache.TMP_RBF_FILE_NAME,
+          JSON.stringify({
+            network: config.MEMPOOL.NETWORK,
+            rbfCacheSchemaVersion: this.rbfCacheSchemaVersion,
+            rbf: rbfData,
+          }),
+          { flag: 'w' }
+        );
+        await fsPromises.rename(
+          DiskCache.TMP_RBF_FILE_NAME,
+          DiskCache.RBF_FILE_NAME
+        );
       }
       logger.debug('Rbf data saved to disk cache');
       this.isWritingCache = false;
     } catch (e) {
-      logger.warn('Error writing rbf data to cache file: ' + (e instanceof Error ? e.message : e));
+      logger.warn(
+        'Error writing rbf data to cache file: ' +
+          (e instanceof Error ? e.message : e)
+      );
       this.isWritingCache = false;
     }
   }
@@ -146,7 +190,11 @@ class DiskCache {
       fs.unlinkSync(DiskCache.FILE_NAME);
     } catch (e: any) {
       if (e?.code !== 'ENOENT') {
-        logger.err(`Cannot wipe cache file ${DiskCache.FILE_NAME}. Exception ${JSON.stringify(e)}`);
+        logger.err(
+          `Cannot wipe cache file ${
+            DiskCache.FILE_NAME
+          }. Exception ${JSON.stringify(e)}`
+        );
       }
     }
 
@@ -156,7 +204,9 @@ class DiskCache {
         fs.unlinkSync(filename);
       } catch (e: any) {
         if (e?.code !== 'ENOENT') {
-          logger.err(`Cannot wipe cache file ${filename}. Exception ${JSON.stringify(e)}`);
+          logger.err(
+            `Cannot wipe cache file ${filename}. Exception ${JSON.stringify(e)}`
+          );
         }
       }
     }
@@ -169,7 +219,11 @@ class DiskCache {
       fs.unlinkSync(DiskCache.RBF_FILE_NAME);
     } catch (e: any) {
       if (e?.code !== 'ENOENT') {
-        logger.err(`Cannot wipe cache file ${DiskCache.RBF_FILE_NAME}. Exception ${JSON.stringify(e)}`);
+        logger.err(
+          `Cannot wipe cache file ${
+            DiskCache.RBF_FILE_NAME
+          }. Exception ${JSON.stringify(e)}`
+        );
       }
     }
   }
@@ -185,12 +239,19 @@ class DiskCache {
       if (cacheData) {
         logger.info('Restoring mempool and blocks data from disk cache');
         data = JSON.parse(cacheData);
-        if (data.cacheSchemaVersion === undefined || data.cacheSchemaVersion !== this.cacheSchemaVersion) {
-          logger.notice('Disk cache contains an outdated schema version. Clearing it and skipping the cache loading.');
+        if (
+          data.cacheSchemaVersion === undefined ||
+          data.cacheSchemaVersion !== this.cacheSchemaVersion
+        ) {
+          logger.notice(
+            'Disk cache contains an outdated schema version. Clearing it and skipping the cache loading.'
+          );
           return this.wipeCache();
         }
         if (data.network && data.network !== config.MEMPOOL.NETWORK) {
-          logger.notice('Disk cache contains data from a different network. Clearing it and skipping the cache loading.');
+          logger.notice(
+            'Disk cache contains data from a different network. Clearing it and skipping the cache loading.'
+          );
           return this.wipeCache();
         }
 
@@ -217,7 +278,12 @@ class DiskCache {
             }
           }
         } catch (e) {
-          logger.err('Error parsing ' + fileName + '. Skipping. Reason: ' + (e instanceof Error ? e.message : e));
+          logger.err(
+            'Error parsing ' +
+              fileName +
+              '. Skipping. Reason: ' +
+              (e instanceof Error ? e.message : e)
+          );
         }
       }
 
@@ -232,7 +298,10 @@ class DiskCache {
         await this.$saveCacheToDisk(true);
       }
     } catch (e) {
-      logger.warn('Failed to parse mempoool and blocks cache. Skipping. Reason: ' + (e instanceof Error ? e.message : e));
+      logger.warn(
+        'Failed to parse mempoool and blocks cache. Skipping. Reason: ' +
+          (e instanceof Error ? e.message : e)
+      );
     }
 
     try {
@@ -241,12 +310,19 @@ class DiskCache {
       if (rbfCacheData) {
         logger.info('Restoring rbf data from disk cache');
         rbfData = JSON.parse(rbfCacheData);
-        if (rbfData.rbfCacheSchemaVersion === undefined || rbfData.rbfCacheSchemaVersion !== this.rbfCacheSchemaVersion) {
-          logger.notice('Rbf disk cache contains an outdated schema version. Clearing it and skipping the cache loading.');
+        if (
+          rbfData.rbfCacheSchemaVersion === undefined ||
+          rbfData.rbfCacheSchemaVersion !== this.rbfCacheSchemaVersion
+        ) {
+          logger.notice(
+            'Rbf disk cache contains an outdated schema version. Clearing it and skipping the cache loading.'
+          );
           return this.wipeRbfCache();
         }
         if (rbfData.network && rbfData.network !== config.MEMPOOL.NETWORK) {
-          logger.notice('Rbf disk cache contains data from a different network. Clearing it and skipping the cache loading.');
+          logger.notice(
+            'Rbf disk cache contains data from a different network. Clearing it and skipping the cache loading.'
+          );
           return this.wipeRbfCache();
         }
       }
@@ -255,19 +331,27 @@ class DiskCache {
         await rbfCache.load({
           txs: rbfData.rbf.txs.map(([txid, entry]) => ({ value: entry })),
           trees: rbfData.rbf.trees,
-          expiring: rbfData.rbf.expiring.map(([txid, value]) => ({ key: txid, value })),
+          expiring: rbfData.rbf.expiring.map(([txid, value]) => ({
+            key: txid,
+            value,
+          })),
           mempool: memPool.getMempool(),
           spendMap: memPool.getSpendMap(),
         });
       }
     } catch (e) {
-      logger.warn('Failed to parse rbf cache. Skipping. Reason: ' + (e instanceof Error ? e.message : e));
+      logger.warn(
+        'Failed to parse rbf cache. Skipping. Reason: ' +
+          (e instanceof Error ? e.message : e)
+      );
     }
   }
 
   private $yield(): Promise<void> {
     if (this.semaphore.locks) {
-      logger.debug('Pause writing mempool and blocks data to disk cache (async)');
+      logger.debug(
+        'Pause writing mempool and blocks data to disk cache (async)'
+      );
       return new Promise((resolve) => {
         this.semaphore.resume.push(resolve);
       });
@@ -285,7 +369,9 @@ class DiskCache {
     if (!this.semaphore.locks && this.semaphore.resume.length) {
       const nextResume = this.semaphore.resume.shift();
       if (nextResume) {
-        logger.debug('Resume writing mempool and blocks data to disk cache (async)');
+        logger.debug(
+          'Resume writing mempool and blocks data to disk cache (async)'
+        );
         nextResume();
       }
     }

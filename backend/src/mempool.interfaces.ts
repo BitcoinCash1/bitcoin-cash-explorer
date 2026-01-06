@@ -29,21 +29,21 @@ export interface PoolStats extends PoolInfo {
 }
 
 export interface BlockAudit {
-  version: number,
-  time: number,
-  height: number,
-  hash: string,
-  unseenTxs: string[],
-  missingTxs: string[],
-  freshTxs: string[],
-  sigopTxs: string[],
-  fullrbfTxs: string[],
-  addedTxs: string[],
-  prioritizedTxs: string[],
-  acceleratedTxs: string[],
-  matchRate: number,
-  expectedFees?: number,
-  expectedWeight?: number,
+  version: number;
+  time: number;
+  height: number;
+  hash: string;
+  unseenTxs: string[];
+  missingTxs: string[];
+  freshTxs: string[];
+  sigopTxs: string[];
+  fullrbfTxs: string[];
+  addedTxs: string[];
+  prioritizedTxs: string[];
+  acceleratedTxs: string[];
+  matchRate: number;
+  expectedFees?: number;
+  expectedWeight?: number;
   template?: any[];
 }
 
@@ -60,10 +60,10 @@ export interface TransactionAudit {
 }
 
 export interface AuditScore {
-  hash: string,
-  matchRate?: number,
-  expectedFees?: number
-  expectedWeight?: number
+  hash: string;
+  matchRate?: number;
+  expectedFees?: number;
+  expectedWeight?: number;
 }
 
 export interface MempoolBlock {
@@ -87,19 +87,19 @@ export interface MempoolBlockDelta {
 }
 
 export interface MempoolDeltaTxids {
-  sequence: number,
+  sequence: number;
   added: string[];
   removed: string[];
   mined: string[];
-  replaced: { replaced: string, by: string }[];
+  replaced: { replaced: string; by: string }[];
 }
 
 export interface MempoolDelta {
-  sequence: number,
+  sequence: number;
   added: MempoolTransactionExtended[];
   removed: string[];
   mined: string[];
-  replaced: { replaced: string, by: TransactionExtended }[];
+  replaced: { replaced: string; by: TransactionExtended }[];
 }
 
 interface VinStrippedToScriptsig {
@@ -122,8 +122,8 @@ export interface TransactionExtended extends IEsploraApi.Transaction {
   bestDescendant?: BestDescendant | null;
   cpfpChecked?: boolean;
   position?: {
-    block: number,
-    vsize: number,
+    block: number;
+    vsize: number;
   };
   acceleration?: boolean;
   acceleratedBy?: number[];
@@ -180,7 +180,7 @@ export interface CompactThreadTransaction {
 }
 
 export interface GbtCandidates {
-  txs: { [txid: string ]: boolean },
+  txs: { [txid: string]: boolean };
   added: MempoolTransactionExtended[];
   removed: MempoolTransactionExtended[];
 }
@@ -224,8 +224,8 @@ export interface CpfpInfo {
   descendants?: Ancestor[];
   effectiveFeePerVsize?: number;
   sigops?: number;
-  adjustedVsize?: number,
-  acceleration?: boolean,
+  adjustedVsize?: number;
+  acceleration?: boolean;
   fee?: number;
 }
 
@@ -244,47 +244,56 @@ export interface TransactionClassified extends TransactionStripped {
 }
 
 // [txid, fee, vsize, value, rate, flags, acceleration?]
-export type TransactionCompressed = [string, number, number, number, number, number, number, 1?];
+export type TransactionCompressed = [
+  string,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  1?,
+];
 // [txid, rate, flags, acceleration?]
-export type MempoolDeltaChange = [string, number, number, (1|0)];
+export type MempoolDeltaChange = [string, number, number, 1 | 0];
 
 // binary flags for transaction classification
 export const TransactionFlags = {
   // features
-  rbf:                                                         0b00000001n,
-  no_rbf:                                                      0b00000010n,
-  v1:                                                          0b00000100n,
-  v2:                                                          0b00001000n,
-  v3:                                                          0b00010000n,
-  nonstandard:                                                 0b00100000n,
+  rbf: 0b00000001n,
+  no_rbf: 0b00000010n,
+  v1: 0b00000100n,
+  v2: 0b00001000n,
+  v3: 0b00010000n,
+  nonstandard: 0b00100000n,
   // address types
-  p2pk:                                               0b00000001_00000000n,
-  p2ms:                                               0b00000010_00000000n,
-  p2pkh:                                              0b00000100_00000000n,
-  p2sh:                                               0b00001000_00000000n,
-  p2wpkh:                                             0b00010000_00000000n,
-  p2wsh:                                              0b00100000_00000000n,
-  p2tr:                                               0b01000000_00000000n,
+  p2pk: 0b00000001_00000000n,
+  p2ms: 0b00000010_00000000n,
+  p2pkh: 0b00000100_00000000n,
+  p2sh: 0b00001000_00000000n,
+  p2wpkh: 0b00010000_00000000n,
+  p2wsh: 0b00100000_00000000n,
+  p2tr: 0b01000000_00000000n,
   // behavior
-  cpfp_parent:                               0b00000001_00000000_00000000n,
-  cpfp_child:                                0b00000010_00000000_00000000n,
-  replacement:                               0b00000100_00000000_00000000n,
+  cpfp_parent: 0b00000001_00000000_00000000n,
+  cpfp_child: 0b00000010_00000000_00000000n,
+  replacement: 0b00000100_00000000_00000000n,
   // data
-  op_return:                        0b00000001_00000000_00000000_00000000n,
-  fake_pubkey:                      0b00000010_00000000_00000000_00000000n,
-  inscription:                      0b00000100_00000000_00000000_00000000n,
-  fake_scripthash:                  0b00001000_00000000_00000000_00000000n,
-  annex:                            0b00010000_00000000_00000000_00000000n,
+  op_return: 0b00000001_00000000_00000000_00000000n,
+  fake_pubkey: 0b00000010_00000000_00000000_00000000n,
+  inscription: 0b00000100_00000000_00000000_00000000n,
+  fake_scripthash: 0b00001000_00000000_00000000_00000000n,
+  annex: 0b00010000_00000000_00000000_00000000n,
   // heuristics
-  coinjoin:                0b00000001_00000000_00000000_00000000_00000000n,
-  consolidation:           0b00000010_00000000_00000000_00000000_00000000n,
-  batch_payout:            0b00000100_00000000_00000000_00000000_00000000n,
+  coinjoin: 0b00000001_00000000_00000000_00000000_00000000n,
+  consolidation: 0b00000010_00000000_00000000_00000000_00000000n,
+  batch_payout: 0b00000100_00000000_00000000_00000000_00000000n,
   // sighash
-  sighash_all:    0b00000001_00000000_00000000_00000000_00000000_00000000n,
-  sighash_none:   0b00000010_00000000_00000000_00000000_00000000_00000000n,
+  sighash_all: 0b00000001_00000000_00000000_00000000_00000000_00000000n,
+  sighash_none: 0b00000010_00000000_00000000_00000000_00000000_00000000n,
   sighash_single: 0b00000100_00000000_00000000_00000000_00000000_00000000n,
-  sighash_default:0b00001000_00000000_00000000_00000000_00000000_00000000n,
-  sighash_acp:    0b00010000_00000000_00000000_00000000_00000000_00000000n,
+  sighash_default: 0b00001000_00000000_00000000_00000000_00000000_00000000n,
+  sighash_acp: 0b00010000_00000000_00000000_00000000_00000000_00000000n,
 };
 
 export interface BlockExtension {
@@ -316,7 +325,7 @@ export interface BlockExtension {
   totalOutputs: number;
   totalOutputAmt: number;
   medianFeeAmt: number | null; // median fee in sats
-  feePercentiles: number[] | null, // fee percentiles in sats
+  feePercentiles: number[] | null; // fee percentiles in sats
   segwitTotalTxs: number;
   segwitTotalSize: number;
   segwitTotalWeight: number;
@@ -347,10 +356,10 @@ export interface BlockSummary {
 }
 
 export interface AuditSummary extends BlockAudit {
-  timestamp?: number,
-  size?: number,
-  weight?: number,
-  tx_count?: number,
+  timestamp?: number;
+  size?: number;
+  weight?: number;
+  tx_count?: number;
   transactions: TransactionClassified[];
   template?: TransactionClassified[];
 }
@@ -384,10 +393,10 @@ export interface WorkingEffectiveFeeStats extends EffectiveFeeStats {
 }
 
 export interface CpfpCluster {
-  root: string,
-  height: number,
-  txs: Ancestor[],
-  effectiveFeePerVsize: number,
+  root: string;
+  height: number;
+  txs: Ancestor[];
+  effectiveFeePerVsize: number;
 }
 
 export interface CpfpSummary {
@@ -459,22 +468,29 @@ export interface OptimizedStatistic {
 }
 
 export interface TxTrackingInfo {
-  replacedBy?: string,
-  position?: { block: number, vsize: number, accelerated?: boolean, acceleratedBy?: number[], acceleratedAt?: number, feeDelta?: number },
+  replacedBy?: string;
+  position?: {
+    block: number;
+    vsize: number;
+    accelerated?: boolean;
+    acceleratedBy?: number[];
+    acceleratedAt?: number;
+    feeDelta?: number;
+  };
   cpfp?: {
-    ancestors?: Ancestor[],
-    bestDescendant?: Ancestor | null,
-    descendants?: Ancestor[] | null,
-    effectiveFeePerVsize?: number | null,
-    sigops: number,
-    adjustedVsize: number,
-  },
-  utxoSpent?: { [vout: number]: { vin: number, txid: string } },
-  accelerated?: boolean,
-  acceleratedBy?: number[],
-  acceleratedAt?: number,
-  feeDelta?: number,
-  confirmed?: boolean
+    ancestors?: Ancestor[];
+    bestDescendant?: Ancestor | null;
+    descendants?: Ancestor[] | null;
+    effectiveFeePerVsize?: number | null;
+    sigops: number;
+    adjustedVsize: number;
+  };
+  utxoSpent?: { [vout: number]: { vin: number; txid: string } };
+  accelerated?: boolean;
+  acceleratedBy?: number[];
+  acceleratedAt?: number;
+  feeDelta?: number;
+  confirmed?: boolean;
 }
 
 export interface WebsocketResponse {
@@ -490,14 +506,18 @@ export interface VbytesPerSecond {
   vSize: number;
 }
 
-export interface RequiredSpec { [name: string]: RequiredParams; }
+export interface RequiredSpec {
+  [name: string]: RequiredParams;
+}
 
 interface RequiredParams {
   required: boolean;
   types: ('@string' | '@number' | '@boolean' | string)[];
 }
 
-export interface ILoadingIndicators { [name: string]: number; }
+export interface ILoadingIndicators {
+  [name: string]: number;
+}
 
 export interface IBackendInfo {
   hostname: string;
@@ -509,28 +529,28 @@ export interface IBackendInfo {
 }
 
 export interface INetworkInfo {
-    version: number;
-    subversion: string;
-    protocolversion: number;
-    localservices: string;
-    localrelay: boolean;
-    timeoffset: number;
-    networkactive: boolean;
-    networks: {
-      name: string;
-      limited: boolean;
-      reachable: boolean;
-      proxy: string;
-      proxy_randomize_credentials: boolean;
-    }[];
-    relayfee: number;
-    incrementalfee: number;
-    localaddresses: {
-      address: string;
-      port: number;
-      score: number;
-    }[];
-    warnings: string;
+  version: number;
+  subversion: string;
+  protocolversion: number;
+  localservices: string;
+  localrelay: boolean;
+  timeoffset: number;
+  networkactive: boolean;
+  networks: {
+    name: string;
+    limited: boolean;
+    reachable: boolean;
+    proxy: string;
+    proxy_randomize_credentials: boolean;
+  }[];
+  relayfee: number;
+  incrementalfee: number;
+  localaddresses: {
+    address: string;
+    port: number;
+    score: number;
+  }[];
+  warnings: string;
 }
 
 export interface IDifficultyAdjustment {
@@ -561,25 +581,25 @@ export interface RewardStats {
 }
 
 export interface ITopNodesPerChannels {
-  publicKey: string,
-  alias: string,
-  channels?: number,
-  capacity: number,
-  firstSeen?: number,
-  updatedAt?: number,
-  city?: any,
-  country?: any,
+  publicKey: string;
+  alias: string;
+  channels?: number;
+  capacity: number;
+  firstSeen?: number;
+  updatedAt?: number;
+  city?: any;
+  country?: any;
 }
 
 export interface ITopNodesPerCapacity {
-  publicKey: string,
-  alias: string,
-  capacity: number,
-  channels?: number,
-  firstSeen?: number,
-  updatedAt?: number,
-  city?: any,
-  country?: any,
+  publicKey: string;
+  alias: string;
+  capacity: number;
+  channels?: number;
+  firstSeen?: number;
+  updatedAt?: number;
+  city?: any;
+  country?: any;
 }
 
 export interface INodesRanking {
@@ -588,12 +608,12 @@ export interface INodesRanking {
 }
 
 export interface IOldestNodes {
-  publicKey: string,
-  alias: string,
-  firstSeen: number,
-  channels?: number,
-  capacity: number,
-  updatedAt?: number,
-  city?: any,
-  country?: any,
+  publicKey: string;
+  alias: string;
+  firstSeen: number;
+  channels?: number;
+  capacity: number;
+  updatedAt?: number;
+  city?: any;
+  country?: any;
 }
