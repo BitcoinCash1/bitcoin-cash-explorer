@@ -2,26 +2,26 @@
 
 This directory contains the Dockerfiles used to build and release the official images, as well as a `docker-compose.yml` to configure environment variables and other settings.
 
-If you are looking to use these Docker images to deploy your own instance of Mempool, note that they only containerize Mempool's frontend and backend. You will still need to deploy and configure Bitcoin Core and an Electrum Server separately, along with any other utilities specific to your use case (e.g., a reverse proxy, etc). Such configuration is mostly beyond the scope of the Mempool project, so please only proceed if you know what you're doing.
+If you are looking to use these Docker images to deploy your own instance of Mempool, note that they only containerize Mempool's frontend and backend. You will still need to deploy and configure Bitcoin Cash Node and an Electrum Server separately, along with any other utilities specific to your use case (e.g., a reverse proxy, etc). Such configuration is mostly beyond the scope of the Mempool project, so please only proceed if you know what you're doing.
 
 See a video guide of this installation method by k3tan [on BitcoinTV.com](https://bitcointv.com/w/8fpAx6rf5CQ16mMhospwjg).
 
 Jump to a section in this doc:
-- [Configure with Bitcoin Core Only](#configure-with-bitcoin-core-only)
-- [Configure with Bitcoin Core + Electrum Server](#configure-with-bitcoin-core--electrum-server)
+- [Configure with Bitcoin Cash Node Only](#configure-with-bitcoin-cash-node-only)
+- [Configure with Bitcoin Cash Node + Electrum Server](#configure-with-bitcoin-cash-node--electrum-server)
 - [Further Configuration](#further-configuration)
 
-## Configure with Bitcoin Core Only
+## Configure with Bitcoin Cash Node Only
 
-_Note: address lookups require an Electrum Server and will not work with this configuration. [Add an Electrum Server](#configure-with-bitcoin-core--electrum-server) to your backend for full functionality._
+_Note: address lookups require an Electrum Server and will not work with this configuration. [Add an Electrum Server](#configure-with-bitcoin-cash-node--electrum-server) to your backend for full functionality._
 
 The default Docker configuration assumes you have the following configuration in your `bitcoin.conf` file:
 
 ```ini
 txindex=1
 server=1
-rpcuser=mempool
-rpcpassword=mempool
+rpcuser=explorer
+rpcpassword=explorer
 ```
 
 If you want to use different credentials, specify them in the `docker-compose.yml` file:
@@ -49,9 +49,9 @@ docker-compose up
 
 Your Mempool instance should be running at http://localhost. The graphs will be populated as new transactions are detected.
 
-## Configure with Bitcoin Core + Electrum Server
+## Configure with Bitcoin Cash Node + Electrum Server
 
-First, configure `bitcoind` as specified above, and make sure your Electrum Server is running and synced. See [this FAQ](https://mempool.space/docs/faq#address-lookup-issues) if you need help picking an Electrum Server implementation.
+First, configure `bitcoind` as specified above, and make sure your Electrum Server is running and synced. See [this FAQ](https://explorer.melroy.org/docs/faq#address-lookup-issues) if you need help picking an Electrum Server implementation.
 
 Then, set the following variables in `docker-compose.yml` so Mempool can connect to your Electrum Server:
 
@@ -158,8 +158,8 @@ Corresponding `docker-compose.yml` overrides:
   "CORE_RPC": {
     "HOST": "127.0.0.1",
     "PORT": 8332,
-    "USERNAME": "mempool",
-    "PASSWORD": "mempool",
+    "USERNAME": "explorer",
+    "PASSWORD": "explorer",
     "TIMEOUT": 60000,
     "COOKIE": false,
     "COOKIE_PATH": ""
@@ -229,8 +229,8 @@ Corresponding `docker-compose.yml` overrides:
   "SECOND_CORE_RPC": {
     "HOST": "127.0.0.1",
     "PORT": 8332,
-    "USERNAME": "mempool",
-    "PASSWORD": "mempool",
+    "USERNAME": "explorer",
+    "PASSWORD": "explorer",
     "TIMEOUT": 60000,
     "COOKIE": false,
     "COOKIE_PATH": ""
@@ -259,9 +259,9 @@ Corresponding `docker-compose.yml` overrides:
     "ENABLED": true,
     "HOST": "127.0.0.1",
     "PORT": 3306,
-    "DATABASE": "mempool",
-    "USERNAME": "mempool",
-    "PASSWORD": "mempool"
+    "DATABASE": "explorer",
+    "USERNAME": "explorer",
+    "PASSWORD": "explorer"
   },
 ```
 
