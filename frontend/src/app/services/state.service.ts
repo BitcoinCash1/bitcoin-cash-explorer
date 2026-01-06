@@ -184,7 +184,7 @@ export class StateService {
     transactions: { [txid: string]: TransactionStripped };
   };
 
-  backend$ = new BehaviorSubject<'esplora' | 'electrum' | 'none'>('esplora');
+  backend$ = new BehaviorSubject<'electrum' | 'none'>('electrum');
   networkChanged$ = new ReplaySubject<string>(1);
   lightningChanged$ = new ReplaySubject<boolean>(1);
   signaturesMode$: BehaviorSubject<SignaturesMode>;

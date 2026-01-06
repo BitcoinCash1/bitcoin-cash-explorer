@@ -35,7 +35,7 @@ export class ApiDocsNavComponent implements OnInit {
     this.stateService.backend$
       .pipe(takeUntil(this.destroy$))
       .subscribe((backend) => {
-        this.runningElectrs = !!(backend == 'esplora');
+        this.runningElectrs = false; // We do not provide esplora and electrs support
       });
     this.auditEnabled = this.env.AUDIT;
     if (this.whichTab === 'rest') {

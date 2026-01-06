@@ -79,40 +79,6 @@
             </ng-template>
           </ng-container>
         </span>
-        <span *ngSwitchCase="'output'">
-          <ng-container
-            *ngIf="
-              (stateService.backend$ | async) === 'esplora' &&
-              line.blockHeight &&
-              line?.spent
-            "
-          >
-            <ng-container
-              *ngIf="line?.status?.block_height; else noBlockHeight"
-            >
-              <ng-container
-                *ngTemplateOutlet="
-                  nBlocksLater;
-                  context: {
-                    n: line?.status?.block_height - line.blockHeight,
-                    connector: false
-                  }
-                "
-              ></ng-container>
-            </ng-container>
-            <ng-template #noBlockHeight>
-              <ng-container
-                *ngTemplateOutlet="
-                  nBlocksLater;
-                  context: {
-                    n: chainTip + 1 - line.blockHeight,
-                    connector: false
-                  }
-                "
-              ></ng-container>
-            </ng-template>
-          </ng-container>
-        </span>
       </ng-container>
     </p>
     <ng-container *ngIf="isConnector && line.txid">

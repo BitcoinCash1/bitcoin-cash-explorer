@@ -31,7 +31,6 @@
     "serve:parameterized": "npm run generate-config && npm run ng -- serve -c parameterized",
     "start": "npm run generate-config && npm run sync-assets-dev && npm run ng -- serve -c local",
     "start:parameterized": "npm run generate-config && npm run sync-assets-dev && npm run ng -- serve -c parameterized",
-    "start:local-esplora": "npm run generate-config && npm run sync-assets-dev && npm run ng -- serve -c local-esplora",
     "start:local-prod": "npm run generate-config && npm run sync-assets-dev && npm run ng -- serve -c local-prod",
     "start:mixed": "npm run generate-config && npm run sync-assets-dev && npm run ng -- serve -c mixed",
     "build": "npm run generate-config && npm run ng -- build --configuration production --localize && npm run sync-assets-dev && npm run sync-assets",

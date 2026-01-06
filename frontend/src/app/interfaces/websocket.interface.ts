@@ -10,7 +10,7 @@ import {
 } from '@interfaces/node-api.interface';
 
 export interface WebsocketResponse {
-  backend?: 'esplora' | 'electrum' | 'none';
+  backend?: 'electrum' | 'none';
   block?: BlockExtended;
   blocks?: BlockExtended[];
   conversions?: Record<string, number>;
