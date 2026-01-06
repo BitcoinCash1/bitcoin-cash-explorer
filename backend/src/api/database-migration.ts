@@ -1926,9 +1926,7 @@ class DatabaseMigration {
 
     if (version < 1) {
       if (version > 0) {
-        logger.notice(
-          `MIGRATIONS: Migrating (shifting) statistics table data`
-        );
+        logger.notice(`MIGRATIONS: Migrating (shifting) statistics table data`);
       }
       queries.push(this.getShiftStatisticsQuery());
     }

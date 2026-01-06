@@ -1507,7 +1507,7 @@ class BlocksRepository {
         await BlocksSummariesRepository.$getFeePercentilesByBlockId(dbBlk.id);
       if (extras.feePercentiles === null) {
         let summary;
-        let summaryVersion = 0;
+        const summaryVersion = 0;
         // Call Core RPC
         const block = await bitcoinClient.getBlock(dbBlk.id, 2);
         summary = blocks.summarizeBlock(block);
@@ -1587,7 +1587,7 @@ class BlocksRepository {
           transactions.map((tx) => ({
             weight: tx.vsize * 4,
             effectiveFeePerVsize: tx.rate,
-            txid: tx.txid
+            txid: tx.txid,
           }))
         );
 

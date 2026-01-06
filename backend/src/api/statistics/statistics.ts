@@ -107,8 +107,8 @@ class Statistics {
     memPoolArray.forEach((transaction) => {
       for (let i = 0; i < logFees.length; i++) {
         if (
-          ((i === lastItem ||
-              transaction.effectiveFeePerVsize < logFees[i + 1]))
+          i === lastItem ||
+          transaction.effectiveFeePerVsize < logFees[i + 1]
         ) {
           if (weightVsizeFees[logFees[i]]) {
             weightVsizeFees[logFees[i]] += transaction.vsize;

@@ -40,7 +40,8 @@ const DEFAULT_PERMIT_BAREMULTISIG = true;
 const MAX_TX_LEGACY_SIGOPS = 2_500 * 4; // witness-adjusted sigops
 
 export class Common {
-  static nativeAssetId = '6f0279e9ed041c3d710a9f57d0c02928416460c4b722ae3457a11eec381c526d';
+  static nativeAssetId =
+    '6f0279e9ed041c3d710a9f57d0c02928416460c4b722ae3457a11eec381c526d';
 
   static median(numbers: number[]) {
     let medianNr = 0;
@@ -1026,9 +1027,7 @@ export class Common {
       }
     } else if (addr.indexOf('i2p') !== -1) {
       network = 'i2p';
-    } else if (
-      addr.indexOf('ipv4') !== -1
-    ) {
+    } else if (addr.indexOf('ipv4') !== -1) {
       const ipv = isIP(url.split(':')[0]);
       if (ipv === 4) {
         network = 'ipv4';
@@ -1038,9 +1037,7 @@ export class Common {
           url: addr,
         };
       }
-    } else if (
-      addr.indexOf('ipv6') !== -1
-    ) {
+    } else if (addr.indexOf('ipv6') !== -1) {
       const parts = url.split('[');
       if (parts.length < 2) {
         return {

@@ -1421,11 +1421,7 @@ class Blocks {
           timer,
           `reindexed block at ${newBlock.height} (${newBlock.id})`
         );
-        await this.$getStrippedBlockTransactions(
-          newBlock.id,
-          true,
-          true
-        );
+        await this.$getStrippedBlockTransactions(newBlock.id, true, true);
         this.updateTimerProgress(timer, `reindexed block summary`);
 
         forkTail = newBlock;
@@ -1764,7 +1760,7 @@ class Blocks {
           );
         if (cleanBlock.fee_amt_percentiles === null) {
           let summary;
-          let summaryVersion = 0;
+          const summaryVersion = 0;
           // Call Core RPC
           const block = await bitcoinClient.getBlock(cleanBlock.hash, 2);
           summary = this.summarizeBlock(block);

@@ -309,7 +309,7 @@ class Mempool {
     const currentMempoolSize = Object.keys(this.mempoolCache).length;
     this.updateTimerProgress(timer, 'got raw mempool');
     const diff = transactions.length - currentMempoolSize;
-    let newTransactions: MempoolTransactionExtended[] = [];
+    const newTransactions: MempoolTransactionExtended[] = [];
 
     this.mempoolCacheDelta = Math.abs(diff);
 
@@ -334,7 +334,7 @@ class Mempool {
 
     let intervalTimer = Date.now();
 
-    let loaded = false;
+    const loaded = false;
     if (!loaded) {
       const remainingTxids = transactions.filter(
         (txid) => !this.mempoolCache[txid]

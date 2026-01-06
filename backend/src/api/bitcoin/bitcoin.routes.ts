@@ -131,10 +131,7 @@ class BitcoinRoutes {
       )
       .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId', this.getTransaction)
       .post(config.MEMPOOL.API_URL_PREFIX + 'tx', this.$postTransaction)
-      .post(
-        config.MEMPOOL.API_URL_PREFIX + 'txs/test',
-        this.$testTransactions
-      )
+      .post(config.MEMPOOL.API_URL_PREFIX + 'txs/test', this.$testTransactions)
       .get(
         config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/hex',
         this.getRawTransaction
@@ -163,10 +160,7 @@ class BitcoinRoutes {
         config.MEMPOOL.API_URL_PREFIX + 'blocks/tip/hash',
         this.getBlockTipHash
       )
-      .get(
-        config.MEMPOOL.API_URL_PREFIX + 'block/:hash/raw',
-        this.getRawBlock
-      )
+      .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/raw', this.getRawBlock)
       .get(
         config.MEMPOOL.API_URL_PREFIX + 'block/:hash/txids',
         this.getTxIdsForBlock
@@ -183,10 +177,7 @@ class BitcoinRoutes {
         config.MEMPOOL.API_URL_PREFIX + 'block-height/:height',
         this.getBlockHeight
       )
-      .get(
-        config.MEMPOOL.API_URL_PREFIX + 'address/:address',
-        this.getAddress
-      )
+      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address', this.getAddress)
       .get(
         config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs',
         this.getAddressTransactions

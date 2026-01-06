@@ -242,7 +242,6 @@ class RedisCache {
     }
   }
 
-
   async $getBlocks(): Promise<BlockExtended[]> {
     if (!config.REDIS.ENABLED) {
       return [];

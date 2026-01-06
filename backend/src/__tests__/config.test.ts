@@ -58,7 +58,7 @@ describe('Mempool Backend Config', () => {
       expect(config.ELECTRUM).toStrictEqual({
         HOST: '127.0.0.1',
         PORT: 3306,
-        TLS_ENABLED: true
+        TLS_ENABLED: true,
       });
 
       expect(config.CORE_RPC).toStrictEqual({

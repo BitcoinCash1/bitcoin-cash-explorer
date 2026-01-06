@@ -234,7 +234,7 @@ class WebsocketHandler {
                   };
                   response['txPosition'] = JSON.stringify({
                     txid: trackTxid,
-                    position
+                    position,
                   });
                 }
               } else {
@@ -642,13 +642,13 @@ class WebsocketHandler {
       sequence: this.mempoolSequence,
       added: newTransactions.map((tx) => tx.txid),
       removed: deletedTransactions.map((tx) => tx.txid),
-      mined: []
+      mined: [],
     };
     const mempoolDelta: MempoolDelta = {
       sequence: this.mempoolSequence,
       added: newTransactions,
       removed: deletedTransactions.map((tx) => tx.txid),
-      mined: []
+      mined: [],
     };
 
     // update init data
@@ -784,7 +784,9 @@ class WebsocketHandler {
           );
           // txs may be missing prevouts in non-esplora backends
           // so fetch the full transactions now
-          const fullTransactions = await this.getFullTransactions(newTransactions);
+          const fullTransactions = await this.getFullTransactions(
+            newTransactions
+          );
 
           if (removedTransactions.length) {
             response['address-removed-transactions'] =
@@ -808,7 +810,9 @@ class WebsocketHandler {
             );
             // txs may be missing prevouts in non-esplora backends
             // so fetch the full transactions now
-            const fullTransactions = await this.getFullTransactions(newTransactions);
+            const fullTransactions = await this.getFullTransactions(
+              newTransactions
+            );
             if (fullTransactions?.length) {
               addressMap[address] = {
                 mempool: fullTransactions,
@@ -834,7 +838,9 @@ class WebsocketHandler {
             );
             // txs may be missing prevouts in non-esplora backends
             // so fetch the full transactions now
-            const fullTransactions = await this.getFullTransactions(newTransactions);
+            const fullTransactions = await this.getFullTransactions(
+              newTransactions
+            );
             if (fullTransactions?.length) {
               spkMap[spk] = {
                 mempool: fullTransactions,
@@ -904,7 +910,7 @@ class WebsocketHandler {
               position: {
                 ...mempoolTx.position,
                 feeDelta: mempoolTx.feeDelta || undefined,
-              }
+              },
             };
             response['txPosition'] = JSON.stringify(positionData);
           }
@@ -993,7 +999,6 @@ class WebsocketHandler {
     let transactionIds: string[] = memPool.limitGBT
       ? Object.keys(candidates?.txs || {})
       : Object.keys(_memPool);
-
 
     memPool.removeFromSpendMap(transactions);
 
@@ -1144,7 +1149,7 @@ class WebsocketHandler {
         transactionIds,
         _memPool,
         candidates,
-        true,
+        true
       );
     }
     const mBlocks = mempoolBlocks.getMempoolBlocks();
@@ -1180,13 +1185,13 @@ class WebsocketHandler {
       sequence: this.mempoolSequence,
       added: [],
       removed: [],
-      mined: transactions.map((tx) => tx.txid)
+      mined: transactions.map((tx) => tx.txid),
     };
     const mempoolDelta: MempoolDelta = {
       sequence: this.mempoolSequence,
       added: [],
       removed: [],
-      mined: transactions.map((tx) => tx.txid)
+      mined: transactions.map((tx) => tx.txid),
     };
 
     // check for wallet transactions
@@ -1592,7 +1597,7 @@ class WebsocketHandler {
       let numTxSubs = 0;
       let numTxsSubs = 0;
       let numProjectedSubs = 0;
-      let numRbfSubs = 0;
+      const numRbfSubs = 0;
 
       // TODO - Fix indentation after PR is merged
       for (const server of this.webSocketServers) {

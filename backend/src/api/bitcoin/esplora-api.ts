@@ -63,7 +63,7 @@ class FailoverRouter {
       logger.warn('Failed to set local hostname, using "localhost"');
     }
     // setup list of hosts
-    this.hosts = ([]).map((domain) => {
+    this.hosts = [].map((domain) => {
       return {
         host: domain,
         checked: false,
@@ -77,7 +77,7 @@ class FailoverRouter {
       };
     });
     this.activeHost = {
-      host: "",
+      host: '',
       rtts: [],
       rtt: 0,
       failures: 0,
@@ -125,7 +125,7 @@ class FailoverRouter {
         const result = await (host.socket
           ? this.pollConnection.get<number>('http://api/blocks/tip/height', {
               socketPath: host.host,
-              timeout: 20
+              timeout: 20,
             })
           : this.pollConnection.get<number>(host.host + '/blocks/tip/height', {
               timeout: 20,

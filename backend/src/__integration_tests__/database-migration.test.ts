@@ -19,7 +19,7 @@ describe('Database Migration Integration Tests', () => {
 
   test('should have schema version in state table', async () => {
     const [result] = await DB.query<any>(
-      'SELECT number FROM state WHERE name = \'schema_version\''
+      "SELECT number FROM state WHERE name = 'schema_version'"
     );
     expect(result).toHaveLength(1);
     expect(result[0].number).toBeGreaterThan(0);

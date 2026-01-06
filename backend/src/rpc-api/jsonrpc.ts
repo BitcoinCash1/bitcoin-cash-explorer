@@ -73,7 +73,9 @@ JsonRPC.prototype.call = function (method, params) {
 
     // start request timeout timer
     const reqTimeout = setTimeout(function () {
-      if (cbCalled) {return;}
+      if (cbCalled) {
+        return;
+      }
       cbCalled = true;
       request.abort();
       const err = new Error('ETIMEDOUT');
@@ -84,7 +86,9 @@ JsonRPC.prototype.call = function (method, params) {
 
     // set additional timeout on socket in case of remote freeze after sending headers
     request.setTimeout(this.opts.timeout || 30000, function () {
-      if (cbCalled) {return;}
+      if (cbCalled) {
+        return;
+      }
       cbCalled = true;
       request.abort();
       const err = new Error('ESOCKETTIMEDOUT');
@@ -94,7 +98,9 @@ JsonRPC.prototype.call = function (method, params) {
     });
 
     request.on('error', function (err) {
-      if (cbCalled) {return;}
+      if (cbCalled) {
+        return;
+      }
       cbCalled = true;
       clearTimeout(reqTimeout);
       reject(err);
@@ -114,7 +120,9 @@ JsonRPC.prototype.call = function (method, params) {
       response.on('end', () => {
         let err;
 
-        if (cbCalled) {return;}
+        if (cbCalled) {
+          return;
+        }
         cbCalled = true;
 
         try {

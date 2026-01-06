@@ -115,9 +115,7 @@ class MempoolBlocks {
         mempoolBlocks[i].transactions.forEach((tx) => {
           if (!prevIds[tx.txid]) {
             added.push(tx);
-          } else if (
-            tx.rate !== prevIds[tx.txid].rate
-          ) {
+          } else if (tx.rate !== prevIds[tx.txid].rate) {
             changed.push(tx);
           }
         });
@@ -347,7 +345,7 @@ class MempoolBlocks {
     txids: string[],
     newMempool: { [txid: string]: MempoolTransactionExtended },
     candidates: GbtCandidates | undefined,
-    saveResults: boolean = false,
+    saveResults: boolean = false
   ): Promise<MempoolBlockWithTransactions[]> {
     const start = Date.now();
 
@@ -441,7 +439,7 @@ class MempoolBlocks {
     newMempool: { [txid: string]: MempoolTransactionExtended },
     added: MempoolTransactionExtended[],
     removed: MempoolTransactionExtended[],
-    candidates: GbtCandidates | undefined,
+    candidates: GbtCandidates | undefined
   ): Promise<MempoolBlockWithTransactions[]> {
     // GBT optimization requires that uids never get too sparse
     // as a sanity check, we should also explicitly prevent uint32 uid overflow
