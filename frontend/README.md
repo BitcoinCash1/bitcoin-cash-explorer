@@ -27,13 +27,12 @@ The same frontend codebase is used for https://mempool.space and https://liquid.
 Configure the frontend for the site you want by running the corresponding command:
 
 ```
-$ npm run config:defaults:mempool
-$ npm run config:defaults:liquid
+$ npm run config:defaults:explorer
 ```
 
 ### 3. Run the Frontend
 
-_Make sure to use Node.js 20.x and npm 9.x or newer._
+_Make sure to use Node.js 22.x and npm 9.x or newer._
 
 Install project dependencies and run the frontend server:
 
