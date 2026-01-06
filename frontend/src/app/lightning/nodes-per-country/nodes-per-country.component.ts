@@ -1,6 +1,19 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { BehaviorSubject, combineLatest, map, Observable, share, tap } from 'rxjs';
+import {
+  BehaviorSubject,
+  combineLatest,
+  map,
+  Observable,
+  share,
+  tap,
+} from 'rxjs';
 import { ApiService } from '@app/services/api.service';
 import { SeoService } from '@app/services/seo.service';
 import { getFlagEmoji } from '@app/shared/common.utils';
@@ -15,7 +28,7 @@ import { GeolocationData } from '@app/shared/components/geolocation/geolocation.
 })
 export class NodesPerCountry implements OnInit {
   nodes$: Observable<any>;
-  country: {name: string, flag: string};
+  country: { name: string; flag: string };
   nodesPagination$: Observable<any>;
   startingIndexSubject: BehaviorSubject<number> = new BehaviorSubject(0);
   page = 1;
@@ -29,7 +42,7 @@ export class NodesPerCountry implements OnInit {
     private apiService: ApiService,
     private seoService: SeoService,
     private cd: ChangeDetectorRef,
-    private route: ActivatedRoute,
+    private route: ActivatedRoute
   ) {
     for (let i = 0; i < this.pageSize; ++i) {
       this.skeletonLines.push(i);
@@ -37,16 +50,21 @@ export class NodesPerCountry implements OnInit {
   }
 
   ngOnInit(): void {
-    this.nodes$ = this.apiService.getNodeForCountry$(this.route.snapshot.params.country)
+    this.nodes$ = this.apiService
+      .getNodeForCountry$(this.route.snapshot.params.country)
       .pipe(
-        tap(() => this.isLoading = true),
-        map(response => {
-          this.seoService.setTitle($localize`Lightning nodes in ${response.country.en}`);
-          this.seoService.setDescription($localize`:@@meta.description.lightning.nodes-country:Explore all the Lightning nodes hosted in ${response.country.en} and see an overview of each node's capacity, number of open channels, and more.`);
+        tap(() => (this.isLoading = true)),
+        map((response) => {
+          this.seoService.setTitle(
+            $localize`Lightning nodes in ${response.country.en}`
+          );
+          this.seoService.setDescription(
+            $localize`:@@meta.description.lightning.nodes-country:Explore all the Lightning nodes hosted in ${response.country.en} and see an overview of each node's capacity, number of open channels, and more.`
+          );
 
           this.country = {
             name: response.country.en,
-            flag: getFlagEmoji(this.route.snapshot.params.country)
+            flag: getFlagEmoji(this.route.snapshot.params.country),
           };
 
           for (const i in response.nodes) {
@@ -58,8 +76,14 @@ export class NodesPerCountry implements OnInit {
             };
           }
 
-          const sumLiquidity = response.nodes.reduce((partialSum, a) => partialSum + a.capacity, 0);
-          const sumChannels = response.nodes.reduce((partialSum, a) => partialSum + a.channels, 0);
+          const sumLiquidity = response.nodes.reduce(
+            (partialSum, a) => partialSum + a.capacity,
+            0
+          );
+          const sumChannels = response.nodes.reduce(
+            (partialSum, a) => partialSum + a.channels,
+            0
+          );
           const isps = {};
           const topIsp = {
             count: 0,
@@ -93,18 +117,23 @@ export class NodesPerCountry implements OnInit {
             sumLiquidity: sumLiquidity,
             sumChannels: sumChannels,
             topIsp: topIsp,
-            ispCount: Object.keys(isps).length
+            ispCount: Object.keys(isps).length,
           };
         }),
         tap(() => {
-          this.isLoading = false
+          this.isLoading = false;
           this.cd.markForCheck();
         }),
         share()
       );
 
-    this.nodesPagination$ = combineLatest([this.nodes$, this.startingIndexSubject]).pipe(
-      map(([response, startingIndex]) => response.nodes.slice(startingIndex, startingIndex + this.pageSize))
+    this.nodesPagination$ = combineLatest([
+      this.nodes$,
+      this.startingIndexSubject,
+    ]).pipe(
+      map(([response, startingIndex]) =>
+        response.nodes.slice(startingIndex, startingIndex + this.pageSize)
+      )
     );
   }
 

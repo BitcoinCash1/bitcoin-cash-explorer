@@ -1,11 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
-import { defaultMempoolFeeColors, contrastMempoolFeeColors } from '@app/app.constants';
+import {
+  defaultMempoolFeeColors,
+  contrastMempoolFeeColors,
+} from '@app/app.constants';
 import { StorageService } from '@app/services/storage.service';
 import { StateService } from '@app/services/state.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ThemeService {
   style: HTMLLinkElement | null = null;
@@ -15,11 +18,17 @@ export class ThemeService {
 
   constructor(
     private storageService: StorageService,
-    private stateService: StateService,
+    private stateService: StateService
   ) {
-    let theme = this.stateService.env.customize?.theme || this.storageService.getValue('theme-preference') || 'default';
+    let theme =
+      this.stateService.env.customize?.theme ||
+      this.storageService.getValue('theme-preference') ||
+      'default';
     // theme preference must be a valid known public theme
-    if (!this.stateService.env.customize?.theme && !['default', 'contrast', 'softsimon'].includes(theme)) {
+    if (
+      !this.stateService.env.customize?.theme &&
+      !['default', 'contrast', 'softsimon'].includes(theme)
+    ) {
       theme = 'default';
       this.storageService.setValue('theme-preference', 'default');
     }
@@ -33,13 +42,17 @@ export class ThemeService {
 
     this.theme = theme;
     if (theme !== 'default') {
-      this.mempoolFeeColors = (theme === 'contrast'  || theme === 'bukele') ? contrastMempoolFeeColors : defaultMempoolFeeColors;
+      this.mempoolFeeColors =
+        theme === 'contrast' || theme === 'bukele'
+          ? contrastMempoolFeeColors
+          : defaultMempoolFeeColors;
       try {
         if (!this.style) {
           this.style = document.createElement('link');
           this.style.rel = 'stylesheet';
           this.style.href = `${theme}.css`;
-          this.style.onerror = (): void => { // something went wrong (eg the css resource does not exist, revert to default)
+          this.style.onerror = (): void => {
+            // something went wrong (eg the css resource does not exist, revert to default)
             this.apply('default');
           };
           document.head.appendChild(this.style); // load the css now

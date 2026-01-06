@@ -26,19 +26,21 @@ export class FiatSelectorComponent implements OnInit {
   constructor(
     private formBuilder: UntypedFormBuilder,
     private stateService: StateService,
-    private storageService: StorageService,
-  ) { }
+    private storageService: StorageService
+  ) {}
 
   ngOnInit() {
     this.fiatForm = this.formBuilder.group({
-      fiat: ['USD']
+      fiat: ['USD'],
     });
     this.stateService.fiatCurrency$.subscribe((fiat) => {
       this.fiatForm.get('fiat')?.setValue(fiat);
     });
     if (!this.stateService.env.ADDITIONAL_CURRENCIES) {
       this.currencies = this.currencies.filter((currency: any) => {
-        return ['AUD', 'CAD', 'EUR', 'JPY', 'GBP', 'CHF', 'USD'].includes(currency[0]);
+        return ['AUD', 'CAD', 'EUR', 'JPY', 'GBP', 'CHF', 'USD'].includes(
+          currency[0]
+        );
       });
     }
   }

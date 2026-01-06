@@ -11,17 +11,15 @@ import { handleDemoRedirect } from '../../shared/common.utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LightningWrapperComponent implements OnInit {
-
   constructor(
     private websocketService: WebsocketService,
     private router: Router,
     private route: ActivatedRoute
-  ) { }
+  ) {}
 
   ngOnInit() {
     this.websocketService.want(['blocks']);
 
     handleDemoRedirect(this.route, this.router);
   }
-
 }

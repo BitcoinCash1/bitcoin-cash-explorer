@@ -31,7 +31,8 @@
 .table {
   margin-top: 0.5em;
 
-  td, th {
+  td,
+  th {
     padding: 0.15rem 0.5rem;
 
     &.address {
@@ -52,12 +53,14 @@
 
     &:first-child {
       border-bottom: solid 1px white;
-      td, th {
+      td,
+      th {
         padding-bottom: 0.3rem;
       }
     }
     &:nth-child(2) {
-      td, th {
+      td,
+      th {
         padding-top: 0.3rem;
       }
     }
@@ -67,7 +70,8 @@
   }
 
   @media (min-width: 528px) {
-    td, th {
+    td,
+    th {
       &.btc {
         width: 160px;
       }
@@ -78,7 +82,8 @@
   }
 
   @media (min-width: 576px) {
-    td, th {
+    td,
+    th {
       &.btc {
         width: 170px;
       }
@@ -89,7 +94,8 @@
   }
 
   @media (min-width: 992px) {
-    td, th {
+    td,
+    th {
       &.btc {
         width: 210px;
       }

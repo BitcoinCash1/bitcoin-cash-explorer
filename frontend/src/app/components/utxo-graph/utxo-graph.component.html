@@ -2,9 +2,18 @@
 
 <div [class.full-container]="!widget">
   <ng-container *ngIf="!error">
-    <div [class]="!widget ? 'chart' : 'chart-widget'" *browserOnly [style]="{ height: widget ? ((height + 20) + 'px') : null, paddingBottom: !widget}" echarts [initOpts]="chartInitOptions" [options]="chartOptions"
-      (chartInit)="onChartInit($event)">
-    </div>
+    <div
+      [class]="!widget ? 'chart' : 'chart-widget'"
+      *browserOnly
+      [style]="{
+        height: widget ? height + 20 + 'px' : null,
+        paddingBottom: !widget
+      }"
+      echarts
+      [initOpts]="chartInitOptions"
+      [options]="chartOptions"
+      (chartInit)="onChartInit($event)"
+    ></div>
     <div class="text-center loadingGraphs" *ngIf="isLoading">
       <div class="spinner-border text-light"></div>
     </div>
@@ -15,7 +24,10 @@
     </div>
   </ng-container>
 
-  <div class="text-center loadingGraphs" *ngIf="!stateService.isBrowser || isLoading">
+  <div
+    class="text-center loadingGraphs"
+    *ngIf="!stateService.isBrowser || isLoading"
+  >
     <div class="spinner-border text-light"></div>
   </div>
 </div>

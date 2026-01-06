@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, HostListener, ElementRef, ViewChild, Inject, Input, LOCALE_ID, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  ElementRef,
+  ViewChild,
+  Inject,
+  Input,
+  LOCALE_ID,
+  OnInit,
+} from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { StateService } from '@app/services/state.service';
@@ -48,7 +59,7 @@ export class DifficultyComponent implements OnInit {
   @Input() showTitle = true;
 
   @ViewChild('epochSvg') epochSvgElement: ElementRef<SVGElement>;
- 
+
   isLoadingWebSocket$: Observable<boolean>;
   difficultyEpoch$: Observable<EpochProgress>;
 
@@ -71,18 +82,20 @@ export class DifficultyComponent implements OnInit {
   constructor(
     public stateService: StateService,
     private cd: ChangeDetectorRef,
-    @Inject(LOCALE_ID) private locale: string,
-  ) { }
+    @Inject(LOCALE_ID) private locale: string
+  ) {}
 
   ngOnInit(): void {
     this.isLoadingWebSocket$ = this.stateService.isLoadingWebSocket$;
     this.difficultyEpoch$ = combineLatest([
       this.stateService.blocks$,
       this.stateService.difficultyAdjustment$,
-    ])
-    .pipe(
+    ]).pipe(
       map(([blocks, da]) => {
-        const maxHeight = blocks.reduce((max, block) => Math.max(max, block.height), 0);
+        const maxHeight = blocks.reduce(
+          (max, block) => Math.max(max, block.height),
+          0
+        );
         let colorAdjustments = 'var(--transparent-fg)';
         if (da.difficultyChange > 0) {
           colorAdjustments = 'var(--green)';
@@ -104,8 +117,11 @@ export class DifficultyComponent implements OnInit {
         }
 
         const blocksUntilHalving = 210000 - (maxHeight % 210000);
-        const timeUntilHalving = new Date().getTime() + (blocksUntilHalving * 600000);
-        const newEpochStart = Math.floor(this.stateService.latestBlockHeight / EPOCH_BLOCK_LENGTH) * EPOCH_BLOCK_LENGTH;
+        const timeUntilHalving =
+          new Date().getTime() + blocksUntilHalving * 600000;
+        const newEpochStart =
+          Math.floor(this.stateService.latestBlockHeight / EPOCH_BLOCK_LENGTH) *
+          EPOCH_BLOCK_LENGTH;
         const newExpectedHeight = Math.floor(newEpochStart + da.expectedBlocks);
         this.now = new Date().getTime();
         this.nextSubsidy = getNextBlockSubsidy(maxHeight);
@@ -114,40 +130,78 @@ export class DifficultyComponent implements OnInit {
           this.mode = 'halving';
         }
 
-        if (newEpochStart !== this.epochStart || newExpectedHeight !== this.expectedHeight || this.currentHeight !== this.stateService.latestBlockHeight) {
+        if (
+          newEpochStart !== this.epochStart ||
+          newExpectedHeight !== this.expectedHeight ||
+          this.currentHeight !== this.stateService.latestBlockHeight
+        ) {
           this.epochStart = newEpochStart;
           this.expectedHeight = newExpectedHeight;
           this.currentHeight = this.stateService.latestBlockHeight;
           this.currentIndex = this.currentHeight - this.epochStart;
-          this.expectedIndex = Math.min(this.expectedHeight - this.epochStart, 2016) - 1;
+          this.expectedIndex =
+            Math.min(this.expectedHeight - this.epochStart, 2016) - 1;
           this.difference = this.currentIndex - this.expectedIndex;
 
           this.shapes = [];
-          this.shapes = this.shapes.concat(this.blocksToShapes(
-            0, Math.min(this.currentIndex, this.expectedIndex), 'mined', true
-          ));
-          this.shapes = this.shapes.concat(this.blocksToShapes(
-            this.currentIndex + 1, this.expectedIndex, 'behind', true
-          ));
-          this.shapes = this.shapes.concat(this.blocksToShapes(
-            this.expectedIndex + 1, this.currentIndex, 'ahead', false
-          ));
+          this.shapes = this.shapes.concat(
+            this.blocksToShapes(
+              0,
+              Math.min(this.currentIndex, this.expectedIndex),
+              'mined',
+              true
+            )
+          );
+          this.shapes = this.shapes.concat(
+            this.blocksToShapes(
+              this.currentIndex + 1,
+              this.expectedIndex,
+              'behind',
+              true
+            )
+          );
+          this.shapes = this.shapes.concat(
+            this.blocksToShapes(
+              this.expectedIndex + 1,
+              this.currentIndex,
+              'ahead',
+              false
+            )
+          );
           if (this.currentIndex < 2015) {
-            this.shapes = this.shapes.concat(this.blocksToShapes(
-              this.currentIndex + 1, this.currentIndex + 1, 'next', (this.expectedIndex > this.currentIndex)
-            ));
+            this.shapes = this.shapes.concat(
+              this.blocksToShapes(
+                this.currentIndex + 1,
+                this.currentIndex + 1,
+                'next',
+                this.expectedIndex > this.currentIndex
+              )
+            );
           }
-          this.shapes = this.shapes.concat(this.blocksToShapes(
-            Math.max(this.currentIndex + 2, this.expectedIndex + 1), 2105, 'remaining', false
-          ));
+          this.shapes = this.shapes.concat(
+            this.blocksToShapes(
+              Math.max(this.currentIndex + 2, this.expectedIndex + 1),
+              2105,
+              'remaining',
+              false
+            )
+          );
         }
-
 
         let retargetDateString;
         if (da.remainingBlocks > 1870) {
-          retargetDateString = (new Date(da.estimatedRetargetDate)).toLocaleDateString(this.locale, { month: 'long', day: 'numeric' });
+          retargetDateString = new Date(
+            da.estimatedRetargetDate
+          ).toLocaleDateString(this.locale, { month: 'long', day: 'numeric' });
         } else {
-          retargetDateString = (new Date(da.estimatedRetargetDate)).toLocaleTimeString(this.locale, { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' });
+          retargetDateString = new Date(
+            da.estimatedRetargetDate
+          ).toLocaleTimeString(this.locale, {
+            month: 'long',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric',
+          });
         }
 
         const data = {
@@ -173,10 +227,15 @@ export class DifficultyComponent implements OnInit {
     );
   }
 
-  blocksToShapes(start: number, end: number, status: BlockStatus, expected: boolean = false): DiffShape[] {
+  blocksToShapes(
+    start: number,
+    end: number,
+    status: BlockStatus,
+    expected: boolean = false
+  ): DiffShape[] {
     const startY = start % 9;
     const startX = Math.floor(start / 9);
-    const endY = (end % 9);
+    const endY = end % 9;
     const endX = Math.floor(end / 9);
 
     if (startX > endX) {
@@ -184,22 +243,44 @@ export class DifficultyComponent implements OnInit {
     }
 
     if (startX === endX) {
-      return [{
-        x: startX, y: startY, w: 1, h: 1 + endY - startY, status, expected
-      }];
+      return [
+        {
+          x: startX,
+          y: startY,
+          w: 1,
+          h: 1 + endY - startY,
+          status,
+          expected,
+        },
+      ];
     }
 
     const shapes = [];
     shapes.push({
-      x: startX, y: startY, w: 1, h: 9 - startY, status, expected
+      x: startX,
+      y: startY,
+      w: 1,
+      h: 9 - startY,
+      status,
+      expected,
     });
     shapes.push({
-      x: endX, y: 0, w: 1, h: endY + 1, status, expected
+      x: endX,
+      y: 0,
+      w: 1,
+      h: endY + 1,
+      status,
+      expected,
     });
 
     if (startX < endX - 1) {
       shapes.push({
-        x: startX + 1, y: 0, w: endX - startX - 1, h: 9, status, expected
+        x: startX + 1,
+        y: 0,
+        w: endX - startX - 1,
+        h: 9,
+        status,
+        expected,
       });
     }
 

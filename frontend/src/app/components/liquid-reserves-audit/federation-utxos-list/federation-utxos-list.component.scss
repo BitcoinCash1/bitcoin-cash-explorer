@@ -4,7 +4,9 @@
   margin-top: 13px;
 }
 
-tr, td, th {
+tr,
+td,
+th {
   border: 0px;
   padding-top: 0.65rem !important;
   padding-bottom: 0.6rem !important;
@@ -36,7 +38,6 @@ tr, td, th {
 }
 .txid.widget {
   width: 40%;
-  
 }
 
 .address {
@@ -103,4 +104,3 @@ tr, td, th {
     display: none;
   }
 }
-

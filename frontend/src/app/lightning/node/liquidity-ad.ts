@@ -7,8 +7,14 @@ export interface ILiquidityAd {
   compact_lease?: string;
 }
 
-export function parseLiquidityAdHex(compact_lease: string): ILiquidityAd | false {
-  if (!compact_lease || compact_lease.length < 20 || compact_lease.length > 28) {
+export function parseLiquidityAdHex(
+  compact_lease: string
+): ILiquidityAd | false {
+  if (
+    !compact_lease ||
+    compact_lease.length < 20 ||
+    compact_lease.length > 28
+  ) {
     return false;
   }
   try {
@@ -17,9 +23,16 @@ export function parseLiquidityAdHex(compact_lease: string): ILiquidityAd | false
       lease_fee_basis: parseInt(compact_lease.slice(4, 8), 16),
       channel_fee_max_rate: parseInt(compact_lease.slice(8, 12), 16),
       lease_fee_base_sat: parseInt(compact_lease.slice(12, 20), 16),
-      channel_fee_max_base: compact_lease.length > 20 ? parseInt(compact_lease.slice(20), 16) : 0,
-    }
-    if (Object.values(liquidityAd).reduce((valid: boolean, value: number): boolean => (valid && !isNaN(value) && value >= 0), true)) {
+      channel_fee_max_base:
+        compact_lease.length > 20 ? parseInt(compact_lease.slice(20), 16) : 0,
+    };
+    if (
+      Object.values(liquidityAd).reduce(
+        (valid: boolean, value: number): boolean =>
+          valid && !isNaN(value) && value >= 0,
+        true
+      )
+    ) {
       liquidityAd.compact_lease = compact_lease;
       return liquidityAd;
     } else {

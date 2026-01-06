@@ -1,5 +1,13 @@
-<div class="fee-distribution-chart" *ngIf="mempoolVsizeFeesOptions && stateService.isBrowser; else loadingFees">
-  <div *browserOnly echarts [initOpts]="mempoolVsizeFeesInitOptions" [options]="mempoolVsizeFeesOptions"></div>
+<div
+  class="fee-distribution-chart"
+  *ngIf="mempoolVsizeFeesOptions && stateService.isBrowser; else loadingFees"
+>
+  <div
+    *browserOnly
+    echarts
+    [initOpts]="mempoolVsizeFeesInitOptions"
+    [options]="mempoolVsizeFeesOptions"
+  ></div>
 </div>
 
 <ng-template #loadingFees>

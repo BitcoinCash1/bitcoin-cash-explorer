@@ -17,7 +17,6 @@ h1 {
   padding-bottom: 5px;
   display: inline-block;
 
-  
   position: absolute;
   bottom: 50px;
   left: -175px;
@@ -60,14 +59,14 @@ h1 {
 
 .timestamp-first .input-group {
   input {
-    margin-inline-end: .25rem;
+    margin-inline-end: 0.25rem;
   }
 }
 
 :host-context(.rtl-layout) {
   .timestamp-first .input-group {
     button {
-      margin-inline-end: .25rem;
+      margin-inline-end: 0.25rem;
     }
   }
 }

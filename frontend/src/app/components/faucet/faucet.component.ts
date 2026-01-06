@@ -1,5 +1,12 @@
 import { Component, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  ValidatorFn,
+  AbstractControl,
+  ValidationErrors,
+} from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { ServicesApiServices } from '@app/services/services-api.service';
 import { getRegex } from '@app/shared/regex.utils';
@@ -25,7 +32,12 @@ export class FaucetComponent implements OnInit, OnDestroy {
     min: number; // minimum amount to request at once (in sats)
     max: number; // maximum amount to request at once
     address?: string; // faucet address
-    code: 'ok' | 'faucet_not_available' | 'faucet_maximum_reached' | 'faucet_too_soon' | 'faucet_not_available_no_utxo';
+    code:
+      | 'ok'
+      | 'faucet_not_available'
+      | 'faucet_maximum_reached'
+      | 'faucet_too_soon'
+      | 'faucet_not_available_no_utxo';
   } | null = null;
   faucetForm: FormGroup;
 
@@ -55,7 +67,7 @@ export class FaucetComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.servicesApiService.userSubject$.subscribe(user => {
+    this.servicesApiService.userSubject$.subscribe((user) => {
       this.user = user;
       if (!user) {
         this.loading = false;
@@ -69,20 +81,23 @@ export class FaucetComponent implements OnInit, OnDestroy {
 
     // Track transaction
     this.websocketService.want(['blocks', 'mempool-blocks']);
-    this.mempoolPositionSubscription = this.stateService.mempoolTxPosition$.subscribe(txPosition => {
-      if (txPosition && txPosition.txid === this.txid) {
-        this.stateService.markBlock$.next({
-          txid: txPosition.txid,
-          mempoolPosition: txPosition.position,
-        });
-      }
-    });
+    this.mempoolPositionSubscription =
+      this.stateService.mempoolTxPosition$.subscribe((txPosition) => {
+        if (txPosition && txPosition.txid === this.txid) {
+          this.stateService.markBlock$.next({
+            txid: txPosition.txid,
+            mempoolPosition: txPosition.position,
+          });
+        }
+      });
 
-    this.confirmationSubscription = this.stateService.txConfirmed$.subscribe(([txConfirmed, block]) => {
-      if (txConfirmed && txConfirmed === this.txid) {
-        this.stateService.markBlock$.next({ blockHeight: block.height });
+    this.confirmationSubscription = this.stateService.txConfirmed$.subscribe(
+      ([txConfirmed, block]) => {
+        if (txConfirmed && txConfirmed === this.txid) {
+          this.stateService.markBlock$.next({ blockHeight: block.height });
+        }
       }
-    });
+    );
   }
 
   updateFaucetStatus(): void {
@@ -95,7 +110,11 @@ export class FaucetComponent implements OnInit, OnDestroy {
         this.status = status;
         if (this.status.code !== 'ok') {
           this.error = this.status.code;
-          this.updateForm(this.status.min ?? 5000, this.status.max ?? 500_000, this.status.address);
+          this.updateForm(
+            this.status.min ?? 5000,
+            this.status.max ?? 500_000,
+            this.status.address
+          );
           return;
         }
         // update the form with the proper validation parameters
@@ -105,7 +124,7 @@ export class FaucetComponent implements OnInit, OnDestroy {
         this.loading = false;
         this.error = response.error;
         this.cd.markForCheck();
-      }
+      },
     });
   }
 
@@ -116,19 +135,23 @@ export class FaucetComponent implements OnInit, OnDestroy {
     this.error = null;
     this.txid = '';
     this.stateService.markBlock$.next({});
-    this.servicesApiService.requestTestnet4Coins$(this.faucetForm.get('address')?.value, parseInt(this.faucetForm.get('satoshis')?.value))
-    .subscribe({
-      next: ((response) => {
-        this.txid = response.txid;
-        this.websocketService.startTrackTransaction(this.txid);
-        this.audioService.playSound('cha-ching');
-        this.updateFaucetStatus();
-        this.cd.markForCheck();
-      }),
-      error: (response: HttpErrorResponse) => {
-        this.error = response.error;
-      },
-    });
+    this.servicesApiService
+      .requestTestnet4Coins$(
+        this.faucetForm.get('address')?.value,
+        parseInt(this.faucetForm.get('satoshis')?.value)
+      )
+      .subscribe({
+        next: (response) => {
+          this.txid = response.txid;
+          this.websocketService.startTrackTransaction(this.txid);
+          this.audioService.playSound('cha-ching');
+          this.updateFaucetStatus();
+          this.cd.markForCheck();
+        },
+        error: (response: HttpErrorResponse) => {
+          this.error = response.error;
+        },
+      });
   }
 
   isDisabled(): boolean {
@@ -136,16 +159,30 @@ export class FaucetComponent implements OnInit, OnDestroy {
   }
 
   getNotFaucetAddressValidator(faucetAddress: string): ValidatorFn {
-    return faucetAddress ? (control: AbstractControl): ValidationErrors | null => {
-      const forbidden = control.value === faucetAddress;
-      return forbidden ? { forbiddenAddress: { value: control.value } } : null;
-    }: () => null;
+    return faucetAddress
+      ? (control: AbstractControl): ValidationErrors | null => {
+          const forbidden = control.value === faucetAddress;
+          return forbidden
+            ? { forbiddenAddress: { value: control.value } }
+            : null;
+        }
+      : () => null;
   }
 
   initForm(min: number, max: number, faucetAddress: string): void {
     this.faucetForm = this.formBuilder.group({
-      'address': ['', [Validators.required, Validators.pattern(getRegex('address', 'testnet4')), this.getNotFaucetAddressValidator(faucetAddress)]],
-      'satoshis': [min, [Validators.required, Validators.min(min), Validators.max(max)]]
+      address: [
+        '',
+        [
+          Validators.required,
+          Validators.pattern(getRegex('address', 'testnet4')),
+          this.getNotFaucetAddressValidator(faucetAddress),
+        ],
+      ],
+      satoshis: [
+        min,
+        [Validators.required, Validators.min(min), Validators.max(max)],
+      ],
     });
   }
 
@@ -153,9 +190,23 @@ export class FaucetComponent implements OnInit, OnDestroy {
     if (!this.faucetForm) {
       this.initForm(min, max, faucetAddress);
     } else {
-      this.faucetForm.get('address').setValidators([Validators.required, Validators.pattern(getRegex('address', 'testnet4')), this.getNotFaucetAddressValidator(faucetAddress)]);
-      this.faucetForm.get('satoshis').setValidators([Validators.required, Validators.min(min), Validators.max(max)]);
-      this.faucetForm.get('satoshis').setValue(Math.max(min, this.faucetForm.get('satoshis').value));
+      this.faucetForm
+        .get('address')
+        .setValidators([
+          Validators.required,
+          Validators.pattern(getRegex('address', 'testnet4')),
+          this.getNotFaucetAddressValidator(faucetAddress),
+        ]);
+      this.faucetForm
+        .get('satoshis')
+        .setValidators([
+          Validators.required,
+          Validators.min(min),
+          Validators.max(max),
+        ]);
+      this.faucetForm
+        .get('satoshis')
+        .setValue(Math.max(min, this.faucetForm.get('satoshis').value));
       this.faucetForm.get('satoshis').updateValueAndValidity();
       this.faucetForm.get('satoshis').markAsDirty();
     }
@@ -171,15 +222,19 @@ export class FaucetComponent implements OnInit, OnDestroy {
     }
   }
 
-  get amount() { return this.faucetForm.get('satoshis')!; }
+  get amount() {
+    return this.faucetForm.get('satoshis')!;
+  }
   get invalidAmount() {
     const amount = this.faucetForm.get('satoshis')!;
-    return amount?.invalid && (amount.dirty || amount.touched)
+    return amount?.invalid && (amount.dirty || amount.touched);
   }
 
-  get address() { return this.faucetForm.get('address')!; }
+  get address() {
+    return this.faucetForm.get('address')!;
+  }
   get invalidAddress() {
     const address = this.faucetForm.get('address')!;
-    return address?.invalid && (address.dirty || address.touched)
+    return address?.invalid && (address.dirty || address.touched);
   }
 }

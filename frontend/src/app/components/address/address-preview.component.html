@@ -6,7 +6,9 @@
     <div class="col-md table-col">
       <div class="row d-flex justify-content-between">
         <div class="title-wrapper">
-          <h1 class="title"><app-truncate [text]="addressString"></app-truncate></h1>
+          <h1 class="title">
+            <app-truncate [text]="addressString"></app-truncate>
+          </h1>
         </div>
       </div>
       <table class="table table-borderless table-striped">
@@ -14,22 +16,50 @@
           <tr *ngIf="addressInfo && addressInfo.unconfidential">
             <td i18n="address.unconfidential">Unconfidential</td>
             <td>
-              <app-truncate [text]="addressInfo.unconfidential" [lastChars]="7" [link]="['/address/' | relativeUrl, addressInfo.unconfidential]"></app-truncate>
+              <app-truncate
+                [text]="addressInfo.unconfidential"
+                [lastChars]="7"
+                [link]="['/address/' | relativeUrl, addressInfo.unconfidential]"
+              ></app-truncate>
             </td>
           </tr>
           <ng-template [ngIf]="!address.electrum">
             <tr>
               <td i18n="address.total-received">Total received</td>
-              <td *ngIf="address.chain_stats.funded_txo_sum !== undefined; else confidentialTd"><app-amount [satoshis]="received" [noFiat]="true"></app-amount></td>
+              <td
+                *ngIf="
+                  address.chain_stats.funded_txo_sum !== undefined;
+                  else confidentialTd
+                "
+              >
+                <app-amount [satoshis]="received" [noFiat]="true"></app-amount>
+              </td>
             </tr>
             <tr>
               <td i18n="address.total-sent">Total sent</td>
-              <td *ngIf="address.chain_stats.spent_txo_sum !== undefined; else confidentialTd"><app-amount [satoshis]="sent" [noFiat]="true"></app-amount></td>
+              <td
+                *ngIf="
+                  address.chain_stats.spent_txo_sum !== undefined;
+                  else confidentialTd
+                "
+              >
+                <app-amount [satoshis]="sent" [noFiat]="true"></app-amount>
+              </td>
             </tr>
           </ng-template>
           <tr>
             <td i18n="address.balance">Balance</td>
-            <td *ngIf="address.chain_stats.funded_txo_sum !== undefined; else confidentialTd"><app-amount [satoshis]="received - sent" [noFiat]="true"></app-amount></td>
+            <td
+              *ngIf="
+                address.chain_stats.funded_txo_sum !== undefined;
+                else confidentialTd
+              "
+            >
+              <app-amount
+                [satoshis]="received - sent"
+                [noFiat]="true"
+              ></app-amount>
+            </td>
           </tr>
           <tr>
             <td i18n="address.transactions">Transactions</td>

@@ -1,4 +1,10 @@
-import { Directive, TemplateRef, ViewContainerRef, Inject, PLATFORM_ID } from '@angular/core';
+import {
+  Directive,
+  TemplateRef,
+  ViewContainerRef,
+  Inject,
+  PLATFORM_ID,
+} from '@angular/core';
 import { isPlatformServer } from '@angular/common';
 
 @Directive({

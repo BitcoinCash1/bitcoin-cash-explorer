@@ -1,6 +1,15 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { combineLatest, map, Observable } from 'rxjs';
-import { INodesRanking, INodesStatistics, ITopNodesPerChannels } from '@interfaces/node-api.interface';
+import {
+  INodesRanking,
+  INodesStatistics,
+  ITopNodesPerChannels,
+} from '@interfaces/node-api.interface';
 import { SeoService } from '@app/services/seo.service';
 import { StateService } from '@app/services/state.service';
 import { GeolocationData } from '@app/shared/components/geolocation/geolocation.component';
@@ -17,33 +26,39 @@ export class TopNodesPerChannels implements OnInit {
   @Input() nodes$: Observable<INodesRanking>;
   @Input() statistics$: Observable<INodesStatistics>;
   @Input() widget: boolean = false;
-  
-  topNodesPerChannels$: Observable<{ nodes: ITopNodesPerChannels[]; statistics: { totalChannels: number; totalCapacity?: number; } }>;
+
+  topNodesPerChannels$: Observable<{
+    nodes: ITopNodesPerChannels[];
+    statistics: { totalChannels: number; totalCapacity?: number };
+  }>;
   skeletonRows: number[] = [];
   currency$: Observable<string>;
-  
+
   constructor(
     private apiService: LightningApiService,
     private stateService: StateService,
-    private seoService: SeoService,
+    private seoService: SeoService
   ) {}
 
   ngOnInit(): void {
     this.currency$ = this.stateService.fiatCurrency$;
-    
+
     for (let i = 1; i <= (this.widget ? 6 : 100); ++i) {
       this.skeletonRows.push(i);
     }
 
     if (this.widget === false) {
-      this.seoService.setTitle($localize`:@@c50bf442cf99f6fc5f8b687c460f33234b879869:Connectivity Ranking`);
-      this.seoService.setDescription($localize`:@@meta.description.lightning.ranking.channels:See Lightning nodes with the most channels open along with high-level stats like total node capacity, node age, and more.`);
+      this.seoService.setTitle(
+        $localize`:@@c50bf442cf99f6fc5f8b687c460f33234b879869:Connectivity Ranking`
+      );
+      this.seoService.setDescription(
+        $localize`:@@meta.description.lightning.ranking.channels:See Lightning nodes with the most channels open along with high-level stats like total node capacity, node age, and more.`
+      );
 
       this.topNodesPerChannels$ = combineLatest([
         this.apiService.getTopNodesByChannels$(),
-        this.statistics$
-      ])
-      .pipe(
+        this.statistics$,
+      ]).pipe(
         map(([ranking, statistics]) => {
           for (const i in ranking) {
             ranking[i].geolocation = <GeolocationData>{
@@ -58,16 +73,15 @@ export class TopNodesPerChannels implements OnInit {
             statistics: {
               totalChannels: statistics.latest.channel_count,
               totalCapacity: statistics.latest.total_capacity,
-            }
-          }
+            },
+          };
         })
       );
     } else {
       this.topNodesPerChannels$ = combineLatest([
         this.nodes$,
-        this.statistics$
-      ])
-      .pipe(
+        this.statistics$,
+      ]).pipe(
         map(([ranking, statistics]) => {
           for (const i in ranking.topByChannels) {
             ranking.topByChannels[i].geolocation = <GeolocationData>{
@@ -81,11 +95,10 @@ export class TopNodesPerChannels implements OnInit {
             nodes: ranking.topByChannels.slice(0, 6),
             statistics: {
               totalChannels: statistics.latest.channel_count,
-            }
-          }
+            },
+          };
         })
       );
     }
   }
-
 }

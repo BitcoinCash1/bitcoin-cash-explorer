@@ -8,7 +8,7 @@ import { Subscription } from 'rxjs';
   templateUrl: './theme-selector.component.html',
   styleUrls: ['./theme-selector.component.scss'],
   standalone: false,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ThemeSelectorComponent implements OnInit {
   themeForm: UntypedFormGroup;
@@ -17,17 +17,17 @@ export class ThemeSelectorComponent implements OnInit {
 
   constructor(
     private formBuilder: UntypedFormBuilder,
-    private themeService: ThemeService,
-  ) { }
+    private themeService: ThemeService
+  ) {}
 
   ngOnInit() {
     this.themeForm = this.formBuilder.group({
-      theme: ['default']
+      theme: ['default'],
     });
     this.themeForm.get('theme')?.setValue(this.themeService.theme);
     // Subscribe to theme changes because two instances of this component exist
     this.themeSubscription = this.themeService.themeChanged$.subscribe(() => {
-      if (this.themeForm.get('theme')?.value !== this.themeService.theme){
+      if (this.themeForm.get('theme')?.value !== this.themeService.theme) {
         this.themeForm.get('theme')?.setValue(this.themeService.theme);
       }
     });

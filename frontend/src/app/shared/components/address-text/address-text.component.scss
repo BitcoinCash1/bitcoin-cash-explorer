@@ -5,7 +5,7 @@
   align-items: start;
   position: relative;
 
-	font-family: monospace;
+  font-family: monospace;
 
   .infix {
     flex-grow: 0;
@@ -17,7 +17,8 @@
     text-decoration: underline 2px;
   }
 
-  .prefix, .postfix {
+  .prefix,
+  .postfix {
     flex-shrink: 0;
     flex-grow: 0;
     user-select: none;
@@ -27,6 +28,6 @@
 }
 
 .poison-alert {
-  margin-left: .5em;
+  margin-left: 0.5em;
   color: var(--yellow);
 }

@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
 import { Acceleration } from '@interfaces/node-api.interface';
@@ -18,12 +23,14 @@ export class PendingStatsComponent implements OnInit {
 
   constructor(
     private stateService: StateService,
-    private websocketService: WebsocketService,
-  ) { }
+    private websocketService: WebsocketService
+  ) {}
 
   ngOnInit(): void {
-    this.accelerationStats$ = (this.accelerations$ || this.stateService.liveAccelerations$).pipe(
-      switchMap(accelerations => {
+    this.accelerationStats$ = (
+      this.accelerations$ || this.stateService.liveAccelerations$
+    ).pipe(
+      switchMap((accelerations) => {
         let totalAccelerations = 0;
         let totalFeeDelta = 0;
         let totalVsize = 0;
@@ -35,7 +42,9 @@ export class PendingStatsComponent implements OnInit {
         return of({
           count: totalAccelerations,
           totalFeeDelta,
-          avgFeeDelta: totalAccelerations ? totalFeeDelta / totalAccelerations : 0,
+          avgFeeDelta: totalAccelerations
+            ? totalFeeDelta / totalAccelerations
+            : 0,
           totalVsize,
         });
       })

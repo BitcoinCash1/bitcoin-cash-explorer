@@ -1,9 +1,23 @@
-import { Component, ChangeDetectionStrategy, Input, OnChanges, NgZone, Output, SimpleChanges, ChangeDetectorRef, EventEmitter } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  OnChanges,
+  NgZone,
+  Output,
+  SimpleChanges,
+  ChangeDetectorRef,
+  EventEmitter,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { Location } from '@angular/common';
 import { EChartsOption } from '@app/graphs/echarts';
 import { ScriptInfo } from '@app/shared/script.utils';
-import { computeLeafHash, taggedHash, taprootAddressToOutputKey } from '@app/shared/transaction.utils';
+import {
+  computeLeafHash,
+  taggedHash,
+  taprootAddressToOutputKey,
+} from '@app/shared/transaction.utils';
 import { StateService } from '@app/services/state.service';
 import { AsmStylerPipe } from '@app/shared/pipes/asm-styler/asm-styler.pipe';
 import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pipe';
@@ -19,7 +33,7 @@ interface TaprootTree {
   symbolSize?: number;
   symbolOffset?: number[];
   label?: any;
-  tooltip?: { label: string, content?: string }[];
+  tooltip?: { label: string; content?: string }[];
 }
 
 interface LeafNode {
@@ -56,7 +70,10 @@ export class TaprootAddressScriptsComponent implements OnChanges {
     renderer: 'svg',
   };
   chartInstance: any;
-  isTouchscreen: boolean = 'ontouchstart' in window || navigator.maxTouchPoints > 0 || (navigator as any).msMaxTouchPoints > 0;
+  isTouchscreen: boolean =
+    'ontouchstart' in window ||
+    navigator.maxTouchPoints > 0 ||
+    (navigator as any).msMaxTouchPoints > 0;
 
   constructor(
     public stateService: StateService,
@@ -65,8 +82,8 @@ export class TaprootAddressScriptsComponent implements OnChanges {
     private location: Location,
     private relativeUrlPipe: RelativeUrlPipe,
     private router: Router,
-    private zone: NgZone,
-  ) { }
+    private zone: NgZone
+  ) {}
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.scripts?.currentValue && changes.scripts.currentValue.size) {
@@ -116,7 +133,10 @@ export class TaprootAddressScriptsComponent implements OnChanges {
 
     // Expand the tree to include public key, internal key and merkle root
     const internalKeyNode = scripts[0].taprootInfo.scriptPath.internalKey;
-    const merkleRootNode = treeStructure.length > 0 ? treeStructure[0].keys().next().value : leaves.keys().next().value;
+    const merkleRootNode =
+      treeStructure.length > 0
+        ? treeStructure[0].keys().next().value
+        : leaves.keys().next().value;
     const outputKeyNode = taprootAddressToOutputKey(this.address).outputKey;
     treeStructure.unshift(new Map<string, [string, string]>());
     treeStructure[0].set(outputKeyNode, [internalKeyNode, merkleRootNode]);
@@ -124,10 +144,14 @@ export class TaprootAddressScriptsComponent implements OnChanges {
     this.isNUMS = scripts[0].taprootInfo.scriptPath.isNUMS;
 
     // Build the tree recursively
-    const recursiveBuild = (hash: string, depth: number, special?: TaprootTree['special']): TaprootTree => {
+    const recursiveBuild = (
+      hash: string,
+      depth: number,
+      special?: TaprootTree['special']
+    ): TaprootTree => {
       const node: TaprootTree = {
         name: hash,
-        depth: depth
+        depth: depth,
       };
 
       if (special) {
@@ -142,8 +166,16 @@ export class TaprootAddressScriptsComponent implements OnChanges {
       if (depth < treeStructure.length && treeStructure[depth].has(hash)) {
         const [firstChild, secondChild] = treeStructure[depth].get(hash);
         node.children = [
-          recursiveBuild(firstChild, depth + 1, depth === 0 ? 'internalKey' : undefined),
-          recursiveBuild(secondChild, depth + 1, depth === 0 ? 'merkleRoot' : undefined)
+          recursiveBuild(
+            firstChild,
+            depth + 1,
+            depth === 0 ? 'internalKey' : undefined
+          ),
+          recursiveBuild(
+            secondChild,
+            depth + 1,
+            depth === 0 ? 'merkleRoot' : undefined
+          ),
         ];
       }
 
@@ -173,7 +205,9 @@ export class TaprootAddressScriptsComponent implements OnChanges {
 
   toggleTree(show: boolean, delay = true): void {
     this.fullTreeShown = show;
-    this.depthShown = show ? this.depth : Math.min(this.depth, this.croppedTreeDepth);
+    this.depthShown = show
+      ? this.depth
+      : Math.min(this.depth, this.croppedTreeDepth);
     if (show) {
       this.height = (this.depthShown + 1) * this.levelHeight;
       setTimeout(() => {
@@ -192,7 +226,6 @@ export class TaprootAddressScriptsComponent implements OnChanges {
       }
     }
   }
-
 
   prepareTree(node: TaprootTree, depth: number): void {
     if (!node) {
@@ -225,7 +258,10 @@ export class TaprootAddressScriptsComponent implements OnChanges {
         },
       };
       node.tooltip = [
-        { label: 'Public Key', content: node.name.slice(0, 10) + '…' + node.name.slice(-10) },
+        {
+          label: 'Public Key',
+          content: node.name.slice(0, 10) + '…' + node.name.slice(-10),
+        },
       ];
     }
 
@@ -237,7 +273,10 @@ export class TaprootAddressScriptsComponent implements OnChanges {
           node.symbolOffset = [0, 5];
           node.label = { formatter: '' };
           node.tooltip = [
-            { label: 'TapBranch Hash', content: node.name.slice(0, 10) + '…' + node.name.slice(-10) },
+            {
+              label: 'TapBranch Hash',
+              content: node.name.slice(0, 10) + '…' + node.name.slice(-10),
+            },
             { label: 'Depth', content: (depth - 1).toString() },
           ];
         } else if (node.special === 'merkleRoot') {
@@ -253,7 +292,10 @@ export class TaprootAddressScriptsComponent implements OnChanges {
             },
           };
           node.tooltip = [
-            { label: 'Merkle Root', content: node.name.slice(0, 10) + '…' + node.name.slice(-10) },
+            {
+              label: 'Merkle Root',
+              content: node.name.slice(0, 10) + '…' + node.name.slice(-10),
+            },
           ];
         }
       }
@@ -272,19 +314,26 @@ export class TaprootAddressScriptsComponent implements OnChanges {
             pill: {
               ...basePillStyle,
               backgroundColor: '#ffc107',
-              color: '#212529'
-            }
-          }
+              color: '#212529',
+            },
+          },
         };
 
         node.tooltip = [
-          { label: 'TapLeaf Hash', content: node.name.slice(0, 10) + '…' + node.name.slice(-10) },
+          {
+            label: 'TapLeaf Hash',
+            content: node.name.slice(0, 10) + '…' + node.name.slice(-10),
+          },
           { label: 'Depth', content: (depth - 1).toString() },
-          { label: 'Leaf Version', content: node.value.leafVersion.toString(16) },
+          {
+            label: 'Leaf Version',
+            content: node.value.leafVersion.toString(16),
+          },
         ];
-
       } else if (node.special === 'internalKey') {
-        const internalKeyLabel = this.isNUMS ? 'Internal Key 🚫' : 'Internal Key';
+        const internalKeyLabel = this.isNUMS
+          ? 'Internal Key 🚫'
+          : 'Internal Key';
         node.label = {
           formatter: `{pill|${internalKeyLabel}}`,
           offset: [0, -5],
@@ -297,7 +346,10 @@ export class TaprootAddressScriptsComponent implements OnChanges {
           },
         };
         node.tooltip = [
-          { label: 'Internal Key', content: node.name.slice(0, 10) + '…' + node.name.slice(-10) },
+          {
+            label: 'Internal Key',
+            content: node.name.slice(0, 10) + '…' + node.name.slice(-10),
+          },
         ];
       } else {
         node.symbol = 'circle';
@@ -305,7 +357,10 @@ export class TaprootAddressScriptsComponent implements OnChanges {
         node.symbolOffset = [0, 5];
         node.label = { formatter: '' };
         node.tooltip = [
-          { label: 'Hash', content: node.name.slice(0, 10) + '…' + node.name.slice(-10) },
+          {
+            label: 'Hash',
+            content: node.name.slice(0, 10) + '…' + node.name.slice(-10),
+          },
           { label: 'Depth', content: (depth - 1).toString() },
         ];
         this.maybeTapTreeIncomplete = true;
@@ -335,13 +390,21 @@ export class TaprootAddressScriptsComponent implements OnChanges {
             return '';
           }
 
-          let rows = node.tooltip.map(
-            (item) =>
-              `<tr>
-                  <td style="color: #fff; padding-right: 5px; width: 30%">${item.label}</td>
-                  <td style="color: ${item.label === 'Internal Key' && this.isNUMS ? '#ffdddd' : '#b1b1b1'}; text-align: right">${item.content}</td>
+          let rows = node.tooltip
+            .map(
+              (item) =>
+                `<tr>
+                  <td style="color: #fff; padding-right: 5px; width: 30%">${
+                    item.label
+                  }</td>
+                  <td style="color: ${
+                    item.label === 'Internal Key' && this.isNUMS
+                      ? '#ffdddd'
+                      : '#b1b1b1'
+                  }; text-align: right">${item.content}</td>
                 </tr>`
-          ).join('');
+            )
+            .join('');
 
           if (node.value?.script.vinId) {
             const [txid, vinIndex] = node.value.script.vinId.split(':');
@@ -349,23 +412,34 @@ export class TaprootAddressScriptsComponent implements OnChanges {
               <tr>
                 <td style="color: #fff; padding-right: 5px; width: 30%">Last used in tx</td>
                 <td style="color: #b1b1b1; text-align: right">
-                  <a href="${this.relativeUrlPipe.transform('/tx/' + txid)}?mode=details#vin=${vinIndex}">${txid.slice(0, 10) + '…' + txid.slice(-10)}</a>
+                  <a href="${this.relativeUrlPipe.transform(
+                    '/tx/' + txid
+                  )}?mode=details#vin=${vinIndex}">${
+                    txid.slice(0, 10) + '…' + txid.slice(-10)
+                  }</a>
                 </td>
               </tr>`;
           }
 
           let asmContent = '';
           if (node.value?.script?.asm) {
-            const asm = this.asmStylerPipe.transform(node.value.script.asm, 300);
+            const asm = this.asmStylerPipe.transform(
+              node.value.script.asm,
+              300
+            );
             asmContent = `
               <div style="margin-top: 10px; border-top: 1px solid #333; padding-top: 5px; word-break: break-all; white-space: normal; font-family: monospace; font-size: 12px;">
-                <td>${asm} ${node.value.script.asm.length > 300 ? '...' : ''}</td>
+                <td>${asm} ${
+                  node.value.script.asm.length > 300 ? '...' : ''
+                }</td>
               </div>`;
           } else if (node.value?.script?.type === 'inner_simplicityscript') {
             const hex = node.value.script.hex.slice(0, 300);
             asmContent = `
               <div style="margin-top: 10px; border-top: 1px solid #333; padding-top: 5px; word-break: break-all; white-space: normal; font-family: monospace; font-size: 12px;">
-                <td>Simplicity script: ${hex} ${node.value.script.hex.length > 300 ? '...' : ''}</td>
+                <td>Simplicity script: ${hex} ${
+                  node.value.script.hex.length > 300 ? '...' : ''
+                }</td>
               </div>`;
           }
 
@@ -382,7 +456,11 @@ export class TaprootAddressScriptsComponent implements OnChanges {
             }
             hiddenScriptsMessage = `
               <div style="margin-top: 8px; color: #888; font-size: 11px; line-height: 1.3; font-style: italic; border-top: 1px solid #333; padding-top: 6px; word-break: break-word; white-space: normal">
-                This node might commit to ${upperBoundHtml === '1' ? 'exactly 1 script' : `at most ${upperBoundHtml} scripts`}.
+                This node might commit to ${
+                  upperBoundHtml === '1'
+                    ? 'exactly 1 script'
+                    : `at most ${upperBoundHtml} scripts`
+                }.
               </div>`;
           }
 
@@ -396,32 +474,34 @@ export class TaprootAddressScriptsComponent implements OnChanges {
             </div>`;
         },
       },
-      series: [{
-        type: 'tree',
-        data: [tree as any],
-        top: '20',
-        bottom: '20',
-        right: 0,
-        left: 0,
-        height: Math.max(140, this.depthShown * this.levelHeight),
-        lineStyle: {
-          curveness: 0.9,
-          width: 2,
-        },
-        emphasis: {
-          focus: 'ancestor',
-          itemStyle: {
-            color: '#ccc',
-          },
+      series: [
+        {
+          type: 'tree',
+          data: [tree as any],
+          top: '20',
+          bottom: '20',
+          right: 0,
+          left: 0,
+          height: Math.max(140, this.depthShown * this.levelHeight),
           lineStyle: {
-            color: '#ccc',
-          }
+            curveness: 0.9,
+            width: 2,
+          },
+          emphasis: {
+            focus: 'ancestor',
+            itemStyle: {
+              color: '#ccc',
+            },
+            lineStyle: {
+              color: '#ccc',
+            },
+          },
+          orient: 'TB',
+          expandAndCollapse: false,
+          animationDuration: 250,
+          animationDurationUpdate: 250,
         },
-        orient: 'TB',
-        expandAndCollapse: false,
-        animationDuration: 250,
-        animationDurationUpdate: 250,
-      }],
+      ],
     };
   }
 
@@ -431,7 +511,8 @@ export class TaprootAddressScriptsComponent implements OnChanges {
   }
 
   onChartClick(e): void {
-    if (this.isTouchscreen) { // show tooltip on touchscreen, and click on link in tooltip to navigate
+    if (this.isTouchscreen) {
+      // show tooltip on touchscreen, and click on link in tooltip to navigate
       return;
     }
 
@@ -440,16 +521,22 @@ export class TaprootAddressScriptsComponent implements OnChanges {
     }
 
     const [txid, vinIndex] = e.data.value.script.vinId.split(':');
-    const url = this.router.createUrlTree([this.relativeUrlPipe.transform('/tx'), txid], { fragment: 'vin=' + vinIndex });
+    const url = this.router.createUrlTree(
+      [this.relativeUrlPipe.transform('/tx'), txid],
+      { fragment: 'vin=' + vinIndex }
+    );
 
     this.zone.run(() => {
       if (e.event?.event?.ctrlKey || e.event?.event?.metaKey) {
-        const fullUrl = this.location.prepareExternalUrl(this.router.serializeUrl(url));
+        const fullUrl = this.location.prepareExternalUrl(
+          this.router.serializeUrl(url)
+        );
         window.open(fullUrl, '_blank');
       } else {
-        this.router.navigate([this.relativeUrlPipe.transform('/tx'), txid], { fragment: 'vin=' + vinIndex });
+        this.router.navigate([this.relativeUrlPipe.transform('/tx'), txid], {
+          fragment: 'vin=' + vinIndex,
+        });
       }
     });
-
   }
 }

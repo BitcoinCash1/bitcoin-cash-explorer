@@ -10,7 +10,7 @@ import { WebsocketService } from '@app/services/websocket.service';
   templateUrl: './calculator.component.html',
   styleUrls: ['./calculator.component.scss'],
   standalone: false,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalculatorComponent implements OnInit {
   satoshis = 10000;
@@ -23,8 +23,8 @@ export class CalculatorComponent implements OnInit {
   constructor(
     private stateService: StateService,
     private formBuilder: FormBuilder,
-    private websocketService: WebsocketService,
-  ) { }
+    private websocketService: WebsocketService
+  ) {}
 
   ngOnInit(): void {
     this.form = this.formBuilder.group({
@@ -33,15 +33,14 @@ export class CalculatorComponent implements OnInit {
       satoshis: [0],
     });
 
-    this.lastFiatPrice$ = this.stateService.conversions$.asObservable()
-      .pipe(
-        map((conversions) => conversions.time)
-      );
+    this.lastFiatPrice$ = this.stateService.conversions$
+      .asObservable()
+      .pipe(map((conversions) => conversions.time));
 
     let currency;
     this.price$ = this.currency$.pipe(
       switchMap((result) => {
-        currency = result; 
+        currency = result;
         return this.stateService.conversions$.asObservable();
       }),
       map((conversions) => {
@@ -49,41 +48,42 @@ export class CalculatorComponent implements OnInit {
       })
     );
 
-    combineLatest([
-      this.price$,
-      this.form.get('fiat').valueChanges
-    ]).subscribe(([price, value]) => {
-      const rate = (value / price).toFixed(8);
-      const satsRate = Math.round(value / price * 100_000_000);
-      if (isNaN(value)) {
-        return;
+    combineLatest([this.price$, this.form.get('fiat').valueChanges]).subscribe(
+      ([price, value]) => {
+        const rate = (value / price).toFixed(8);
+        const satsRate = Math.round((value / price) * 100_000_000);
+        if (isNaN(value)) {
+          return;
+        }
+        this.form.get('bitcoin').setValue(rate, { emitEvent: false });
+        this.form.get('satoshis').setValue(satsRate, { emitEvent: false });
       }
-      this.form.get('bitcoin').setValue(rate, { emitEvent: false });
-      this.form.get('satoshis').setValue(satsRate, { emitEvent: false } );
-    });
+    );
 
     combineLatest([
       this.price$,
-      this.form.get('bitcoin').valueChanges
+      this.form.get('bitcoin').valueChanges,
     ]).subscribe(([price, value]) => {
       const rate = parseFloat((value * price).toFixed(8));
       if (isNaN(value)) {
         return;
       }
-      this.form.get('fiat').setValue(rate, { emitEvent: false } );
-      this.form.get('satoshis').setValue(Math.round(value * 100_000_000), { emitEvent: false } );
+      this.form.get('fiat').setValue(rate, { emitEvent: false });
+      this.form
+        .get('satoshis')
+        .setValue(Math.round(value * 100_000_000), { emitEvent: false });
     });
 
     combineLatest([
       this.price$,
-      this.form.get('satoshis').valueChanges
+      this.form.get('satoshis').valueChanges,
     ]).subscribe(([price, value]) => {
-      const rate = parseFloat((value / 100_000_000 * price).toFixed(8));
+      const rate = parseFloat(((value / 100_000_000) * price).toFixed(8));
       const bitcoinRate = (value / 100_000_000).toFixed(8);
       if (isNaN(value)) {
         return;
       }
-      this.form.get('fiat').setValue(rate, { emitEvent: false } );
+      this.form.get('fiat').setValue(rate, { emitEvent: false });
       this.form.get('bitcoin').setValue(bitcoinRate, { emitEvent: false });
     });
 
@@ -94,7 +94,7 @@ export class CalculatorComponent implements OnInit {
   transformInput(name: string): void {
     const formControl = this.form.get(name);
     if (!formControl.value) {
-      return formControl.setValue('', {emitEvent: false});
+      return formControl.setValue('', { emitEvent: false });
     }
     let value = formControl.value.replace(',', '.').replace(/[^0-9.]/g, '');
     if (value === '.') {
@@ -110,7 +110,7 @@ export class CalculatorComponent implements OnInit {
     if (name === 'satoshis') {
       sanitizedValue = parseFloat(sanitizedValue).toFixed(0);
     }
-    formControl.setValue(sanitizedValue, {emitEvent: true});
+    formControl.setValue(sanitizedValue, { emitEvent: true });
   }
 
   removeExtraDots(str: string): string {
@@ -124,12 +124,14 @@ export class CalculatorComponent implements OnInit {
 
   countDecimals(numberString: string): number {
     const decimalPos = numberString.indexOf('.');
-    if (decimalPos === -1) return 0;
+    if (decimalPos === -1) {
+      return 0;
+    }
     return numberString.length - decimalPos - 1;
   }
 
   toFixedWithoutRounding(numStr: string, fixed: number): string {
-    const re = new RegExp(`^-?\\d+(?:.\\d{0,${(fixed || -1)}})?`);
+    const re = new RegExp(`^-?\\d+(?:.\\d{0,${fixed || -1}})?`);
     const result = numStr.match(re);
     return result ? result[0] : numStr;
   }

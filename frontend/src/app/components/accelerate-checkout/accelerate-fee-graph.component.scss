@@ -64,7 +64,7 @@
           margin: 0;
 
           .label {
-            margin-right: .2em;
+            margin-right: 0.2em;
           }
 
           .rate .symbol {
@@ -111,7 +111,8 @@
           }
           bottom: 2px;
         }
-        &.active, &:hover {
+        &.active,
+        &:hover {
           .fill {
             background: var(--primary);
           }
@@ -138,7 +139,8 @@
     }
 
     &:hover > .bar:not(:hover) {
-      &.target, &.max {
+      &.target,
+      &.max {
         .fee {
           opacity: 0;
         }

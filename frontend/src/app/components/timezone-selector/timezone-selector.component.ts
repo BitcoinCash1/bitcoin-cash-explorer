@@ -4,13 +4,12 @@ import { StorageService } from '@app/services/storage.service';
 import { StateService } from '@app/services/state.service';
 import { timezones } from '@app/app.constants';
 
-
 @Component({
   selector: 'app-timezone-selector',
   templateUrl: './timezone-selector.component.html',
   styleUrls: ['./timezone-selector.component.scss'],
   standalone: false,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimezoneSelectorComponent implements OnInit {
   timezoneForm: UntypedFormGroup;
@@ -21,8 +20,8 @@ export class TimezoneSelectorComponent implements OnInit {
   constructor(
     private formBuilder: UntypedFormBuilder,
     private stateService: StateService,
-    private storageService: StorageService,
-  ) { }
+    private storageService: StorageService
+  ) {}
 
   ngOnInit() {
     this.setLocalTimezone();
@@ -42,7 +41,7 @@ export class TimezoneSelectorComponent implements OnInit {
 
   setLocalTimezone() {
     const offset = new Date().getTimezoneOffset();
-    const sign = offset <= 0 ? "+" : "-";
+    const sign = offset <= 0 ? '+' : '-';
     const absOffset = Math.abs(offset);
     const hours = String(Math.floor(absOffset / 60));
     const minutes = String(absOffset % 60).padStart(2, '0');
@@ -52,8 +51,12 @@ export class TimezoneSelectorComponent implements OnInit {
       this.localTimezoneOffset = `${sign}${hours.padStart(2, '0')}:${minutes}`;
     }
 
-    const timezone = this.timezones.find(tz => tz.offset === this.localTimezoneOffset);
-    this.timezones = this.timezones.filter(tz => tz.offset !== this.localTimezoneOffset && tz.offset !== '+0');
+    const timezone = this.timezones.find(
+      (tz) => tz.offset === this.localTimezoneOffset
+    );
+    this.timezones = this.timezones.filter(
+      (tz) => tz.offset !== this.localTimezoneOffset && tz.offset !== '+0'
+    );
     this.localTimezoneName = timezone ? timezone.name : '';
   }
 }

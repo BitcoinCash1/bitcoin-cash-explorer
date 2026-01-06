@@ -23,21 +23,31 @@ export class FeeRateComponent implements OnInit {
 
   constructor(
     private stateService: StateService,
-    private feeRoundingPipe: FeeRoundingPipe,
-  ) { }
+    private feeRoundingPipe: FeeRoundingPipe
+  ) {}
 
   ngOnInit() {
     this.rateUnits$ = this.stateService.rateUnits$;
   }
 
   getIntegerPart(rate: number): string {
-    const formatted = this.feeRoundingPipe.transform(rate, this.rounding, this.dp);
+    const formatted = this.feeRoundingPipe.transform(
+      rate,
+      this.rounding,
+      this.dp
+    );
     const decimalIndex = formatted.indexOf('.');
-    return decimalIndex === -1 ? formatted : formatted.substring(0, decimalIndex);
+    return decimalIndex === -1
+      ? formatted
+      : formatted.substring(0, decimalIndex);
   }
 
   getDecimalPart(rate: number): string {
-    const formatted = this.feeRoundingPipe.transform(rate, this.rounding, this.dp);
+    const formatted = this.feeRoundingPipe.transform(
+      rate,
+      this.rounding,
+      this.dp
+    );
     const decimalIndex = formatted.indexOf('.');
     return decimalIndex === -1 ? ' ' : formatted.substring(decimalIndex) + ' ';
   }

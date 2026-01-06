@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 
 @Component({
   selector: 'app-acceleration-sparkles',
@@ -14,9 +23,7 @@ export class AccelerationSparklesComponent implements OnChanges {
   @ViewChild('sparkleAnchor')
   sparkleAnchor: ElementRef<HTMLDivElement>;
 
-  constructor(
-    private cd: ChangeDetectorRef,
-  ) {}
+  constructor(private cd: ChangeDetectorRef) {}
 
   endTimeout: any;
   lastSparkle: number = 0;
@@ -45,19 +52,20 @@ export class AccelerationSparklesComponent implements OnChanges {
       if (now - this.lastSparkle > 20) {
         this.lastSparkle = now;
         if (this.arrow?.nativeElement && this.sparkleAnchor?.nativeElement) {
-          const anchor = this.sparkleAnchor.nativeElement.getBoundingClientRect().right;
+          const anchor =
+            this.sparkleAnchor.nativeElement.getBoundingClientRect().right;
           const right = this.arrow.nativeElement.getBoundingClientRect().right;
-          const dx = (anchor - right) + 30;
+          const dx = anchor - right + 30;
           const numSparkles = Math.ceil(Math.random() * 3);
           for (let i = 0; i < numSparkles; i++) {
             this.sparkles.push({
               style: {
-                right: (dx + (Math.random() * 10)) + 'px',
-                top: (15 + (Math.random() * 30)) + 'px',
+                right: dx + Math.random() * 10 + 'px',
+                top: 15 + Math.random() * 30 + 'px',
               },
               rotation: {
                 transform: `rotate(${Math.random() * 360}deg)`,
-              }
+              },
             });
           }
           while (this.sparkles.length > 200) {

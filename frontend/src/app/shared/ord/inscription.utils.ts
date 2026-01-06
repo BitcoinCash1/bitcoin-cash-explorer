@@ -22,31 +22,31 @@ export const OP_IF = 0x63;
 export const OP_0 = 0x00;
 
 export const OP_PUSHBYTES_3 = 0x03; //  3 -- not an actual opcode, but used in documentation --> pushes the next 3 bytes onto the stack.
-export const OP_PUSHDATA1 = 0x4c;   // 76 -- The next byte contains the number of bytes to be pushed onto the stack.
-export const OP_PUSHDATA2 = 0x4d;   // 77 -- The next two bytes contain the number of bytes to be pushed onto the stack in little endian order.
-export const OP_PUSHDATA4 = 0x4e;   // 78 -- The next four bytes contain the number of bytes to be pushed onto the stack in little endian order.
-export const OP_ENDIF = 0x68;       // 104 -- Ends an if/else block.
+export const OP_PUSHDATA1 = 0x4c; // 76 -- The next byte contains the number of bytes to be pushed onto the stack.
+export const OP_PUSHDATA2 = 0x4d; // 77 -- The next two bytes contain the number of bytes to be pushed onto the stack in little endian order.
+export const OP_PUSHDATA4 = 0x4e; // 78 -- The next four bytes contain the number of bytes to be pushed onto the stack in little endian order.
+export const OP_ENDIF = 0x68; // 104 -- Ends an if/else block.
 
-export const OP_1NEGATE = 0x4f;            // 79 -- The number -1 is pushed onto the stack.
-export const OP_RESERVED = 0x50;           // 80 -- Transaction is invalid unless occuring in an unexecuted OP_IF branch
-export const OP_PUSHNUM_1 = 0x51;          // 81 -- also known as OP_1
-export const OP_PUSHNUM_2 = 0x52;          // 82 -- also known as OP_2
-export const OP_PUSHNUM_3 = 0x53;          // 83 -- also known as OP_3
-export const OP_PUSHNUM_4 = 0x54;          // 84 -- also known as OP_4
-export const OP_PUSHNUM_5 = 0x55;          // 85 -- also known as OP_5
-export const OP_PUSHNUM_6 = 0x56;          // 86 -- also known as OP_6
-export const OP_PUSHNUM_7 = 0x57;          // 87 -- also known as OP_7
-export const OP_PUSHNUM_8 = 0x58;          // 88 -- also known as OP_8
-export const OP_PUSHNUM_9 = 0x59;          // 89 -- also known as OP_9
-export const OP_PUSHNUM_10 = 0x5a;         // 90 -- also known as OP_10
-export const OP_PUSHNUM_11 = 0x5b;         // 91 -- also known as OP_11
-export const OP_PUSHNUM_12 = 0x5c;         // 92 -- also known as OP_12
-export const OP_PUSHNUM_13 = 0x5d;         // 93 -- also known as OP_13
-export const OP_PUSHNUM_14 = 0x5e;         // 94 -- also known as OP_14
-export const OP_PUSHNUM_15 = 0x5f;         // 95 -- also known as OP_15
-export const OP_PUSHNUM_16 = 0x60;         // 96 -- also known as OP_16
+export const OP_1NEGATE = 0x4f; // 79 -- The number -1 is pushed onto the stack.
+export const OP_RESERVED = 0x50; // 80 -- Transaction is invalid unless occuring in an unexecuted OP_IF branch
+export const OP_PUSHNUM_1 = 0x51; // 81 -- also known as OP_1
+export const OP_PUSHNUM_2 = 0x52; // 82 -- also known as OP_2
+export const OP_PUSHNUM_3 = 0x53; // 83 -- also known as OP_3
+export const OP_PUSHNUM_4 = 0x54; // 84 -- also known as OP_4
+export const OP_PUSHNUM_5 = 0x55; // 85 -- also known as OP_5
+export const OP_PUSHNUM_6 = 0x56; // 86 -- also known as OP_6
+export const OP_PUSHNUM_7 = 0x57; // 87 -- also known as OP_7
+export const OP_PUSHNUM_8 = 0x58; // 88 -- also known as OP_8
+export const OP_PUSHNUM_9 = 0x59; // 89 -- also known as OP_9
+export const OP_PUSHNUM_10 = 0x5a; // 90 -- also known as OP_10
+export const OP_PUSHNUM_11 = 0x5b; // 91 -- also known as OP_11
+export const OP_PUSHNUM_12 = 0x5c; // 92 -- also known as OP_12
+export const OP_PUSHNUM_13 = 0x5d; // 93 -- also known as OP_13
+export const OP_PUSHNUM_14 = 0x5e; // 94 -- also known as OP_14
+export const OP_PUSHNUM_15 = 0x5f; // 95 -- also known as OP_15
+export const OP_PUSHNUM_16 = 0x60; // 96 -- also known as OP_16
 
-export const OP_RETURN = 0x6a;             // 106 -- a standard way of attaching extra data to transactions is to add a zero-value output with a scriptPubKey consisting of OP_RETURN followed by data
+export const OP_RETURN = 0x6a; // 106 -- a standard way of attaching extra data to transactions is to add a zero-value output with a scriptPubKey consisting of OP_RETURN followed by data
 
 //////////////////////////// Helper ///////////////////////////////
 
@@ -74,8 +74,8 @@ export const knownFields = {
   content_encoding: 0x09,
 
   // delegate, with a tag of 11, see delegate docs: https://docs.ordinals.com/inscriptions/delegate.html
-  delegate: 0xb
-}
+  delegate: 0xb,
+};
 
 /**
  * Retrieves the value for a given field from an array of field objects.
@@ -85,9 +85,11 @@ export const knownFields = {
  * @param field - The field number to search for.
  * @returns The value associated with the first matching field, or undefined if no match is found.
  */
-export function getKnownFieldValue(fields: { tag: number; value: Uint8Array }[], field: number): Uint8Array | undefined {
-  const knownField = fields.find(x =>
-    x.tag === field);
+export function getKnownFieldValue(
+  fields: { tag: number; value: Uint8Array }[],
+  field: number
+): Uint8Array | undefined {
+  const knownField = fields.find((x) => x.tag === field);
 
   if (knownField === undefined) {
     return undefined;
@@ -104,12 +106,13 @@ export function getKnownFieldValue(fields: { tag: number; value: Uint8Array }[],
  * @param field - The field number to search for.
  * @returns An array of Uint8Array values associated with the matching fields. If no matches are found, an empty array is returned.
  */
-export function getKnownFieldValues(fields: { tag: number; value: Uint8Array }[], field: number): Uint8Array[] {
-  const knownFields = fields.filter(x =>
-    x.tag === field
-  );
+export function getKnownFieldValues(
+  fields: { tag: number; value: Uint8Array }[],
+  field: number
+): Uint8Array[] {
+  const knownFields = fields.filter((x) => x.tag === field);
 
-  return knownFields.map(field => field.value);
+  return knownFields.map((field) => field.value);
 }
 
 /**
@@ -124,21 +127,32 @@ export function getKnownFieldValues(fields: { tag: number; value: Uint8Array }[]
  *
  * @returns The position immediately after the inscription mark, or -1 if not found.
  */
-export function getNextInscriptionMark(raw: Uint8Array, startPosition: number): number {
-
+export function getNextInscriptionMark(
+  raw: Uint8Array,
+  startPosition: number
+): number {
   // OP_FALSE
   // OP_IF
   // OP_PUSHBYTES_3: This pushes the next 3 bytes onto the stack.
   // 0x6f, 0x72, 0x64: These bytes translate to the ASCII string "ord"
-  const inscriptionMark = new Uint8Array([OP_FALSE, OP_IF, OP_PUSHBYTES_3, 0x6f, 0x72, 0x64]);
+  const inscriptionMark = new Uint8Array([
+    OP_FALSE,
+    OP_IF,
+    OP_PUSHBYTES_3,
+    0x6f,
+    0x72,
+    0x64,
+  ]);
 
   for (let index = startPosition; index <= raw.length - 6; index++) {
-    if (raw[index] === inscriptionMark[0] &&
+    if (
+      raw[index] === inscriptionMark[0] &&
       raw[index + 1] === inscriptionMark[1] &&
       raw[index + 2] === inscriptionMark[2] &&
       raw[index + 3] === inscriptionMark[3] &&
       raw[index + 4] === inscriptionMark[4] &&
-      raw[index + 5] === inscriptionMark[5]) {
+      raw[index + 5] === inscriptionMark[5]
+    ) {
       return index + 6;
     }
   }
@@ -156,7 +170,11 @@ export function getNextInscriptionMark(raw: Uint8Array, startPosition: number): 
  * @param n - The number of bytes to read.
  * @returns A tuple containing the read bytes as Uint8Array and the updated pointer position.
  */
-export function readBytes(raw: Uint8Array, pointer: number, n: number): [Uint8Array, number] {
+export function readBytes(
+  raw: Uint8Array,
+  pointer: number,
+  n: number
+): [Uint8Array, number] {
   const slice = raw.slice(pointer, pointer + n);
   return [slice, pointer + n];
 }
@@ -169,9 +187,11 @@ export function readBytes(raw: Uint8Array, pointer: number, n: number): [Uint8Ar
  * @param pointer - The current position in the raw data array.
  * @returns A tuple containing the read data as Uint8Array and the updated pointer position.
  */
-export function readPushdata(raw: Uint8Array, pointer: number): [Uint8Array, number] {
-
-  let [opcodeSlice, newPointer] = readBytes(raw, pointer, 1);
+export function readPushdata(
+  raw: Uint8Array,
+  pointer: number
+): [Uint8Array, number] {
+  const [opcodeSlice, newPointer] = readBytes(raw, pointer, 1);
   const opcode = opcodeSlice[0];
 
   // Handle the special case of OP_0 (0x00) which pushes an empty array (interpreted as zero)
@@ -202,15 +222,21 @@ export function readPushdata(raw: Uint8Array, pointer: number): [Uint8Array, num
 
   let numBytes: number;
   switch (opcode) {
-    case OP_PUSHDATA1: numBytes = 1; break;
-    case OP_PUSHDATA2: numBytes = 2; break;
-    case OP_PUSHDATA4: numBytes = 4; break;
+    case OP_PUSHDATA1:
+      numBytes = 1;
+      break;
+    case OP_PUSHDATA2:
+      numBytes = 2;
+      break;
+    case OP_PUSHDATA4:
+      numBytes = 4;
+      break;
     default:
       throw new Error(`Invalid push opcode ${opcode} at position ${pointer}`);
   }
 
-  let [dataSizeArray, nextPointer] = readBytes(raw, newPointer, numBytes);
-  let dataSize = littleEndianBytesToNumber(dataSizeArray);
+  const [dataSizeArray, nextPointer] = readBytes(raw, newPointer, numBytes);
+  const dataSize = littleEndianBytesToNumber(dataSizeArray);
   return readBytes(raw, nextPointer, dataSize);
 }
 
@@ -271,7 +297,9 @@ export function bytesToHex(bytes: Uint8Array): string {
   if (!bytes) {
     return null;
   }
-  return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
+  return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join(
+    ''
+  );
 }
 
 /**
@@ -301,7 +329,7 @@ export function littleEndianBytesToNumber(byteArray: Uint8Array): number {
  */
 export function concatUint8Arrays(arrays: Uint8Array[]): Uint8Array {
   if (arrays.length === 0) {
-      return new Uint8Array();
+    return new Uint8Array();
   }
 
   const totalLength = arrays.reduce((sum, arr) => sum + arr.length, 0);
@@ -309,8 +337,8 @@ export function concatUint8Arrays(arrays: Uint8Array[]): Uint8Array {
   let offset = 0;
 
   for (const array of arrays) {
-      result.set(array, offset);
-      offset += array.length;
+    result.set(array, offset);
+    offset += array.length;
   }
 
   return result;
@@ -334,24 +362,27 @@ export interface Inscription {
  * @param pointer - The current pointer where the reading starts.
  * @returns An array of fields and the updated pointer position.
  */
-export function extractFields(raw: Uint8Array, pointer: number): [{ tag: number; value: Uint8Array }[], number] {
-
+export function extractFields(
+  raw: Uint8Array,
+  pointer: number
+): [{ tag: number; value: Uint8Array }[], number] {
   const fields: { tag: number; value: Uint8Array }[] = [];
   let newPointer = pointer;
   let slice: Uint8Array;
 
-  while (newPointer < raw.length &&
+  while (
+    newPointer < raw.length &&
     // normal inscription - content follows now
-    (raw[newPointer] !== OP_0) &&
+    raw[newPointer] !== OP_0 &&
     // delegate - inscription has no further content and ends directly here
-    (raw[newPointer] !== OP_ENDIF)
+    raw[newPointer] !== OP_ENDIF
   ) {
-
     // tags are encoded by ord as single-byte data pushes, but are accepted by ord as either single-byte pushes, or as OP_NUM data pushes.
     // tags greater than or equal to 256 should be encoded as little endian integers with trailing zeros omitted.
     // see: https://github.com/ordinals/ord/issues/2505
     [slice, newPointer] = readPushdata(raw, newPointer);
-    const tag = slice.length === 1 ? slice[0] : littleEndianBytesToNumber(slice);
+    const tag =
+      slice.length === 1 ? slice[0] : littleEndianBytesToNumber(slice);
 
     [slice, newPointer] = readPushdata(raw, newPointer);
     const value = slice;
@@ -362,17 +393,17 @@ export function extractFields(raw: Uint8Array, pointer: number): [{ tag: number;
   return [fields, newPointer];
 }
 
-
 /**
  * Extracts inscription data starting from the current pointer.
  * @param raw - The raw data to read.
  * @param pointer - The current pointer where the reading starts.
  * @returns The parsed inscription or nullx
  */
-export function extractInscriptionData(raw: Uint8Array, pointer: number): Inscription | null {
-
+export function extractInscriptionData(
+  raw: Uint8Array,
+  pointer: number
+): Inscription | null {
   try {
-
     let fields: { tag: number; value: Uint8Array }[];
     let newPointer: number;
     let slice: Uint8Array;
@@ -392,8 +423,11 @@ export function extractInscriptionData(raw: Uint8Array, pointer: number): Inscri
       data.push(slice);
     }
 
-    const combinedLengthOfAllArrays = data.reduce((acc, curr) => acc + curr.length, 0);
-    let combinedData = new Uint8Array(combinedLengthOfAllArrays);
+    const combinedLengthOfAllArrays = data.reduce(
+      (acc, curr) => acc + curr.length,
+      0
+    );
+    const combinedData = new Uint8Array(combinedLengthOfAllArrays);
 
     // Copy all segments from data into combinedData, forming a single contiguous Uint8Array
     let idx = 0;
@@ -416,9 +450,10 @@ export function extractInscriptionData(raw: Uint8Array, pointer: number): Inscri
       body: combinedData.slice(0, 100_000), // Limit body to 100 kB for now
       is_cropped: combinedData.length > 100_000,
       body_length: combinedData.length,
-      delegate_txid: getKnownFieldValue(fields, knownFields.delegate) ? bytesToHex(getKnownFieldValue(fields, knownFields.delegate).reverse()) : null
+      delegate_txid: getKnownFieldValue(fields, knownFields.delegate)
+        ? bytesToHex(getKnownFieldValue(fields, knownFields.delegate).reverse())
+        : null,
     };
-
   } catch (ex) {
     return null;
   }

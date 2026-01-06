@@ -1,11 +1,20 @@
-import { Component, OnInit, OnDestroy, ViewChildren, QueryList } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChildren,
+  QueryList,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { catchError, startWith } from 'rxjs/operators';
 import { Subject, Subscription, of } from 'rxjs';
 import { StateService } from '@app/services/state.service';
 import { WebsocketService } from '@app/services/websocket.service';
 import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pipe';
-import { BlockExtended, TransactionStripped } from '@interfaces/node-api.interface';
+import {
+  BlockExtended,
+  TransactionStripped,
+} from '@interfaces/node-api.interface';
 import { ApiService } from '@app/services/api.service';
 import { BlockOverviewGraphComponent } from '@components/block-overview-graph/block-overview-graph.component';
 import { detectWebGL } from '@app/shared/graphs.utils';
@@ -17,8 +26,12 @@ function bestFitResolution(min, max, n): number {
   let bestScore = Infinity;
   let best = null;
   for (let i = min; i <= max; i++) {
-    const remainder = (n % i);
-    if (remainder < bestScore || (remainder === bestScore && (Math.abs(i - target) < Math.abs(best - target)))) {
+    const remainder = n % i;
+    if (
+      remainder < bestScore ||
+      (remainder === bestScore &&
+        Math.abs(i - target) < Math.abs(best - target))
+    ) {
       bestScore = remainder;
       best = i;
     }
@@ -40,9 +53,7 @@ interface BlockInfo extends BlockExtended {
         style({ opacity: 0 }),
         animate('1000ms', style({ opacity: 1 })),
       ]),
-      transition(':leave', [
-        animate('1000ms 500ms', style({ opacity: 0 }))
-      ])
+      transition(':leave', [animate('1000ms 500ms', style({ opacity: 0 }))]),
     ]),
   ],
   standalone: false,
@@ -86,7 +97,8 @@ export class EightBlocksComponent implements OnInit, OnDestroy {
   containerStyle = {};
   resolution: number = 86;
 
-  @ViewChildren('blockGraph') blockGraphs: QueryList<BlockOverviewGraphComponent>;
+  @ViewChildren('blockGraph')
+  blockGraphs: QueryList<BlockOverviewGraphComponent>;
 
   constructor(
     private route: ActivatedRoute,
@@ -94,7 +106,7 @@ export class EightBlocksComponent implements OnInit, OnDestroy {
     public stateService: StateService,
     private websocketService: WebsocketService,
     private apiService: ApiService,
-    private bytesPipe: BytesPipe,
+    private bytesPipe: BytesPipe
   ) {
     this.webGlEnabled = this.stateService.isBrowser && detectWebGL();
   }
@@ -103,56 +115,81 @@ export class EightBlocksComponent implements OnInit, OnDestroy {
     this.websocketService.want(['blocks']);
     this.network = this.stateService.network;
 
-    this.queryParamsSubscription = this.route.queryParams.subscribe((params) => {
-      this.numBlocks = Number.isInteger(Number(params.numBlocks)) ? Number(params.numBlocks) : 8;
-      this.blockIndices = [...Array(this.numBlocks).keys()];
-      this.autofit = params.autofit !== 'false';
-      this.padding = Number.isInteger(Number(params.padding)) ? Number(params.padding) : 10;
-      this.blockWidth = Number.isInteger(Number(params.blockWidth)) ? Number(params.blockWidth) : 540;
-      this.wrapBlocks = params.wrap !== 'false';
-      this.stagger = Number.isInteger(Number(params.stagger)) ? Number(params.stagger) : 0;
-      this.animationDuration = Number.isInteger(Number(params.animationDuration)) ? Number(params.animationDuration) : 2000;
-      this.animationOffset = this.padding * 2;
+    this.queryParamsSubscription = this.route.queryParams.subscribe(
+      (params) => {
+        this.numBlocks = Number.isInteger(Number(params.numBlocks))
+          ? Number(params.numBlocks)
+          : 8;
+        this.blockIndices = [...Array(this.numBlocks).keys()];
+        this.autofit = params.autofit !== 'false';
+        this.padding = Number.isInteger(Number(params.padding))
+          ? Number(params.padding)
+          : 10;
+        this.blockWidth = Number.isInteger(Number(params.blockWidth))
+          ? Number(params.blockWidth)
+          : 540;
+        this.wrapBlocks = params.wrap !== 'false';
+        this.stagger = Number.isInteger(Number(params.stagger))
+          ? Number(params.stagger)
+          : 0;
+        this.animationDuration = Number.isInteger(
+          Number(params.animationDuration)
+        )
+          ? Number(params.animationDuration)
+          : 2000;
+        this.animationOffset = this.padding * 2;
 
-      if (this.autofit) {
-        this.resolution = bestFitResolution(76, 96, this.blockWidth - this.padding * 2);
-      } else {
-        this.resolution = 86;
-      }
-
-      this.wrapperStyle = {
-        '--block-width': this.blockWidth + 'px',
-        width: this.blockWidth + 'px',
-        maxWidth: this.blockWidth + 'px',
-        padding: (this.padding || 0) +'px 0px',
-      };
-
-      if (params.test === 'true') {
-        if (this.blocksSubscription) {
-          this.blocksSubscription.unsubscribe();
+        if (this.autofit) {
+          this.resolution = bestFitResolution(
+            76,
+            96,
+            this.blockWidth - this.padding * 2
+          );
+        } else {
+          this.resolution = 86;
         }
-        this.blocksSubscription = (new Subject<BlockExtended[]>()).subscribe((blocks) => {
-          this.handleNewBlock(blocks.slice(0, this.numBlocks));
-        });
-        this.shiftTestBlocks();
-      } else if (!this.blocksSubscription) {
-        this.blocksSubscription = this.stateService.blocks$
-          .subscribe((blocks) => {
-            this.handleNewBlock(blocks.slice(0, this.numBlocks));
-          });
+
+        this.wrapperStyle = {
+          '--block-width': this.blockWidth + 'px',
+          width: this.blockWidth + 'px',
+          maxWidth: this.blockWidth + 'px',
+          padding: (this.padding || 0) + 'px 0px',
+        };
+
+        if (params.test === 'true') {
+          if (this.blocksSubscription) {
+            this.blocksSubscription.unsubscribe();
+          }
+          this.blocksSubscription = new Subject<BlockExtended[]>().subscribe(
+            (blocks) => {
+              this.handleNewBlock(blocks.slice(0, this.numBlocks));
+            }
+          );
+          this.shiftTestBlocks();
+        } else if (!this.blocksSubscription) {
+          this.blocksSubscription = this.stateService.blocks$.subscribe(
+            (blocks) => {
+              this.handleNewBlock(blocks.slice(0, this.numBlocks));
+            }
+          );
+        }
       }
-    });
+    );
 
     this.setupBlockGraphs();
 
-    this.networkChangedSubscription = this.stateService.networkChanged$
-      .subscribe((network) => this.network = network);
+    this.networkChangedSubscription =
+      this.stateService.networkChanged$.subscribe(
+        (network) => (this.network = network)
+      );
   }
 
   ngAfterViewInit(): void {
-    this.graphChangeSubscription = this.blockGraphs.changes.pipe(startWith(null)).subscribe(() => {
-      this.setupBlockGraphs();
-    });
+    this.graphChangeSubscription = this.blockGraphs.changes
+      .pipe(startWith(null))
+      .subscribe(() => {
+        this.setupBlockGraphs();
+      });
   }
 
   ngOnDestroy(): void {
@@ -163,19 +200,23 @@ export class EightBlocksComponent implements OnInit, OnDestroy {
     this.cacheBlocksSubscription?.unsubscribe();
     this.networkChangedSubscription?.unsubscribe();
     this.queryParamsSubscription?.unsubscribe();
-    this.blockGraphs.forEach(graph => {
+    this.blockGraphs.forEach((graph) => {
       graph.destroy();
     });
   }
 
   shiftTestBlocks(): void {
-    const sub = this.apiService.getBlocks$(this.testHeight).subscribe(result => {
-      sub.unsubscribe();
-      this.handleNewBlock(result.slice(0, this.numBlocks));
-      this.testHeight++;
-      clearTimeout(this.testShiftTimeout);
-      this.testShiftTimeout = window.setTimeout(() => { this.shiftTestBlocks(); }, 10000);
-    });
+    const sub = this.apiService
+      .getBlocks$(this.testHeight)
+      .subscribe((result) => {
+        sub.unsubscribe();
+        this.handleNewBlock(result.slice(0, this.numBlocks));
+        this.testHeight++;
+        clearTimeout(this.testShiftTimeout);
+        this.testShiftTimeout = window.setTimeout(() => {
+          this.shiftTestBlocks();
+        }, 10000);
+      });
   }
 
   async handleNewBlock(blocks: BlockExtended[]): Promise<void> {
@@ -186,24 +227,29 @@ export class EightBlocksComponent implements OnInit, OnDestroy {
     for (const block of blocks) {
       newHeights[block.height] = true;
       if (!this.strippedTransactions[block.height]) {
-        readyPromises.push(new Promise((resolve) => {
-          const subscription = this.apiService.getStrippedBlockTransactions$(block.id).pipe(
-            catchError(() => {
-              return of([]);
-            }),
-          ).subscribe((transactions) => {
-            this.strippedTransactions[block.height] = transactions;
-            subscription.unsubscribe();
-            resolve(transactions);
-          });
-        }));
+        readyPromises.push(
+          new Promise((resolve) => {
+            const subscription = this.apiService
+              .getStrippedBlockTransactions$(block.id)
+              .pipe(
+                catchError(() => {
+                  return of([]);
+                })
+              )
+              .subscribe((transactions) => {
+                this.strippedTransactions[block.height] = transactions;
+                subscription.unsubscribe();
+                resolve(transactions);
+              });
+          })
+        );
       }
     }
     await Promise.allSettled(readyPromises);
     this.updateBlockGraphs(blocks);
 
     // free up old transactions
-    previousBlocks.forEach(block => {
+    previousBlocks.forEach((block) => {
       if (!newHeights[block.height]) {
         delete this.strippedTransactions[block.height];
       }
@@ -211,35 +257,45 @@ export class EightBlocksComponent implements OnInit, OnDestroy {
   }
 
   updateBlockGraphs(blocks): void {
-    const startTime = performance.now() + 1000 - (this.stagger < 0 ? this.stagger * 8 : 0);
+    const startTime =
+      performance.now() + 1000 - (this.stagger < 0 ? this.stagger * 8 : 0);
     if (this.blockGraphs) {
       this.blockGraphs.forEach((graph, index) => {
-        graph.replace(this.strippedTransactions[blocks?.[index]?.height] || [], 'right', false, startTime + (this.stagger * index));
+        graph.replace(
+          this.strippedTransactions[blocks?.[index]?.height] || [],
+          'right',
+          false,
+          startTime + this.stagger * index
+        );
       });
     }
     this.showInfo = false;
     setTimeout(() => {
-      this.blockInfo = blocks.map(block => {
+      this.blockInfo = blocks.map((block) => {
         return {
           ...block,
-          timeString: (new Date(block.timestamp * 1000)).toLocaleTimeString(),
+          timeString: new Date(block.timestamp * 1000).toLocaleTimeString(),
         };
       });
       this.showInfo = true;
-    }, 1600);  // Should match the animation time.
+    }, 1600); // Should match the animation time.
   }
 
   setupBlockGraphs(): void {
     if (this.blockGraphs) {
       this.blockGraphs.forEach((graph, index) => {
         graph.destroy();
-        graph.setup(this.strippedTransactions[this.latestBlocks?.[index]?.height] || []);
+        graph.setup(
+          this.strippedTransactions[this.latestBlocks?.[index]?.height] || []
+        );
       });
     }
   }
 
-  onTxClick(event: { tx: TransactionStripped, keyModifier: boolean }): void {
-    const url = new RelativeUrlPipe(this.stateService).transform(`/tx/${event.tx.txid}`);
+  onTxClick(event: { tx: TransactionStripped; keyModifier: boolean }): void {
+    const url = new RelativeUrlPipe(this.stateService).transform(
+      `/tx/${event.tx.txid}`
+    );
     if (!event.keyModifier) {
       this.router.navigate([url]);
     } else {

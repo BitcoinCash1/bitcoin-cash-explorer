@@ -1,7 +1,13 @@
-import { Component, ChangeDetectionStrategy, Input, OnChanges, OnInit, HostListener } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  OnChanges,
+  OnInit,
+  HostListener,
+} from '@angular/core';
 import { EChartsOption } from '@app/graphs/echarts';
 import { CurrentPegs } from '@interfaces/node-api.interface';
-
 
 @Component({
   selector: 'app-reserves-ratio',
@@ -19,14 +25,14 @@ export class ReservesRatioComponent implements OnInit, OnChanges {
   right: number | string = '10';
   top: number | string = '20';
   left: number | string = '50';
-  template: ('widget' | 'advanced') = 'widget';
+  template: 'widget' | 'advanced' = 'widget';
   isLoading = true;
 
   ratioChartInitOptions = {
-    renderer: 'svg'
+    renderer: 'svg',
   };
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit() {
     this.isLoading = true;
@@ -37,10 +43,17 @@ export class ReservesRatioComponent implements OnInit, OnChanges {
   }
 
   updateChartOptions() {
-    if (!this.currentPeg || !this.currentReserves || this.currentPeg.amount === '0') {
+    if (
+      !this.currentPeg ||
+      !this.currentReserves ||
+      this.currentPeg.amount === '0'
+    ) {
       return;
     }
-    this.ratioChartOptions = this.createChartOptions(this.currentPeg, this.currentReserves);
+    this.ratioChartOptions = this.createChartOptions(
+      this.currentPeg,
+      this.currentReserves
+    );
   }
 
   rendered() {
@@ -50,8 +63,12 @@ export class ReservesRatioComponent implements OnInit, OnChanges {
     this.isLoading = false;
   }
 
-  createChartOptions(currentPeg: CurrentPegs, currentReserves: CurrentPegs): EChartsOption {
-    const value = parseFloat(currentReserves.amount) / parseFloat(currentPeg.amount);
+  createChartOptions(
+    currentPeg: CurrentPegs,
+    currentReserves: CurrentPegs
+  ): EChartsOption {
+    const value =
+      parseFloat(currentReserves.amount) / parseFloat(currentPeg.amount);
     const hideMaxAxisLabels = value >= 1.001;
     const hideMinAxisLabels = value <= 0.999;
 
@@ -63,22 +80,26 @@ export class ReservesRatioComponent implements OnInit, OnChanges {
       axisFontSize = 14;
       pointerLength = '50%';
       pointerWidth = 16;
-      offsetCenter = value >= 1.0007 || value <= 0.9993 ? ['0%', '-30%'] : ['0%', '-22%'];
+      offsetCenter =
+        value >= 1.0007 || value <= 0.9993 ? ['0%', '-30%'] : ['0%', '-22%'];
     } else if (window.innerWidth >= 768) {
       axisFontSize = 10;
       pointerLength = '35%';
       pointerWidth = 12;
-      offsetCenter = value >= 1.0007 || value <= 0.9993 ? ['0%', '-37%'] : ['0%', '-27%'];
+      offsetCenter =
+        value >= 1.0007 || value <= 0.9993 ? ['0%', '-37%'] : ['0%', '-27%'];
     } else if (window.innerWidth >= 450) {
       axisFontSize = 14;
       pointerLength = '45%';
       pointerWidth = 14;
-      offsetCenter = value >= 1.0007 || value <= 0.9993 ? ['0%', '-32%'] : ['0%', '-22%'];
+      offsetCenter =
+        value >= 1.0007 || value <= 0.9993 ? ['0%', '-32%'] : ['0%', '-22%'];
     } else {
       axisFontSize = 10;
       pointerLength = '35%';
       pointerWidth = 12;
-      offsetCenter = value >= 1.0007 || value <= 0.9993 ? ['0%', '-37%'] : ['0%', '-27%'];
+      offsetCenter =
+        value >= 1.0007 || value <= 0.9993 ? ['0%', '-37%'] : ['0%', '-27%'];
     }
 
     return {
@@ -98,14 +119,14 @@ export class ReservesRatioComponent implements OnInit, OnChanges {
               width: 6,
               color: [
                 [0.49, 'var(--red)'],
-                [1, 'var(--green)']
-              ]
-            }
+                [1, 'var(--green)'],
+              ],
+            },
           },
           axisLabel: {
-            color: 'inherit',        
-            fontFamily: 'inherit',  
-            fontSize: axisFontSize,  
+            color: 'inherit',
+            fontFamily: 'inherit',
+            fontSize: axisFontSize,
             formatter: function (value) {
               if (value === 0.999) {
                 return hideMinAxisLabels ? '' : '99.9%';
@@ -122,22 +143,22 @@ export class ReservesRatioComponent implements OnInit, OnChanges {
             width: pointerWidth,
             offsetCenter: offsetCenter,
             itemStyle: {
-              color: 'auto'
-            }
+              color: 'auto',
+            },
           },
           axisTick: {
             length: 12,
             lineStyle: {
               color: 'auto',
-              width: 2
-            }
+              width: 2,
+            },
           },
           splitLine: {
             length: 20,
             lineStyle: {
               color: 'auto',
-              width: 5
-            }
+              width: 5,
+            },
           },
           title: {
             show: true,
@@ -156,16 +177,16 @@ export class ReservesRatioComponent implements OnInit, OnChanges {
             formatter: function (value) {
               return (value * 100).toFixed(3) + '%';
             },
-            color: 'inherit'
+            color: 'inherit',
           },
           data: [
             {
               value: value,
-              name: $localize`Assets vs Liabilities`
-            }
-          ]
-        }
-      ]
+              name: $localize`Assets vs Liabilities`,
+            },
+          ],
+        },
+      ],
     };
   }
 
@@ -174,4 +195,3 @@ export class ReservesRatioComponent implements OnInit, OnChanges {
     this.updateChartOptions();
   }
 }
-

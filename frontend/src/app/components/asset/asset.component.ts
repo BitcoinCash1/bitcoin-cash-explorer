@@ -21,7 +21,10 @@ import { moveDec } from '@app/bitcoin.utils';
 })
 export class AssetComponent implements OnInit, OnDestroy {
   network = '';
-  nativeAssetId = this.stateService.network === 'liquidtestnet' ? environment.nativeTestAssetId : environment.nativeAssetId;
+  nativeAssetId =
+    this.stateService.network === 'liquidtestnet'
+      ? environment.nativeTestAssetId
+      : environment.nativeAssetId;
 
   asset: Asset;
   blindedIssuance: boolean;
@@ -53,12 +56,14 @@ export class AssetComponent implements OnInit, OnDestroy {
     private audioService: AudioService,
     private apiService: ApiService,
     private seoService: SeoService,
-    private assetsService: AssetsService,
-  ) { }
+    private assetsService: AssetsService
+  ) {}
 
   ngOnInit() {
     this.websocketService.want(['blocks', 'mempool-blocks']);
-    this.stateService.networkChanged$.subscribe((network) => this.network = network);
+    this.stateService.networkChanged$.subscribe(
+      (network) => (this.network = network)
+    );
 
     this.mainSubscription = this.route.paramMap
       .pipe(
@@ -73,17 +78,24 @@ export class AssetComponent implements OnInit, OnDestroy {
           this.transactions = null;
           document.body.scrollTo(0, 0);
           this.assetString = params.get('id') || '';
-          this.seoService.setTitle($localize`:@@asset.component.asset-browser-title:Asset: ${this.assetString}:INTERPOLATION:`);
+          this.seoService.setTitle(
+            $localize`:@@asset.component.asset-browser-title:Asset: ${this.assetString}:INTERPOLATION:`
+          );
 
           return merge(
             of(true),
-            this.stateService.connectionState$
-              .pipe(filter((state) => state === 2 && this.transactions && this.transactions.length > 0))
-          )
-          .pipe(
+            this.stateService.connectionState$.pipe(
+              filter(
+                (state) =>
+                  state === 2 &&
+                  this.transactions &&
+                  this.transactions.length > 0
+              )
+            )
+          ).pipe(
             switchMap(() => {
-              return combineLatest([this.electrsApiService.getAsset$(this.assetString)
-                .pipe(
+              return combineLatest([
+                this.electrsApiService.getAsset$(this.assetString).pipe(
                   catchError((err) => {
                     this.isLoadingAsset = false;
                     this.error = err;
@@ -91,10 +103,9 @@ export class AssetComponent implements OnInit, OnDestroy {
                     console.log(err);
                     return of(null);
                   })
-                ), this.assetsService.getAssetsMinimalJson$])
-              .pipe(
-                take(1)
-              );
+                ),
+                this.assetsService.getAssetsMinimalJson$,
+              ]).pipe(take(1));
             })
           );
         })
@@ -106,8 +117,12 @@ export class AssetComponent implements OnInit, OnDestroy {
           if (!this.assetContract) {
             this.assetContract = [null, '?', 'Unknown', 0];
           }
-          this.seoService.setDescription($localize`:@@meta.description.liquid.asset:Browse an overview of the Liquid asset ${this.assetContract[2]}:INTERPOLATION: (${this.assetContract[1]}:INTERPOLATION:): see issued amount, burned amount, circulating amount, related transactions, and more.`);
-          this.blindedIssuance = this.asset.chain_stats.has_blinded_issuances || this.asset.mempool_stats.has_blinded_issuances;
+          this.seoService.setDescription(
+            $localize`:@@meta.description.liquid.asset:Browse an overview of the Liquid asset ${this.assetContract[2]}:INTERPOLATION: (${this.assetContract[1]}:INTERPOLATION:): see issued amount, burned amount, circulating amount, related transactions, and more.`
+          );
+          this.blindedIssuance =
+            this.asset.chain_stats.has_blinded_issuances ||
+            this.asset.mempool_stats.has_blinded_issuances;
           this.isNativeAsset = asset.asset_id === this.nativeAssetId;
           this.updateChainStats();
           this.websocketService.startTrackAsset(asset.asset_id);
@@ -118,8 +133,11 @@ export class AssetComponent implements OnInit, OnDestroy {
         switchMap((transactions) => {
           this.tempTransactions = transactions;
           if (transactions.length) {
-            this.lastTransactionTxId = transactions[transactions.length - 1].txid;
-            this.loadedConfirmedTxCount += transactions.filter((tx) => tx.status.confirmed).length;
+            this.lastTransactionTxId =
+              transactions[transactions.length - 1].txid;
+            this.loadedConfirmedTxCount += transactions.filter(
+              (tx) => tx.status.confirmed
+            ).length;
           }
 
           const fetchTxs: string[] = [];
@@ -136,62 +154,70 @@ export class AssetComponent implements OnInit, OnDestroy {
           return this.apiService.getTransactionTimes$(fetchTxs);
         })
       )
-      .subscribe((times: number[]) => {
-        times.forEach((time, index) => {
-          this.tempTransactions[this.timeTxIndexes[index]].firstSeen = time;
-        });
-        this.tempTransactions.sort((a, b) => {
-          if (b.status.confirmed) {
-            if (b.status.block_height === a.status.block_height) {
-              return b.status.block_time - a.status.block_time;
+      .subscribe(
+        (times: number[]) => {
+          times.forEach((time, index) => {
+            this.tempTransactions[this.timeTxIndexes[index]].firstSeen = time;
+          });
+          this.tempTransactions.sort((a, b) => {
+            if (b.status.confirmed) {
+              if (b.status.block_height === a.status.block_height) {
+                return b.status.block_time - a.status.block_time;
+              }
+              return b.status.block_height - a.status.block_height;
             }
-            return b.status.block_height - a.status.block_height;
-          }
-          return b.firstSeen - a.firstSeen;
-        });
+            return b.firstSeen - a.firstSeen;
+          });
 
-        this.transactions = this.tempTransactions;
-        this.isLoadingTransactions = false;
-      },
-      (error) => {
-        console.log(error);
-        this.error = error;
-        this.seoService.logSoft404();
-        this.isLoadingAsset = false;
-      });
-
-    this.stateService.mempoolTransactions$
-      .subscribe((transaction) => {
-        if (this.transactions.some((t) => t.txid === transaction.txid)) {
-          return;
+          this.transactions = this.tempTransactions;
+          this.isLoadingTransactions = false;
+        },
+        (error) => {
+          console.log(error);
+          this.error = error;
+          this.seoService.logSoft404();
+          this.isLoadingAsset = false;
         }
+      );
 
-        this.transactions.unshift(transaction);
+    this.stateService.mempoolTransactions$.subscribe((transaction) => {
+      if (this.transactions.some((t) => t.txid === transaction.txid)) {
+        return;
+      }
+
+      this.transactions.unshift(transaction);
+      this.transactions = this.transactions.slice();
+      this.txCount++;
+
+      this.audioService.playSound('chime');
+    });
+
+    this.stateService.blockTransactions$.subscribe((transaction) => {
+      const tx = this.transactions.find((t) => t.txid === transaction.txid);
+      if (tx) {
+        tx.status = transaction.status;
         this.transactions = this.transactions.slice();
-        this.txCount++;
-
-        this.audioService.playSound('chime');
-      });
-
-    this.stateService.blockTransactions$
-      .subscribe((transaction) => {
-        const tx = this.transactions.find((t) => t.txid === transaction.txid);
-        if (tx) {
-          tx.status = transaction.status;
-          this.transactions = this.transactions.slice();
-          this.audioService.playSound('magic');
-        }
-        this.totalConfirmedTxCount++;
-        this.loadedConfirmedTxCount++;
-      });
+        this.audioService.playSound('magic');
+      }
+      this.totalConfirmedTxCount++;
+      this.loadedConfirmedTxCount++;
+    });
   }
 
   loadMore() {
-    if (this.isLoadingTransactions || !this.totalConfirmedTxCount || this.loadedConfirmedTxCount >= this.totalConfirmedTxCount) {
+    if (
+      this.isLoadingTransactions ||
+      !this.totalConfirmedTxCount ||
+      this.loadedConfirmedTxCount >= this.totalConfirmedTxCount
+    ) {
       return;
     }
     this.isLoadingTransactions = true;
-    this.electrsApiService.getAssetTransactionsFromHash$(this.asset.asset_id, this.lastTransactionTxId)
+    this.electrsApiService
+      .getAssetTransactionsFromHash$(
+        this.asset.asset_id,
+        this.lastTransactionTxId
+      )
       .subscribe((transactions: Transaction[]) => {
         this.lastTransactionTxId = transactions[transactions.length - 1].txid;
         this.loadedConfirmedTxCount += transactions.length;
@@ -203,7 +229,8 @@ export class AssetComponent implements OnInit, OnDestroy {
   updateChainStats() {
     // this.receieved = this.asset.chain_stats.funded_txo_sum + this.asset.mempool_stats.funded_txo_sum;
     // this.sent = this.asset.chain_stats.spent_txo_sum + this.asset.mempool_stats.spent_txo_sum;
-    this.txCount = this.asset.chain_stats.tx_count + this.asset.mempool_stats.tx_count;
+    this.txCount =
+      this.asset.chain_stats.tx_count + this.asset.mempool_stats.tx_count;
     this.totalConfirmedTxCount = this.asset.chain_stats.tx_count;
   }
 

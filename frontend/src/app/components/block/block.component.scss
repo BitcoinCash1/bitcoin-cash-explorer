@@ -40,7 +40,7 @@
     }
     .difference {
       margin-left: 0.5em;
-  
+
       &.positive {
         color: rgb(66, 183, 71);
       }
@@ -75,8 +75,9 @@ h1 {
   padding: 0px;
   line-height: 1;
   a {
-    &:hover, &:focus{
-      text-decoration: none;;
+    &:hover,
+    &:focus {
+      text-decoration: none;
     }
   }
 }
@@ -101,18 +102,18 @@ h1 {
 }
 
 .row {
-	flex-direction: column;
-	@media (min-width: 768px) {
-		flex-direction: row;
-	}
+  flex-direction: column;
+  @media (min-width: 768px) {
+    flex-direction: row;
+  }
 }
 @media (max-width: 767.98px) {
-	.mobile-bottomcol {
-		margin-top: 15px;
-	}
-	.details-table td:first-child {
-		white-space: pre-wrap;
-	}
+  .mobile-bottomcol {
+    margin-top: 15px;
+  }
+  .details-table td:first-child {
+    white-space: pre-wrap;
+  }
 }
 
 .toggle-btns {
@@ -125,7 +126,7 @@ h1 {
 }
 
 .btn-audit {
-  margin-right: .5em;
+  margin-right: 0.5em;
 }
 
 .grow {
@@ -141,7 +142,8 @@ h1 {
   }
 
   a {
-    &:hover, &:focus {
+    &:hover,
+    &:focus {
       display: inline-block;
     }
   }
@@ -170,7 +172,7 @@ h1 {
   }
 }
 
-.chart-container{
+.chart-container {
   margin: 20px auto;
   @media (min-width: 768px) {
     margin: auto;
@@ -205,7 +207,8 @@ h1 {
     background: var(--box-bg);
   }
 
-  &.active, &:hover {
+  &.active,
+  &:hover {
     border-color: white;
   }
 }

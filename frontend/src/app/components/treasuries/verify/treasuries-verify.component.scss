@@ -41,7 +41,6 @@
   }
 }
 
-
 .verify-skeleton {
   display: flex;
   flex-direction: row;
@@ -58,7 +57,7 @@
     @media (min-width: 376px) {
       margin: 0 auto 0px;
     }
-    &:first-child{
+    &:first-child {
       display: none;
       @media (min-width: 485px) {
         display: block;
@@ -169,7 +168,8 @@
   white-space: nowrap;
 }
 
-.verify-progress, .halving-progress {
+.verify-progress,
+.halving-progress {
   width: 100%;
   height: 22px;
   margin-bottom: 12px;
@@ -217,7 +217,7 @@
   position: fixed;
   background: color-mix(in srgb, var(--active-bg) 95%, transparent);
   border-radius: 4px;
-  box-shadow: 1px 1px 10px rgba(0,0,0,0.5);
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
   color: var(--tooltip-grey);
   padding: 10px 15px;
   text-align: left;

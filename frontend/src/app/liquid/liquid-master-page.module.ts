@@ -5,13 +5,12 @@ import { SharedModule } from '@app/shared/shared.module';
 import { NgxEchartsModule } from 'ngx-echarts';
 import { LiquidMasterPageComponent } from '@components/liquid-master-page/liquid-master-page.component';
 
-
 import { StartComponent } from '@components/start/start.component';
 import { PushTransactionComponent } from '@components/push-transaction/push-transaction.component';
 import { BlocksList } from '@components/blocks-list/blocks-list.component';
 import { AssetGroupComponent } from '@components/assets/asset-group/asset-group.component';
 import { AssetsComponent } from '@components/assets/assets.component';
-import { AssetsFeaturedComponent } from '@components/assets/assets-featured/assets-featured.component'
+import { AssetsFeaturedComponent } from '@components/assets/assets-featured/assets-featured.component';
 import { AssetComponent } from '@components/asset/asset.component';
 import { AssetsNavComponent } from '@components/assets/assets-nav/assets-nav.component';
 import { RecentPegsListComponent } from '@components/liquid-reserves-audit/recent-pegs-list/recent-pegs-list.component';
@@ -32,7 +31,8 @@ const routes: Routes = [
       },
       {
         path: 'about',
-        loadChildren: () => import('@components/about/about.module').then(m => m.AboutModule),
+        loadChildren: () =>
+          import('@components/about/about.module').then((m) => m.AboutModule),
       },
       {
         path: 'blocks/:page',
@@ -44,27 +44,40 @@ const routes: Routes = [
       },
       {
         path: 'terms-of-service',
-        loadChildren: () => import('@components/terms-of-service/terms-of-service.module').then(m => m.TermsOfServiceModule),
+        loadChildren: () =>
+          import('@components/terms-of-service/terms-of-service.module').then(
+            (m) => m.TermsOfServiceModule
+          ),
       },
       {
         path: 'privacy-policy',
-        loadChildren: () => import('@components/privacy-policy/privacy-policy.module').then(m => m.PrivacyPolicyModule),
+        loadChildren: () =>
+          import('@components/privacy-policy/privacy-policy.module').then(
+            (m) => m.PrivacyPolicyModule
+          ),
       },
       {
         path: 'trademark-policy',
-        loadChildren: () => import('@components/trademark-policy/trademark-policy.module').then(m => m.TrademarkModule),
+        loadChildren: () =>
+          import('@components/trademark-policy/trademark-policy.module').then(
+            (m) => m.TrademarkModule
+          ),
       },
       {
         path: 'tx',
         component: StartComponent,
         data: { preload: true, networkSpecific: true },
-        loadChildren: () => import('@components/transaction/transaction.module').then(m => m.TransactionModule),
+        loadChildren: () =>
+          import('@components/transaction/transaction.module').then(
+            (m) => m.TransactionModule
+          ),
       },
       {
         path: 'block',
         component: StartComponent,
         data: { preload: true, networkSpecific: true },
-        loadChildren: () => import('@components/block/block.module').then(m => m.BlockModule),
+        loadChildren: () =>
+          import('@components/block/block.module').then((m) => m.BlockModule),
       },
       {
         path: 'audit/wallet',
@@ -83,9 +96,9 @@ const routes: Routes = [
           },
           {
             path: '**',
-            redirectTo: 'utxos'
-          }
-        ]
+            redirectTo: 'utxos',
+          },
+        ],
       },
       {
         path: 'audit/pegs/:page',
@@ -94,7 +107,7 @@ const routes: Routes = [
       },
       {
         path: 'audit/pegs',
-        redirectTo: 'audit/pegs/1'
+        redirectTo: 'audit/pegs/1',
       },
       {
         path: 'assets',
@@ -114,27 +127,29 @@ const routes: Routes = [
           {
             path: 'asset/:id',
             data: { networkSpecific: true },
-            component: AssetComponent
+            component: AssetComponent,
           },
           {
             path: 'group/:id',
             data: { networkSpecific: true },
-            component: AssetGroupComponent
+            component: AssetGroupComponent,
           },
           {
             path: '**',
-            redirectTo: 'featured'
-          }
-        ]
+            redirectTo: 'featured',
+          },
+        ],
       },
       {
         path: 'docs',
-        loadChildren: () => import('../docs/docs.module').then(m => m.DocsModule),
+        loadChildren: () =>
+          import('../docs/docs.module').then((m) => m.DocsModule),
         data: { preload: true },
       },
       {
         path: 'api',
-        loadChildren: () => import('../docs/docs.module').then(m => m.DocsModule)
+        loadChildren: () =>
+          import('../docs/docs.module').then((m) => m.DocsModule),
       },
     ],
   },
@@ -144,24 +159,20 @@ if (window['__env']?.OFFICIAL_MEMPOOL_SPACE) {
   routes[0].children.push({
     path: 'monitoring',
     data: { networks: ['bitcoin', 'liquid'] },
-    component: ServerHealthComponent
+    component: ServerHealthComponent,
   });
   routes[0].children.push({
     path: 'nodes',
     data: { networks: ['bitcoin', 'liquid'] },
-    component: ServerStatusComponent
+    component: ServerStatusComponent,
   });
 }
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports: [
-    RouterModule
-  ]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class LiquidRoutingModule { }
+export class LiquidRoutingModule {}
 
 @NgModule({
   imports: [
@@ -169,13 +180,13 @@ export class LiquidRoutingModule { }
     LiquidRoutingModule,
     SharedModule,
     NgxEchartsModule.forRoot({
-      echarts: () => import('../graphs/echarts').then(m => m.echarts),
-    })
+      echarts: () => import('../graphs/echarts').then((m) => m.echarts),
+    }),
   ],
   declarations: [
     LiquidMasterPageComponent,
     FederationWalletComponent,
     FederationUtxosListComponent,
-  ]
+  ],
 })
-export class LiquidMasterPageModule { }
+export class LiquidMasterPageModule {}

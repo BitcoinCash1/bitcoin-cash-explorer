@@ -1,5 +1,10 @@
 import { DOCUMENT } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  OnInit,
+} from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { languages } from '@app/app.constants';
 import { LanguageService } from '@app/services/language.service';
@@ -9,7 +14,7 @@ import { LanguageService } from '@app/services/language.service';
   templateUrl: './language-selector.component.html',
   styleUrls: ['./language-selector.component.scss'],
   standalone: false,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LanguageSelectorComponent implements OnInit {
   languageForm: UntypedFormGroup;
@@ -18,20 +23,23 @@ export class LanguageSelectorComponent implements OnInit {
   constructor(
     @Inject(DOCUMENT) private document: Document,
     private formBuilder: UntypedFormBuilder,
-    private languageService: LanguageService,
-  ) { }
+    private languageService: LanguageService
+  ) {}
 
   ngOnInit() {
     this.languageForm = this.formBuilder.group({
-      language: ['en']
+      language: ['en'],
     });
-    this.languageForm.get('language').setValue(this.languageService.getLanguage());
+    this.languageForm
+      .get('language')
+      .setValue(this.languageService.getLanguage());
   }
 
   changeLanguage() {
     const newLang = this.languageForm.get('language').value;
     this.languageService.setLanguage(newLang);
     const rawUrlPath = this.languageService.stripLanguageFromUrl(null);
-    this.document.location.href = (newLang !== 'en' ? `/${newLang}` : '') + rawUrlPath;
+    this.document.location.href =
+      (newLang !== 'en' ? `/${newLang}` : '') + rawUrlPath;
   }
 }

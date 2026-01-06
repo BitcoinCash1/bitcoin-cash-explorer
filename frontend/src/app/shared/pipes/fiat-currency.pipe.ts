@@ -13,11 +13,13 @@ export class FiatCurrencyPipe implements PipeTransform {
 
   constructor(
     @Inject(LOCALE_ID) public locale: string,
-    private stateService: StateService,
+    private stateService: StateService
   ) {
-    this.fiatSubscription = this.stateService.fiatCurrency$.subscribe((fiat) => {
-      this.currency = fiat;
-    });
+    this.fiatSubscription = this.stateService.fiatCurrency$.subscribe(
+      (fiat) => {
+        this.currency = fiat;
+      }
+    );
   }
 
   transform(num: number, ...args: any[]): unknown {
@@ -25,9 +27,16 @@ export class FiatCurrencyPipe implements PipeTransform {
     const currency = args[1] || this.currency || 'USD';
 
     if (Math.abs(num) >= 1000) {
-      return new Intl.NumberFormat(this.locale, { style: 'currency', currency, maximumFractionDigits: 0 }).format(num);
+      return new Intl.NumberFormat(this.locale, {
+        style: 'currency',
+        currency,
+        maximumFractionDigits: 0,
+      }).format(num);
     } else {
-      return new Intl.NumberFormat(this.locale, { style: 'currency', currency }).format(num);
+      return new Intl.NumberFormat(this.locale, {
+        style: 'currency',
+        currency,
+      }).format(num);
     }
   }
 }

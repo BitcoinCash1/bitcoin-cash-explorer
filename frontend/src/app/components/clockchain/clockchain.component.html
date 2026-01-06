@@ -1,8 +1,17 @@
 <div
-  class="text-center" class="blockchain-wrapper" [class.time-ltr]="timeLtr" #container
-  [class.ltr-transition]="ltrTransitionEnabled" [style.width]="width + 'px'" [style.height]="height + 'px'"
+  class="text-center"
+  class="blockchain-wrapper"
+  [class.time-ltr]="timeLtr"
+  #container
+  [class.ltr-transition]="ltrTransitionEnabled"
+  [style.width]="width + 'px'"
+  [style.height]="height + 'px'"
 >
-  <div class="position-container" [ngClass]="network ? network : ''" [style.top]="(height / 3) + 'px'">
+  <div
+    class="position-container"
+    [ngClass]="network ? network : ''"
+    [style.top]="height / 3 + 'px'"
+  >
     <span>
       <div class="blocks-wrapper">
         <app-mempool-blocks
@@ -25,15 +34,9 @@
         <svg
           viewBox="0 0 2 175"
           [style.width]="'2px'"
-          [style.height]="(5 * height / 6) + 'px'"
+          [style.height]="(5 * height) / 6 + 'px'"
         >
-          <line
-            class="divider-line"
-            x0="0"
-            x1="0"
-            y0="0"
-            y1="175px"
-          ></line>
+          <line class="divider-line" x0="0" x1="0" y0="0" y1="175px"></line>
         </svg>
       </div>
     </span>

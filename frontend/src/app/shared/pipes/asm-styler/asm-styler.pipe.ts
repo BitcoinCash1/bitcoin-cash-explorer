@@ -5,7 +5,6 @@ import { Pipe, PipeTransform } from '@angular/core';
   standalone: false,
 })
 export class AsmStylerPipe implements PipeTransform {
-
   transform(asm: string, crop: number = 0): string {
     const instructions = asm.split('OP_');
     let out = '';
@@ -320,5 +319,4 @@ export class AsmStylerPipe implements PipeTransform {
     }
     return `<span class='${style}'>OP_${opcode}</span> ${args}<br>`;
   }
-
 }

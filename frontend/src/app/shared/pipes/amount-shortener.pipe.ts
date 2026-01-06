@@ -19,9 +19,7 @@ export class AmountShortenerPipe implements PipeTransform {
         formattedNum = num.toFixed(digits);
       }
 
-      return unit !== undefined
-        ? formattedNum + ' ' + unit
-        : formattedNum;
+      return unit !== undefined ? formattedNum + ' ' + unit : formattedNum;
     }
 
     const lookup = [
@@ -33,17 +31,22 @@ export class AmountShortenerPipe implements PipeTransform {
       { value: 1e15, symbol: 'P' },
       { value: 1e18, symbol: 'E' },
       { value: 1e21, symbol: 'Z' },
-      { value: 1e24, symbol: 'Y' }
+      { value: 1e24, symbol: 'Y' },
     ];
     const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
-    const item = lookup.slice().reverse().find((item) => num >= item.value);
+    const item = lookup
+      .slice()
+      .reverse()
+      .find((item) => num >= item.value);
 
     if (!item) {
       return '0';
     }
 
     const scaledNum = num / item.value;
-    const formattedNum = Number(sigfigs ? scaledNum.toPrecision(digits) : scaledNum.toFixed(digits)).toString();
+    const formattedNum = Number(
+      sigfigs ? scaledNum.toPrecision(digits) : scaledNum.toFixed(digits)
+    ).toString();
 
     return unit !== undefined
       ? formattedNum + ' ' + item.symbol + unit

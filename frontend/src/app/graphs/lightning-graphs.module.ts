@@ -46,13 +46,9 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class LightningGraphsRoutingModule { }
+export class LightningGraphsRoutingModule {}
 
 @NgModule({
-  imports: [
-    CommonModule,
-    SharedModule,
-    LightningGraphsRoutingModule,
-  ],
+  imports: [CommonModule, SharedModule, LightningGraphsRoutingModule],
 })
-export class LightningGraphsModule { }
+export class LightningGraphsModule {}

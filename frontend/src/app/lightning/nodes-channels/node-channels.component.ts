@@ -1,5 +1,13 @@
 import { formatNumber } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Inject, Input, LOCALE_ID, NgZone, OnChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  Input,
+  LOCALE_ID,
+  NgZone,
+  OnChanges,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { EChartsOption, TreemapSeriesOption } from '@app/graphs/echarts';
 import { Observable, share, switchMap, tap } from 'rxjs';
@@ -34,13 +42,14 @@ export class NodeChannels implements OnChanges {
     private amountShortenerPipe: AmountShortenerPipe,
     private zone: NgZone,
     private router: Router,
-    public stateService: StateService,
+    public stateService: StateService
   ) {}
 
   ngOnChanges(): void {
     this.prepareChartOptions(null);
 
-    this.channelsObservable$ = this.lightningApiService.getChannelsByNodeId$(this.publicKey, -1, 'active')
+    this.channelsObservable$ = this.lightningApiService
+      .getChannelsByNodeId$(this.publicKey, -1, 'active')
       .pipe(
         switchMap((response) => {
           this.isLoading = true;
@@ -55,20 +64,26 @@ export class NodeChannels implements OnChanges {
             return;
           }
           const biggestCapacity = body[0].capacity;
-          this.prepareChartOptions(body.map(channel => {
-            return {
-              name: channel.node.alias,
-              value: channel.capacity,
-              shortId: channel.short_id,
-              id: channel.id,
-              itemStyle: {
-                color: lerpColor('#1E88E5', '#D81B60', Math.pow(channel.capacity / biggestCapacity, 0.4)),
-              }
-            };
-          }));
+          this.prepareChartOptions(
+            body.map((channel) => {
+              return {
+                name: channel.node.alias,
+                value: channel.capacity,
+                shortId: channel.short_id,
+                id: channel.id,
+                itemStyle: {
+                  color: lerpColor(
+                    '#1E88E5',
+                    '#D81B60',
+                    Math.pow(channel.capacity / biggestCapacity, 0.4)
+                  ),
+                },
+              };
+            })
+          );
           this.isLoading = false;
         }),
-        share(),
+        share()
       );
   }
 
@@ -78,7 +93,7 @@ export class NodeChannels implements OnChanges {
         trigger: 'item',
         textStyle: {
           align: 'left',
-        }
+        },
       },
       series: <TreemapSeriesOption[]>[
         {
@@ -106,9 +121,17 @@ export class NodeChannels implements OnChanges {
               }
               let capacity = '';
               if (value.data.value > 100000000) {
-                capacity = formatNumber(Math.round(value.data.value / 100000000), this.locale, '1.2-2') + ' BTC';
+                capacity =
+                  formatNumber(
+                    Math.round(value.data.value / 100000000),
+                    this.locale,
+                    '1.2-2'
+                  ) + ' BTC';
               } else {
-                capacity = <string>this.amountShortenerPipe.transform(value.data.value, 2) + ' sats';
+                capacity =
+                  <string>(
+                    this.amountShortenerPipe.transform(value.data.value, 2)
+                  ) + ' sats';
               }
 
               return `
@@ -116,7 +139,7 @@ export class NodeChannels implements OnChanges {
                 <span>Node: ${value.name}</span><br>
                 <span>Capacity: ${capacity}</span>
               `;
-            }
+            },
           },
           itemStyle: {
             borderColor: 'black',
@@ -124,10 +147,10 @@ export class NodeChannels implements OnChanges {
           },
           breadcrumb: {
             show: false,
-          }
-        }
-      ]
-    };    
+          },
+        },
+      ],
+    };
   }
 
   onChartInit(ec: any): void {
@@ -140,7 +163,9 @@ export class NodeChannels implements OnChanges {
       }
       this.zone.run(() => {
         //@ts-ignore
-        const url = new RelativeUrlPipe(this.stateService).transform(`/lightning/channel/${e.data.id}`);
+        const url = new RelativeUrlPipe(this.stateService).transform(
+          `/lightning/channel/${e.data.id}`
+        );
         this.router.navigate([url]);
       });
     });

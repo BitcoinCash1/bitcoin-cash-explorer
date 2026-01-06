@@ -103,15 +103,10 @@ import { AsmStylerPipe } from '@app/shared/pipes/asm-styler/asm-styler.pipe';
     SharedModule,
     GraphsRoutingModule,
     NgxEchartsModule.forRoot({
-      echarts: () => import('@app/graphs/echarts').then(m => m.echarts),
-    })
+      echarts: () => import('@app/graphs/echarts').then((m) => m.echarts),
+    }),
   ],
-  exports: [
-    NgxEchartsModule,
-    ActiveAccelerationBox,
-  ],
-  providers: [
-    AsmStylerPipe
-  ]
+  exports: [NgxEchartsModule, ActiveAccelerationBox],
+  providers: [AsmStylerPipe],
 })
-export class GraphsModule { }
+export class GraphsModule {}

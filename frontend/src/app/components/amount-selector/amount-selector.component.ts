@@ -8,7 +8,7 @@ import { StateService } from '@app/services/state.service';
   templateUrl: './amount-selector.component.html',
   styleUrls: ['./amount-selector.component.scss'],
   standalone: false,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AmountSelectorComponent implements OnInit {
   amountForm: UntypedFormGroup;
@@ -17,12 +17,12 @@ export class AmountSelectorComponent implements OnInit {
   constructor(
     private formBuilder: UntypedFormBuilder,
     private stateService: StateService,
-    private storageService: StorageService,
-  ) { }
+    private storageService: StorageService
+  ) {}
 
   ngOnInit() {
     this.amountForm = this.formBuilder.group({
-      mode: ['btc']
+      mode: ['btc'],
     });
     this.stateService.viewAmountMode$.subscribe((mode) => {
       this.amountForm.get('mode')?.setValue(mode);

@@ -1,11 +1,6 @@
 <div class="clock-face" [style]="faceStyle">
   <ng-content></ng-content>
-  <svg
-    class="cut-out"
-    width="384"
-    height="384"
-    viewBox="0 0 384 384"
-  >
+  <svg class="cut-out" width="384" height="384" viewBox="0 0 384 384">
     <g>
       <path
         class="face"
@@ -14,20 +9,38 @@
     </g>
   </svg>
 
-  <svg
-    class="demo-dial"
-    width="384"
-    height="384"
-    viewBox="0 0 384 384"
-  >
+  <svg class="demo-dial" width="384" height="384" viewBox="0 0 384 384">
     <defs>
-      <pattern id="dial-gradient" patternUnits="userSpaceOnUse" width="384" height="384">
-        <image class="dial-gradient-img" href="/resources/clock/gradient.png" x="0" y="0" width="384" height="384" [style.transform]="'rotate(' + (minutes * 6) + 'deg)'" />
+      <pattern
+        id="dial-gradient"
+        patternUnits="userSpaceOnUse"
+        width="384"
+        height="384"
+      >
+        <image
+          class="dial-gradient-img"
+          href="/resources/clock/gradient.png"
+          x="0"
+          y="0"
+          width="384"
+          height="384"
+          [style.transform]="'rotate(' + minutes * 6 + 'deg)'"
+        />
       </pattern>
     </defs>
 
-    <path *ngFor="let angle of minorTicks" class="tick minor" d="M 192,27 v 10" [style.transform]="'rotate(' + angle + 'deg)'"/>
-    <path *ngFor="let angle of majorTicks" class="tick major" d="M 192,27 v 18" [style.transform]="'rotate(' + angle + 'deg)'"/>
+    <path
+      *ngFor="let angle of minorTicks"
+      class="tick minor"
+      d="M 192,27 v 10"
+      [style.transform]="'rotate(' + angle + 'deg)'"
+    />
+    <path
+      *ngFor="let angle of majorTicks"
+      class="tick major"
+      d="M 192,27 v 18"
+      [style.transform]="'rotate(' + angle + 'deg)'"
+    />
 
     <ng-container *ngFor="let segment of segments; trackBy: trackBySegment">
       <path class="block-segment" [attr.d]="segment.path" />
@@ -36,7 +49,17 @@
     </ng-container>
     <!-- <polyline points="468.750,82.031 468.750,35 " id="polyline322" style="fill:none;stroke:#ffffff;stroke-width:4.84839;stroke-dasharray:none;stroke-opacity:1" transform="matrix(0.41250847,0,0,0.93092534,-1.3627708,-32.692008)" /> -->
     <path class="tick very major" d="M 192,0 v 45" />
-    <path id="hour" class="gnomon hour" d="M 178,3 206,3 192,40 Z" [style.transform]="'rotate(' + (hours * 30) + 'deg)'" />
-    <path id="minute" class="gnomon minute" d="M 180,4 204,4 192,38 Z" [style.transform]="'rotate(' + (minutes * 6) + 'deg)'" />
+    <path
+      id="hour"
+      class="gnomon hour"
+      d="M 178,3 206,3 192,40 Z"
+      [style.transform]="'rotate(' + hours * 30 + 'deg)'"
+    />
+    <path
+      id="minute"
+      class="gnomon minute"
+      d="M 180,4 204,4 192,38 Z"
+      [style.transform]="'rotate(' + minutes * 6 + 'deg)'"
+    />
   </svg>
 </div>

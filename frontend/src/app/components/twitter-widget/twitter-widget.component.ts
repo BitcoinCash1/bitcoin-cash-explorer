@@ -1,4 +1,11 @@
-import { Component, Input, ChangeDetectionStrategy, SecurityContext, SimpleChanges, OnChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  SecurityContext,
+  SimpleChanges,
+  OnChanges,
+} from '@angular/core';
 import { LanguageService } from '@app/services/language.service';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
@@ -22,7 +29,7 @@ export class TwitterWidgetComponent implements OnChanges {
 
   constructor(
     private languageService: LanguageService,
-    public sanitizer: DomSanitizer,
+    public sanitizer: DomSanitizer
   ) {
     this.lang = this.languageService.getLanguage();
     this.setIframeSrc();
@@ -38,8 +45,10 @@ export class TwitterWidgetComponent implements OnChanges {
     if (!this.handle) {
       return;
     }
-    let url = `/api/v1/services/x/${this.handle}`;
-    this.iframeSrc = this.sanitizer.bypassSecurityTrustResourceUrl(this.sanitizer.sanitize(SecurityContext.URL, url));
+    const url = `/api/v1/services/x/${this.handle}`;
+    this.iframeSrc = this.sanitizer.bypassSecurityTrustResourceUrl(
+      this.sanitizer.sanitize(SecurityContext.URL, url)
+    );
   }
 
   onReady(): void {

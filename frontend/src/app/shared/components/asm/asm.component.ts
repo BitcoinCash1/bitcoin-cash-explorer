@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { SigInfo, SighashLabels } from '@app/shared/transaction.utils';
 
 @Component({
@@ -6,24 +13,24 @@ import { SigInfo, SighashLabels } from '@app/shared/transaction.utils';
   templateUrl: './asm.component.html',
   styleUrls: ['./asm.component.scss'],
   standalone: false,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AsmComponent {
   @Input() asm: string;
   @Input() crop: number = 0;
   @Input() annotations: {
-    signatures: Record<string, { sig: SigInfo, vindex: number }>,
-    selectedSig: SigInfo | null,
-    p2sh: boolean
+    signatures: Record<string, { sig: SigInfo; vindex: number }>;
+    selectedSig: SigInfo | null;
+    p2sh: boolean;
   } = {
     signatures: {},
     selectedSig: null,
-    p2sh: false
+    p2sh: false,
   };
   @Output() showSigInfo = new EventEmitter<SigInfo>();
   @Output() hideSigInfo = new EventEmitter<void>();
 
-  instructions: { instruction: string, args: string[] }[] = [];
+  instructions: { instruction: string; args: string[] }[] = [];
   sighashLabels: Record<number, string> = SighashLabels;
 
   ngOnInit(): void {
@@ -43,7 +50,7 @@ export class AsmComponent {
       let chars = 0;
       for (let i = 0; i < instructions.length; i++) {
         if (chars + instructions[i].length + 3 > this.crop) {
-          let croppedInstruction = instructions[i];
+          const croppedInstruction = instructions[i];
           instructions = instructions.slice(0, i);
           // add cropped instruction
           let remainingChars = this.crop - chars;
@@ -70,13 +77,15 @@ export class AsmComponent {
         chars += instructions[i].length + 3;
       }
     }
-    this.instructions = instructions.filter(instruction => instruction.trim() !== '').map(instruction => {
-      const parts = instruction.split(' ');
-      return {
-        instruction: parts[0],
-        args: parts.slice(1)
-      };
-    });
+    this.instructions = instructions
+      .filter((instruction) => instruction.trim() !== '')
+      .map((instruction) => {
+        const parts = instruction.split(' ');
+        return {
+          instruction: parts[0],
+          args: parts.slice(1),
+        };
+      });
   }
 
   doShowSigInfo(sig: SigInfo): void {
@@ -92,12 +101,15 @@ export class AsmComponent {
     ['0', 'constants'],
     ['FALSE', 'constants'],
     ['TRUE', 'constants'],
-    ...Array.from({length: 75}, (_, i) => [`PUSHBYTES_${i + 1}`, 'constants']),
+    ...Array.from({ length: 75 }, (_, i) => [
+      `PUSHBYTES_${i + 1}`,
+      'constants',
+    ]),
     ['PUSHDATA1', 'constants'],
     ['PUSHDATA2', 'constants'],
     ['PUSHDATA4', 'constants'],
     ['PUSHNUM_NEG1', 'constants'],
-    ...Array.from({length: 16}, (_, i) => [`PUSHNUM_${i + 1}`, 'constants']),
+    ...Array.from({ length: 16 }, (_, i) => [`PUSHNUM_${i + 1}`, 'constants']),
 
     // Control flow
     ['NOP', 'control'],
@@ -107,7 +119,7 @@ export class AsmComponent {
     ['ENDIF', 'control'],
     ['VERIFY', 'control'],
     ['RETURN', 'control'],
-    ...Array.from({length: 70}, (_, i) => [`RETURN_${i + 186}`, 'control']),
+    ...Array.from({ length: 70 }, (_, i) => [`RETURN_${i + 186}`, 'control']),
 
     // Stack
     ['TOALTSTACK', 'stack'],
@@ -198,6 +210,6 @@ export class AsmComponent {
     ['VERNOTIF', 'reserved'],
     ['RESERVED1', 'reserved'],
     ['RESERVED2', 'reserved'],
-    ...Array.from({length: 10}, (_, i) => [`NOP${i + 1}`, 'reserved'])
+    ...Array.from({ length: 10 }, (_, i) => [`NOP${i + 1}`, 'reserved']),
   ] as [string, string][]);
 }

@@ -1,4 +1,12 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, Input, OnChanges, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ChangeDetectionStrategy,
+  Input,
+  OnChanges,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { StateService } from '@app/services/state.service';
 
@@ -30,7 +38,7 @@ export class ClockchainComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     public stateService: StateService,
-    private cd: ChangeDetectorRef,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -40,17 +48,20 @@ export class ClockchainComponent implements OnInit, OnChanges, OnDestroy {
     this.timeLtrSubscription = this.stateService.timeLtr.subscribe((ltr) => {
       this.timeLtr = !!ltr;
     });
-    this.connectionStateSubscription = this.stateService.connectionState$.subscribe(state => {
-      this.connected = (state === 2);
-    });
+    this.connectionStateSubscription =
+      this.stateService.connectionState$.subscribe((state) => {
+        this.connected = state === 2;
+      });
     firstValueFrom(this.stateService.chainTip$).then(() => {
       this.loadingTip = false;
     });
   }
 
   ngOnChanges() {
-    this.blockWidth = Math.floor(7 * this.height / 12);
-    this.mempoolBlocks = Math.floor(((this.width / 2) - (this.blockWidth * 0.32)) / (1.24 * this.blockWidth));
+    this.blockWidth = Math.floor((7 * this.height) / 12);
+    this.mempoolBlocks = Math.floor(
+      (this.width / 2 - this.blockWidth * 0.32) / (1.24 * this.blockWidth)
+    );
     this.blockchainBlocks = this.mempoolBlocks;
     this.dividerStyle = {
       width: '2px',

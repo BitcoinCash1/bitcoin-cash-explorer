@@ -7,7 +7,7 @@ import { StateService } from '@app/services/state.service';
 import { LanguageService } from '@app/services/language.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class OpenGraphService {
   network = '';
@@ -22,31 +22,39 @@ export class OpenGraphService {
     private stateService: StateService,
     private LanguageService: LanguageService,
     private router: Router,
-    private activatedRoute: ActivatedRoute,
+    private activatedRoute: ActivatedRoute
   ) {
     // save og:image tag from original template
     const initialOgImageTag = metaService.getTag("property='og:image'");
-    this.defaultImageUrl = initialOgImageTag?.content || 'https://mempool.space/resources/previews/mempool-space-preview.jpg';
-    this.router.events.pipe(
-      filter(event => event instanceof NavigationEnd),
-      map(() => this.activatedRoute),
-      map(route => {
-        while (route.firstChild) route = route.firstChild;
-        return route;
-      }),
-      filter(route => route.outlet === 'primary'),
-      switchMap(route => route.data),
-    ).subscribe((data) => {
-      if (data.ogImage) {
-        this.setOgImage();
-      } else {
-        this.clearOgImage();
-      }
-    });
+    this.defaultImageUrl =
+      initialOgImageTag?.content ||
+      'https://mempool.space/resources/previews/mempool-space-preview.jpg';
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationEnd),
+        map(() => this.activatedRoute),
+        map((route) => {
+          while (route.firstChild) {
+            route = route.firstChild;
+          }
+          return route;
+        }),
+        filter((route) => route.outlet === 'primary'),
+        switchMap((route) => route.data)
+      )
+      .subscribe((data) => {
+        if (data.ogImage) {
+          this.setOgImage();
+        } else {
+          this.clearOgImage();
+        }
+      });
 
     // expose routing method to global scope, so we can access it from the unfurler
     window['ogService'] = {
-      loadPage: (path) => { return this.loadPage(path); }
+      loadPage: (path) => {
+        return this.loadPage(path);
+      },
     };
   }
 
@@ -60,8 +68,14 @@ export class OpenGraphService {
   }
 
   clearOgImage() {
-    this.metaService.updateTag({ property: 'og:image', content: this.defaultImageUrl });
-    this.metaService.updateTag({ name: 'twitter:image', content: this.defaultImageUrl });
+    this.metaService.updateTag({
+      property: 'og:image',
+      content: this.defaultImageUrl,
+    });
+    this.metaService.updateTag({
+      name: 'twitter:image',
+      content: this.defaultImageUrl,
+    });
     this.metaService.updateTag({ property: 'og:image:width', content: '1000' });
     this.metaService.updateTag({ property: 'og:image:height', content: '500' });
   }
@@ -70,7 +84,10 @@ export class OpenGraphService {
     const ogImage = `${window.location.protocol}//${window.location.host}/resources/previews/${imageFilename}`;
     this.metaService.updateTag({ property: 'og:image', content: ogImage });
     this.metaService.updateTag({ property: 'og:image:width', content: '2000' });
-    this.metaService.updateTag({ property: 'og:image:height', content: '1000' });
+    this.metaService.updateTag({
+      property: 'og:image:height',
+      content: '1000',
+    });
     this.metaService.updateTag({ name: 'twitter:image', content: ogImage });
   }
 
@@ -82,34 +99,46 @@ export class OpenGraphService {
     } else {
       this.previewLoadingEvents[event]++;
     }
-    this.metaService.updateTag({ property: 'og:preview:loading', content: 'loading'});
+    this.metaService.updateTag({
+      property: 'og:preview:loading',
+      content: 'loading',
+    });
     return this.sessionId;
   }
 
   // mark an event as resolved
   // if all registered events have resolved, signal we are ready for a screenshot
-  waitOver({ event, sessionId }: { event: string, sessionId: number }) {
+  waitOver({ event, sessionId }: { event: string; sessionId: number }) {
     if (sessionId !== this.sessionId) {
       return;
     }
     if (this.previewLoadingEvents[event]) {
       this.previewLoadingEvents[event]--;
-      if (this.previewLoadingEvents[event] === 0 && this.previewLoadingCount > 0) {
+      if (
+        this.previewLoadingEvents[event] === 0 &&
+        this.previewLoadingCount > 0
+      ) {
         delete this.previewLoadingEvents[event];
         this.previewLoadingCount--;
       }
     }
     if (this.previewLoadingCount === 0) {
-      this.metaService.updateTag({ property: 'og:preview:ready', content: 'ready'});
+      this.metaService.updateTag({
+        property: 'og:preview:ready',
+        content: 'ready',
+      });
     }
   }
 
-  fail({ event, sessionId }: { event: string, sessionId: number }) {
+  fail({ event, sessionId }: { event: string; sessionId: number }) {
     if (sessionId !== this.sessionId) {
       return;
     }
     if (this.previewLoadingEvents[event]) {
-      this.metaService.updateTag({ property: 'og:preview:fail', content: 'fail'});
+      this.metaService.updateTag({
+        property: 'og:preview:fail',
+        content: 'fail',
+      });
     }
   }
 

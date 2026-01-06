@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Env, StateService } from '@app/services/state.service';
-import { merge, Observable, of, Subscription} from 'rxjs';
+import { merge, Observable, of, Subscription } from 'rxjs';
 import { LanguageService } from '@app/services/language.service';
 import { EnterpriseService } from '@app/services/enterprise.service';
 import { NavigationService } from '@app/services/navigation.service';
@@ -30,8 +30,8 @@ export class LiquidMasterPageComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private languageService: LanguageService,
     private enterpriseService: EnterpriseService,
-    private navigationService: NavigationService,
-  ) { }
+    private navigationService: NavigationService
+  ) {}
 
   ngOnInit(): void {
     this.env = this.stateService.env;
@@ -47,7 +47,7 @@ export class LiquidMasterPageComponent implements OnInit, OnDestroy {
         this.footerVisible = true;
       }
     });
-    this.enterpriseInfo$ = this.enterpriseService.info$.subscribe(info => {
+    this.enterpriseInfo$ = this.enterpriseService.info$.subscribe((info) => {
       this.enterpriseInfo = info;
     });
   }

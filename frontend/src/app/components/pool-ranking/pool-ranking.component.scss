@@ -13,10 +13,10 @@
   padding-bottom: 20px;
   @media (max-width: 992px) {
     height: calc(100% - 190px);
-  };
+  }
   @media (max-width: 575px) {
     height: calc(100% - 230px);
-  };
+  }
 }
 
 .chart {
@@ -40,7 +40,7 @@
 @media (max-width: 767.98px) {
   .pools-table th,
   .pools-table td {
-    padding: .3em !important;
+    padding: 0.3em !important;
   }
 }
 
@@ -121,7 +121,6 @@
   max-width: 80px;
   margin: 15px auto 3px;
 }
-
 
 td {
   .difference {

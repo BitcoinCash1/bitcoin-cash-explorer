@@ -1,4 +1,15 @@
-import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, Input, Output, EventEmitter, ChangeDetectorRef, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ChangeDetectionStrategy,
+  Input,
+  Output,
+  EventEmitter,
+  ChangeDetectorRef,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { StateService } from '@app/services/state.service';
 import { StorageService } from '@app/services/storage.service';
@@ -33,14 +44,14 @@ export class BlockchainComponent implements OnInit, OnDestroy, OnChanges {
   dividerOffset: number | null = null;
   mempoolOffset: number | null = null;
   positionStyle = {
-    transform: "translateX(1280px)",
+    transform: 'translateX(1280px)',
   };
   blockDisplayToggleStyle = {};
 
   constructor(
     public stateService: StateService,
     public StorageService: StorageService,
-    private cd: ChangeDetectorRef,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -50,13 +61,17 @@ export class BlockchainComponent implements OnInit, OnDestroy, OnChanges {
       this.timeLtr = !!ltr;
       this.updateStyle();
     });
-    this.connectionStateSubscription = this.stateService.connectionState$.subscribe(state => {
-      this.connected = (state === 2);
-    });
+    this.connectionStateSubscription =
+      this.stateService.connectionState$.subscribe((state) => {
+        this.connected = state === 2;
+      });
     firstValueFrom(this.stateService.chainTip$).then(() => {
       this.loadingTip = false;
     });
-    this.blockDisplayMode = this.StorageService.getValue('block-display-mode-preference') as 'size' | 'fees' || 'fees';
+    this.blockDisplayMode =
+      (this.StorageService.getValue('block-display-mode-preference') as
+        | 'size'
+        | 'fees') || 'fees';
   }
 
   ngOnDestroy(): void {
@@ -83,17 +98,23 @@ export class BlockchainComponent implements OnInit, OnDestroy, OnChanges {
         this.ltrTransitionEnabled = false;
         this.flipping = false;
         this.mempoolOffset = prevOffset;
-        this.mempoolOffsetChange.emit((this.mempoolOffset || 0));
+        this.mempoolOffsetChange.emit(this.mempoolOffset || 0);
         this.updateStyle();
         this.cd.markForCheck();
-      },  1000);
+      }, 1000);
     }, 0);
   }
 
   toggleBlockDisplayMode(): void {
-    if (this.blockDisplayMode === 'size') this.blockDisplayMode = 'fees';
-    else this.blockDisplayMode = 'size';
-    this.StorageService.setValue('block-display-mode-preference', this.blockDisplayMode);
+    if (this.blockDisplayMode === 'size') {
+      this.blockDisplayMode = 'fees';
+    } else {
+      this.blockDisplayMode = 'size';
+    }
+    this.StorageService.setValue(
+      'block-display-mode-preference',
+      this.blockDisplayMode
+    );
     this.stateService.blockDisplayMode$.next(this.blockDisplayMode);
   }
 
@@ -111,11 +132,15 @@ export class BlockchainComponent implements OnInit, OnDestroy, OnChanges {
       return;
     }
     const oldTransform = this.positionStyle.transform;
-    this.positionStyle = this.timeLtr ? {
-      transform: `translateX(calc(100vw - ${this.dividerOffset + this.mempoolOffset}px)`,
-    } : {
-      transform: `translateX(${this.dividerOffset + this.mempoolOffset}px)`,
-    };
+    this.positionStyle = this.timeLtr
+      ? {
+          transform: `translateX(calc(100vw - ${
+            this.dividerOffset + this.mempoolOffset
+          }px)`,
+        }
+      : {
+          transform: `translateX(${this.dividerOffset + this.mempoolOffset}px)`,
+        };
     if (oldTransform !== this.positionStyle.transform) {
       this.cd.detectChanges();
     }

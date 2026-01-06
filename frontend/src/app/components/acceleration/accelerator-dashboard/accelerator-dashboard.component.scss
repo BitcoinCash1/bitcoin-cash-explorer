@@ -55,7 +55,13 @@
 }
 
 .fade-border {
-  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 10%, black 80%, transparent 100%)
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 10%,
+    black 80%,
+    transparent 100%
+  );
 }
 
 .main-title {
@@ -105,7 +111,10 @@
   font-size: 22px;
 }
 
-.title-link, .title-link:hover, .title-link:focus, .title-link:active {
+.title-link,
+.title-link:hover,
+.title-link:focus,
+.title-link:active {
   display: block;
   margin-bottom: 10px;
   text-decoration: none;
@@ -115,7 +124,9 @@
 .lastest-blocks-table {
   width: 100%;
   text-align: left;
-  tr, td, th {
+  tr,
+  td,
+  th {
     border: 0px;
     padding-top: 0.65rem !important;
     padding-bottom: 0.8rem !important;

@@ -1,10 +1,9 @@
-
 .fee-estimation-container {
   display: flex;
   justify-content: space-between;
   @media (min-width: 376px) {
     flex-direction: row;
-  }  
+  }
   .item {
     max-width: 150px;
     margin: 0;
@@ -16,7 +15,7 @@
     .card-title {
       color: var(--title-fg);
       font-size: 10px;
-      margin-bottom: 4px;  
+      margin-bottom: 4px;
       font-size: 1rem;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -31,7 +30,7 @@
         top: -2px;
       }
     }
-    
+
     &:last-child {
       margin-bottom: 0;
     }
@@ -40,7 +39,7 @@
       font-size: 12px;
       top: 0px;
     }
-    .fee-text{
+    .fee-text {
       border-bottom: 1px solid #ffffff1c;
       color: #ffffff;
       width: fit-content;
@@ -55,7 +54,7 @@
   }
 }
 
-.loading-container{
+.loading-container {
   min-height: 76px;
 }
 
@@ -74,7 +73,10 @@
   }
 }
 
-.title-link, .title-link:hover, .title-link:focus, .title-link:active {
+.title-link,
+.title-link:hover,
+.title-link:focus,
+.title-link:active {
   display: block;
   margin-bottom: 4px;
   text-decoration: none;

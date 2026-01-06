@@ -1,4 +1,9 @@
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  OnDestroy,
+} from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BehaviorSubject, EMPTY, merge, Observable, Subscription } from 'rxjs';
 import { catchError, switchMap, tap } from 'rxjs/operators';
@@ -31,12 +36,12 @@ export class RbfList implements OnInit, OnDestroy {
     public stateService: StateService,
     private websocketService: WebsocketService,
     private seoService: SeoService,
-    private ogService: OpenGraphService,
-  ) { }
+    private ogService: OpenGraphService
+  ) {}
 
   ngOnInit(): void {
     this.urlFragmentSubscription = this.route.fragment.subscribe((fragment) => {
-      this.fullRbf = (fragment === 'fullrbf');
+      this.fullRbf = fragment === 'fullrbf';
       this.websocketService.startTrackRbf(this.fullRbf ? 'fullRbf' : 'all');
       this.nextRbfSubject.next(null);
       this.isLoading = true;
@@ -52,15 +57,20 @@ export class RbfList implements OnInit, OnDestroy {
         })
       ),
       this.stateService.rbfLatest$
-    )
-    .pipe(
+    ).pipe(
       tap(() => {
         this.isLoading = false;
       })
     );
 
-    this.seoService.setTitle($localize`:@@5e3d5a82750902f159122fcca487b07f1af3141f:RBF Replacements`);
-    this.seoService.setDescription($localize`:@@meta.description.rbf-list:See the most recent RBF replacements on the Bitcoin${seoDescriptionNetwork(this.stateService.network)} network, updated in real-time.`);
+    this.seoService.setTitle(
+      $localize`:@@5e3d5a82750902f159122fcca487b07f1af3141f:RBF Replacements`
+    );
+    this.seoService.setDescription(
+      $localize`:@@meta.description.rbf-list:See the most recent RBF replacements on the Bitcoin${seoDescriptionNetwork(
+        this.stateService.network
+      )} network, updated in real-time.`
+    );
     this.ogService.setManualOgImage('rbf.jpg');
   }
 

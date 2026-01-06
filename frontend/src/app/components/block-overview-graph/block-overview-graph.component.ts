@@ -1,4 +1,16 @@
-import { Component, ElementRef, ViewChild, HostListener, Input, Output, EventEmitter, NgZone, AfterViewInit, OnDestroy, OnChanges } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  HostListener,
+  Input,
+  Output,
+  EventEmitter,
+  NgZone,
+  AfterViewInit,
+  OnDestroy,
+  OnChanges,
+} from '@angular/core';
 import { TransactionStripped } from '@interfaces/node-api.interface';
 import { FastVertexArray } from '@components/block-overview-graph/fast-vertex-array';
 import BlockScene from '@components/block-overview-graph/block-scene';
@@ -9,7 +21,16 @@ import { Price } from '@app/services/price.service';
 import { StateService } from '@app/services/state.service';
 import { ThemeService } from '@app/services/theme.service';
 import { Subscription } from 'rxjs';
-import { defaultColorFunction, setOpacity, defaultAuditColors, defaultColors, ageColorFunction, contrastColorFunction, contrastAuditColors, contrastColors } from '@components/block-overview-graph/utils';
+import {
+  defaultColorFunction,
+  setOpacity,
+  defaultAuditColors,
+  defaultColors,
+  ageColorFunction,
+  contrastColorFunction,
+  contrastAuditColors,
+  contrastColors,
+} from '@components/block-overview-graph/utils';
 import { ActiveFilter, FilterMode, toFlags } from '@app/shared/filters.utils';
 import { detectWebGL } from '@app/shared/graphs.utils';
 
@@ -18,7 +39,10 @@ const unmatchedAuditColors = {
   censored: setOpacity(defaultAuditColors.censored, unmatchedOpacity),
   missing: setOpacity(defaultAuditColors.missing, unmatchedOpacity),
   added: setOpacity(defaultAuditColors.added, unmatchedOpacity),
-  added_prioritized: setOpacity(defaultAuditColors.added_prioritized, unmatchedOpacity),
+  added_prioritized: setOpacity(
+    defaultAuditColors.added_prioritized,
+    unmatchedOpacity
+  ),
   prioritized: setOpacity(defaultAuditColors.prioritized, unmatchedOpacity),
   accelerated: setOpacity(defaultAuditColors.accelerated, unmatchedOpacity),
 };
@@ -26,7 +50,10 @@ const unmatchedContrastAuditColors = {
   censored: setOpacity(contrastAuditColors.censored, unmatchedOpacity),
   missing: setOpacity(contrastAuditColors.missing, unmatchedOpacity),
   added: setOpacity(contrastAuditColors.added, unmatchedOpacity),
-  added_prioritized: setOpacity(contrastAuditColors.added_prioritized, unmatchedOpacity),
+  added_prioritized: setOpacity(
+    contrastAuditColors.added_prioritized,
+    unmatchedOpacity
+  ),
   prioritized: setOpacity(contrastAuditColors.prioritized, unmatchedOpacity),
   accelerated: setOpacity(contrastAuditColors.accelerated, unmatchedOpacity),
 };
@@ -37,7 +64,9 @@ const unmatchedContrastAuditColors = {
   styleUrls: ['./block-overview-graph.component.scss'],
   standalone: false,
 })
-export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, OnChanges {
+export class BlockOverviewGraphComponent
+  implements AfterViewInit, OnDestroy, OnChanges
+{
   @Input() isLoading: boolean;
   @Input() resolution: number;
   @Input() autofit: boolean = false;
@@ -58,7 +87,10 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
   @Input() relativeTime: number | null;
   @Input() blockConversion: Price;
   @Input() overrideColors: ((tx: TxView) => Color) | null = null;
-  @Output() txClickEvent = new EventEmitter<{ tx: TransactionStripped, keyModifier: boolean}>();
+  @Output() txClickEvent = new EventEmitter<{
+    tx: TransactionStripped;
+    keyModifier: boolean;
+  }>();
   @Output() txHoverEvent = new EventEmitter<string>();
   @Output() readyEvent = new EventEmitter();
 
@@ -86,11 +118,17 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
   readyNextFrame = false;
   lastUpdate: number = 0;
   pendingUpdate: {
-    count: number,
-    add: { [txid: string]: TransactionStripped },
-    remove: { [txid: string]: string },
-    change: { [txid: string]: { txid: string, rate: number | undefined, acc: boolean | undefined } },
-    direction?: string,
+    count: number;
+    add: { [txid: string]: TransactionStripped };
+    remove: { [txid: string]: string };
+    change: {
+      [txid: string]: {
+        txid: string;
+        rate: number | undefined;
+        acc: boolean | undefined;
+      };
+    };
+    direction?: string;
   } = {
     count: 0,
     add: {},
@@ -110,28 +148,39 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
     readonly ngZone: NgZone,
     readonly elRef: ElementRef,
     public stateService: StateService,
-    private themeService: ThemeService,
+    private themeService: ThemeService
   ) {
     this.webGlEnabled = this.stateService.isBrowser && detectWebGL();
     this.vertexArray = new FastVertexArray(512, TxSprite.dataSize);
-    this.searchSubscription = this.stateService.searchText$.subscribe((text) => {
-      this.searchText = text;
-      this.updateSearchHighlight();
-    });
+    this.searchSubscription = this.stateService.searchText$.subscribe(
+      (text) => {
+        this.searchText = text;
+        this.updateSearchHighlight();
+      }
+    );
   }
 
   ngAfterViewInit(): void {
     if (this.canvas) {
-      this.canvas.nativeElement.addEventListener('webglcontextlost', this.handleContextLost, false);
-      this.canvas.nativeElement.addEventListener('webglcontextrestored', this.handleContextRestored, false);
+      this.canvas.nativeElement.addEventListener(
+        'webglcontextlost',
+        this.handleContextLost,
+        false
+      );
+      this.canvas.nativeElement.addEventListener(
+        'webglcontextrestored',
+        this.handleContextRestored,
+        false
+      );
       this.gl = this.canvas.nativeElement.getContext('webgl');
 
       if (this.gl) {
         this.initCanvas();
         this.resizeCanvas();
-        this.themeChangedSubscription = this.themeService.themeChanged$.subscribe(() => {
-          this.scene.setColorFunction(this.getColorFunction());
-        });
+        this.themeChangedSubscription =
+          this.themeService.themeChanged$.subscribe(() => {
+            this.scene.setColorFunction(this.getColorFunction());
+          });
       }
     }
   }
@@ -149,9 +198,16 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
       this.setHighlightingEnabled(this.auditHighlighting);
     }
     if (changes.overrideColor && this.scene) {
-      this.scene.setColorFunction(this.getFilterColorFunction(0n, this.gradientMode));
+      this.scene.setColorFunction(
+        this.getFilterColorFunction(0n, this.gradientMode)
+      );
     }
-    if ((changes.filterFlags || changes.showFilters || changes.filterMode || changes.gradientMode)) {
+    if (
+      changes.filterFlags ||
+      changes.showFilters ||
+      changes.filterMode ||
+      changes.gradientMode
+    ) {
       this.setFilterFlags();
     }
   }
@@ -159,12 +215,18 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
   setFilterFlags(goggle?: ActiveFilter): void {
     this.filterMode = goggle?.mode || this.filterMode;
     this.gradientMode = goggle?.gradient || this.gradientMode;
-    this.activeFilterFlags = goggle?.filters ? toFlags(goggle.filters) : this.filterFlags;
+    this.activeFilterFlags = goggle?.filters
+      ? toFlags(goggle.filters)
+      : this.filterFlags;
     if (this.scene) {
       if (this.activeFilterFlags != null && this.filtersAvailable) {
-        this.scene.setColorFunction(this.getFilterColorFunction(this.activeFilterFlags, this.gradientMode));
+        this.scene.setColorFunction(
+          this.getFilterColorFunction(this.activeFilterFlags, this.gradientMode)
+        );
       } else {
-        this.scene.setColorFunction(this.getFilterColorFunction(0n, this.gradientMode));
+        this.scene.setColorFunction(
+          this.getFilterColorFunction(0n, this.gradientMode)
+        );
       }
     }
     this.start();
@@ -176,8 +238,14 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
     }
     clearTimeout(this.animationHeartBeat);
     if (this.canvas) {
-      this.canvas.nativeElement.removeEventListener('webglcontextlost', this.handleContextLost);
-      this.canvas.nativeElement.removeEventListener('webglcontextrestored', this.handleContextRestored);
+      this.canvas.nativeElement.removeEventListener(
+        'webglcontextlost',
+        this.handleContextLost
+      );
+      this.canvas.nativeElement.removeEventListener(
+        'webglcontextrestored',
+        this.handleContextRestored
+      );
     }
     if (this.scene) {
       this.scene.destroy();
@@ -206,7 +274,10 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
 
   // initialize the scene without any entry transition
   setup(transactions: TransactionStripped[], sort: boolean = false): void {
-    const filtersAvailable = transactions.reduce((flagSet, tx) => flagSet || tx.flags > 0, false);
+    const filtersAvailable = transactions.reduce(
+      (flagSet, tx) => flagSet || tx.flags > 0,
+      false
+    );
     if (filtersAvailable !== this.filtersAvailable) {
       this.setFilterFlags();
     }
@@ -238,7 +309,12 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
     }
   }
 
-  replace(transactions: TransactionStripped[], direction: string, sort: boolean = true, startTime?: number): void {
+  replace(
+    transactions: TransactionStripped[],
+    direction: string,
+    sort: boolean = true,
+    startTime?: number
+  ): void {
     if (this.scene) {
       this.clearUpdateQueue();
       this.scene.replace(transactions || [], direction, sort, startTime);
@@ -248,7 +324,16 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
   }
 
   // collates deferred updates into a set of consistent pending changes
-  queueUpdate(add: TransactionStripped[], remove: string[], change: { txid: string, rate: number | undefined, acc: boolean | undefined }[], direction: string = 'left'): void {
+  queueUpdate(
+    add: TransactionStripped[],
+    remove: string[],
+    change: {
+      txid: string;
+      rate: number | undefined;
+      acc: boolean | undefined;
+    }[],
+    direction: string = 'left'
+  ): void {
     for (const tx of add) {
       this.pendingUpdate.add[tx.txid] = tx;
       delete this.pendingUpdate.remove[tx.txid];
@@ -271,14 +356,31 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
     this.pendingUpdate.count++;
   }
 
-  deferredUpdate(add: TransactionStripped[], remove: string[], change: { txid: string, rate: number | undefined, acc: boolean | undefined }[], direction: string = 'left'): void {
+  deferredUpdate(
+    add: TransactionStripped[],
+    remove: string[],
+    change: {
+      txid: string;
+      rate: number | undefined;
+      acc: boolean | undefined;
+    }[],
+    direction: string = 'left'
+  ): void {
     this.queueUpdate(add, remove, change, direction);
     this.applyQueuedUpdates();
   }
 
   applyQueuedUpdates(): void {
-    if (this.pendingUpdate.count && performance.now() > (this.lastUpdate + this.animationDuration)) {
-      this.applyUpdate(Object.values(this.pendingUpdate.add), Object.values(this.pendingUpdate.remove), Object.values(this.pendingUpdate.change), this.pendingUpdate.direction);
+    if (
+      this.pendingUpdate.count &&
+      performance.now() > this.lastUpdate + this.animationDuration
+    ) {
+      this.applyUpdate(
+        Object.values(this.pendingUpdate.add),
+        Object.values(this.pendingUpdate.remove),
+        Object.values(this.pendingUpdate.change),
+        this.pendingUpdate.direction
+      );
       this.clearUpdateQueue();
     }
   }
@@ -293,18 +395,44 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
     this.lastUpdate = performance.now();
   }
 
-  update(add: TransactionStripped[], remove: string[], change: { txid: string, rate: number | undefined, acc: boolean | undefined }[], direction: string = 'left', resetLayout: boolean = false): void {
+  update(
+    add: TransactionStripped[],
+    remove: string[],
+    change: {
+      txid: string;
+      rate: number | undefined;
+      acc: boolean | undefined;
+    }[],
+    direction: string = 'left',
+    resetLayout: boolean = false
+  ): void {
     // merge any pending changes into this update
     this.queueUpdate(add, remove, change);
-    this.applyUpdate(Object.values(this.pendingUpdate.add), Object.values(this.pendingUpdate.remove), Object.values(this.pendingUpdate.change), direction, resetLayout);
+    this.applyUpdate(
+      Object.values(this.pendingUpdate.add),
+      Object.values(this.pendingUpdate.remove),
+      Object.values(this.pendingUpdate.change),
+      direction,
+      resetLayout
+    );
     this.clearUpdateQueue();
   }
 
-  applyUpdate(add: TransactionStripped[], remove: string[], change: { txid: string, rate: number | undefined, acc: boolean | undefined }[], direction: string = 'left', resetLayout: boolean = false): void {
+  applyUpdate(
+    add: TransactionStripped[],
+    remove: string[],
+    change: {
+      txid: string;
+      rate: number | undefined;
+      acc: boolean | undefined;
+    }[],
+    direction: string = 'left',
+    resetLayout: boolean = false
+  ): void {
     if (this.scene) {
-      add = add.filter(tx => !this.scene.txs[tx.txid]);
-      remove = remove.filter(txid => this.scene.txs[txid]);
-      change = change.filter(tx => this.scene.txs[tx.txid]);
+      add = add.filter((tx) => !this.scene.txs[tx.txid]);
+      remove = remove.filter((txid) => this.scene.txs[txid]);
+      change = change.filter((tx) => this.scene.txs[tx.txid]);
 
       if (this.gradientMode === 'age') {
         this.scene.updateAllColors();
@@ -327,12 +455,12 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
     const shaderSet = [
       {
         type: this.gl.VERTEX_SHADER,
-        src: vertShaderSrc
+        src: vertShaderSrc,
       },
       {
         type: this.gl.FRAGMENT_SHADER,
-        src: fragShaderSrc
-      }
+        src: fragShaderSrc,
+      },
     ];
 
     this.shaderProgram = this.buildShaderProgram(shaderSet);
@@ -385,13 +513,27 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
         this.gl.viewport(0, 0, this.displayWidth, this.displayHeight);
       }
       if (this.scene) {
-        this.scene.resize({ width: this.displayWidth, height: this.displayHeight, animate: false });
+        this.scene.resize({
+          width: this.displayWidth,
+          height: this.displayHeight,
+          animate: false,
+        });
         this.start();
       } else {
-        this.scene = new BlockScene({ width: this.displayWidth, height: this.displayHeight, resolution: this.resolution,
-          blockLimit: this.blockLimit, orientation: this.orientation, flip: this.flip, vertexArray: this.vertexArray, theme: this.themeService,
-          highlighting: this.auditHighlighting, animationDuration: this.animationDuration, animationOffset: this.animationOffset,
-        colorFunction: this.getColorFunction() });
+        this.scene = new BlockScene({
+          width: this.displayWidth,
+          height: this.displayHeight,
+          resolution: this.resolution,
+          blockLimit: this.blockLimit,
+          orientation: this.orientation,
+          flip: this.flip,
+          vertexArray: this.vertexArray,
+          theme: this.themeService,
+          highlighting: this.auditHighlighting,
+          animationDuration: this.animationDuration,
+          animationOffset: this.animationOffset,
+          colorFunction: this.getColorFunction(),
+        });
         this.start();
       }
     }
@@ -407,7 +549,11 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
     this.gl.compileShader(shader);
 
     if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
-      console.log(`Error compiling ${type === this.gl.VERTEX_SHADER ? 'vertex' : 'fragment'} shader:`);
+      console.log(
+        `Error compiling ${
+          type === this.gl.VERTEX_SHADER ? 'vertex' : 'fragment'
+        } shader:`
+      );
       console.log(this.gl.getShaderInfoLog(shader));
     }
     return shader;
@@ -457,32 +603,53 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
     if (this.scene && this.gl && this.vertexArray) {
       /* SET UP SHADER UNIFORMS */
       // screen dimensions
-      this.gl.uniform2f(this.gl.getUniformLocation(this.shaderProgram, 'screenSize'), this.displayWidth, this.displayHeight);
+      this.gl.uniform2f(
+        this.gl.getUniformLocation(this.shaderProgram, 'screenSize'),
+        this.displayWidth,
+        this.displayHeight
+      );
       // frame timestamp
-      this.gl.uniform1f(this.gl.getUniformLocation(this.shaderProgram, 'now'), now);
+      this.gl.uniform1f(
+        this.gl.getUniformLocation(this.shaderProgram, 'now'),
+        now
+      );
 
       if (this.vertexArray.dirty) {
         /* SET UP SHADER ATTRIBUTES */
         Object.keys(attribs).forEach((key, i) => {
-          this.gl.vertexAttribPointer(attribs[key].pointer,
-          attribs[key].count,  // number of primitives in this attribute
-          this.gl[attribs[key].type],  // type of primitive in this attribute (e.g. gl.FLOAT)
-          false, // never normalised
-          stride,   // distance between values of the same attribute
-          attribs[key].offset);  // offset of the first value
+          this.gl.vertexAttribPointer(
+            attribs[key].pointer,
+            attribs[key].count, // number of primitives in this attribute
+            this.gl[attribs[key].type], // type of primitive in this attribute (e.g. gl.FLOAT)
+            false, // never normalised
+            stride, // distance between values of the same attribute
+            attribs[key].offset
+          ); // offset of the first value
         });
 
         const pointArray = this.vertexArray.getVertexData();
 
         if (pointArray.length) {
-          this.gl.bufferData(this.gl.ARRAY_BUFFER, pointArray, this.gl.DYNAMIC_DRAW);
-          this.gl.drawArrays(this.gl.TRIANGLES, 0, pointArray.length / TxSprite.vertexSize);
+          this.gl.bufferData(
+            this.gl.ARRAY_BUFFER,
+            pointArray,
+            this.gl.DYNAMIC_DRAW
+          );
+          this.gl.drawArrays(
+            this.gl.TRIANGLES,
+            0,
+            pointArray.length / TxSprite.vertexSize
+          );
         }
         this.vertexArray.dirty = false;
       } else {
         const pointArray = this.vertexArray.getVertexData();
         if (pointArray.length) {
-          this.gl.drawArrays(this.gl.TRIANGLES, 0, pointArray.length / TxSprite.vertexSize);
+          this.gl.drawArrays(
+            this.gl.TRIANGLES,
+            0,
+            pointArray.length / TxSprite.vertexSize
+          );
         }
       }
 
@@ -493,7 +660,7 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
     }
 
     /* LOOP */
-    if (this.running && this.scene && now <= (this.scene.animateUntil + 500)) {
+    if (this.running && this.scene && now <= this.scene.animateUntil + 500) {
       this.doRun();
     } else {
       clearTimeout(this.animationHeartBeat);
@@ -522,7 +689,10 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
     if (!this.canvas) {
       return;
     }
-    if (event.target === this.canvas.nativeElement && event.pointerType === 'touch') {
+    if (
+      event.target === this.canvas.nativeElement &&
+      event.pointerType === 'touch'
+    ) {
       this.setPreviewTx(event.offsetX, event.offsetY, true);
     } else if (event.target === this.canvas.nativeElement) {
       const keyMod = event.shiftKey || event.ctrlKey || event.metaKey;
@@ -556,7 +726,7 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
     if (this.scene && (!this.selectedTx || clicked)) {
       this.tooltipPosition = {
         x: cssX,
-        y: cssY
+        y: cssY,
       };
       const selected = this.scene.getTxAt({ x, y });
       const currentPreview = this.selectedTx || this.hoverTx;
@@ -609,10 +779,18 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
   }
 
   updateSearchHighlight(): void {
-    if (this.highlightTx && this.highlightTx.txid !== this.searchText && this.scene) {
+    if (
+      this.highlightTx &&
+      this.highlightTx.txid !== this.searchText &&
+      this.scene
+    ) {
       this.scene.setHighlight(this.highlightTx, false);
       this.start();
-    } else if (this.scene?.txs && this.searchText && this.searchText.length === 64) {
+    } else if (
+      this.scene?.txs &&
+      this.searchText &&
+      this.searchText.length === 64
+    ) {
       this.highlightTx = this.scene.txs[this.searchText];
       if (this.highlightTx) {
         this.scene.setHighlight(this.highlightTx, true);
@@ -643,19 +821,25 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
     this.txHoverEvent.emit(hoverId);
   }
 
-  getColorFunction(): ((tx: TxView) => Color) {
+  getColorFunction(): (tx: TxView) => Color {
     if (this.overrideColors) {
       return this.overrideColors;
     } else if (this.filterFlags) {
       return this.getFilterColorFunction(this.filterFlags, this.gradientMode);
     } else if (this.activeFilterFlags) {
-      return this.getFilterColorFunction(this.activeFilterFlags, this.gradientMode);
+      return this.getFilterColorFunction(
+        this.activeFilterFlags,
+        this.gradientMode
+      );
     } else {
       return this.getFilterColorFunction(0n, this.gradientMode);
     }
   }
 
-  getFilterColorFunction(flags: bigint, gradient: 'fee' | 'age'): ((tx: TxView) => Color) {
+  getFilterColorFunction(
+    flags: bigint,
+    gradient: 'fee' | 'age'
+  ): (tx: TxView) => Color {
     return (tx: TxView) => {
       let matches = false;
       switch (this.filterMode) {
@@ -670,26 +854,60 @@ export class BlockOverviewGraphComponent implements AfterViewInit, OnDestroy, On
           break;
       }
       if (matches) {
-        if (this.themeService.theme !== 'contrast' && this.themeService.theme !== 'bukele') {
-          return (gradient === 'age') ? ageColorFunction(tx, defaultColors.fee, defaultAuditColors, this.relativeTime || (Date.now() / 1000)) : defaultColorFunction(tx, defaultColors.fee, defaultAuditColors, this.relativeTime || (Date.now() / 1000));
+        if (
+          this.themeService.theme !== 'contrast' &&
+          this.themeService.theme !== 'bukele'
+        ) {
+          return gradient === 'age'
+            ? ageColorFunction(
+                tx,
+                defaultColors.fee,
+                defaultAuditColors,
+                this.relativeTime || Date.now() / 1000
+              )
+            : defaultColorFunction(
+                tx,
+                defaultColors.fee,
+                defaultAuditColors,
+                this.relativeTime || Date.now() / 1000
+              );
         } else {
-          return (gradient === 'age') ? ageColorFunction(tx, contrastColors.fee, contrastAuditColors, this.relativeTime || (Date.now() / 1000)) : contrastColorFunction(tx, contrastColors.fee, contrastAuditColors, this.relativeTime || (Date.now() / 1000));
+          return gradient === 'age'
+            ? ageColorFunction(
+                tx,
+                contrastColors.fee,
+                contrastAuditColors,
+                this.relativeTime || Date.now() / 1000
+              )
+            : contrastColorFunction(
+                tx,
+                contrastColors.fee,
+                contrastAuditColors,
+                this.relativeTime || Date.now() / 1000
+              );
         }
       } else {
-        if (this.themeService.theme !== 'contrast' && this.themeService.theme !== 'bukele') {
-          return (gradient === 'age') ? { r: 1, g: 1, b: 1, a: 0.05 } : defaultColorFunction(
-            tx,
-            defaultColors.unmatchedfee,
-            unmatchedAuditColors,
-            this.relativeTime || (Date.now() / 1000)
-          );
+        if (
+          this.themeService.theme !== 'contrast' &&
+          this.themeService.theme !== 'bukele'
+        ) {
+          return gradient === 'age'
+            ? { r: 1, g: 1, b: 1, a: 0.05 }
+            : defaultColorFunction(
+                tx,
+                defaultColors.unmatchedfee,
+                unmatchedAuditColors,
+                this.relativeTime || Date.now() / 1000
+              );
         } else {
-          return (gradient === 'age') ? { r: 1, g: 1, b: 1, a: 0.05 } : contrastColorFunction(
-            tx,
-            contrastColors.unmatchedfee,
-            unmatchedContrastAuditColors,
-            this.relativeTime || (Date.now() / 1000)
-          );
+          return gradient === 'age'
+            ? { r: 1, g: 1, b: 1, a: 0.05 }
+            : contrastColorFunction(
+                tx,
+                contrastColors.unmatchedfee,
+                unmatchedContrastAuditColors,
+                this.relativeTime || Date.now() / 1000
+              );
         }
       }
     };
@@ -705,17 +923,17 @@ const attribs = {
   colR: { type: 'FLOAT', count: 4, pointer: null, offset: 0 },
   colG: { type: 'FLOAT', count: 4, pointer: null, offset: 0 },
   colB: { type: 'FLOAT', count: 4, pointer: null, offset: 0 },
-  colA: { type: 'FLOAT', count: 4, pointer: null, offset: 0 }
+  colA: { type: 'FLOAT', count: 4, pointer: null, offset: 0 },
 };
 // Calculate the number of bytes per vertex based on specified attributes
 const stride = Object.values(attribs).reduce((total, attrib) => {
-  return total + (attrib.count * 4);
+  return total + attrib.count * 4;
 }, 0);
 // Calculate vertex attribute offsets
 for (let i = 0, offset = 0; i < Object.keys(attribs).length; i++) {
   const attrib = Object.values(attribs)[i];
   attrib.offset = offset;
-  offset += (attrib.count * 4);
+  offset += attrib.count * 4;
 }
 
 const vertShaderSrc = `

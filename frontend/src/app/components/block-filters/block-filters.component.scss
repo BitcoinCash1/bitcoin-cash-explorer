@@ -8,7 +8,8 @@
   z-index: 10;
   pointer-events: none;
 
-  .filter-bar, .active-tags {
+  .filter-bar,
+  .active-tags {
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -25,7 +26,8 @@
     flex-direction: row;
     align-items: center;
 
-    &:hover, &:active {
+    &:hover,
+    &:active {
       text-decoration: none;
     }
   }
@@ -149,7 +151,9 @@
     }
   }
 
-  :host-context(.block-overview-graph:hover) &, &:hover, &:active {
+  :host-context(.block-overview-graph:hover) &,
+  &:hover,
+  &:active {
     .menu-toggle {
       opacity: 0.5;
       background: var(--stat-box-bg);
@@ -160,7 +164,8 @@
       }
     }
 
-    &.menu-open, &.filters-active {
+    &.menu-open,
+    &.filters-active {
       .menu-toggle {
         opacity: 1;
         background: none;
@@ -172,7 +177,8 @@
     }
   }
 
-  &.menu-open, &.filters-active {
+  &.menu-open,
+  &.filters-active {
     .menu-toggle {
       opacity: 1;
       background: none;

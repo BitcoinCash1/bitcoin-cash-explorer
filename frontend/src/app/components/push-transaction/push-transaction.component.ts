@@ -1,5 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import {
+  UntypedFormBuilder,
+  UntypedFormGroup,
+  Validators,
+} from '@angular/forms';
 import { ApiService } from '@app/services/api.service';
 import { StateService } from '@app/services/state.service';
 import { SeoService } from '@app/services/seo.service';
@@ -39,8 +43,8 @@ export class PushTransactionComponent implements OnInit {
     private ogService: OpenGraphService,
     private route: ActivatedRoute,
     private router: Router,
-    private relativeUrlPipe: RelativeUrlPipe,
-  ) { }
+    private relativeUrlPipe: RelativeUrlPipe
+  ) {}
 
   ngOnInit(): void {
     this.pushTxForm = this.formBuilder.group({
@@ -53,10 +57,23 @@ export class PushTransactionComponent implements OnInit {
       maxburnamount: ['', Validators.min(0)],
     });
 
-    this.stateService.networkChanged$.subscribe((network) => this.network = network);
+    this.stateService.networkChanged$.subscribe(
+      (network) => (this.network = network)
+    );
 
-    this.seoService.setTitle($localize`:@@f13cbfe8cfc955918e9f64466d2cafddb4760d9a:Broadcast Transaction`);
-    this.seoService.setDescription($localize`:@@meta.description.push-tx:Broadcast a transaction to the ${this.stateService.network==='liquid'||this.stateService.network==='liquidtestnet'?'Liquid':'Bitcoin'}${seoDescriptionNetwork(this.stateService.network)} network using the transaction's hash.`);
+    this.seoService.setTitle(
+      $localize`:@@f13cbfe8cfc955918e9f64466d2cafddb4760d9a:Broadcast Transaction`
+    );
+    this.seoService.setDescription(
+      $localize`:@@meta.description.push-tx:Broadcast a transaction to the ${
+        this.stateService.network === 'liquid' ||
+        this.stateService.network === 'liquidtestnet'
+          ? 'Liquid'
+          : 'Bitcoin'
+      }${seoDescriptionNetwork(
+        this.stateService.network
+      )} network using the transaction's hash.`
+    );
     this.ogService.setManualOgImage('tx-push.jpg');
 
     this.route.fragment.subscribe(async (fragment) => {
@@ -70,30 +87,40 @@ export class PushTransactionComponent implements OnInit {
     this.error = '';
     this.txId = '';
     return new Promise((resolve, reject) => {
-      this.apiService.postTransaction$(hex || this.pushTxForm.get('txHash').value)
-      .subscribe((result) => {
-        this.isLoading = false;
-        this.txId = result;
-        this.pushTxForm.reset();
-        resolve(this.txId);
-      },
-      (error) => {
-        if (typeof error.error === 'string') {
-          const matchText = error.error.replace(/\\/g, '').match('"message":"(.*?)"');
-          this.error = 'Failed to broadcast transaction, reason: ' + (matchText && matchText[1] || error.error);
-        } else if (error.message) {
-          this.error = 'Failed to broadcast transaction, reason: ' + error.message;
-        }
-        this.isLoading = false;
-        reject(this.error);
-      });
+      this.apiService
+        .postTransaction$(hex || this.pushTxForm.get('txHash').value)
+        .subscribe(
+          (result) => {
+            this.isLoading = false;
+            this.txId = result;
+            this.pushTxForm.reset();
+            resolve(this.txId);
+          },
+          (error) => {
+            if (typeof error.error === 'string') {
+              const matchText = error.error
+                .replace(/\\/g, '')
+                .match('"message":"(.*?)"');
+              this.error =
+                'Failed to broadcast transaction, reason: ' +
+                ((matchText && matchText[1]) || error.error);
+            } else if (error.message) {
+              this.error =
+                'Failed to broadcast transaction, reason: ' + error.message;
+            }
+            this.isLoading = false;
+            reject(this.error);
+          }
+        );
     });
   }
 
   submitTxs() {
     let txs: string[] = [];
     try {
-      txs = (this.submitTxsForm.get('txs')?.value as string).split(',').map(hex => hex.trim());
+      txs = (this.submitTxsForm.get('txs')?.value as string)
+        .split(',')
+        .map((hex) => hex.trim());
       if (txs?.length === 1) {
         this.pushTxForm.get('txHash').setValue(txs[0]);
         this.submitTxsForm.get('txs').setValue('');
@@ -129,29 +156,41 @@ export class PushTransactionComponent implements OnInit {
     this.isLoadingPackage = true;
     this.errorPackage = '';
     this.results = [];
-    this.apiService.submitPackage$(txs, maxfeerate === 0.1 ? null : maxfeerate, maxburnamount === 0 ? null : maxburnamount)
-      .subscribe((result) => {
-        this.isLoadingPackage = false;
+    this.apiService
+      .submitPackage$(
+        txs,
+        maxfeerate === 0.1 ? null : maxfeerate,
+        maxburnamount === 0 ? null : maxburnamount
+      )
+      .subscribe(
+        (result) => {
+          this.isLoadingPackage = false;
 
-        this.packageMessage = result['package_msg'];
-        for (let wtxid in result['tx-results']) {
-          this.results.push(result['tx-results'][wtxid]);
-        }
+          this.packageMessage = result['package_msg'];
+          for (const wtxid in result['tx-results']) {
+            this.results.push(result['tx-results'][wtxid]);
+          }
 
-        this.submitTxsForm.reset();
-      },
-      (error) => {
-        if (typeof error.error?.error === 'string') {
-          const matchText = error.error.error.replace(/\\/g, '').match('"message":"(.*?)"');
-          this.errorPackage = matchText && matchText[1] || error.error.error;
-        } else if (error.message) {
-          this.errorPackage = error.message;
+          this.submitTxsForm.reset();
+        },
+        (error) => {
+          if (typeof error.error?.error === 'string') {
+            const matchText = error.error.error
+              .replace(/\\/g, '')
+              .match('"message":"(.*?)"');
+            this.errorPackage =
+              (matchText && matchText[1]) || error.error.error;
+          } else if (error.message) {
+            this.errorPackage = error.message;
+          }
+          this.isLoadingPackage = false;
         }
-        this.isLoadingPackage = false;
-      });
+      );
   }
 
-  private async handleColdcardPushTx(fragmentParams: URLSearchParams): Promise<boolean> {
+  private async handleColdcardPushTx(
+    fragmentParams: URLSearchParams
+  ): Promise<boolean> {
     // maybe conforms to Coldcard nfc-pushtx spec
     if (fragmentParams && fragmentParams.get('t')) {
       try {
@@ -161,8 +200,13 @@ export class PushTransactionComponent implements OnInit {
         if (this.stateService.network !== '' && !pushNetwork) {
           this.router.navigateByUrl(`/pushtx#${fragmentParams.toString()}`);
           return false;
-        } else if (this.stateService.network !== 'testnet' && pushNetwork === 'XTN') {
-          this.router.navigateByUrl(`/testnet/pushtx#${fragmentParams.toString()}`);
+        } else if (
+          this.stateService.network !== 'testnet' &&
+          pushNetwork === 'XTN'
+        ) {
+          this.router.navigateByUrl(
+            `/testnet/pushtx#${fragmentParams.toString()}`
+          );
           return false;
         } else if (pushNetwork === 'XRT') {
           this.error = 'Regtest is not supported';
@@ -178,11 +222,13 @@ export class PushTransactionComponent implements OnInit {
           return false;
         }
         const rawCheck = this.base64UrlToU8Array(fragmentParams.get('c'));
-        
 
         // check checksum
         const hashTx = await crypto.subtle.digest('SHA-256', rawTx);
-        if (this.u8ArrayToHex(new Uint8Array(hashTx.slice(24))) !== this.u8ArrayToHex(rawCheck)) {
+        if (
+          this.u8ArrayToHex(new Uint8Array(hashTx.slice(24))) !==
+          this.u8ArrayToHex(rawCheck)
+        ) {
           this.error = 'Bad checksum, URL is probably truncated';
           return false;
         }
@@ -207,12 +253,17 @@ export class PushTransactionComponent implements OnInit {
   }
 
   private base64UrlToU8Array(base64Url: string): Uint8Array {
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/').padEnd(base64Url.length + (4 - base64Url.length % 4) % 4, '=');
+    const base64 = base64Url
+      .replace(/-/g, '+')
+      .replace(/_/g, '/')
+      .padEnd(base64Url.length + ((4 - (base64Url.length % 4)) % 4), '=');
     const binaryString = atob(base64);
-    return new Uint8Array([...binaryString].map(char => char.charCodeAt(0)));
+    return new Uint8Array([...binaryString].map((char) => char.charCodeAt(0)));
   }
 
   private u8ArrayToHex(arr: Uint8Array): string {
-    return Array.from(arr).map(byte => byte.toString(16).padStart(2, '0')).join('');
+    return Array.from(arr)
+      .map((byte) => byte.toString(16).padStart(2, '0'))
+      .join('');
   }
 }

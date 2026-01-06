@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, OnChanges, HostListener } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnChanges,
+  HostListener,
+} from '@angular/core';
 import { ETA } from '@app/services/eta.service';
 import { Transaction } from '@interfaces/electrs.interface';
 import { Acceleration, SinglePoolStats } from '@interfaces/node-api.interface';
@@ -28,14 +34,12 @@ export class AccelerationTimelineComponent implements OnInit, OnChanges {
   hoverInfo: any = null;
   poolsData: { [id: number]: SinglePoolStats } = {};
 
-  constructor(
-    private miningService: MiningService,
-  ) {}
+  constructor(private miningService: MiningService) {}
 
   ngOnInit(): void {
     this.updateTimes();
 
-    this.miningService.getPools().subscribe(pools => {
+    this.miningService.getPools().subscribe((pools) => {
       for (const pool of pools) {
         this.poolsData[pool.unique_id] = pool;
       }
@@ -49,16 +53,22 @@ export class AccelerationTimelineComponent implements OnInit, OnChanges {
   updateTimes(): void {
     this.now = Math.floor(new Date().getTime() / 1000);
     this.useAbsoluteTime = this.tx.status.block_time < this.now - 7 * 24 * 3600;
-    this.firstSeenToAccelerated = Math.max(0, this.acceleratedAt - this.transactionTime);
-    this.acceleratedToMined = Math.max(0, this.tx.status.block_time - this.acceleratedAt);
+    this.firstSeenToAccelerated = Math.max(
+      0,
+      this.acceleratedAt - this.transactionTime
+    );
+    this.acceleratedToMined = Math.max(
+      0,
+      this.tx.status.block_time - this.acceleratedAt
+    );
   }
-  
+
   onHover(event, status: string): void {
     if (status === 'seen') {
       this.hoverInfo = {
         status,
         fee: this.tx.fee,
-        weight: this.tx.weight
+        weight: this.tx.weight,
       };
     } else if (status === 'accelerated') {
       this.hoverInfo = {
@@ -67,7 +77,7 @@ export class AccelerationTimelineComponent implements OnInit, OnChanges {
         weight: this.tx.weight,
         feeDelta: this.accelerationInfo?.feeDelta || this.tx.feeDelta,
         pools: this.tx.acceleratedBy || this.accelerationInfo?.pools,
-        poolsData: this.poolsData
+        poolsData: this.poolsData,
       };
     } else if (status === 'mined') {
       this.hoverInfo = {
@@ -77,7 +87,7 @@ export class AccelerationTimelineComponent implements OnInit, OnChanges {
         bidBoost: this.accelerationInfo?.bidBoost,
         minedByPoolUniqueId: this.accelerationInfo?.minedByPoolUniqueId,
         pools: this.tx.acceleratedBy || this.accelerationInfo?.pools,
-        poolsData: this.poolsData
+        poolsData: this.poolsData,
       };
     }
   }

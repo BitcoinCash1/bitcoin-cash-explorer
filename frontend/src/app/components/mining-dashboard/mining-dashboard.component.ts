@@ -1,4 +1,10 @@
-import { AfterViewInit, ChangeDetectionStrategy, Component, HostListener, OnInit } from '@angular/core';
+import {
+  AfterViewInit,
+  ChangeDetectionStrategy,
+  Component,
+  HostListener,
+  OnInit,
+} from '@angular/core';
 import { SeoService } from '@app/services/seo.service';
 import { OpenGraphService } from '@app/services/opengraph.service';
 import { WebsocketService } from '@app/services/websocket.service';
@@ -22,13 +28,17 @@ export class MiningDashboardComponent implements OnInit, AfterViewInit {
     private websocketService: WebsocketService,
     private stateService: StateService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.onResize();
     this.websocketService.want(['blocks', 'mempool-blocks', 'stats']);
-    this.seoService.setTitle($localize`:@@a681a4e2011bb28157689dbaa387de0dd0aa0c11:Mining Dashboard`);
-    this.seoService.setDescription($localize`:@@meta.description.mining.dashboard:Get real-time Bitcoin mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.`);
+    this.seoService.setTitle(
+      $localize`:@@a681a4e2011bb28157689dbaa387de0dd0aa0c11:Mining Dashboard`
+    );
+    this.seoService.setDescription(
+      $localize`:@@meta.description.mining.dashboard:Get real-time Bitcoin mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.`
+    );
     this.ogService.setManualOgImage('mining.jpg');
   }
 
@@ -36,7 +46,8 @@ export class MiningDashboardComponent implements OnInit, AfterViewInit {
     this.stateService.focusSearchInputDesktop();
     this.router.events.subscribe((e: NavigationStart) => {
       if (e.type === EventType.NavigationStart) {
-        if (e.url.indexOf('graphs') === -1) { // The mining dashboard and the graph component are part of the same module so we can't use ngAfterViewInit in graphs.component.ts to blur the input
+        if (e.url.indexOf('graphs') === -1) {
+          // The mining dashboard and the graph component are part of the same module so we can't use ngAfterViewInit in graphs.component.ts to blur the input
           this.stateService.focusSearchInputDesktop();
         }
       }

@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { Observable } from 'rxjs';
 import { PegsVolume } from '@interfaces/node-api.interface';
 
@@ -12,9 +17,7 @@ import { PegsVolume } from '@interfaces/node-api.interface';
 export class RecentPegsStatsComponent implements OnInit {
   @Input() pegsVolume$: Observable<PegsVolume[]>;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

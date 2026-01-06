@@ -1,9 +1,28 @@
-import { Component, OnInit, ChangeDetectionStrategy, Input } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  Input,
+} from '@angular/core';
 import { Observable, Subject, combineLatest, of, timer } from 'rxjs';
-import { delayWhen, filter, map, share, shareReplay, switchMap, takeUntil, tap, throttleTime } from 'rxjs/operators';
+import {
+  delayWhen,
+  filter,
+  map,
+  share,
+  shareReplay,
+  switchMap,
+  takeUntil,
+  tap,
+  throttleTime,
+} from 'rxjs/operators';
 import { ApiService } from '@app/services/api.service';
 import { Env, StateService } from '@app/services/state.service';
-import { AuditStatus, CurrentPegs, FederationAddress } from '@interfaces/node-api.interface';
+import {
+  AuditStatus,
+  CurrentPegs,
+  FederationAddress,
+} from '@interfaces/node-api.interface';
 import { WebsocketService } from '@app/services/websocket.service';
 
 @Component({
@@ -37,29 +56,32 @@ export class FederationAddressesListComponent implements OnInit {
     private apiService: ApiService,
     public stateService: StateService,
     private websocketService: WebsocketService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     this.isLoading = !this.widget;
     this.env = this.stateService.env;
-    this.skeletonLines = this.widget === true ? [...Array(5).keys()] : [...Array(15).keys()];
+    this.skeletonLines =
+      this.widget === true ? [...Array(5).keys()] : [...Array(15).keys()];
     if (!this.widget) {
       this.websocketService.want(['blocks']);
       this.auditStatus$ = this.stateService.blocks$.pipe(
         takeUntil(this.destroy$),
         throttleTime(40000),
-        delayWhen(_ => this.isLoad ? timer(0) : timer(2000)),
-        tap(() => this.isLoad = false),
+        delayWhen((_) => (this.isLoad ? timer(0) : timer(2000))),
+        tap(() => (this.isLoad = false)),
         switchMap(() => this.apiService.federationAuditSynced$()),
         shareReplay(1)
       );
 
       this.currentPeg$ = this.auditStatus$.pipe(
-        filter(auditStatus => auditStatus.isAuditSynced === true),
-        switchMap(_ =>
+        filter((auditStatus) => auditStatus.isAuditSynced === true),
+        switchMap((_) =>
           this.apiService.liquidPegs$().pipe(
-            filter((currentPegs) => currentPegs.lastBlockUpdate >= this.lastPegBlockUpdate),
+            filter(
+              (currentPegs) =>
+                currentPegs.lastBlockUpdate >= this.lastPegBlockUpdate
+            ),
             tap((currentPegs) => {
               this.lastPegBlockUpdate = currentPegs.lastBlockUpdate;
             })
@@ -70,12 +92,12 @@ export class FederationAddressesListComponent implements OnInit {
 
       this.auditUpdated$ = combineLatest([
         this.auditStatus$,
-        this.currentPeg$
+        this.currentPeg$,
       ]).pipe(
         filter(([auditStatus, _]) => auditStatus.isAuditSynced === true),
         map(([auditStatus, currentPeg]) => ({
           lastBlockAudit: auditStatus.lastBlockAudit,
-          currentPegAmount: currentPeg.amount
+          currentPegAmount: currentPeg.amount,
         })),
         switchMap(({ lastBlockAudit, currentPegAmount }) => {
           const blockAuditCheck = lastBlockAudit > this.lastReservesBlockUpdate;
@@ -88,14 +110,13 @@ export class FederationAddressesListComponent implements OnInit {
       );
 
       this.federationAddresses$ = this.auditUpdated$.pipe(
-        filter(auditUpdated => auditUpdated === true),
+        filter((auditUpdated) => auditUpdated === true),
         throttleTime(40000),
-        switchMap(_ => this.apiService.federationAddresses$()),
-        tap(_ => this.isLoading = false),
+        switchMap((_) => this.apiService.federationAddresses$()),
+        tap((_) => (this.isLoading = false)),
         share()
       );
     }
-
   }
 
   ngOnDestroy(): void {
@@ -106,5 +127,4 @@ export class FederationAddressesListComponent implements OnInit {
   pageChange(page: number): void {
     this.page = page;
   }
-
 }

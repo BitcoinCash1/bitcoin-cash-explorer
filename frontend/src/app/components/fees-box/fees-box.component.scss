@@ -29,7 +29,7 @@
     margin: 0 auto 0px;
     &:first-child {
       @media (767px < width < 992px), (width < 576px) {
-        display: none
+        display: none;
       }
     }
     &:last-child {
@@ -40,7 +40,7 @@
       font-size: 12px;
       top: 0px;
     }
-    .fee-text{
+    .fee-text {
       border-bottom: 1px solid #ffffff1c;
       width: fit-content;
       margin: auto;
@@ -53,7 +53,7 @@
   }
 }
 
-.loading-container{
+.loading-container {
   height: 50px;
 }
 
@@ -89,7 +89,7 @@
   }
   &:first-child {
     @media (767px < width < 992px), (width < 576px) {
-      display: none
+      display: none;
     }
   }
 }
@@ -97,7 +97,7 @@
 .band-separator {
   width: 5%;
   @media (767px < width < 992px), (width < 576px) {
-    display: none
+    display: none;
   }
   &.fill {
     height: 22px;
@@ -107,7 +107,7 @@
       rgb(45, 51, 72) 2px,
       rgb(29, 31, 49) 2px,
       rgb(29, 31, 49) 4px
-    );  
+    );
   }
 }
 

@@ -7,9 +7,7 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
   standalone: false,
 })
 export class IndexingProgressComponent implements OnInit {
-  constructor(
-  ) {}
+  constructor() {}
 
-  ngOnInit() {
-  }
+  ngOnInit() {}
 }

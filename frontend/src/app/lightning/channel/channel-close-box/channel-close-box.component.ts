@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 
 @Component({
   selector: 'app-channel-close-box',
@@ -20,9 +26,9 @@ export class ChannelCloseBoxComponent implements OnChanges {
   maxClosingBalance: number;
 
   startingBalanceStyle: {
-    left: string,
-    center: string,
-    right: string,
+    left: string;
+    center: string;
+    right: string;
   } = {
     left: '',
     center: '',
@@ -30,9 +36,9 @@ export class ChannelCloseBoxComponent implements OnChanges {
   };
 
   closingBalanceStyle: {
-    left: string,
-    center: string,
-    right: string,
+    left: string;
+    center: string;
+    right: string;
   } = {
     left: '',
     center: '',
@@ -44,13 +50,16 @@ export class ChannelCloseBoxComponent implements OnChanges {
   hideClosingLeft: boolean = false;
   hideClosingRight: boolean = false;
 
-  constructor() { }
+  constructor() {}
 
   ngOnChanges(changes: SimpleChanges): void {
     let closingCapacity;
     if (this.channel && this.left && this.right) {
-      this.showStartingBalance = (this.left.funding_balance || this.right.funding_balance) && this.channel.funding_ratio;
-      this.showClosingBalance = this.left.closing_balance || this.right.closing_balance;
+      this.showStartingBalance =
+        (this.left.funding_balance || this.right.funding_balance) &&
+        this.channel.funding_ratio;
+      this.showClosingBalance =
+        this.left.closing_balance || this.right.closing_balance;
 
       if (this.channel.single_funded) {
         if (this.left.funding_balance) {
@@ -61,13 +70,30 @@ export class ChannelCloseBoxComponent implements OnChanges {
           this.maxStartingBalance = 0;
         }
       } else {
-        this.minStartingBalance = clampRound(0, this.channel.capacity, this.left.funding_balance * this.channel.funding_ratio);
-        this.maxStartingBalance = clampRound(0, this.channel.capacity, this.channel.capacity - (this.right.funding_balance * this.channel.funding_ratio));
+        this.minStartingBalance = clampRound(
+          0,
+          this.channel.capacity,
+          this.left.funding_balance * this.channel.funding_ratio
+        );
+        this.maxStartingBalance = clampRound(
+          0,
+          this.channel.capacity,
+          this.channel.capacity -
+            this.right.funding_balance * this.channel.funding_ratio
+        );
       }
 
       closingCapacity = this.channel.capacity - this.channel.closing_fee;
-      this.minClosingBalance = clampRound(0, closingCapacity, this.left.closing_balance);
-      this.maxClosingBalance = clampRound(0, closingCapacity, closingCapacity - this.right.closing_balance);
+      this.minClosingBalance = clampRound(
+        0,
+        closingCapacity,
+        this.left.closing_balance
+      );
+      this.maxClosingBalance = clampRound(
+        0,
+        closingCapacity,
+        closingCapacity - this.right.closing_balance
+      );
 
       // margin of error to account for 2 x 330 sat anchor outputs
       if (Math.abs(this.minClosingBalance - this.maxClosingBalance) <= 660) {
@@ -78,11 +104,13 @@ export class ChannelCloseBoxComponent implements OnChanges {
       this.showClosingBalance = false;
     }
 
-    const startingMinPc = (this.minStartingBalance / this.channel.capacity) * 100;
-    const startingMaxPc = (this.maxStartingBalance / this.channel.capacity) * 100;
+    const startingMinPc =
+      (this.minStartingBalance / this.channel.capacity) * 100;
+    const startingMaxPc =
+      (this.maxStartingBalance / this.channel.capacity) * 100;
     this.startingBalanceStyle = {
       left: `left: 0%; right: ${100 - startingMinPc}%;`,
-      center: `left: ${startingMinPc}%; right: ${100 -startingMaxPc}%;`,
+      center: `left: ${startingMinPc}%; right: ${100 - startingMaxPc}%;`,
       right: `left: ${startingMaxPc}%; right: 0%;`,
     };
     this.hideStartingLeft = startingMinPc < 15;

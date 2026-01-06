@@ -10,14 +10,16 @@ import { StateService } from '@app/services/state.service';
   selector: 'app-difficulty-adjustments-table',
   templateUrl: './difficulty-adjustments-table.component.html',
   styleUrls: ['./difficulty-adjustments-table.component.scss'],
-  styles: [`
-    .loadingGraphs {
-      position: absolute;
-      top: 50%;
-      left: calc(50% - 15px);
-      z-index: 99;
-    }
-  `],
+  styles: [
+    `
+      .loadingGraphs {
+        position: absolute;
+        top: 50%;
+        left: calc(50% - 15px);
+        z-index: 99;
+      }
+    `,
+  ],
   standalone: false,
 })
 export class DifficultyAdjustmentsTable implements OnInit {
@@ -30,8 +32,7 @@ export class DifficultyAdjustmentsTable implements OnInit {
     private apiService: ApiService,
     public amountShortenerPipe: AmountShortenerPipe,
     public stateService: StateService
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     let decimals = 2;
@@ -39,7 +40,8 @@ export class DifficultyAdjustmentsTable implements OnInit {
       decimals = 5;
     }
 
-    this.hashrateObservable$ = this.apiService.getDifficultyAdjustments$('3m')
+    this.hashrateObservable$ = this.apiService
+      .getDifficultyAdjustments$('3m')
       .pipe(
         map((response) => {
           const data = response.body;
@@ -49,16 +51,19 @@ export class DifficultyAdjustmentsTable implements OnInit {
               height: adjustment[1],
               timestamp: adjustment[0],
               change: (adjustment[3] - 1) * 100,
-              difficultyShorten: this.amountShortenerPipe.transform(adjustment[2], decimals)
+              difficultyShorten: this.amountShortenerPipe.transform(
+                adjustment[2],
+                decimals
+              ),
             });
           }
           this.isLoading = false;
           return tableData.slice(0, 6);
-        }),
+        })
       );
   }
 
   isMobile() {
-    return (window.innerWidth <= 767.98);
+    return window.innerWidth <= 767.98;
   }
 }

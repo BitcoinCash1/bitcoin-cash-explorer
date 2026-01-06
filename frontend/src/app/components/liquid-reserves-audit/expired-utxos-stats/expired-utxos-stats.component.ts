@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { Observable, map, of } from 'rxjs';
 import { FederationUtxo } from '@interfaces/node-api.interface';
 
@@ -14,12 +19,15 @@ export class ExpiredUtxosStatsComponent implements OnInit {
 
   stats$: Observable<any>;
 
-  constructor() { }
+  constructor() {}
 
   ngOnInit(): void {
     this.stats$ = this.expiredUtxos$?.pipe(
       map((utxos: FederationUtxo[]) => {
-        const stats = { nonDust: { count: 0, total: 0 }, all: { count: 0, total: 0 } };
+        const stats = {
+          nonDust: { count: 0, total: 0 },
+          all: { count: 0, total: 0 },
+        };
         utxos.forEach((utxo: FederationUtxo) => {
           stats.all.count++;
           stats.all.total += utxo.amount;
@@ -29,8 +37,7 @@ export class ExpiredUtxosStatsComponent implements OnInit {
           }
         });
         return stats;
-      }),
+      })
     );
   }
-
 }

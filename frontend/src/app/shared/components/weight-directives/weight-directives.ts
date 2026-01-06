@@ -1,4 +1,9 @@
-import { Directive, OnDestroy, TemplateRef, ViewContainerRef } from '@angular/core';
+import {
+  Directive,
+  OnDestroy,
+  TemplateRef,
+  ViewContainerRef,
+} from '@angular/core';
 import { Subscription } from 'rxjs';
 import { StateService } from '@app/services/state.service';
 
@@ -14,7 +19,7 @@ function createRateUnitDirective(checkFn: (rateUnit: string) => boolean): any {
       private viewContainer: ViewContainerRef,
       private stateService: StateService
     ) {
-      this.subscription = this.stateService.rateUnits$.subscribe(rateUnit => {
+      this.subscription = this.stateService.rateUnits$.subscribe((rateUnit) => {
         this.enabled = checkFn(rateUnit);
         this.updateView();
       });
@@ -39,7 +44,11 @@ function createRateUnitDirective(checkFn: (rateUnit: string) => boolean): any {
 }
 
 @Directive({ selector: '[only-vsize]', standalone: false })
-export class OnlyVsizeDirective extends createRateUnitDirective(rateUnit => rateUnit !== 'wu') {}
+export class OnlyVsizeDirective extends createRateUnitDirective(
+  (rateUnit) => rateUnit !== 'wu'
+) {}
 
 @Directive({ selector: '[only-weight]', standalone: false })
-export class OnlyWeightDirective extends createRateUnitDirective(rateUnit => rateUnit === 'wu') {}
+export class OnlyWeightDirective extends createRateUnitDirective(
+  (rateUnit) => rateUnit === 'wu'
+) {}

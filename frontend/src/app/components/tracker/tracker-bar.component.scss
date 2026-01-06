@@ -69,7 +69,8 @@
     &.left-current {
       --div-left-color: var(--tertiary);
     }
-    &.left-blank, &.left-next {
+    &.left-blank,
+    &.left-next {
       &:nth-child(4n + 0) {
         --div-left-color: var(--secondary);
       }
@@ -83,7 +84,8 @@
     &.right-current {
       --div-right-color: var(--tertiary);
     }
-    &.right-blank, &.right-next {
+    &.right-blank,
+    &.right-next {
       &:nth-child(4n + 2) {
         --div-right-color: var(--secondary);
       }
@@ -92,8 +94,9 @@
       animation: 1s linear alternate infinite pulse-next-bottom;
     }
 
-    &::after, &::before {
-      content: '';
+    &::after,
+    &::before {
+      content: "";
       width: 100%;
       height: 100%;
       display: block;
@@ -110,8 +113,14 @@
   }
 
   &.transitions {
-    .stage, .divider, .divider::before, .divider::after {
-      transition: color 500ms, border-color 500ms, background-color 500ms;
+    .stage,
+    .divider,
+    .divider::before,
+    .divider::after {
+      transition:
+        color 500ms,
+        border-color 500ms,
+        background-color 500ms;
     }
   }
 }

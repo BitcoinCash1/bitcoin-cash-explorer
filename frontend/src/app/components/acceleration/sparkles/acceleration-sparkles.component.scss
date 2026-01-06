@@ -10,7 +10,9 @@
   color: rgba(152, 88, 255, 0.75);
   opacity: 0;
   transform: scale(0.8) rotate(0deg);
-  animation: pop ease 2000ms forwards, sparkle ease 500ms infinite;
+  animation:
+    pop ease 2000ms forwards,
+    sparkle ease 500ms infinite;
 }
 
 .inner-sparkle {

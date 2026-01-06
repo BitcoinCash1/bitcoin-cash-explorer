@@ -1,4 +1,15 @@
-import { Input, ChangeDetectionStrategy, ChangeDetectorRef, Component, OnInit, OnChanges, SimpleChanges, Inject, LOCALE_ID, OnDestroy } from '@angular/core';
+import {
+  Input,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  OnChanges,
+  SimpleChanges,
+  Inject,
+  LOCALE_ID,
+  OnDestroy,
+} from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable, merge, of, Subject, Subscription } from 'rxjs';
 import { tap, takeUntil } from 'rxjs/operators';
@@ -61,7 +72,7 @@ export class GlobalFooterComponent implements OnInit, OnDestroy, OnChanges {
     this.navigationService.subnetPaths.subscribe((paths) => {
       this.networkPaths = paths;
     });
-    this.enterpriseInfo$ = this.enterpriseService.info$.subscribe(info => {
+    this.enterpriseInfo$ = this.enterpriseService.info$.subscribe((info) => {
       this.enterpriseInfo = info;
     });
     this.network$ = merge(of(''), this.stateService.networkChanged$).pipe(
@@ -76,7 +87,7 @@ export class GlobalFooterComponent implements OnInit, OnDestroy, OnChanges {
     this.urlSubscription = this.route.url.subscribe((url) => {
       this.user = this.storageService.getAuth();
       this.cd.markForCheck();
-    })
+    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -96,11 +107,27 @@ export class GlobalFooterComponent implements OnInit, OnDestroy, OnChanges {
 
   networkLink(network) {
     const thisNetwork = network || 'mainnet';
-    if( network === '' || network === 'mainnet' || network === 'testnet' || network === 'testnet4' || network === 'signet' ) {
-      return (this.env.BASE_MODULE === 'mempool' ? '' : this.env.MEMPOOL_WEBSITE_URL + this.urlLanguage) + this.networkPaths[thisNetwork] || '/';
+    if (
+      network === '' ||
+      network === 'mainnet' ||
+      network === 'testnet' ||
+      network === 'testnet4' ||
+      network === 'signet'
+    ) {
+      return (
+        (this.env.BASE_MODULE === 'mempool'
+          ? ''
+          : this.env.MEMPOOL_WEBSITE_URL + this.urlLanguage) +
+          this.networkPaths[thisNetwork] || '/'
+      );
     }
-    if( network === 'liquid' || network === 'liquidtestnet' ) {
-      return (this.env.BASE_MODULE === 'liquid' ? '' : this.env.LIQUID_WEBSITE_URL + this.urlLanguage) + this.networkPaths[thisNetwork] || '/';
+    if (network === 'liquid' || network === 'liquidtestnet') {
+      return (
+        (this.env.BASE_MODULE === 'liquid'
+          ? ''
+          : this.env.LIQUID_WEBSITE_URL + this.urlLanguage) +
+          this.networkPaths[thisNetwork] || '/'
+      );
     }
   }
 }

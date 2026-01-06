@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { StateService } from '@app/services/state.service';
@@ -37,19 +42,19 @@ export class DifficultyMiningComponent implements OnInit {
   @Input() showHalving = false;
   @Input() showTitle = true;
 
-  constructor(
-    public stateService: StateService,
-  ) { }
+  constructor(public stateService: StateService) {}
 
   ngOnInit(): void {
     this.isLoadingWebSocket$ = this.stateService.isLoadingWebSocket$;
     this.difficultyEpoch$ = combineLatest([
       this.stateService.blocks$,
       this.stateService.difficultyAdjustment$,
-    ])
-    .pipe(
+    ]).pipe(
       map(([blocks, da]) => {
-        const maxHeight = blocks.reduce((max, block) => Math.max(max, block.height), 0);
+        const maxHeight = blocks.reduce(
+          (max, block) => Math.max(max, block.height),
+          0
+        );
         let colorAdjustments = 'var(--transparent-fg)';
         if (da.difficultyChange > 0) {
           colorAdjustments = 'var(--green)';
@@ -71,7 +76,8 @@ export class DifficultyMiningComponent implements OnInit {
         }
 
         this.blocksUntilHalving = 210000 - (maxHeight % 210000);
-        this.timeUntilHalving = new Date().getTime() + (this.blocksUntilHalving * 600000);
+        this.timeUntilHalving =
+          new Date().getTime() + this.blocksUntilHalving * 600000;
         this.now = new Date().getTime();
 
         const data = {
@@ -95,6 +101,6 @@ export class DifficultyMiningComponent implements OnInit {
   }
 
   isEllipsisActive(e): boolean {
-    return (e.offsetWidth < e.scrollWidth);
+    return e.offsetWidth < e.scrollWidth;
   }
 }

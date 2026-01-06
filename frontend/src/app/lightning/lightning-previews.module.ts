@@ -25,8 +25,6 @@ import { GroupPreviewComponent } from '@app/lightning/group/group-preview.compon
     LightningPreviewsRoutingModule,
     LightningModule,
   ],
-  providers: [
-    LightningApiService,
-  ]
+  providers: [LightningApiService],
 })
-export class LightningPreviewsModule { }
+export class LightningPreviewsModule {}

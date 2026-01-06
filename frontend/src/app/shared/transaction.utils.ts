@@ -1,7 +1,18 @@
 import { TransactionFlags } from '@app/shared/filters.utils';
-import { getVarIntLength, parseMultisigScript, isPoint, parseTapscriptMultisig, parseTapscriptUnanimousMultisig, ScriptInfo } from '@app/shared/script.utils';
+import {
+  getVarIntLength,
+  parseMultisigScript,
+  isPoint,
+  parseTapscriptMultisig,
+  parseTapscriptUnanimousMultisig,
+  ScriptInfo,
+} from '@app/shared/script.utils';
 import { Transaction, Vin } from '@interfaces/electrs.interface';
-import { CpfpInfo, RbfInfo, TransactionStripped } from '@interfaces/node-api.interface';
+import {
+  CpfpInfo,
+  RbfInfo,
+  TransactionStripped,
+} from '@interfaces/node-api.interface';
 import { StateService } from '@app/services/state.service';
 import { hash, Hash } from '@app/shared/sha256';
 import { AddressType, AddressTypeInfo } from '@app/shared/address-utils';
@@ -10,7 +21,7 @@ import * as secp256k1 from '@noble/secp256k1';
 // Bitcoin Core default policy settings
 const MAX_STANDARD_TX_WEIGHT = 400_000;
 const MAX_BLOCK_SIGOPS_COST = 80_000;
-const MAX_STANDARD_TX_SIGOPS_COST = (MAX_BLOCK_SIGOPS_COST / 5);
+const MAX_STANDARD_TX_SIGOPS_COST = MAX_BLOCK_SIGOPS_COST / 5;
 const MIN_STANDARD_TX_NONWITNESS_SIZE = 65;
 const MAX_P2SH_SIGOPS = 15;
 const MAX_STANDARD_P2WSH_STACK_ITEMS = 100;
@@ -23,17 +34,24 @@ const MAX_OP_RETURN_RELAY = 83;
 const DEFAULT_PERMIT_BAREMULTISIG = true;
 const MAX_TX_LEGACY_SIGOPS = 2_500 * 4; // witness-adjusted sigops
 
-const TAPROOT_NUMS_INTERNAL_KEY = '50929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0';
-const SECP256K1_ORDER = BigInt('0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141');
+const TAPROOT_NUMS_INTERNAL_KEY =
+  '50929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0';
+const SECP256K1_ORDER = BigInt(
+  '0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141'
+);
 
-export function countScriptSigops(script: string, isRawScript: boolean = false, witness: boolean = false): number {
+export function countScriptSigops(
+  script: string,
+  isRawScript: boolean = false,
+  witness: boolean = false
+): number {
   if (!script?.length) {
     return 0;
   }
 
   let sigops = 0;
   // count OP_CHECKSIG and OP_CHECKSIGVERIFY
-  sigops += (script.match(/OP_CHECKSIG/g)?.length || 0);
+  sigops += script.match(/OP_CHECKSIG/g)?.length || 0;
 
   // count OP_CHECKMULTISIG and OP_CHECKMULTISIGVERIFY
   if (isRawScript) {
@@ -41,7 +59,9 @@ export function countScriptSigops(script: string, isRawScript: boolean = false, 
     sigops += 20 * (script.match(/OP_CHECKMULTISIG/g)?.length || 0);
   } else {
     // in redeem scripts and witnesses, worth N if preceded by OP_N, 20 otherwise
-    const matches = script.matchAll(/(?:OP_(?:PUSHNUM_)?(\d+))? OP_CHECKMULTISIG/g);
+    const matches = script.matchAll(
+      /(?:OP_(?:PUSHNUM_)?(\d+))? OP_CHECKMULTISIG/g
+    );
     for (const match of matches) {
       const n = parseInt(match[1]);
       if (Number.isInteger(n)) {
@@ -52,10 +72,13 @@ export function countScriptSigops(script: string, isRawScript: boolean = false, 
     }
   }
 
-  return witness ? sigops : (sigops * 4);
+  return witness ? sigops : sigops * 4;
 }
 
-export function setSchnorrSighashFlags(flags: bigint, witness: string[]): bigint {
+export function setSchnorrSighashFlags(
+  flags: bigint,
+  witness: string[]
+): bigint {
   // no witness items
   if (!witness?.length) {
     return flags;
@@ -85,10 +108,11 @@ export function setSchnorrSighashFlags(flags: bigint, witness: string[]): bigint
 
 export function isDERSig(w: string): boolean {
   // heuristic to detect probable DER signatures
-  return (w.length >= 18
-    && w.startsWith('30') // minimum DER signature length is 8 bytes + sighash flag (see https://mempool.space/testnet/tx/c6c232a36395fa338da458b86ff1327395a9afc28c5d2daa4273e410089fd433)
-    && ['01', '02', '03', '81', '82', '83'].includes(w.slice(-2)) // signature must end with a valid sighash flag
-    && (w.length === (2 * parseInt(w.slice(2, 4), 16)) + 6) // second byte encodes the combined length of the R and S components
+  return (
+    w.length >= 18 &&
+    w.startsWith('30') && // minimum DER signature length is 8 bytes + sighash flag (see https://mempool.space/testnet/tx/c6c232a36395fa338da458b86ff1327395a9afc28c5d2daa4273e410089fd433)
+    ['01', '02', '03', '81', '82', '83'].includes(w.slice(-2)) && // signature must end with a valid sighash flag
+    w.length === 2 * parseInt(w.slice(2, 4), 16) + 6 // second byte encodes the combined length of the R and S components
   );
 }
 
@@ -108,7 +132,7 @@ export function isCanonicalDERSig(w: string): boolean {
 
   // second byte encodes the total length of the sequence (not including sighash flag)
   const compoundLength = parseInt(w.slice(2, 4), 16);
-  if (w.length !== (compoundLength * 2) + 6) {
+  if (w.length !== compoundLength * 2 + 6) {
     return false;
   }
 
@@ -120,10 +144,10 @@ export function isCanonicalDERSig(w: string): boolean {
   // fourth byte encodes the length of the R component
   const rLength = parseInt(w.slice(6, 8), 16);
   // rLength doesn't overflow remaining space
-  if (w.length < (rLength * 2) + 10) {
+  if (w.length < rLength * 2 + 10) {
     return false;
   }
-  const sEnd = 8 + (rLength * 2);
+  const sEnd = 8 + rLength * 2;
 
   // next byte after R is 0x02 ("INTEGER")
   if (w.slice(sEnd, sEnd + 2) !== '02') {
@@ -133,7 +157,7 @@ export function isCanonicalDERSig(w: string): boolean {
   // next byte encodes the length of the S component
   const sLength = parseInt(w.slice(sEnd + 2, sEnd + 4), 16);
   // R + S lengths exactly fit the length of the signature
-  if (w.length !== ((rLength + sLength) * 2) + 14) {
+  if (w.length !== (rLength + sLength) * 2 + 14) {
     return false;
   }
 
@@ -145,18 +169,18 @@ export enum SighashFlag {
   ALL = 1,
   NONE = 2,
   SINGLE = 3,
-  ANYONECANPAY = 0x80
+  ANYONECANPAY = 0x80,
 }
 
 export type SighashValue =
-  SighashFlag.DEFAULT |
-  SighashFlag.ALL |
-  SighashFlag.NONE |
-  SighashFlag.SINGLE |
-  (SighashFlag.ALL & SighashFlag.ANYONECANPAY) |
-  (SighashFlag.NONE & SighashFlag.ANYONECANPAY) |
-  (SighashFlag.SINGLE & SighashFlag.ANYONECANPAY) |
-  (SighashFlag.ALL & SighashFlag.NONE);
+  | SighashFlag.DEFAULT
+  | SighashFlag.ALL
+  | SighashFlag.NONE
+  | SighashFlag.SINGLE
+  | (SighashFlag.ALL & SighashFlag.ANYONECANPAY)
+  | (SighashFlag.NONE & SighashFlag.ANYONECANPAY)
+  | (SighashFlag.SINGLE & SighashFlag.ANYONECANPAY)
+  | (SighashFlag.ALL & SighashFlag.NONE);
 
 export const SighashLabels: Record<number, string> = {
   '0': 'SIGHASH_DEFAULT',
@@ -179,15 +203,15 @@ export class Sighash {
   }
 
   static isNone(val: SighashValue): boolean {
-    return (val & 0x7F) === SighashFlag.NONE;
+    return (val & 0x7f) === SighashFlag.NONE;
   }
 
   static isSingle(val: SighashValue): boolean {
-    return (val & 0x7F) === SighashFlag.SINGLE;
+    return (val & 0x7f) === SighashFlag.SINGLE;
   }
 
   static isAll(val: SighashValue): boolean {
-    return (val & 0x7F) === SighashFlag.ALL;
+    return (val & 0x7f) === SighashFlag.ALL;
   }
 
   static isDefault(val: SighashValue): boolean {
@@ -196,7 +220,10 @@ export class Sighash {
 }
 
 export function decodeSighashFlag(sighash: number): SighashValue {
-  if (sighash >= 0 && sighash <= 0x03 || sighash > 0x80 && sighash <= 0x83) {
+  if (
+    (sighash >= 0 && sighash <= 0x03) ||
+    (sighash > 0x80 && sighash <= 0x83)
+  ) {
     return sighash as SighashValue;
   }
   return SighashFlag.DEFAULT;
@@ -237,7 +264,7 @@ export function extractDERSignaturesASM(script_asm: string): SigInfo[] {
         const sighash = decodeSighashFlag(parseInt(hexData.slice(-2), 16));
         signatures.push({
           signature: hexData,
-          sighash
+          sighash,
         });
       }
     }
@@ -273,29 +300,36 @@ export function extractSchnorrSignatures(witnesses: string[]): SigInfo[] {
 export function processInputSignatures(vin: Vin): SigInfo[] {
   const addressType = vin.prevout?.scriptpubkey_type as AddressType;
   let signatures: SigInfo[] = [];
-  switch(addressType) {
+  switch (addressType) {
     case 'p2pk':
     case 'multisig':
     case 'p2pkh':
       signatures = extractDERSignaturesASM(vin.scriptsig_asm);
       break;
-    case 'p2sh': {
-      if (vin.witness?.length) {
-        signatures = extractDERSignaturesWitness(vin.witness || []);
-      } else {
-        signatures = [...extractDERSignaturesASM(vin.scriptsig_asm), ...extractDERSignaturesASM(vin.inner_redeemscript_asm)];
+    case 'p2sh':
+      {
+        if (vin.witness?.length) {
+          signatures = extractDERSignaturesWitness(vin.witness || []);
+        } else {
+          signatures = [
+            ...extractDERSignaturesASM(vin.scriptsig_asm),
+            ...extractDERSignaturesASM(vin.inner_redeemscript_asm),
+          ];
+        }
       }
-    } break;
+      break;
     case 'v0_p2wpkh':
       signatures = extractDERSignaturesWitness(vin.witness || []);
       break;
     case 'v0_p2wsh':
       signatures = extractDERSignaturesWitness(vin.witness || []);
       break;
-    case 'v1_p2tr': {
-      const taprootInfo = parseTaproot(vin.witness);
-      signatures = extractSchnorrSignatures(taprootInfo.stack);
-    } break;
+    case 'v1_p2tr':
+      {
+        const taprootInfo = parseTaproot(vin.witness);
+        signatures = extractSchnorrSignatures(taprootInfo.stack);
+      }
+      break;
     default:
       // non-signed input types?
       break;
@@ -303,21 +337,25 @@ export function processInputSignatures(vin: Vin): SigInfo[] {
   return signatures;
 }
 
-/*  
+/*
  * returns the number of missing signatures, the number of bytes to add to the transaction
  * and whether these should benefit from witness discounting
  * - Add a DER sig     in scriptsig/witness: 71 bytes signature + 1 push or witness size byte = 72 bytes
  * - Add a public key  in scriptsig/witness: 33 bytes pubkey    + 1 push or witness size byte = 34 bytes
  * - Add a Schnorr sig in           witness: 64 bytes signature + 1 witness size byte         = 65 bytes
-*/
-export function fillUnsignedInput(vin: Vin): { missingSigs: number, bytes: number, addToWitness: boolean } {
+ */
+export function fillUnsignedInput(vin: Vin): {
+  missingSigs: number;
+  bytes: number;
+  addToWitness: boolean;
+} {
   let missingSigs = 0;
   let bytes = 0;
   let addToWitness = false;
 
   const addressType = vin.prevout?.scriptpubkey_type as AddressType;
   let signatures: SigInfo[] = [];
-  let multisig: { m: number, n: number } | null = null;
+  let multisig: { m: number; n: number } | null = null;
   switch (addressType) {
     case 'p2pk':
       signatures = extractDERSignaturesASM(vin.scriptsig_asm);
@@ -363,7 +401,12 @@ export function fillUnsignedInput(vin: Vin): { missingSigs: number, bytes: numbe
       }
 
       // P2SH-P2WSH
-      if (/OP_0 OP_PUSHBYTES_32 [a-fA-F0-9]{64}/.test(vin.inner_redeemscript_asm) && vin.inner_witnessscript_asm) {
+      if (
+        /OP_0 OP_PUSHBYTES_32 [a-fA-F0-9]{64}/.test(
+          vin.inner_redeemscript_asm
+        ) &&
+        vin.inner_witnessscript_asm
+      ) {
         // Check for P2WSH multisig
         multisig = parseMultisigScript(vin.inner_witnessscript_asm);
         if (multisig) {
@@ -377,7 +420,9 @@ export function fillUnsignedInput(vin: Vin): { missingSigs: number, bytes: numbe
       }
 
       // P2SH-P2WPKH
-      if (/OP_0 OP_PUSHBYTES_20 [a-fA-F0-9]{40}/.test(vin.inner_redeemscript_asm)) {
+      if (
+        /OP_0 OP_PUSHBYTES_20 [a-fA-F0-9]{40}/.test(vin.inner_redeemscript_asm)
+      ) {
         signatures = extractDERSignaturesWitness(vin.witness || []);
         if (!signatures.length) {
           missingSigs = 1;
@@ -406,43 +451,52 @@ export function fillUnsignedInput(vin: Vin): { missingSigs: number, bytes: numbe
         }
       }
       break;
-    case 'v1_p2tr': {
-      const taprootInfo = parseTaproot(vin.witness);
-      signatures = extractSchnorrSignatures(taprootInfo.stack);
-      if (taprootInfo.scriptPath) {
-        if (/^OP_PUSHBYTES_32 [a-fA-F0-9]{64} OP_CHECKSIG$/.test(vin.inner_witnessscript_asm)) {
+    case 'v1_p2tr':
+      {
+        const taprootInfo = parseTaproot(vin.witness);
+        signatures = extractSchnorrSignatures(taprootInfo.stack);
+        if (taprootInfo.scriptPath) {
+          if (
+            /^OP_PUSHBYTES_32 [a-fA-F0-9]{64} OP_CHECKSIG$/.test(
+              vin.inner_witnessscript_asm
+            )
+          ) {
+            if (!signatures.length) {
+              missingSigs = 1;
+              bytes = 65;
+              addToWitness = true;
+            }
+          }
+
+          multisig = parseTapscriptMultisig(vin.inner_witnessscript_asm);
+          if (multisig) {
+            if (multisig.m - signatures.length > 0) {
+              missingSigs = multisig.m - signatures.length;
+              bytes = 65 * missingSigs + (multisig.n - multisig.m); // empty witness items for each non-signing keys
+              addToWitness = true;
+            }
+          }
+
+          const unanimousMultisig = parseTapscriptUnanimousMultisig(
+            vin.inner_witnessscript_asm
+          );
+          if (unanimousMultisig) {
+            if (unanimousMultisig - signatures.length > 0) {
+              missingSigs = unanimousMultisig - signatures.length;
+              bytes = 65 * missingSigs;
+              addToWitness = true;
+            }
+          }
+        } else {
+          // Assume keyspend
           if (!signatures.length) {
             missingSigs = 1;
             bytes = 65;
             addToWitness = true;
           }
         }
-
-        multisig = parseTapscriptMultisig(vin.inner_witnessscript_asm);
-        if (multisig) {
-          if (multisig.m - signatures.length > 0) {
-            missingSigs = multisig.m - signatures.length;
-            bytes = 65 * missingSigs + (multisig.n - multisig.m); // empty witness items for each non-signing keys
-            addToWitness = true;
-          }
-        }
-
-        const unanimousMultisig = parseTapscriptUnanimousMultisig(vin.inner_witnessscript_asm);
-        if (unanimousMultisig) {
-          if (unanimousMultisig - signatures.length > 0) {
-            missingSigs = unanimousMultisig - signatures.length;
-            bytes = 65 * missingSigs;
-            addToWitness = true;
-          }
-        }
-      } else { // Assume keyspend
-        if (!signatures.length) {
-          missingSigs = 1;
-          bytes = 65;
-          addToWitness = true;
-        }
       }
-    } break;
+      break;
     default:
       break;
   }
@@ -458,7 +512,11 @@ export function fillUnsignedInput(vin: Vin): { missingSigs: number, bytes: numbe
  * As standardness rules change, we'll need to apply the rules in force *at the time* to older blocks.
  * For now, just pull out individual rules into versioned functions where necessary.
  */
-export function isNonStandard(tx: Transaction, height?: number, network?: string): boolean {
+export function isNonStandard(
+  tx: Transaction,
+  height?: number,
+  network?: string
+): boolean {
   // version
   if (isNonStandardVersion(tx, height, network)) {
     return true;
@@ -491,7 +549,7 @@ export function isNonStandard(tx: Transaction, height?: number, network?: string
       return false;
     }
     // scriptsig-size
-    if ((vin.scriptsig.length / 2) > MAX_STANDARD_SCRIPTSIG_SIZE) {
+    if (vin.scriptsig.length / 2 > MAX_STANDARD_SCRIPTSIG_SIZE) {
       return true;
     }
     // scriptsig-not-pushonly
@@ -506,13 +564,20 @@ export function isNonStandard(tx: Transaction, height?: number, network?: string
     if (vin.prevout?.scriptpubkey_type === 'p2sh') {
       // TODO: evaluate script (https://github.com/bitcoin/bitcoin/blob/1ac627c485a43e50a9a49baddce186ee3ad4daad/src/policy/policy.cpp#L177)
       // countScriptSigops returns the witness-scaled sigops, so divide by 4 before comparison with MAX_P2SH_SIGOPS
-      const sigops = (countScriptSigops(vin.inner_redeemscript_asm || '') / 4);
+      const sigops = countScriptSigops(vin.inner_redeemscript_asm || '') / 4;
       if (sigops > MAX_P2SH_SIGOPS) {
         return true;
       }
-    } else if (['unknown', 'provably_unspendable', 'empty'].includes(vin.prevout?.scriptpubkey_type || '')) {
+    } else if (
+      ['unknown', 'provably_unspendable', 'empty'].includes(
+        vin.prevout?.scriptpubkey_type || ''
+      )
+    ) {
       return true;
-    } else if (vin.prevout?.scriptpubkey_type === 'anchor' && isNonStandardAnchor(vin, height, network)) {
+    } else if (
+      vin.prevout?.scriptpubkey_type === 'anchor' &&
+      isNonStandardAnchor(vin, height, network)
+    ) {
       return true;
     }
     // bad-witness-nonstandard
@@ -534,7 +599,7 @@ export function isNonStandard(tx: Transaction, height?: number, network?: string
           }
         }
         // remaining witness items (except for the script) must be within MAX_STANDARD_TAPSCRIPT_STACK_ITEM_SIZE limit
-        if (taprootInfo.stack.some(v => v.length > 160)) {
+        if (taprootInfo.stack.some((v) => v.length > 160)) {
           return false;
         }
       }
@@ -547,13 +612,20 @@ export function isNonStandard(tx: Transaction, height?: number, network?: string
   let opreturnBytes = 0;
   for (const vout of tx.vout) {
     // scriptpubkey
-    if (['nonstandard', 'provably_unspendable', 'empty'].includes(vout.scriptpubkey_type)) {
+    if (
+      ['nonstandard', 'provably_unspendable', 'empty'].includes(
+        vout.scriptpubkey_type
+      )
+    ) {
       // (non-standard output type)
       return true;
     } else if (vout.scriptpubkey_type === 'unknown') {
       // undefined segwit version/length combinations are actually standard in outputs
       // https://github.com/bitcoin/bitcoin/blob/2c79abc7ad4850e9e3ba32a04c530155cda7f980/src/script/interpreter.cpp#L1950-L1951
-      if (vout.scriptpubkey.startsWith('00') || !isWitnessProgram(vout.scriptpubkey)) {
+      if (
+        vout.scriptpubkey.startsWith('00') ||
+        !isWitnessProgram(vout.scriptpubkey)
+      ) {
         return true;
       }
     } else if (vout.scriptpubkey_type === 'multisig') {
@@ -573,7 +645,7 @@ export function isNonStandard(tx: Transaction, height?: number, network?: string
     // dust
     // (we could probably hardcode this for the different output types...)
     if (vout.scriptpubkey_type !== 'op_return') {
-      let dustSize = (vout.scriptpubkey.length / 2);
+      let dustSize = vout.scriptpubkey.length / 2;
       // add varint length overhead
       dustSize += getVarIntLength(dustSize);
       // add value size
@@ -583,7 +655,7 @@ export function isNonStandard(tx: Transaction, height?: number, network?: string
       } else {
         dustSize += 148;
       }
-      if (vout.value < (dustSize * DUST_RELAY_TX_FEE)) {
+      if (vout.value < dustSize * DUST_RELAY_TX_FEE) {
         // under minimum output size
         return !isStandardEphemeralDust(tx, height, network);
       }
@@ -605,18 +677,22 @@ export function isNonStandard(tx: Transaction, height?: number, network?: string
 // Individual versioned standardness rules
 
 const V3_STANDARDNESS_ACTIVATION_HEIGHT = {
-  'testnet4': 42_000,
-  'testnet': 2_900_000,
-  'signet': 211_000,
+  testnet4: 42_000,
+  testnet: 2_900_000,
+  signet: 211_000,
   '': 863_500,
 };
-function isNonStandardVersion(tx: Transaction, height?: number, network?: string): boolean {
+function isNonStandardVersion(
+  tx: Transaction,
+  height?: number,
+  network?: string
+): boolean {
   let TX_MAX_STANDARD_VERSION = 3;
   if (
-    height != null
-    && network != null
-    && V3_STANDARDNESS_ACTIVATION_HEIGHT[network]
-    && height <= V3_STANDARDNESS_ACTIVATION_HEIGHT[network]
+    height != null &&
+    network != null &&
+    V3_STANDARDNESS_ACTIVATION_HEIGHT[network] &&
+    height <= V3_STANDARDNESS_ACTIVATION_HEIGHT[network]
   ) {
     // V3 transactions were non-standard to spend before v28.x (scheduled for 2024/09/30 https://github.com/bitcoin/bitcoin/issues/29891)
     TX_MAX_STANDARD_VERSION = 2;
@@ -629,18 +705,22 @@ function isNonStandardVersion(tx: Transaction, height?: number, network?: string
 }
 
 const ANCHOR_STANDARDNESS_ACTIVATION_HEIGHT = {
-  'testnet4': 42_000,
-  'testnet': 2_900_000,
-  'signet': 211_000,
+  testnet4: 42_000,
+  testnet: 2_900_000,
+  signet: 211_000,
   '': 863_500,
 };
-function isNonStandardAnchor(vin: Vin, height?: number, network?: string): boolean {
+function isNonStandardAnchor(
+  vin: Vin,
+  height?: number,
+  network?: string
+): boolean {
   if (
-    height != null
-    && network != null
-    && ANCHOR_STANDARDNESS_ACTIVATION_HEIGHT[network]
-    && height <= ANCHOR_STANDARDNESS_ACTIVATION_HEIGHT[network]
-    && vin.prevout?.scriptpubkey === '51024e73'
+    height != null &&
+    network != null &&
+    ANCHOR_STANDARDNESS_ACTIVATION_HEIGHT[network] &&
+    height <= ANCHOR_STANDARDNESS_ACTIVATION_HEIGHT[network] &&
+    vin.prevout?.scriptpubkey === '51024e73'
   ) {
     // anchor outputs were non-standard to spend before v28.x (scheduled for 2024/09/30 https://github.com/bitcoin/bitcoin/issues/29891)
     return true;
@@ -650,18 +730,21 @@ function isNonStandardAnchor(vin: Vin, height?: number, network?: string): boole
 
 // Ephemeral dust is a new concept that allows a single dust output in a transaction, provided the transaction is zero fee
 const EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT = {
-  'testnet4': 90_500,
-  'testnet': 4_550_000,
-  'signet': 260_000,
+  testnet4: 90_500,
+  testnet: 4_550_000,
+  signet: 260_000,
   '': 905_000,
 };
-function isStandardEphemeralDust(tx: Transaction, height?: number, network?: string): boolean {
+function isStandardEphemeralDust(
+  tx: Transaction,
+  height?: number,
+  network?: string
+): boolean {
   if (
-    tx.fee === 0
-    && (height == null || (
-      EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT[network]
-      && height >= EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT[network]
-    ))
+    tx.fee === 0 &&
+    (height == null ||
+      (EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT[network] &&
+        height >= EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT[network]))
   ) {
     return true;
   }
@@ -670,19 +753,23 @@ function isStandardEphemeralDust(tx: Transaction, height?: number, network?: str
 
 // OP_RETURN size & count limits were lifted in v28.3/v29.2/v30.0
 const OP_RETURN_STANDARDNESS_ACTIVATION_HEIGHT = {
-  'testnet4': 108_000,
-  'testnet': 4_750_000,
-  'signet': 276_500,
+  testnet4: 108_000,
+  testnet: 4_750_000,
+  signet: 276_500,
   '': 921_000,
 };
 const MAX_DATACARRIER_BYTES = 83;
-function isStandardOpReturn(bytes: number, outputs: number,height?: number, network?: string): boolean {
+function isStandardOpReturn(
+  bytes: number,
+  outputs: number,
+  height?: number,
+  network?: string
+): boolean {
   if (
-    (height == null || (
-      OP_RETURN_STANDARDNESS_ACTIVATION_HEIGHT[network]
-      && height >= OP_RETURN_STANDARDNESS_ACTIVATION_HEIGHT[network]
-    )) // limits lifted
-    || // OR
+    height == null ||
+    (OP_RETURN_STANDARDNESS_ACTIVATION_HEIGHT[network] &&
+      height >= OP_RETURN_STANDARDNESS_ACTIVATION_HEIGHT[network]) || // limits lifted
+    // OR
     (bytes <= MAX_DATACARRIER_BYTES && outputs <= 1) // below old limits
   ) {
     return true;
@@ -692,17 +779,20 @@ function isStandardOpReturn(bytes: number, outputs: number,height?: number, netw
 
 // New legacy sigops limit started to be enforced in v30.0
 const LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT = {
-  'testnet4': 108_000,
-  'testnet': 4_750_000,
-  'signet': 276_500,
+  testnet4: 108_000,
+  testnet: 4_750_000,
+  signet: 276_500,
   '': 921_000,
 };
-function isNonStandardLegacySigops(tx: Transaction, height?: number, network?: string): boolean {
+function isNonStandardLegacySigops(
+  tx: Transaction,
+  height?: number,
+  network?: string
+): boolean {
   if (
-    height == null || (
-      LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT[network]
-      && height >= LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT[network]
-    )
+    height == null ||
+    (LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT[network] &&
+      height >= LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT[network])
   ) {
     if (!checkSigopsBIP54(tx, MAX_TX_LEGACY_SIGOPS)) {
       return true;
@@ -714,16 +804,18 @@ function isNonStandardLegacySigops(tx: Transaction, height?: number, network?: s
 // A witness program is any valid scriptpubkey that consists of a 1-byte push opcode
 // followed by a data push between 2 and 40 bytes.
 // https://github.com/bitcoin/bitcoin/blob/2c79abc7ad4850e9e3ba32a04c530155cda7f980/src/script/script.cpp#L224-L240
-function isWitnessProgram(scriptpubkey: string): false | { version: number, program: string } {
+function isWitnessProgram(
+  scriptpubkey: string
+): false | { version: number; program: string } {
   if (scriptpubkey.length < 8 || scriptpubkey.length > 84) {
     return false;
   }
-  const version = parseInt(scriptpubkey.slice(0,2), 16);
-  if (version !== 0 && version < 0x51 || version > 0x60) {
-      return false;
+  const version = parseInt(scriptpubkey.slice(0, 2), 16);
+  if ((version !== 0 && version < 0x51) || version > 0x60) {
+    return false;
   }
-  const push = parseInt(scriptpubkey.slice(2,4), 16);
-  if (push + 2 === (scriptpubkey.length / 2)) {
+  const push = parseInt(scriptpubkey.slice(2, 4), 16);
+  if (push + 2 === scriptpubkey.length / 2) {
     return {
       version: version ? version - 0x50 : 0,
       program: scriptpubkey.slice(4),
@@ -742,7 +834,7 @@ export function getNonWitnessSize(tx: Transaction): number {
       weight -= getVarIntLength(vin.witness.length);
       for (const witness of vin.witness) {
         // witness item size + content
-        weight -= getVarIntLength(witness.length / 2) + (witness.length / 2);
+        weight -= getVarIntLength(witness.length / 2) + witness.length / 2;
       }
     }
   }
@@ -753,7 +845,10 @@ export function getNonWitnessSize(tx: Transaction): number {
   return Math.ceil(weight / 4);
 }
 
-export function setSegwitSighashFlags(flags: bigint, witness: string[]): bigint {
+export function setSegwitSighashFlags(
+  flags: bigint,
+  witness: string[]
+): bigint {
   for (const w of witness) {
     if (isCanonicalDERSig(w)) {
       flags |= setSighashFlags(flags, w);
@@ -762,7 +857,10 @@ export function setSegwitSighashFlags(flags: bigint, witness: string[]): bigint 
   return flags;
 }
 
-export function setLegacySighashFlags(flags: bigint, scriptsig_asm: string): bigint {
+export function setLegacySighashFlags(
+  flags: bigint,
+  scriptsig_asm: string
+): bigint {
   for (const item of scriptsig_asm.split(' ')) {
     // skip op_codes
     if (item.startsWith('OP_')) {
@@ -777,14 +875,27 @@ export function setLegacySighashFlags(flags: bigint, scriptsig_asm: string): big
 }
 
 export function setSighashFlags(flags: bigint, signature: string): bigint {
-  switch(signature.slice(-2)) {
-    case '01': return flags | TransactionFlags.sighash_all;
-    case '02': return flags | TransactionFlags.sighash_none;
-    case '03': return flags | TransactionFlags.sighash_single;
-    case '81': return flags | TransactionFlags.sighash_all | TransactionFlags.sighash_acp;
-    case '82': return flags | TransactionFlags.sighash_none | TransactionFlags.sighash_acp;
-    case '83': return flags | TransactionFlags.sighash_single | TransactionFlags.sighash_acp;
-    default: return flags | TransactionFlags.sighash_default; // taproot only
+  switch (signature.slice(-2)) {
+    case '01':
+      return flags | TransactionFlags.sighash_all;
+    case '02':
+      return flags | TransactionFlags.sighash_none;
+    case '03':
+      return flags | TransactionFlags.sighash_single;
+    case '81':
+      return (
+        flags | TransactionFlags.sighash_all | TransactionFlags.sighash_acp
+      );
+    case '82':
+      return (
+        flags | TransactionFlags.sighash_none | TransactionFlags.sighash_acp
+      );
+    case '83':
+      return (
+        flags | TransactionFlags.sighash_single | TransactionFlags.sighash_acp
+      );
+    default:
+      return flags | TransactionFlags.sighash_default; // taproot only
   }
 }
 
@@ -797,7 +908,13 @@ export function isBurnKey(pubkey: string): boolean {
   ].includes(pubkey);
 }
 
-export function getTransactionFlags(tx: Transaction, cpfpInfo?: CpfpInfo, replacement?: boolean, height?: number, network?: string): bigint {
+export function getTransactionFlags(
+  tx: Transaction,
+  cpfpInfo?: CpfpInfo,
+  replacement?: boolean,
+  height?: number,
+  network?: string
+): bigint {
   let flags = tx.flags ? BigInt(tx.flags) : 0n;
 
   // Update variable flags (CPFP, RBF)
@@ -826,8 +943,8 @@ export function getTransactionFlags(tx: Transaction, cpfpInfo?: CpfpInfo, replac
   } else if (tx.version === 3) {
     flags |= TransactionFlags.v3;
   }
-  const reusedInputAddresses: { [address: string ]: number } = {};
-  const reusedOutputAddresses: { [address: string ]: number } = {};
+  const reusedInputAddresses: { [address: string]: number } = {};
+  const reusedOutputAddresses: { [address: string]: number } = {};
   const inValues = {};
   const outValues = {};
   let rbf = false;
@@ -836,32 +953,46 @@ export function getTransactionFlags(tx: Transaction, cpfpInfo?: CpfpInfo, replac
       rbf = true;
     }
     switch (vin.prevout?.scriptpubkey_type) {
-      case 'p2pk': flags |= TransactionFlags.p2pk; break;
-      case 'multisig': flags |= TransactionFlags.p2ms; break;
-      case 'p2pkh': flags |= TransactionFlags.p2pkh; break;
-      case 'p2sh': flags |= TransactionFlags.p2sh; break;
-      case 'v0_p2wpkh': flags |= TransactionFlags.p2wpkh; break;
-      case 'v0_p2wsh': flags |= TransactionFlags.p2wsh; break;
-      case 'v1_p2tr': {
-        flags |= TransactionFlags.p2tr;
-        // every valid taproot input has at least one witness item, however transactions
-        // created before taproot activation don't need to have any witness data
-        // (see https://mempool.space/tx/b10c007c60e14f9d087e0291d4d0c7869697c6681d979c6639dbd960792b4d41)
-        if (vin.witness?.length) {
-          const taprootInfo = parseTaproot(vin.witness);
-          if (taprootInfo.scriptPath) {
-            // the script itself is the second-to-last witness item, not counting the annex
-            const asm = vin.inner_witnessscript_asm;
-            // inscriptions smuggle data within an 'OP_0 OP_IF ... OP_ENDIF' envelope
-            if (asm?.includes('OP_0 OP_IF')) {
-              flags |= TransactionFlags.inscription;
+      case 'p2pk':
+        flags |= TransactionFlags.p2pk;
+        break;
+      case 'multisig':
+        flags |= TransactionFlags.p2ms;
+        break;
+      case 'p2pkh':
+        flags |= TransactionFlags.p2pkh;
+        break;
+      case 'p2sh':
+        flags |= TransactionFlags.p2sh;
+        break;
+      case 'v0_p2wpkh':
+        flags |= TransactionFlags.p2wpkh;
+        break;
+      case 'v0_p2wsh':
+        flags |= TransactionFlags.p2wsh;
+        break;
+      case 'v1_p2tr':
+        {
+          flags |= TransactionFlags.p2tr;
+          // every valid taproot input has at least one witness item, however transactions
+          // created before taproot activation don't need to have any witness data
+          // (see https://mempool.space/tx/b10c007c60e14f9d087e0291d4d0c7869697c6681d979c6639dbd960792b4d41)
+          if (vin.witness?.length) {
+            const taprootInfo = parseTaproot(vin.witness);
+            if (taprootInfo.scriptPath) {
+              // the script itself is the second-to-last witness item, not counting the annex
+              const asm = vin.inner_witnessscript_asm;
+              // inscriptions smuggle data within an 'OP_0 OP_IF ... OP_ENDIF' envelope
+              if (asm?.includes('OP_0 OP_IF')) {
+                flags |= TransactionFlags.inscription;
+              }
+            }
+            if (taprootInfo.annex) {
+              flags |= TransactionFlags.annex;
             }
           }
-          if (taprootInfo.annex) {
-            flags |= TransactionFlags.annex;
-          }
         }
-      } break;
+        break;
     }
 
     // sighash flags
@@ -874,9 +1005,11 @@ export function getTransactionFlags(tx: Transaction, cpfpInfo?: CpfpInfo, replac
     }
 
     if (vin.prevout?.scriptpubkey_address) {
-      reusedInputAddresses[vin.prevout?.scriptpubkey_address] = (reusedInputAddresses[vin.prevout?.scriptpubkey_address] || 0) + 1;
+      reusedInputAddresses[vin.prevout?.scriptpubkey_address] =
+        (reusedInputAddresses[vin.prevout?.scriptpubkey_address] || 0) + 1;
     }
-    inValues[vin.prevout?.value || Math.random()] = (inValues[vin.prevout?.value || Math.random()] || 0) + 1;
+    inValues[vin.prevout?.value || Math.random()] =
+      (inValues[vin.prevout?.value || Math.random()] || 0) + 1;
   }
   if (rbf) {
     flags |= TransactionFlags.rbf;
@@ -888,30 +1021,48 @@ export function getTransactionFlags(tx: Transaction, cpfpInfo?: CpfpInfo, replac
   let olgaSize = 0;
   for (const vout of tx.vout) {
     switch (vout.scriptpubkey_type) {
-      case 'p2pk': {
-        flags |= TransactionFlags.p2pk;
-        // detect fake pubkey (i.e. not a valid DER point on the secp256k1 curve)
-        hasFakePubkey = hasFakePubkey || !isPoint(vout.scriptpubkey?.slice(2, -2));
-      } break;
-      case 'multisig': {
-        flags |= TransactionFlags.p2ms;
-        // detect fake pubkeys (i.e. not valid DER points on the secp256k1 curve)
-        const asm = vout.scriptpubkey_asm;
-        for (const key of (asm?.split(' ') || [])) {
-          if (!hasFakePubkey && !key.startsWith('OP_')) {
-            hasFakePubkey = hasFakePubkey || isBurnKey(key) || !isPoint(key);
+      case 'p2pk':
+        {
+          flags |= TransactionFlags.p2pk;
+          // detect fake pubkey (i.e. not a valid DER point on the secp256k1 curve)
+          hasFakePubkey =
+            hasFakePubkey || !isPoint(vout.scriptpubkey?.slice(2, -2));
+        }
+        break;
+      case 'multisig':
+        {
+          flags |= TransactionFlags.p2ms;
+          // detect fake pubkeys (i.e. not valid DER points on the secp256k1 curve)
+          const asm = vout.scriptpubkey_asm;
+          for (const key of asm?.split(' ') || []) {
+            if (!hasFakePubkey && !key.startsWith('OP_')) {
+              hasFakePubkey = hasFakePubkey || isBurnKey(key) || !isPoint(key);
+            }
           }
         }
-      } break;
-      case 'p2pkh': flags |= TransactionFlags.p2pkh; break;
-      case 'p2sh': flags |= TransactionFlags.p2sh; break;
-      case 'v0_p2wpkh': flags |= TransactionFlags.p2wpkh; break;
-      case 'v0_p2wsh': flags |= TransactionFlags.p2wsh; break;
-      case 'v1_p2tr': flags |= TransactionFlags.p2tr; break;
-      case 'op_return': flags |= TransactionFlags.op_return; break;
+        break;
+      case 'p2pkh':
+        flags |= TransactionFlags.p2pkh;
+        break;
+      case 'p2sh':
+        flags |= TransactionFlags.p2sh;
+        break;
+      case 'v0_p2wpkh':
+        flags |= TransactionFlags.p2wpkh;
+        break;
+      case 'v0_p2wsh':
+        flags |= TransactionFlags.p2wsh;
+        break;
+      case 'v1_p2tr':
+        flags |= TransactionFlags.p2tr;
+        break;
+      case 'op_return':
+        flags |= TransactionFlags.op_return;
+        break;
     }
     if (vout.scriptpubkey_address) {
-      reusedOutputAddresses[vout.scriptpubkey_address] = (reusedOutputAddresses[vout.scriptpubkey_address] || 0) + 1;
+      reusedOutputAddresses[vout.scriptpubkey_address] =
+        (reusedOutputAddresses[vout.scriptpubkey_address] || 0) + 1;
     }
     if (vout.scriptpubkey_type === 'v0_p2wsh') {
       if (!P2WSHCount) {
@@ -919,7 +1070,7 @@ export function getTransactionFlags(tx: Transaction, cpfpInfo?: CpfpInfo, replac
       }
       P2WSHCount++;
       if (P2WSHCount === Math.ceil((olgaSize + 2) / 32)) {
-        const nullBytes = (P2WSHCount * 32) - olgaSize - 2;
+        const nullBytes = P2WSHCount * 32 - olgaSize - 2;
         if (vout.scriptpubkey.endsWith(''.padEnd(nullBytes * 2, '0'))) {
           flags |= TransactionFlags.fake_scripthash;
         }
@@ -927,7 +1078,8 @@ export function getTransactionFlags(tx: Transaction, cpfpInfo?: CpfpInfo, replac
     } else {
       P2WSHCount = 0;
     }
-    outValues[vout.value || Math.random()] = (outValues[vout.value || Math.random()] || 0) + 1;
+    outValues[vout.value || Math.random()] =
+      (outValues[vout.value || Math.random()] || 0) + 1;
   }
   if (hasFakePubkey) {
     flags |= TransactionFlags.fake_pubkey;
@@ -935,8 +1087,22 @@ export function getTransactionFlags(tx: Transaction, cpfpInfo?: CpfpInfo, replac
 
   // fast but bad heuristic to detect possible coinjoins
   // (at least 5 inputs and 5 outputs, less than half of which are unique amounts, with no address reuse)
-  const addressReuse = Object.keys(reusedOutputAddresses).reduce((acc, key) => Math.max(acc, (reusedInputAddresses[key] || 0) + (reusedOutputAddresses[key] || 0)), 0) > 1;
-  if (!addressReuse && tx.vin.length >= 5 && tx.vout.length >= 5 && (Object.keys(inValues).length + Object.keys(outValues).length) <= (tx.vin.length + tx.vout.length) / 2 ) {
+  const addressReuse =
+    Object.keys(reusedOutputAddresses).reduce(
+      (acc, key) =>
+        Math.max(
+          acc,
+          (reusedInputAddresses[key] || 0) + (reusedOutputAddresses[key] || 0)
+        ),
+      0
+    ) > 1;
+  if (
+    !addressReuse &&
+    tx.vin.length >= 5 &&
+    tx.vout.length >= 5 &&
+    Object.keys(inValues).length + Object.keys(outValues).length <=
+      (tx.vin.length + tx.vout.length) / 2
+  ) {
     flags |= TransactionFlags.coinjoin;
   }
   // more than 5:1 input:output ratio
@@ -955,21 +1121,26 @@ export function getTransactionFlags(tx: Transaction, cpfpInfo?: CpfpInfo, replac
   return flags;
 }
 
-export function getUnacceleratedFeeRate(tx: Transaction, accelerated: boolean): number {
+export function getUnacceleratedFeeRate(
+  tx: Transaction,
+  accelerated: boolean
+): number {
   if (accelerated) {
     let ancestorVsize = tx.weight / 4;
     let ancestorFee = tx.fee;
     for (const ancestor of tx.ancestors || []) {
-      ancestorVsize += (ancestor.weight / 4);
+      ancestorVsize += ancestor.weight / 4;
       ancestorFee += ancestor.fee;
     }
-    return Math.min(tx.fee / (tx.weight / 4), (ancestorFee / ancestorVsize));
+    return Math.min(tx.fee / (tx.weight / 4), ancestorFee / ancestorVsize);
   } else {
     return tx.effectiveFeePerVsize;
   }
 }
 
-export function identifyPrioritizedTransactions(transactions: TransactionStripped[]): { prioritized: string[], deprioritized: string[] } {
+export function identifyPrioritizedTransactions(
+  transactions: TransactionStripped[]
+): { prioritized: string[]; deprioritized: string[] } {
   // find the longest increasing subsequence of transactions
   // (adapted from https://en.wikipedia.org/wiki/Longest_increasing_subsequence#Efficient_algorithms)
   // should be O(n log n)
@@ -992,7 +1163,8 @@ export function identifyPrioritizedTransactions(transactions: TransactionStrippe
       const mid = lo + Math.floor((hi - lo) / 2); // lo <= mid < hi
       if (X[M[mid]].rate > X[i].rate) {
         hi = mid;
-      } else { // if X[M[mid]].effectiveFeePerVsize < X[i].effectiveFeePerVsize
+      } else {
+        // if X[M[mid]].effectiveFeePerVsize < X[i].effectiveFeePerVsize
         lo = mid + 1;
       }
     }
@@ -1051,7 +1223,6 @@ export function identifyPrioritizedTransactions(transactions: TransactionStrippe
 // Adapted from mempool backend https://github.com/mempool/mempool/blob/14e49126c3ca8416a8d7ad134a95c5e090324d69/backend/src/api/transaction-utils.ts#L254
 // Converts hex bitcoin script to ASM
 function convertScriptSigAsm(hex: string): string {
-
   const buf = new Uint8Array(hex.length / 2);
   for (let i = 0; i < buf.length; i++) {
     buf[i] = parseInt(hex.substr(i * 2, 2), 16);
@@ -1074,7 +1245,8 @@ function convertScriptSigAsm(hex: string): string {
         b.push('OP_PUSHDATA2');
         i += 2;
       } else if (op === 0x4e) {
-        push = buf[i] | (buf[i + 1] << 8) | (buf[i + 2] << 16) | (buf[i + 3] << 24);
+        push =
+          buf[i] | (buf[i + 1] << 8) | (buf[i + 2] << 16) | (buf[i + 3] << 24);
         b.push('OP_PUSHDATA4');
         i += 4;
       } else {
@@ -1125,7 +1297,9 @@ function convertScriptSigAsm(hex: string): string {
  *          the script item if it is a script spend.
  */
 function witnessToP2TRScript(witness: string[]): string | null {
-  if (witness.length < 2) return null;
+  if (witness.length < 2) {
+    return null;
+  }
   // Note: see BIP341 for parsing details of witness stack
 
   // If there are at least two witness elements, and the first byte of the
@@ -1135,7 +1309,9 @@ function witnessToP2TRScript(witness: string[]): string | null {
   // If there are at least two witness elements left, script path spending is used.
   // Call the second-to-last stack element s, the script.
   // (Note: this phrasing from BIP341 assumes we've *removed* the annex from the stack)
-  if (hasAnnex && witness.length < 3) return null;
+  if (hasAnnex && witness.length < 3) {
+    return null;
+  }
   const positionOfScript = hasAnnex ? witness.length - 3 : witness.length - 2;
   return witness[positionOfScript];
 }
@@ -1176,7 +1352,11 @@ export function addInnerScriptsToVin(vin: Vin): void {
  * @param inputs Additional information from a PSBT, if available
  * @returns The decoded transaction object and the raw hex
  */
-function fromBuffer(buffer: Uint8Array, network: string, inputs?: PsbtKeyValueMap[]): { tx: Transaction, hex: string } {
+function fromBuffer(
+  buffer: Uint8Array,
+  network: string,
+  inputs?: PsbtKeyValueMap[]
+): { tx: Transaction; hex: string } {
   let offset = 0;
 
   // Parse raw transaction
@@ -1186,9 +1366,9 @@ function fromBuffer(buffer: Uint8Array, network: string, inputs?: PsbtKeyValueMa
       block_height: null,
       block_hash: null,
       block_time: null,
-    }
+    },
   } as Transaction;
-  
+
   [tx.version, offset] = readInt32(buffer, offset);
 
   let marker, flag;
@@ -1218,7 +1398,15 @@ function fromBuffer(buffer: Uint8Array, network: string, inputs?: PsbtKeyValueMa
     [sequence, offset] = readInt32(buffer, offset, true);
     const is_coinbase = txid === '0'.repeat(64);
     const scriptsig_asm = convertScriptSigAsm(scriptsig);
-    tx.vin.push({ txid, vout, scriptsig, sequence, is_coinbase, scriptsig_asm, prevout: null });
+    tx.vin.push({
+      txid,
+      vout,
+      scriptsig,
+      sequence,
+      is_coinbase,
+      scriptsig_asm,
+      prevout: null,
+    });
   }
 
   let voutLen;
@@ -1234,7 +1422,13 @@ function fromBuffer(buffer: Uint8Array, network: string, inputs?: PsbtKeyValueMa
     const toAddress = scriptPubKeyToAddress(scriptpubkey, network);
     const scriptpubkey_type = toAddress.type;
     const scriptpubkey_address = toAddress?.address;
-    tx.vout.push({ value, scriptpubkey, scriptpubkey_asm, scriptpubkey_type, scriptpubkey_address });
+    tx.vout.push({
+      value,
+      scriptpubkey,
+      scriptpubkey_asm,
+      scriptpubkey_type,
+      scriptpubkey_address,
+    });
   }
 
   if (!isLegacyTransaction) {
@@ -1250,7 +1444,7 @@ function fromBuffer(buffer: Uint8Array, network: string, inputs?: PsbtKeyValueMa
   if (offset !== buffer.length) {
     throw new Error('Transaction has unexpected data');
   }
-  
+
   // Optionally add data from PSBT: prevouts, redeem/witness scripts and signatures
   if (inputs) {
     for (let i = 0; i < tx.vin.length; i++) {
@@ -1261,7 +1455,8 @@ function fromBuffer(buffer: Uint8Array, network: string, inputs?: PsbtKeyValueMa
         nonWitnessUtxo: inputRecords.get(PSBT_IN.NON_WITNESS_UTXO)?.[0] || null,
         witnessUtxo: inputRecords.get(PSBT_IN.WITNESS_UTXO)?.[0] || null,
         finalScriptSig: inputRecords.get(PSBT_IN.FINAL_SCRIPTSIG)?.[0] || null,
-        finalScriptWitness: inputRecords.get(PSBT_IN.FINAL_SCRIPTWITNESS)?.[0] || null,
+        finalScriptWitness:
+          inputRecords.get(PSBT_IN.FINAL_SCRIPTWITNESS)?.[0] || null,
         redeemScript: inputRecords.get(PSBT_IN.REDEEM_SCRIPT)?.[0] || null,
         witnessScript: inputRecords.get(PSBT_IN.WITNESS_SCRIPT)?.[0] || null,
         partialSigs: inputRecords.get(PSBT_IN.PARTIAL_SIG) || [],
@@ -1272,16 +1467,31 @@ function fromBuffer(buffer: Uint8Array, network: string, inputs?: PsbtKeyValueMa
 
       // Fill prevout
       if (groups.witnessUtxo && !vin.prevout) {
-        let value, scriptpubkeyArray, scriptpubkey, outputOffset = 0;
-        [value, outputOffset] = readInt64(groups.witnessUtxo.value, outputOffset);
+        let value,
+          scriptpubkeyArray,
+          scriptpubkey,
+          outputOffset = 0;
+        [value, outputOffset] = readInt64(
+          groups.witnessUtxo.value,
+          outputOffset
+        );
         value = Number(value);
-        [scriptpubkeyArray, outputOffset] = readVarSlice(groups.witnessUtxo.value, outputOffset);
+        [scriptpubkeyArray, outputOffset] = readVarSlice(
+          groups.witnessUtxo.value,
+          outputOffset
+        );
         scriptpubkey = uint8ArrayToHexString(scriptpubkeyArray);
         const scriptpubkey_asm = convertScriptSigAsm(scriptpubkey);
         const toAddress = scriptPubKeyToAddress(scriptpubkey, network);
         const scriptpubkey_type = toAddress.type;
         const scriptpubkey_address = toAddress?.address;
-        vin.prevout = { value, scriptpubkey, scriptpubkey_asm, scriptpubkey_type, scriptpubkey_address };
+        vin.prevout = {
+          value,
+          scriptpubkey,
+          scriptpubkey_asm,
+          scriptpubkey_type,
+          scriptpubkey_address,
+        };
       }
       if (groups.nonWitnessUtxo && !vin.prevout) {
         const utxoTx = fromBuffer(groups.nonWitnessUtxo.value, network).tx;
@@ -1299,7 +1509,10 @@ function fromBuffer(buffer: Uint8Array, network: string, inputs?: PsbtKeyValueMa
       if (groups.finalScriptWitness) {
         let witness = [];
         let witnessOffset = 0;
-        [witness, witnessOffset] = readVector(groups.finalScriptWitness.value, witnessOffset);
+        [witness, witnessOffset] = readVector(
+          groups.finalScriptWitness.value,
+          witnessOffset
+        );
         vin.witness = witness.map(uint8ArrayToHexString);
         finalizedWitness = true;
       }
@@ -1311,7 +1524,7 @@ function fromBuffer(buffer: Uint8Array, network: string, inputs?: PsbtKeyValueMa
       if (groups.redeemScript && !finalizedScriptSig) {
         const redeemScript = groups.redeemScript.value;
         if (redeemScript.length > 520) {
-          throw new Error("Redeem script must be <= 520 bytes");
+          throw new Error('Redeem script must be <= 520 bytes');
         }
         let pushOpcode;
         if (redeemScript.length < 0x4c) {
@@ -1319,15 +1532,26 @@ function fromBuffer(buffer: Uint8Array, network: string, inputs?: PsbtKeyValueMa
         } else if (redeemScript.length <= 0xff) {
           pushOpcode = new Uint8Array([0x4c, redeemScript.length]); // OP_PUSHDATA1
         } else {
-          pushOpcode = new Uint8Array([0x4d, redeemScript.length & 0xff, redeemScript.length >> 8]); // OP_PUSHDATA2
+          pushOpcode = new Uint8Array([
+            0x4d,
+            redeemScript.length & 0xff,
+            redeemScript.length >> 8,
+          ]); // OP_PUSHDATA2
         }
-        vin.scriptsig = (vin.scriptsig || '') + uint8ArrayToHexString(pushOpcode) + uint8ArrayToHexString(redeemScript);
+        vin.scriptsig =
+          (vin.scriptsig || '') +
+          uint8ArrayToHexString(pushOpcode) +
+          uint8ArrayToHexString(redeemScript);
         vin.scriptsig_asm = convertScriptSigAsm(vin.scriptsig);
         vin.inner_redeemscript_asm = vin.scriptsig_asm.split(' ').reverse()[0];
       }
       if (groups.witnessScript && !finalizedWitness) {
-        vin.witness = (vin.witness || []).concat(uint8ArrayToHexString(groups.witnessScript.value));
-        vin.inner_witnessscript_asm = convertScriptSigAsm(vin.witness[vin.witness.length - 1]);
+        vin.witness = (vin.witness || []).concat(
+          uint8ArrayToHexString(groups.witnessScript.value)
+        );
+        vin.inner_witnessscript_asm = convertScriptSigAsm(
+          vin.witness[vin.witness.length - 1]
+        );
       }
 
       // Fill partial signatures
@@ -1336,25 +1560,37 @@ function fromBuffer(buffer: Uint8Array, network: string, inputs?: PsbtKeyValueMa
         const scriptpubkey_type = vin.prevout?.scriptpubkey_type;
         if (scriptpubkey_type === 'multisig' && !finalizedScriptSig) {
           if (signature.length > 74) {
-            throw new Error("Signature must be <= 74 bytes");
+            throw new Error('Signature must be <= 74 bytes');
           }
           const pushOpcode = new Uint8Array([signature.length]);
-          vin.scriptsig = uint8ArrayToHexString(pushOpcode) + uint8ArrayToHexString(signature) + (vin.scriptsig || '');
+          vin.scriptsig =
+            uint8ArrayToHexString(pushOpcode) +
+            uint8ArrayToHexString(signature) +
+            (vin.scriptsig || '');
           vin.scriptsig_asm = convertScriptSigAsm(vin.scriptsig);
         }
         if (scriptpubkey_type === 'p2sh') {
-          const redeemScriptStr = vin.scriptsig_asm ? vin.scriptsig_asm.split(' ').reverse()[0] : '';
-          if (redeemScriptStr.startsWith('00') && redeemScriptStr.length === 68 && vin.witness?.length) {
+          const redeemScriptStr = vin.scriptsig_asm
+            ? vin.scriptsig_asm.split(' ').reverse()[0]
+            : '';
+          if (
+            redeemScriptStr.startsWith('00') &&
+            redeemScriptStr.length === 68 &&
+            vin.witness?.length
+          ) {
             if (!finalizedWitness) {
               vin.witness.unshift(uint8ArrayToHexString(signature));
             }
           } else {
             if (!finalizedScriptSig) {
               if (signature.length > 74) {
-                throw new Error("Signature must be <= 74 bytes");
+                throw new Error('Signature must be <= 74 bytes');
               }
               const pushOpcode = new Uint8Array([signature.length]);
-              vin.scriptsig = uint8ArrayToHexString(pushOpcode) + uint8ArrayToHexString(signature) + (vin.scriptsig || '');
+              vin.scriptsig =
+                uint8ArrayToHexString(pushOpcode) +
+                uint8ArrayToHexString(signature) +
+                (vin.scriptsig || '');
               vin.scriptsig_asm = convertScriptSigAsm(vin.scriptsig);
             }
           }
@@ -1365,10 +1601,18 @@ function fromBuffer(buffer: Uint8Array, network: string, inputs?: PsbtKeyValueMa
         }
       }
 
-      if (groups.tapLeafScripts.length && groups.tapInternalKey && !finalizedWitness) {
+      if (
+        groups.tapLeafScripts.length &&
+        groups.tapInternalKey &&
+        !finalizedWitness
+      ) {
         // If no signature is present, assume key spend *except* if internal key is provably unspendable
         if (!groups.tapScriptSigs.length) {
-          if (isInternalKeyNUMS(uint8ArrayToHexString(groups.tapInternalKey.value))) {
+          if (
+            isInternalKeyNUMS(
+              uint8ArrayToHexString(groups.tapInternalKey.value)
+            )
+          ) {
             // unspendable internal key, use the first tap leaf script provided
             const record = groups.tapLeafScripts[0];
             const controlBlock = uint8ArrayToHexString(record.keyData);
@@ -1399,8 +1643,13 @@ function fromBuffer(buffer: Uint8Array, network: string, inputs?: PsbtKeyValueMa
           for (const record of groups.tapLeafScripts) {
             const leafVersion = uint8ArrayToHexString(record.value.slice(-1));
             const script = uint8ArrayToHexString(record.value.slice(0, -1));
-            const scriptSize = uint8ArrayToHexString(compactSize(record.value.length - 1));
-            if (taggedHash('TapLeaf', leafVersion + scriptSize + script) === scriptMostSigs) {
+            const scriptSize = uint8ArrayToHexString(
+              compactSize(record.value.length - 1)
+            );
+            if (
+              taggedHash('TapLeaf', leafVersion + scriptSize + script) ===
+              scriptMostSigs
+            ) {
               // add the script
               const controlBlock = uint8ArrayToHexString(record.keyData);
               const tapLeaf = uint8ArrayToHexString(record.value.slice(0, -1));
@@ -1409,7 +1658,9 @@ function fromBuffer(buffer: Uint8Array, network: string, inputs?: PsbtKeyValueMa
               vin.inner_witnessscript_asm = convertScriptSigAsm(tapLeaf);
               // add the signatures that are part of this script
               for (const sigRecord of groups.tapScriptSigs) {
-                const sigLeafHash = uint8ArrayToHexString(sigRecord.keyData.slice(32));
+                const sigLeafHash = uint8ArrayToHexString(
+                  sigRecord.keyData.slice(32)
+                );
                 if (sigLeafHash === scriptMostSigs) {
                   vin.witness.unshift(uint8ArrayToHexString(sigRecord.value));
                 }
@@ -1419,11 +1670,11 @@ function fromBuffer(buffer: Uint8Array, network: string, inputs?: PsbtKeyValueMa
           }
         }
       }
-    }    
+    }
   }
 
   // Calculate final size, weight, and txid
-  const hasWitness = tx.vin.some(vin => vin.witness?.length);
+  const hasWitness = tx.vin.some((vin) => vin.witness?.length);
   let witnessSize = 0;
   if (hasWitness) {
     for (let i = 0; i < tx.vin.length; ++i) {
@@ -1446,7 +1697,7 @@ function fromBuffer(buffer: Uint8Array, network: string, inputs?: PsbtKeyValueMa
   return { tx, hex: uint8ArrayToHexString(rawHex) };
 }
 
-export type PsbtKeyValue = { keyData: Uint8Array; value: Uint8Array; };
+export type PsbtKeyValue = { keyData: Uint8Array; value: Uint8Array };
 type PsbtKeyValueMap = Map<number, PsbtKeyValue[]>;
 
 const PSBT_IN = {
@@ -1476,14 +1727,18 @@ const PSBT_OUT = {
  *   - the full input map for each input
  *   - the full output map for each output
  */
-function decodePsbt(psbtBuffer: Uint8Array): { rawTx: Uint8Array; inputs: PsbtKeyValueMap[]; outputs: PsbtKeyValueMap[]; } {
+function decodePsbt(psbtBuffer: Uint8Array): {
+  rawTx: Uint8Array;
+  inputs: PsbtKeyValueMap[];
+  outputs: PsbtKeyValueMap[];
+} {
   let offset = 0;
 
   // magic: "psbt" in ASCII
   const expectedMagic = [0x70, 0x73, 0x62, 0x74];
   for (let i = 0; i < expectedMagic.length; i++) {
     if (psbtBuffer[offset + i] !== expectedMagic[i]) {
-      throw new Error("Invalid PSBT magic bytes");
+      throw new Error('Invalid PSBT magic bytes');
     }
   }
   offset += expectedMagic.length;
@@ -1491,7 +1746,7 @@ function decodePsbt(psbtBuffer: Uint8Array): { rawTx: Uint8Array; inputs: PsbtKe
   const separator = psbtBuffer[offset];
   offset += 1;
   if (separator !== 0xff) {
-    throw new Error("Invalid PSBT separator");
+    throw new Error('Invalid PSBT separator');
   }
 
   // GLOBAL MAP
@@ -1517,35 +1772,38 @@ function decodePsbt(psbtBuffer: Uint8Array): { rawTx: Uint8Array; inputs: PsbtKe
   }
 
   if (!rawTx) {
-    throw new Error("Unsigned transaction not found in PSBT");
+    throw new Error('Unsigned transaction not found in PSBT');
   }
 
-  const readMaps = (count: number, startOffset: number): { map: PsbtKeyValueMap[]; offset: number } => {
+  const readMaps = (
+    count: number,
+    startOffset: number
+  ): { map: PsbtKeyValueMap[]; offset: number } => {
     const map: PsbtKeyValueMap[] = [];
     let offset = startOffset;
 
     for (let i = 0; i < count; i++) {
       const records: PsbtKeyValueMap = new Map();
-    const seenKeys = new Set<string>();
-    while (offset < psbtBuffer.length) {
-      const [keyLen, newOffset] = readVarInt(psbtBuffer, offset);
-      offset = newOffset;
-      if (keyLen === 0) {
-        break;
-      }
-      const key = psbtBuffer.slice(offset, offset + keyLen);
-      offset += keyLen;
+      const seenKeys = new Set<string>();
+      while (offset < psbtBuffer.length) {
+        const [keyLen, newOffset] = readVarInt(psbtBuffer, offset);
+        offset = newOffset;
+        if (keyLen === 0) {
+          break;
+        }
+        const key = psbtBuffer.slice(offset, offset + keyLen);
+        offset += keyLen;
 
-      const keyHex = uint8ArrayToHexString(key);
-      if (seenKeys.has(keyHex)) {
+        const keyHex = uint8ArrayToHexString(key);
+        if (seenKeys.has(keyHex)) {
           throw new Error('Duplicate key in map');
-      }
-      seenKeys.add(keyHex);
+        }
+        seenKeys.add(keyHex);
 
-      const [valLen, newOffset2] = readVarInt(psbtBuffer, offset);
-      offset = newOffset2;
-      const value = psbtBuffer.slice(offset, offset + valLen);
-      offset += valLen;
+        const [valLen, newOffset2] = readVarInt(psbtBuffer, offset);
+        offset = newOffset2;
+        const value = psbtBuffer.slice(offset, offset + valLen);
+        offset += valLen;
 
         const [keyType, keyDataOffset] = readVarInt(key, 0);
         const bucket = records.get(keyType) || [];
@@ -1553,7 +1811,7 @@ function decodePsbt(psbtBuffer: Uint8Array): { rawTx: Uint8Array; inputs: PsbtKe
         records.set(keyType, bucket);
       }
       map.push(records);
-  }
+    }
 
     return { map, offset };
   };
@@ -1589,18 +1847,33 @@ function decodePsbt(psbtBuffer: Uint8Array): { rawTx: Uint8Array; inputs: PsbtKe
   return { rawTx, inputs, outputs };
 }
 
-export function decodeRawTransaction(input: string, network: string): { tx: Transaction, hex: string, psbt?: string } {
+export function decodeRawTransaction(
+  input: string,
+  network: string
+): { tx: Transaction; hex: string; psbt?: string } {
   const buffer = convertTextToBuffer(input);
 
-  if (buffer[0] === 0x70 && buffer[1] === 0x73 && buffer[2] === 0x62 && buffer[3] === 0x74) { // PSBT magic bytes
+  if (
+    buffer[0] === 0x70 &&
+    buffer[1] === 0x73 &&
+    buffer[2] === 0x62 &&
+    buffer[3] === 0x74
+  ) {
+    // PSBT magic bytes
     const { rawTx, inputs } = decodePsbt(buffer);
-    return { ...fromBuffer(rawTx, network, inputs), psbt: uint8ArrayToHexString(buffer) };
+    return {
+      ...fromBuffer(rawTx, network, inputs),
+      psbt: uint8ArrayToHexString(buffer),
+    };
   }
 
   return fromBuffer(buffer, network);
 }
 
-function serializeTransaction(tx: Transaction, includeWitness: boolean = true): Uint8Array {
+function serializeTransaction(
+  tx: Transaction,
+  includeWitness: boolean = true
+): Uint8Array {
   const result: number[] = [];
 
   // Add version
@@ -1666,15 +1939,25 @@ export function countSigops(transaction: Transaction): number {
     }
     if (input.prevout) {
       switch (true) {
-        case input.prevout.scriptpubkey_type === 'p2sh' && input.witness?.length === 2 && input.scriptsig && input.scriptsig.startsWith('160014'):
+        case input.prevout.scriptpubkey_type === 'p2sh' &&
+          input.witness?.length === 2 &&
+          input.scriptsig &&
+          input.scriptsig.startsWith('160014'):
         case input.prevout.scriptpubkey_type === 'v0_p2wpkh':
           sigops += 1;
           break;
 
-        case input.prevout?.scriptpubkey_type === 'p2sh' && input.witness?.length && input.scriptsig && input.scriptsig.startsWith('220020'):
+        case input.prevout?.scriptpubkey_type === 'p2sh' &&
+          input.witness?.length &&
+          input.scriptsig &&
+          input.scriptsig.startsWith('220020'):
         case input.prevout.scriptpubkey_type === 'v0_p2wsh':
           if (input.witness?.length) {
-            sigops += countScriptSigops(convertScriptSigAsm(input.witness[input.witness.length - 1]), false, true);
+            sigops += countScriptSigops(
+              convertScriptSigAsm(input.witness[input.witness.length - 1]),
+              false,
+              true
+            );
           }
           break;
 
@@ -1708,7 +1991,10 @@ export function countSigops(transaction: Transaction): number {
  * or fewer. This method of accounting was introduced by BIP16, and BIP54 reuses it.
  * The GetSigOpCount call on the previous scriptPubKey counts both bare and P2SH sigops."
  */
-function checkSigopsBIP54(tx: Transaction, limit: number = MAX_TX_LEGACY_SIGOPS): boolean {
+function checkSigopsBIP54(
+  tx: Transaction,
+  limit: number = MAX_TX_LEGACY_SIGOPS
+): boolean {
   let sigops = 0;
   for (const input of tx.vin) {
     if (input.scriptsig_asm) {
@@ -1716,7 +2002,10 @@ function checkSigopsBIP54(tx: Transaction, limit: number = MAX_TX_LEGACY_SIGOPS)
     }
     if (input.prevout) {
       // P2SH redeem script
-      if (input.prevout.scriptpubkey_type === 'p2sh' && input.inner_redeemscript_asm) {
+      if (
+        input.prevout.scriptpubkey_type === 'p2sh' &&
+        input.inner_redeemscript_asm
+      ) {
         sigops += countScriptSigops(input.inner_redeemscript_asm);
       } else {
         // prevout scriptpubkey
@@ -1731,30 +2020,51 @@ function checkSigopsBIP54(tx: Transaction, limit: number = MAX_TX_LEGACY_SIGOPS)
   return true;
 }
 
-function scriptPubKeyToAddress(scriptPubKey: string, network: string): { address: string, type: string } {
+function scriptPubKeyToAddress(
+  scriptPubKey: string,
+  network: string
+): { address: string; type: string } {
   // P2PKH
   if (/^76a914[0-9a-f]{40}88ac$/.test(scriptPubKey)) {
-    return { address: p2pkh(scriptPubKey.substring(6, 6 + 40), network), type: 'p2pkh' };
+    return {
+      address: p2pkh(scriptPubKey.substring(6, 6 + 40), network),
+      type: 'p2pkh',
+    };
   }
   // P2PK
-  if (/^21[0-9a-f]{66}ac$/.test(scriptPubKey) || /^41[0-9a-f]{130}ac$/.test(scriptPubKey)) {
+  if (
+    /^21[0-9a-f]{66}ac$/.test(scriptPubKey) ||
+    /^41[0-9a-f]{130}ac$/.test(scriptPubKey)
+  ) {
     return { address: null, type: 'p2pk' };
   }
   // P2SH
   if (/^a914[0-9a-f]{40}87$/.test(scriptPubKey)) {
-    return { address: p2sh(scriptPubKey.substring(4, 4 + 40), network), type: 'p2sh' };
+    return {
+      address: p2sh(scriptPubKey.substring(4, 4 + 40), network),
+      type: 'p2sh',
+    };
   }
   // P2WPKH
   if (/^0014[0-9a-f]{40}$/.test(scriptPubKey)) {
-    return { address: p2wpkh(scriptPubKey.substring(4, 4 + 40), network), type: 'v0_p2wpkh' };
+    return {
+      address: p2wpkh(scriptPubKey.substring(4, 4 + 40), network),
+      type: 'v0_p2wpkh',
+    };
   }
   // P2WSH
   if (/^0020[0-9a-f]{64}$/.test(scriptPubKey)) {
-    return { address: p2wsh(scriptPubKey.substring(4, 4 + 64), network), type: 'v0_p2wsh' };
+    return {
+      address: p2wsh(scriptPubKey.substring(4, 4 + 64), network),
+      type: 'v0_p2wsh',
+    };
   }
   // P2TR
   if (/^5120[0-9a-f]{64}$/.test(scriptPubKey)) {
-    return { address: p2tr(scriptPubKey.substring(4, 4 + 64), network), type: 'v1_p2tr' };
+    return {
+      address: p2tr(scriptPubKey.substring(4, 4 + 64), network),
+      type: 'v1_p2tr',
+    };
   }
   // multisig
   if (/^[0-9a-f]+ae$/.test(scriptPubKey)) {
@@ -1773,7 +2083,9 @@ function scriptPubKeyToAddress(scriptPubKey: string, network: string): { address
 
 function p2pkh(pubKeyHash: string, network: string): string {
   const pubkeyHashArray = hexStringToUint8Array(pubKeyHash);
-  const version = ['testnet', 'testnet4', 'signet'].includes(network) ? 0x6f : 0x00;
+  const version = ['testnet', 'testnet4', 'signet'].includes(network)
+    ? 0x6f
+    : 0x00;
   const versionedPayload = Uint8Array.from([version, ...pubkeyHashArray]);
   const hash1 = new Hash().update(versionedPayload).digest();
   const hash2 = new Hash().update(hash1).digest();
@@ -1785,7 +2097,9 @@ function p2pkh(pubKeyHash: string, network: string): string {
 
 function p2sh(scriptHash: string, network: string): string {
   const scriptHashArray = hexStringToUint8Array(scriptHash);
-  const version = ['testnet', 'testnet4', 'signet'].includes(network) ? 0xc4 : 0x05;
+  const version = ['testnet', 'testnet4', 'signet'].includes(network)
+    ? 0xc4
+    : 0x05;
   const versionedPayload = Uint8Array.from([version, ...scriptHashArray]);
   const hash1 = new Hash().update(versionedPayload).digest();
   const hash2 = new Hash().update(hash1).digest();
@@ -1832,32 +2146,39 @@ function p2a(network: string): string {
 }
 
 /* Convert a *valid* P2TR address to its x-only pubkey */
-export function taprootAddressToOutputKey(address: string): { outputKey: string, network: string } {
+export function taprootAddressToOutputKey(address: string): {
+  outputKey: string;
+  network: string;
+} {
   const { prefix, words } = bech32Decode(address);
   const programBytes = fromWords(words.slice(1));
-  return { outputKey: uint8ArrayToHexString(programBytes), network: prefix === 'tb' ? 'testnet' : 'mainnet' };
+  return {
+    outputKey: uint8ArrayToHexString(programBytes),
+    network: prefix === 'tb' ? 'testnet' : 'mainnet',
+  };
 }
 
 // base58 encoding
 function base58Encode(data: Uint8Array): string {
-  const BASE58_ALPHABET = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+  const BASE58_ALPHABET =
+    '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 
-  let hexString = Array.from(data)
-    .map(byte => byte.toString(16).padStart(2, '0'))
+  const hexString = Array.from(data)
+    .map((byte) => byte.toString(16).padStart(2, '0'))
     .join('');
-  
-  let num = BigInt("0x" + hexString);
 
-  let encoded = "";
+  let num = BigInt('0x' + hexString);
+
+  let encoded = '';
   while (num > 0) {
     const remainder = Number(num % 58n);
     num = num / 58n;
     encoded = BASE58_ALPHABET[remainder] + encoded;
   }
 
-  for (let byte of data) {
+  for (const byte of data) {
     if (byte === 0) {
-      encoded = "1" + encoded;
+      encoded = '1' + encoded;
     } else {
       break;
     }
@@ -1868,10 +2189,14 @@ function base58Encode(data: Uint8Array): string {
 
 // bech32 encoding / decoding
 // Adapted from https://github.com/bitcoinjs/bech32/blob/5ceb0e3d4625561a459c85643ca6947739b2d83c/src/index.ts
-const BECH32_ALPHABET = "qpzry9x8gf2tvdw0s3jn54khce6mua7l";
+const BECH32_ALPHABET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
 type Bech32Encoding = 'bech32' | 'bech32m';
 
-function bech32Encode(prefix: string, words: number[], encoding: Bech32Encoding = 'bech32'): string {
+function bech32Encode(
+  prefix: string,
+  words: number[],
+  encoding: Bech32Encoding = 'bech32'
+): string {
   const constant = encoding === 'bech32m' ? 0x2bc830a3 : 1;
   const checksum = createChecksum(prefix, words, constant);
   const combined = words.concat(checksum);
@@ -1883,7 +2208,11 @@ function bech32Encode(prefix: string, words: number[], encoding: Bech32Encoding 
 }
 
 /* Decodes a *valid* bech32 or bech32m encoded address into its prefix and payload */
-function bech32Decode(address: string): { prefix: string, words: number[], encoding: Bech32Encoding } {
+function bech32Decode(address: string): {
+  prefix: string;
+  words: number[];
+  encoding: Bech32Encoding;
+} {
   const normalized = address.toLowerCase();
   const separator = normalized.lastIndexOf('1');
   const prefix = normalized.slice(0, separator);
@@ -1915,7 +2244,9 @@ function bech32Polymod(prefix: string, words: number[]): number {
 }
 
 function polymodStep(pre) {
-  const GENERATORS = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3];
+  const GENERATORS = [
+    0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3,
+  ];
   const b = pre >> 25;
   return (
     ((pre & 0x1ffffff) << 5) ^
@@ -1968,7 +2299,9 @@ function convertBits(data, fromBits, toBits, pad) {
 
   for (let i = 0; i < data.length; ++i) {
     const value = data[i];
-    if (value < 0 || value >> fromBits) throw new Error('Invalid value');
+    if (value < 0 || value >> fromBits) {
+      throw new Error('Invalid value');
+    }
     acc = (acc << fromBits) | value;
     bits += fromBits;
     while (bits >= toBits) {
@@ -1980,7 +2313,7 @@ function convertBits(data, fromBits, toBits, pad) {
     if (bits > 0) {
       ret.push((acc << (toBits - bits)) & maxV);
     }
-  } else if (bits >= fromBits || ((acc << (toBits - bits)) & maxV)) {
+  } else if (bits >= fromBits || (acc << (toBits - bits)) & maxV) {
     throw new Error('Invalid data');
   }
   return ret;
@@ -1996,7 +2329,9 @@ function fromWords(words: number[]) {
 
 // Helper functions
 export function uint8ArrayToHexString(uint8Array: Uint8Array): string {
-  return Array.from(uint8Array).map(byte => byte.toString(16).padStart(2, '0')).join('');
+  return Array.from(uint8Array)
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
 }
 
 export function hexStringToUint8Array(hex: string): Uint8Array {
@@ -2009,7 +2344,7 @@ export function hexStringToUint8Array(hex: string): Uint8Array {
 
 function base64ToUint8Array(base64: string): Uint8Array {
   const binaryString = atob(base64);
-  return new Uint8Array([...binaryString].map(char => char.charCodeAt(0)));
+  return new Uint8Array([...binaryString].map((char) => char.charCodeAt(0)));
 }
 
 function intToBytes(value: number, byteLength: number): number[] {
@@ -2068,11 +2403,19 @@ function readInt16(buffer: Uint8Array, offset: number): [number, number] {
   return [buffer[offset] | (buffer[offset + 1] << 8), offset + 2];
 }
 
-function readInt32(buffer: Uint8Array, offset: number, unsigned: boolean = false): [number, number] {
+function readInt32(
+  buffer: Uint8Array,
+  offset: number,
+  unsigned: boolean = false
+): [number, number] {
   if (offset + 4 > buffer.length) {
     throw new Error('Buffer out of bounds');
   }
-  const value = buffer[offset] | (buffer[offset + 1] << 8) | (buffer[offset + 2] << 16) | (buffer[offset + 3] << 24);
+  const value =
+    buffer[offset] |
+    (buffer[offset + 1] << 8) |
+    (buffer[offset + 2] << 16) |
+    (buffer[offset + 3] << 24);
   return [unsigned ? value >>> 0 : value, offset + 4];
 }
 
@@ -2080,8 +2423,18 @@ function readInt64(buffer: Uint8Array, offset: number): [bigint, number] {
   if (offset + 8 > buffer.length) {
     throw new Error('Buffer out of bounds');
   }
-  const low = BigInt(buffer[offset] | (buffer[offset + 1] << 8) | (buffer[offset + 2] << 16) | (buffer[offset + 3] << 24));
-  const high = BigInt(buffer[offset + 4] | (buffer[offset + 5] << 8) | (buffer[offset + 6] << 16) | (buffer[offset + 7] << 24));
+  const low = BigInt(
+    buffer[offset] |
+      (buffer[offset + 1] << 8) |
+      (buffer[offset + 2] << 16) |
+      (buffer[offset + 3] << 24)
+  );
+  const high = BigInt(
+    buffer[offset + 4] |
+      (buffer[offset + 5] << 8) |
+      (buffer[offset + 6] << 16) |
+      (buffer[offset + 7] << 24)
+  );
   return [(high << 32n) | (low & 0xffffffffn), offset + 8];
 }
 
@@ -2098,17 +2451,21 @@ function readVarInt(buffer: Uint8Array, offset: number): [number, number] {
     const [bigValue, nextOffset] = readInt64(buffer, newOffset);
 
     if (bigValue > Number.MAX_SAFE_INTEGER) {
-      throw new Error("VarInt exceeds safe integer range");
+      throw new Error('VarInt exceeds safe integer range');
     }
 
     const numValue = Number(bigValue);
     return [numValue, nextOffset];
   } else {
-    throw new Error("Invalid VarInt prefix");
+    throw new Error('Invalid VarInt prefix');
   }
 }
 
-function readSlice(buffer: Uint8Array, offset: number, n: number | bigint): [Uint8Array, number] {
+function readSlice(
+  buffer: Uint8Array,
+  offset: number,
+  n: number | bigint
+): [Uint8Array, number] {
   const length = Number(n);
   if (offset + length > buffer.length) {
     throw new Error('Cannot read slice out of bounds');
@@ -2117,12 +2474,18 @@ function readSlice(buffer: Uint8Array, offset: number, n: number | bigint): [Uin
   return [slice, offset + length];
 }
 
-function readVarSlice(buffer: Uint8Array, offset: number): [Uint8Array, number] {
+function readVarSlice(
+  buffer: Uint8Array,
+  offset: number
+): [Uint8Array, number] {
   const [length, newOffset] = readVarInt(buffer, offset);
   return readSlice(buffer, newOffset, length);
 }
 
-function readVector(buffer: Uint8Array, offset: number): [Uint8Array[], number] {
+function readVector(
+  buffer: Uint8Array,
+  offset: number
+): [Uint8Array[], number] {
   const [count, newOffset] = readVarInt(buffer, offset);
   let updatedOffset = newOffset;
   const vector: Uint8Array[] = [];
@@ -2140,7 +2503,15 @@ function readVector(buffer: Uint8Array, offset: number): [Uint8Array[], number] 
 export function taggedHash(tag: string, dataHex: string): string {
   const encoder = new TextEncoder();
   const tagHash = hash(encoder.encode(tag));
-  return uint8ArrayToHexString(hash(new Uint8Array([...tagHash, ...tagHash, ...hexStringToUint8Array(dataHex)])));
+  return uint8ArrayToHexString(
+    hash(
+      new Uint8Array([
+        ...tagHash,
+        ...tagHash,
+        ...hexStringToUint8Array(dataHex),
+      ])
+    )
+  );
 }
 
 export function compactSize(n: number): Uint8Array {
@@ -2149,7 +2520,13 @@ export function compactSize(n: number): Uint8Array {
   } else if (n <= 0xffff) {
     return new Uint8Array([0xfd, n & 0xff, (n >> 8) & 0xff]);
   } else if (n <= 0xffffffff) {
-    return new Uint8Array([0xfe, n & 0xff, (n >> 8) & 0xff, (n >> 16) & 0xff, (n >> 24) & 0xff]);
+    return new Uint8Array([
+      0xfe,
+      n & 0xff,
+      (n >> 8) & 0xff,
+      (n >> 16) & 0xff,
+      (n >> 24) & 0xff,
+    ]);
   } else {
     const buffer = new Uint8Array(9);
     buffer[0] = 0xff;
@@ -2291,7 +2668,7 @@ export interface ParsedTaproot {
     merkleBranches: string[];
     internalKey: string;
     isNUMS?: boolean;
-  }
+  };
   stack: string[]; // witness items excluding annex, script, control block
   annex?: string;
   controlBlock?: string;
@@ -2313,7 +2690,8 @@ export function parseTaproot(witness: string[]): ParsedTaproot | null {
     keyPath: true,
     stack: witness.slice(0, 1), // assume keyspend for now
   };
-  const hasAnnex = witness.length > 1 && witness[witness.length - 1].startsWith('50');
+  const hasAnnex =
+    witness.length > 1 && witness[witness.length - 1].startsWith('50');
   if (hasAnnex) {
     parsed.annexIndex = witness.length - 1;
     parsed.annex = witness[parsed.annexIndex];
@@ -2336,11 +2714,13 @@ export function parseTaproot(witness: string[]): ParsedTaproot | null {
       isNUMS: isInternalKeyNUMS(internalKey),
       merkleBranches: [],
     };
-    for (let i = 66; (i + 64) <= parsed.controlBlock.length; i += 64) {
-      parsed.scriptPath.merkleBranches.push(parsed.controlBlock.slice(i, i + 64));
+    for (let i = 66; i + 64 <= parsed.controlBlock.length; i += 64) {
+      parsed.scriptPath.merkleBranches.push(
+        parsed.controlBlock.slice(i, i + 64)
+      );
     }
     // remaining items are the initial stack
-    parsed.stack = witness.slice(0, (hasAnnex ? -3 : -2));
+    parsed.stack = witness.slice(0, hasAnnex ? -3 : -2);
 
     if (parsed.scriptPath.leafVersion === 0xbe) {
       // override script stuff for simplicity
@@ -2359,7 +2739,11 @@ export function convertTextToBuffer(input: string): Uint8Array {
   let buffer: Uint8Array;
   if (input.length % 2 === 0 && /^[0-9a-fA-F]+$/.test(input)) {
     buffer = hexStringToUint8Array(input);
-  } else if (/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}(?:==)|[A-Za-z0-9+/]{3}=)?$/.test(input)) {
+  } else if (
+    /^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}(?:==)|[A-Za-z0-9+/]{3}=)?$/.test(
+      input
+    )
+  ) {
     buffer = base64ToUint8Array(input);
   } else {
     throw new Error('Invalid input: not hex or base64');
@@ -2367,13 +2751,22 @@ export function convertTextToBuffer(input: string): Uint8Array {
   return buffer;
 }
 
-export function computeLeafHash(scriptHex: string, leafVersion: number): string {
+export function computeLeafHash(
+  scriptHex: string,
+  leafVersion: number
+): string {
   const versionHex = leafVersion.toString(16).padStart(2, '0');
-  const scriptSizeHex = uint8ArrayToHexString(compactSize(scriptHex.length / 2));
+  const scriptSizeHex = uint8ArrayToHexString(
+    compactSize(scriptHex.length / 2)
+  );
   return taggedHash('TapLeaf', versionHex + scriptSizeHex + scriptHex);
 }
 
-function computeMerkleRoot(scriptHex: string, leafVersion: number, merkleBranches: string[]): string {
+function computeMerkleRoot(
+  scriptHex: string,
+  leafVersion: number,
+  merkleBranches: string[]
+): string {
   const leafHash = computeLeafHash(scriptHex, leafVersion);
   return (merkleBranches || []).reduce((acc, branch) => {
     const firstChild = acc < branch ? acc : branch;
@@ -2382,19 +2775,34 @@ function computeMerkleRoot(scriptHex: string, leafVersion: number, merkleBranche
   }, leafHash);
 }
 
-export function computeTaprootOutputKey(internalKey: string, merkleRoot: string): { outputKey: string; parity: number } {
+export function computeTaprootOutputKey(
+  internalKey: string,
+  merkleRoot: string
+): { outputKey: string; parity: number } {
   const tweakHash = taggedHash('TapTweak', internalKey + merkleRoot); // HashTapTweak(internalKey || m)
   const tweak = BigInt('0x' + tweakHash) % SECP256K1_ORDER; // int(HashTapTweak(internalKey || m))
   const internalKeyPoint = secp256k1.Point.fromHex(`02${internalKey}`); // P = lift_x(internalKey)
-  const outputKeyPoint = internalKeyPoint.add(secp256k1.Point.BASE.multiply(tweak)); // Q = P + int(HashTapTweak(internalKey || m)) * G
+  const outputKeyPoint = internalKeyPoint.add(
+    secp256k1.Point.BASE.multiply(tweak)
+  ); // Q = P + int(HashTapTweak(internalKey || m)) * G
   const parity = Number(outputKeyPoint.y & 1n);
   const outputKey = outputKeyPoint.x.toString(16).padStart(64, '0');
   return { outputKey, parity };
 }
 
-function deriveTaprootAddress(internalKey: string, merkleRoot: string, network: string): { address: string; parity: number } {
-  const { outputKey, parity } = computeTaprootOutputKey(internalKey, merkleRoot);
-  return { address: scriptPubKeyToAddress(`5120${outputKey}`, network).address, parity };
+function deriveTaprootAddress(
+  internalKey: string,
+  merkleRoot: string,
+  network: string
+): { address: string; parity: number } {
+  const { outputKey, parity } = computeTaprootOutputKey(
+    internalKey,
+    merkleRoot
+  );
+  return {
+    address: scriptPubKeyToAddress(`5120${outputKey}`, network).address,
+    parity,
+  };
 }
 
 export interface TapLeaf {
@@ -2409,11 +2817,15 @@ export function parseTapLeafRecord(record: PsbtKeyValue): TapLeaf {
   const controlBlock = record.keyData;
   const valueLength = record.value.length;
   const leafVersion = record.value[valueLength - 1];
-  const scriptHex = uint8ArrayToHexString(record.value.slice(0, valueLength - 1));
+  const scriptHex = uint8ArrayToHexString(
+    record.value.slice(0, valueLength - 1)
+  );
   const internalKey = uint8ArrayToHexString(controlBlock.slice(1, 33));
   const merkleBranches: string[] = [];
   for (let offset = 33; offset < controlBlock.length; offset += 32) {
-    merkleBranches.push(uint8ArrayToHexString(controlBlock.slice(offset, offset + 32)));
+    merkleBranches.push(
+      uint8ArrayToHexString(controlBlock.slice(offset, offset + 32))
+    );
   }
   return { leafVersion, scriptHex, merkleBranches, internalKey };
 }
@@ -2438,9 +2850,16 @@ export function parseTapTreeRecord(value: Uint8Array): TapLeaf[] {
       merkleBranches: [],
     };
     leaves.push(leaf);
-    stack.push({ depth, hash: computeLeafHash(scriptHex, leafVersion), leaves: [leaf] });
+    stack.push({
+      depth,
+      hash: computeLeafHash(scriptHex, leafVersion),
+      leaves: [leaf],
+    });
 
-    while (stack.length >= 2 && stack[stack.length - 1].depth === stack[stack.length - 2].depth) {
+    while (
+      stack.length >= 2 &&
+      stack[stack.length - 1].depth === stack[stack.length - 2].depth
+    ) {
       const right = stack.pop();
       const left = stack.pop();
       for (const l of left.leaves) {
@@ -2451,7 +2870,11 @@ export function parseTapTreeRecord(value: Uint8Array): TapLeaf[] {
       }
       const firstChild = left.hash < right.hash ? left.hash : right.hash;
       const secondChild = firstChild === left.hash ? right.hash : left.hash;
-      stack.push({ depth: left.depth - 1, hash: taggedHash('TapBranch', firstChild + secondChild), leaves: left.leaves.concat(right.leaves) });
+      stack.push({
+        depth: left.depth - 1,
+        hash: taggedHash('TapBranch', firstChild + secondChild),
+        leaves: left.leaves.concat(right.leaves),
+      });
     }
   }
 
@@ -2468,7 +2891,12 @@ export function parseTapTreeRecord(value: Uint8Array): TapLeaf[] {
  * @param internalKey Optional x-only internal key
  * @throws {Error} If no tapleaves are found or extraction fails
  */
-export function extractTapLeaves(psbt: Uint8Array, tapleaves: PsbtKeyValue[], tapTree: Uint8Array, internalKey: Uint8Array): TapLeaf[] {
+export function extractTapLeaves(
+  psbt: Uint8Array,
+  tapleaves: PsbtKeyValue[],
+  tapTree: Uint8Array,
+  internalKey: Uint8Array
+): TapLeaf[] {
   const leaves: TapLeaf[] = [];
   const seenLeaves = new Set<string>();
 
@@ -2477,12 +2905,16 @@ export function extractTapLeaves(psbt: Uint8Array, tapleaves: PsbtKeyValue[], ta
     if (providedInternalKey !== undefined) {
       return providedInternalKey;
     }
-    providedInternalKey = internalKey ? uint8ArrayToHexString(internalKey) : undefined;
+    providedInternalKey = internalKey
+      ? uint8ArrayToHexString(internalKey)
+      : undefined;
     return providedInternalKey;
   };
 
   const addLeaf = (leaf: TapLeaf): void => {
-    const key = `${leaf.leafVersion}${leaf.merkleBranches.join('')}${leaf.scriptHex}${leaf.internalKey || ''}`;
+    const key = `${leaf.leafVersion}${leaf.merkleBranches.join('')}${
+      leaf.scriptHex
+    }${leaf.internalKey || ''}`;
     if (seenLeaves.has(key)) {
       return;
     }
@@ -2504,7 +2936,9 @@ export function extractTapLeaves(psbt: Uint8Array, tapleaves: PsbtKeyValue[], ta
         const tapTreeRecord = output.get(PSBT_OUT.TAP_TREE)?.[0];
         if (tapTreeRecord) {
           // If PSBT_OUT_TAP_INTERNAL_KEY is omitted, fallback to provided ikey
-          const internalKey = tapInternalKeyRecord ? uint8ArrayToHexString(tapInternalKeyRecord.value) : getProvidedInternalKey();
+          const internalKey = tapInternalKeyRecord
+            ? uint8ArrayToHexString(tapInternalKeyRecord.value)
+            : getProvidedInternalKey();
           for (const leaf of parseTapTreeRecord(tapTreeRecord.value)) {
             addLeaf({ ...leaf, internalKey });
           }
@@ -2536,23 +2970,33 @@ export function extractTapLeaves(psbt: Uint8Array, tapleaves: PsbtKeyValue[], ta
 }
 
 /** Populate an address' taptree using a PSBT involving the taproot address */
-export function fillTapTree(addressTypeInfo: AddressTypeInfo, leaves: TapLeaf[]) {
+export function fillTapTree(
+  addressTypeInfo: AddressTypeInfo,
+  leaves: TapLeaf[]
+) {
   if (addressTypeInfo?.type !== 'v1_p2tr') {
     return;
   }
 
   let commitment: { internalKey: string; merkleRoot: string; parity: number };
   if (addressTypeInfo.scripts.size) {
-    const tapInfo: ParsedTaproot = addressTypeInfo.scripts.values().next().value.taprootInfo;
+    const tapInfo: ParsedTaproot = addressTypeInfo.scripts.values().next()
+      .value.taprootInfo;
     commitment = {
       internalKey: tapInfo.scriptPath.internalKey,
-      merkleRoot: computeMerkleRoot(tapInfo.scriptPath.script, tapInfo.scriptPath.leafVersion, tapInfo.scriptPath.merkleBranches),
+      merkleRoot: computeMerkleRoot(
+        tapInfo.scriptPath.script,
+        tapInfo.scriptPath.leafVersion,
+        tapInfo.scriptPath.merkleBranches
+      ),
       parity: tapInfo.scriptPath.parity,
     };
   }
 
   // Adds the internal key to the leaf if needed and fills the commitment when the leaf matches the address
-  const leafMatchesAddress = (leaf: TapLeaf): leaf is TapLeaf & { internalKey: string } => {
+  const leafMatchesAddress = (
+    leaf: TapLeaf
+  ): leaf is TapLeaf & { internalKey: string } => {
     leaf.internalKey = leaf.internalKey ?? commitment?.internalKey;
     if (!leaf.internalKey) {
       throw new Error('Internal key is needed to validate leaves');
@@ -2562,12 +3006,20 @@ export function fillTapTree(addressTypeInfo: AddressTypeInfo, leaves: TapLeaf[])
       return false;
     }
 
-    const resolvedMerkleRoot = computeMerkleRoot(leaf.scriptHex, leaf.leafVersion, leaf.merkleBranches);
+    const resolvedMerkleRoot = computeMerkleRoot(
+      leaf.scriptHex,
+      leaf.leafVersion,
+      leaf.merkleBranches
+    );
     if (commitment) {
       return resolvedMerkleRoot === commitment.merkleRoot;
     }
 
-    const { address, parity } = deriveTaprootAddress(leaf.internalKey, resolvedMerkleRoot, addressTypeInfo.network);
+    const { address, parity } = deriveTaprootAddress(
+      leaf.internalKey,
+      resolvedMerkleRoot,
+      addressTypeInfo.network
+    );
     if (addressTypeInfo.address !== address) {
       return false;
     }
@@ -2584,8 +3036,11 @@ export function fillTapTree(addressTypeInfo: AddressTypeInfo, leaves: TapLeaf[])
   try {
     for (const leaf of leaves) {
       if (leafMatchesAddress(leaf)) {
-        const controlBlockPrefix = (leaf.leafVersion | commitment.parity).toString(16).padStart(2, '0');
-        const controlBlock = controlBlockPrefix + leaf.internalKey + leaf.merkleBranches.join('');
+        const controlBlockPrefix = (leaf.leafVersion | commitment.parity)
+          .toString(16)
+          .padStart(2, '0');
+        const controlBlock =
+          controlBlockPrefix + leaf.internalKey + leaf.merkleBranches.join('');
         const taprootInfo: ParsedTaproot = {
           keyPath: false,
           stack: [],
@@ -2599,7 +3054,13 @@ export function fillTapTree(addressTypeInfo: AddressTypeInfo, leaves: TapLeaf[])
             isNUMS: isInternalKeyNUMS(leaf.internalKey),
           },
         };
-        const scriptInfo = new ScriptInfo('inner_witnessscript', leaf.scriptHex, convertScriptSigAsm(leaf.scriptHex), undefined, taprootInfo);
+        const scriptInfo = new ScriptInfo(
+          'inner_witnessscript',
+          leaf.scriptHex,
+          convertScriptSigAsm(leaf.scriptHex),
+          undefined,
+          taprootInfo
+        );
         const scriptAdded = addressTypeInfo.processScript(scriptInfo);
         if (scriptAdded) {
           addressTypeInfo.tapscript = true;
@@ -2608,11 +3069,15 @@ export function fillTapTree(addressTypeInfo: AddressTypeInfo, leaves: TapLeaf[])
       }
     }
   } catch (error) {
-    throw error instanceof Error ? error : new Error('An error occurred while filling the taproot tree');
+    throw error instanceof Error
+      ? error
+      : new Error('An error occurred while filling the taproot tree');
   }
 
   if (!addedScript) {
-    throw new Error('No valid taproot scripts found that match this address, or all provided scripts are already loaded for this address');
+    throw new Error(
+      'No valid taproot scripts found that match this address, or all provided scripts are already loaded for this address'
+    );
   }
 }
 

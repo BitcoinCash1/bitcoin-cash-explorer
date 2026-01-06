@@ -8,33 +8,17 @@ const routes: Routes = [
   {
     path: '',
     component: TermsOfServiceComponent,
-  }
+  },
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports: [
-    RouterModule
-  ]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class TermsModule { }
+export class TermsModule {}
 
 @NgModule({
-  imports: [
-    CommonModule,
-    TermsModule,
-    SharedModule,
-  ],
-  declarations: [
-    TermsOfServiceComponent,
-  ]
+  imports: [CommonModule, TermsModule, SharedModule],
+  declarations: [TermsOfServiceComponent],
 })
-export class TermsOfServiceModule { }
-
-
-
-
-
-
+export class TermsOfServiceModule {}

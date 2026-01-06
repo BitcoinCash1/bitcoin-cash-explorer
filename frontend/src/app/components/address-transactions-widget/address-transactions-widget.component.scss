@@ -1,14 +1,16 @@
 .latest-transactions {
   width: 100%;
   text-align: left;
-  table-layout:fixed;
-  tr, td, th {
+  table-layout: fixed;
+  tr,
+  td,
+  th {
     border: 0px;
     padding-top: 0.71rem !important;
     padding-bottom: 0.75rem !important;
   }
   td {
-    overflow:hidden;
+    overflow: hidden;
     width: 25%;
   }
   .table-cell-satoshis {

@@ -54,7 +54,7 @@ export type Runestone = {
 type Message = {
   fields: Record<number, bigint[]>;
   edicts: Edict[];
-}
+};
 
 export const UNCOMMON_GOODS: Etching = {
   divisibility: 0,
@@ -202,26 +202,30 @@ function messageToRunestone(message: Message): Runestone {
     etching = {
       divisibility: Number(message.fields[Tag.Divisibility]?.[0] ?? 0n),
       premine: message.fields[Tag.Premine]?.[0],
-      symbol: message.fields[Tag.Symbol]?.[0] ? String.fromCodePoint(Number(message.fields[Tag.Symbol][0])) : '¤',
-      terms: hasTerms ? {
-        cap: message.fields[Tag.Cap]?.[0],
-        amount: message.fields[Tag.Amount]?.[0],
-        offset: {
-          start: message.fields[Tag.OffsetStart]?.[0],
-          end: message.fields[Tag.OffsetEnd]?.[0],
-        },
-        height: {
-          start: message.fields[Tag.HeightStart]?.[0],
-          end: message.fields[Tag.HeightEnd]?.[0],
-        },
-      } : undefined,
+      symbol: message.fields[Tag.Symbol]?.[0]
+        ? String.fromCodePoint(Number(message.fields[Tag.Symbol][0]))
+        : '¤',
+      terms: hasTerms
+        ? {
+            cap: message.fields[Tag.Cap]?.[0],
+            amount: message.fields[Tag.Amount]?.[0],
+            offset: {
+              start: message.fields[Tag.OffsetStart]?.[0],
+              end: message.fields[Tag.OffsetEnd]?.[0],
+            },
+            height: {
+              start: message.fields[Tag.HeightStart]?.[0],
+              end: message.fields[Tag.HeightEnd]?.[0],
+            },
+          }
+        : undefined,
       turbo: isTurbo,
       name,
       spacedName: spaceRuneName(name, message.fields[Tag.Spacers]?.[0] ?? 0n),
     };
-    etching.supply = (
-      (etching.terms?.cap ?? 0n) * (etching.terms?.amount ?? 0n)
-    ) + (etching.premine ?? 0n);
+    etching.supply =
+      (etching.terms?.cap ?? 0n) * (etching.terms?.amount ?? 0n) +
+      (etching.premine ?? 0n);
   }
   const mintField = message.fields[Tag.Mint];
   if (mintField) {
@@ -240,7 +244,9 @@ function messageToRunestone(message: Message): Runestone {
 }
 
 export function decipherRunestone(tx: Transaction): Runestone | void {
-  const payload = tx.vout.find((vout) => vout.scriptpubkey.startsWith('6a5d'))?.scriptpubkey_asm.replace(/OP_\w+|\s/g, '');
+  const payload = tx.vout
+    .find((vout) => vout.scriptpubkey.startsWith('6a5d'))
+    ?.scriptpubkey_asm.replace(/OP_\w+|\s/g, '');
   if (!payload) {
     return;
   }

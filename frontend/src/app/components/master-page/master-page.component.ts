@@ -34,7 +34,7 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   servicesEnabled = false;
   menuOpen = false;
   isDropdownVisible: boolean;
-  
+
   enterpriseInfo: any;
   enterpriseInfo$: Subscription;
 
@@ -47,8 +47,8 @@ export class MasterPageComponent implements OnInit, OnDestroy {
     private enterpriseService: EnterpriseService,
     private navigationService: NavigationService,
     private storageService: StorageService,
-    private router: Router,
-  ) { }
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.env = this.stateService.env;
@@ -68,11 +68,14 @@ export class MasterPageComponent implements OnInit, OnDestroy {
         this.footerVisible = this.footerVisibleOverride;
       }
     });
-    this.enterpriseInfo$ = this.enterpriseService.info$.subscribe(info => {
+    this.enterpriseInfo$ = this.enterpriseService.info$.subscribe((info) => {
       this.enterpriseInfo = info;
     });
 
-    this.servicesEnabled = this.officialMempoolSpace && this.stateService.env.ACCELERATOR === true && this.stateService.network === '';
+    this.servicesEnabled =
+      this.officialMempoolSpace &&
+      this.stateService.env.ACCELERATOR === true &&
+      this.stateService.network === '';
     this.refreshAuth();
 
     const isServicesPage = this.router.url.includes('/services/');
@@ -89,7 +92,9 @@ export class MasterPageComponent implements OnInit, OnDestroy {
       this.env.LIQUID_TESTNET_ENABLED,
       this.env.MAINNET_ENABLED,
     ];
-    const enabledNetworksCount = networks.filter((networkEnabled) => networkEnabled).length;
+    const enabledNetworksCount = networks.filter(
+      (networkEnabled) => networkEnabled
+    ).length;
     this.isDropdownVisible = enabledNetworksCount > 1;
   }
 
@@ -134,5 +139,4 @@ export class MasterPageComponent implements OnInit, OnDestroy {
       this.enterpriseInfo$.unsubscribe();
     }
   }
-
 }

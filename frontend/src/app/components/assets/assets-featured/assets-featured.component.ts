@@ -14,11 +14,12 @@ export class AssetsFeaturedComponent implements OnInit {
 
   constructor(
     private apiService: ApiService,
-    private stateService: StateService,
-  ) { }
+    private stateService: StateService
+  ) {}
 
   ngOnInit(): void {
-    this.featuredAssets$ = this.apiService.listFeaturedAssets$(this.stateService.network);
+    this.featuredAssets$ = this.apiService.listFeaturedAssets$(
+      this.stateService.network
+    );
   }
-
 }

@@ -1,10 +1,22 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, Inject, Input, LOCALE_ID, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  Inject,
+  Input,
+  LOCALE_ID,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
 import { combineLatest, map, Observable, startWith, Subscription } from 'rxjs';
 import { StateService } from '@app/services/state.service';
 import { WalletStats } from '../../../shared/wallet-stats';
 import { AddressTxSummary } from '../../../interfaces/electrs.interface';
 import { Treasury } from '../../../interfaces/node-api.interface';
-
 
 interface SupplyShare {
   share: number;
@@ -52,8 +64,8 @@ export class TreasuriesSupplyComponent implements OnInit, OnDestroy {
   constructor(
     public stateService: StateService,
     private cd: ChangeDetectorRef,
-    @Inject(LOCALE_ID) private locale: string,
-  ) { }
+    @Inject(LOCALE_ID) private locale: string
+  ) {}
 
   ngOnInit(): void {
     this.isLoadingWebSocket$ = this.stateService.isLoadingWebSocket$;
@@ -69,17 +81,29 @@ export class TreasuriesSupplyComponent implements OnInit, OnDestroy {
   init(): void {
     if (this.walletSummaries$ && this.treasuries && this.walletStats) {
       this.subscription?.unsubscribe();
-      this.subscription = combineLatest([this.stateService.chainTip$.pipe(startWith(this.stateService.latestBlockHeight)), this.walletSummaries$]).pipe(
-        map(([chainTip, summaries]) => {
-          this.currentHeight = chainTip;
-          this.walletBalance = {};
-          for (const treasury of this.treasuries) {
-            const total = this.walletStats[treasury.wallet] ? this.walletStats[treasury.wallet].balance : summaries[treasury.wallet]?.reduce((acc, tx) => acc + tx.value, 0) || 0;
-            this.walletBalance[treasury.wallet] = total / 100_000_000;
-          }
-          this.processSupplyShares();
-        })
-      ).subscribe();
+      this.subscription = combineLatest([
+        this.stateService.chainTip$.pipe(
+          startWith(this.stateService.latestBlockHeight)
+        ),
+        this.walletSummaries$,
+      ])
+        .pipe(
+          map(([chainTip, summaries]) => {
+            this.currentHeight = chainTip;
+            this.walletBalance = {};
+            for (const treasury of this.treasuries) {
+              const total = this.walletStats[treasury.wallet]
+                ? this.walletStats[treasury.wallet].balance
+                : summaries[treasury.wallet]?.reduce(
+                    (acc, tx) => acc + tx.value,
+                    0
+                  ) || 0;
+              this.walletBalance[treasury.wallet] = total / 100_000_000;
+            }
+            this.processSupplyShares();
+          })
+        )
+        .subscribe();
     }
   }
 
@@ -90,7 +114,7 @@ export class TreasuriesSupplyComponent implements OnInit, OnDestroy {
     let mined = 0;
     for (let i = 0; i < this.currentHeight; i += 210000) {
       const subsidy = 50 / Math.pow(2, Math.floor(i / 210000));
-      if ((i + 210000) <= this.currentHeight) {
+      if (i + 210000 <= this.currentHeight) {
         mined += subsidy * 210000;
       } else {
         mined += subsidy * (this.currentHeight - i);
@@ -98,7 +122,10 @@ export class TreasuriesSupplyComponent implements OnInit, OnDestroy {
     }
 
     const lost = 0; // TODO: track this dynamically
-    const treasuryTotal = Object.values(this.walletBalance).reduce((acc, balance) => acc + balance, 0);
+    const treasuryTotal = Object.values(this.walletBalance).reduce(
+      (acc, balance) => acc + balance,
+      0
+    );
     const otherMined = mined - treasuryTotal - lost;
     const yetToBeMined = total - mined;
 
@@ -110,7 +137,7 @@ export class TreasuriesSupplyComponent implements OnInit, OnDestroy {
     this.shares = [];
     let runningTotal = 0;
     this.shares.push({
-      share: (treasuryTotal / total),
+      share: treasuryTotal / total,
       btc: treasuryTotal,
       x: ((runningTotal / total) * 100).toFixed(2) + '%',
       w: ((treasuryTotal / total) * 100).toFixed(2) + '%',
@@ -119,7 +146,7 @@ export class TreasuriesSupplyComponent implements OnInit, OnDestroy {
     });
     runningTotal += treasuryTotal;
     this.shares.push({
-      share: (otherMined / total),
+      share: otherMined / total,
       btc: otherMined,
       x: ((runningTotal / total) * 100).toFixed(2) + '%',
       w: ((otherMined / total) * 100).toFixed(2) + '%',
@@ -128,7 +155,7 @@ export class TreasuriesSupplyComponent implements OnInit, OnDestroy {
     });
     runningTotal += otherMined;
     this.shares.push({
-      share: (yetToBeMined / total),
+      share: yetToBeMined / total,
       btc: yetToBeMined,
       x: ((runningTotal / total) * 100).toFixed(2) + '%',
       w: ((yetToBeMined / total) * 100).toFixed(2) + '%',
@@ -137,7 +164,7 @@ export class TreasuriesSupplyComponent implements OnInit, OnDestroy {
     });
     runningTotal += yetToBeMined;
     this.shares.push({
-      share: (lost / total),
+      share: lost / total,
       btc: lost,
       x: ((runningTotal / total) * 100).toFixed(2) + '%',
       w: ((lost / total) * 100).toFixed(2) + '%',
@@ -162,9 +189,13 @@ export class TreasuriesSupplyComponent implements OnInit, OnDestroy {
       let x = event.clientX;
       const y = event.clientY - 100;
       if (this.tooltipElement) {
-        const elementBounds = this.tooltipElement.nativeElement.getBoundingClientRect();
+        const elementBounds =
+          this.tooltipElement.nativeElement.getBoundingClientRect();
         x -= elementBounds.width / 2;
-        x = Math.min(Math.max(x, 20), (window.innerWidth - 20 - elementBounds.width));
+        x = Math.min(
+          Math.max(x, 20),
+          window.innerWidth - 20 - elementBounds.width
+        );
       }
       this.tooltipPosition = { x, y };
       this.cd.markForCheck();

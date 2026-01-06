@@ -14,7 +14,8 @@
   --chain-height: 60px;
   --clock-width: 300px;
 
-  .clockchain-bar, .clock-face {
+  .clockchain-bar,
+  .clock-face {
     flex-shrink: 0;
     flex-grow: 0;
   }
@@ -100,7 +101,7 @@
     font-size: calc(0.2 * var(--clock-width));
     padding: 0;
     margin: 0;
-    background: radial-gradient(rgba(0,0,0,0.5), transparent 67%);
+    background: radial-gradient(rgba(0, 0, 0, 0.5), transparent 67%);
     padding: calc(0.05 * var(--clock-width)) calc(0.15 * var(--clock-width));
   }
 }
@@ -128,7 +129,12 @@
     right: 0;
     top: 0;
     bottom: 0;
-    background: radial-gradient(transparent 0%, transparent 44%, #11131f 58%, #11131f 100%);
+    background: radial-gradient(
+      transparent 0%,
+      transparent 44%,
+      #11131f 58%,
+      #11131f 100%
+    );
   }
 
   .block-cube {
@@ -156,23 +162,23 @@
     }
 
     .side.top {
-      transform: rotateX(90deg); 
+      transform: rotateX(90deg);
       margin-top: var(--neg-half-side);
     }
 
     .side.bottom {
       background: var(--primary);
-      transform: rotateX(-90deg); 
+      transform: rotateX(-90deg);
       margin-top: var(--half-side);
     }
 
     .side.right {
-      transform: rotateY(90deg); 
+      transform: rotateY(90deg);
       margin-left: var(--half-side);
     }
 
     .side.left {
-      transform: rotateY(-90deg); 
+      transform: rotateY(-90deg);
       margin-left: var(--neg-half-side);
     }
 
@@ -187,6 +193,10 @@
 }
 
 @keyframes block-spin {
-  0% {transform: translate(-50%, -50%) rotateX(-20deg) rotateY(0deg);}
-  100% {transform: translate(-50%, -50%) rotateX(-20deg) rotateY(-360deg);}
+  0% {
+    transform: translate(-50%, -50%) rotateX(-20deg) rotateY(0deg);
+  }
+  100% {
+    transform: translate(-50%, -50%) rotateX(-20deg) rotateY(-360deg);
+  }
 }

@@ -17,12 +17,12 @@ export class SatsComponent implements OnInit {
   network = '';
   stateSubscription: Subscription;
 
-  constructor(
-    private stateService: StateService,
-  ) { }
+  constructor(private stateService: StateService) {}
 
   ngOnInit() {
-    this.stateSubscription = this.stateService.networkChanged$.subscribe((network) => this.network = network);
+    this.stateSubscription = this.stateService.networkChanged$.subscribe(
+      (network) => (this.network = network)
+    );
   }
 
   ngOnDestroy() {
@@ -30,5 +30,4 @@ export class SatsComponent implements OnInit {
       this.stateSubscription.unsubscribe();
     }
   }
-
 }

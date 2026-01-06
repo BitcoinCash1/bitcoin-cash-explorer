@@ -1,4 +1,9 @@
-import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  Input,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
 
 @Component({
   selector: 'app-clipboard',
@@ -22,9 +27,7 @@ export class ClipboardComponent {
     large: '18',
   };
 
-  constructor(
-    private cd: ChangeDetectorRef,
-  ) { }
+  constructor(private cd: ChangeDetectorRef) {}
 
   async copyText() {
     if (this.text && !this.showMessage) {
@@ -57,5 +60,4 @@ export class ClipboardComponent {
       textarea.remove();
     }
   }
-
 }

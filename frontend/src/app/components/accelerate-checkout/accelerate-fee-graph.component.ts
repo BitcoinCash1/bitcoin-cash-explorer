@@ -1,10 +1,26 @@
-import { Component, Input, Output, OnChanges, EventEmitter, HostListener, OnInit, ViewChild, ElementRef, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  OnChanges,
+  EventEmitter,
+  HostListener,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+  OnDestroy,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { Transaction } from '@interfaces/electrs.interface';
-import { AccelerationEstimate, RateOption } from '@components/accelerate-checkout/accelerate-checkout.component';
+import {
+  AccelerationEstimate,
+  RateOption,
+} from '@components/accelerate-checkout/accelerate-checkout.component';
 
 interface GraphBar {
   rate: number;
-  style?: Record<string,string>;
+  style?: Record<string, string>;
   class: 'tx' | 'target' | 'max';
   label: string;
   active?: boolean;
@@ -19,13 +35,15 @@ interface GraphBar {
   styleUrls: ['./accelerate-fee-graph.component.scss'],
   standalone: false,
 })
-export class AccelerateFeeGraphComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
+export class AccelerateFeeGraphComponent
+  implements OnInit, AfterViewInit, OnChanges, OnDestroy
+{
   @Input() tx: Transaction;
   @Input() estimate: AccelerationEstimate;
   @Input() showEstimate = false;
   @Input() maxRateOptions: RateOption[] = [];
   @Input() maxRateIndex: number = 0;
-  @Output() setUserBid = new EventEmitter<{ fee: number, index: number }>();
+  @Output() setUserBid = new EventEmitter<{ fee: number; index: number }>();
 
   @ViewChild('feeGraph')
   container: ElementRef<HTMLDivElement>;
@@ -36,9 +54,7 @@ export class AccelerateFeeGraphComponent implements OnInit, AfterViewInit, OnCha
   bars: GraphBar[] = [];
   tooltipPosition = { x: 0, y: 0 };
 
-  constructor(
-    private cd: ChangeDetectorRef,
-  ) {}
+  constructor(private cd: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.initGraph();
@@ -46,7 +62,7 @@ export class AccelerateFeeGraphComponent implements OnInit, AfterViewInit, OnCha
 
   ngAfterViewInit(): void {
     if (ResizeObserver) {
-      this.observer = new ResizeObserver(entries => {
+      this.observer = new ResizeObserver((entries) => {
         for (const entry of entries) {
           this.height = entry.contentRect.height;
           this.initGraph();
@@ -66,35 +82,52 @@ export class AccelerateFeeGraphComponent implements OnInit, AfterViewInit, OnCha
     if (!this.tx || !this.estimate) {
       return;
     }
-    const hasNextBlockRate = (this.estimate.nextBlockFee > this.estimate.txSummary.effectiveFee);
+    const hasNextBlockRate =
+      this.estimate.nextBlockFee > this.estimate.txSummary.effectiveFee;
     const numBars = hasNextBlockRate ? 4 : 3;
-    const maxRate = Math.max(...this.maxRateOptions.map(option => option.rate));
-    const baseRate = this.estimate.txSummary.effectiveFee / this.estimate.txSummary.effectiveVsize;
-    let baseHeight = Math.max(this.height - (numBars * 30), this.height * (baseRate / maxRate));
+    const maxRate = Math.max(
+      ...this.maxRateOptions.map((option) => option.rate)
+    );
+    const baseRate =
+      this.estimate.txSummary.effectiveFee /
+      this.estimate.txSummary.effectiveVsize;
+    let baseHeight = Math.max(
+      this.height - numBars * 30,
+      this.height * (baseRate / maxRate)
+    );
     const bars: GraphBar[] = [];
     let lastHeight = 0;
     if (hasNextBlockRate) {
-      lastHeight = Math.max(lastHeight + 30, (this.height * ((this.estimate.targetFeeRate - baseRate) / maxRate)));
+      lastHeight = Math.max(
+        lastHeight + 30,
+        this.height * ((this.estimate.targetFeeRate - baseRate) / maxRate)
+      );
       bars.push({
         rate: this.estimate.targetFeeRate,
         height: lastHeight,
         class: 'target',
-        label: $localize`:@@bdf0e930eb22431140a2eaeacd809cc5f8ebd38c:Next Block`.toLowerCase(),
-        fee: this.estimate.nextBlockFee - this.estimate.txSummary.effectiveFee
+        label:
+          $localize`:@@bdf0e930eb22431140a2eaeacd809cc5f8ebd38c:Next Block`.toLowerCase(),
+        fee: this.estimate.nextBlockFee - this.estimate.txSummary.effectiveFee,
       });
     }
     this.maxRateOptions.forEach((option, index) => {
-      lastHeight = Math.max(lastHeight + 30, (this.height * ((option.rate - baseRate) / maxRate)));
+      lastHeight = Math.max(
+        lastHeight + 30,
+        this.height * ((option.rate - baseRate) / maxRate)
+      );
       bars.push({
         rate: option.rate,
         height: lastHeight,
         class: 'max',
-        label: this.showEstimate ? $localize`maximum` : $localize`:@@b484583f0ce10f3341ab36750d05271d9d22c9a1:Accelerated`.toLowerCase(),
+        label: this.showEstimate
+          ? $localize`maximum`
+          : $localize`:@@b484583f0ce10f3341ab36750d05271d9d22c9a1:Accelerated`.toLowerCase(),
         active: option.index === this.maxRateIndex,
         rateIndex: option.index,
         fee: option.fee,
-      })
-    })
+      });
+    });
 
     bars.reverse();
 
@@ -117,11 +150,11 @@ export class AccelerateFeeGraphComponent implements OnInit, AfterViewInit, OnCha
     this.cd.detectChanges();
   }
 
-  getStyle(height: number, base: number): Record<string,string> {
+  getStyle(height: number, base: number): Record<string, string> {
     return {
       height: `${height}px`,
       bottom: base ? `${base}px` : '0',
-    }
+    };
   }
 
   onClick(event, bar): void {

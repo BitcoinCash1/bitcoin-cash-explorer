@@ -3,7 +3,8 @@
     text-align: right;
     margin-inline-end: 1em;
 
-    a, span {
+    a,
+    span {
       margin-left: 1em;
     }
   }
@@ -18,11 +19,13 @@
   .status-table {
     width: 100%;
 
-    td, th {
+    td,
+    th {
       padding: 0.25em;
       width: 0%;
 
-      &.rank, &.flag {
+      &.rank,
+      &.flag {
         text-align: right;
       }
       &.updated {
@@ -30,7 +33,8 @@
         text-align: right;
         white-space: nowrap;
       }
-      &.rtt, &.height {
+      &.rtt,
+      &.height {
         text-align: right;
       }
       &.only-small {

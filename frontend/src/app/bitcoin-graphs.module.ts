@@ -7,31 +7,19 @@ const routes: Routes = [
   {
     path: '',
     component: MasterPageComponent,
-    loadChildren: () => import('@app/graphs/graphs.module').then(m => m.GraphsModule),
+    loadChildren: () =>
+      import('@app/graphs/graphs.module').then((m) => m.GraphsModule),
     data: { preload: true },
-  }
+  },
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports: [
-    RouterModule
-  ]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class BitcoinGraphsRoutingModule { }
+export class BitcoinGraphsRoutingModule {}
 
 @NgModule({
-  imports: [
-    CommonModule,
-    BitcoinGraphsRoutingModule,
-  ],
+  imports: [CommonModule, BitcoinGraphsRoutingModule],
 })
-export class BitcoinGraphsModule { }
-
-
-
-
-
-
+export class BitcoinGraphsModule {}

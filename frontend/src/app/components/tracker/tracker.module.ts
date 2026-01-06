@@ -13,20 +13,16 @@ const routes: Routes = [
     path: ':id',
     component: TrackerComponent,
     data: {
-      ogImage: true
-    }
-  }
+      ogImage: true,
+    },
+  },
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports: [
-    RouterModule
-  ]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class TrackerRoutingModule { }
+export class TrackerRoutingModule {}
 
 @NgModule({
   imports: [
@@ -37,15 +33,6 @@ export class TrackerRoutingModule { }
     GraphsModule,
     TxBowtieModule,
   ],
-  declarations: [
-    TrackerComponent,
-    TrackerBarComponent,
-  ]
+  declarations: [TrackerComponent, TrackerBarComponent],
 })
-export class TrackerModule { }
-
-
-
-
-
-
+export class TrackerModule {}

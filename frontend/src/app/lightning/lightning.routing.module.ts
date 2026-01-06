@@ -12,79 +12,79 @@ import { GroupComponent } from '@app/lightning/group/group.component';
 import { JusticeList } from '@app/lightning/justice-list/justice-list.component';
 
 const routes: Routes = [
-    {
-      path: '',
-      component: LightningWrapperComponent,
-      children: [
-        {
-          path: '',
-          component: LightningDashboardComponent,
+  {
+    path: '',
+    component: LightningWrapperComponent,
+    children: [
+      {
+        path: '',
+        component: LightningDashboardComponent,
+      },
+      {
+        path: 'node/:public_key',
+        data: { networkSpecific: true },
+        component: NodeComponent,
+      },
+      {
+        path: 'channel/:short_id',
+        data: { networkSpecific: true },
+        component: ChannelComponent,
+      },
+      {
+        path: 'nodes/country/:country',
+        component: NodesPerCountry,
+      },
+      {
+        path: 'nodes/isp/:isp',
+        component: NodesPerISP,
+      },
+      {
+        path: 'group/the-mempool-open-source-project',
+        component: GroupComponent,
+      },
+      {
+        path: 'nodes/rankings',
+        component: NodesRankingsDashboard,
+      },
+      {
+        path: 'nodes/rankings/liquidity',
+        component: NodesRanking,
+        data: {
+          type: 'capacity',
         },
-        {
-          path: 'node/:public_key',
-          data: { networkSpecific: true },
-          component: NodeComponent,
+      },
+      {
+        path: 'nodes/rankings/connectivity',
+        component: NodesRanking,
+        data: {
+          type: 'channels',
         },
-        {
-          path: 'channel/:short_id',
-          data: { networkSpecific: true },
-          component: ChannelComponent,
+      },
+      {
+        path: 'nodes/oldest',
+        component: NodesRanking,
+        data: {
+          type: 'oldest',
         },
-        {
-          path: 'nodes/country/:country',
-          component: NodesPerCountry,
-        },
-        {
-          path: 'nodes/isp/:isp',
-          component: NodesPerISP,
-        },
-        {
-          path: 'group/the-mempool-open-source-project',
-          component: GroupComponent,
-        },
-        {
-          path: 'nodes/rankings',
-          component: NodesRankingsDashboard,
-        },
-        {
-          path: 'nodes/rankings/liquidity',
-          component: NodesRanking,
-          data: {
-            type: 'capacity'
-          },
-        },
-        {
-          path: 'nodes/rankings/connectivity',
-          component: NodesRanking,
-          data: {
-            type: 'channels'
-          },
-        },
-        {
-          path: 'nodes/oldest',
-          component: NodesRanking,
-          data: {
-            type: 'oldest'
-          },
-        },
-        {
-          path: 'penalties',
-          component: JusticeList,
-        },
-        {
-          path: '**',
-          redirectTo: ''
-        }
-      ]
-    },
-    {
-      path: '**',
-      redirectTo: ''
-    }
+      },
+      {
+        path: 'penalties',
+        component: JusticeList,
+      },
+      {
+        path: '**',
+        redirectTo: '',
+      },
+    ],
+  },
+  {
+    path: '**',
+    redirectTo: '',
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class LightningRoutingModule { }
+export class LightningRoutingModule {}

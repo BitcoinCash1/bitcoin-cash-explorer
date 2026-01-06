@@ -1,6 +1,14 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { catchError, map, Observable, of, ReplaySubject, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  map,
+  Observable,
+  of,
+  ReplaySubject,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { ServicesApiServices } from '@app/services/services-api.service';
 
 export interface IAuth {
@@ -8,18 +16,18 @@ export interface IAuth {
   user: {
     userId: number;
     username: string;
-  }
+  };
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AuthServiceMempool {
   private auth$: ReplaySubject<IAuth | null> = new ReplaySubject(1);
 
   constructor(
     private servicesApiService: ServicesApiServices,
-    private router: Router,
+    private router: Router
   ) {
     const localStorageAuth = localStorage.getItem('auth');
     if (!localStorageAuth || localStorageAuth.length === 0) {
@@ -36,19 +44,18 @@ export class AuthServiceMempool {
   }
 
   refreshAuth$(): Observable<IAuth | null> {
-    return this.servicesApiService.getJWT$()
-      .pipe(
-        tap((user) => {
-          this.setAuth(user);
-        }),
-        map((user) => {
-          return user;
-        }),
-        catchError(() => {
-          this.setAuth(null);
-          return of(null);
-        }),
-      );
+    return this.servicesApiService.getJWT$().pipe(
+      tap((user) => {
+        this.setAuth(user);
+      }),
+      map((user) => {
+        return user;
+      }),
+      catchError(() => {
+        this.setAuth(null);
+        return of(null);
+      })
+    );
   }
 
   logout() {

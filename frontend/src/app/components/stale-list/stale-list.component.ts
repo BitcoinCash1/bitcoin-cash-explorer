@@ -23,7 +23,7 @@ export class StaleList implements OnInit {
   gradientColors = {
     '': ['var(--mainnet-alt)', 'var(--primary)'],
     liquid: ['var(--liquid)', 'var(--testnet-alt)'],
-    'liquidtestnet': ['var(--liquidtestnet)', 'var(--liquidtestnet-alt)'],
+    liquidtestnet: ['var(--liquidtestnet)', 'var(--liquidtestnet-alt)'],
     testnet: ['var(--testnet)', 'var(--testnet-alt)'],
     testnet4: ['var(--testnet)', 'var(--testnet-alt)'],
     signet: ['var(--signet)', 'var(--signet-alt)'],
@@ -32,13 +32,15 @@ export class StaleList implements OnInit {
   constructor(
     private apiService: ApiService,
     public stateService: StateService,
-    private seoService: SeoService,
-  ) { }
+    private seoService: SeoService
+  ) {}
 
   ngOnInit(): void {
     this.chainTips$ = this.apiService.getStaleTips$().pipe(
       map((chainTips) => {
-        const filtered = chainTips.filter((chainTip) => chainTip.status !== 'active') as StaleTip[];
+        const filtered = chainTips.filter(
+          (chainTip) => chainTip.status !== 'active'
+        ) as StaleTip[];
 
         filtered.forEach((chainTip) => {
           if (chainTip.stale?.extras) {
@@ -46,8 +48,12 @@ export class StaleList implements OnInit {
             chainTip.stale.extras.maxFee = this.getMaxBlockFee(chainTip.stale);
           }
           if (chainTip.canonical?.extras) {
-            chainTip.canonical.extras.minFee = this.getMinBlockFee(chainTip.canonical);
-            chainTip.canonical.extras.maxFee = this.getMaxBlockFee(chainTip.canonical);
+            chainTip.canonical.extras.minFee = this.getMinBlockFee(
+              chainTip.canonical
+            );
+            chainTip.canonical.extras.maxFee = this.getMaxBlockFee(
+              chainTip.canonical
+            );
           }
         });
 
@@ -58,8 +64,14 @@ export class StaleList implements OnInit {
       })
     );
 
-    this.seoService.setTitle($localize`:@@page.stale-chain-tips:Stale Chain Tips`);
-    this.seoService.setDescription($localize`:@@meta.description.stale-chain-tips:See the most recent stale chain tips on the Bitcoin${seoDescriptionNetwork(this.stateService.network)} network.`);
+    this.seoService.setTitle(
+      $localize`:@@page.stale-chain-tips:Stale Chain Tips`
+    );
+    this.seoService.setDescription(
+      $localize`:@@meta.description.stale-chain-tips:See the most recent stale chain tips on the Bitcoin${seoDescriptionNetwork(
+        this.stateService.network
+      )} network.`
+    );
   }
 
   getBlockGradient(block: BlockExtended): string {
@@ -67,7 +79,8 @@ export class StaleList implements OnInit {
       return 'var(--secondary)';
     }
 
-    const backgroundHeight = 100 - (block.weight / this.stateService.env.BLOCK_WEIGHT_UNITS) * 100;
+    const backgroundHeight =
+      100 - (block.weight / this.stateService.env.BLOCK_WEIGHT_UNITS) * 100;
     const network = this.stateService.network || '';
 
     return `repeating-linear-gradient(

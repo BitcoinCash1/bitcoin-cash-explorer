@@ -1,4 +1,13 @@
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  OnDestroy,
+  OnInit,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { Subscription, of, catchError } from 'rxjs';
@@ -26,7 +35,7 @@ export class BitcoinInvoiceComponent implements OnInit, OnChanges, OnDestroy {
     private formBuilder: FormBuilder,
     private apiService: ServicesApiServices,
     private sanitizer: DomSanitizer
-  ) { }
+  ) {}
 
   ngOnDestroy() {
     if (this.paymentStatusSubscription) {
@@ -36,7 +45,7 @@ export class BitcoinInvoiceComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnInit(): void {
     this.paymentForm = this.formBuilder.group({
-      'method': 'lightning'
+      method: 'lightning',
     });
   }
 
@@ -70,32 +79,39 @@ export class BitcoinInvoiceComponent implements OnInit, OnChanges, OnDestroy {
     if (this.paymentStatusSubscription) {
       this.paymentStatusSubscription.unsubscribe();
     }
-    this.paymentStatusSubscription = this.apiService.getPaymentStatus$(this.invoice.btcpayInvoiceId).pipe(
-      tap(result => {
-        if (result.status === 204) { // Manually trigger an error in that case so we can retry
-          throw result;
-        } else if (result.status === 200) { // Invoice settled
-          this.paymentStatus = 3;
-          this.completed.emit();
-        }
-      }),
-      catchError(err => {
-        if (err.status === 204 || err.status === 504) {
-          throw err; // Will trigger the retry
-        } else if (err.status === 400) {
-          this.paymentErrorMessage = 'Invoice has expired';
-        } else if (err.status === 404) {
-          this.paymentErrorMessage = 'Invoice is no longer valid';
-        }
-        this.paymentStatus = -1;
-        return of(null);
-      }),
-      retry({ delay: 1000 }),
-    ).subscribe();
+    this.paymentStatusSubscription = this.apiService
+      .getPaymentStatus$(this.invoice.btcpayInvoiceId)
+      .pipe(
+        tap((result) => {
+          if (result.status === 204) {
+            // Manually trigger an error in that case so we can retry
+            throw result;
+          } else if (result.status === 200) {
+            // Invoice settled
+            this.paymentStatus = 3;
+            this.completed.emit();
+          }
+        }),
+        catchError((err) => {
+          if (err.status === 204 || err.status === 504) {
+            throw err; // Will trigger the retry
+          } else if (err.status === 400) {
+            this.paymentErrorMessage = 'Invoice has expired';
+          } else if (err.status === 404) {
+            this.paymentErrorMessage = 'Invoice is no longer valid';
+          }
+          this.paymentStatus = -1;
+          return of(null);
+        }),
+        retry({ delay: 1000 })
+      )
+      .subscribe();
   }
 
   get availableMethods(): string[] {
-    return Object.keys(this.invoice?.addresses || {}).filter(k => k === 'BTC_LightningLike');
+    return Object.keys(this.invoice?.addresses || {}).filter(
+      (k) => k === 'BTC_LightningLike'
+    );
   }
 
   bypassSecurityTrustUrl(text: string): SafeUrl {

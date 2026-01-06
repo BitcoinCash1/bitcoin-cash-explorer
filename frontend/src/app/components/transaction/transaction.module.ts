@@ -26,20 +26,16 @@ const routes: Routes = [
     path: ':id',
     component: TransactionComponent,
     data: {
-      ogImage: true
-    }
-  }
+      ogImage: true,
+    },
+  },
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports: [
-    RouterModule
-  ]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class TransactionRoutingModule { }
+export class TransactionRoutingModule {}
 
 @NgModule({
   imports: [
@@ -64,12 +60,6 @@ export class TransactionRoutingModule { }
     AccelerateCheckout,
     AccelerateFeeGraphComponent,
     CpfpInfoComponent,
-  ]
+  ],
 })
-export class TransactionModule { }
-
-
-
-
-
-
+export class TransactionModule {}

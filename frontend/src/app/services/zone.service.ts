@@ -5,25 +5,30 @@ import { Observable, Subscriber } from 'rxjs';
 declare const Zone: any;
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ZoneService {
-
   constructor(
     private ngZone: NgZone,
-    private appRef: ApplicationRef,
-  ) { }
+    private appRef: ApplicationRef
+  ) {}
 
   wrapObservable<T>(obs: Observable<T>): Observable<T> {
     return new Observable((subscriber: Subscriber<T>) => {
       let task: any;
 
       this.ngZone.run(() => {
-        task = Zone.current.scheduleMacroTask('wrapObservable', () => {}, {}, () => {}, () => {});
+        task = Zone.current.scheduleMacroTask(
+          'wrapObservable',
+          () => {},
+          {},
+          () => {},
+          () => {}
+        );
       });
 
       const subscription = obs.subscribe(
-        value => {
+        (value) => {
           subscriber.next(value);
           if (task) {
             this.ngZone.run(() => {
@@ -32,7 +37,7 @@ export class ZoneService {
             task.invoke();
           }
         },
-        err => {
+        (err) => {
           subscriber.error(err);
           if (task) {
             this.appRef.tick();

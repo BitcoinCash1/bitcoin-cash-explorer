@@ -1,9 +1,20 @@
-import { Component, OnInit, Input, QueryList, AfterViewInit, ViewChildren } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  QueryList,
+  AfterViewInit,
+  ViewChildren,
+} from '@angular/core';
 import { Env, StateService } from '@app/services/state.service';
 import { Observable, merge, of, Subject, Subscription } from 'rxjs';
 import { tap, takeUntil } from 'rxjs/operators';
-import { ActivatedRoute } from "@angular/router";
-import { faqData, restApiDocsData, wsApiDocsData } from '@app/docs/api-docs/api-docs-data';
+import { ActivatedRoute } from '@angular/router';
+import {
+  faqData,
+  restApiDocsData,
+  wsApiDocsData,
+} from '@app/docs/api-docs/api-docs-data';
 import { FaqTemplateDirective } from '@app/docs/faq-template/faq-template.component';
 
 @Component({
@@ -23,7 +34,7 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   code: any;
   baseNetworkUrl = '';
   @Input() whichTab: string;
-  desktopDocsNavPosition = "relative";
+  desktopDocsNavPosition = 'relative';
   faq: any[];
   restDocs: any[];
   wsDocs: any;
@@ -37,48 +48,58 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   timeLtr: boolean = this.stateService.timeLtr.value;
   isMempoolSpaceBuild = this.stateService.isMempoolSpaceBuild;
 
-  @ViewChildren(FaqTemplateDirective) faqTemplates: QueryList<FaqTemplateDirective>;
+  @ViewChildren(FaqTemplateDirective)
+  faqTemplates: QueryList<FaqTemplateDirective>;
   dict = {};
 
   constructor(
     private stateService: StateService,
-    private route: ActivatedRoute,
-  ) { }
+    private route: ActivatedRoute
+  ) {}
 
   ngAfterContentChecked() {
     if (this.faqTemplates) {
-      this.faqTemplates.forEach((x) => this.dict[x.type] = x.template);
+      this.faqTemplates.forEach((x) => (this.dict[x.type] = x.template));
     }
-    this.desktopDocsNavPosition = ( window.pageYOffset > 115 ) ? "fixed" : "relative";
+    this.desktopDocsNavPosition =
+      window.pageYOffset > 115 ? 'fixed' : 'relative';
     this.mobileViewport = window.innerWidth <= 992;
   }
 
   ngAfterViewInit() {
     const that = this;
-    setTimeout( () => {
-      if( this.route.snapshot.fragment ) {
-        this.openEndpointContainer( this.route.snapshot.fragment );
-        if (document.getElementById( this.route.snapshot.fragment )) {
-          let vOffset = ( window.innerWidth <= 992 ) ? 100 : 60;
+    setTimeout(() => {
+      if (this.route.snapshot.fragment) {
+        this.openEndpointContainer(this.route.snapshot.fragment);
+        if (document.getElementById(this.route.snapshot.fragment)) {
+          const vOffset = window.innerWidth <= 992 ? 100 : 60;
           window.scrollTo({
-            top: document.getElementById( this.route.snapshot.fragment ).offsetTop - vOffset
+            top:
+              document.getElementById(this.route.snapshot.fragment).offsetTop -
+              vOffset,
           });
         }
       }
       window.addEventListener('scroll', that.onDocScroll, { passive: true });
-    }, 1 );
+    }, 1);
   }
 
   ngOnInit(): void {
     this.env = this.stateService.env;
     this.officialMempoolInstance = this.env.OFFICIAL_MEMPOOL_SPACE;
-    this.stateService.backend$.pipe(takeUntil(this.destroy$)).subscribe((backend) => {
-      this.runningElectrs = !!(backend == 'esplora');
-    });
+    this.stateService.backend$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((backend) => {
+        this.runningElectrs = !!(backend == 'esplora');
+      });
     this.auditEnabled = this.env.AUDIT;
     this.network$ = merge(of(''), this.stateService.networkChanged$).pipe(
       tap((network: string) => {
-        if (this.env.BASE_MODULE === 'mempool' && network !== '' && this.env.ROOT_NETWORK === '') {
+        if (
+          this.env.BASE_MODULE === 'mempool' &&
+          network !== '' &&
+          this.env.ROOT_NETWORK === ''
+        ) {
           this.baseNetworkUrl = `/${network}`;
         } else if (this.env.BASE_MODULE === 'liquid') {
           if (!['', 'liquid'].includes(network)) {
@@ -100,22 +121,29 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
     this.wsDocs = wsApiDocsData;
 
     this.network$.pipe(takeUntil(this.destroy$)).subscribe((network) => {
-      this.active = (network === 'liquid' || network === 'liquidtestnet') ? 2 : 0;
-      switch( network ) {
-        case "":
-          this.electrsPort = 50002; break;
-        case "mainnet":
-          this.electrsPort = 50002; break;
-        case "testnet":
-          this.electrsPort = 60002; break;
-        case "testnet4":
-          this.electrsPort = 40002; break;
-        case "signet":
-          this.electrsPort = 60602; break;
-        case "liquid":
-          this.electrsPort = 51002; break;
-        case "liquidtestnet":
-          this.electrsPort = 51302; break;
+      this.active = network === 'liquid' || network === 'liquidtestnet' ? 2 : 0;
+      switch (network) {
+        case '':
+          this.electrsPort = 50002;
+          break;
+        case 'mainnet':
+          this.electrsPort = 50002;
+          break;
+        case 'testnet':
+          this.electrsPort = 60002;
+          break;
+        case 'testnet4':
+          this.electrsPort = 40002;
+          break;
+        case 'signet':
+          this.electrsPort = 60602;
+          break;
+        case 'liquid':
+          this.electrsPort = 51002;
+          break;
+        case 'liquidtestnet':
+          this.electrsPort = 51302;
+          break;
       }
     });
 
@@ -132,47 +160,64 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   }
 
   onDocScroll() {
-    this.desktopDocsNavPosition = ( window.pageYOffset > 115 ) ? "fixed" : "relative";
+    this.desktopDocsNavPosition =
+      window.pageYOffset > 115 ? 'fixed' : 'relative';
   }
 
-  anchorLinkClick( e ) {
-    let targetId = e.fragment;
-    let vOffset = ( window.innerWidth <= 992 ) ? 100 : 60;
+  anchorLinkClick(e) {
+    const targetId = e.fragment;
+    const vOffset = window.innerWidth <= 992 ? 100 : 60;
     window.scrollTo({
-      top: document.getElementById( targetId ).offsetTop - vOffset
+      top: document.getElementById(targetId).offsetTop - vOffset,
     });
-    window.history.pushState({}, null, document.location.href.split("#")[0] + "#" + targetId);
-    this.openEndpointContainer( targetId );
+    window.history.pushState(
+      {},
+      null,
+      document.location.href.split('#')[0] + '#' + targetId
+    );
+    this.openEndpointContainer(targetId);
   }
 
-  openEndpointContainer( targetId ) {
+  openEndpointContainer(targetId) {
     let tabHeaderHeight = 0;
-    if (document.getElementById( targetId + "-tab-header" )) {
-      tabHeaderHeight = document.getElementById( targetId + "-tab-header" ).scrollHeight;
+    if (document.getElementById(targetId + '-tab-header')) {
+      tabHeaderHeight = document.getElementById(
+        targetId + '-tab-header'
+      ).scrollHeight;
     }
-    if( ( window.innerWidth <= 992 ) && ( ( this.whichTab === 'rest' ) || ( this.whichTab === 'faq' ) || ( this.whichTab === 'websocket' ) ) && targetId ) {
-      const endpointContainerEl = document.querySelector<HTMLElement>( "#" + targetId );
-      const endpointContentEl = document.querySelector<HTMLElement>( "#" + targetId + " .endpoint-content" );
+    if (
+      window.innerWidth <= 992 &&
+      (this.whichTab === 'rest' ||
+        this.whichTab === 'faq' ||
+        this.whichTab === 'websocket') &&
+      targetId
+    ) {
+      const endpointContainerEl = document.querySelector<HTMLElement>(
+        '#' + targetId
+      );
+      const endpointContentEl = document.querySelector<HTMLElement>(
+        '#' + targetId + ' .endpoint-content'
+      );
       const endPointContentElHeight = endpointContentEl.clientHeight;
 
-      if( endpointContentEl.classList.contains( "open" ) ) {
-        endpointContainerEl.style.height = "auto";
-        endpointContentEl.style.top = "-10000px";
-        endpointContentEl.style.opacity = "0";
-        endpointContentEl.classList.remove( "open" );
+      if (endpointContentEl.classList.contains('open')) {
+        endpointContainerEl.style.height = 'auto';
+        endpointContentEl.style.top = '-10000px';
+        endpointContentEl.style.opacity = '0';
+        endpointContentEl.classList.remove('open');
       } else {
-        endpointContainerEl.style.height = endPointContentElHeight + tabHeaderHeight + 28 + "px";
-        endpointContentEl.style.top = tabHeaderHeight + 28 + "px";
-        endpointContentEl.style.opacity = "1";
-        endpointContentEl.classList.add( "open" );
+        endpointContainerEl.style.height =
+          endPointContentElHeight + tabHeaderHeight + 28 + 'px';
+        endpointContentEl.style.top = tabHeaderHeight + 28 + 'px';
+        endpointContentEl.style.opacity = '1';
+        endpointContentEl.classList.add('open');
       }
     }
   }
 
   wrapUrl(network: string, code: any, websocket: boolean = false) {
-
     let curlResponse = [];
-    if (['', 'mainnet'].includes(network)){
+    if (['', 'mainnet'].includes(network)) {
       curlResponse = code.codeSampleMainnet.curl;
     }
     if (network === 'testnet') {
@@ -235,6 +280,4 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
     wsHostname = wsHostname.replace('http://', 'ws://');
     return `${wsHostname}${curlNetwork}/api/v1/ws`;
   }
-
 }
-

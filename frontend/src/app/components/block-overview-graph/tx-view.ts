@@ -1,6 +1,11 @@
 import TxSprite from '@components/block-overview-graph/tx-sprite';
 import { FastVertexArray } from '@components/block-overview-graph/fast-vertex-array';
-import { SpriteUpdateParams, Square, Color, ViewUpdateParams } from '@components/block-overview-graph/sprite-types';
+import {
+  SpriteUpdateParams,
+  Square,
+  Color,
+  ViewUpdateParams,
+} from '@components/block-overview-graph/sprite-types';
 import { hexToColor } from '@components/block-overview-graph/utils';
 import BlockScene from '@components/block-overview-graph/block-scene';
 import { TransactionStripped } from '@interfaces/node-api.interface';
@@ -18,7 +23,7 @@ function toSpriteUpdate(params: ViewUpdateParams): SpriteUpdateParams {
     minDuration: params.minDuration,
     ...params.display.position,
     ...params.display.color,
-    adjust: params.adjust
+    adjust: params.adjust,
   };
 }
 
@@ -33,7 +38,23 @@ export default class TxView implements TransactionStripped {
   flags: number;
   bigintFlags?: bigint | null = 0b00000100_00000000_00000000_00000000n;
   time?: number;
-  status?: 'found' | 'missing' | 'sigop' | 'fresh' | 'freshcpfp' | 'added' | 'added_prioritized' | 'prioritized' | 'added_deprioritized' | 'deprioritized' | 'censored' | 'selected' | 'rbf' | 'accelerated' | 'matched' | 'unmatched';
+  status?:
+    | 'found'
+    | 'missing'
+    | 'sigop'
+    | 'fresh'
+    | 'freshcpfp'
+    | 'added'
+    | 'added_prioritized'
+    | 'prioritized'
+    | 'added_deprioritized'
+    | 'deprioritized'
+    | 'censored'
+    | 'selected'
+    | 'rbf'
+    | 'accelerated'
+    | 'matched'
+    | 'unmatched';
   context?: 'projected' | 'actual' | 'stale' | 'canonical';
   scene?: BlockScene;
 
@@ -58,12 +79,14 @@ export default class TxView implements TransactionStripped {
     this.fee = tx.fee;
     this.vsize = tx.vsize;
     this.value = tx.value;
-    this.feerate = tx.rate || (tx.fee / tx.vsize); // sort by effective fee rate where available
+    this.feerate = tx.rate || tx.fee / tx.vsize; // sort by effective fee rate where available
     this.acc = tx.acc;
     this.rate = tx.rate;
     this.status = tx.status;
     this.flags = tx.flags || 0;
-    this.bigintFlags = tx.flags ? (BigInt(tx.flags) | (this.acc ? TransactionFlags.acceleration : 0n)): 0n;
+    this.bigintFlags = tx.flags
+      ? BigInt(tx.flags) | (this.acc ? TransactionFlags.acceleration : 0n)
+      : 0n;
     this.initialised = false;
     this.vertexArray = scene.vertexArray;
 
@@ -86,7 +109,11 @@ export default class TxView implements TransactionStripped {
     if (!this.gridPosition) {
       this.gridPosition = { x: 0, y: 0, s: 0 };
     }
-    if (this.gridPosition.x !== position.x || this.gridPosition.y !== position.y || this.gridPosition.s !== position.s) {
+    if (
+      this.gridPosition.x !== position.x ||
+      this.gridPosition.y !== position.y ||
+      this.gridPosition.s !== position.s
+    ) {
       this.gridPosition.x = position.x;
       this.gridPosition.y = position.y;
       this.gridPosition.s = position.s;
@@ -108,15 +135,12 @@ export default class TxView implements TransactionStripped {
   */
   update(params: ViewUpdateParams): number {
     if (params.jitter) {
-      params.delay += (Math.random() * params.jitter);
+      params.delay += Math.random() * params.jitter;
     }
 
     if (!this.initialised || !this.sprite) {
       this.initialised = true;
-      this.sprite = new TxSprite(
-        toSpriteUpdate(params),
-        this.vertexArray
-      );
+      this.sprite = new TxSprite(toSpriteUpdate(params), this.vertexArray);
       // apply any pending hover event
       if (this.hover) {
         params.duration = Math.max(params.duration, hoverTransitionTime);
@@ -124,16 +148,18 @@ export default class TxView implements TransactionStripped {
           ...this.hoverColor,
           duration: hoverTransitionTime,
           adjust: false,
-          temp: true
+          temp: true,
         });
       }
     } else {
-      this.sprite.update(
-        toSpriteUpdate(params)
-      );
+      this.sprite.update(toSpriteUpdate(params));
     }
     this.dirty = false;
-    return (params.start || performance.now()) + (params.delay || 0) + (params.duration || 0);
+    return (
+      (params.start || performance.now()) +
+      (params.delay || 0) +
+      (params.duration || 0)
+    );
   }
 
   // Temporarily override the tx color
@@ -147,7 +173,7 @@ export default class TxView implements TransactionStripped {
         ...this.hoverColor,
         duration: hoverTransitionTime,
         adjust: false,
-        temp: true
+        temp: true,
       });
     } else {
       this.hover = false;
@@ -166,7 +192,10 @@ export default class TxView implements TransactionStripped {
 
   // Temporarily override the tx color
   // returns minimum transition end time
-  setHighlight(highlightOn: boolean, color: Color | void = defaultHighlightColor): number {
+  setHighlight(
+    highlightOn: boolean,
+    color: Color | void = defaultHighlightColor
+  ): number {
     if (highlightOn) {
       this.highlight = true;
       this.highlightColor = color;
@@ -175,7 +204,7 @@ export default class TxView implements TransactionStripped {
         ...this.highlightColor,
         duration: hoverTransitionTime,
         adjust: false,
-        temp: true
+        temp: true,
       });
     } else {
       this.highlight = false;

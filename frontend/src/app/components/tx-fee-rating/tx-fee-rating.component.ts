@@ -1,4 +1,12 @@
-import { Component, ChangeDetectionStrategy, OnChanges, Input, OnInit, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  OnChanges,
+  Input,
+  OnInit,
+  ChangeDetectorRef,
+  OnDestroy,
+} from '@angular/core';
 import { Transaction } from '@interfaces/electrs.interface';
 import { StateService } from '@app/services/state.service';
 import { Subscription } from 'rxjs';
@@ -26,16 +34,22 @@ export class TxFeeRatingComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
     private stateService: StateService,
     private cacheService: CacheService,
-    private cd: ChangeDetectorRef,
-  ) { }
+    private cd: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
-    this.blocksSubscription = this.cacheService.loadedBlocks$.subscribe((block) => {
-      if (this.tx.status.confirmed && this.tx.status.block_height === block.height && block?.extras?.medianFee > 0) {
-        this.calculateRatings(block);
-        this.cd.markForCheck();
+    this.blocksSubscription = this.cacheService.loadedBlocks$.subscribe(
+      (block) => {
+        if (
+          this.tx.status.confirmed &&
+          this.tx.status.block_height === block.height &&
+          block?.extras?.medianFee > 0
+        ) {
+          this.calculateRatings(block);
+          this.cd.markForCheck();
+        }
       }
-    });
+    );
   }
 
   ngOnChanges() {
@@ -45,7 +59,8 @@ export class TxFeeRatingComponent implements OnInit, OnChanges, OnDestroy {
     }
     this.cacheService.loadBlock(this.tx.status.block_height);
 
-    const foundBlock = this.cacheService.getCachedBlock(this.tx.status.block_height) || null;
+    const foundBlock =
+      this.cacheService.getCachedBlock(this.tx.status.block_height) || null;
     if (foundBlock && foundBlock?.extras?.medianFee > 0) {
       this.calculateRatings(foundBlock);
     }
@@ -56,11 +71,15 @@ export class TxFeeRatingComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   calculateRatings(block: BlockExtended) {
-    const feePervByte = this.tx.effectiveFeePerVsize || this.tx.fee / (this.tx.weight / 4);
+    const feePervByte =
+      this.tx.effectiveFeePerVsize || this.tx.fee / (this.tx.weight / 4);
     this.medianFeeNeeded = block?.extras?.medianFee;
 
     // Block not filled or sub-sat median fee
-    if (block.weight < this.stateService.env.BLOCK_WEIGHT_UNITS * 0.95 || this.medianFeeNeeded < 1) {
+    if (
+      block.weight < this.stateService.env.BLOCK_WEIGHT_UNITS * 0.95 ||
+      this.medianFeeNeeded < 1
+    ) {
       this.medianFeeNeeded = 1;
     }
 

@@ -1,4 +1,9 @@
-import { Component, ChangeDetectionStrategy, Input, OnChanges } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  OnChanges,
+} from '@angular/core';
 import { Vin, Vout } from '@interfaces/electrs.interface';
 import { StateService } from '@app/services/state.service';
 import { AddressType, AddressTypeInfo } from '@app/shared/address-utils';
@@ -21,9 +26,7 @@ export class AddressLabelsComponent implements OnChanges {
 
   label?: string;
 
-  constructor(
-    stateService: StateService,
-  ) {
+  constructor(stateService: StateService) {
     this.network = stateService.network;
   }
 
@@ -41,8 +44,12 @@ export class AddressLabelsComponent implements OnChanges {
 
   handleChannel() {
     const type = this.vout ? 'open' : 'close';
-    const leftNodeName = this.channel.node_left.alias || this.channel.node_left.public_key.substring(0, 10);
-    const rightNodeName = this.channel.node_right.alias || this.channel.node_right.public_key.substring(0, 10);
+    const leftNodeName =
+      this.channel.node_left.alias ||
+      this.channel.node_left.public_key.substring(0, 10);
+    const rightNodeName =
+      this.channel.node_right.alias ||
+      this.channel.node_right.public_key.substring(0, 10);
     this.label = `Channel ${type}: ${leftNodeName} <> ${rightNodeName}`;
   }
 
@@ -56,7 +63,12 @@ export class AddressLabelsComponent implements OnChanges {
   }
 
   handleVin() {
-    const address = new AddressTypeInfo(this.network || 'mainnet', this.vin.prevout?.scriptpubkey_address, this.vin.prevout?.scriptpubkey_type as AddressType, [this.vin]);
+    const address = new AddressTypeInfo(
+      this.network || 'mainnet',
+      this.vin.prevout?.scriptpubkey_address,
+      this.vin.prevout?.scriptpubkey_type as AddressType,
+      [this.vin]
+    );
     if (address?.scripts.size) {
       const script = address?.scripts.values().next().value;
       if (script.template?.label) {
@@ -66,7 +78,13 @@ export class AddressLabelsComponent implements OnChanges {
   }
 
   handleVout() {
-    const address = new AddressTypeInfo(this.network || 'mainnet', this.vout.scriptpubkey_address, this.vout.scriptpubkey_type as AddressType, undefined, this.vout);
+    const address = new AddressTypeInfo(
+      this.network || 'mainnet',
+      this.vout.scriptpubkey_address,
+      this.vout.scriptpubkey_type as AddressType,
+      undefined,
+      this.vout
+    );
     if (address?.scripts.size) {
       const script = address?.scripts.values().next().value;
       if (script.template?.label) {

@@ -18,10 +18,10 @@
   height: calc(100% - 140px);
   @media (max-width: 992px) {
     height: calc(100% - 190px);
-  };
+  }
   @media (max-width: 575px) {
     height: calc(100% - 230px);
-  };
+  }
 }
 
 .chart {
@@ -35,7 +35,7 @@
 .rank {
   width: 8%;
   @media (max-width: 576px) {
-    display: none
+    display: none;
   }
 }
 
@@ -52,7 +52,7 @@
 .share {
   width: 15%;
   @media (max-width: 576px) {
-    display: none
+    display: none;
   }
 }
 

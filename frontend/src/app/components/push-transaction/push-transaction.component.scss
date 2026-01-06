@@ -1,5 +1,6 @@
 .accept-results {
-  td, th {
+  td,
+  th {
     &.allowed {
       width: 10%;
       text-align: center;
@@ -22,7 +23,8 @@
   @media (max-width: 950px) {
     table-layout: auto;
 
-    td, th {
+    td,
+    th {
       &.allowed {
         width: 100px;
       }

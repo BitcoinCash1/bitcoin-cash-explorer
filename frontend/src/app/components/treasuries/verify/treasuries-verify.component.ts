@@ -1,10 +1,29 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, HostListener, Inject, Input, LOCALE_ID, OnDestroy, OnInit, SimpleChanges, ViewChild } from '@angular/core';
-import { combineLatest, map, Observable, startWith, Subscription, tap } from 'rxjs';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  HostListener,
+  Inject,
+  Input,
+  LOCALE_ID,
+  OnDestroy,
+  OnInit,
+  SimpleChanges,
+  ViewChild,
+} from '@angular/core';
+import {
+  combineLatest,
+  map,
+  Observable,
+  startWith,
+  Subscription,
+  tap,
+} from 'rxjs';
 import { StateService } from '@app/services/state.service';
 import { WalletStats } from '../../../shared/wallet-stats';
 import { AddressTxSummary } from '../../../interfaces/electrs.interface';
 import { Treasury } from '../../../interfaces/node-api.interface';
-
 
 interface VerifyShare {
   share: number;
@@ -51,8 +70,8 @@ export class TreasuriesVerifyProgressComponent implements OnInit, OnDestroy {
   constructor(
     public stateService: StateService,
     private cd: ChangeDetectorRef,
-    @Inject(LOCALE_ID) private locale: string,
-  ) { }
+    @Inject(LOCALE_ID) private locale: string
+  ) {}
 
   ngOnInit(): void {
     this.isLoadingWebSocket$ = this.stateService.isLoadingWebSocket$;
@@ -68,12 +87,12 @@ export class TreasuriesVerifyProgressComponent implements OnInit, OnDestroy {
   init(): void {
     if (this.treasuries && this.walletStats) {
       this.subscription?.unsubscribe();
-      this.subscription = this.stateService.chainTip$.pipe(
-        startWith(this.stateService.latestBlockHeight),
-      ).subscribe((chainTip) => {
-        this.currentHeight = chainTip;
-        this.processVerifyShares();
-      });
+      this.subscription = this.stateService.chainTip$
+        .pipe(startWith(this.stateService.latestBlockHeight))
+        .subscribe((chainTip) => {
+          this.currentHeight = chainTip;
+          this.processVerifyShares();
+        });
     }
   }
 
@@ -89,7 +108,8 @@ export class TreasuriesVerifyProgressComponent implements OnInit, OnDestroy {
         for (const address of walletStats.addresses) {
           const stats = walletStats.addressStats[address];
           if (stats) {
-            const addressBalance = (stats.funded_txo_sum - stats.spent_txo_sum) / 100_000_000;
+            const addressBalance =
+              (stats.funded_txo_sum - stats.spent_txo_sum) / 100_000_000;
             if (treasury.verifiedAddresses?.includes(address)) {
               verifiedTotal += addressBalance;
             }
@@ -117,7 +137,7 @@ export class TreasuriesVerifyProgressComponent implements OnInit, OnDestroy {
         type: 'treasuries',
       },
       {
-        share: (publicTotal / total),
+        share: publicTotal / total,
         btc: publicTotal,
         x: '0',
         w: ((publicTotal / total) * 100).toFixed(2) + '%',
@@ -125,13 +145,13 @@ export class TreasuriesVerifyProgressComponent implements OnInit, OnDestroy {
         type: 'public',
       },
       {
-        share: (verifiedTotal / total),
+        share: verifiedTotal / total,
         btc: verifiedTotal,
         x: '0',
         w: ((verifiedTotal / total) * 100).toFixed(2) + '%',
         label: 'Verified Holdings',
         type: 'verified',
-      }
+      },
     ];
     this.loading = false;
   }
@@ -150,9 +170,13 @@ export class TreasuriesVerifyProgressComponent implements OnInit, OnDestroy {
       let x = event.clientX;
       const y = event.clientY - 100;
       if (this.tooltipElement) {
-        const elementBounds = this.tooltipElement.nativeElement.getBoundingClientRect();
+        const elementBounds =
+          this.tooltipElement.nativeElement.getBoundingClientRect();
         x -= elementBounds.width / 2;
-        x = Math.min(Math.max(x, 20), (window.innerWidth - 20 - elementBounds.width));
+        x = Math.min(
+          Math.max(x, 20),
+          window.innerWidth - 20 - elementBounds.width
+        );
       }
       this.tooltipPosition = { x, y };
       this.cd.markForCheck();

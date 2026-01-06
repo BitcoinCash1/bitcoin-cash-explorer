@@ -4,7 +4,7 @@
   margin-bottom: 10px;
   @media (min-width: 376px) {
     flex-direction: row;
-  }  
+  }
   .item {
     max-width: 300px;
     margin: 0;
@@ -35,7 +35,7 @@
       font-size: 12px;
       top: 0px;
     }
-    .fee-text{
+    .fee-text {
       border-bottom: 1px solid #ffffff1c;
       width: fit-content;
       margin: auto;
@@ -64,7 +64,10 @@
   }
 }
 
-.title-link, .title-link:hover, .title-link:focus, .title-link:active {
+.title-link,
+.title-link:hover,
+.title-link:focus,
+.title-link:active {
   display: block;
   margin-bottom: 4px;
   text-decoration: none;

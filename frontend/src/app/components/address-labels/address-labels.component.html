@@ -2,10 +2,11 @@
   <div>
     <div class="badge-positioner">
       <a [routerLink]="['/lightning/channel' | relativeUrl, channel.id]">
-        <span 
+        <span
           *ngIf="label"
           class="badge badge-pill badge-warning {{ class }}"
-        >{{ label }}</span>
+          >{{ label }}</span
+        >
       </a>
     </div>
     &nbsp;
@@ -13,8 +14,7 @@
 </ng-template>
 
 <ng-template #default>
-  <span
-    *ngIf="label"
-    class="badge badge-pill badge-warning {{ class }}"
-  >{{ label }}</span>
+  <span *ngIf="label" class="badge badge-pill badge-warning {{ class }}">{{
+    label
+  }}</span>
 </ng-template>

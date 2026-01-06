@@ -9,31 +9,36 @@ export class WalletStats implements ChainStats {
   tx_count: number;
   addressStats: Record<string, ChainStats> = {};
 
-  constructor (stats: ChainStats[], addresses: string[]) {
+  constructor(stats: ChainStats[], addresses: string[]) {
     this.addressStats = {};
     for (let i = 0; i < stats.length; i++) {
       this.addressStats[addresses[i]] = stats[i];
     }
-    Object.assign(this, stats.reduce((acc, stat) => {
-        acc.funded_txo_count += stat.funded_txo_count;
-        acc.funded_txo_sum += stat.funded_txo_sum;
-        acc.spent_txo_count += stat.spent_txo_count;
-        acc.spent_txo_sum += stat.spent_txo_sum;
-        acc.tx_count += stat.tx_count;
-        return acc;
-      }, {
-        funded_txo_count: 0,
-        funded_txo_sum: 0,
-        spent_txo_count: 0,
-        spent_txo_sum: 0,
-        tx_count: 0,
-      })
+    Object.assign(
+      this,
+      stats.reduce(
+        (acc, stat) => {
+          acc.funded_txo_count += stat.funded_txo_count;
+          acc.funded_txo_sum += stat.funded_txo_sum;
+          acc.spent_txo_count += stat.spent_txo_count;
+          acc.spent_txo_sum += stat.spent_txo_sum;
+          acc.tx_count += stat.tx_count;
+          return acc;
+        },
+        {
+          funded_txo_count: 0,
+          funded_txo_sum: 0,
+          spent_txo_count: 0,
+          spent_txo_sum: 0,
+          tx_count: 0,
+        }
+      )
     );
     this.addresses = addresses;
   }
 
   public addTx(tx: Transaction): void {
-    const seenAddresses = new Set<string>;
+    const seenAddresses = new Set<string>();
     for (const vin of tx.vin) {
       const address = vin.prevout?.scriptpubkey_address;
       if (this.addresses.includes(address)) {
@@ -59,7 +64,7 @@ export class WalletStats implements ChainStats {
   }
 
   public removeTx(tx: Transaction): void {
-    const seenAddresses = new Set<string>;
+    const seenAddresses = new Set<string>();
     for (const vin of tx.vin) {
       const address = vin.prevout?.scriptpubkey_address;
       if (this.addresses.includes(address)) {

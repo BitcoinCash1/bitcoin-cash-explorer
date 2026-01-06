@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+} from '@angular/core';
 import { Observable } from 'rxjs';
 import { ServicesApiServices } from '@app/services/services-api.service';
 
@@ -7,7 +13,7 @@ export type AccelerationStats = {
   totalBidBoost: number;
   successRate: number;
   totalVsize: number;
-}
+};
 
 @Component({
   selector: 'app-acceleration-stats',
@@ -21,9 +27,7 @@ export class AccelerationStatsComponent implements OnInit, OnChanges {
   accelerationStats$: Observable<AccelerationStats>;
   blocksInPeriod: number = 7 * 144;
 
-  constructor(
-    private servicesApiService: ServicesApiServices
-  ) { }
+  constructor(private servicesApiService: ServicesApiServices) {}
 
   ngOnInit(): void {
     this.updateStats();
@@ -34,7 +38,9 @@ export class AccelerationStatsComponent implements OnInit, OnChanges {
   }
 
   updateStats(): void {
-    this.accelerationStats$ = this.servicesApiService.getAccelerationStats$({ timeframe: this.timespan });
+    this.accelerationStats$ = this.servicesApiService.getAccelerationStats$({
+      timeframe: this.timespan,
+    });
     switch (this.timespan) {
       case '24h':
         this.blocksInPeriod = 144;
@@ -44,7 +50,7 @@ export class AccelerationStatsComponent implements OnInit, OnChanges {
         break;
       case '1y':
         this.blocksInPeriod = 30.5 * 144 * 365;
-        break;  
+        break;
       case 'all':
         this.blocksInPeriod = Infinity;
         break;

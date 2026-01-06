@@ -1,4 +1,10 @@
-import { Component, OnInit, ChangeDetectionStrategy, SecurityContext, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  SecurityContext,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { WebsocketService } from '@app/services/websocket.service';
 import { Observable, Subject, map, tap } from 'rxjs';
 import { StateService } from '@app/services/state.service';
@@ -30,7 +36,7 @@ export class ServerHealthComponent implements OnInit {
     private websocketService: WebsocketService,
     private stateService: StateService,
     private cd: ChangeDetectorRef,
-    public sanitizer: DomSanitizer,
+    public sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -41,27 +47,35 @@ export class ServerHealthComponent implements OnInit {
           let statusUrl = '';
           let linkHost = '';
           if (host.socket) {
-            statusUrl = 'https://' + window.location.hostname + subpath + '/status';
+            statusUrl =
+              'https://' + window.location.hostname + subpath + '/status';
             linkHost = window.location.hostname + subpath;
           } else {
             const hostUrl = new URL(host.host);
             statusUrl = 'https://' + hostUrl.hostname + subpath + '/status';
             linkHost = hostUrl.hostname + subpath;
           }
-          host.statusPage = this.sanitizer.bypassSecurityTrustResourceUrl(this.sanitizer.sanitize(SecurityContext.URL, statusUrl));
+          host.statusPage = this.sanitizer.bypassSecurityTrustResourceUrl(
+            this.sanitizer.sanitize(SecurityContext.URL, statusUrl)
+          );
           host.link = linkHost;
           host.flag = this.parseFlag(host.host);
         }
         return hosts;
       }),
-      tap(hosts => {
+      tap((hosts) => {
         let newMaxHeight = 0;
         for (const host of hosts) {
           newMaxHeight = Math.max(newMaxHeight, host.latestHeight);
         }
       })
     );
-    this.websocketService.want(['mempool-blocks', 'stats', 'blocks', 'tomahawk']);
+    this.websocketService.want([
+      'mempool-blocks',
+      'stats',
+      'blocks',
+      'tomahawk',
+    ]);
 
     this.interval = window.setInterval(() => {
       this.now = Date.now();

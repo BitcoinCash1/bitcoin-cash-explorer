@@ -10,7 +10,7 @@
 
 .field-label {
   @media (max-width: 849px) {
-    text-align: left;    
+    text-align: left;
   }
   @media (max-width: 649px) {
     width: auto;
@@ -58,7 +58,8 @@
 
 ::ng-deep .chart {
   overflow: visible;
-  & > div, & > div > svg {
+  & > div,
+  & > div > svg {
     overflow: visible !important;
   }
 }

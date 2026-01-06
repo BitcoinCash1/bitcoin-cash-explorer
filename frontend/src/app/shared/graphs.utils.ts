@@ -10,7 +10,10 @@ export const formatterXAxis = (
   const date = new Date(value);
   switch (windowPreference) {
     case '2h':
-      return date.toLocaleTimeString(locale, { hour: 'numeric', minute: 'numeric' });
+      return date.toLocaleTimeString(locale, {
+        hour: 'numeric',
+        minute: 'numeric',
+      });
     case '24h':
     case '3d':
     case '1w':
@@ -18,27 +21,43 @@ export const formatterXAxis = (
     case '3m':
     case '6m':
     case '1y':
-      return date.toLocaleTimeString(locale, { month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric' });
+      return date.toLocaleTimeString(locale, {
+        month: 'long',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric',
+      });
     case '2y':
     case '3y':
     case '4y':
     case 'all':
-      return date.toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' });
+      return date.toLocaleDateString(locale, {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+      });
   }
 };
 
 export const formatterXAxisLabel = (
   locale: string,
-  windowPreference: string,
+  windowPreference: string
 ) => {
   const date = new Date();
   switch (windowPreference) {
     case '2h':
     case '24h':
-      return date.toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' });
+      return date.toLocaleDateString(locale, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
     case '3d':
     case '1w':
-      return date.toLocaleDateString(locale, { year: 'numeric', month: 'long' });
+      return date.toLocaleDateString(locale, {
+        year: 'numeric',
+        month: 'long',
+      });
     case '1m':
     case '3m':
     case '6m':
@@ -59,23 +78,40 @@ export const formatterXAxisTimeCategory = (
   const date = new Date(value);
   switch (windowPreference) {
     case '2h':
-      return date.toLocaleTimeString(locale, { hour: 'numeric', minute: 'numeric' });
+      return date.toLocaleTimeString(locale, {
+        hour: 'numeric',
+        minute: 'numeric',
+      });
     case '24h':
-      return date.toLocaleTimeString(locale, { weekday: 'short', hour: 'numeric' });
+      return date.toLocaleTimeString(locale, {
+        weekday: 'short',
+        hour: 'numeric',
+      });
     case '3d':
     case '1w':
-      return date.toLocaleTimeString(locale, { month: 'short', day: 'numeric', hour: 'numeric' });
+      return date.toLocaleTimeString(locale, {
+        month: 'short',
+        day: 'numeric',
+        hour: 'numeric',
+      });
     case '1m':
     case '3m':
       return date.toLocaleDateString(locale, { month: 'long', day: 'numeric' });
     case '6m':
     case '1y':
-      return date.toLocaleDateString(locale, { year: 'numeric', month: 'short', day: 'numeric' });
+      return date.toLocaleDateString(locale, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
     case '2y':
     case '3y':
     case '4y':
     case 'all':
-      return date.toLocaleDateString(locale, { year: 'numeric', month: 'long' });
+      return date.toLocaleDateString(locale, {
+        year: 'numeric',
+        month: 'long',
+      });
   }
 };
 
@@ -107,12 +143,18 @@ export function detectWebGL(): boolean {
  */
 export function lerpColor(a: string, b: string, amount: number): string {
   const ah = parseInt(a.replace(/#/g, ''), 16),
-    ar = ah >> 16, ag = ah >> 8 & 0xff, ab = ah & 0xff,
+    ar = ah >> 16,
+    ag = (ah >> 8) & 0xff,
+    ab = ah & 0xff,
     bh = parseInt(b.replace(/#/g, ''), 16),
-    br = bh >> 16, bg = bh >> 8 & 0xff, bb = bh & 0xff,
+    br = bh >> 16,
+    bg = (bh >> 8) & 0xff,
+    bb = bh & 0xff,
     rr = ar + amount * (br - ar),
     rg = ag + amount * (bg - ag),
     rb = ab + amount * (bb - ab);
 
-  return '#' + ((1 << 24) + (rr << 16) + (rg << 8) + rb | 0).toString(16).slice(1);
+  return (
+    '#' + (((1 << 24) + (rr << 16) + (rg << 8) + rb) | 0).toString(16).slice(1)
+  );
 }

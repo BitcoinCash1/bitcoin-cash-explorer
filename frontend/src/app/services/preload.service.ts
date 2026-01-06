@@ -4,21 +4,23 @@ import { Subject, debounceTime, switchMap } from 'rxjs';
 import { ApiService } from '@app/services/api.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PreloadService {
-  block$ = new Subject<string>;
-  blockAudit$ = new Subject<string>;
+  block$ = new Subject<string>();
+  blockAudit$ = new Subject<string>();
   debounceTime = 250;
 
   constructor(
     private electrsApiService: ElectrsApiService,
-    private apiService: ApiService,
+    private apiService: ApiService
   ) {
     this.block$
       .pipe(
         debounceTime(this.debounceTime),
-        switchMap((blockHash) => this.electrsApiService.getBlockTransactions$(blockHash))
+        switchMap((blockHash) =>
+          this.electrsApiService.getBlockTransactions$(blockHash)
+        )
       )
       .subscribe();
 
@@ -29,5 +31,4 @@ export class PreloadService {
       )
       .subscribe();
   }
-
 }

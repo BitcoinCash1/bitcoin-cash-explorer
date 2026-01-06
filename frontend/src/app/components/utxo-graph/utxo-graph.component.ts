@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Input, NgZone, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  NgZone,
+  OnChanges,
+  OnDestroy,
+  SimpleChanges,
+} from '@angular/core';
 import { EChartsOption } from '@app/graphs/echarts';
 import { Subscription } from 'rxjs';
 import { Utxo } from '@interfaces/electrs.interface';
@@ -6,7 +15,11 @@ import { StateService } from '@app/services/state.service';
 import { Router } from '@angular/router';
 import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pipe';
 import { renderSats } from '@app/shared/common.utils';
-import { colorToHex, hexToColor, mix } from '@components/block-overview-graph/utils';
+import {
+  colorToHex,
+  hexToColor,
+  mix,
+} from '@components/block-overview-graph/utils';
 import { TimeService } from '@app/services/time.service';
 import { WebsocketService } from '@app/services/websocket.service';
 import { Acceleration } from '@interfaces/node-api.interface';
@@ -19,17 +32,20 @@ const newColor = hexToColor(newColorHex);
 const oldColor = hexToColor(oldColorHex);
 
 interface Circle {
-  x: number,
-  y: number,
-  r: number,
-  i: number,
+  x: number;
+  y: number;
+  r: number;
+  i: number;
 }
 
 interface UtxoCircle extends Circle {
   utxo: Utxo;
 }
 
-function sortedInsert(positions: { c1: Circle, c2: Circle, d: number, p: number, side?: boolean }[], newPosition: { c1: Circle, c2: Circle, d: number, p: number }): void {
+function sortedInsert(
+  positions: { c1: Circle; c2: Circle; d: number; p: number; side?: boolean }[],
+  newPosition: { c1: Circle; c2: Circle; d: number; p: number }
+): void {
   let left = 0;
   let right = positions.length;
   while (left < right) {
@@ -40,20 +56,22 @@ function sortedInsert(positions: { c1: Circle, c2: Circle, d: number, p: number,
       left = mid + 1;
     }
   }
-  positions.splice(left, 0, newPosition, {...newPosition, side: true });
+  positions.splice(left, 0, newPosition, { ...newPosition, side: true });
 }
 @Component({
   selector: 'app-utxo-graph',
   templateUrl: './utxo-graph.component.html',
   styleUrls: ['./utxo-graph.component.scss'],
-  styles: [`
-    .loadingGraphs {
-      position: absolute;
-      top: 50%;
-      left: calc(50% - 15px);
-      z-index: 99;
-    }
-  `],
+  styles: [
+    `
+      .loadingGraphs {
+        position: absolute;
+        top: 50%;
+        left: calc(50% - 15px);
+        z-index: 99;
+      }
+    `,
+  ],
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -86,7 +104,7 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
     private router: Router,
     private relativeUrlPipe: RelativeUrlPipe,
     private timeService: TimeService,
-    private websocketService: WebsocketService,
+    private websocketService: WebsocketService
   ) {
     // re-render the chart every 10 seconds, to keep the age colors up to date
     this.updateInterval = setInterval(() => {
@@ -96,16 +114,16 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
     }, 10000);
 
     this.websocketService.startTrackAccelerations();
-    this.accelerationsSubscription = this.stateService.liveAccelerations$.subscribe((accelerations) => {
-      this.accelerationMap = accelerations.reduce((acc, acceleration) => {
-        acc[acceleration.txid] = acceleration;
-        return acc;
-      }, {});
+    this.accelerationsSubscription =
+      this.stateService.liveAccelerations$.subscribe((accelerations) => {
+        this.accelerationMap = accelerations.reduce((acc, acceleration) => {
+          acc[acceleration.txid] = acceleration;
+          return acc;
+        }, {});
 
-      this.applyAccelerations();
-      this.prepareChartOptions(this.utxos);
-    });
-
+        this.applyAccelerations();
+        this.prepareChartOptions(this.utxos);
+      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -136,36 +154,53 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
     this.isLoading = false;
 
     // Helper functions
-    const distance = (x1: number, y1: number, x2: number, y2: number): number => Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
-    const intersection = (c1: Circle, c2: Circle, d: number, r: number, side: boolean): { x: number, y: number} => {
+    const distance = (x1: number, y1: number, x2: number, y2: number): number =>
+      Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+    const intersection = (
+      c1: Circle,
+      c2: Circle,
+      d: number,
+      r: number,
+      side: boolean
+    ): { x: number; y: number } => {
       const d1 = c1.r + r;
       const d2 = c2.r + r;
       const a = (d1 * d1 - d2 * d2 + d * d) / (2 * d);
       const h = Math.sqrt(d1 * d1 - a * a);
-      const x3 = c1.x + a * (c2.x - c1.x) / d;
-      const y3 = c1.y + a * (c2.y - c1.y) / d;
+      const x3 = c1.x + (a * (c2.x - c1.x)) / d;
+      const y3 = c1.y + (a * (c2.y - c1.y)) / d;
       return side
-        ? { x: x3 + h * (c2.y - c1.y) / d, y: y3 - h * (c2.x - c1.x) / d }
-        : { x: x3 - h * (c2.y - c1.y) / d, y: y3 + h * (c2.x - c1.x) / d };
+        ? { x: x3 + (h * (c2.y - c1.y)) / d, y: y3 - (h * (c2.x - c1.x)) / d }
+        : { x: x3 - (h * (c2.y - c1.y)) / d, y: y3 + (h * (c2.x - c1.x)) / d };
     };
 
     // ~Linear algorithm to pack circles as tightly as possible without overlaps
     const placedCircles: UtxoCircle[] = [];
-    const positions: { c1: Circle, c2: Circle, d: number, p: number, side?: boolean }[] = [];
+    const positions: {
+      c1: Circle;
+      c2: Circle;
+      d: number;
+      p: number;
+      side?: boolean;
+    }[] = [];
     // Pack in descending order of value, and limit to the top 500 to preserve performance
-    const sortedUtxos = utxos.sort((a, b) => {
-      if (a.value === b.value) {
-        if (a.status.confirmed && !b.status.confirmed) {
-          return -1;
-        } else if (!a.status.confirmed && b.status.confirmed) {
-          return 1;
-        } else {
-          return a.status.block_height - b.status.block_height;
+    const sortedUtxos = utxos
+      .sort((a, b) => {
+        if (a.value === b.value) {
+          if (a.status.confirmed && !b.status.confirmed) {
+            return -1;
+          } else if (!a.status.confirmed && b.status.confirmed) {
+            return 1;
+          } else {
+            return a.status.block_height - b.status.block_height;
+          }
         }
-      }
-      return b.value - a.value;
-    }).slice(0, 500);
-    const maxR = Math.sqrt(sortedUtxos.reduce((max, utxo) => Math.max(max, utxo.value), 0));
+        return b.value - a.value;
+      })
+      .slice(0, 500);
+    const maxR = Math.sqrt(
+      sortedUtxos.reduce((max, utxo) => Math.max(max, utxo.value), 0)
+    );
     sortedUtxos.forEach((utxo, index) => {
       // area proportional to value
       const r = Math.sqrt(utxo.value);
@@ -178,13 +213,23 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
       if (index === 1) {
         const c = placedCircles[0];
         placedCircles.push({ x: c.r + r, y: 0, r, utxo, i: index });
-        sortedInsert(positions, { c1: c, c2: placedCircles[1], d: c.r + r, p: 0 });
+        sortedInsert(positions, {
+          c1: c,
+          c2: placedCircles[1],
+          d: c.r + r,
+          p: 0,
+        });
         return;
       }
       if (index === 2) {
         const c = placedCircles[0];
         placedCircles.push({ x: -c.r - r, y: 0, r, utxo, i: index });
-        sortedInsert(positions, { c1: c, c2: placedCircles[2], d: c.r + r, p: 0 });
+        sortedInsert(positions, {
+          c1: c,
+          c2: placedCircles[2],
+          d: c.r + r,
+          p: 0,
+        });
         return;
       }
 
@@ -196,11 +241,17 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
       while (positions.length > 0) {
         const position = positions.shift();
         // if the circles are too far apart, skip
-        if (position.d > (position.c1.r + position.c2.r + r + r)) {
+        if (position.d > position.c1.r + position.c2.r + r + r) {
           continue;
         }
 
-        const { x, y } = intersection(position.c1, position.c2, position.d, r, position.side);
+        const { x, y } = intersection(
+          position.c1,
+          position.c2,
+          position.d,
+          r,
+          position.side
+        );
         if (isNaN(x) || isNaN(y)) {
           // should never happen
           continue;
@@ -208,7 +259,7 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
 
         // check if the circle would overlap any other circles here
         let valid = true;
-        const nearbyCircles: { c: UtxoCircle, d: number, s: number }[] = [];
+        const nearbyCircles: { c: UtxoCircle; d: number; s: number }[] = [];
         for (let k = 0; k < numCircles; k++) {
           const c = placedCircles[k];
           if (k === position.c1.i || k === position.c2.i) {
@@ -216,7 +267,7 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
             continue;
           }
           const d = distance(x, y, c.x, c.y);
-          if (d < (r + c.r)) {
+          if (d < r + c.r) {
             valid = false;
             break;
           } else {
@@ -228,8 +279,13 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
           // add new positions to the candidate list
           const nearest = nearbyCircles.sort((a, b) => a.s - b.s).slice(0, 5);
           for (const n of nearest) {
-            if (n.d < (n.c.r + r + maxR + maxR)) {
-              sortedInsert(positions, { c1: newCircle, c2: n.c, d: n.d, p: distance((n.c.x + x) / 2, (n.c.y + y), 0, 0) });
+            if (n.d < n.c.r + r + maxR + maxR) {
+              sortedInsert(positions, {
+                c1: newCircle,
+                c2: n.c,
+                d: n.d,
+                p: distance((n.c.x + x) / 2, n.c.y + y, 0, 0),
+              });
             }
           }
           break;
@@ -244,10 +300,10 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
     });
 
     // Precompute the bounding box of the graph
-    const minX = Math.min(...placedCircles.map(d => d.x - d.r));
-    const maxX = Math.max(...placedCircles.map(d => d.x + d.r));
-    const minY = Math.min(...placedCircles.map(d => d.y - d.r));
-    const maxY = Math.max(...placedCircles.map(d => d.y + d.r));
+    const minX = Math.min(...placedCircles.map((d) => d.x - d.r));
+    const maxX = Math.max(...placedCircles.map((d) => d.x + d.r));
+    const minY = Math.min(...placedCircles.map((d) => d.y - d.r));
+    const maxY = Math.max(...placedCircles.map((d) => d.y + d.r));
     const width = maxX - minX;
     const height = maxY - minY;
 
@@ -260,69 +316,71 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
     ]);
 
     this.chartOptions = {
-      series: [{
-        type: 'custom',
-        coordinateSystem: undefined,
-        data: data,
-        encode: {
-          itemName: 0,
-          x: 2,
-          y: 3,
-          r: 4,
-        },
-        renderItem: (params, api) => {
-          const chartWidth = api.getWidth();
-          const chartHeight = api.getHeight();
-          const scale = Math.min(chartWidth / width, chartHeight / height);
-          const scaledWidth = width * scale;
-          const scaledHeight = height * scale;
-          const offsetX = (chartWidth - scaledWidth) / 2 - minX * scale;
-          const offsetY = (chartHeight - scaledHeight) / 2 - minY * scale;
+      series: [
+        {
+          type: 'custom',
+          coordinateSystem: undefined,
+          data: data,
+          encode: {
+            itemName: 0,
+            x: 2,
+            y: 3,
+            r: 4,
+          },
+          renderItem: (params, api) => {
+            const chartWidth = api.getWidth();
+            const chartHeight = api.getHeight();
+            const scale = Math.min(chartWidth / width, chartHeight / height);
+            const scaledWidth = width * scale;
+            const scaledHeight = height * scale;
+            const offsetX = (chartWidth - scaledWidth) / 2 - minX * scale;
+            const offsetY = (chartHeight - scaledHeight) / 2 - minY * scale;
 
-          const datum = data[params.dataIndex];
-          const utxo = datum[1] as Utxo;
-          const x = datum[2] as number;
-          const y = datum[3] as number;
-          const r = datum[4] as number;
-          if (r * scale < 2) {
-            // skip items too small to render cleanly
-            return;
-          }
+            const datum = data[params.dataIndex];
+            const utxo = datum[1] as Utxo;
+            const x = datum[2] as number;
+            const y = datum[3] as number;
+            const r = datum[4] as number;
+            if (r * scale < 2) {
+              // skip items too small to render cleanly
+              return;
+            }
 
-          const valueStr = renderSats(utxo.value, this.stateService.network);
-          const elements: any[] = [
-            {
-              type: 'circle',
-              autoBatch: true,
-              shape: {
-                r: (r * scale) - 1,
+            const valueStr = renderSats(utxo.value, this.stateService.network);
+            const elements: any[] = [
+              {
+                type: 'circle',
+                autoBatch: true,
+                shape: {
+                  r: r * scale - 1,
+                },
+                style: {
+                  fill: '#' + this.getColor(utxo),
+                },
               },
-              style: {
-                fill: '#' + this.getColor(utxo),
-              }
-            },
-          ];
-          const labelFontSize = Math.min(36, r * scale * 0.3);
-          if (labelFontSize > 8) {
-            elements.push({
-              type: 'text',
-              style: {
-                text: valueStr,
-                fontSize: labelFontSize,
-                fill: '#fff',
-                align: 'center',
-                verticalAlign: 'middle',
-              },
-            });
-          }
-          return {
-            type: 'group',
-            x: (x * scale) + offsetX,
-            y: (y * scale) + offsetY,
-            children: elements,
-          };
+            ];
+            const labelFontSize = Math.min(36, r * scale * 0.3);
+            if (labelFontSize > 8) {
+              elements.push({
+                type: 'text',
+                style: {
+                  text: valueStr,
+                  fontSize: labelFontSize,
+                  fill: '#fff',
+                  align: 'center',
+                  verticalAlign: 'middle',
+                },
+              });
+            }
+            return {
+              type: 'group',
+              x: x * scale + offsetX,
+              y: y * scale + offsetY,
+              children: elements,
+            };
+          },
         },
-      }],
+      ],
       tooltip: {
         backgroundColor: 'rgba(17, 19, 31, 1)',
         borderRadius: 4,
@@ -336,19 +394,29 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
           const utxo = params.data[1] as Utxo;
           const valueStr = renderSats(utxo.value, this.stateService.network);
           return `
-          <b style="color: white;">${utxo.txid.slice(0, 6)}...${utxo.txid.slice(-6)}:${utxo.vout}</b>
+          <b style="color: white;">${utxo.txid.slice(0, 6)}...${utxo.txid.slice(
+            -6
+          )}:${utxo.vout}</b>
           <br>
           ${valueStr}
           <br>
-          ${utxo.status.confirmed
-            ? 'Confirmed ' + this.timeService.calculate(utxo.status.block_time, 'since', true, 1, 'minute').text
-            : utxo.status['accelerated']
+          ${
+            utxo.status.confirmed
+              ? 'Confirmed ' +
+                this.timeService.calculate(
+                  utxo.status.block_time,
+                  'since',
+                  true,
+                  1,
+                  'minute'
+                ).text
+              : utxo.status['accelerated']
               ? 'Accelerated'
               : 'Pending'
           }
           `;
         },
-      }
+      },
     };
     this.lastUpdate = Date.now();
 
@@ -383,7 +451,11 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
     if (e.data?.[1]?.txid) {
       this.zone.run(() => {
         const url = this.relativeUrlPipe.transform(`/tx/${e.data[1].txid}`);
-        if (e.event.event.shiftKey || e.event.event.ctrlKey || e.event.event.metaKey) {
+        if (
+          e.event.event.shiftKey ||
+          e.event.event.ctrlKey ||
+          e.event.event.metaKey
+        ) {
           window.open(url + '?mode=details#vout=' + e.data[1].vout);
         } else {
           this.router.navigate([url], { fragment: `vout=${e.data[1].vout}` });
@@ -407,6 +479,6 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
   }
 
   isMobile(): boolean {
-    return (window.innerWidth <= 767.98);
+    return window.innerWidth <= 767.98;
   }
 }

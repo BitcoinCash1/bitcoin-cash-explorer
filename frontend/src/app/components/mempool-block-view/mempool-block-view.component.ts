@@ -9,8 +9,12 @@ function bestFitResolution(min, max, n): number {
   let bestScore = Infinity;
   let best = null;
   for (let i = min; i <= max; i++) {
-    const remainder = (n % i);
-    if (remainder < bestScore || (remainder === bestScore && (Math.abs(i - target) < Math.abs(best - target)))) {
+    const remainder = n % i;
+    if (
+      remainder < bestScore ||
+      (remainder === bestScore &&
+        Math.abs(i - target) < Math.abs(best - target))
+    ) {
       bestScore = remainder;
       best = i;
     }
@@ -36,8 +40,8 @@ export class MempoolBlockViewComponent implements OnInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private websocketService: WebsocketService,
-    public stateService: StateService,
-  ) { }
+    public stateService: StateService
+  ) {}
 
   ngOnInit(): void {
     window['setFlags'] = this.setFilterFlags.bind(this);
@@ -48,37 +52,52 @@ export class MempoolBlockViewComponent implements OnInit, OnDestroy {
       .pipe(
         switchMap((params: ParamMap) => {
           this.index = parseInt(params.get('index'), 10) || 0;
-          return this.stateService.mempoolBlocks$
-            .pipe(
-              map((blocks) => {
-                if (!blocks.length) {
-                  return [{ index: 0, blockSize: 0, blockVSize: 0, feeRange: [0, 0], medianFee: 0, nTx: 0, totalFees: 0 }];
-                }
-                return blocks;
-              }),
-              filter((mempoolBlocks) => mempoolBlocks.length > 0),
-              tap((mempoolBlocks) => {
-                while (!mempoolBlocks[this.index]) {
-                  this.index--;
-                }
-              })
-            );
+          return this.stateService.mempoolBlocks$.pipe(
+            map((blocks) => {
+              if (!blocks.length) {
+                return [
+                  {
+                    index: 0,
+                    blockSize: 0,
+                    blockVSize: 0,
+                    feeRange: [0, 0],
+                    medianFee: 0,
+                    nTx: 0,
+                    totalFees: 0,
+                  },
+                ];
+              }
+              return blocks;
+            }),
+            filter((mempoolBlocks) => mempoolBlocks.length > 0),
+            tap((mempoolBlocks) => {
+              while (!mempoolBlocks[this.index]) {
+                this.index--;
+              }
+            })
+          );
         })
-      ).subscribe();
+      )
+      .subscribe();
 
-    this.queryParamsSubscription = this.route.queryParams.subscribe((params) => {
-      this.autofit = params.autofit === 'true';
-      if (this.autofit) {
-        this.onResize();
+    this.queryParamsSubscription = this.route.queryParams.subscribe(
+      (params) => {
+        this.autofit = params.autofit === 'true';
+        if (this.autofit) {
+          this.onResize();
+        }
       }
-    });
+    );
   }
-
 
   @HostListener('window:resize', ['$event'])
   onResize(): void {
     if (this.autofit) {
-      this.resolution = bestFitResolution(64, 96, Math.min(window.innerWidth, window.innerHeight));
+      this.resolution = bestFitResolution(
+        64,
+        96,
+        Math.min(window.innerWidth, window.innerHeight)
+      );
     }
   }
 

@@ -1,4 +1,12 @@
-import { Component, OnInit, Input, Output, EventEmitter, HostListener, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  Output,
+  EventEmitter,
+  HostListener,
+  OnDestroy,
+} from '@angular/core';
 import { Observable } from 'rxjs';
 import { MenuGroup } from '@interfaces/services.interface';
 import { StorageService } from '@app/services/storage.service';
@@ -13,12 +21,11 @@ import { AuthServiceMempool } from '@app/services/auth.service';
   styleUrls: ['./menu.component.scss'],
   standalone: false,
 })
-
 export class MenuComponent implements OnInit, OnDestroy {
   @Input() navOpen: boolean = false;
   @Output() loggedOut = new EventEmitter<boolean>();
   @Output() menuToggled = new EventEmitter<boolean>();
-  
+
   userMenuGroups$: Observable<MenuGroup[]> | undefined;
   user$: Observable<IUser | null>;
   userAuth: any | undefined;
@@ -34,7 +41,7 @@ export class MenuComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.userAuth = this.storageService.getAuth();
-    
+
     if (this.stateService.env.GIT_COMMIT_HASH_MEMPOOL_SPACE) {
       this.userMenuGroups$ = this.servicesApiServices.getUserMenuGroups$();
       this.user$ = this.servicesApiServices.userSubject$;
@@ -102,7 +109,8 @@ export class MenuComponent implements OnInit, OnDestroy {
     const isServicesPageOnMobile = this.isServicesPage && this.isSmallScreen();
     const cssClasses = event.target.className;
 
-    if (!cssClasses.indexOf) { // Click on chart or non html thingy, close the menu
+    if (!cssClasses.indexOf) {
+      // Click on chart or non html thingy, close the menu
       if (!this.isServicesPage || isServicesPageOnMobile) {
         this.toggleMenu(false);
       }
@@ -111,7 +119,11 @@ export class MenuComponent implements OnInit, OnDestroy {
 
     const isHamburger = cssClasses.indexOf('profile_image') !== -1;
     const isMenu = cssClasses.indexOf('menu-click') !== -1;
-    if (!isHamburger && !isMenu && (!this.isServicesPage || isServicesPageOnMobile)) {
+    if (
+      !isHamburger &&
+      !isMenu &&
+      (!this.isServicesPage || isServicesPageOnMobile)
+    ) {
       this.toggleMenu(false);
     }
   }

@@ -10,14 +10,12 @@ import { StateService } from '@app/services/state.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TestnetAlertComponent {
-
   constructor(
     public storageService: StorageService,
-    public stateService: StateService,
-  ) { }
+    public stateService: StateService
+  ) {}
 
   dismissWarning(): void {
     this.storageService.setValue('hideWarning', 'hidden');
   }
-
 }

@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { Observable } from 'rxjs';
 import { INodesStatistics } from '@interfaces/node-api.interface';
 
@@ -12,9 +17,7 @@ import { INodesStatistics } from '@interfaces/node-api.interface';
 export class NodeStatisticsComponent implements OnInit {
   @Input() statistics$: Observable<INodesStatistics>;
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
-
+  ngOnInit(): void {}
 }

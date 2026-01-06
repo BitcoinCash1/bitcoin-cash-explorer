@@ -1,4 +1,10 @@
-import { Component, OnInit, ChangeDetectionStrategy, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  OnDestroy,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { StateService } from '@app/services/state.service';
 import { WebsocketService } from '@app/services/websocket.service';
 import { map, Observable } from 'rxjs';
@@ -7,7 +13,6 @@ import { MiningService } from '@app/services/mining.service';
 import { SinglePoolStats } from '@interfaces/node-api.interface';
 
 type MerkleCellType = ' ' | '┬' | '├' | '└' | '│' | '─' | 'leaf';
-
 
 interface TaggedStratumJob extends StratumJob {
   tag: string;
@@ -39,7 +44,11 @@ function parseTag(scriptSig: string): string {
     bytes.push(parseInt(hex.substr(i, 2), 16));
   }
   // eslint-disable-next-line no-control-regex
-  const ascii = new TextDecoder('utf8').decode(Uint8Array.from(bytes)).replace(/\uFFFD/g, '').replace(/\\0/g, '').replace(/[\x00-\x1F\x7F-\x9F]/g, '');
+  const ascii = new TextDecoder('utf8')
+    .decode(Uint8Array.from(bytes))
+    .replace(/\uFFFD/g, '')
+    .replace(/\\0/g, '')
+    .replace(/[\x00-\x1F\x7F-\x9F]/g, '');
   if (ascii.includes('/ViaBTC/')) {
     return '/ViaBTC/';
   } else if (ascii.includes('SpiderPool/')) {
@@ -48,7 +57,11 @@ function parseTag(scriptSig: string): string {
   return (ascii.match(/\/.*\//)?.[0] || ascii).trim();
 }
 
-function getMerkleBranchIds(merkleBranches: string[], numBranches: number, poolId: number): string[] {
+function getMerkleBranchIds(
+  merkleBranches: string[],
+  numBranches: number,
+  poolId: number
+): string[] {
   let lastHash = '';
   const ids: string[] = [];
   for (let i = 0; i < numBranches; i++) {
@@ -78,12 +91,12 @@ export class StratumList implements OnInit, OnDestroy {
     private stateService: StateService,
     private websocketService: WebsocketService,
     private miningService: MiningService,
-    private cd: ChangeDetectorRef,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.websocketService.want(['stats', 'blocks', 'mempool-blocks']);
-    this.miningService.getPools().subscribe(pools => {
+    this.miningService.getPools().subscribe((pools) => {
       this.pools = {};
       for (const pool of pools) {
         this.pools[pool.unique_id] = pool;
@@ -92,22 +105,32 @@ export class StratumList implements OnInit, OnDestroy {
       this.cd.markForCheck();
     });
     this.rows$ = this.stateService.stratumJobs$.pipe(
-      map((jobs) => this.processJobs(jobs)),
+      map((jobs) => this.processJobs(jobs))
     );
     this.websocketService.startTrackStratum('all');
   }
 
   processJobs(rawJobs: Record<string, StratumJob>): PoolRow[] {
-    const numBranches = Math.max(...Object.values(rawJobs).map(job => job.merkleBranches.length));
+    const numBranches = Math.max(
+      ...Object.values(rawJobs).map((job) => job.merkleBranches.length)
+    );
     const jobs: Record<string, TaggedStratumJob> = {};
     for (const [id, job] of Object.entries(rawJobs)) {
-      jobs[id] = { ...job, tag: parseTag(job.scriptsig), merkleBranchIds: getMerkleBranchIds(job.merkleBranches, numBranches, job.pool) };
+      jobs[id] = {
+        ...job,
+        tag: parseTag(job.scriptsig),
+        merkleBranchIds: getMerkleBranchIds(
+          job.merkleBranches,
+          numBranches,
+          job.pool
+        ),
+      };
     }
     if (Object.keys(jobs).length === 0) {
       return [];
     }
 
-    let trees: MerkleTree[] = Object.keys(jobs).map(job => ({
+    let trees: MerkleTree[] = Object.keys(jobs).map((job) => ({
       job,
       size: 1,
     }));
@@ -123,7 +146,7 @@ export class StratumList implements OnInit, OnDestroy {
         groups[branchId].push(tree);
       }
 
-      trees = Object.values(groups).map(group => ({
+      trees = Object.values(groups).map((group) => ({
         hash: jobs[group[0].job].merkleBranches[col],
         job: group[0].job,
         children: group,
@@ -142,46 +165,54 @@ export class StratumList implements OnInit, OnDestroy {
     }
 
     // fill in the cells
-    let colTrees = [trees.sort((a, b) => {
-      if (a.size !== b.size) {
-        return b.size - a.size;
-      }
-      return a.job.localeCompare(b.job);
-    })];
+    let colTrees = [
+      trees.sort((a, b) => {
+        if (a.size !== b.size) {
+          return b.size - a.size;
+        }
+        return a.job.localeCompare(b.job);
+      }),
+    ];
     for (let col = 0; col <= numBranches; col++) {
       let row = 0;
       const nextTrees: MerkleTree[][] = [];
       for (let g = 0; g < colTrees.length; g++) {
         for (let t = 0; t < colTrees[g].length; t++) {
           const tree = colTrees[g][t];
-          const isFirstTree = (t === 0);
-          const isLastTree = (t === colTrees[g].length - 1);
+          const isFirstTree = t === 0;
+          const isLastTree = t === colTrees[g].length - 1;
           for (let i = 0; i < tree.size; i++) {
-            const isFirstCell = (i === 0);
-            const isLeaf = (col === numBranches);
+            const isFirstCell = i === 0;
+            const isLeaf = col === numBranches;
             rows[row][col] = {
               hash: tree.hash,
               job: isLeaf ? jobs[tree.job] : undefined,
               type: 'leaf',
             };
             if (col > 0) {
-              rows[row][col - 1].type = getCellType(isFirstCell, isFirstTree, isLastTree);
+              rows[row][col - 1].type = getCellType(
+                isFirstCell,
+                isFirstTree,
+                isLastTree
+              );
             }
             row++;
           }
           if (tree.children) {
-            nextTrees.push(tree.children.sort((a, b) => {
-              if (a.size !== b.size) {
-                return b.size - a.size;
-              }
-              return a.job.localeCompare(b.job);
-            }));
+            nextTrees.push(
+              tree.children.sort((a, b) => {
+                if (a.size !== b.size) {
+                  return b.size - a.size;
+                }
+                return a.job.localeCompare(b.job);
+              })
+            );
           }
         }
       }
       colTrees = nextTrees;
     }
-    return rows.map(row => ({
+    return rows.map((row) => ({
       job: row[row.length - 1].job,
       merkleCells: row.slice(0, -1),
     }));
@@ -195,7 +226,7 @@ export class StratumList implements OnInit, OnDestroy {
       '└': 'branch-end',
       '│': 'vertical',
       '─': 'horizontal',
-      'leaf': 'leaf'
+      leaf: 'leaf',
     }[type];
   }
 

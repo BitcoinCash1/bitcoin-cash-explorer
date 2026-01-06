@@ -18,12 +18,14 @@ export class NodesRanking implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private lightningApiService: LightningApiService,
+    private lightningApiService: LightningApiService
   ) {}
 
   ngOnInit(): void {
-    this.statistics$ = this.lightningApiService.getLatestStatistics$().pipe(share());
-    this.route.data.subscribe(data => {
+    this.statistics$ = this.lightningApiService
+      .getLatestStatistics$()
+      .pipe(share());
+    this.route.data.subscribe((data) => {
       this.type = data.type;
     });
   }

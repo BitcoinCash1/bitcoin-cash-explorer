@@ -1,4 +1,9 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Input,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import { CpfpInfo } from '@interfaces/node-api.interface';
 import { Transaction } from '@interfaces/electrs.interface';
 
@@ -7,7 +12,7 @@ import { Transaction } from '@interfaces/electrs.interface';
   templateUrl: './cpfp-info.component.html',
   styleUrls: ['./cpfp-info.component.scss'],
   standalone: false,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CpfpInfoComponent implements OnInit {
   @Input() cpfpInfo: CpfpInfo;

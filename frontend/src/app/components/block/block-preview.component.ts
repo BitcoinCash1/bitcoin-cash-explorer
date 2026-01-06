@@ -1,12 +1,30 @@
-import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { ElectrsApiService } from '@app/services/electrs-api.service';
-import { switchMap, tap, throttleTime, catchError, shareReplay, startWith, pairwise, filter } from 'rxjs/operators';
+import {
+  switchMap,
+  tap,
+  throttleTime,
+  catchError,
+  shareReplay,
+  startWith,
+  pairwise,
+  filter,
+} from 'rxjs/operators';
 import { of, Subscription, asyncScheduler, forkJoin } from 'rxjs';
 import { StateService } from '@app/services/state.service';
 import { SeoService } from '@app/services/seo.service';
 import { OpenGraphService } from '@app/services/opengraph.service';
-import { BlockExtended, TransactionStripped } from '@interfaces/node-api.interface';
+import {
+  BlockExtended,
+  TransactionStripped,
+} from '@interfaces/node-api.interface';
 import { ApiService } from '@app/services/api.service';
 import { seoDescriptionNetwork } from '@app/shared/common.utils';
 import { BlockOverviewGraphComponent } from '@components/block-overview-graph/block-overview-graph.component';
@@ -47,8 +65,8 @@ export class BlockPreviewComponent implements OnInit, OnDestroy {
     private seoService: SeoService,
     private openGraphService: OpenGraphService,
     private apiService: ApiService,
-    private servicesApiService: ServicesApiServices,
-  ) { }
+    private servicesApiService: ServicesApiServices
+  ) {}
 
   ngOnInit() {
     this.network = this.stateService.network;
@@ -56,8 +74,12 @@ export class BlockPreviewComponent implements OnInit, OnDestroy {
     const block$ = this.route.paramMap.pipe(
       switchMap((params: ParamMap) => {
         this.rawId = params.get('id') || '';
-        this.ogSession = this.openGraphService.waitFor('block-viz-' + this.rawId);
-        this.ogSession = this.openGraphService.waitFor('block-data-' + this.rawId);
+        this.ogSession = this.openGraphService.waitFor(
+          'block-viz-' + this.rawId
+        );
+        this.ogSession = this.openGraphService.waitFor(
+          'block-data-' + this.rawId
+        );
 
         const blockHash: string = params.get('id') || '';
         this.block = undefined;
@@ -76,7 +98,8 @@ export class BlockPreviewComponent implements OnInit, OnDestroy {
         this.isLoadingOverview = true;
 
         if (isBlockHeight) {
-          return this.electrsApiService.getBlockHashFromHeight$(parseInt(blockHash, 10))
+          return this.electrsApiService
+            .getBlockHashFromHeight$(parseInt(blockHash, 10))
             .pipe(
               switchMap((hash) => {
                 if (hash) {
@@ -89,10 +112,16 @@ export class BlockPreviewComponent implements OnInit, OnDestroy {
               catchError((err) => {
                 this.error = err;
                 this.seoService.logSoft404();
-                this.openGraphService.fail({ event: 'block-data-' + this.rawId, sessionId: this.ogSession });
-                this.openGraphService.fail({ event: 'block-viz-' + this.rawId, sessionId: this.ogSession });
+                this.openGraphService.fail({
+                  event: 'block-data-' + this.rawId,
+                  sessionId: this.ogSession,
+                });
+                this.openGraphService.fail({
+                  event: 'block-viz-' + this.rawId,
+                  sessionId: this.ogSession,
+                });
                 return of(null);
-              }),
+              })
             );
         }
         return this.apiService.getBlock$(blockHash);
@@ -102,11 +131,24 @@ export class BlockPreviewComponent implements OnInit, OnDestroy {
         this.block = block;
         this.blockHeight = block.height;
 
-        this.seoService.setTitle($localize`:@@block.component.browser-title:Block ${block.height}:BLOCK_HEIGHT:: ${block.id}:BLOCK_ID:`);
-        if( this.stateService.network === 'liquid' || this.stateService.network === 'liquidtestnet' ) {
-          this.seoService.setDescription($localize`:@@meta.description.liquid.block:See size, weight, fee range, included transactions, and more for Liquid${seoDescriptionNetwork(this.stateService.network)} block ${block.height}:BLOCK_HEIGHT: (${block.id}:BLOCK_ID:).`);
+        this.seoService.setTitle(
+          $localize`:@@block.component.browser-title:Block ${block.height}:BLOCK_HEIGHT:: ${block.id}:BLOCK_ID:`
+        );
+        if (
+          this.stateService.network === 'liquid' ||
+          this.stateService.network === 'liquidtestnet'
+        ) {
+          this.seoService.setDescription(
+            $localize`:@@meta.description.liquid.block:See size, weight, fee range, included transactions, and more for Liquid${seoDescriptionNetwork(
+              this.stateService.network
+            )} block ${block.height}:BLOCK_HEIGHT: (${block.id}:BLOCK_ID:).`
+          );
         } else {
-          this.seoService.setDescription($localize`:@@meta.description.bitcoin.block:See size, weight, fee range, included transactions, audit (expected v actual), and more for Bitcoin${seoDescriptionNetwork(this.stateService.network)} block ${block.height}:BLOCK_HEIGHT: (${block.id}:BLOCK_ID:).`);
+          this.seoService.setDescription(
+            $localize`:@@meta.description.bitcoin.block:See size, weight, fee range, included transactions, audit (expected v actual), and more for Bitcoin${seoDescriptionNetwork(
+              this.stateService.network
+            )} block ${block.height}:BLOCK_HEIGHT: (${block.id}:BLOCK_ID:).`
+          );
         }
         this.isLoadingBlock = false;
         this.setBlockSubsidy();
@@ -117,71 +159,90 @@ export class BlockPreviewComponent implements OnInit, OnDestroy {
         this.isLoadingOverview = true;
         this.overviewError = null;
 
-        this.openGraphService.waitOver({ event: 'block-data-' + this.rawId, sessionId: this.ogSession });
+        this.openGraphService.waitOver({
+          event: 'block-data-' + this.rawId,
+          sessionId: this.ogSession,
+        });
       }),
       throttleTime(50, asyncScheduler, { leading: true, trailing: true }),
       shareReplay({ bufferSize: 1, refCount: true })
     );
 
-    this.overviewSubscription = block$.pipe(
-      startWith(null),
-      pairwise(),
-      switchMap(([prevBlock, block]) => {
+    this.overviewSubscription = block$
+      .pipe(
+        startWith(null),
+        pairwise(),
+        switchMap(([prevBlock, block]) => {
           return forkJoin([
-            this.apiService.getStrippedBlockTransactions$(block.id)
-              .pipe(
-                catchError((err) => {
-                  this.overviewError = err;
-                  this.openGraphService.fail({ event: 'block-viz-' + this.rawId, sessionId: this.ogSession });
-                  return of([]);
-                }),
-                switchMap((transactions) => {
-                  return of(transactions);
-                })
-              ),
-            this.stateService.env.ACCELERATOR === true && block.height > 819500 && this.stateService.network === ''
-              ? this.servicesApiService.getAllAccelerationHistory$({ blockHeight: block.height })
-                .pipe(
-                  catchError(() => {
-                  return of([]);
-                }))
-              : of([])
+            this.apiService.getStrippedBlockTransactions$(block.id).pipe(
+              catchError((err) => {
+                this.overviewError = err;
+                this.openGraphService.fail({
+                  event: 'block-viz-' + this.rawId,
+                  sessionId: this.ogSession,
+                });
+                return of([]);
+              }),
+              switchMap((transactions) => {
+                return of(transactions);
+              })
+            ),
+            this.stateService.env.ACCELERATOR === true &&
+            block.height > 819500 &&
+            this.stateService.network === ''
+              ? this.servicesApiService
+                  .getAllAccelerationHistory$({ blockHeight: block.height })
+                  .pipe(
+                    catchError(() => {
+                      return of([]);
+                    })
+                  )
+              : of([]),
           ]);
+        })
+      )
+      .subscribe(
+        ([transactions, accelerations]) => {
+          this.strippedTransactions = transactions;
+
+          const acceleratedInBlock = {};
+          for (const acc of accelerations) {
+            acceleratedInBlock[acc.txid] = acc;
+          }
+          for (const tx of transactions) {
+            if (acceleratedInBlock[tx.txid]) {
+              tx.acc = true;
+            }
+          }
+
+          this.isLoadingOverview = false;
+          if (this.blockGraph) {
+            this.blockGraph.destroy();
+            this.blockGraph.setup(this.strippedTransactions);
+          }
+        },
+        (error) => {
+          this.error = error;
+          this.isLoadingOverview = false;
+          this.seoService.logSoft404();
+          this.openGraphService.fail({
+            event: 'block-viz-' + this.rawId,
+            sessionId: this.ogSession,
+          });
+          this.openGraphService.fail({
+            event: 'block-data-' + this.rawId,
+            sessionId: this.ogSession,
+          });
+          if (this.blockGraph) {
+            this.blockGraph.destroy();
+          }
         }
-      ),
-    )
-    .subscribe(([transactions, accelerations]) => {
-      this.strippedTransactions = transactions;
+      );
 
-      const acceleratedInBlock = {};
-      for (const acc of accelerations) {
-        acceleratedInBlock[acc.txid] = acc;
-      }
-      for (const tx of transactions) {
-        if (acceleratedInBlock[tx.txid]) {
-          tx.acc = true;
-        }
-      }
-
-      this.isLoadingOverview = false;
-      if (this.blockGraph) {
-        this.blockGraph.destroy();
-        this.blockGraph.setup(this.strippedTransactions);
-      }
-    },
-    (error) => {
-      this.error = error;
-      this.isLoadingOverview = false;
-      this.seoService.logSoft404();
-      this.openGraphService.fail({ event: 'block-viz-' + this.rawId, sessionId: this.ogSession });
-      this.openGraphService.fail({ event: 'block-data-' + this.rawId, sessionId: this.ogSession });
-      if (this.blockGraph) {
-        this.blockGraph.destroy();
-      }
-    });
-
-    this.networkChangedSubscription = this.stateService.networkChanged$
-      .subscribe((network) => this.network = network);
+    this.networkChangedSubscription =
+      this.stateService.networkChanged$.subscribe(
+        (network) => (this.network = network)
+      );
   }
 
   ngOnDestroy() {
@@ -200,6 +261,9 @@ export class BlockPreviewComponent implements OnInit, OnDestroy {
   }
 
   onGraphReady(): void {
-    this.openGraphService.waitOver({ event: 'block-viz-' + this.rawId, sessionId: this.ogSession });
+    this.openGraphService.waitOver({
+      event: 'block-viz-' + this.rawId,
+      sessionId: this.ogSession,
+    });
   }
 }

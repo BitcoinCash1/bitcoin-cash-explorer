@@ -8,7 +8,8 @@
   }
 }
 
-.starting-balance, .closing-balance {
+.starting-balance,
+.closing-balance {
   width: 100%;
 
   h5 {
@@ -24,7 +25,7 @@
 
   @media (max-width: 768px) {
     display: flex;
-	}
+  }
 }
 
 .balances {
@@ -97,7 +98,7 @@
         var(--primary) 8px,
         var(--success) 8px,
         var(--success) 16px
-      )
+      );
     }
-	}
+  }
 }

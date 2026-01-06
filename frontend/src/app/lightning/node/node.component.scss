@@ -5,7 +5,7 @@
 
 .tx-link {
   display: flex;
-	flex-wrap: wrap;
+  flex-wrap: wrap;
 }
 
 .node-id {
@@ -19,7 +19,6 @@
   padding-bottom: 5px;
   display: inline-block;
 
-  
   position: absolute;
   bottom: 50px;
   left: -175px;
@@ -75,11 +74,10 @@ app-fiat {
 @media (max-width: 767.98px) {
   h1 > .skeleton-loader {
     height: 28px !important;
-  };
+  }
 }
 
 .details {
-
   .detail-section {
     margin-bottom: 1.5rem;
     &:last-child {

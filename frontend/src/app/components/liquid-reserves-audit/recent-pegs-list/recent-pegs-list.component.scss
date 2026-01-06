@@ -4,7 +4,9 @@
   margin-top: 13px;
 }
 
-tr, td, th {
+tr,
+td,
+th {
   border: 0px;
   padding-top: 0.65rem;
   padding-bottom: 0.6rem;
@@ -39,7 +41,6 @@ tr, td, th {
 }
 .transaction.widget {
   width: 100%;
-  
 }
 
 .address {
@@ -115,9 +116,9 @@ tr, td, th {
 
 @keyframes color-oscillation {
   0% {
-      color: #777983;
+    color: #777983;
   }
   100% {
-      color: var(--red);
+    color: var(--red);
   }
 }

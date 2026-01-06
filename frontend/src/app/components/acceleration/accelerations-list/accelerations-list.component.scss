@@ -32,7 +32,9 @@
   }
 }
 
-tr, td, th {
+tr,
+td,
+th {
   border: 0px;
   padding-top: 0.65rem !important;
   padding-bottom: 0.8rem !important;
@@ -79,7 +81,7 @@ tr, td, th {
 
 .pool {
   width: 15%;
-  
+
   @media (max-width: 700px) {
     display: none;
   }
@@ -153,13 +155,13 @@ tr, td, th {
   }
 
   .status {
-    width: 25%
+    width: 25%;
   }
 }
 
 /* Tooltip text */
 .tooltip-custom {
-  position: relative; 
+  position: relative;
 }
 
 .tooltip-custom .tooltiptext {
@@ -181,10 +183,10 @@ tr, td, th {
 
 .scriptmessage {
   overflow: hidden;
-	display: inline-block;
-	text-overflow: ellipsis;
-	vertical-align: middle;
-	max-width: 50vw;
+  display: inline-block;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  max-width: 50vw;
   text-align: left;
 }
 

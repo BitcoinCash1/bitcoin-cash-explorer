@@ -13,51 +13,51 @@ if (browserWindowEnv.BASE_MODULE && browserWindowEnv.BASE_MODULE === 'liquid') {
     {
       path: '',
       redirectTo: 'api/rest',
-      pathMatch: 'full'
+      pathMatch: 'full',
     },
     {
       path: 'api/:type',
-      component: DocsComponent
+      component: DocsComponent,
     },
     {
       path: 'api',
       redirectTo: 'api/rest',
-      pathMatch: 'full'
+      pathMatch: 'full',
     },
     {
       path: '**',
       redirectTo: 'api/rest',
-      pathMatch: 'full'
-    }
+      pathMatch: 'full',
+    },
   ];
 } else {
   routes = [
     {
       path: '',
       pathMatch: 'full',
-      redirectTo: 'faq'
+      redirectTo: 'faq',
     },
     {
       path: 'api/:type',
-      component: DocsComponent
+      component: DocsComponent,
     },
     {
       path: 'faq',
       data: { networks: ['bitcoin'] },
-      component: DocsComponent
+      component: DocsComponent,
     },
     {
       path: 'api',
-      redirectTo: 'api/rest'
+      redirectTo: 'api/rest',
     },
     {
       path: '**',
-      redirectTo: 'api/faq'
-    }
+      redirectTo: 'api/faq',
+    },
   ];
 }
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
 })
-export class DocsRoutingModule { }
+export class DocsRoutingModule {}

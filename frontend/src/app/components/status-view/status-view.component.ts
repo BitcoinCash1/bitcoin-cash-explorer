@@ -7,9 +7,7 @@ import { WebsocketService } from '@app/services/websocket.service';
   standalone: false,
 })
 export class StatusViewComponent implements OnInit {
-  constructor(
-    private websocketService: WebsocketService,
-  ) { }
+  constructor(private websocketService: WebsocketService) {}
 
   ngOnInit() {
     this.websocketService.want(['mempool-blocks', 'stats', 'blocks']);

@@ -1,7 +1,20 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { switchMap, catchError, map, tap, shareReplay, startWith, scan } from 'rxjs/operators';
-import { Address, AddressTxSummary, ChainStats, Transaction } from '@interfaces/electrs.interface';
+import {
+  switchMap,
+  catchError,
+  map,
+  tap,
+  shareReplay,
+  startWith,
+  scan,
+} from 'rxjs/operators';
+import {
+  Address,
+  AddressTxSummary,
+  ChainStats,
+  Transaction,
+} from '@interfaces/electrs.interface';
 import { WebsocketService } from '@app/services/websocket.service';
 import { StateService } from '@app/services/state.service';
 import { ApiService } from '@app/services/api.service';
@@ -56,36 +69,51 @@ export class WalletComponent implements OnInit, OnDestroy {
     private electrsApiService: ElectrsApiService,
     private audioService: AudioService,
     private seoService: SeoService,
-    private relativeUrlPipe: RelativeUrlPipe,
-  ) { }
+    private relativeUrlPipe: RelativeUrlPipe
+  ) {}
 
   ngOnInit(): void {
-    this.stateService.networkChanged$.subscribe((network) => this.network = network);
+    this.stateService.networkChanged$.subscribe(
+      (network) => (this.network = network)
+    );
     this.websocketService.want(['blocks']);
     this.wallet$ = this.route.paramMap.pipe(
       map((params: ParamMap) => params.get('wallet') as string),
       tap((walletName: string) => {
         this.walletName = walletName;
         this.websocketService.startTrackingWallet(walletName);
-        this.seoService.setTitle($localize`:@@wallet.component.browser-title:Wallet: ${walletName}:INTERPOLATION:`);
-        this.seoService.setDescription($localize`:@@meta.description.bitcoin.wallet:See mempool transactions, confirmed transactions, balance, and more for ${this.stateService.network==='liquid'||this.stateService.network==='liquidtestnet'?'Liquid':'Bitcoin'}${seoDescriptionNetwork(this.stateService.network)} wallet ${walletName}:INTERPOLATION:.`);
+        this.seoService.setTitle(
+          $localize`:@@wallet.component.browser-title:Wallet: ${walletName}:INTERPOLATION:`
+        );
+        this.seoService.setDescription(
+          $localize`:@@meta.description.bitcoin.wallet:See mempool transactions, confirmed transactions, balance, and more for ${
+            this.stateService.network === 'liquid' ||
+            this.stateService.network === 'liquidtestnet'
+              ? 'Liquid'
+              : 'Bitcoin'
+          }${seoDescriptionNetwork(
+            this.stateService.network
+          )} wallet ${walletName}:INTERPOLATION:.`
+        );
       }),
-      switchMap((walletName: string) => this.apiService.getWallet$(walletName).pipe(
-        catchError((err) => {
-          this.error = err;
-          console.log(err);
-          if (err.status === 404) {
-            this.seoService.logSoft404();
-            this.router.navigate([this.relativeUrlPipe.transform('')]);
-          }
-          return of({});
-        })
-      )),
-      shareReplay(1),
+      switchMap((walletName: string) =>
+        this.apiService.getWallet$(walletName).pipe(
+          catchError((err) => {
+            this.error = err;
+            console.log(err);
+            if (err.status === 404) {
+              this.seoService.logSoft404();
+              this.router.navigate([this.relativeUrlPipe.transform('')]);
+            }
+            return of({});
+          })
+        )
+      ),
+      shareReplay(1)
     );
 
     this.walletAddresses$ = this.wallet$.pipe(
-      map(wallet => {
+      map((wallet) => {
         const walletInfo: Record<string, Address> = {};
         for (const address of Object.keys(wallet)) {
           walletInfo[address] = {
@@ -94,115 +122,141 @@ export class WalletComponent implements OnInit, OnDestroy {
             mempool_stats: {
               funded_txo_count: 0,
               funded_txo_sum: 0,
-              spent_txo_count: 0, spent_txo_sum: 0, tx_count: 0
+              spent_txo_count: 0,
+              spent_txo_sum: 0,
+              tx_count: 0,
             },
           };
         }
         return walletInfo;
       }),
-      switchMap(initial => this.stateService.walletTransactions$.pipe(
-        startWith(null),
-        tap((transactions) => {
-          if (!transactions?.length) {
-            return;
-          }
-          for (const transaction of transactions) {
-            const tx = this.transactions.find((t) => t.txid === transaction.txid);
-            if (tx) {
-              tx.status = transaction.status;
-            } else {
-              this.transactions.unshift(transaction);
+      switchMap((initial) =>
+        this.stateService.walletTransactions$.pipe(
+          startWith(null),
+          tap((transactions) => {
+            if (!transactions?.length) {
+              return;
             }
-          }
-          this.transactions = this.transactions.slice();
-          this.audioService.playSound('magic');
-        }),
-        scan((wallet, walletTransactions) => {
-          for (const tx of (walletTransactions || [])) {
-            const funded: Record<string, number> = {};
-            const spent: Record<string, number> = {};
-            const fundedCount: Record<string, number> = {};
-            const spentCount: Record<string, number> = {};
-            for (const vin of tx.vin) {
-              const address = vin.prevout?.scriptpubkey_address;
-              if (address && wallet[address]) {
-                spent[address] = (spent[address] ?? 0) + (vin.prevout?.value ?? 0);
-                spentCount[address] = (spentCount[address] ?? 0) + 1;
+            for (const transaction of transactions) {
+              const tx = this.transactions.find(
+                (t) => t.txid === transaction.txid
+              );
+              if (tx) {
+                tx.status = transaction.status;
+              } else {
+                this.transactions.unshift(transaction);
               }
             }
-            for (const vout of tx.vout) {
-              const address = vout.scriptpubkey_address;
-              if (address && wallet[address]) {
-                funded[address] = (funded[address] ?? 0) + (vout.value ?? 0);
-                fundedCount[address] = (fundedCount[address] ?? 0) + 1;
+            this.transactions = this.transactions.slice();
+            this.audioService.playSound('magic');
+          }),
+          scan((wallet, walletTransactions) => {
+            for (const tx of walletTransactions || []) {
+              const funded: Record<string, number> = {};
+              const spent: Record<string, number> = {};
+              const fundedCount: Record<string, number> = {};
+              const spentCount: Record<string, number> = {};
+              for (const vin of tx.vin) {
+                const address = vin.prevout?.scriptpubkey_address;
+                if (address && wallet[address]) {
+                  spent[address] =
+                    (spent[address] ?? 0) + (vin.prevout?.value ?? 0);
+                  spentCount[address] = (spentCount[address] ?? 0) + 1;
+                }
+              }
+              for (const vout of tx.vout) {
+                const address = vout.scriptpubkey_address;
+                if (address && wallet[address]) {
+                  funded[address] = (funded[address] ?? 0) + (vout.value ?? 0);
+                  fundedCount[address] = (fundedCount[address] ?? 0) + 1;
+                }
+              }
+              for (const address of Object.keys({ ...funded, ...spent })) {
+                // update address stats
+                wallet[address].chain_stats.tx_count++;
+                wallet[address].chain_stats.funded_txo_count +=
+                  fundedCount[address] || 0;
+                wallet[address].chain_stats.spent_txo_count +=
+                  spentCount[address] || 0;
+                wallet[address].chain_stats.funded_txo_sum +=
+                  funded[address] || 0;
+                wallet[address].chain_stats.spent_txo_sum +=
+                  spent[address] || 0;
               }
             }
-            for (const address of Object.keys({ ...funded, ...spent })) {
-              // update address stats
-              wallet[address].chain_stats.tx_count++;
-              wallet[address].chain_stats.funded_txo_count += fundedCount[address] || 0;
-              wallet[address].chain_stats.spent_txo_count += spentCount[address] || 0;
-              wallet[address].chain_stats.funded_txo_sum += funded[address] || 0;
-              wallet[address].chain_stats.spent_txo_sum += spent[address] || 0;
-            }
-          }
-          return wallet;
-        }, initial)
-      )),
+            return wallet;
+          }, initial)
+        )
+      ),
       tap(() => {
         this.isLoadingWallet = false;
       })
     );
 
-    this.walletSubscription = this.walletAddresses$.subscribe(wallet => {
+    this.walletSubscription = this.walletAddresses$.subscribe((wallet) => {
       this.addressStrings = Object.keys(wallet);
       this.addresses = Object.values(wallet);
     });
 
     this.walletSummary$ = this.wallet$.pipe(
-      switchMap(wallet => this.stateService.walletTransactions$.pipe(
-        startWith([]),
-        scan((summaries, newTransactions) => {
-          const newSummaries: AddressTxSummary[] = [];
-          for (const tx of newTransactions) {
-            const funded: Record<string, number> = {};
-            const spent: Record<string, number> = {};
-            const fundedCount: Record<string, number> = {};
-            const spentCount: Record<string, number> = {};
-            for (const vin of tx.vin) {
-              const address = vin.prevout?.scriptpubkey_address;
-              if (address && wallet[address]) {
-                spent[address] = (spent[address] ?? 0) + (vin.prevout?.value ?? 0);
-                spentCount[address] = (spentCount[address] ?? 0) + 1;
+      switchMap((wallet) =>
+        this.stateService.walletTransactions$.pipe(
+          startWith([]),
+          scan(
+            (summaries, newTransactions) => {
+              const newSummaries: AddressTxSummary[] = [];
+              for (const tx of newTransactions) {
+                const funded: Record<string, number> = {};
+                const spent: Record<string, number> = {};
+                const fundedCount: Record<string, number> = {};
+                const spentCount: Record<string, number> = {};
+                for (const vin of tx.vin) {
+                  const address = vin.prevout?.scriptpubkey_address;
+                  if (address && wallet[address]) {
+                    spent[address] =
+                      (spent[address] ?? 0) + (vin.prevout?.value ?? 0);
+                    spentCount[address] = (spentCount[address] ?? 0) + 1;
+                  }
+                }
+                for (const vout of tx.vout) {
+                  const address = vout.scriptpubkey_address;
+                  if (address && wallet[address]) {
+                    funded[address] =
+                      (funded[address] ?? 0) + (vout.value ?? 0);
+                    fundedCount[address] = (fundedCount[address] ?? 0) + 1;
+                  }
+                }
+                for (const address of Object.keys({ ...funded, ...spent })) {
+                  // add tx to summary
+                  const txSummary: AddressTxSummary = {
+                    txid: tx.txid,
+                    value: (funded[address] ?? 0) - (spent[address] ?? 0),
+                    height: tx.status.block_height,
+                    time: tx.status.block_time,
+                  };
+                  wallet[address].transactions?.push(txSummary);
+                  newSummaries.push(txSummary);
+                }
               }
-            }
-            for (const vout of tx.vout) {
-              const address = vout.scriptpubkey_address;
-              if (address && wallet[address]) {
-                funded[address] = (funded[address] ?? 0) + (vout.value ?? 0);
-                fundedCount[address] = (fundedCount[address] ?? 0) + 1;
-              }
-            }
-            for (const address of Object.keys({ ...funded, ...spent })) {
-              // add tx to summary
-              const txSummary: AddressTxSummary = {
-                txid: tx.txid,
-                value: (funded[address] ?? 0) - (spent[address] ?? 0),
-                height: tx.status.block_height,
-                time: tx.status.block_time,
-              };
-              wallet[address].transactions?.push(txSummary);
-              newSummaries.push(txSummary);
-            }
-          }
-          return this.deduplicateWalletTransactions([...summaries, ...newSummaries]);
-        }, this.deduplicateWalletTransactions(Object.values(wallet).flatMap(address => address.transactions)))
-      ))
+              return this.deduplicateWalletTransactions([
+                ...summaries,
+                ...newSummaries,
+              ]);
+            },
+            this.deduplicateWalletTransactions(
+              Object.values(wallet).flatMap((address) => address.transactions)
+            )
+          )
+        )
+      )
     );
 
     this.walletStats$ = this.wallet$.pipe(
-      switchMap(wallet => {
-        const walletStats = new WalletStats(Object.values(wallet).map(w => w.stats), Object.keys(wallet));
+      switchMap((wallet) => {
+        const walletStats = new WalletStats(
+          Object.values(wallet).map((w) => w.stats),
+          Object.keys(wallet)
+        );
         return this.stateService.walletTransactions$.pipe(
           startWith([]),
           scan((stats, newTransactions) => {
@@ -210,34 +264,40 @@ export class WalletComponent implements OnInit, OnDestroy {
               stats.addTx(tx);
             }
             return stats;
-          }, walletStats),
+          }, walletStats)
         );
       })
     );
 
-    this.transactionSubscription = this.wallet$.pipe(
-      switchMap(wallet => {
-        const addresses = Object.keys(wallet).map(addr => this.normalizeAddress(addr));
-        return this.electrsApiService.getAddressesTransactions$(addresses);
-      }),
-      map(transactions => {
-        // only confirmed transactions supported for now
-        return transactions.filter(tx => tx.status.confirmed).sort((a, b) => b.status.block_height - a.status.block_height);
-      }),
-      catchError((error) => {
-        console.log(error);
-        this.error = error;
-        this.seoService.logSoft404();
-        this.isLoadingWallet = false;
-        return of([]);
-      })
-    ).subscribe((transactions: Transaction[] | null) => {
-      if (!transactions) {
-        return;
-      }
-      this.transactions = transactions;
-      this.isLoadingTransactions = false;
-    });
+    this.transactionSubscription = this.wallet$
+      .pipe(
+        switchMap((wallet) => {
+          const addresses = Object.keys(wallet).map((addr) =>
+            this.normalizeAddress(addr)
+          );
+          return this.electrsApiService.getAddressesTransactions$(addresses);
+        }),
+        map((transactions) => {
+          // only confirmed transactions supported for now
+          return transactions
+            .filter((tx) => tx.status.confirmed)
+            .sort((a, b) => b.status.block_height - a.status.block_height);
+        }),
+        catchError((error) => {
+          console.log(error);
+          this.error = error;
+          this.seoService.logSoft404();
+          this.isLoadingWallet = false;
+          return of([]);
+        })
+      )
+      .subscribe((transactions: Transaction[] | null) => {
+        if (!transactions) {
+          return;
+        }
+        this.transactions = transactions;
+        this.isLoadingTransactions = false;
+      });
   }
 
   loadMore(): void {
@@ -246,26 +306,38 @@ export class WalletComponent implements OnInit, OnDestroy {
     }
     this.isLoadingTransactions = true;
     this.retryLoadMore = false;
-    this.electrsApiService.getAddressesTransactions$(this.addressStrings, this.transactions[this.transactions.length - 1].txid)
-      .subscribe((transactions: Transaction[]) => {
-        if (transactions && transactions.length) {
-          this.transactions = this.transactions.concat(transactions.sort((a, b) => b.status.block_height - a.status.block_height));
-        } else {
-          this.fullyLoaded = true;
+    this.electrsApiService
+      .getAddressesTransactions$(
+        this.addressStrings,
+        this.transactions[this.transactions.length - 1].txid
+      )
+      .subscribe(
+        (transactions: Transaction[]) => {
+          if (transactions && transactions.length) {
+            this.transactions = this.transactions.concat(
+              transactions.sort(
+                (a, b) => b.status.block_height - a.status.block_height
+              )
+            );
+          } else {
+            this.fullyLoaded = true;
+          }
+          this.isLoadingTransactions = false;
+        },
+        (error) => {
+          this.isLoadingTransactions = false;
+          this.retryLoadMore = true;
+          // In the unlikely event of the txid wasn't found in the mempool anymore and we must reload the page.
+          if (error.status === 422) {
+            window.location.reload();
+          }
         }
-        this.isLoadingTransactions = false;
-      },
-      (error) => {
-        this.isLoadingTransactions = false;
-        this.retryLoadMore = true;
-        // In the unlikely event of the txid wasn't found in the mempool anymore and we must reload the page.
-        if (error.status === 422) {
-          window.location.reload();
-        }
-      });
+      );
   }
 
-  deduplicateWalletTransactions(walletTransactions: AddressTxSummary[]): AddressTxSummary[] {
+  deduplicateWalletTransactions(
+    walletTransactions: AddressTxSummary[]
+  ): AddressTxSummary[] {
     const transactions = new Map<string, AddressTxSummary>();
     for (const tx of walletTransactions) {
       if (transactions.has(tx.txid)) {
@@ -283,7 +355,11 @@ export class WalletComponent implements OnInit, OnDestroy {
   }
 
   normalizeAddress(address: string): string {
-    if (/^[A-Z]{2,5}1[AC-HJ-NP-Z02-9]{8,100}|04[a-fA-F0-9]{128}|(02|03)[a-fA-F0-9]{64}$/.test(address)) {
+    if (
+      /^[A-Z]{2,5}1[AC-HJ-NP-Z02-9]{8,100}|04[a-fA-F0-9]{128}|(02|03)[a-fA-F0-9]{64}$/.test(
+        address
+      )
+    ) {
       return address.toLowerCase();
     } else {
       return address;

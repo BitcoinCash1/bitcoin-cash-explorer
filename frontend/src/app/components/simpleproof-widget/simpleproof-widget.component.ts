@@ -1,4 +1,10 @@
-import { Component, Input, SecurityContext, SimpleChanges, OnChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  SecurityContext,
+  SimpleChanges,
+  OnChanges,
+} from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { ServicesApiServices } from '@app/services/services-api.service';
 import { catchError, of } from 'rxjs';
@@ -22,8 +28,14 @@ export interface SimpleProof {
   standalone: false,
 })
 export class SimpleProofWidgetComponent implements OnChanges {
-  @Input() key: string = window['__env']?.customize?.dashboard.widgets?.find(w => w.component ==='simpleproof')?.props?.key ?? '';
-  @Input() label: string = window['__env']?.customize?.dashboard.widgets?.find(w => w.component ==='simpleproof')?.props?.label ?? 'Verified Documents';
+  @Input() key: string =
+    window['__env']?.customize?.dashboard.widgets?.find(
+      (w) => w.component === 'simpleproof'
+    )?.props?.key ?? '';
+  @Input() label: string =
+    window['__env']?.customize?.dashboard.widgets?.find(
+      (w) => w.component === 'simpleproof'
+    )?.props?.label ?? 'Verified Documents';
   @Input() widget: boolean = false;
   @Input() width = 300;
   @Input() height = 400;
@@ -39,7 +51,7 @@ export class SimpleProofWidgetComponent implements OnChanges {
 
   constructor(
     private servicesApiService: ServicesApiServices,
-    public sanitizer: DomSanitizer,
+    public sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -58,30 +70,48 @@ export class SimpleProofWidgetComponent implements OnChanges {
   loadVerifications(): void {
     if (this.key) {
       this.isLoading = true;
-      this.servicesApiService.getSimpleProofs$(this.key).pipe(
-        catchError(() => {
-          this.isLoading = false;
-          this.error = true;
-          return of({});
-        }),
-      ).subscribe((data: Record<string, SimpleProof>) => {
-        if (Object.keys(data).length) {
-          this.verified = Object.keys(data).map(key => ({
-            ...data[key],
-            file_name: data[key].file_name.replace('source-', '').replace('_', ' '),
-            key,
-            sanitized_url: this.sanitizer.bypassSecurityTrustResourceUrl(this.sanitizer.sanitize(SecurityContext.URL, data[key]['simpleproof-url']) ?? ''),
-          })).sort((a, b) => b.key.localeCompare(a.key));
-          this.verifiedPage = this.verified.slice((this.page - 1) * this.itemsPerPage, this.page * this.itemsPerPage);
-          this.isLoading = false;
-          this.error = false;
-        }
-      });
+      this.servicesApiService
+        .getSimpleProofs$(this.key)
+        .pipe(
+          catchError(() => {
+            this.isLoading = false;
+            this.error = true;
+            return of({});
+          })
+        )
+        .subscribe((data: Record<string, SimpleProof>) => {
+          if (Object.keys(data).length) {
+            this.verified = Object.keys(data)
+              .map((key) => ({
+                ...data[key],
+                file_name: data[key].file_name
+                  .replace('source-', '')
+                  .replace('_', ' '),
+                key,
+                sanitized_url: this.sanitizer.bypassSecurityTrustResourceUrl(
+                  this.sanitizer.sanitize(
+                    SecurityContext.URL,
+                    data[key]['simpleproof-url']
+                  ) ?? ''
+                ),
+              }))
+              .sort((a, b) => b.key.localeCompare(a.key));
+            this.verifiedPage = this.verified.slice(
+              (this.page - 1) * this.itemsPerPage,
+              this.page * this.itemsPerPage
+            );
+            this.isLoading = false;
+            this.error = false;
+          }
+        });
     }
   }
 
   pageChange(page: number): void {
     this.page = page;
-    this.verifiedPage = this.verified.slice((this.page - 1) * this.itemsPerPage, this.page * this.itemsPerPage);
+    this.verifiedPage = this.verified.slice(
+      (this.page - 1) * this.itemsPerPage,
+      this.page * this.itemsPerPage
+    );
   }
 }

@@ -13,11 +13,13 @@ export class FiatShortenerPipe implements PipeTransform {
 
   constructor(
     @Inject(LOCALE_ID) public locale: string,
-    private stateService: StateService,
+    private stateService: StateService
   ) {
-    this.fiatSubscription = this.stateService.fiatCurrency$.subscribe((fiat) => {
-      this.currency = fiat;
-    });
+    this.fiatSubscription = this.stateService.fiatCurrency$.subscribe(
+      (fiat) => {
+        this.currency = fiat;
+      }
+    );
   }
 
   transform(num: number, ...args: any[]): unknown {
@@ -25,7 +27,11 @@ export class FiatShortenerPipe implements PipeTransform {
     const currency = args[1] || this.currency || 'USD';
 
     if (num < 1000) {
-      return new Intl.NumberFormat(this.locale, { style: 'currency', currency, maximumFractionDigits: 1 }).format(num);
+      return new Intl.NumberFormat(this.locale, {
+        style: 'currency',
+        currency,
+        maximumFractionDigits: 1,
+      }).format(num);
     }
 
     const lookup = [
@@ -35,14 +41,23 @@ export class FiatShortenerPipe implements PipeTransform {
       { value: 1e9, symbol: 'B' },
       { value: 1e12, symbol: 'T' },
       { value: 1e15, symbol: 'P' },
-      { value: 1e18, symbol: 'E' }
+      { value: 1e18, symbol: 'E' },
     ];
     const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
-    const item = lookup.slice().reverse().find((item) => num >= item.value);
+    const item = lookup
+      .slice()
+      .reverse()
+      .find((item) => num >= item.value);
 
-    let result = item ? (num / item.value).toFixed(digits).replace(rx, '$1') : '0';
-    result = new Intl.NumberFormat(this.locale, { style: 'currency', currency, maximumFractionDigits: 0 }).format(item ? num / item.value : 0);
-    
+    let result = item
+      ? (num / item.value).toFixed(digits).replace(rx, '$1')
+      : '0';
+    result = new Intl.NumberFormat(this.locale, {
+      style: 'currency',
+      currency,
+      maximumFractionDigits: 0,
+    }).format(item ? num / item.value : 0);
+
     return result + item.symbol;
   }
 }

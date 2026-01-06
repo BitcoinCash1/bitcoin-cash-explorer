@@ -1,5 +1,20 @@
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
-import { map, Observable, of, Subject, Subscription, switchMap, tap, zip } from 'rxjs';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
+import {
+  map,
+  Observable,
+  of,
+  Subject,
+  Subscription,
+  switchMap,
+  tap,
+  zip,
+} from 'rxjs';
 import { IChannel } from '@interfaces/node-api.interface';
 import { LightningApiService } from '@app/lightning/lightning-api.service';
 import { Transaction } from '@interfaces/electrs.interface';
@@ -23,27 +38,35 @@ export class JusticeList implements OnInit, OnDestroy {
   constructor(
     private apiService: LightningApiService,
     private electrsApiService: ElectrsApiService,
-    private cd: ChangeDetectorRef,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
     this.justiceChannels$ = this.apiService.getPenaltyClosedChannels$();
 
-    this.transactionsSubscription = this.fetchTransactions$.pipe(
-      tap(() => {
-        this.loadingTransactions = true;
-      }),
-      switchMap((channel: IChannel) => {
-        return zip([
-          channel.transaction_id ? this.electrsApiService.getTransaction$(channel.transaction_id) : of(null),
-          channel.closing_transaction_id ? this.electrsApiService.getTransaction$(channel.closing_transaction_id) : of(null),
-        ]);
-      }),
-    ).subscribe((transactions) => {
-      this.transactions = transactions;
-      this.loadingTransactions = false;
-      this.cd.markForCheck();
-    });
+    this.transactionsSubscription = this.fetchTransactions$
+      .pipe(
+        tap(() => {
+          this.loadingTransactions = true;
+        }),
+        switchMap((channel: IChannel) => {
+          return zip([
+            channel.transaction_id
+              ? this.electrsApiService.getTransaction$(channel.transaction_id)
+              : of(null),
+            channel.closing_transaction_id
+              ? this.electrsApiService.getTransaction$(
+                  channel.closing_transaction_id
+                )
+              : of(null),
+          ]);
+        })
+      )
+      .subscribe((transactions) => {
+        this.transactions = transactions;
+        this.loadingTransactions = false;
+        this.cd.markForCheck();
+      });
   }
 
   toggleDetails(channel: any): void {

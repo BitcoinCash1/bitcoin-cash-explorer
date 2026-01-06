@@ -9,18 +9,18 @@
 
 .tx-link {
   display: flex;
-	flex-grow: 1;
-	@media (min-width: 768px) {
+  flex-grow: 1;
+  @media (min-width: 768px) {
     top: 1px;
     position: relative;
     align-self: end;
     margin-left: 15px;
     margin-top: 0px;
     margin-bottom: 4px;
-	}
-	@media (max-width: 768px) {
-	  order: 2;
-	}
+  }
+  @media (max-width: 768px) {
+    order: 2;
+  }
 }
 
 .badges {

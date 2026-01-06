@@ -8,12 +8,8 @@ import { AppComponent } from '@components/app/app.component';
 import { HttpCacheInterceptor } from '@app/services/http-cache.interceptor';
 import { ZoneService } from '@app/services/zone.service';
 
-
 @NgModule({
-  imports: [
-    AppModule,
-    ServerModule,
-  ],
+  imports: [AppModule, ServerModule],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: HttpCacheInterceptor, multi: true },
     { provide: ZONE_SERVICE, useClass: ZoneService },

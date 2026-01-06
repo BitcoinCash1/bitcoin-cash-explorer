@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from '@angular/core';
 import { Runestone, Etching } from '@app/shared/ord/rune.utils';
 import { Inscription } from '@app/shared/ord/inscription.utils';
 
@@ -7,7 +13,7 @@ import { Inscription } from '@app/shared/ord/inscription.utils';
   templateUrl: './ord-data.component.html',
   styleUrls: ['./ord-data.component.scss'],
   standalone: false,
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class OrdDataComponent implements OnChanges {
   @Input() inscriptions: Inscription[];
@@ -18,17 +24,29 @@ export class OrdDataComponent implements OnChanges {
   toNumber = (value: bigint): number => Number(value);
 
   // Inscriptions
-  inscriptionsData: { [key: string]: { count: number, totalSize: number, text?: string; json?: JSON; tag?: string; delegate?: string } };
+  inscriptionsData: {
+    [key: string]: {
+      count: number;
+      totalSize: number;
+      text?: string;
+      json?: JSON;
+      tag?: string;
+      delegate?: string;
+    };
+  };
   // Rune mints
   minted: number;
   // Rune transfers
   transferredRunes: { key: string; etching: Etching; txid: string }[] = [];
 
-  constructor() { }
+  constructor() {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.runestone && this.runestone) {
-      if (this.runestone.mint && this.runeInfo[this.runestone.mint.toString()]) {
+      if (
+        this.runestone.mint &&
+        this.runeInfo[this.runestone.mint.toString()]
+      ) {
         const mint = this.runestone.mint.toString();
         const terms = this.runeInfo[mint].etching.terms;
         const amount = terms?.amount;
@@ -38,15 +56,17 @@ export class OrdDataComponent implements OnChanges {
         }
       }
 
-      this.runestone.edicts.forEach(edict => {
+      this.runestone.edicts.forEach((edict) => {
         if (this.runeInfo[edict.id.toString()]) {
-          this.transferredRunes.push({ key: edict.id.toString(), ...this.runeInfo[edict.id.toString()] });
+          this.transferredRunes.push({
+            key: edict.id.toString(),
+            ...this.runeInfo[edict.id.toString()],
+          });
         }
       });
     }
 
     if (changes.inscriptions && this.inscriptions) {
-
       if (this.inscriptions?.length) {
         this.inscriptionsData = {};
         this.inscriptions.forEach((inscription) => {
@@ -57,18 +77,27 @@ export class OrdDataComponent implements OnChanges {
           }
           this.inscriptionsData[key].count++;
           this.inscriptionsData[key].totalSize += inscription.body_length;
-          if (inscription.delegate_txid && !this.inscriptionsData[key].delegate) {
+          if (
+            inscription.delegate_txid &&
+            !this.inscriptionsData[key].delegate
+          ) {
             this.inscriptionsData[key].delegate = inscription.delegate_txid;
           }
 
           // Text / JSON data
-          if ((key.includes('text') || key.includes('json')) && !inscription.is_cropped && !this.inscriptionsData[key].text && !this.inscriptionsData[key].json) {
+          if (
+            (key.includes('text') || key.includes('json')) &&
+            !inscription.is_cropped &&
+            !this.inscriptionsData[key].text &&
+            !this.inscriptionsData[key].json
+          ) {
             const decoder = new TextDecoder('utf-8');
             const text = decoder.decode(inscription.body);
             try {
               this.inscriptionsData[key].json = JSON.parse(text);
               if (this.inscriptionsData[key].json['p']) {
-                this.inscriptionsData[key].tag = this.inscriptionsData[key].json['p'].toUpperCase();
+                this.inscriptionsData[key].tag =
+                  this.inscriptionsData[key].json['p'].toUpperCase();
               }
             } catch (e) {
               this.inscriptionsData[key].text = text;
@@ -83,6 +112,8 @@ export class OrdDataComponent implements OnChanges {
     const divisor = BigInt(10) ** BigInt(divisibility);
     const result = amount / divisor;
 
-    return result <= BigInt(Number.MAX_SAFE_INTEGER) ? Number(result) : Number.MAX_SAFE_INTEGER;
+    return result <= BigInt(Number.MAX_SAFE_INTEGER)
+      ? Number(result)
+      : Number.MAX_SAFE_INTEGER;
   }
 }

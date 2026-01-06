@@ -19,7 +19,7 @@
 
 .fiat {
   display: block;
-  @media (min-width: 992px){
+  @media (min-width: 992px) {
     display: inline-block;
     margin-left: 10px;
   }
@@ -64,20 +64,20 @@ h1 {
   }
 }
 
-.row{
-	flex-direction: column;
-	@media (min-width: 576px) {
-		flex-direction: row;
-	}
+.row {
+  flex-direction: column;
+  @media (min-width: 576px) {
+    flex-direction: row;
+  }
 }
 
 @media (max-width: 767.98px) {
-	.mobile-bottomcol {
-		margin-top: 15px;
-	}
-	.details-table td:first-child {
-		white-space: pre-wrap;
-	}
+  .mobile-bottomcol {
+    margin-top: 15px;
+  }
+  .details-table td:first-child {
+    white-space: pre-wrap;
+  }
 }
 
 .tx-link {
@@ -85,10 +85,10 @@ h1 {
   height: 100%;
   top: 9px;
   position: relative;
-	@media (min-width: 576px) {
+  @media (min-width: 576px) {
     max-width: calc(100% - 180px);
     top: 11px;
-	}
+  }
   @media (min-width: 768px) {
     top: 17px;
   }

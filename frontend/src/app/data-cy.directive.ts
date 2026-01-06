@@ -6,7 +6,10 @@ import { environment } from '@environments/environment';
   standalone: false,
 })
 export class DataCyDirective {
-  constructor(private el: ElementRef, private renderer: Renderer2) {
+  constructor(
+    private el: ElementRef,
+    private renderer: Renderer2
+  ) {
     if (environment.production) {
       renderer.removeAttribute(el.nativeElement, 'data-cy');
     }

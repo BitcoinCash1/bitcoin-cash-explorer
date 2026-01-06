@@ -1,10 +1,17 @@
-import { Directive, ElementRef, Host, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import {
+  Directive,
+  ElementRef,
+  Host,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 
 @Directive({
-  selector: '[ssAutofocus]'
+  selector: '[ssAutofocus]',
 })
 export class AutofocusDirective implements OnInit, OnChanges {
-
   /**
    * Will set focus if set to falsy value or not set at all
    */
@@ -14,9 +21,7 @@ export class AutofocusDirective implements OnInit, OnChanges {
     return this.elemRef.nativeElement;
   }
 
-  constructor(
-    @Host() private elemRef: ElementRef,
-  ) { }
+  constructor(@Host() private elemRef: ElementRef) {}
 
   ngOnInit() {
     this.focus();
@@ -37,5 +42,4 @@ export class AutofocusDirective implements OnInit, OnChanges {
 
     this.element.focus && this.element.focus();
   }
-
 }

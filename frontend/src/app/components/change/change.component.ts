@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnChanges,
+} from '@angular/core';
 
 @Component({
   selector: 'app-change',
@@ -13,14 +18,13 @@ export class ChangeComponent implements OnChanges {
 
   change: number;
 
-  constructor() { }
+  constructor() {}
 
   ngOnChanges(): void {
     if (!this.previous) {
       this.change = 0;
     } else {
-      this.change = (this.current - this.previous) / this.previous * 100;
+      this.change = ((this.current - this.previous) / this.previous) * 100;
     }
   }
-
 }

@@ -27,4 +27,4 @@ import { TxBowtieModule } from '@components/tx-bowtie-graph/tx-bowtie.module';
     TxBowtieModule,
   ],
 })
-export class PreviewsModule { }
+export class PreviewsModule {}

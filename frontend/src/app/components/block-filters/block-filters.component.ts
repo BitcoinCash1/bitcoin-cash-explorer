@@ -1,8 +1,24 @@
-import { Component, EventEmitter, Output, HostListener, Input, ChangeDetectorRef, OnChanges, SimpleChanges, OnInit, OnDestroy } from '@angular/core';
-import { ActiveFilter, FilterGroups, FilterMode, GradientMode, TransactionFilters } from '@app/shared/filters.utils';
+import {
+  Component,
+  EventEmitter,
+  Output,
+  HostListener,
+  Input,
+  ChangeDetectorRef,
+  OnChanges,
+  SimpleChanges,
+  OnInit,
+  OnDestroy,
+} from '@angular/core';
+import {
+  ActiveFilter,
+  FilterGroups,
+  FilterMode,
+  GradientMode,
+  TransactionFilters,
+} from '@app/shared/filters.utils';
 import { StateService } from '@app/services/state.service';
 import { Subscription } from 'rxjs';
-
 
 @Component({
   selector: 'app-block-filters',
@@ -13,7 +29,8 @@ import { Subscription } from 'rxjs';
 export class BlockFiltersComponent implements OnInit, OnChanges, OnDestroy {
   @Input() cssWidth: number = 800;
   @Input() excludeFilters: string[] = [];
-  @Output() onFilterChanged: EventEmitter<ActiveFilter | null> = new EventEmitter();
+  @Output() onFilterChanged: EventEmitter<ActiveFilter | null> =
+    new EventEmitter();
 
   filterSubscription: Subscription;
 
@@ -28,22 +45,30 @@ export class BlockFiltersComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(
     private stateService: StateService,
-    private cd: ChangeDetectorRef,
+    private cd: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.filterSubscription = this.stateService.activeGoggles$.subscribe((active: ActiveFilter) => {
-      this.filterMode = active.mode;
-      this.gradientMode = active.gradient;
-      for (const key of Object.keys(this.filterFlags)) {
-        this.filterFlags[key] = false;
+    this.filterSubscription = this.stateService.activeGoggles$.subscribe(
+      (active: ActiveFilter) => {
+        this.filterMode = active.mode;
+        this.gradientMode = active.gradient;
+        for (const key of Object.keys(this.filterFlags)) {
+          this.filterFlags[key] = false;
+        }
+        for (const key of active.filters) {
+          this.filterFlags[key] = !this.disabledFilters[key];
+        }
+        this.activeFilters = [
+          ...active.filters.filter((key) => !this.disabledFilters[key]),
+        ];
+        this.onFilterChanged.emit({
+          mode: active.mode,
+          filters: this.activeFilters,
+          gradient: this.gradientMode,
+        });
       }
-      for (const key of active.filters) {
-        this.filterFlags[key] = !this.disabledFilters[key];
-      }
-      this.activeFilters = [...active.filters.filter(key => !this.disabledFilters[key])];
-      this.onFilterChanged.emit({ mode: active.mode, filters: this.activeFilters, gradient: this.gradientMode });
-    });
+    );
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -52,7 +77,7 @@ export class BlockFiltersComponent implements OnInit, OnChanges, OnDestroy {
     }
     if (changes.excludeFilters) {
       this.disabledFilters = {};
-      this.excludeFilters.forEach(filter => {
+      this.excludeFilters.forEach((filter) => {
         this.disabledFilters[filter] = true;
       });
     }
@@ -60,14 +85,30 @@ export class BlockFiltersComponent implements OnInit, OnChanges, OnDestroy {
 
   setFilterMode(mode): void {
     this.filterMode = mode;
-    this.onFilterChanged.emit({ mode: this.filterMode, filters: this.activeFilters, gradient: this.gradientMode });
-    this.stateService.activeGoggles$.next({ mode: this.filterMode, filters: [...this.activeFilters], gradient: this.gradientMode });
+    this.onFilterChanged.emit({
+      mode: this.filterMode,
+      filters: this.activeFilters,
+      gradient: this.gradientMode,
+    });
+    this.stateService.activeGoggles$.next({
+      mode: this.filterMode,
+      filters: [...this.activeFilters],
+      gradient: this.gradientMode,
+    });
   }
 
   setGradientMode(mode): void {
     this.gradientMode = mode;
-    this.onFilterChanged.emit({ mode: this.filterMode, filters: this.activeFilters, gradient: this.gradientMode });
-    this.stateService.activeGoggles$.next({ mode: this.filterMode, filters: [...this.activeFilters], gradient: this.gradientMode });
+    this.onFilterChanged.emit({
+      mode: this.filterMode,
+      filters: this.activeFilters,
+      gradient: this.gradientMode,
+    });
+    this.stateService.activeGoggles$.next({
+      mode: this.filterMode,
+      filters: [...this.activeFilters],
+      gradient: this.gradientMode,
+    });
   }
 
   toggleFilter(key): void {
@@ -76,24 +117,34 @@ export class BlockFiltersComponent implements OnInit, OnChanges, OnDestroy {
     if (this.filterFlags[key]) {
       // remove any other flags in the same toggle group
       if (filter.toggle) {
-        this.activeFilters.forEach(f => {
+        this.activeFilters.forEach((f) => {
           if (this.filters[f].toggle === filter.toggle) {
             this.filterFlags[f] = false;
           }
         });
-        this.activeFilters = this.activeFilters.filter(f => this.filters[f].toggle !== filter.toggle);
+        this.activeFilters = this.activeFilters.filter(
+          (f) => this.filters[f].toggle !== filter.toggle
+        );
       }
       // add new active filter
       this.activeFilters.push(key);
     } else {
       // remove active filter
-      this.activeFilters = this.activeFilters.filter(f => f != key);
+      this.activeFilters = this.activeFilters.filter((f) => f != key);
     }
     const booleanFlags = this.getBooleanFlags();
-    this.onFilterChanged.emit({ mode: this.filterMode, filters: this.activeFilters, gradient: this.gradientMode });
-    this.stateService.activeGoggles$.next({ mode: this.filterMode, filters: [...this.activeFilters], gradient: this.gradientMode });
+    this.onFilterChanged.emit({
+      mode: this.filterMode,
+      filters: this.activeFilters,
+      gradient: this.gradientMode,
+    });
+    this.stateService.activeGoggles$.next({
+      mode: this.filterMode,
+      filters: [...this.activeFilters],
+      gradient: this.gradientMode,
+    });
   }
-  
+
   getBooleanFlags(): bigint | null {
     let flags = 0n;
     for (const key of Object.keys(this.filterFlags)) {

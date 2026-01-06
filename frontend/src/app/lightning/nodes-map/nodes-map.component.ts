@@ -1,7 +1,25 @@
-import { ChangeDetectionStrategy, Component, Inject, Input, Output, EventEmitter, LOCALE_ID, NgZone, OnDestroy, OnInit, OnChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  Input,
+  Output,
+  EventEmitter,
+  LOCALE_ID,
+  NgZone,
+  OnDestroy,
+  OnInit,
+  OnChanges,
+} from '@angular/core';
 import { SeoService } from '@app/services/seo.service';
 import { ApiService } from '@app/services/api.service';
-import { Observable, BehaviorSubject, switchMap, tap, combineLatest } from 'rxjs';
+import {
+  Observable,
+  BehaviorSubject,
+  switchMap,
+  tap,
+  combineLatest,
+} from 'rxjs';
 import { AssetsService } from '@app/services/assets.service';
 import { EChartsOption, echarts } from '@app/graphs/echarts';
 import { lerpColor } from '@app/shared/graphs.utils';
@@ -44,13 +62,16 @@ export class NodesMap implements OnInit, OnChanges {
     private router: Router,
     private zone: NgZone,
     private amountShortenerPipe: AmountShortenerPipe
-  ) {
-  }
+  ) {}
 
   ngOnInit(): void {
     if (!this.widget) {
-      this.seoService.setTitle($localize`:@@af8560ca50882114be16c951650f83bca73161a7:Lightning Nodes World Map`);
-      this.seoService.setDescription($localize`:@@meta.description.lightning.node-channel-map:See the locations of non-Tor Lightning network nodes visualized on a world map. Hover/tap on points on the map for node names and details.`);
+      this.seoService.setTitle(
+        $localize`:@@af8560ca50882114be16c951650f83bca73161a7:Lightning Nodes World Map`
+      );
+      this.seoService.setDescription(
+        $localize`:@@meta.description.lightning.node-channel-map:See the locations of non-Tor Lightning network nodes visualized on a world map. Hover/tap on points on the map for node names and details.`
+      );
     }
 
     if (!this.inputNodes$) {
@@ -58,72 +79,74 @@ export class NodesMap implements OnInit, OnChanges {
     }
 
     this.nodes$ = this.inputNodes$.pipe(
-      switchMap((nodes) =>  nodes ? [nodes] : this.apiService.getWorldNodes$())
+      switchMap((nodes) => (nodes ? [nodes] : this.apiService.getWorldNodes$()))
     );
 
     this.observable$ = combineLatest(
       this.assetsService.getWorldMapJson$,
       this.nodes$
-    ).pipe(tap((data) => {
-      echarts.registerMap('world', data[0]);
+    ).pipe(
+      tap((data) => {
+        echarts.registerMap('world', data[0]);
 
-      let maxLiquidity = data[1].maxLiquidity;
-      let inputNodes: any[] = data[1].nodes;
-      let mapCenter: number[] = [0, 5];
-      if (this.type === 'country') {
-        mapCenter = [0, 0];
-      } else if (this.type === 'isp') {
-        mapCenter = [0, 10];
-      }
-
-      let mapZoom = 1.3;
-      if (!inputNodes) {
-        inputNodes = [];
-        for (const node of data[1]) {
-          if (this.type === 'country') {
-            mapCenter[0] += node.longitude;
-            mapCenter[1] += node.latitude;
-          }
-          inputNodes.push([
-            node.longitude,
-            node.latitude,
-            node.public_key,
-            node.alias,
-            node.capacity,
-            node.channels,
-            node.country,
-            node.iso_code,
-          ]);
-          maxLiquidity = Math.max(maxLiquidity ?? 0, node.capacity);
-        }
+        let maxLiquidity = data[1].maxLiquidity;
+        let inputNodes: any[] = data[1].nodes;
+        let mapCenter: number[] = [0, 5];
         if (this.type === 'country') {
-          mapCenter[0] /= data[1].length;
-          mapCenter[1] /= data[1].length;
-          mapZoom = 6;
+          mapCenter = [0, 0];
+        } else if (this.type === 'isp') {
+          mapCenter = [0, 10];
         }
-      }
 
-      const nodes: any[] = [];
-      for (const node of inputNodes) {
-        // We add a bit of noise so nodes at the same location are not all
-        // on top of each other
-        const random = Math.random() * 2 * Math.PI;
-        const random2 = Math.random() * 0.01;
-        nodes.push([
-          node[0] + random2 * Math.cos(random),
-          node[1] + random2 * Math.sin(random),
-          node[4], // Liquidity
-          node[3], // Alias
-          node[2], // Public key
-          node[5], // Channels
-          node[6]?.en, // Country
-          node[7], // ISO Code
-        ]);
-      }
+        let mapZoom = 1.3;
+        if (!inputNodes) {
+          inputNodes = [];
+          for (const node of data[1]) {
+            if (this.type === 'country') {
+              mapCenter[0] += node.longitude;
+              mapCenter[1] += node.latitude;
+            }
+            inputNodes.push([
+              node.longitude,
+              node.latitude,
+              node.public_key,
+              node.alias,
+              node.capacity,
+              node.channels,
+              node.country,
+              node.iso_code,
+            ]);
+            maxLiquidity = Math.max(maxLiquidity ?? 0, node.capacity);
+          }
+          if (this.type === 'country') {
+            mapCenter[0] /= data[1].length;
+            mapCenter[1] /= data[1].length;
+            mapZoom = 6;
+          }
+        }
 
-      maxLiquidity = Math.max(1, maxLiquidity);
-      this.prepareChartOptions(nodes, maxLiquidity, mapCenter, mapZoom);
-    }));
+        const nodes: any[] = [];
+        for (const node of inputNodes) {
+          // We add a bit of noise so nodes at the same location are not all
+          // on top of each other
+          const random = Math.random() * 2 * Math.PI;
+          const random2 = Math.random() * 0.01;
+          nodes.push([
+            node[0] + random2 * Math.cos(random),
+            node[1] + random2 * Math.sin(random),
+            node[4], // Liquidity
+            node[3], // Alias
+            node[2], // Public key
+            node[5], // Channels
+            node[6]?.en, // Country
+            node[7], // ISO Code
+          ]);
+        }
+
+        maxLiquidity = Math.max(1, maxLiquidity);
+        this.prepareChartOptions(nodes, maxLiquidity, mapCenter, mapZoom);
+      })
+    );
   }
 
   ngOnChanges(changes): void {
@@ -142,11 +165,11 @@ export class NodesMap implements OnInit, OnChanges {
       title = {
         textStyle: {
           color: 'grey',
-          fontSize: 15
+          fontSize: 15,
         },
         text: $localize`No data to display yet. Try again later.`,
         left: 'center',
-        top: 'center'
+        top: 'center',
       };
     }
 
@@ -160,13 +183,13 @@ export class NodesMap implements OnInit, OnChanges {
         center: mapCenter,
         zoom: mapZoom,
         tooltip: {
-          show: false
+          show: false,
         },
         map: 'world',
         roam: true,
         itemStyle: {
           borderColor: 'black',
-          color: '#272b3f'
+          color: '#272b3f',
         },
         scaleLimit: {
           min: 1.3,
@@ -174,7 +197,7 @@ export class NodesMap implements OnInit, OnChanges {
         },
         emphasis: {
           disabled: true,
-        }
+        },
       },
       series: [
         {
@@ -188,7 +211,7 @@ export class NodesMap implements OnInit, OnChanges {
             return 10 * Math.pow(params[2] / maxLiquidity, 0.2) + 3;
           },
           tooltip: {
-            position: function(point, params, dom, rect, size) {
+            position: function (point, params, dom, rect, size) {
               return point;
             },
             trigger: 'item',
@@ -204,21 +227,31 @@ export class NodesMap implements OnInit, OnChanges {
             formatter: (value) => {
               const data = value.data;
               const alias = data[3].length > 0 ? data[3] : data[4].slice(0, 20);
-              const liquidity = data[2] >= 100000000 ?
-                `${this.amountShortenerPipe.transform(data[2] / 100000000)} BTC` :
-                `${this.amountShortenerPipe.transform(data[2], 2)} sats`;
+              const liquidity =
+                data[2] >= 100000000
+                  ? `${this.amountShortenerPipe.transform(
+                      data[2] / 100000000
+                    )} BTC`
+                  : `${this.amountShortenerPipe.transform(data[2], 2)} sats`;
 
-              return `
+              return (
+                `
                 <b style="color: white">${alias}</b><br>
                 ${liquidity}<br>` +
-                $localize`:@@205c1b86ac1cc419c4d0cca51fdde418c4ffdc20:${data[5]}:INTERPOLATION: channels` + `<br>
+                $localize`:@@205c1b86ac1cc419c4d0cca51fdde418c4ffdc20:${data[5]}:INTERPOLATION: channels` +
+                `<br>
                 ${getFlagEmoji(data[7])} ${data[6]}
-              `;
-            }
+              `
+              );
+            },
           },
           itemStyle: {
             color: function (params) {
-              return `${lerpColor('#1E88E5', '#D81B60', Math.pow(params.data[2] / maxLiquidity, 0.2))}`;
+              return `${lerpColor(
+                '#1E88E5',
+                '#D81B60',
+                Math.pow(params.data[2] / maxLiquidity, 0.2)
+              )}`;
             },
             opacity: 1,
             borderColor: 'black',
@@ -226,7 +259,7 @@ export class NodesMap implements OnInit, OnChanges {
           },
           zlevel: 2,
         },
-      ]
+      ],
     };
     this.isLoading = false;
   }
@@ -245,7 +278,9 @@ export class NodesMap implements OnInit, OnChanges {
     this.chartInstance.on('click', (e) => {
       if (e.data) {
         this.zone.run(() => {
-          const url = new RelativeUrlPipe(this.stateService).transform(`/lightning/node/${e.data[4]}`);
+          const url = new RelativeUrlPipe(this.stateService).transform(
+            `/lightning/node/${e.data[4]}`
+          );
           this.router.navigate([url]);
         });
       }

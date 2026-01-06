@@ -9,7 +9,7 @@
   justify-content: flex-end;
   row-gap: 0.5rem;
   gap: 0.5rem;
-  
+
   .form-control {
     min-width: 160px;
     flex-grow: 100;
@@ -20,7 +20,9 @@
     align-items: stretch;
   }
 
-  .submit-button, .button-group, .button-group .btn {
+  .submit-button,
+  .button-group,
+  .button-group .btn {
     flex-grow: 1;
   }
   .submit-button:disabled {
@@ -28,7 +30,7 @@
   }
 
   #satoshis::after {
-    content: 'sats';
+    content: "sats";
     position: absolute;
     right: 0.5em;
     top: 0;

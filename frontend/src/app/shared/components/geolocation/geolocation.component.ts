@@ -30,7 +30,10 @@ export class GeolocationComponent implements OnChanges {
     const subdivisionLikeCity = this.data.city === this.data.subdivision;
     let subdivision = this.data.subdivision;
 
-    if (['US', 'CA'].includes(this.data.iso) === false || (this.type === 'node' && subdivisionLikeCity)) {
+    if (
+      ['US', 'CA'].includes(this.data.iso) === false ||
+      (this.type === 'node' && subdivisionLikeCity)
+    ) {
       this.data.subdivision = undefined;
     } else if (['list-isp', 'list-country'].includes(this.type) === true) {
       subdivision = convertRegion(this.data.subdivision, 'abbreviated');
@@ -39,8 +42,7 @@ export class GeolocationComponent implements OnChanges {
     if (this.type === 'list-country') {
       if (!this.data.city) {
         this.formattedLocation = '-';
-      }
-      else if (this.data.city) {
+      } else if (this.data.city) {
         this.formattedLocation += ' ' + city;
         if (this.data.subdivision) {
           this.formattedLocation += ', ' + subdivision;
@@ -67,13 +69,15 @@ export class GeolocationComponent implements OnChanges {
         }
       }
     }
-    
+
     if (this.type === 'node') {
       const city = this.data.city ? this.data.city : '';
 
       // Handle city-states like Singapore or Hong Kong
       if (city && city === this.data?.country) {
-        this.formattedLocation = `${this.data.country} ${getFlagEmoji(this.data.iso)}`;
+        this.formattedLocation = `${this.data.country} ${getFlagEmoji(
+          this.data.iso
+        )}`;
         return;
       }
 
@@ -95,7 +99,9 @@ export class GeolocationComponent implements OnChanges {
         } else if (this.data.city) {
           this.formattedLocation += ', ';
         }
-        this.formattedLocation += `${this.data.country} ${getFlagEmoji(this.data.iso)}`;
+        this.formattedLocation += `${this.data.country} ${getFlagEmoji(
+          this.data.iso
+        )}`;
       }
 
       return;
@@ -103,6 +109,6 @@ export class GeolocationComponent implements OnChanges {
   }
 
   isEllipsisActive(e): boolean {
-    return (e.offsetWidth < e.scrollWidth);
+    return e.offsetWidth < e.scrollWidth;
   }
 }

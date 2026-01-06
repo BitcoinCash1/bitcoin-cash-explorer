@@ -1,18 +1,27 @@
-import { Component, ChangeDetectionStrategy, Input, Output, OnChanges, SimpleChanges, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  ChangeDetectionStrategy,
+  Input,
+  Output,
+  OnChanges,
+  SimpleChanges,
+  EventEmitter,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { Transaction } from '@interfaces/electrs.interface';
 import { Acceleration, SinglePoolStats } from '@interfaces/node-api.interface';
 import { EChartsOption, PieSeriesOption } from '@app/graphs/echarts';
 import { MiningStats } from '@app/services/mining.service';
 
-function lighten(color, p): { r, g, b } {
+function lighten(color, p): { r; g; b } {
   return {
-    r: color.r + ((255 - color.r) * p),
-    g: color.g + ((255 - color.g) * p),
-    b: color.b + ((255 - color.b) * p),
+    r: color.r + (255 - color.r) * p,
+    g: color.g + (255 - color.g) * p,
+    b: color.b + (255 - color.b) * p,
   };
 }
 
-function toRGB({r,g,b}): string {
+function toRGB({ r, g, b }): string {
   return `rgb(${r},${g},${b})`;
 }
 
@@ -43,12 +52,11 @@ export class ActiveAccelerationBox implements OnChanges {
   timespan = '';
   chartInstance: any = undefined;
 
-  constructor(
-    private cd: ChangeDetectorRef,
-  ) {}
+  constructor(private cd: ChangeDetectorRef) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    const pools = this.pools || this.accelerationInfo?.pools || this.acceleratedBy;
+    const pools =
+      this.pools || this.accelerationInfo?.pools || this.acceleratedBy;
     if (pools && this.miningStats) {
       this.prepareChartOptions(pools);
     }
@@ -69,37 +77,72 @@ export class ActiveAccelerationBox implements OnChanges {
       },
     });
 
-    const acceleratingPools = (poolList || []).filter(id => pools[id]).sort((a,b) => pools[a].lastEstimatedHashrate - pools[b].lastEstimatedHashrate);
-    const totalAcceleratedHashrate = acceleratingPools.reduce((total, pool) => total + pools[pool].lastEstimatedHashrate, 0);
+    const acceleratingPools = (poolList || [])
+      .filter((id) => pools[id])
+      .sort(
+        (a, b) =>
+          pools[a].lastEstimatedHashrate - pools[b].lastEstimatedHashrate
+      );
+    const totalAcceleratedHashrate = acceleratingPools.reduce(
+      (total, pool) => total + pools[pool].lastEstimatedHashrate,
+      0
+    );
     // Find the first pool with at least 1% of the total network hashrate
-    const firstSignificantPool = acceleratingPools.findIndex(pool => pools[pool].lastEstimatedHashrate > this.miningStats.lastEstimatedHashrate / 100);
+    const firstSignificantPool = acceleratingPools.findIndex(
+      (pool) =>
+        pools[pool].lastEstimatedHashrate >
+        this.miningStats.lastEstimatedHashrate / 100
+    );
     const numSignificantPools = acceleratingPools.length - firstSignificantPool;
     acceleratingPools.forEach((poolId, index) => {
       const pool = pools[poolId];
-      const poolShare = ((pool.lastEstimatedHashrate / this.miningStats.lastEstimatedHashrate) * 100).toFixed(1);
+      const poolShare = (
+        (pool.lastEstimatedHashrate / this.miningStats.lastEstimatedHashrate) *
+        100
+      ).toFixed(1);
       let color = 'white';
       if (index >= firstSignificantPool) {
         if (numSignificantPools > 1) {
-          color = toRGB(lighten({ r: 147, g: 57, b: 244 }, 1 - (index - firstSignificantPool) / Math.max((numSignificantPools - 1), 1)));
+          color = toRGB(
+            lighten(
+              { r: 147, g: 57, b: 244 },
+              1 -
+                (index - firstSignificantPool) /
+                  Math.max(numSignificantPools - 1, 1)
+            )
+          );
         } else {
           color = toRGB({ r: 147, g: 57, b: 244 });
         }
       }
-      data.push(getDataItem(
-        pool.lastEstimatedHashrate,
-        color,
-        `<b style="color: white">${pool.name} (${poolShare}%)</b>`,
-        true,
-      ) as PieSeriesOption);
+      data.push(
+        getDataItem(
+          pool.lastEstimatedHashrate,
+          color,
+          `<b style="color: white">${pool.name} (${poolShare}%)</b>`,
+          true
+        ) as PieSeriesOption
+      );
     });
-    this.acceleratedByPercentage = ((totalAcceleratedHashrate / this.miningStats.lastEstimatedHashrate) * 100).toFixed(1) + '%';
-    const notAcceleratedByPercentage = ((1 - (totalAcceleratedHashrate / this.miningStats.lastEstimatedHashrate)) * 100).toFixed(1) + '%';
-    data.push(getDataItem(
-      (this.miningStats.lastEstimatedHashrate - totalAcceleratedHashrate),
-      'rgba(127, 127, 127, 0.3)',
-      $localize`not accelerating` + ` (${notAcceleratedByPercentage})`,
-      false,
-    ) as PieSeriesOption);
+    this.acceleratedByPercentage =
+      (
+        (totalAcceleratedHashrate / this.miningStats.lastEstimatedHashrate) *
+        100
+      ).toFixed(1) + '%';
+    const notAcceleratedByPercentage =
+      (
+        (1 -
+          totalAcceleratedHashrate / this.miningStats.lastEstimatedHashrate) *
+        100
+      ).toFixed(1) + '%';
+    data.push(
+      getDataItem(
+        this.miningStats.lastEstimatedHashrate - totalAcceleratedHashrate,
+        'rgba(127, 127, 127, 0.3)',
+        $localize`not accelerating` + ` (${notAcceleratedByPercentage})`,
+        false
+      ) as PieSeriesOption
+    );
 
     return data;
   }
@@ -125,22 +168,22 @@ export class ActiveAccelerationBox implements OnChanges {
         borderColor: '#000',
         formatter: (item) => {
           return item.name;
-        }
+        },
       },
       series: [
         {
           type: 'pie',
           radius: '100%',
           label: {
-            show: false
+            show: false,
           },
           labelLine: {
-            show: false
+            show: false,
           },
           animationDuration: 0,
           data: this.getChartData(pools),
-        }
-      ]
+        },
+      ],
     };
     this.cd.markForCheck();
   }

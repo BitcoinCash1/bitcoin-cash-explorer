@@ -1,4 +1,12 @@
-import { Component, Input, OnInit, OnChanges, Inject, LOCALE_ID, HostListener } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnChanges,
+  Inject,
+  LOCALE_ID,
+  HostListener,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { RbfTree, RbfTransaction } from '@interfaces/node-api.interface';
 import { StateService } from '@app/services/state.service';
@@ -7,10 +15,10 @@ import { ApiService } from '@app/services/api.service';
 type Connector = 'pipe' | 'corner';
 
 interface TimelineCell {
-  replacement?: RbfTree,
-  connector?: Connector,
-  first?: boolean,
-  fullRbf?: boolean,
+  replacement?: RbfTree;
+  connector?: Connector;
+  first?: boolean;
+  fullRbf?: boolean;
 }
 
 function isTimelineCell(val: RbfTree | TimelineCell): boolean {
@@ -39,9 +47,13 @@ export class RbfTimelineComponent implements OnInit, OnChanges {
     private router: Router,
     private stateService: StateService,
     private apiService: ApiService,
-    @Inject(LOCALE_ID) private locale: string,
+    @Inject(LOCALE_ID) private locale: string
   ) {
-    if (this.locale.startsWith('ar') || this.locale.startsWith('fa') || this.locale.startsWith('he')) {
+    if (
+      this.locale.startsWith('ar') ||
+      this.locale.startsWith('fa') ||
+      this.locale.startsWith('he')
+    ) {
       this.dir = 'rtl';
     }
   }
@@ -52,14 +64,22 @@ export class RbfTimelineComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes): void {
     this.rows = this.buildTimelines(this.replacements);
-    if (changes.txid && !changes.txid.firstChange && changes.txid.previousValue !== changes.txid.currentValue) {
-      setTimeout(() => { this.scrollToSelected(); });
+    if (
+      changes.txid &&
+      !changes.txid.firstChange &&
+      changes.txid.previousValue !== changes.txid.currentValue
+    ) {
+      setTimeout(() => {
+        this.scrollToSelected();
+      });
     }
   }
 
   // converts a tree of RBF events into a format that can be more easily rendered in HTML
   buildTimelines(tree: RbfTree): TimelineCell[][] {
-    if (!tree) return [];
+    if (!tree) {
+      return [];
+    }
 
     this.flagFullRbf(tree);
     const split = this.splitTimelines(tree);
@@ -84,7 +104,11 @@ export class RbfTimelineComponent implements OnInit, OnChanges {
   splitTimelines(tree: RbfTree, tail: RbfTree[] = []): RbfTree[][] {
     const replacements = [...tail, tree];
     if (tree.replaces.length) {
-      return [].concat(...tree.replaces.map(subtree => this.splitTimelines(subtree, replacements)));
+      return [].concat(
+        ...tree.replaces.map((subtree) =>
+          this.splitTimelines(subtree, replacements)
+        )
+      );
     } else {
       return [[...replacements]];
     }
@@ -133,7 +157,9 @@ export class RbfTimelineComponent implements OnInit, OnChanges {
           }
           index++;
         }
-        for (const merged of Object.values(toMerge).sort((a, b) => b.length - a.length)) {
+        for (const merged of Object.values(toMerge).sort(
+          (a, b) => b.length - a.length
+        )) {
           nextGroups.push(merged);
         }
         for (let i = 0; i < emptyInGroup; i++) {
@@ -141,7 +167,7 @@ export class RbfTimelineComponent implements OnInit, OnChanges {
         }
         emptyCount += emptyInGroup;
         lineGroups = nextGroups;
-        done = (emptyCount >= rows.length);
+        done = emptyCount >= rows.length;
       }
       column++;
     }

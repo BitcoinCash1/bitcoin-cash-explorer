@@ -24,38 +24,41 @@ export interface MiningStats {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MiningService {
   cache: {
     [interval: string]: {
       lastUpdated: number;
       data: MiningStats;
-    }
+    };
   } = {};
   poolsData: SinglePoolStats[] = [];
 
   constructor(
     private stateService: StateService,
     private apiService: ApiService,
-    private storageService: StorageService,
+    private storageService: StorageService
   ) {
     this.stateService.networkChanged$.subscribe((network) => {
       this.clearCache();
     });
-   }
+  }
 
   /**
    * Generate pool ranking stats
    */
   public getMiningStats(interval: string): Observable<MiningStats> {
     // returned cached data fetched within the last 5 minutes
-    if (this.cache[interval] && this.cache[interval].lastUpdated > (Date.now() - (5 * 60000))) {
+    if (
+      this.cache[interval] &&
+      this.cache[interval].lastUpdated > Date.now() - 5 * 60000
+    ) {
       return of(this.cache[interval].data);
     } else {
       return this.apiService.listPools$(interval).pipe(
-        map(response => this.generateMiningStats(response)),
-        tap(stats => {
+        map((response) => this.generateMiningStats(response)),
+        tap((stats) => {
           this.cache[interval] = {
             lastUpdated: Date.now(),
             data: stats,
@@ -69,12 +72,14 @@ export class MiningService {
    * Get names and slugs of all pools
    */
   public getPools(): Observable<any[]> {
-    return this.poolsData.length ? of(this.poolsData) : this.apiService.listPools$(undefined).pipe(
-      map(response => {
-        this.poolsData = response.body;
-        return this.poolsData;
-      })
-    );
+    return this.poolsData.length
+      ? of(this.poolsData)
+      : this.apiService.listPools$(undefined).pipe(
+          map((response) => {
+            this.poolsData = response.body;
+            return this.poolsData;
+          })
+        );
   }
   /**
    * Set the hashrate power of ten we want to display
@@ -93,7 +98,10 @@ export class MiningService {
     // I think it's fine to hardcode this since we don't have x1000 hashrate jump everyday
     // If we want to support the mining dashboard for testnet, we can hardcode it too
     let selectedPower = 18;
-    if (this.stateService.network === 'testnet' || this.stateService.network === 'testnet4') {
+    if (
+      this.stateService.network === 'testnet' ||
+      this.stateService.network === 'testnet4'
+    ) {
       selectedPower = 12;
     }
 
@@ -108,9 +116,19 @@ export class MiningService {
    */
   public getDefaultTimespan(min: string): string {
     const timespans = [
-      '24h', '3d', '1w', '1m', '3m', '6m', '1y', '2y', '3y', 'all'
+      '24h',
+      '3d',
+      '1w',
+      '1m',
+      '3m',
+      '6m',
+      '1y',
+      '2y',
+      '3y',
+      'all',
     ];
-    const preference = this.storageService.getValue('miningWindowPreference') ?? '1w';
+    const preference =
+      this.storageService.getValue('miningWindowPreference') ?? '1w';
     if (timespans.indexOf(preference) < timespans.indexOf(min)) {
       return min;
     }
@@ -125,16 +143,33 @@ export class MiningService {
     const totalEmptyBlock = Object.values(stats.pools).reduce((prev, cur) => {
       return prev + cur.emptyBlocks;
     }, 0);
-    const totalEmptyBlockRatio = (totalEmptyBlock / stats.blockCount * 100).toFixed(2);
+    const totalEmptyBlockRatio = (
+      (totalEmptyBlock / stats.blockCount) *
+      100
+    ).toFixed(2);
     const poolsStats = stats.pools.map((poolStat) => {
       return {
-        share: parseFloat((poolStat.blockCount / stats.blockCount * 100).toFixed(2)),
-        lastEstimatedHashrate: poolStat.blockCount / stats.blockCount * stats.lastEstimatedHashrate / hashrateDivider,
-        lastEstimatedHashrate3d: poolStat.blockCount / stats.blockCount * stats.lastEstimatedHashrate3d / hashrateDivider,
-        lastEstimatedHashrate1w: poolStat.blockCount / stats.blockCount * stats.lastEstimatedHashrate1w / hashrateDivider,
-        emptyBlockRatio: (poolStat.emptyBlocks / poolStat.blockCount * 100).toFixed(2),
+        share: parseFloat(
+          ((poolStat.blockCount / stats.blockCount) * 100).toFixed(2)
+        ),
+        lastEstimatedHashrate:
+          ((poolStat.blockCount / stats.blockCount) *
+            stats.lastEstimatedHashrate) /
+          hashrateDivider,
+        lastEstimatedHashrate3d:
+          ((poolStat.blockCount / stats.blockCount) *
+            stats.lastEstimatedHashrate3d) /
+          hashrateDivider,
+        lastEstimatedHashrate1w:
+          ((poolStat.blockCount / stats.blockCount) *
+            stats.lastEstimatedHashrate1w) /
+          hashrateDivider,
+        emptyBlockRatio: (
+          (poolStat.emptyBlocks / poolStat.blockCount) *
+          100
+        ).toFixed(2),
         logo: `/resources/mining-pools/` + poolStat.slug + '.svg',
-        ...poolStat
+        ...poolStat,
       };
     });
 

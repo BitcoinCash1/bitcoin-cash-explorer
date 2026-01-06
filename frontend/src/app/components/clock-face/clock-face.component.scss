@@ -4,7 +4,8 @@
   margin: auto;
   overflow: hidden;
 
-  .cut-out, .demo-dial {
+  .cut-out,
+  .demo-dial {
     position: absolute;
     left: 0;
     right: 0;
@@ -23,8 +24,8 @@
     stroke-linejoin: round;
 
     &.minute {
-      fill:#80C2E1;
-      stroke:#80C2E1;
+      fill: #80c2e1;
+      stroke: #80c2e1;
       stroke-width: 2px;
     }
 

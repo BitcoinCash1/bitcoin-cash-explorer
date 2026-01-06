@@ -1,6 +1,6 @@
-import { Vin } from "../interfaces/electrs.interface";
-import { AddressType, detectAddressType } from "./address-utils";
-import { ParsedTaproot } from "./transaction.utils";
+import { Vin } from '../interfaces/electrs.interface';
+import { AddressType, detectAddressType } from './address-utils';
+import { ParsedTaproot } from './transaction.utils';
 
 const opcodes = {
   OP_FALSE: 0,
@@ -149,28 +149,54 @@ for (let i = 187; i <= 255; i++) {
 
 export { opcodes };
 
-export type ScriptType = 'scriptpubkey'
+export type ScriptType =
+  | 'scriptpubkey'
   | 'scriptsig'
   | 'inner_witnessscript'
   | 'inner_redeemscript'
-  | 'inner_simplicityscript'
+  | 'inner_simplicityscript';
 
 export interface ScriptTemplate {
   type: string;
   label: string;
 }
 
-export const ScriptTemplates: { [type: string]: (...args: any) => ScriptTemplate } = {
+export const ScriptTemplates: {
+  [type: string]: (...args: any) => ScriptTemplate;
+} = {
   liquid_peg_out: () => ({ type: 'liquid_peg_out', label: 'Liquid Peg Out' }),
-  liquid_peg_out_emergency: () => ({ type: 'liquid_peg_out_emergency', label: 'Emergency Liquid Peg Out' }),
-  ln_force_close: () => ({ type: 'ln_force_close', label: 'Lightning Force Close' }),
-  ln_force_close_revoked: () => ({ type: 'ln_force_close_revoked', label: 'Revoked Lightning Force Close' }),
+  liquid_peg_out_emergency: () => ({
+    type: 'liquid_peg_out_emergency',
+    label: 'Emergency Liquid Peg Out',
+  }),
+  ln_force_close: () => ({
+    type: 'ln_force_close',
+    label: 'Lightning Force Close',
+  }),
+  ln_force_close_revoked: () => ({
+    type: 'ln_force_close_revoked',
+    label: 'Revoked Lightning Force Close',
+  }),
   ln_htlc: () => ({ type: 'ln_htlc', label: 'Lightning HTLC' }),
-  ln_htlc_revoked: () => ({ type: 'ln_htlc_revoked', label: 'Revoked Lightning HTLC' }),
-  ln_htlc_expired: () => ({ type: 'ln_htlc_expired', label: 'Expired Lightning HTLC' }),
+  ln_htlc_revoked: () => ({
+    type: 'ln_htlc_revoked',
+    label: 'Revoked Lightning HTLC',
+  }),
+  ln_htlc_expired: () => ({
+    type: 'ln_htlc_expired',
+    label: 'Expired Lightning HTLC',
+  }),
   ln_anchor: () => ({ type: 'ln_anchor', label: 'Lightning Anchor' }),
-  ln_anchor_swept: () => ({ type: 'ln_anchor_swept', label: 'Swept Lightning Anchor' }),
-  multisig: (m: number, n: number) => ({ type: 'multisig', m, n, label: $localize`:@@address-label.multisig:Multisig ${m}:multisigM: of ${n}:multisigN:` }),
+  ln_anchor_swept: () => ({
+    type: 'ln_anchor_swept',
+    label: 'Swept Lightning Anchor',
+  }),
+  multisig: (m: number, n: number) => ({
+    type: 'multisig',
+    m,
+    n,
+    label: $localize`:@@address-label.multisig:Multisig ${m}:multisigM: of ${n}:multisigN:`,
+  }),
   anchor: () => ({ type: 'anchor', label: 'anchor' }),
 };
 
@@ -182,7 +208,14 @@ export class ScriptInfo {
   vinId?: string;
   template: ScriptTemplate;
 
-  constructor(type: ScriptType, hex?: string, asm?: string, witness?: string[], taprootInfo?: ParsedTaproot, vinId?: string) {
+  constructor(
+    type: ScriptType,
+    hex?: string,
+    asm?: string,
+    witness?: string[],
+    taprootInfo?: ParsedTaproot,
+    vinId?: string
+  ) {
     this.type = type;
     this.hex = hex;
     this.asm = asm;
@@ -198,7 +231,14 @@ export class ScriptInfo {
   }
 
   public clone(): ScriptInfo {
-    const cloned = new ScriptInfo(this.type, this.hex, this.asm, undefined, this.taprootInfo, this.vinId);
+    const cloned = new ScriptInfo(
+      this.type,
+      this.hex,
+      this.asm,
+      undefined,
+      this.taprootInfo,
+      this.vinId
+    );
     if (this.template) {
       cloned.template = this.template;
     }
@@ -211,9 +251,20 @@ export class ScriptInfo {
 }
 
 /** parses an inner_witnessscript + witness stack, and detects named script types */
-export function detectScriptTemplate(type: ScriptType, script_asm: string, witness?: string[]): ScriptTemplate | undefined {
+export function detectScriptTemplate(
+  type: ScriptType,
+  script_asm: string,
+  witness?: string[]
+): ScriptTemplate | undefined {
   if (type === 'inner_witnessscript' && witness?.length) {
-    if (script_asm.indexOf('OP_DEPTH OP_PUSHNUM_12 OP_EQUAL OP_IF OP_PUSHNUM_11') === 0 || script_asm.indexOf('OP_PUSHNUM_15 OP_CHECKMULTISIG OP_IFDUP OP_NOTIF OP_PUSHBYTES_2') === 1259) {
+    if (
+      script_asm.indexOf(
+        'OP_DEPTH OP_PUSHNUM_12 OP_EQUAL OP_IF OP_PUSHNUM_11'
+      ) === 0 ||
+      script_asm.indexOf(
+        'OP_PUSHNUM_15 OP_CHECKMULTISIG OP_IFDUP OP_NOTIF OP_PUSHBYTES_2'
+      ) === 1259
+    ) {
       if (witness.length > 11) {
         return ScriptTemplates.liquid_peg_out();
       } else {
@@ -222,7 +273,11 @@ export function detectScriptTemplate(type: ScriptType, script_asm: string, witne
     }
 
     const topElement = witness[witness.length - 2];
-    if (/^OP_IF OP_PUSHBYTES_33 \w{66} OP_ELSE OP_PUSH(NUM_\d+|BYTES_(1 \w{2}|2 \w{4})) OP_CSV OP_DROP OP_PUSHBYTES_33 \w{66} OP_ENDIF OP_CHECKSIG$/.test(script_asm)) {
+    if (
+      /^OP_IF OP_PUSHBYTES_33 \w{66} OP_ELSE OP_PUSH(NUM_\d+|BYTES_(1 \w{2}|2 \w{4})) OP_CSV OP_DROP OP_PUSHBYTES_33 \w{66} OP_ENDIF OP_CHECKSIG$/.test(
+        script_asm
+      )
+    ) {
       // https://github.com/lightning/bolts/blob/master/03-transactions.md#commitment-transaction-outputs
       if (topElement === '01') {
         // top element is '01' to get in the revocation path
@@ -232,8 +287,12 @@ export function detectScriptTemplate(type: ScriptType, script_asm: string, witne
         return ScriptTemplates.ln_force_close();
       }
     } else if (
-      /^OP_DUP OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUAL OP_IF OP_CHECKSIG OP_ELSE OP_PUSHBYTES_33 \w{66} OP_SWAP OP_SIZE OP_PUSHBYTES_1 20 OP_EQUAL OP_NOTIF OP_DROP OP_PUSHNUM_2 OP_SWAP OP_PUSHBYTES_33 \w{66} OP_PUSHNUM_2 OP_CHECKMULTISIG OP_ELSE OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUALVERIFY OP_CHECKSIG OP_ENDIF (OP_PUSHNUM_1 OP_CSV OP_DROP |)OP_ENDIF$/.test(script_asm) ||
-      /^OP_DUP OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUAL OP_IF OP_CHECKSIG OP_ELSE OP_PUSHBYTES_33 \w{66} OP_SWAP OP_SIZE OP_PUSHBYTES_1 20 OP_EQUAL OP_IF OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUALVERIFY OP_PUSHNUM_2 OP_SWAP OP_PUSHBYTES_33 \w{66} OP_PUSHNUM_2 OP_CHECKMULTISIG OP_ELSE OP_DROP OP_PUSHBYTES_3 \w{6} OP_CLTV OP_DROP OP_CHECKSIG OP_ENDIF (OP_PUSHNUM_1 OP_CSV OP_DROP |)OP_ENDIF$/.test(script_asm)
+      /^OP_DUP OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUAL OP_IF OP_CHECKSIG OP_ELSE OP_PUSHBYTES_33 \w{66} OP_SWAP OP_SIZE OP_PUSHBYTES_1 20 OP_EQUAL OP_NOTIF OP_DROP OP_PUSHNUM_2 OP_SWAP OP_PUSHBYTES_33 \w{66} OP_PUSHNUM_2 OP_CHECKMULTISIG OP_ELSE OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUALVERIFY OP_CHECKSIG OP_ENDIF (OP_PUSHNUM_1 OP_CSV OP_DROP |)OP_ENDIF$/.test(
+        script_asm
+      ) ||
+      /^OP_DUP OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUAL OP_IF OP_CHECKSIG OP_ELSE OP_PUSHBYTES_33 \w{66} OP_SWAP OP_SIZE OP_PUSHBYTES_1 20 OP_EQUAL OP_IF OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUALVERIFY OP_PUSHNUM_2 OP_SWAP OP_PUSHBYTES_33 \w{66} OP_PUSHNUM_2 OP_CHECKMULTISIG OP_ELSE OP_DROP OP_PUSHBYTES_3 \w{6} OP_CLTV OP_DROP OP_CHECKSIG OP_ENDIF (OP_PUSHNUM_1 OP_CSV OP_DROP |)OP_ENDIF$/.test(
+        script_asm
+      )
     ) {
       // https://github.com/lightning/bolts/blob/master/03-transactions.md#offered-htlc-outputs
       // https://github.com/lightning/bolts/blob/master/03-transactions.md#received-htlc-outputs
@@ -247,7 +306,11 @@ export function detectScriptTemplate(type: ScriptType, script_asm: string, witne
         // top element is '' to get in the expiry of the script
         return ScriptTemplates.ln_htlc_expired();
       }
-    } else if (/^OP_PUSHBYTES_33 \w{66} OP_CHECKSIG OP_IFDUP OP_NOTIF OP_PUSHNUM_16 OP_CSV OP_ENDIF$/.test(script_asm)) {
+    } else if (
+      /^OP_PUSHBYTES_33 \w{66} OP_CHECKSIG OP_IFDUP OP_NOTIF OP_PUSHNUM_16 OP_CSV OP_ENDIF$/.test(
+        script_asm
+      )
+    ) {
       // https://github.com/lightning/bolts/blob/master/03-transactions.md#to_local_anchor-and-to_remote_anchor-output-option_anchors
       if (topElement) {
         // top element is a signature
@@ -269,9 +332,13 @@ export function detectScriptTemplate(type: ScriptType, script_asm: string, witne
     return ScriptTemplates.multisig(tapscriptMultisig.m, tapscriptMultisig.n);
   }
 
-  const tapscriptUnanimousMultisig = parseTapscriptUnanimousMultisig(script_asm);
+  const tapscriptUnanimousMultisig =
+    parseTapscriptUnanimousMultisig(script_asm);
   if (tapscriptUnanimousMultisig) {
-    return ScriptTemplates.multisig(tapscriptUnanimousMultisig, tapscriptUnanimousMultisig);
+    return ScriptTemplates.multisig(
+      tapscriptUnanimousMultisig,
+      tapscriptUnanimousMultisig
+    );
   }
 
   return;
@@ -308,7 +375,11 @@ function popScriptNumberOperand(ops: string[]): number | undefined {
     }
 
     const byteCount = parseInt(pushBytes[1], 10);
-    if (!byteCount || !/^[0-9a-fA-F]+$/.test(token) || token.length !== byteCount * 2) {
+    if (
+      !byteCount ||
+      !/^[0-9a-fA-F]+$/.test(token) ||
+      token.length !== byteCount * 2
+    ) {
       return;
     }
 
@@ -328,7 +399,9 @@ function popScriptNumberOperand(ops: string[]): number | undefined {
 }
 
 /** extracts m and n from a multisig script (asm), returns nothing if it is not a multisig script */
-export function parseMultisigScript(script: string): undefined | { m: number, n: number } {
+export function parseMultisigScript(
+  script: string
+): undefined | { m: number; n: number } {
   if (!script) {
     return;
   }
@@ -364,7 +437,9 @@ export function parseMultisigScript(script: string): undefined | { m: number, n:
   return { m, n };
 }
 
-export function parseTapscriptMultisig(script: string): undefined | { m: number, n: number } {
+export function parseTapscriptMultisig(
+  script: string
+): undefined | { m: number; n: number } {
   if (!script) {
     return;
   }
@@ -376,7 +451,16 @@ export function parseTapscriptMultisig(script: string): undefined | { m: number,
   }
 
   const finalOp = ops.pop();
-  if (!['OP_NUMEQUAL', 'OP_NUMEQUALVERIFY', 'OP_GREATERTHANOREQUAL', 'OP_GREATERTHAN', 'OP_EQUAL', 'OP_EQUALVERIFY'].includes(finalOp)) {
+  if (
+    ![
+      'OP_NUMEQUAL',
+      'OP_NUMEQUALVERIFY',
+      'OP_GREATERTHANOREQUAL',
+      'OP_GREATERTHAN',
+      'OP_EQUAL',
+      'OP_EQUALVERIFY',
+    ].includes(finalOp)
+  ) {
     return;
   }
 
@@ -420,7 +504,9 @@ export function parseTapscriptMultisig(script: string): undefined | { m: number,
   return { m, n };
 }
 
-export function parseTapscriptUnanimousMultisig(script: string): undefined | number {
+export function parseTapscriptUnanimousMultisig(
+  script: string
+): undefined | number {
   if (!script) {
     return;
   }
@@ -504,7 +590,9 @@ function sqrtMod(x: bigint, P: bigint): bigint {
   return root;
 }
 
-const curveP = BigInt(`0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F`);
+const curveP = BigInt(
+  `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F`
+);
 
 /**
  * This function tells whether the point given is a DER encoded point on the ECDSA curve.
@@ -530,7 +618,6 @@ export function isPoint(pointHex: string): boolean {
   }
 
   // Function modified slightly from noble-curves
-  
 
   // Now we know that pointHex is a 33 or 65 byte hex string.
   const isCompressed = pointHex.length === 66;

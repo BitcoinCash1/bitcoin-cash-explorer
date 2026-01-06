@@ -19,12 +19,16 @@ export class GraphsComponent implements OnInit {
     private websocketService: WebsocketService,
     private router: Router,
     private route: ActivatedRoute
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.websocketService.want(['blocks']);
 
-    if (this.stateService.env.ACCELERATOR === true && (this.stateService.env.MINING_DASHBOARD === true || this.stateService.env.LIGHTNING === true)) {
+    if (
+      this.stateService.env.ACCELERATOR === true &&
+      (this.stateService.env.MINING_DASHBOARD === true ||
+        this.stateService.env.LIGHTNING === true)
+    ) {
       this.flexWrap = true;
     }
 

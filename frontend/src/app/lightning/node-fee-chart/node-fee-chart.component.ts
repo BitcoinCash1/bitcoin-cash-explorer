@@ -1,4 +1,11 @@
-import { Component, Inject, Input, LOCALE_ID, OnInit, HostBinding } from '@angular/core';
+import {
+  Component,
+  Inject,
+  Input,
+  LOCALE_ID,
+  OnInit,
+  HostBinding,
+} from '@angular/core';
 import { EChartsOption } from '@app/graphs/echarts';
 import { switchMap } from 'rxjs/operators';
 import { download } from '@app/shared/graphs.utils';
@@ -12,14 +19,16 @@ import { StateService } from '@app/services/state.service';
   templateUrl: './node-fee-chart.component.html',
   styleUrls: ['./node-fee-chart.component.scss'],
   standalone: false,
-  styles: [`
-    .loadingGraphs {
-      position: absolute;
-      top: 50%;
-      left: calc(50% - 15px);
-      z-index: 99;
-    }
-  `],
+  styles: [
+    `
+      .loadingGraphs {
+        position: absolute;
+        top: 50%;
+        left: calc(50% - 15px);
+        z-index: 99;
+      }
+    `,
+  ],
 })
 export class NodeFeeChartComponent implements OnInit {
   chartOptions: EChartsOption = {};
@@ -37,19 +46,20 @@ export class NodeFeeChartComponent implements OnInit {
     private lightningApiService: LightningApiService,
     public stateService: StateService,
     private activatedRoute: ActivatedRoute,
-    private amountShortenerPipe: AmountShortenerPipe,
-  ) {
-  }
+    private amountShortenerPipe: AmountShortenerPipe
+  ) {}
 
   ngOnInit(): void {
-
     this.activatedRoute.paramMap
       .pipe(
         switchMap((params: ParamMap) => {
           this.isLoading = true;
-          return this.lightningApiService.getNodeFeeHistogram$(params.get('public_key'));
-        }),
-      ).subscribe((data) => {
+          return this.lightningApiService.getNodeFeeHistogram$(
+            params.get('public_key')
+          );
+        })
+      )
+      .subscribe((data) => {
         if (data && data.incoming && data.outgoing) {
           const outgoingHistogram = this.bucketsToHistogram(data.outgoing);
           const incomingHistogram = this.bucketsToHistogram(data.incoming);
@@ -59,7 +69,9 @@ export class NodeFeeChartComponent implements OnInit {
       });
   }
 
-  bucketsToHistogram(buckets): { label: string, count: number, capacity: number}[] {
+  bucketsToHistogram(
+    buckets
+  ): { label: string; count: number; capacity: number }[] {
     const histogram = [];
     let increment = 1;
     let lower = -increment;
@@ -77,8 +89,12 @@ export class NodeFeeChartComponent implements OnInit {
       }
       histogram.push({
         label: upper === 0 ? '0 ppm' : `${lower} - ${upper} ppm`,
-        count: Number(bucket?.count || 0) + (upper === 0 ? Number(nullBucket?.count || 0) : 0),
-        capacity: Number(bucket?.capacity || 0) + (upper === 0 ? Number(nullBucket?.capacity || 0) : 0),
+        count:
+          Number(bucket?.count || 0) +
+          (upper === 0 ? Number(nullBucket?.count || 0) : 0),
+        capacity:
+          Number(bucket?.capacity || 0) +
+          (upper === 0 ? Number(nullBucket?.capacity || 0) : 0),
       });
 
       if (upper >= increment * 10) {
@@ -90,11 +106,14 @@ export class NodeFeeChartComponent implements OnInit {
         upper += increment;
       }
     }
-    const rest = buckets.reduce((acc, bucket) => {
-      acc.count += Number(bucket.count);
-      acc.capacity += Number(bucket.capacity);
-      return acc;
-    }, { count: 0, capacity: 0 });
+    const rest = buckets.reduce(
+      (acc, bucket) => {
+        acc.count += Number(bucket.count);
+        acc.capacity += Number(bucket.capacity);
+        return acc;
+      },
+      { count: 0, capacity: 0 }
+    );
     histogram.push({
       label: `5000+ ppm`,
       count: rest.count,
@@ -116,11 +135,11 @@ export class NodeFeeChartComponent implements OnInit {
       title = {
         textStyle: {
           color: 'grey',
-          fontSize: 15
+          fontSize: 15,
         },
         text: $localize`No data to display yet. Try again later.`,
         left: 'center',
-        top: 'center'
+        top: 'center',
       };
     }
 
@@ -137,7 +156,7 @@ export class NodeFeeChartComponent implements OnInit {
         show: !this.isMobile(),
         trigger: 'axis',
         axisPointer: {
-          type: 'line'
+          type: 'line',
         },
         backgroundColor: 'rgba(17, 19, 31, 1)',
         borderRadius: 4,
@@ -149,99 +168,132 @@ export class NodeFeeChartComponent implements OnInit {
         borderColor: '#000',
         formatter: (ticks): string => {
           return `
-            <b style="color: white; margin-left: 2px">${ticks[0].data.label}</b><br>
+            <b style="color: white; margin-left: 2px">${
+              ticks[0].data.label
+            }</b><br>
             <br>
-            <b style="color: white; margin-left: 2px">${ticks[0].marker} Outgoing</b><br>
-            <span>Capacity: ${this.amountShortenerPipe.transform(ticks[0].data.capacity, 2, undefined, true)} sats</span><br>
+            <b style="color: white; margin-left: 2px">${
+              ticks[0].marker
+            } Outgoing</b><br>
+            <span>Capacity: ${this.amountShortenerPipe.transform(
+              ticks[0].data.capacity,
+              2,
+              undefined,
+              true
+            )} sats</span><br>
             <span>Channels: ${ticks[0].data.count}</span><br>
             <br>
-            <b style="color: white; margin-left: 2px">${ticks[1].marker} Incoming</b><br>
-            <span>Capacity: ${this.amountShortenerPipe.transform(ticks[1].data.capacity, 2, undefined, true)} sats</span><br>
+            <b style="color: white; margin-left: 2px">${
+              ticks[1].marker
+            } Incoming</b><br>
+            <span>Capacity: ${this.amountShortenerPipe.transform(
+              ticks[1].data.capacity,
+              2,
+              undefined,
+              true
+            )} sats</span><br>
             <span>Channels: ${ticks[1].data.count}</span><br>
           `;
-        }
-      },
-      xAxis: sum === 0 ? undefined : {
-        type: 'category',
-        axisLine: { onZero: true },
-        axisLabel: {
-          align: 'center',
-          fontSize: 11,
-          lineHeight: 12,
-          hideOverlap: true,
-          padding: [0, 5],
         },
-        data: outgoingData.map(bucket => bucket.label)
       },
-      legend: sum === 0 ? undefined : {
-        padding: 10,
-        data: [
-          {
-            name: $localize`Outgoing Fees`,
-            inactiveColor: 'rgb(110, 112, 121)',
-            textStyle: {
-              color: 'white',
+      xAxis:
+        sum === 0
+          ? undefined
+          : {
+              type: 'category',
+              axisLine: { onZero: true },
+              axisLabel: {
+                align: 'center',
+                fontSize: 11,
+                lineHeight: 12,
+                hideOverlap: true,
+                padding: [0, 5],
+              },
+              data: outgoingData.map((bucket) => bucket.label),
             },
-            icon: 'roundRect',
-          },
-          {
-            name: $localize`Incoming Fees`,
-            inactiveColor: 'rgb(110, 112, 121)',
-            textStyle: {
-              color: 'white',
+      legend:
+        sum === 0
+          ? undefined
+          : {
+              padding: 10,
+              data: [
+                {
+                  name: $localize`Outgoing Fees`,
+                  inactiveColor: 'rgb(110, 112, 121)',
+                  textStyle: {
+                    color: 'white',
+                  },
+                  icon: 'roundRect',
+                },
+                {
+                  name: $localize`Incoming Fees`,
+                  inactiveColor: 'rgb(110, 112, 121)',
+                  textStyle: {
+                    color: 'white',
+                  },
+                  icon: 'roundRect',
+                },
+              ],
             },
-            icon: 'roundRect',
-          },
-        ],
-      },
-      yAxis: sum === 0 ? undefined : [
-        {
-          type: 'value',
-          axisLabel: {
-            color: 'rgb(110, 112, 121)',
-            formatter: (val) => {
-              return `${this.amountShortenerPipe.transform(Math.abs(val), 2, undefined, true)} sats`;
-            }
-          },
-          splitLine: {
-            lineStyle: {
-              type: 'dotted',
-              color: 'var(--transparent-fg)',
-              opacity: 0.25,
-            }
-          },
-        },
-      ],
-      series: sum === 0 ? undefined : [
-        {
-          zlevel: 0,
-          name: $localize`Outgoing Fees`,
-          data: outgoingData.map(bucket => ({
-            value: bucket.capacity,
-            label: bucket.label,
-            capacity: bucket.capacity,
-            count: bucket.count,
-          })),
-          type: 'bar',
-          barWidth: '90%',
-          barMaxWidth: 50,
-          stack: 'fees',
-        },
-        {
-          zlevel: 0,
-          name: $localize`Incoming Fees`,
-          data: incomingData.map(bucket => ({
-            value: -bucket.capacity,
-            label: bucket.label,
-            capacity: bucket.capacity,
-            count: bucket.count,
-          })),
-          type: 'bar',
-          barWidth: '90%',
-          barMaxWidth: 50,
-          stack: 'fees',
-        },
-      ],
+      yAxis:
+        sum === 0
+          ? undefined
+          : [
+              {
+                type: 'value',
+                axisLabel: {
+                  color: 'rgb(110, 112, 121)',
+                  formatter: (val) => {
+                    return `${this.amountShortenerPipe.transform(
+                      Math.abs(val),
+                      2,
+                      undefined,
+                      true
+                    )} sats`;
+                  },
+                },
+                splitLine: {
+                  lineStyle: {
+                    type: 'dotted',
+                    color: 'var(--transparent-fg)',
+                    opacity: 0.25,
+                  },
+                },
+              },
+            ],
+      series:
+        sum === 0
+          ? undefined
+          : [
+              {
+                zlevel: 0,
+                name: $localize`Outgoing Fees`,
+                data: outgoingData.map((bucket) => ({
+                  value: bucket.capacity,
+                  label: bucket.label,
+                  capacity: bucket.capacity,
+                  count: bucket.count,
+                })),
+                type: 'bar',
+                barWidth: '90%',
+                barMaxWidth: 50,
+                stack: 'fees',
+              },
+              {
+                zlevel: 0,
+                name: $localize`Incoming Fees`,
+                data: incomingData.map((bucket) => ({
+                  value: -bucket.capacity,
+                  label: bucket.label,
+                  capacity: bucket.capacity,
+                  count: bucket.count,
+                })),
+                type: 'bar',
+                barWidth: '90%',
+                barMaxWidth: 50,
+                stack: 'fees',
+              },
+            ],
     };
   }
 
@@ -254,6 +306,6 @@ export class NodeFeeChartComponent implements OnInit {
   }
 
   isMobile() {
-    return (window.innerWidth <= 767.98);
+    return window.innerWidth <= 767.98;
   }
 }

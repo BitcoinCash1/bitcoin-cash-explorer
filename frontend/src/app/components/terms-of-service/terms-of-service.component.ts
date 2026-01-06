@@ -14,12 +14,14 @@ export class TermsOfServiceComponent {
   constructor(
     private stateService: StateService,
     private seoService: SeoService,
-    private ogService: OpenGraphService,
-  ) { }
+    private ogService: OpenGraphService
+  ) {}
 
   ngOnInit(): void {
     this.seoService.setTitle('Terms of Service');
-    this.seoService.setDescription('Out of respect for the Bitcoin community, the mempool.space website is Bitcoin Only and does not display any advertising.');
+    this.seoService.setDescription(
+      'Out of respect for the Bitcoin community, the mempool.space website is Bitcoin Only and does not display any advertising.'
+    );
     this.ogService.setManualOgImage('tos.jpg');
   }
 }

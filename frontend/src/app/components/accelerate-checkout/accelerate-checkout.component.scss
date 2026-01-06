@@ -5,7 +5,7 @@
 }
 
 .estimating {
-  color: var(--green)
+  color: var(--green);
 }
 
 .accelerate-checkout-inner {
@@ -110,7 +110,8 @@
         padding-top: 0.75rem;
       }
     }
-    &.group-last, &:last-child {
+    &.group-last,
+    &:last-child {
       td {
         padding-bottom: 0.75rem;
       }
@@ -119,7 +120,7 @@
       border-top: 1px dashed grey;
     }
     &.dashed-bottom {
-      border-bottom: 1px dashed grey
+      border-bottom: 1px dashed grey;
     }
   }
   td {
@@ -212,18 +213,18 @@
 }
 
 .apple-pay-button {
-    display: inline-block;
-    -webkit-appearance: -apple-pay-button;
-    -apple-pay-button-type: plain; /* Use any supported button type. */
+  display: inline-block;
+  -webkit-appearance: -apple-pay-button;
+  -apple-pay-button-type: plain; /* Use any supported button type. */
 }
 .apple-pay-button-black {
-    -apple-pay-button-style: black;
+  -apple-pay-button-style: black;
 }
 .apple-pay-button-white {
-    -apple-pay-button-style: white;
+  -apple-pay-button-style: white;
 }
 .apple-pay-button-white-with-line {
-    -apple-pay-button-style: white-outline;
+  -apple-pay-button-style: white-outline;
 }
 
 .btcpay-invoice {

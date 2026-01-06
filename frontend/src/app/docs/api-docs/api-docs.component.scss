@@ -18,7 +18,14 @@
 
 code {
   background-color: var(--bg);
-  font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New;
+  font-family:
+    Consolas,
+    Monaco,
+    Lucida Console,
+    Liberation Mono,
+    DejaVu Sans Mono,
+    Bitstream Vera Sans Mono,
+    Courier New;
 }
 
 .math {
@@ -37,7 +44,7 @@ tr {
 
 li.nav-item {
   width: 100%;
-  @media (min-width: 676px){
+  @media (min-width: 676px) {
     width: auto;
   }
 }
@@ -80,7 +87,7 @@ ul.no-bull.block-audit li ul {
   margin-bottom: 15px;
 }
 
-ul.no-bull.block-audit code{
+ul.no-bull.block-audit code {
   background-color: inherit;
 }
 
@@ -94,7 +101,7 @@ ul.no-bull.block-audit code{
 
 .nav-tabs .nav-link.active {
   border-bottom: 1px solid #fff;
-  @media (min-width: 676px){
+  @media (min-width: 676px) {
     border-bottom: 1px solid var(--active-bg);
   }
 }
@@ -105,7 +112,6 @@ ul.no-bull.block-audit code{
   li.nav-item {
     width: auto;
   }
-
 }
 
 .code {
@@ -179,7 +185,7 @@ ul.no-bull.block-audit code{
 }
 
 .doc-content.no-sidebar {
-  width: 100%
+  width: 100%;
 }
 
 h3 {
@@ -187,8 +193,8 @@ h3 {
 }
 
 .endpoint-container:before {
-	display: block;
- 	content: " ";
+  display: block;
+  content: " ";
   height: 1px;
   margin-top: -1px;
   visibility: hidden;
@@ -352,7 +358,6 @@ h3 {
 }
 
 @media (max-width: 992px) {
-
   h3 {
     margin: 1.5rem 0 0 0;
   }
@@ -416,7 +421,6 @@ h3 {
 }
 
 @media (min-width: 992px) {
-
   .hide-on-desktop {
     display: none;
   }
@@ -456,7 +460,14 @@ dd {
     display: inline;
     font-weight: normal;
     color: #e83e8c;
-    font-family: Consolas, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono, Bitstream Vera Sans Mono, Courier New;
+    font-family:
+      Consolas,
+      Monaco,
+      Lucida Console,
+      Liberation Mono,
+      DejaVu Sans Mono,
+      Bitstream Vera Sans Mono,
+      Courier New;
     text-transform: uppercase;
 
     &:before {
@@ -473,7 +484,14 @@ dd {
 
 code {
   background-color: var(--bg);
-  font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New;
+  font-family:
+    Consolas,
+    Monaco,
+    Lucida Console,
+    Liberation Mono,
+    DejaVu Sans Mono,
+    Bitstream Vera Sans Mono,
+    Courier New;
 }
 
 pre {
@@ -482,7 +500,7 @@ pre {
   color: #f18920;
   background-color: var(--bg);
   padding: 30px;
-  code{
+  code {
     background-color: transparent;
     white-space: break-spaces;
     word-break: break-all;

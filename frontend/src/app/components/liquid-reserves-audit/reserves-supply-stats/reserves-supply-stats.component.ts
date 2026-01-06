@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { Observable } from 'rxjs';
 import { Env, StateService } from '@app/services/state.service';
 import { CurrentPegs } from '@interfaces/node-api.interface';
@@ -16,10 +21,9 @@ export class ReservesSupplyStatsComponent implements OnInit {
 
   env: Env;
 
-  constructor(private stateService: StateService) { }
+  constructor(private stateService: StateService) {}
 
   ngOnInit(): void {
     this.env = this.stateService.env;
   }
-
 }

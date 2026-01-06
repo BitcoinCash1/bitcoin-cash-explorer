@@ -10,36 +10,19 @@ const routes: Routes = [
     path: ':id',
     component: BlockComponent,
     data: {
-      ogImage: true
-    }
-  }
+      ogImage: true,
+    },
+  },
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports: [
-    RouterModule
-  ]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class BlockRoutingModule { }
+export class BlockRoutingModule {}
 
 @NgModule({
-  imports: [
-    CommonModule,
-    BlockRoutingModule,
-    SharedModule,
-  ],
-  declarations: [
-    BlockComponent,
-    BlockTransactionsComponent,
-  ]
+  imports: [CommonModule, BlockRoutingModule, SharedModule],
+  declarations: [BlockComponent, BlockTransactionsComponent],
 })
-export class BlockModule { }
-
-
-
-
-
-
+export class BlockModule {}

@@ -6,30 +6,30 @@ import { NodesPerISPPreview } from '@app/lightning/nodes-per-isp/nodes-per-isp-p
 import { GroupPreviewComponent } from '@app/lightning/group/group-preview.component';
 
 const routes: Routes = [
-    {
-      path: 'node/:public_key',
-      component: NodePreviewComponent,
-    },
-    {
-      path: 'channel/:short_id',
-      component: ChannelPreviewComponent,
-    },
-    {
-      path: 'nodes/isp/:isp',
-      component: NodesPerISPPreview,
-    },
-    {
-      path: 'group/:slug',
-      component: GroupPreviewComponent,
-    },
-    {
-      path: '**',
-      redirectTo: ''
-    }
+  {
+    path: 'node/:public_key',
+    component: NodePreviewComponent,
+  },
+  {
+    path: 'channel/:short_id',
+    component: ChannelPreviewComponent,
+  },
+  {
+    path: 'nodes/isp/:isp',
+    component: NodesPerISPPreview,
+  },
+  {
+    path: 'group/:slug',
+    component: GroupPreviewComponent,
+  },
+  {
+    path: '**',
+    redirectTo: '',
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class LightningPreviewsRoutingModule { }
+export class LightningPreviewsRoutingModule {}

@@ -1,14 +1,12 @@
-import { formatNumber } from "@angular/common";
-import { Inject, LOCALE_ID, Pipe, PipeTransform } from "@angular/core";
+import { formatNumber } from '@angular/common';
+import { Inject, LOCALE_ID, Pipe, PipeTransform } from '@angular/core';
 
 @Pipe({
-  name: "feeRounding",
+  name: 'feeRounding',
   standalone: false,
 })
 export class FeeRoundingPipe implements PipeTransform {
-  constructor(
-    @Inject(LOCALE_ID) private locale: string,
-  ) {}
+  constructor(@Inject(LOCALE_ID) private locale: string) {}
 
   transform(fee: number, rounding = null, dp = 3): string {
     if (rounding) {

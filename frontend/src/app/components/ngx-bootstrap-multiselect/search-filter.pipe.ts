@@ -10,7 +10,6 @@ interface StringHashMap<T> {
   standalone: false,
 })
 export class MultiSelectSearchFilter implements PipeTransform {
-
   private _lastOptions: IMultiSelectOption[];
   private _searchCache: StringHashMap<IMultiSelectOption[]> = {};
   private _searchCacheInclusive: StringHashMap<boolean | number> = {};
@@ -21,7 +20,7 @@ export class MultiSelectSearchFilter implements PipeTransform {
     str = '',
     limit = 0,
     renderLimit = 0,
-    searchFunction: (str: string) => RegExp,
+    searchFunction: (str: string) => RegExp
   ): IMultiSelectOption[] {
     str = str.toLowerCase();
 
@@ -62,7 +61,12 @@ export class MultiSelectSearchFilter implements PipeTransform {
     return options;
   }
 
-  private _doSearch(options: IMultiSelectOption[], str: string, limit: number, searchFunction: (str: string) => RegExp) {
+  private _doSearch(
+    options: IMultiSelectOption[],
+    str: string,
+    limit: number,
+    searchFunction: (str: string) => RegExp
+  ) {
     const prevStr = str.slice(0, -1);
     const prevResults = this._searchCache[prevStr];
     const prevResultShift = this._prevSkippedItems[prevStr] || 0;
@@ -76,15 +80,21 @@ export class MultiSelectSearchFilter implements PipeTransform {
     const regexp = searchFunction(str);
     const filteredOpts: IMultiSelectOption[] = [];
 
-    let i = 0, founded = 0, removedFromPrevResult = 0;
+    let i = 0,
+      founded = 0,
+      removedFromPrevResult = 0;
 
-    const doesOptionMatch = (option: IMultiSelectOption) => regexp.test(option.name);
+    const doesOptionMatch = (option: IMultiSelectOption) =>
+      regexp.test(option.name);
     const getChildren = (option: IMultiSelectOption) =>
-      options.filter(child => child.parentId === option.id);
+      options.filter((child) => child.parentId === option.id);
     const getParent = (option: IMultiSelectOption) =>
-      options.find(parent => option.parentId === parent.id);
-    const foundFn = (item: any) => { filteredOpts.push(item); founded++; };
-    const notFoundFn = prevResults ? () => removedFromPrevResult++ : () => { };
+      options.find((parent) => option.parentId === parent.id);
+    const foundFn = (item: any) => {
+      filteredOpts.push(item);
+      founded++;
+    };
+    const notFoundFn = prevResults ? () => removedFromPrevResult++ : () => {};
 
     for (; i < optsLength && founded < maxFound; ++i) {
       const option = options[i];

@@ -8,9 +8,8 @@ describe('ChannelBoxComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ChannelBoxComponent ]
-    })
-    .compileComponents();
+      declarations: [ChannelBoxComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

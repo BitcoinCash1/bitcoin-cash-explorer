@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class AudioService {
   audio: HTMLAudioElement;
@@ -13,7 +13,15 @@ export class AudioService {
     } catch (e) {}
   }
 
-  public playSound(name: 'magic' | 'chime' | 'cha-ching' | 'bright-harmony' | 'wind-chimes-harp-ascend' | 'ascend-chime-cartoon') {
+  public playSound(
+    name:
+      | 'magic'
+      | 'chime'
+      | 'cha-ching'
+      | 'bright-harmony'
+      | 'wind-chimes-harp-ascend'
+      | 'ascend-chime-cartoon'
+  ) {
     if (this.isPlaying || !this.audio) {
       return;
     }
@@ -24,6 +32,6 @@ export class AudioService {
     this.audio.play().catch((e) => {
       console.log('Play sound failed' + e);
     });
-    setTimeout(() => this.isPlaying = false, 100);
+    setTimeout(() => (this.isPlaying = false), 100);
   }
 }

@@ -44,7 +44,6 @@ li.nav-item {
     .nav-link {
       padding: 12px 0;
     }
-
   }
   @media (max-width: 429px) {
     margin: 0;
@@ -104,7 +103,6 @@ li.nav-item {
     text-align: center; /* For text alignment */
   }
 }
-
 
 .navbar-collapse {
   justify-content: flex-end;
@@ -213,7 +211,7 @@ nav {
     height: 48px;
     margin-right: 1em;
   }
- 
+
   &.mobile_logo {
     margin-right: 0;
   }
@@ -247,7 +245,8 @@ nav {
   display: flex;
 }
 
-.mempool-logo, app-svg-images {
+.mempool-logo,
+app-svg-images {
   align-self: center;
   width: 140px;
   height: 35px;

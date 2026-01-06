@@ -1,5 +1,11 @@
 import { FastVertexArray } from '@components/block-overview-graph/fast-vertex-array';
-import { InterpolatedAttribute, Attributes, OptionalAttributes, SpriteUpdateParams, Update } from '@components/block-overview-graph/sprite-types';
+import {
+  InterpolatedAttribute,
+  Attributes,
+  OptionalAttributes,
+  SpriteUpdateParams,
+  Update,
+} from '@components/block-overview-graph/sprite-types';
 
 const attribKeys = ['a', 'b', 't', 'v'];
 const updateKeys = ['x', 'y', 's', 'r', 'g', 'b', 'a'];
@@ -7,7 +13,7 @@ const updateKeys = ['x', 'y', 's', 'r', 'g', 'b', 'a'];
 export default class TxSprite {
   static vertexSize = 30;
   static vertexCount = 6;
-  static dataSize: number = (30 * 6);
+  static dataSize: number = 30 * 6;
 
   vertexArray: FastVertexArray;
   vertexPointer: number;
@@ -16,13 +22,18 @@ export default class TxSprite {
   attributes: Attributes;
   tempAttributes: OptionalAttributes;
 
-
   constructor(params: SpriteUpdateParams, vertexArray: FastVertexArray) {
     const offsetTime = params.start;
     this.vertexArray = vertexArray;
     this.vertexData = Array(VI.length).fill(0);
     this.updateMap = {
-      x: 0, y: 0, s: 0, r: 0, g: 0, b: 0, a: 0
+      x: 0,
+      y: 0,
+      s: 0,
+      r: 0,
+      g: 0,
+      b: 0,
+      a: 0,
     };
 
     this.attributes = {
@@ -43,8 +54,15 @@ export default class TxSprite {
     this.compile();
   }
 
-  private interpolateAttributes(updateMap: Update, attributes: OptionalAttributes, offsetTime: DOMHighResTimeStamp, v: number,
-                                duration: number, minDuration: number, adjust: boolean): void {
+  private interpolateAttributes(
+    updateMap: Update,
+    attributes: OptionalAttributes,
+    offsetTime: DOMHighResTimeStamp,
+    v: number,
+    duration: number,
+    minDuration: number,
+    adjust: boolean
+  ): void {
     for (const key of Object.keys(updateMap)) {
       // for each non-null attribute:
       if (updateMap[key] != null) {
@@ -79,17 +97,26 @@ export default class TxSprite {
   */
   update(params: SpriteUpdateParams): void {
     const offsetTime = params.start || performance.now();
-    const v = params.duration > 0 ? (1 / params.duration) : 0;
+    const v = params.duration > 0 ? 1 / params.duration : 0;
 
-    updateKeys.forEach(key => {
+    updateKeys.forEach((key) => {
       this.updateMap[key] = params[key];
     });
 
     const isModified = !!this.tempAttributes;
     if (!params.temp) {
-      this.interpolateAttributes(this.updateMap, this.attributes, offsetTime, v, params.duration, params.minDuration, params.adjust);
+      this.interpolateAttributes(
+        this.updateMap,
+        this.attributes,
+        offsetTime,
+        v,
+        params.duration,
+        params.minDuration,
+        params.adjust
+      );
     } else {
-      if (!isModified) { // set up tempAttributes
+      if (!isModified) {
+        // set up tempAttributes
         this.tempAttributes = {};
         for (const key of Object.keys(this.updateMap)) {
           if (this.updateMap[key] != null) {
@@ -97,25 +124,39 @@ export default class TxSprite {
           }
         }
       }
-      this.interpolateAttributes(this.updateMap, this.tempAttributes, offsetTime, v, params.duration, params.minDuration, params.adjust);
+      this.interpolateAttributes(
+        this.updateMap,
+        this.tempAttributes,
+        offsetTime,
+        v,
+        params.duration,
+        params.minDuration,
+        params.adjust
+      );
     }
 
     this.compile();
   }
 
   // Transition back from modified state back to base attributes
-  resume(duration: number, start: DOMHighResTimeStamp = performance.now()): void {
+  resume(
+    duration: number,
+    start: DOMHighResTimeStamp = performance.now()
+  ): void {
     // If not in modified state, there's nothing to do
     if (!this.tempAttributes) {
       return;
     }
 
     const offsetTime = start;
-    const v = duration > 0 ? (1 / duration) : 0;
+    const v = duration > 0 ? 1 / duration : 0;
 
     for (const key of Object.keys(this.tempAttributes)) {
       // If this base attribute is static (fixed or post-transition), transition smoothly back
-      if (this.attributes[key].v === 0 || (this.attributes[key].t + this.attributes[key].d) <= start) {
+      if (
+        this.attributes[key].v === 0 ||
+        this.attributes[key].t + this.attributes[key].d <= start
+      ) {
         // calculate current interpolated value, and set as 'from'
         interpolateAttributeStart(this.tempAttributes[key], offsetTime);
         this.attributes[key].a = this.tempAttributes[key].a;
@@ -136,7 +177,7 @@ export default class TxSprite {
     if (this.tempAttributes) {
       attributes = {
         ...this.attributes,
-        ...this.tempAttributes
+        ...this.tempAttributes,
       };
     }
     const size = attributes.s;
@@ -146,11 +187,13 @@ export default class TxSprite {
     const vertexStride = VI.length + 2;
     for (let vertex = 0; vertex < 6; vertex++) {
       this.vertexData[vertex * vertexStride] = vertexOffsetFactors[vertex][0];
-      this.vertexData[(vertex * vertexStride) + 1] = vertexOffsetFactors[vertex][1];
+      this.vertexData[vertex * vertexStride + 1] =
+        vertexOffsetFactors[vertex][1];
       for (let step = 0; step < VI.length; step++) {
         // components of each field in the vertex array are defined by an entry in VI:
         // VI[i].a is the attribute, VI[i].f is the inner field, VI[i].offA and VI[i].offB are offset factors
-        this.vertexData[(vertex * vertexStride) + step + 2] = attributes[VI[step].a][VI[step].f];
+        this.vertexData[vertex * vertexStride + step + 2] =
+          attributes[VI[step].a][VI[step].f];
       }
     }
 
@@ -174,8 +217,11 @@ function smootherstep(x: number): number {
   return x / (x + ix * ix);
 }
 
-function interpolateAttributeStart(attribute: InterpolatedAttribute, start: DOMHighResTimeStamp): void {
-  if (attribute.v === 0 || (attribute.t + attribute.d) <= start) {
+function interpolateAttributeStart(
+  attribute: InterpolatedAttribute,
+  start: DOMHighResTimeStamp
+): void {
+  if (attribute.v === 0 || attribute.t + attribute.d <= start) {
     // transition finished, next transition starts from current end state
     // (clamp to 1)
     attribute.a = attribute.b;
@@ -187,9 +233,9 @@ function interpolateAttributeStart(attribute: InterpolatedAttribute, start: DOMH
   } else {
     // transition in progress
     // (interpolate)
-    const progress = (start - attribute.t);
+    const progress = start - attribute.t;
     const delta = smootherstep(progress / attribute.d);
-    attribute.a = attribute.a + (delta * (attribute.b - attribute.a));
+    attribute.a = attribute.a + delta * (attribute.b - attribute.a);
     attribute.d = attribute.d - progress;
     attribute.v = 1 / attribute.d;
   }
@@ -201,15 +247,15 @@ const vertexOffsetFactors = [
   [1, 0],
   [0, 0],
   [1, 1],
-  [0, 1]
+  [0, 1],
 ];
 
 const VI = [];
 updateKeys.forEach((attribute, aIndex) => {
-  attribKeys.forEach(field => {
+  attribKeys.forEach((field) => {
     VI.push({
       a: attribute,
-      f: field
+      f: field,
     });
   });
 });

@@ -1,4 +1,10 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, HostListener } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ChangeDetectorRef,
+  HostListener,
+} from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { ElectrsApiService } from '@app/services/electrs-api.service';
 import { switchMap, catchError } from 'rxjs/operators';
@@ -26,7 +32,7 @@ export class AddressGroupComponent implements OnInit, OnDestroy {
   addresses: { [address: string]: number | null };
   addressStrings: string[] = [];
   addressInfo: { [address: string]: AddressInformation | null };
-  seenTxs: { [txid: string ]: boolean } = {};
+  seenTxs: { [txid: string]: boolean } = {};
   isLoadingAddress = true;
   error: any;
   mainSubscription: Subscription;
@@ -47,12 +53,14 @@ export class AddressGroupComponent implements OnInit, OnDestroy {
     private audioService: AudioService,
     private apiService: ApiService,
     private seoService: SeoService,
-    private cd: ChangeDetectorRef,
-  ) { }
+    private cd: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.onResize();
-    this.stateService.networkChanged$.subscribe((network) => this.network = network);
+    this.stateService.networkChanged$.subscribe(
+      (network) => (this.network = network)
+    );
     this.websocketService.want(['blocks']);
 
     this.mainSubscription = this.route.queryParamMap
@@ -63,67 +71,98 @@ export class AddressGroupComponent implements OnInit, OnDestroy {
           this.addresses = {};
           this.addressInfo = {};
           this.balance = 0;
-          
-          this.addressStrings = params.get('addresses').split(',').map(address => {
-            if (/^[A-Z]{2,5}1[AC-HJ-NP-Z02-9]{8,100}|04[a-fA-F0-9]{128}|(02|03)[a-fA-F0-9]{64}$/.test(address)) {
-              return address.toLowerCase();
-            } else {
-              return address;
-            }
-          });
 
-          return forkJoin(this.addressStrings.map(address => {
-            const getLiquidInfo = ((this.stateService.network === 'liquid' || this.stateService.network === 'liquidtestnet') && /^([a-zA-HJ-NP-Z1-9]{26,35}|[a-z]{2,5}1[ac-hj-np-z02-9]{8,100}|[a-km-zA-HJ-NP-Z1-9]{80})$/.test(address));
-            return forkJoin([
-              of(address),
-              this.electrsApiService.getAddress$(address),
-              (getLiquidInfo ? this.apiService.validateAddress$(address) : of(null)),
-            ]);
-          }));
+          this.addressStrings = params
+            .get('addresses')
+            .split(',')
+            .map((address) => {
+              if (
+                /^[A-Z]{2,5}1[AC-HJ-NP-Z02-9]{8,100}|04[a-fA-F0-9]{128}|(02|03)[a-fA-F0-9]{64}$/.test(
+                  address
+                )
+              ) {
+                return address.toLowerCase();
+              } else {
+                return address;
+              }
+            });
+
+          return forkJoin(
+            this.addressStrings.map((address) => {
+              const getLiquidInfo =
+                (this.stateService.network === 'liquid' ||
+                  this.stateService.network === 'liquidtestnet') &&
+                /^([a-zA-HJ-NP-Z1-9]{26,35}|[a-z]{2,5}1[ac-hj-np-z02-9]{8,100}|[a-km-zA-HJ-NP-Z1-9]{80})$/.test(
+                  address
+                );
+              return forkJoin([
+                of(address),
+                this.electrsApiService.getAddress$(address),
+                getLiquidInfo
+                  ? this.apiService.validateAddress$(address)
+                  : of(null),
+              ]);
+            })
+          );
         }),
-        catchError(e => {
+        catchError((e) => {
           this.error = e;
           return of([]);
         })
-      ).subscribe((addresses) => {
+      )
+      .subscribe((addresses) => {
         for (const addressData of addresses) {
           const address = addressData[0];
           const addressBalance = addressData[1] as Address;
           if (addressBalance) {
-            this.addresses[address] = addressBalance.chain_stats.funded_txo_sum
-              + addressBalance.mempool_stats.funded_txo_sum
-              - addressBalance.chain_stats.spent_txo_sum
-              - addressBalance.mempool_stats.spent_txo_sum;
+            this.addresses[address] =
+              addressBalance.chain_stats.funded_txo_sum +
+              addressBalance.mempool_stats.funded_txo_sum -
+              addressBalance.chain_stats.spent_txo_sum -
+              addressBalance.mempool_stats.spent_txo_sum;
             this.balance += this.addresses[address];
-            this.confirmed += (addressBalance.chain_stats.funded_txo_sum - addressBalance.chain_stats.spent_txo_sum);
+            this.confirmed +=
+              addressBalance.chain_stats.funded_txo_sum -
+              addressBalance.chain_stats.spent_txo_sum;
           }
-          this.addressInfo[address] = addressData[2] ? addressData[2] as AddressInformation : null;
+          this.addressInfo[address] = addressData[2]
+            ? (addressData[2] as AddressInformation)
+            : null;
         }
         this.websocketService.startTrackAddresses(this.addressStrings);
         this.isLoadingAddress = false;
         this.pageChange(this.pageIndex);
       });
 
-    this.wsSubscription = this.stateService.multiAddressTransactions$.subscribe(update => {
-      for (const address of Object.keys(update)) {
-        for (const tx of update[address].mempool) {
-          this.addTransaction(tx, false, false);
-        }
-        for (const tx of update[address].confirmed) {
-          this.addTransaction(tx, true, false);
-        }
-        for (const tx of update[address].removed) {
-          this.removeTransaction(tx, tx.status.confirmed);
+    this.wsSubscription = this.stateService.multiAddressTransactions$.subscribe(
+      (update) => {
+        for (const address of Object.keys(update)) {
+          for (const tx of update[address].mempool) {
+            this.addTransaction(tx, false, false);
+          }
+          for (const tx of update[address].confirmed) {
+            this.addTransaction(tx, true, false);
+          }
+          for (const tx of update[address].removed) {
+            this.removeTransaction(tx, tx.status.confirmed);
+          }
         }
       }
-    });
+    );
   }
 
   pageChange(index): void {
-    this.page = this.addressStrings.slice((index - 1) * this.itemsPerPage, index * this.itemsPerPage);
+    this.page = this.addressStrings.slice(
+      (index - 1) * this.itemsPerPage,
+      index * this.itemsPerPage
+    );
   }
 
-  addTransaction(transaction: Transaction, confirmed = false, playSound: boolean = true): boolean {
+  addTransaction(
+    transaction: Transaction,
+    confirmed = false,
+    playSound: boolean = true
+  ): boolean {
     if (this.seenTxs[transaction.txid]) {
       this.removeTransaction(transaction, false);
     }

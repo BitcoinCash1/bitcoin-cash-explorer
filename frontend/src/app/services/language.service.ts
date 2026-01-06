@@ -3,14 +3,14 @@ import { LOCALE_ID, Inject, Injectable } from '@angular/core';
 import { languages } from '@app/app.constants';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class LanguageService {
   private language = 'en';
   private languages = languages;
   constructor(
     @Inject(DOCUMENT) private document: Document,
-    @Inject(LOCALE_ID) private locale: string,
+    @Inject(LOCALE_ID) private locale: string
   ) {
     this.language = getLocaleId(this.locale).substring(0, 2);
   }
@@ -35,6 +35,6 @@ export class LanguageService {
   setLanguage(language: string): void {
     try {
       document.cookie = `lang=${language}; expires=Thu, 18 Dec 2050 12:00:00 UTC; path=/`;
-    } catch (e) { }
+    } catch (e) {}
   }
 }

@@ -1,4 +1,11 @@
-import { Component, OnInit, OnDestroy, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  Input,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { StateService } from '@app/services/state.service';
 import { Observable, Subscription } from 'rxjs';
 import { Price } from '@app/services/price.service';
@@ -30,18 +37,22 @@ export class AmountComponent implements OnInit, OnDestroy {
 
   constructor(
     private stateService: StateService,
-    private cd: ChangeDetectorRef,
+    private cd: ChangeDetectorRef
   ) {
-    this.currencySubscription = this.stateService.fiatCurrency$.subscribe((fiat) => {
-      this.currency = fiat;
-      this.cd.markForCheck();
-    });
+    this.currencySubscription = this.stateService.fiatCurrency$.subscribe(
+      (fiat) => {
+        this.currency = fiat;
+        this.cd.markForCheck();
+      }
+    );
   }
 
   ngOnInit() {
     this.viewAmountMode$ = this.stateService.viewAmountMode$.asObservable();
     this.conversions$ = this.stateService.conversions$.asObservable();
-    this.stateSubscription = this.stateService.networkChanged$.subscribe((network) => this.network = network);
+    this.stateSubscription = this.stateService.networkChanged$.subscribe(
+      (network) => (this.network = network)
+    );
   }
 
   ngOnDestroy() {
@@ -50,5 +61,4 @@ export class AmountComponent implements OnInit, OnDestroy {
     }
     this.currencySubscription.unsubscribe();
   }
-
 }

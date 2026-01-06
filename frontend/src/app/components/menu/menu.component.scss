@@ -45,7 +45,8 @@
   right: 0;
 }
 
-.sidenav a, button{
+.sidenav a,
+button {
   text-decoration: none;
   color: lightgray;
   margin-left: 20px;
@@ -67,7 +68,9 @@
 }
 
 @media screen and (max-height: 450px) {
-  .sidenav a {font-size: 18px;}
+  .sidenav a {
+    font-size: 18px;
+  }
 }
 
 .badge-default {

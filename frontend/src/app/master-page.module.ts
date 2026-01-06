@@ -1,6 +1,11 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Routes, RouterModule, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import {
+  Routes,
+  RouterModule,
+  ActivatedRouteSnapshot,
+  RouterStateSnapshot,
+} from '@angular/router';
 import { MasterPageComponent } from '@components/master-page/master-page.component';
 import { SharedModule } from '@app/shared/shared.module';
 
@@ -30,7 +35,7 @@ const routes: Routes = [
       {
         path: 'mining/blocks',
         redirectTo: 'blocks',
-        pathMatch: 'full'
+        pathMatch: 'full',
       },
       {
         path: 'tx/push',
@@ -46,7 +51,8 @@ const routes: Routes = [
       },
       {
         path: 'about',
-        loadChildren: () => import('@components/about/about.module').then(m => m.AboutModule),
+        loadChildren: () =>
+          import('@components/about/about.module').then((m) => m.AboutModule),
       },
       {
         path: 'blocks/stale',
@@ -64,98 +70,135 @@ const routes: Routes = [
         path: 'rbf',
         component: RbfList,
       },
-      ...(browserWindowEnv.STRATUM_ENABLED ? [{
-        path: 'stratum',
-        component: StartComponent,
-        children: [
-          {
-            path: '',
-            component: StratumList,
-          }
-        ]
-      }] : []),
+      ...(browserWindowEnv.STRATUM_ENABLED
+        ? [
+            {
+              path: 'stratum',
+              component: StartComponent,
+              children: [
+                {
+                  path: '',
+                  component: StratumList,
+                },
+              ],
+            },
+          ]
+        : []),
       {
         path: 'terms-of-service',
-        loadChildren: () => import('@components/terms-of-service/terms-of-service.module').then(m => m.TermsOfServiceModule),
+        loadChildren: () =>
+          import('@components/terms-of-service/terms-of-service.module').then(
+            (m) => m.TermsOfServiceModule
+          ),
       },
       {
         path: 'privacy-policy',
-        loadChildren: () => import('@components/privacy-policy/privacy-policy.module').then(m => m.PrivacyPolicyModule),
+        loadChildren: () =>
+          import('@components/privacy-policy/privacy-policy.module').then(
+            (m) => m.PrivacyPolicyModule
+          ),
       },
       {
         path: 'trademark-policy',
-        loadChildren: () => import('@components/trademark-policy/trademark-policy.module').then(m => m.TrademarkModule),
+        loadChildren: () =>
+          import('@components/trademark-policy/trademark-policy.module').then(
+            (m) => m.TrademarkModule
+          ),
       },
       {
         path: 'tx',
         component: StartComponent,
         data: { preload: true, networkSpecific: true },
-        loadChildren: () => import('@components/transaction/transaction.module').then(m => m.TransactionModule),
+        loadChildren: () =>
+          import('@components/transaction/transaction.module').then(
+            (m) => m.TransactionModule
+          ),
       },
       {
         path: 'block',
         component: StartComponent,
         data: { preload: true, networkSpecific: true },
-        loadChildren: () => import('@components/block/block.module').then(m => m.BlockModule),
+        loadChildren: () =>
+          import('@components/block/block.module').then((m) => m.BlockModule),
       },
       {
         path: 'docs',
-        loadChildren: () => import('@app/docs/docs.module').then(m => m.DocsModule),
+        loadChildren: () =>
+          import('@app/docs/docs.module').then((m) => m.DocsModule),
         data: { preload: true },
       },
       {
         path: 'api',
-        loadChildren: () => import('@app/docs/docs.module').then(m => m.DocsModule)
+        loadChildren: () =>
+          import('@app/docs/docs.module').then((m) => m.DocsModule),
       },
       {
         path: 'lightning',
-        loadChildren: () => import('@app/lightning/lightning.module').then(m => m.LightningModule),
-        data: { preload: browserWindowEnv && browserWindowEnv.LIGHTNING === true, networks: ['bitcoin'] },
+        loadChildren: () =>
+          import('@app/lightning/lightning.module').then(
+            (m) => m.LightningModule
+          ),
+        data: {
+          preload: browserWindowEnv && browserWindowEnv.LIGHTNING === true,
+          networks: ['bitcoin'],
+        },
       },
       {
         path: 'tools/calculator',
-        component: CalculatorComponent
+        component: CalculatorComponent,
       },
     ],
-  }
+  },
 ];
 
 if (window['__env']?.OFFICIAL_MEMPOOL_SPACE) {
   routes[0].children.push({
     path: 'monitoring',
     data: { networks: ['bitcoin', 'liquid'] },
-    component: ServerHealthComponent
+    component: ServerHealthComponent,
   });
   routes[0].children.push({
     path: 'nodes',
     data: { networks: ['bitcoin', 'liquid'] },
-    component: ServerStatusComponent
+    component: ServerStatusComponent,
   });
   if (window['isMempoolSpaceBuild']) {
     routes[0].children.push({
       path: 'faucet',
-      canActivate: [(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
-        return state.url.startsWith('/testnet4/');
-      }],
+      canActivate: [
+        (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
+          return state.url.startsWith('/testnet4/');
+        },
+      ],
       component: StartComponent,
       data: { preload: true, networkSpecific: true },
-      children: [{
-        path: '',
-        data: { networks: ['bitcoin'] },
-        component: FaucetComponent,
-      }]
-    })
+      children: [
+        {
+          path: '',
+          data: { networks: ['bitcoin'] },
+          component: FaucetComponent,
+        },
+      ],
+    });
   }
 }
 
-if (window['__env']?.customize?.dashboard?.widgets?.some(w => w.component ==='simpleproof')) {
+if (
+  window['__env']?.customize?.dashboard?.widgets?.some(
+    (w) => w.component === 'simpleproof'
+  )
+) {
   routes[0].children.push({
     path: 'sp/verified',
     component: SimpleProofWidgetComponent,
   });
 }
 
-if (window['__env']?.customize?.dashboard?.widgets?.some(w => w.component ==='simpleproof_cubo')) {
+if (
+  window['__env']?.customize?.dashboard?.widgets?.some(
+    (w) => w.component === 'simpleproof_cubo'
+  )
+) {
   routes[0].children.push({
     path: 'sp/cubo',
     component: SimpleProofCuboWidgetComponent,
@@ -163,26 +206,14 @@ if (window['__env']?.customize?.dashboard?.widgets?.some(w => w.component ==='si
 }
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports: [
-    RouterModule
-  ]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class MasterPageRoutingModule { }
+export class MasterPageRoutingModule {}
 
 @NgModule({
-  imports: [
-    CommonModule,
-    MasterPageRoutingModule,
-    SharedModule,
-  ],
-  declarations: [
-    MasterPageComponent,
-  ],
-  exports: [
-    MasterPageComponent,
-  ]
+  imports: [CommonModule, MasterPageRoutingModule, SharedModule],
+  declarations: [MasterPageComponent],
+  exports: [MasterPageComponent],
 })
-export class MasterPageModule { }
+export class MasterPageModule {}

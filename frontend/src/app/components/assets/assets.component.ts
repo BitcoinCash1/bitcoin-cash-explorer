@@ -17,7 +17,10 @@ import { StateService } from '@app/services/state.service';
   standalone: false,
 })
 export class AssetsComponent implements OnInit {
-  nativeAssetId = this.stateService.network === 'liquidtestnet' ? environment.nativeTestAssetId : environment.nativeAssetId;
+  nativeAssetId =
+    this.stateService.network === 'liquidtestnet'
+      ? environment.nativeTestAssetId
+      : environment.nativeAssetId;
   paginationMaxSize = window.matchMedia('(max-width: 670px)').matches ? 4 : 6;
   ellipses = window.matchMedia('(max-width: 670px)').matches ? false : true;
 
@@ -38,47 +41,50 @@ export class AssetsComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private seoService: SeoService,
-    private stateService: StateService,
-  ) { }
+    private stateService: StateService
+  ) {}
 
   ngOnInit() {
-    this.seoService.setTitle($localize`:@@ee8f8008bae6ce3a49840c4e1d39b4af23d4c263:Assets`);
-    this.itemsPerPage = Math.max(Math.round(this.contentSpace / this.fiveItemsPxSize) * 5, 10);
+    this.seoService.setTitle(
+      $localize`:@@ee8f8008bae6ce3a49840c4e1d39b4af23d4c263:Assets`
+    );
+    this.itemsPerPage = Math.max(
+      Math.round(this.contentSpace / this.fiveItemsPxSize) * 5,
+      10
+    );
 
     this.assets$ = combineLatest([
       this.assetsService.getAssetsJson$,
       this.route.queryParams,
-    ])
-      .pipe(
-        take(1),
-        switchMap(([assets, qp]) => {
-          this.assets = assets.array;
+    ]).pipe(
+      take(1),
+      switchMap(([assets, qp]) => {
+        this.assets = assets.array;
 
-          return this.route.queryParams
-            .pipe(
-              filter((queryParams) => {
-                const newPage = parseInt(queryParams.page, 10);
-                if (newPage !== this.page) {
-                  return true;
-                }
-                return false;
-              }),
-              map((queryParams) => {
-                if (queryParams.page) {
-                  const newPage = parseInt(queryParams.page, 10);
-                  this.page = newPage;
-                } else {
-                  this.page = 1;
-                }
-                return '';
-              })
-            );
-        }),
-        map(() => {
-          const start = (this.page - 1) * this.itemsPerPage;
-          return this.assets.slice(start, this.itemsPerPage + start);
-        })
-      );
+        return this.route.queryParams.pipe(
+          filter((queryParams) => {
+            const newPage = parseInt(queryParams.page, 10);
+            if (newPage !== this.page) {
+              return true;
+            }
+            return false;
+          }),
+          map((queryParams) => {
+            if (queryParams.page) {
+              const newPage = parseInt(queryParams.page, 10);
+              this.page = newPage;
+            } else {
+              this.page = 1;
+            }
+            return '';
+          })
+        );
+      }),
+      map(() => {
+        const start = (this.page - 1) * this.itemsPerPage;
+        return this.assets.slice(start, this.itemsPerPage + start);
+      })
+    );
   }
 
   pageChange(page: number) {

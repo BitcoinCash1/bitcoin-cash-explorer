@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Input,
+  OnInit,
+} from '@angular/core';
 import { Observable } from 'rxjs';
 import { INodesStatistics } from '@interfaces/node-api.interface';
 
@@ -13,10 +18,9 @@ export class ChannelsStatisticsComponent implements OnInit {
   @Input() statistics$: Observable<INodesStatistics>;
   mode: string = 'avg';
 
-  constructor() { }
+  constructor() {}
 
-  ngOnInit(): void {
-  }
+  ngOnInit(): void {}
 
   switchMode(mode: 'avg' | 'med') {
     this.mode = mode;

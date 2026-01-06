@@ -7,31 +7,19 @@ const routes: Routes = [
   {
     path: '',
     component: LiquidMasterPageComponent,
-    loadChildren: () => import('../graphs/graphs.module').then(m => m.GraphsModule),
+    loadChildren: () =>
+      import('../graphs/graphs.module').then((m) => m.GraphsModule),
     data: { preload: true },
-  }
+  },
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports: [
-    RouterModule
-  ]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class LiquidGraphsRoutingModule { }
+export class LiquidGraphsRoutingModule {}
 
 @NgModule({
-  imports: [
-    CommonModule,
-    LiquidGraphsRoutingModule,
-  ],
+  imports: [CommonModule, LiquidGraphsRoutingModule],
 })
-export class LiquidGraphsModule { }
-
-
-
-
-
-
+export class LiquidGraphsModule {}

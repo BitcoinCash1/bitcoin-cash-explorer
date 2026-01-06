@@ -1,4 +1,10 @@
-import { Component, Input, Inject, LOCALE_ID, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  Input,
+  Inject,
+  LOCALE_ID,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 
 @Component({
   selector: 'app-truncate',
@@ -19,10 +25,12 @@ export class TruncateComponent {
   @Input() disabled: boolean = false;
   rtl: boolean;
 
-  constructor(
-    @Inject(LOCALE_ID) private locale: string,
-  ) {
-    if (this.locale.startsWith('ar') || this.locale.startsWith('fa') || this.locale.startsWith('he')) {
+  constructor(@Inject(LOCALE_ID) private locale: string) {
+    if (
+      this.locale.startsWith('ar') ||
+      this.locale.startsWith('fa') ||
+      this.locale.startsWith('he')
+    ) {
       this.rtl = true;
     }
   }

@@ -13,7 +13,7 @@ import { LightningApiService } from '@app/lightning/lightning-api.service';
 })
 export class GroupComponent implements OnInit {
   nodes$: Observable<any>;
-  isp: {name: string, id: number};
+  isp: { name: string; id: number };
 
   skeletonLines: number[] = [];
   selectedSocketIndex = 0;
@@ -23,7 +23,7 @@ export class GroupComponent implements OnInit {
   constructor(
     private lightningApiService: LightningApiService,
     private seoService: SeoService,
-    private formBuilder: UntypedFormBuilder,
+    private formBuilder: UntypedFormBuilder
   ) {
     for (let i = 0; i < 20; ++i) {
       this.skeletonLines.push(i);
@@ -40,64 +40,70 @@ export class GroupComponent implements OnInit {
     });
 
     this.seoService.setTitle(`Mempool.space Lightning Nodes`);
-    this.seoService.setDescription(`See all Lightning nodes run by mempool.space -- these are the nodes that provide the data on the mempool.space Lightning dashboard.`);
+    this.seoService.setDescription(
+      `See all Lightning nodes run by mempool.space -- these are the nodes that provide the data on the mempool.space Lightning dashboard.`
+    );
 
-    this.nodes$ = this.lightningApiService.getNodeGroup$('mempool.space')
-      .pipe(
-        map((nodes) => {
-          for (const node of nodes) {
-            const socketsObject = [];
-            for (const socket of node.sockets.split(',')) {
-              if (socket === '') {
-                continue;
-              }
-              let label = '';
-              if (socket.match(/(?:[0-9]{1,3}\.){3}[0-9]{1,3}/)) {
-                label = 'IPv4';
-              } else if (socket.indexOf('[') > -1) {
-                label = 'IPv6';
-              } else if (socket.indexOf('onion') > -1) {
-                label = 'Tor';
-              }
-              socketsObject.push({
-                label: label,
-                socket: node.public_key + '@' + socket,
-              });
+    this.nodes$ = this.lightningApiService.getNodeGroup$('mempool.space').pipe(
+      map((nodes) => {
+        for (const node of nodes) {
+          const socketsObject = [];
+          for (const socket of node.sockets.split(',')) {
+            if (socket === '') {
+              continue;
             }
-            // @ts-ignore
-            node.socketsObject = socketsObject;
-
-            if (!node?.country && !node?.city &&
-              !node?.subdivision) {
-                // @ts-ignore
-                node.geolocation = null;
-            } else {
-              // @ts-ignore
-              node.geolocation = <GeolocationData>{
-                country: node.country?.en,
-                city: node.city?.en,
-                subdivision: node.subdivision?.en,
-                iso: node.iso_code,
-              };
+            let label = '';
+            if (socket.match(/(?:[0-9]{1,3}\.){3}[0-9]{1,3}/)) {
+              label = 'IPv4';
+            } else if (socket.indexOf('[') > -1) {
+              label = 'IPv6';
+            } else if (socket.indexOf('onion') > -1) {
+              label = 'Tor';
             }
+            socketsObject.push({
+              label: label,
+              socket: node.public_key + '@' + socket,
+            });
           }
+          // @ts-ignore
+          node.socketsObject = socketsObject;
 
-          nodes.map((node) => {
-            node.channels = node.opened_channel_count;
-            return node;
-          });
+          if (!node?.country && !node?.city && !node?.subdivision) {
+            // @ts-ignore
+            node.geolocation = null;
+          } else {
+            // @ts-ignore
+            node.geolocation = <GeolocationData>{
+              country: node.country?.en,
+              city: node.city?.en,
+              subdivision: node.subdivision?.en,
+              iso: node.iso_code,
+            };
+          }
+        }
 
-          const sumLiquidity = nodes.reduce((partialSum, a) => partialSum + parseInt(a.capacity, 10), 0);
-          const sumChannels = nodes.reduce((partialSum, a) => partialSum + a.opened_channel_count, 0);
-          
-          return {
-            nodes: nodes,
-            sumLiquidity: sumLiquidity,
-            sumChannels: sumChannels,
-          };
-        }),
-        share()
-      );
+        nodes.map((node) => {
+          node.channels = node.opened_channel_count;
+          return node;
+        });
+
+        const sumLiquidity = nodes.reduce(
+          (partialSum, a) => partialSum + parseInt(a.capacity, 10),
+          0
+        );
+        const sumChannels = nodes.reduce(
+          (partialSum, a) => partialSum + a.opened_channel_count,
+          0
+        );
+
+        return {
+          nodes: nodes,
+          sumLiquidity: sumLiquidity,
+          sumChannels: sumChannels,
+        };
+      }),
+      share()
+    );
   }
 
   trackByPublicKey(index: number, node: any): string {
@@ -107,5 +113,4 @@ export class GroupComponent implements OnInit {
   changeSocket(index: number) {
     this.selectedSocketIndex = index;
   }
-
 }

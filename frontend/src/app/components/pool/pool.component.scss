@@ -5,12 +5,12 @@
 
 @media (min-width: 768px) {
   .d-md-block {
-      display: table-cell !important;
+    display: table-cell !important;
   }
 }
 @media (min-width: 992px) {
   .d-lg-block {
-      display: table-cell !important;
+    display: table-cell !important;
   }
 }
 
@@ -99,7 +99,7 @@ div.scrollable {
 
 .health {
   @media (max-width: 1150px) {
-  display: none;    
+    display: none;
   }
 }
 
@@ -166,7 +166,6 @@ div.scrollable {
 .skeleton-loader.data {
   max-width: 70px;
 }
-
 
 .loadingGraphs {
   position: absolute;
@@ -239,7 +238,15 @@ div.scrollable {
       top: 0;
       height: 100%;
       width: 100%;
-      background: linear-gradient(to top left, transparent, transparent 48%, white 49%, white 51%, transparent 52%, transparent);
+      background: linear-gradient(
+        to top left,
+        transparent,
+        transparent 48%,
+        white 49%,
+        white 51%,
+        transparent 52%,
+        transparent
+      );
     }
   }
 
@@ -263,7 +270,8 @@ div.scrollable {
 }
 
 .job-table {
-  td, th {
+  td,
+  th {
     width: 25%;
     max-width: 25%;
     min-width: 25%;
@@ -273,13 +281,19 @@ div.scrollable {
   }
 
   @media (max-width: 767.98px) {
-    .expected, .timestamp, .clean, .job-received {
+    .expected,
+    .timestamp,
+    .clean,
+    .job-received {
       display: none;
     }
   }
 }
 
-.title-link, .title-link:hover, .title-link:focus, .title-link:active {
+.title-link,
+.title-link:hover,
+.title-link:focus,
+.title-link:active {
   display: block;
   text-decoration: none;
   color: inherit;

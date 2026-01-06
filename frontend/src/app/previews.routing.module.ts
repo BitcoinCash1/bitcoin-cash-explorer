@@ -14,38 +14,41 @@ const routes: Routes = [
     children: [
       {
         path: 'block/:id',
-        component: BlockPreviewComponent
+        component: BlockPreviewComponent,
       },
       {
         path: 'address/:id',
         children: [],
-        component: AddressPreviewComponent
+        component: AddressPreviewComponent,
       },
       {
         path: 'wallet/:wallet',
         children: [],
-        component: WalletPreviewComponent
+        component: WalletPreviewComponent,
       },
       {
         path: 'tx/:id',
         children: [],
-        component: TransactionPreviewComponent
+        component: TransactionPreviewComponent,
       },
       {
         path: 'mining/pool/:slug',
-        component: PoolPreviewComponent
+        component: PoolPreviewComponent,
       },
       {
         path: 'lightning',
-        loadChildren: () => import('@app/lightning/lightning-previews.module').then(m => m.LightningPreviewsModule),
+        loadChildren: () =>
+          import('@app/lightning/lightning-previews.module').then(
+            (m) => m.LightningPreviewsModule
+          ),
         data: { preload: true },
       },
     ],
-  }
+  },
 ];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+  exports: [RouterModule],
 })
-export class PreviewsRoutingModule { }
+export class PreviewsRoutingModule {}

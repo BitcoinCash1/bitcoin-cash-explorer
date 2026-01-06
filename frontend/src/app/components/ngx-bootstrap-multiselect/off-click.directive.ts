@@ -7,14 +7,13 @@ import { Output } from '@angular/core';
   selector: '[offClick]',
   standalone: false,
 })
-
 export class OffClickDirective {
   @Output('offClick') onOffClick = new EventEmitter<any>();
 
   private _clickEvent: MouseEvent;
   private _touchEvent: TouchEvent;
 
-  @HostListener('click', ['$event']) 
+  @HostListener('click', ['$event'])
   public onClick(event: MouseEvent): void {
     this._clickEvent = event;
   }
@@ -24,7 +23,7 @@ export class OffClickDirective {
     this._touchEvent = event;
   }
 
-  @HostListener('document:click', ['$event']) 
+  @HostListener('document:click', ['$event'])
   public onDocumentClick(event: MouseEvent): void {
     if (event !== this._clickEvent) {
       this.onOffClick.emit(event);

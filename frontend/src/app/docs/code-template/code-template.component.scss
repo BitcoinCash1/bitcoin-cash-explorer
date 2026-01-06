@@ -4,7 +4,14 @@
 
 code {
   background-color: var(--bg);
-  font-family: Consolas,Monaco,Lucida Console,Liberation Mono,DejaVu Sans Mono,Bitstream Vera Sans Mono,Courier New;
+  font-family:
+    Consolas,
+    Monaco,
+    Lucida Console,
+    Liberation Mono,
+    DejaVu Sans Mono,
+    Bitstream Vera Sans Mono,
+    Courier New;
 }
 
 tr {
@@ -17,25 +24,24 @@ tr {
 
 li.nav-item {
   width: 100%;
-  @media (min-width: 676px){
+  @media (min-width: 676px) {
     width: auto;
   }
 }
 
 .nav-tabs .nav-link.active {
   border-bottom: 1px solid #fff;
-  @media (min-width: 676px){
+  @media (min-width: 676px) {
     border-bottom: 1px solid var(--active-bg);
   }
 }
 
-.code-tab { 
+.code-tab {
   width: auto;
   margin: 20px auto 10px;
   li.nav-item {
     width: auto;
   }
-
 }
 
 .code {
@@ -89,7 +95,7 @@ pre {
   color: #f18920;
   background-color: var(--bg);
   padding: 30px;
-  code{
+  code {
     background-color: transparent;
     white-space: break-spaces;
     word-break: break-all;

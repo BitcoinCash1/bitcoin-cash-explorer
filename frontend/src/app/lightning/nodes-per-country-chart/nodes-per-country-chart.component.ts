@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, OnInit, HostBinding, NgZone } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  HostBinding,
+  NgZone,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { EChartsOption, PieSeriesOption } from '@app/graphs/echarts';
 import { map, Observable, share, tap } from 'rxjs';
@@ -39,16 +45,20 @@ export class NodesPerCountryChartComponent implements OnInit {
     private amountShortenerPipe: AmountShortenerPipe,
     private zone: NgZone,
     public stateService: StateService,
-    private router: Router,
-  ) {
-  }
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
-    this.seoService.setTitle($localize`:@@9d3ad4c6623870d96b65fb7a708fed6ce7c20044:Lightning Nodes Per Country`);
-    this.seoService.setDescription($localize`:@@meta.description.lightning.nodes-country-overview:See a geographical breakdown of the Lightning network: how many Lightning nodes are hosted in countries around the world, aggregate BTC capacity for each country, and more.`);
-    this.nodesPerCountryObservable$ = this.apiService.getNodesPerCountry$()
+    this.seoService.setTitle(
+      $localize`:@@9d3ad4c6623870d96b65fb7a708fed6ce7c20044:Lightning Nodes Per Country`
+    );
+    this.seoService.setDescription(
+      $localize`:@@meta.description.lightning.nodes-country-overview:See a geographical breakdown of the Lightning network: how many Lightning nodes are hosted in countries around the world, aggregate BTC capacity for each country, and more.`
+    );
+    this.nodesPerCountryObservable$ = this.apiService
+      .getNodesPerCountry$()
       .pipe(
-        map(data => {
+        map((data) => {
           for (let i = 0; i < data.length; ++i) {
             data[i].rank = i + 1;
             data[i].iso = data[i].iso.toLowerCase();
@@ -56,7 +66,7 @@ export class NodesPerCountryChartComponent implements OnInit {
           }
           return data.slice(0, 100);
         }),
-        tap(data => {
+        tap((data) => {
           this.isLoading = false;
           this.prepareChartOptions(data);
         }),
@@ -101,11 +111,16 @@ export class NodesPerCountryChartComponent implements OnInit {
           borderColor: '#000',
           formatter: () => {
             const nodeCount = country.count.toString();
-            return `<b style="color: white">${country.name.en} (${country.share}%)</b><br>` +
-              $localize`${nodeCount} nodes` + `<br>` +
-              $localize`${this.amountShortenerPipe.transform(country.capacity / 100000000, 2)} BTC capacity`
-            ;
-          }
+            return (
+              `<b style="color: white">${country.name.en} (${country.share}%)</b><br>` +
+              $localize`${nodeCount} nodes` +
+              `<br>` +
+              $localize`${this.amountShortenerPipe.transform(
+                country.capacity / 100000000,
+                2
+              )} BTC capacity`
+            );
+          },
         },
         data: country.iso,
       } as PieSeriesOption);
@@ -122,7 +137,7 @@ export class NodesPerCountryChartComponent implements OnInit {
         overflow: 'truncate',
         color: 'var(--tooltip-grey)',
         alignTo: 'edge',
-        edgeDistance: edgeDistance
+        edgeDistance: edgeDistance,
       },
       tooltip: {
         backgroundColor: 'rgba(17, 19, 31, 1)',
@@ -134,11 +149,15 @@ export class NodesPerCountryChartComponent implements OnInit {
         borderColor: '#000',
         formatter: () => {
           const nodeCount = totalNodeOther.toString();
-          return `<b style="color: white">` + $localize`Other (${totalShareOther.toFixed(2) + '%'})` + `</b><br>` +
-            $localize`${nodeCount} nodes`;
+          return (
+            `<b style="color: white">` +
+            $localize`Other (${totalShareOther.toFixed(2) + '%'})` +
+            `</b><br>` +
+            $localize`${nodeCount} nodes`
+          );
         },
       },
-      data: 9999 as any
+      data: 9999 as any,
     } as PieSeriesOption);
 
     return data;
@@ -157,7 +176,7 @@ export class NodesPerCountryChartComponent implements OnInit {
         trigger: 'item',
         textStyle: {
           align: 'left',
-        }
+        },
       },
       series: [
         {
@@ -190,16 +209,16 @@ export class NodesPerCountryChartComponent implements OnInit {
             labelLine: {
               lineStyle: {
                 width: 4,
-              }
-            }
-          }
-        }
+              },
+            },
+          },
+        },
       ],
     };
   }
 
   isMobile() {
-    return (window.innerWidth <= 767.98);
+    return window.innerWidth <= 767.98;
   }
 
   onChartInit(ec) {
@@ -209,11 +228,14 @@ export class NodesPerCountryChartComponent implements OnInit {
     this.chartInstance = ec;
 
     this.chartInstance.on('click', (e) => {
-      if (e.data.data === 9999) { // "Other"
+      if (e.data.data === 9999) {
+        // "Other"
         return;
       }
       this.zone.run(() => {
-        const url = new RelativeUrlPipe(this.stateService).transform(`/lightning/nodes/country/${e.data.data}`);
+        const url = new RelativeUrlPipe(this.stateService).transform(
+          `/lightning/nodes/country/${e.data.data}`
+        );
         this.router.navigate([url]);
       });
     });
@@ -223,16 +245,18 @@ export class NodesPerCountryChartComponent implements OnInit {
     const now = new Date();
     this.chartOptions.backgroundColor = 'var(--active-bg)';
     this.chartInstance.setOption(this.chartOptions);
-    download(this.chartInstance.getDataURL({
-      pixelRatio: 2,
-      excludeComponents: ['dataZoom'],
-    }), `lightning-nodes-per-country-${Math.round(now.getTime() / 1000)}.svg`);
+    download(
+      this.chartInstance.getDataURL({
+        pixelRatio: 2,
+        excludeComponents: ['dataZoom'],
+      }),
+      `lightning-nodes-per-country-${Math.round(now.getTime() / 1000)}.svg`
+    );
     this.chartOptions.backgroundColor = 'none';
     this.chartInstance.setOption(this.chartOptions);
   }
 
   isEllipsisActive(e) {
-    return (e.offsetWidth < e.scrollWidth);
+    return e.offsetWidth < e.scrollWidth;
   }
 }
-

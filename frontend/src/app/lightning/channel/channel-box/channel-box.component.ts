@@ -10,6 +10,5 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 export class ChannelBoxComponent {
   @Input() channel: any;
 
-  constructor() { }
-
+  constructor() {}
 }

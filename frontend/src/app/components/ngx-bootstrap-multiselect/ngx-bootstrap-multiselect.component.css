@@ -23,9 +23,9 @@ a {
 }
 
 .slider {
-  width:3.8em;
-  height:3.8em;
-  display:block;
+  width: 3.8em;
+  height: 3.8em;
+  display: block;
   -webkit-transition: all 0.125s linear;
   -moz-transition: all 0.125s linear;
   -o-transition: all 0.125s linear;
@@ -38,7 +38,7 @@ a {
   margin-left: 1.35em;
 }
 
-.content_wrapper{
+.content_wrapper {
   display: table-cell;
   vertical-align: middle;
 }

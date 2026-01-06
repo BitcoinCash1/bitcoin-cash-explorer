@@ -15,10 +15,6 @@ import { FaqTemplateDirective } from '@app/docs/faq-template/faq-template.compon
     DocsComponent,
     FaqTemplateDirective,
   ],
-  imports: [
-    CommonModule,
-    SharedModule,
-    DocsRoutingModule,
-  ]
+  imports: [CommonModule, SharedModule, DocsRoutingModule],
 })
-export class DocsModule { }
+export class DocsModule {}

@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnChanges,
+  OnInit,
+  SimpleChanges,
+} from '@angular/core';
 import { Subscription } from 'rxjs';
 import { StateService } from '@app/services/state.service';
 
@@ -19,12 +25,12 @@ export class BtcComponent implements OnInit, OnChanges {
   network = '';
   stateSubscription: Subscription;
 
-  constructor(
-    private stateService: StateService,
-  ) { }
+  constructor(private stateService: StateService) {}
 
   ngOnInit() {
-    this.stateSubscription = this.stateService.networkChanged$.subscribe((network) => this.network = network);
+    this.stateSubscription = this.stateService.networkChanged$.subscribe(
+      (network) => (this.network = network)
+    );
   }
 
   ngOnDestroy() {
@@ -35,11 +41,11 @@ export class BtcComponent implements OnInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (this.satoshis >= 1_000_000) {
-      this.value = (this.satoshis / 100_000_000);
-      this.unit = 'BTC'
+      this.value = this.satoshis / 100_000_000;
+      this.unit = 'BTC';
     } else {
       this.value = Math.round(this.satoshis);
-      this.unit = 'sats'
+      this.unit = 'sats';
     }
   }
 }

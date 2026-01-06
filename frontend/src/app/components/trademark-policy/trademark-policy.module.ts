@@ -8,33 +8,17 @@ const routes: Routes = [
   {
     path: '',
     component: TrademarkPolicyComponent,
-  }
+  },
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports: [
-    RouterModule
-  ]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class TrademarkRoutingModule { }
+export class TrademarkRoutingModule {}
 
 @NgModule({
-  imports: [
-    CommonModule,
-    TrademarkRoutingModule,
-    SharedModule,
-  ],
-  declarations: [
-    TrademarkPolicyComponent,
-  ]
+  imports: [CommonModule, TrademarkRoutingModule, SharedModule],
+  declarations: [TrademarkPolicyComponent],
 })
-export class TrademarkModule { }
-
-
-
-
-
-
+export class TrademarkModule {}

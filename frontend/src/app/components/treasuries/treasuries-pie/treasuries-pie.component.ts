@@ -1,4 +1,15 @@
-import { ChangeDetectionStrategy, Component, Inject, LOCALE_ID, Input, OnChanges, SimpleChanges, ChangeDetectorRef, EventEmitter, Output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  LOCALE_ID,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ChangeDetectorRef,
+  EventEmitter,
+  Output,
+} from '@angular/core';
 import { EChartsOption, PieSeriesOption } from '@app/graphs/echarts';
 import { BehaviorSubject, combineLatest, Observable, Subscription } from 'rxjs';
 import { StateService } from '@app/services/state.service';
@@ -41,9 +52,8 @@ export class TreasuriesPieComponent implements OnChanges {
   constructor(
     @Inject(LOCALE_ID) public locale: string,
     public stateService: StateService,
-    private cd: ChangeDetectorRef,
-  ) {
-  }
+    private cd: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
     this.isLoading = true;
@@ -65,7 +75,7 @@ export class TreasuriesPieComponent implements OnChanges {
   setupSubscription(): void {
     this.subscription = combineLatest([
       this.redraw$,
-      this.walletSummaries$
+      this.walletSummaries$,
     ]).subscribe(([_, walletSummaries]) => {
       if (walletSummaries) {
         this.error = null;
@@ -82,7 +92,9 @@ export class TreasuriesPieComponent implements OnChanges {
     for (const treasury of this.treasuries) {
       const summary = walletSummaries[treasury.wallet];
       if (summary?.length) {
-        const total = this.walletStats[treasury.wallet] ? this.walletStats[treasury.wallet].balance : summary.reduce((acc, tx) => acc + tx.value, 0);
+        const total = this.walletStats[treasury.wallet]
+          ? this.walletStats[treasury.wallet].balance
+          : summary.reduce((acc, tx) => acc + tx.value, 0);
         this.walletBalance[treasury.wallet] = total;
       }
     }
@@ -103,16 +115,19 @@ export class TreasuriesPieComponent implements OnChanges {
       edgeDistance = 10;
     }
 
-    const treasuriesTotal = Object.values(this.walletBalance).reduce((acc, v) => acc + v, 0);
+    const treasuriesTotal = Object.values(this.walletBalance).reduce(
+      (acc, v) => acc + v,
+      0
+    );
     const total = this.mode === 'relative' ? treasuriesTotal : 2099999997690000;
 
     const entries: {
-      treasury?: any,
-      id: string,
-      label: string,
-      balance: number,
-      share: number,
-      color: string,
+      treasury?: any;
+      id: string;
+      label: string;
+      balance: number;
+      share: number;
+      color: string;
     }[] = this.treasuries.map((treasury, index) => ({
       treasury,
       id: treasury.wallet,
@@ -125,9 +140,9 @@ export class TreasuriesPieComponent implements OnChanges {
       entries.unshift({
         id: 'remaining',
         label: 'Remaining',
-        balance: (total - treasuriesTotal),
+        balance: total - treasuriesTotal,
         share: ((total - treasuriesTotal) / total) * 100,
-        color: 'orange'
+        color: 'orange',
       });
     }
 
@@ -152,7 +167,7 @@ export class TreasuriesPieComponent implements OnChanges {
           edgeDistance: edgeDistance,
           formatter: () => {
             return entry.label;
-          }
+          },
         },
         tooltip: {
           show: !isMobile(),
@@ -164,9 +179,15 @@ export class TreasuriesPieComponent implements OnChanges {
           },
           borderColor: '#000',
           formatter: () => {
-            return `<b style="color: white">${entry.label} (${entry.share.toFixed(2)}%)</b><br>
-            ${formatNumber(entry.balance / 100_000_000, this.locale, '1.3-3')} BTC<br>`;
-          }
+            return `<b style="color: white">${
+              entry.label
+            } (${entry.share.toFixed(2)}%)</b><br>
+            ${formatNumber(
+              entry.balance / 100_000_000,
+              this.locale,
+              '1.3-3'
+            )} BTC<br>`;
+          },
         },
         data: entry.treasury,
       } as PieSeriesOption);
@@ -180,12 +201,12 @@ export class TreasuriesPieComponent implements OnChanges {
           color: '#6b6b6b',
         },
         value: otherEntry.share,
-        name:  $localize`Other (${percentage})`,
+        name: $localize`Other (${percentage})`,
         label: {
           overflow: 'none',
           color: 'var(--tooltip-grey)',
           alignTo: 'edge',
-          edgeDistance: edgeDistance
+          edgeDistance: edgeDistance,
         },
         tooltip: {
           backgroundColor: 'rgba(17, 19, 31, 1)',
@@ -196,9 +217,15 @@ export class TreasuriesPieComponent implements OnChanges {
           },
           borderColor: '#000',
           formatter: () => {
-            return `<b style="color: white">${otherEntry.label} (${otherEntry.share.toFixed(2)}%)</b><br>
-            ${formatNumber(otherEntry.balance / 100_000_000, this.locale, '1.3-3')} BTC<br>`;
-          }
+            return `<b style="color: white">${
+              otherEntry.label
+            } (${otherEntry.share.toFixed(2)}%)</b><br>
+            ${formatNumber(
+              otherEntry.balance / 100_000_000,
+              this.locale,
+              '1.3-3'
+            )} BTC<br>`;
+          },
         },
       } as PieSeriesOption);
     }
@@ -216,7 +243,7 @@ export class TreasuriesPieComponent implements OnChanges {
         trigger: 'item',
         textStyle: {
           align: 'left',
-        }
+        },
       },
       series: [
         {
@@ -247,10 +274,10 @@ export class TreasuriesPieComponent implements OnChanges {
             labelLine: {
               lineStyle: {
                 width: 3,
-              }
-            }
-          }
-        }
+              },
+            },
+          },
+        },
       ],
     };
   }
@@ -273,16 +300,18 @@ export class TreasuriesPieComponent implements OnChanges {
     const now = new Date();
     this.chartOptions.backgroundColor = 'var(--active-bg)';
     this.chartInstance.setOption(this.chartOptions);
-    download(this.chartInstance.getDataURL({
-      pixelRatio: 2,
-      excludeComponents: ['dataZoom'],
-    }), `treasuries-pie-${Math.round(now.getTime() / 1000)}.svg`);
+    download(
+      this.chartInstance.getDataURL({
+        pixelRatio: 2,
+        excludeComponents: ['dataZoom'],
+      }),
+      `treasuries-pie-${Math.round(now.getTime() / 1000)}.svg`
+    );
     this.chartOptions.backgroundColor = 'none';
     this.chartInstance.setOption(this.chartOptions);
   }
 
   isEllipsisActive(e: HTMLElement): boolean {
-    return (e.offsetWidth < e.scrollWidth);
+    return e.offsetWidth < e.scrollWidth;
   }
 }
-

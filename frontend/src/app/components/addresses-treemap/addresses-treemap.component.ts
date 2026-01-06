@@ -1,4 +1,12 @@
-import { ChangeDetectionStrategy, Component, Inject, Input, LOCALE_ID, NgZone, OnChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  Input,
+  LOCALE_ID,
+  NgZone,
+  OnChanges,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { EChartsOption, TreemapSeriesOption } from '@app/graphs/echarts';
 import { lerpColor } from '@app/shared/graphs.utils';
@@ -32,7 +40,7 @@ export class AddressesTreemap implements OnChanges {
     private amountShortenerPipe: AmountShortenerPipe,
     private zone: NgZone,
     private router: Router,
-    public stateService: StateService,
+    public stateService: StateService
   ) {}
 
   ngOnChanges(): void {
@@ -40,26 +48,29 @@ export class AddressesTreemap implements OnChanges {
   }
 
   prepareChartOptions(): void {
-    const data = this.addresses.map(address => ({
+    const data = this.addresses.map((address) => ({
       address: address.address,
-      value: address.chain_stats.funded_txo_sum - address.chain_stats.spent_txo_sum,
+      value:
+        address.chain_stats.funded_txo_sum - address.chain_stats.spent_txo_sum,
       stats: address.chain_stats,
     }));
     // only consider visible items for the color gradient
     const totalValue = data.reduce((acc, address) => acc + address.value, 0);
-    const maxTxs = data.filter(address => address.value > (totalValue / 2000)).reduce((max, address) => Math.max(max, address.stats.tx_count), 0);
-    const dataItems = data.map(address => ({
+    const maxTxs = data
+      .filter((address) => address.value > totalValue / 2000)
+      .reduce((max, address) => Math.max(max, address.stats.tx_count), 0);
+    const dataItems = data.map((address) => ({
       ...address,
       itemStyle: {
         color: lerpColor('#1E88E5', '#D81B60', address.stats.tx_count / maxTxs),
-      }
+      },
     }));
     this.chartOptions = {
       tooltip: {
         trigger: 'item',
         textStyle: {
           align: 'left',
-        }
+        },
       },
       series: <TreemapSeriesOption[]>[
         {
@@ -90,28 +101,39 @@ export class AddressesTreemap implements OnChanges {
                 <table style="table-layout: fixed;">
                   <tbody>
                     <tr>
-                      <td colspan="2"><b style="color: white; margin-left: 2px">${value.data.address}</b></td>
+                      <td colspan="2"><b style="color: white; margin-left: 2px">${
+                        value.data.address
+                      }</b></td>
                     </tr>
                     <tr>
                       <td>Received</td>
-                      <td style="text-align: right">${this.formatValue(value.data.stats.funded_txo_sum)}</td>
+                      <td style="text-align: right">${this.formatValue(
+                        value.data.stats.funded_txo_sum
+                      )}</td>
                     </tr>
                     <tr>
                       <td>Sent</td>
-                      <td style="text-align: right">${this.formatValue(value.data.stats.spent_txo_sum)}</td>
+                      <td style="text-align: right">${this.formatValue(
+                        value.data.stats.spent_txo_sum
+                      )}</td>
                     </tr>
                     <tr>
                       <td>Balance</td>
-                      <td style="text-align: right">${this.formatValue(value.data.stats.funded_txo_sum - value.data.stats.spent_txo_sum)}</td>
+                      <td style="text-align: right">${this.formatValue(
+                        value.data.stats.funded_txo_sum -
+                          value.data.stats.spent_txo_sum
+                      )}</td>
                     </tr>
                     <tr>
                       <td>Transaction count</td>
-                      <td style="text-align: right">${value.data.stats.tx_count}</td>
+                      <td style="text-align: right">${
+                        value.data.stats.tx_count
+                      }</td>
                     </tr>
                   </tbody>
                 </table>
               `;
-            }
+            },
           },
           itemStyle: {
             borderColor: 'black',
@@ -119,17 +141,17 @@ export class AddressesTreemap implements OnChanges {
           },
           breadcrumb: {
             show: false,
-          }
-        }
-      ]
-    };    
+          },
+        },
+      ],
+    };
   }
 
   formatValue(sats: number): string {
     if (sats > 100000000) {
       return formatNumber(sats / 100000000, this.locale, '1.2-2') + ' BTC';
     } else {
-     return this.amountShortenerPipe.transform(sats, 2) + ' sats';
+      return this.amountShortenerPipe.transform(sats, 2) + ' sats';
     }
   }
 
@@ -143,7 +165,9 @@ export class AddressesTreemap implements OnChanges {
       }
       this.zone.run(() => {
         //@ts-ignore
-        const url = new RelativeUrlPipe(this.stateService).transform(`/address/${e.data.address}`);
+        const url = new RelativeUrlPipe(this.stateService).transform(
+          `/address/${e.data.address}`
+        );
         this.router.navigate([url]);
       });
     });

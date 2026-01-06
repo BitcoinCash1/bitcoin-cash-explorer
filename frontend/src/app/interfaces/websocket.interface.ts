@@ -1,7 +1,13 @@
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { ILoadingIndicators } from '@app/services/state.service';
 import { Transaction } from '@interfaces/electrs.interface';
-import { Acceleration, BlockExtended, DifficultyAdjustment, RbfTree, TransactionStripped } from '@interfaces/node-api.interface';
+import {
+  Acceleration,
+  BlockExtended,
+  DifficultyAdjustment,
+  RbfTree,
+  TransactionStripped,
+} from '@interfaces/node-api.interface';
 
 export interface WebsocketResponse {
   backend?: 'esplora' | 'electrum' | 'none';
@@ -79,17 +85,21 @@ export interface MempoolBlockDelta {
   block: number;
   added: TransactionStripped[];
   removed: string[];
-  changed: { txid: string, rate: number, flags: number, acc: boolean }[];
+  changed: { txid: string; rate: number; flags: number; acc: boolean }[];
 }
 export interface MempoolBlockState {
   block: number;
   transactions: TransactionStripped[];
 }
 export type MempoolBlockUpdate = MempoolBlockDelta | MempoolBlockState;
-export function isMempoolState(update: MempoolBlockUpdate): update is MempoolBlockState {
+export function isMempoolState(
+  update: MempoolBlockUpdate
+): update is MempoolBlockState {
   return update['transactions'] !== undefined;
 }
-export function isMempoolDelta(update: MempoolBlockUpdate): update is MempoolBlockDelta {
+export function isMempoolDelta(
+  update: MempoolBlockUpdate
+): update is MempoolBlockDelta {
   return update['transactions'] === undefined;
 }
 
@@ -106,19 +116,28 @@ export interface AccelerationDelta {
 }
 
 export interface MempoolInfo {
-  loaded: boolean;                 //  (boolean) True if the mempool is fully loaded
-  size: number;                    //  (numeric) Current tx count
-  bytes: number;                   //  (numeric) Sum of all virtual transaction sizes as defined in BIP 141.
-  usage: number;                   //  (numeric) Total memory usage for the mempool
-  maxmempool: number;              //  (numeric) Maximum memory usage for the mempool
-  mempoolminfee: number;           //  (numeric) Minimum fee rate in BTC/kB for tx to be accepted.
-  minrelaytxfee: number;           //  (numeric) Current minimum relay fee for transactions
+  loaded: boolean; //  (boolean) True if the mempool is fully loaded
+  size: number; //  (numeric) Current tx count
+  bytes: number; //  (numeric) Sum of all virtual transaction sizes as defined in BIP 141.
+  usage: number; //  (numeric) Total memory usage for the mempool
+  maxmempool: number; //  (numeric) Maximum memory usage for the mempool
+  mempoolminfee: number; //  (numeric) Minimum fee rate in BTC/kB for tx to be accepted.
+  minrelaytxfee: number; //  (numeric) Current minimum relay fee for transactions
 }
 
 // [txid, fee, vsize, value, rate, flags, acceleration?]
-export type TransactionCompressed = [string, number, number, number, number, number, number, 1?];
+export type TransactionCompressed = [
+  string,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  1?,
+];
 // [txid, rate, flags, acceleration?]
-export type MempoolDeltaChange = [string, number, number, (1|0)];
+export type MempoolDeltaChange = [string, number, number, 1 | 0];
 
 export interface IBackendInfo {
   hostname?: string;
@@ -151,7 +170,7 @@ export interface HealthCheckHost {
     frontend?: string;
     backend?: string;
     electrs?: string;
-  }
+  };
 }
 
 export interface StratumJob {

@@ -58,7 +58,8 @@
     font-size: 28px;
   }
 
-  ::ng-deep .title, ::ng-deep .subtitle {
+  ::ng-deep .title,
+  ::ng-deep .subtitle {
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;

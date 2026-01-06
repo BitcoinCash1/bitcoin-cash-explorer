@@ -7,11 +7,15 @@
       <div class="row">
         <div class="block-titles">
           <h1 class="title">
-            <ng-template [ngIf]="blockHeight === 0"><ng-container i18n="@@2303359202781425764">Genesis</ng-container></ng-template>
+            <ng-template [ngIf]="blockHeight === 0"
+              ><ng-container i18n="@@2303359202781425764"
+                >Genesis</ng-container
+              ></ng-template
+            >
             <ng-template [ngIf]="blockHeight">{{ blockHeight }}</ng-template>
           </h1>
           <div class="blockhash" *ngIf="blockHash">
-            <h2 class="truncate right">{{ blockHash.slice(0,32) }}</h2>
+            <h2 class="truncate right">{{ blockHash.slice(0, 32) }}</h2>
             <h2 class="truncate left">{{ blockHash.slice(32) }}</h2>
           </div>
         </div>
@@ -25,7 +29,7 @@
           <tr>
             <td i18n="block.timestamp">Timestamp</td>
             <td>
-              {{ block?.timestamp * 1000 | date:'yyyy-MM-dd HH:mm' }}
+              {{ block?.timestamp * 1000 | date: "yyyy-MM-dd HH:mm" }}
             </td>
           </tr>
           <tr>
@@ -34,44 +38,107 @@
           </tr>
           <tr *ngIf="block?.extras?.medianFee != undefined">
             <td class="td-width" i18n="block.median-fee">Median fee</td>
-            <td>~<app-fee-rate [fee]="block?.extras?.medianFee" rounding="1.0-0"></app-fee-rate></td>
+            <td>
+              ~<app-fee-rate
+                [fee]="block?.extras?.medianFee"
+                rounding="1.0-0"
+              ></app-fee-rate>
+            </td>
           </tr>
           <ng-template [ngIf]="fees !== undefined">
             <tr>
               <td i18n="block.total-fees|Total fees in a block">Total fees</td>
-              <td *ngIf="network !== 'liquid' && network !== 'liquidtestnet'; else liquidTotalFees">
-                <app-amount [satoshis]="block?.extras.totalFees" digitsInfo="1.2-3" [noFiat]="true"></app-amount>
+              <td
+                *ngIf="
+                  network !== 'liquid' && network !== 'liquidtestnet';
+                  else liquidTotalFees
+                "
+              >
+                <app-amount
+                  [satoshis]="block?.extras.totalFees"
+                  digitsInfo="1.2-3"
+                  [noFiat]="true"
+                ></app-amount>
               </td>
               <ng-template #liquidTotalFees>
                 <td>
-                  <app-amount [satoshis]="fees * 100000000" digitsInfo="1.2-2" [noFiat]="true"></app-amount>
+                  <app-amount
+                    [satoshis]="fees * 100000000"
+                    digitsInfo="1.2-2"
+                    [noFiat]="true"
+                  ></app-amount>
                 </td>
               </ng-template>
             </tr>
           </ng-template>
-          <tr *ngIf="network !== 'liquid' && network !== 'liquidtestnet' && block?.extras?.pool">
+          <tr
+            *ngIf="
+              network !== 'liquid' &&
+              network !== 'liquidtestnet' &&
+              block?.extras?.pool
+            "
+          >
             <td i18n="block.miner">Miner</td>
             <td *ngIf="stateService.env.MINING_DASHBOARD">
-              <a placement="bottom" [routerLink]="['/mining/pool' | relativeUrl, block.extras.pool.slug]" class="badge" style="color: #FFF;padding:0;">
-                <span class="miner-name" *ngIf="block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1] != ''">
+              <a
+                placement="bottom"
+                [routerLink]="[
+                  '/mining/pool' | relativeUrl,
+                  block.extras.pool.slug
+                ]"
+                class="badge"
+                style="color: #fff; padding: 0"
+              >
+                <span
+                  class="miner-name"
+                  *ngIf="
+                    block.extras.pool.minerNames?.length > 1 &&
+                    block.extras.pool.minerNames[1] != ''
+                  "
+                >
                   @if (block.extras.pool.minerNames[1].length > 16) {
-                    {{ block.extras.pool.minerNames[1].slice(0, 15) }}…
-                  } @else {
-                    {{ block.extras.pool.minerNames[1] }}
+                  {{ block.extras.pool.minerNames[1].slice(0, 15) }}… } @else {
+                  {{ block.extras.pool.minerNames[1] }}
                   }
                 </span>
-                <img class="pool-logo" [src]="'/resources/mining-pools/' + block.extras.pool.slug + '.svg'" onError="this.src = '/resources/mining-pools/default.svg'" [alt]="'Logo of ' + block.extras.pool.name + ' mining pool'">
+                <img
+                  class="pool-logo"
+                  [src]="
+                    '/resources/mining-pools/' + block.extras.pool.slug + '.svg'
+                  "
+                  onError="this.src = '/resources/mining-pools/default.svg'"
+                  [alt]="'Logo of ' + block.extras.pool.name + ' mining pool'"
+                />
                 {{ block.extras.pool.name }}
               </a>
             </td>
-            <td *ngIf="!stateService.env.MINING_DASHBOARD && stateService.env.BASE_MODULE === 'mempool'">
-              <span [attr.data-cy]="'block-details-miner-badge'" placement="bottom" class="badge"
-                [class]="!block?.extras.pool.name || block?.extras.pool.slug === 'unknown' ? 'badge-secondary' : 'badge-primary'">
-                <span class="miner-name" *ngIf="block.extras.pool.minerNames?.length > 1 && block.extras.pool.minerNames[1] != ''">
+            <td
+              *ngIf="
+                !stateService.env.MINING_DASHBOARD &&
+                stateService.env.BASE_MODULE === 'mempool'
+              "
+            >
+              <span
+                [attr.data-cy]="'block-details-miner-badge'"
+                placement="bottom"
+                class="badge"
+                [class]="
+                  !block?.extras.pool.name ||
+                  block?.extras.pool.slug === 'unknown'
+                    ? 'badge-secondary'
+                    : 'badge-primary'
+                "
+              >
+                <span
+                  class="miner-name"
+                  *ngIf="
+                    block.extras.pool.minerNames?.length > 1 &&
+                    block.extras.pool.minerNames[1] != ''
+                  "
+                >
                   @if (block.extras.pool.minerNames[1].length > 16) {
-                    {{ block.extras.pool.minerNames[1].slice(0, 15) }}…
-                  } @else {
-                    {{ block.extras.pool.minerNames[1] }}
+                  {{ block.extras.pool.minerNames[1].slice(0, 15) }}… } @else {
+                  {{ block.extras.pool.minerNames[1] }}
                   }
                 </span>
                 {{ block.extras.pool.name }}

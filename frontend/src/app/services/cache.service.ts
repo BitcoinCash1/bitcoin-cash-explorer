@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { firstValueFrom, Subject, Subscription} from 'rxjs';
+import { firstValueFrom, Subject, Subscription } from 'rxjs';
 import { Transaction } from '@interfaces/electrs.interface';
 import { BlockExtended } from '@interfaces/node-api.interface';
 import { StateService } from '@app/services/state.service';
@@ -9,7 +9,7 @@ const BLOCK_CACHE_SIZE = 500;
 const KEEP_RECENT_BLOCKS = 50;
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CacheService {
   loadedBlocks$ = new Subject<BlockExtended>();
@@ -26,7 +26,7 @@ export class CacheService {
 
   constructor(
     private stateService: StateService,
-    private apiService: ApiService,
+    private apiService: ApiService
   ) {
     this.stateService.blocks$.subscribe((blocks) => {
       for (const block of blocks) {
@@ -46,11 +46,11 @@ export class CacheService {
 
   setTxCache(transactions) {
     this.txCache = {};
-    transactions.forEach(tx => {
+    transactions.forEach((tx) => {
       this.txCache[tx.txid] = tx;
     });
   }
- 
+
   getTxFromCache(txid) {
     if (this.txCache && this.txCache[txid]) {
       return this.txCache[txid];
@@ -78,10 +78,10 @@ export class CacheService {
       try {
         result = await firstValueFrom(this.apiService.getBlocks$(maxHeight));
       } catch (e) {
-        console.log("failed to load blocks: ", e.message);
+        console.log('failed to load blocks: ', e.message);
       }
       if (result && result.length) {
-        result.forEach(block => {
+        result.forEach((block) => {
           if (this.blockLoading[block.height]) {
             this.addBlockToCache(block);
             this.loadedBlocks$.next(block);
@@ -100,16 +100,21 @@ export class CacheService {
   // increase the priority of a block, to delay removal
   bumpBlockPriority(height) {
     this.blockPriorities.push(height);
-    this.copiesInBlockQueue[height] = (this.copiesInBlockQueue[height] || 0) + 1;
+    this.copiesInBlockQueue[height] =
+      (this.copiesInBlockQueue[height] || 0) + 1;
   }
 
   // remove lowest priority blocks from the cache
   clearBlocks() {
-    while (Object.keys(this.blockCache).length > (BLOCK_CACHE_SIZE + KEEP_RECENT_BLOCKS) && this.blockPriorities.length > KEEP_RECENT_BLOCKS) {
+    while (
+      Object.keys(this.blockCache).length >
+        BLOCK_CACHE_SIZE + KEEP_RECENT_BLOCKS &&
+      this.blockPriorities.length > KEEP_RECENT_BLOCKS
+    ) {
       const height = this.blockPriorities.shift();
       if (this.copiesInBlockQueue[height] > 1) {
         this.copiesInBlockQueue[height]--;
-      } else if ((this.tip - height) < KEEP_RECENT_BLOCKS) {
+      } else if (this.tip - height < KEEP_RECENT_BLOCKS) {
         this.bumpBlockPriority(height);
       } else {
         const block = this.blockCache[height];

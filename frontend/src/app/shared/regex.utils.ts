@@ -97,7 +97,7 @@ const ADDRESS_CHARS: {
       + `|`
         + `[V][TJ]` // Confidential P2PKH or P2SH starts with VT or VJ
         + BASE58_CHARS
-        + `{78}`, 
+        + `{78}`,
     bech32: `(?:`
         + `(?:` // bech32 liquid starts with ex1 (unconfidential) or lq1 (confidential)
           + `ex1`
@@ -138,20 +138,41 @@ const ADDRESS_CHARS: {
         + `{6,100}`
       + `)`,
   },
-}
-type RegexTypeNoAddrNoBlockHash = | `transaction` | `blockheight` | `date` | `timestamp`;
+};
+type RegexTypeNoAddrNoBlockHash =
+  | `transaction`
+  | `blockheight`
+  | `date`
+  | `timestamp`;
 export type RegexType = `address` | `blockhash` | RegexTypeNoAddrNoBlockHash;
 
-export const NETWORKS = [`mainnet`, `testnet4`, `testnet`, `signet`, `liquid`, `liquidtestnet`] as const;
-export type Network = typeof NETWORKS[number]; // Turn const array into union type
+export const NETWORKS = [
+  `mainnet`,
+  `testnet4`,
+  `testnet`,
+  `signet`,
+  `liquid`,
+  `liquidtestnet`,
+] as const;
+export type Network = (typeof NETWORKS)[number]; // Turn const array into union type
 
-export const ADDRESS_REGEXES: [RegExp, Network][] = NETWORKS
-  .map(network => [getRegex('address', network), network])
+export const ADDRESS_REGEXES: [RegExp, Network][] = NETWORKS.map((network) => [
+  getRegex('address', network),
+  network,
+]);
 
-export function findOtherNetworks(address: string, skipNetwork: Network, env: Env): { network: Network, address: string, isNetworkAvailable: boolean }[] {
-  return ADDRESS_REGEXES
-    .filter(([regex, network]) => network !== skipNetwork && regex.test(address))
-    .map(([, network]) => ({ network, address, isNetworkAvailable: isNetworkAvailable(network, env) }));
+export function findOtherNetworks(
+  address: string,
+  skipNetwork: Network,
+  env: Env
+): { network: Network; address: string; isNetworkAvailable: boolean }[] {
+  return ADDRESS_REGEXES.filter(
+    ([regex, network]) => network !== skipNetwork && regex.test(address)
+  ).map(([, network]) => ({
+    network,
+    address,
+    isNetworkAvailable: isNetworkAvailable(network, env),
+  }));
 }
 
 function isNetworkAvailable(network: Network, env: Env): boolean {
@@ -173,27 +194,46 @@ function isNetworkAvailable(network: Network, env: Env): boolean {
   }
 }
 
-export function needBaseModuleChange(fromBaseModule: 'mempool' | 'liquid', toNetwork: Network): boolean {
-  if (!toNetwork) return false; // No target network means no change needed
+export function needBaseModuleChange(
+  fromBaseModule: 'mempool' | 'liquid',
+  toNetwork: Network
+): boolean {
+  if (!toNetwork) {
+    return false;
+  } // No target network means no change needed
   if (fromBaseModule === 'mempool') {
-    return toNetwork !== 'mainnet' && toNetwork !== 'testnet' && toNetwork !== 'testnet4' && toNetwork !== 'signet';
+    return (
+      toNetwork !== 'mainnet' &&
+      toNetwork !== 'testnet' &&
+      toNetwork !== 'testnet4' &&
+      toNetwork !== 'signet'
+    );
   }
   if (fromBaseModule === 'liquid') {
     return toNetwork !== 'liquid' && toNetwork !== 'liquidtestnet';
   }
 }
 
-export function getTargetUrl(toNetwork: Network, address: string, env: Env): string {
+export function getTargetUrl(
+  toNetwork: Network,
+  address: string,
+  env: Env
+): string {
   let targetUrl = '';
   if (toNetwork === 'liquid' || toNetwork === 'liquidtestnet') {
     targetUrl = env.LIQUID_WEBSITE_URL;
-    targetUrl += (toNetwork === 'liquidtestnet' ? '/testnet' : '');
+    targetUrl += toNetwork === 'liquidtestnet' ? '/testnet' : '';
     targetUrl += '/address/';
     targetUrl += address;
   }
-  if (toNetwork === 'mainnet' || toNetwork === 'testnet' || toNetwork === 'testnet4' || toNetwork === 'signet') {
+  if (
+    toNetwork === 'mainnet' ||
+    toNetwork === 'testnet' ||
+    toNetwork === 'testnet4' ||
+    toNetwork === 'signet'
+  ) {
     targetUrl = env.MEMPOOL_WEBSITE_URL;
-    targetUrl += (toNetwork === 'mainnet' ? '' : `/${toNetwork}`);
+    targetUrl += toNetwork === 'mainnet' ? '' : `/${toNetwork}`;
     targetUrl += '/address/';
     targetUrl += address;
   }
@@ -238,7 +278,9 @@ export function getRegex(type: RegexType, network?: Network): RegExp {
           leadingZeroes = 8; // We are not interested in Liquid block hashes
           break;
         default:
-          throw new Error(`Invalid Network ${network} (Unreachable error in TypeScript)`);
+          throw new Error(
+            `Invalid Network ${network} (Unreachable error in TypeScript)`
+          );
       }
       regex += `0{${leadingZeroes}}`;
       regex += `${HEX_CHARS}{${64 - leadingZeroes}}`; // Exactly 64 hex letters/numbers
@@ -309,30 +351,32 @@ export function getRegex(type: RegexType, network?: Network): RegExp {
           regex += ADDRESS_CHARS.liquidtestnet.bech32;
           break;
         default:
-          throw new Error(`Invalid Network ${network} (Unreachable error in TypeScript)`);
+          throw new Error(
+            `Invalid Network ${network} (Unreachable error in TypeScript)`
+          );
       }
       regex += `)`; // End the non-capturing group
       break;
     // Match a date in the format YYYY-MM-DD (optional: HH:MM or HH:MM:SS)
     // [Testing Order]: any order is fine
     case `date`:
-      regex += `(?:`;                  // Start a non-capturing group
-      regex += `${NUMBER_CHARS}{4}`;   // Exactly 4 digits
-      regex += `[-/]`;                 // 1 instance of the symbol "-" or "/"
+      regex += `(?:`; // Start a non-capturing group
+      regex += `${NUMBER_CHARS}{4}`; // Exactly 4 digits
+      regex += `[-/]`; // 1 instance of the symbol "-" or "/"
       regex += `${NUMBER_CHARS}{1,2}`; // 1 or 2 digits
-      regex += `[-/]`;                 // 1 instance of the symbol "-" or "/"
+      regex += `[-/]`; // 1 instance of the symbol "-" or "/"
       regex += `${NUMBER_CHARS}{1,2}`; // 1 or 2 digits
-      regex += `(?:`;                  // Start a non-capturing group
-      regex += ` `;                    // 1 instance of the symbol " "
+      regex += `(?:`; // Start a non-capturing group
+      regex += ` `; // 1 instance of the symbol " "
       regex += `${NUMBER_CHARS}{1,2}`; // 1 or 2 digits
-      regex += `:`;                    // 1 instance of the symbol ":"
+      regex += `:`; // 1 instance of the symbol ":"
       regex += `${NUMBER_CHARS}{1,2}`; // 1 or 2 digits
-      regex += `(?:`;                  // Start a non-capturing group for optional seconds
-      regex += `:`;                    // 1 instance of the symbol ":"
+      regex += `(?:`; // Start a non-capturing group for optional seconds
+      regex += `:`; // 1 instance of the symbol ":"
       regex += `${NUMBER_CHARS}{1,2}`; // 1 or 2 digits
-      regex += `)?`;                   // End the non-capturing group
-      regex += `)?`;                   // End the non-capturing group. This group appears 0 or 1 times
-      regex += `)`;                    // End the non-capturing group
+      regex += `)?`; // End the non-capturing group
+      regex += `)?`; // End the non-capturing group. This group appears 0 or 1 times
+      regex += `)`; // End the non-capturing group
       break;
     // Match a unix timestamp
     // [Testing Order]: any order is fine
@@ -340,7 +384,9 @@ export function getRegex(type: RegexType, network?: Network): RegExp {
       regex += `${NUMBER_CHARS}{10}`; // Exactly 10 digits
       break;
     default:
-      throw new Error(`Invalid RegexType ${type} (Unreachable error in TypeScript)`);
+      throw new Error(
+        `Invalid RegexType ${type} (Unreachable error in TypeScript)`
+      );
   }
   regex += `$`; // $ = End of string
   return new RegExp(regex);

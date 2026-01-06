@@ -1,4 +1,11 @@
-import { Component, ElementRef, ViewChild, Input, OnChanges, HostListener } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  ViewChild,
+  Input,
+  OnChanges,
+  HostListener,
+} from '@angular/core';
 
 interface EpochProgress {
   base: string;
@@ -26,8 +33,8 @@ const EPOCH_BLOCK_LENGTH = 2016; // Bitcoin mainnet
 })
 export class DifficultyTooltipComponent implements OnChanges {
   @Input() status: string | void;
-  @Input() progress: EpochProgress | void = null; 
-  @Input() cursorPosition: { x: number, y: number };
+  @Input() progress: EpochProgress | void = null;
+  @Input() cursorPosition: { x: number; y: number };
 
   mined: number;
   ahead: number;
@@ -49,11 +56,15 @@ export class DifficultyTooltipComponent implements OnChanges {
   ngOnChanges(changes): void {
     if (changes.cursorPosition && changes.cursorPosition.currentValue) {
       let x = changes.cursorPosition.currentValue.x;
-      let y = changes.cursorPosition.currentValue.y - 50;
+      const y = changes.cursorPosition.currentValue.y - 50;
       if (this.tooltipElement) {
-        const elementBounds = this.tooltipElement.nativeElement.getBoundingClientRect();
+        const elementBounds =
+          this.tooltipElement.nativeElement.getBoundingClientRect();
         x -= elementBounds.width / 2;
-        x = Math.min(Math.max(x, 20), (window.innerWidth - 20 - elementBounds.width));
+        x = Math.min(
+          Math.max(x, 20),
+          window.innerWidth - 20 - elementBounds.width
+        );
       }
       this.tooltipPosition = { x, y };
     }

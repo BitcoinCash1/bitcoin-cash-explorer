@@ -1,7 +1,20 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { switchMap, catchError, map, tap, shareReplay, startWith, scan } from 'rxjs/operators';
-import { Address, AddressTxSummary, ChainStats, Transaction } from '@interfaces/electrs.interface';
+import {
+  switchMap,
+  catchError,
+  map,
+  tap,
+  shareReplay,
+  startWith,
+  scan,
+} from 'rxjs/operators';
+import {
+  Address,
+  AddressTxSummary,
+  ChainStats,
+  Transaction,
+} from '@interfaces/electrs.interface';
 import { StateService } from '@app/services/state.service';
 import { ApiService } from '@app/services/api.service';
 import { of, Observable, Subscription } from 'rxjs';
@@ -19,20 +32,25 @@ class WalletStats implements ChainStats {
   spent_txo_sum: number;
   tx_count: number;
 
-  constructor (stats: ChainStats[], addresses: string[]) {
-    Object.assign(this, stats.reduce((acc, stat) => {
-        acc.funded_txo_count += stat.funded_txo_count;
-        acc.funded_txo_sum += stat.funded_txo_sum;
-        acc.spent_txo_count += stat.spent_txo_count;
-        acc.spent_txo_sum += stat.spent_txo_sum;
-        return acc;
-      }, {
-        funded_txo_count: 0,
-        funded_txo_sum: 0,
-        spent_txo_count: 0,
-        spent_txo_sum: 0,
-        tx_count: 0,
-      })
+  constructor(stats: ChainStats[], addresses: string[]) {
+    Object.assign(
+      this,
+      stats.reduce(
+        (acc, stat) => {
+          acc.funded_txo_count += stat.funded_txo_count;
+          acc.funded_txo_sum += stat.funded_txo_sum;
+          acc.spent_txo_count += stat.spent_txo_count;
+          acc.spent_txo_sum += stat.spent_txo_sum;
+          return acc;
+        },
+        {
+          funded_txo_count: 0,
+          funded_txo_sum: 0,
+          spent_txo_count: 0,
+          spent_txo_sum: 0,
+          tx_count: 0,
+        }
+      )
     );
     this.addresses = addresses;
   }
@@ -134,38 +152,68 @@ export class WalletPreviewComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     private seoService: SeoService,
     private websocketService: WebsocketService,
-    private openGraphService: OpenGraphService,
-  ) { }
+    private openGraphService: OpenGraphService
+  ) {}
 
   ngOnInit(): void {
     this.websocketService.want(['blocks', 'stats']);
-    this.stateService.networkChanged$.subscribe((network) => this.network = network);
+    this.stateService.networkChanged$.subscribe(
+      (network) => (this.network = network)
+    );
     this.wallet$ = this.route.paramMap.pipe(
       map((params: ParamMap) => params.get('wallet') as string),
       tap((walletName: string) => {
         this.walletName = walletName;
-        this.ogSession = this.openGraphService.waitFor('wallet-addresses-' + this.walletName);
-        this.ogSession = this.openGraphService.waitFor('wallet-data-' + this.walletName);
-        this.ogSession = this.openGraphService.waitFor('wallet-txs-' + this.walletName);
-        this.seoService.setTitle($localize`:@@wallet.component.browser-title:Wallet: ${walletName}:INTERPOLATION:`);
-        this.seoService.setDescription($localize`:@@meta.description.bitcoin.wallet:See mempool transactions, confirmed transactions, balance, and more for ${this.stateService.network==='liquid'||this.stateService.network==='liquidtestnet'?'Liquid':'Bitcoin'}${seoDescriptionNetwork(this.stateService.network)} wallet ${walletName}:INTERPOLATION:.`);
+        this.ogSession = this.openGraphService.waitFor(
+          'wallet-addresses-' + this.walletName
+        );
+        this.ogSession = this.openGraphService.waitFor(
+          'wallet-data-' + this.walletName
+        );
+        this.ogSession = this.openGraphService.waitFor(
+          'wallet-txs-' + this.walletName
+        );
+        this.seoService.setTitle(
+          $localize`:@@wallet.component.browser-title:Wallet: ${walletName}:INTERPOLATION:`
+        );
+        this.seoService.setDescription(
+          $localize`:@@meta.description.bitcoin.wallet:See mempool transactions, confirmed transactions, balance, and more for ${
+            this.stateService.network === 'liquid' ||
+            this.stateService.network === 'liquidtestnet'
+              ? 'Liquid'
+              : 'Bitcoin'
+          }${seoDescriptionNetwork(
+            this.stateService.network
+          )} wallet ${walletName}:INTERPOLATION:.`
+        );
       }),
-      switchMap((walletName: string) => this.apiService.getWallet$(walletName).pipe(
-        catchError((err) => {
-          this.error = err;
-          this.seoService.logSoft404();
-          console.log(err);
-          this.openGraphService.fail({ event: 'wallet-addresses-' + this.walletName, sessionId: this.ogSession });
-          this.openGraphService.fail({ event: 'wallet-data-' + this.walletName, sessionId: this.ogSession });
-          this.openGraphService.fail({ event: 'wallet-txs-' + this.walletName, sessionId: this.ogSession });
-          return of({});
-        })
-      )),
-      shareReplay(1),
+      switchMap((walletName: string) =>
+        this.apiService.getWallet$(walletName).pipe(
+          catchError((err) => {
+            this.error = err;
+            this.seoService.logSoft404();
+            console.log(err);
+            this.openGraphService.fail({
+              event: 'wallet-addresses-' + this.walletName,
+              sessionId: this.ogSession,
+            });
+            this.openGraphService.fail({
+              event: 'wallet-data-' + this.walletName,
+              sessionId: this.ogSession,
+            });
+            this.openGraphService.fail({
+              event: 'wallet-txs-' + this.walletName,
+              sessionId: this.ogSession,
+            });
+            return of({});
+          })
+        )
+      ),
+      shareReplay(1)
     );
 
     this.walletAddresses$ = this.wallet$.pipe(
-      map(wallet => {
+      map((wallet) => {
         const walletInfo: Record<string, Address> = {};
         for (const address of Object.keys(wallet)) {
           walletInfo[address] = {
@@ -174,7 +222,9 @@ export class WalletPreviewComponent implements OnInit, OnDestroy {
             mempool_stats: {
               funded_txo_count: 0,
               funded_txo_sum: 0,
-              spent_txo_count: 0, spent_txo_sum: 0, tx_count: 0
+              spent_txo_count: 0,
+              spent_txo_sum: 0,
+              tx_count: 0,
             },
           };
         }
@@ -185,22 +235,35 @@ export class WalletPreviewComponent implements OnInit, OnDestroy {
       })
     );
 
-    this.walletSubscription = this.walletAddresses$.subscribe(wallet => {
+    this.walletSubscription = this.walletAddresses$.subscribe((wallet) => {
       this.addressStrings = Object.keys(wallet);
       this.addresses = Object.values(wallet);
-      this.openGraphService.waitOver({ event: 'wallet-addresses-' + this.walletName, sessionId: this.ogSession });
+      this.openGraphService.waitOver({
+        event: 'wallet-addresses-' + this.walletName,
+        sessionId: this.ogSession,
+      });
     });
 
     this.walletSummary$ = this.wallet$.pipe(
-      map(wallet => this.deduplicateWalletTransactions(Object.values(wallet).flatMap(address => address.transactions))),
+      map((wallet) =>
+        this.deduplicateWalletTransactions(
+          Object.values(wallet).flatMap((address) => address.transactions)
+        )
+      ),
       tap(() => {
-        this.openGraphService.waitOver({ event: 'wallet-txs-' + this.walletName, sessionId: this.ogSession });
+        this.openGraphService.waitOver({
+          event: 'wallet-txs-' + this.walletName,
+          sessionId: this.ogSession,
+        });
       })
     );
 
     this.walletStats$ = this.wallet$.pipe(
-      switchMap(wallet => {
-        const walletStats = new WalletStats(Object.values(wallet).map(w => w.stats), Object.keys(wallet));
+      switchMap((wallet) => {
+        const walletStats = new WalletStats(
+          Object.values(wallet).map((w) => w.stats),
+          Object.keys(wallet)
+        );
         return this.stateService.walletTransactions$.pipe(
           startWith([]),
           scan((stats, newTransactions) => {
@@ -208,16 +271,21 @@ export class WalletPreviewComponent implements OnInit, OnDestroy {
               stats.addTx(tx);
             }
             return stats;
-          }, walletStats),
+          }, walletStats)
         );
       }),
       tap(() => {
-        this.openGraphService.waitOver({ event: 'wallet-data-' + this.walletName, sessionId: this.ogSession });
+        this.openGraphService.waitOver({
+          event: 'wallet-data-' + this.walletName,
+          sessionId: this.ogSession,
+        });
       })
     );
   }
 
-  deduplicateWalletTransactions(walletTransactions: AddressTxSummary[]): AddressTxSummary[] {
+  deduplicateWalletTransactions(
+    walletTransactions: AddressTxSummary[]
+  ): AddressTxSummary[] {
     const transactions = new Map<string, AddressTxSummary>();
     for (const tx of walletTransactions) {
       if (transactions.has(tx.txid)) {
@@ -235,7 +303,11 @@ export class WalletPreviewComponent implements OnInit, OnDestroy {
   }
 
   normalizeAddress(address: string): string {
-    if (/^[A-Z]{2,5}1[AC-HJ-NP-Z02-9]{8,100}|04[a-fA-F0-9]{128}|(02|03)[a-fA-F0-9]{64}$/.test(address)) {
+    if (
+      /^[A-Z]{2,5}1[AC-HJ-NP-Z02-9]{8,100}|04[a-fA-F0-9]{128}|(02|03)[a-fA-F0-9]{64}$/.test(
+        address
+      )
+    ) {
       return address.toLowerCase();
     } else {
       return address;

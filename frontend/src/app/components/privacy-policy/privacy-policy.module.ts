@@ -8,33 +8,17 @@ const routes: Routes = [
   {
     path: '',
     component: PrivacyPolicyComponent,
-  }
+  },
 ];
 
 @NgModule({
-  imports: [
-    RouterModule.forChild(routes)
-  ],
-  exports: [
-    RouterModule
-  ]
+  imports: [RouterModule.forChild(routes)],
+  exports: [RouterModule],
 })
-export class PrivacyPolicyRoutingModule { }
+export class PrivacyPolicyRoutingModule {}
 
 @NgModule({
-  imports: [
-    CommonModule,
-    PrivacyPolicyRoutingModule,
-    SharedModule,
-  ],
-  declarations: [
-    PrivacyPolicyComponent,
-  ]
+  imports: [CommonModule, PrivacyPolicyRoutingModule, SharedModule],
+  declarations: [PrivacyPolicyComponent],
 })
-export class PrivacyPolicyModule { }
-
-
-
-
-
-
+export class PrivacyPolicyModule {}

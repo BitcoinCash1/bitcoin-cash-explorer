@@ -8,9 +8,8 @@ describe('ChannelCloseBoxComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ChannelCloseBoxComponent ]
-    })
-    .compileComponents();
+      declarations: [ChannelCloseBoxComponent],
+    }).compileComponents();
   });
 
   beforeEach(() => {

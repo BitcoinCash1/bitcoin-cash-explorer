@@ -1,7 +1,23 @@
-import { ChangeDetectionStrategy, Component, OnInit, HostBinding, NgZone, Input } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnInit,
+  HostBinding,
+  NgZone,
+  Input,
+} from '@angular/core';
 import { Router } from '@angular/router';
 import { EChartsOption, PieSeriesOption } from '@app/graphs/echarts';
-import { combineLatest, map, Observable, share, startWith, Subject, switchMap, tap } from 'rxjs';
+import {
+  combineLatest,
+  map,
+  Observable,
+  share,
+  startWith,
+  Subject,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { originalChartColors as chartColors } from '@app/app.constants';
 import { ApiService } from '@app/services/api.service';
 import { SeoService } from '@app/services/seo.service';
@@ -45,67 +61,71 @@ export class NodesPerISPChartComponent implements OnInit {
     private amountShortenerPipe: AmountShortenerPipe,
     private router: Router,
     private zone: NgZone,
-    public stateService: StateService,
-  ) {
-  }
+    public stateService: StateService
+  ) {}
 
   ngOnInit(): void {
     if (!this.widget) {
-      this.seoService.setTitle($localize`:@@8573a1576789bd2c4faeaed23037c4917812c6cf:Lightning Nodes Per ISP`);
-      this.seoService.setDescription($localize`:@@meta.description.lightning.nodes-per-isp:Browse the top 100 ISPs hosting Lightning nodes along with stats like total number of nodes per ISP, aggregate BTC capacity per ISP, and more`);
+      this.seoService.setTitle(
+        $localize`:@@8573a1576789bd2c4faeaed23037c4917812c6cf:Lightning Nodes Per ISP`
+      );
+      this.seoService.setDescription(
+        $localize`:@@meta.description.lightning.nodes-per-isp:Browse the top 100 ISPs hosting Lightning nodes along with stats like total number of nodes per ISP, aggregate BTC capacity per ISP, and more`
+      );
     }
 
     this.nodesPerAsObservable$ = combineLatest([
       this.sortBySubject.pipe(startWith(true)),
-    ])
-      .pipe(
-        switchMap((selectedFilters) => {
-          this.sortBy = selectedFilters[0] ? 'capacity' : 'node-count';
-          return this.apiService.getNodesPerIsp()
-            .pipe(
-              tap(() => {
-                this.isLoading = false;
-              }),
-              map(data => {
-                let nodeCount = 0;
-                let totalCapacity = 0;
+    ]).pipe(
+      switchMap((selectedFilters) => {
+        this.sortBy = selectedFilters[0] ? 'capacity' : 'node-count';
+        return this.apiService.getNodesPerIsp().pipe(
+          tap(() => {
+            this.isLoading = false;
+          }),
+          map((data) => {
+            let nodeCount = 0;
+            let totalCapacity = 0;
 
-                for (let i = 0; i < data.ispRanking.length; ++i) {
-                  nodeCount += data.ispRanking[i][4];
-                  totalCapacity += data.ispRanking[i][2];
-                  data.ispRanking[i][5] = i;
-                }
-                for (let i = 0; i < data.ispRanking.length; ++i) {
-                  data.ispRanking[i][6] = Math.round(data.ispRanking[i][4] / nodeCount * 10000) / 100;
-                  data.ispRanking[i][7] = Math.round(data.ispRanking[i][2] / totalCapacity * 10000) / 100;
-                }
+            for (let i = 0; i < data.ispRanking.length; ++i) {
+              nodeCount += data.ispRanking[i][4];
+              totalCapacity += data.ispRanking[i][2];
+              data.ispRanking[i][5] = i;
+            }
+            for (let i = 0; i < data.ispRanking.length; ++i) {
+              data.ispRanking[i][6] =
+                Math.round((data.ispRanking[i][4] / nodeCount) * 10000) / 100;
+              data.ispRanking[i][7] =
+                Math.round((data.ispRanking[i][2] / totalCapacity) * 10000) /
+                100;
+            }
 
-                if (selectedFilters[0] === true) {
-                  data.ispRanking.sort((a, b) => b[7] - a[7]);
-                } else {
-                  data.ispRanking.sort((a, b) => b[6] - a[6]);
-                }
+            if (selectedFilters[0] === true) {
+              data.ispRanking.sort((a, b) => b[7] - a[7]);
+            } else {
+              data.ispRanking.sort((a, b) => b[6] - a[6]);
+            }
 
-                for (let i = 0; i < data.ispRanking.length; ++i) {
-                  data.ispRanking[i][5] = i + 1;
-                }
+            for (let i = 0; i < data.ispRanking.length; ++i) {
+              data.ispRanking[i][5] = i + 1;
+            }
 
-                this.prepareChartOptions(data.ispRanking);
+            this.prepareChartOptions(data.ispRanking);
 
-                this.indexingInProgress = !data.ispRanking.length;
+            this.indexingInProgress = !data.ispRanking.length;
 
-                return {
-                  taggedISP: data.ispRanking.length,
-                  clearnetCapacity: data.clearnetCapacity,
-                  unknownCapacity: data.unknownCapacity,
-                  torCapacity: data.torCapacity,
-                  ispRanking: data.ispRanking.slice(0, 100),
-                };
-              })
-            );
-        }),
-        share()
-      );
+            return {
+              taggedISP: data.ispRanking.length,
+              clearnetCapacity: data.clearnetCapacity,
+              unknownCapacity: data.unknownCapacity,
+              torCapacity: data.torCapacity,
+              ispRanking: data.ispRanking.slice(0, 100),
+            };
+          })
+        );
+      }),
+      share()
+    );
 
     if (this.widget) {
       this.sortBySubject.next(false);
@@ -114,7 +134,7 @@ export class NodesPerISPChartComponent implements OnInit {
 
   generateChartSerieData(ispRanking): PieSeriesOption[] {
     let shareThreshold = 0.4;
-    if (this.widget && isMobile() || isMobile()) {
+    if ((this.widget && isMobile()) || isMobile()) {
       shareThreshold = 1;
     } else if (this.widget) {
       shareThreshold = 0.75;
@@ -128,7 +148,7 @@ export class NodesPerISPChartComponent implements OnInit {
     let edgeDistance: string | number = '10%';
     if (isMobile() && this.widget) {
       edgeDistance = 0;
-    } else if (isMobile() && !this.widget || this.widget) {
+    } else if ((isMobile() && !this.widget) || this.widget) {
       edgeDistance = 10;
     }
 
@@ -141,7 +161,11 @@ export class NodesPerISPChartComponent implements OnInit {
       }
       data.push({
         value: this.sortBy === 'capacity' ? isp[7] : isp[6],
-        name: isp[1].replace('&', '') + (isMobile() || this.widget ? `` : ` (${this.sortBy === 'capacity' ? isp[7] : isp[6]}%)`),
+        name:
+          isp[1].replace('&', '') +
+          (isMobile() || this.widget
+            ? ``
+            : ` (${this.sortBy === 'capacity' ? isp[7] : isp[6]}%)`),
         label: {
           overflow: 'truncate',
           width: isMobile() ? 75 : this.widget ? 125 : 250,
@@ -160,11 +184,18 @@ export class NodesPerISPChartComponent implements OnInit {
           borderColor: '#000',
           formatter: () => {
             const nodeCount = isp[4].toString();
-            return `<b style="color: white">${isp[1]} (${this.sortBy === 'capacity' ? isp[7] : isp[6]}%)</b><br>` +
-              $localize`${nodeCount} nodes` + `<br>` +
-              $localize`${this.amountShortenerPipe.transform(isp[2] / 100000000, 2)} BTC`
-            ;
-          }
+            return (
+              `<b style="color: white">${isp[1]} (${
+                this.sortBy === 'capacity' ? isp[7] : isp[6]
+              }%)</b><br>` +
+              $localize`${nodeCount} nodes` +
+              `<br>` +
+              $localize`${this.amountShortenerPipe.transform(
+                isp[2] / 100000000,
+                2
+              )} BTC`
+            );
+          },
         },
         data: isp[0],
       } as PieSeriesOption);
@@ -181,7 +212,7 @@ export class NodesPerISPChartComponent implements OnInit {
         overflow: 'truncate',
         color: 'var(--tooltip-grey)',
         alignTo: 'edge',
-        edgeDistance: edgeDistance
+        edgeDistance: edgeDistance,
       },
       tooltip: {
         backgroundColor: 'rgba(17, 19, 31, 1)',
@@ -193,10 +224,18 @@ export class NodesPerISPChartComponent implements OnInit {
         borderColor: '#000',
         formatter: () => {
           const nodeCount = nodeCountOther.toString();
-          return `<b style="color: white">` + $localize`Other (${totalShareOther.toFixed(2) + '%'})` + `</b><br>` +
-            $localize`${nodeCount} nodes` + `<br>` +
-            $localize`${this.amountShortenerPipe.transform(capacityOther / 100000000, 2)} BTC`;
-        }
+          return (
+            `<b style="color: white">` +
+            $localize`Other (${totalShareOther.toFixed(2) + '%'})` +
+            `</b><br>` +
+            $localize`${nodeCount} nodes` +
+            `<br>` +
+            $localize`${this.amountShortenerPipe.transform(
+              capacityOther / 100000000,
+              2
+            )} BTC`
+          );
+        },
       },
       data: 9999 as any,
     } as PieSeriesOption);
@@ -216,7 +255,7 @@ export class NodesPerISPChartComponent implements OnInit {
         trigger: 'item',
         textStyle: {
           align: 'left',
-        }
+        },
       },
       series: [
         {
@@ -249,10 +288,10 @@ export class NodesPerISPChartComponent implements OnInit {
             labelLine: {
               lineStyle: {
                 width: 4,
-              }
-            }
-          }
-        }
+              },
+            },
+          },
+        },
       ],
     };
   }
@@ -264,11 +303,14 @@ export class NodesPerISPChartComponent implements OnInit {
     this.chartInstance = ec;
 
     this.chartInstance.on('click', (e) => {
-      if (e.data.data === 9999 || e.data.data === null) { // "Other" or Tor
+      if (e.data.data === 9999 || e.data.data === null) {
+        // "Other" or Tor
         return;
       }
       this.zone.run(() => {
-        const url = new RelativeUrlPipe(this.stateService).transform(`/lightning/nodes/isp/${e.data.data}`);
+        const url = new RelativeUrlPipe(this.stateService).transform(
+          `/lightning/nodes/isp/${e.data.data}`
+        );
         this.router.navigate([url]);
       });
     });
@@ -278,10 +320,13 @@ export class NodesPerISPChartComponent implements OnInit {
     const now = new Date();
     this.chartOptions.backgroundColor = 'var(--active-bg)';
     this.chartInstance.setOption(this.chartOptions);
-    download(this.chartInstance.getDataURL({
-      pixelRatio: 2,
-      excludeComponents: ['dataZoom'],
-    }), `ln-nodes-per-as-${this.timespan}-${Math.round(now.getTime() / 1000)}.svg`);
+    download(
+      this.chartInstance.getDataURL({
+        pixelRatio: 2,
+        excludeComponents: ['dataZoom'],
+      }),
+      `ln-nodes-per-as-${this.timespan}-${Math.round(now.getTime() / 1000)}.svg`
+    );
     this.chartOptions.backgroundColor = 'none';
     this.chartInstance.setOption(this.chartOptions);
   }
@@ -290,4 +335,3 @@ export class NodesPerISPChartComponent implements OnInit {
     this.sortBySubject.next(e);
   }
 }
-

@@ -1,10 +1,41 @@
 import { ActivatedRoute, Router } from '@angular/router';
-import { Component, OnInit, ChangeDetectionStrategy, Input, Inject, LOCALE_ID, ChangeDetectorRef } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, Subscription, combineLatest, of, timer } from 'rxjs';
-import { delayWhen, filter, map, share, shareReplay, switchMap, take, takeUntil, tap, throttleTime } from 'rxjs/operators';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  Input,
+  Inject,
+  LOCALE_ID,
+  ChangeDetectorRef,
+} from '@angular/core';
+import {
+  BehaviorSubject,
+  Observable,
+  Subject,
+  Subscription,
+  combineLatest,
+  of,
+  timer,
+} from 'rxjs';
+import {
+  delayWhen,
+  filter,
+  map,
+  share,
+  shareReplay,
+  switchMap,
+  take,
+  takeUntil,
+  tap,
+  throttleTime,
+} from 'rxjs/operators';
 import { ApiService } from '@app/services/api.service';
 import { Env, StateService } from '@app/services/state.service';
-import { AuditStatus, CurrentPegs, RecentPeg } from '@interfaces/node-api.interface';
+import {
+  AuditStatus,
+  CurrentPegs,
+  RecentPeg,
+} from '@interfaces/node-api.interface';
 import { WebsocketService } from '@app/services/websocket.service';
 import { SeoService } from '@app/services/seo.service';
 
@@ -51,9 +82,13 @@ export class RecentPegsListComponent implements OnInit {
     private seoService: SeoService,
     private route: ActivatedRoute,
     private router: Router,
-    @Inject(LOCALE_ID) private locale: string,
+    @Inject(LOCALE_ID) private locale: string
   ) {
-    if (this.locale.startsWith('ar') || this.locale.startsWith('fa') || this.locale.startsWith('he')) {
+    if (
+      this.locale.startsWith('ar') ||
+      this.locale.startsWith('fa') ||
+      this.locale.startsWith('he')
+    ) {
       this.dir = 'rtl';
     }
   }
@@ -61,56 +96,68 @@ export class RecentPegsListComponent implements OnInit {
   ngOnInit(): void {
     this.isLoading = !this.widget;
     this.env = this.stateService.env;
-    this.skeletonLines = this.widget === true ? [...Array(5).keys()] : [...Array(15).keys()];
+    this.skeletonLines =
+      this.widget === true ? [...Array(5).keys()] : [...Array(15).keys()];
 
     if (!this.widget) {
-      this.seoService.setTitle($localize`:@@a8b0889ea1b41888f1e247f2731cc9322198ca04:Recent Peg-In / Out's`);
+      this.seoService.setTitle(
+        $localize`:@@a8b0889ea1b41888f1e247f2731cc9322198ca04:Recent Peg-In / Out's`
+      );
       this.websocketService.want(['blocks']);
 
-      this.paramSubscription = this.route.params.pipe(
-        tap((params) => {
-          this.page = +params['page'] || 1;
-          this.startingIndexSubject.next((this.page - 1) * 15);
-        }),
-      ).subscribe();
+      this.paramSubscription = this.route.params
+        .pipe(
+          tap((params) => {
+            this.page = +params['page'] || 1;
+            this.startingIndexSubject.next((this.page - 1) * 15);
+          })
+        )
+        .subscribe();
 
       const prevKey = this.dir === 'ltr' ? 'ArrowLeft' : 'ArrowRight';
       const nextKey = this.dir === 'ltr' ? 'ArrowRight' : 'ArrowLeft';
 
       this.keyNavigationSubscription = this.stateService.keyNavigation$
-      .pipe(
-        filter((event) => event.key === prevKey || event.key === nextKey),
-        tap((event) => {
-          if (event.key === prevKey && this.page > 1) {
-            this.page--;
-            this.isLoading = true;
-            this.cd.markForCheck();
-          }
-          if (event.key === nextKey && this.page < this.pegsCount / this.pageSize) {
-            this.page++;
-            this.isLoading = true;
-            this.cd.markForCheck();
-          }
-        }),
-        throttleTime(1000, undefined, { leading: true, trailing: true }),
-      ).subscribe(() => {
-        this.pageChange(this.page);
-      });
+        .pipe(
+          filter((event) => event.key === prevKey || event.key === nextKey),
+          tap((event) => {
+            if (event.key === prevKey && this.page > 1) {
+              this.page--;
+              this.isLoading = true;
+              this.cd.markForCheck();
+            }
+            if (
+              event.key === nextKey &&
+              this.page < this.pegsCount / this.pageSize
+            ) {
+              this.page++;
+              this.isLoading = true;
+              this.cd.markForCheck();
+            }
+          }),
+          throttleTime(1000, undefined, { leading: true, trailing: true })
+        )
+        .subscribe(() => {
+          this.pageChange(this.page);
+        });
 
       this.auditStatus$ = this.stateService.blocks$.pipe(
         takeUntil(this.destroy$),
         throttleTime(40000),
-        delayWhen(_ => this.isLoad ? timer(0) : timer(2000)),
-        tap(() => this.isLoad = false),
+        delayWhen((_) => (this.isLoad ? timer(0) : timer(2000))),
+        tap(() => (this.isLoad = false)),
         switchMap(() => this.apiService.federationAuditSynced$()),
         shareReplay(1)
       );
 
       this.currentPeg$ = this.auditStatus$.pipe(
-        filter(auditStatus => auditStatus.isAuditSynced === true),
-        switchMap(_ =>
+        filter((auditStatus) => auditStatus.isAuditSynced === true),
+        switchMap((_) =>
           this.apiService.liquidPegs$().pipe(
-            filter((currentPegs) => currentPegs.lastBlockUpdate >= this.lastPegBlockUpdate),
+            filter(
+              (currentPegs) =>
+                currentPegs.lastBlockUpdate >= this.lastPegBlockUpdate
+            ),
             tap((currentPegs) => {
               this.lastPegBlockUpdate = currentPegs.lastBlockUpdate;
             })
@@ -121,12 +168,12 @@ export class RecentPegsListComponent implements OnInit {
 
       this.auditUpdated$ = combineLatest([
         this.auditStatus$,
-        this.currentPeg$
+        this.currentPeg$,
       ]).pipe(
         filter(([auditStatus, _]) => auditStatus.isAuditSynced === true),
         map(([auditStatus, currentPeg]) => ({
           lastBlockAudit: auditStatus.lastBlockAudit,
-          currentPegAmount: currentPeg.amount
+          currentPegAmount: currentPeg.amount,
         })),
         switchMap(({ lastBlockAudit, currentPegAmount }) => {
           const blockAuditCheck = lastBlockAudit > this.lastReservesBlockUpdate;
@@ -139,9 +186,9 @@ export class RecentPegsListComponent implements OnInit {
       );
 
       this.pegsCount$ = this.auditUpdated$.pipe(
-        filter(auditUpdated => auditUpdated === true),
-        tap(() => this.isPegCountLoading = true),
-        switchMap(_ => this.apiService.pegsCount$()),
+        filter((auditUpdated) => auditUpdated === true),
+        tap(() => (this.isPegCountLoading = true)),
+        switchMap((_) => this.apiService.pegsCount$()),
         map((data) => data.pegs_count),
         tap((pegsCount) => {
           this.isPegCountLoading = false;
@@ -153,7 +200,7 @@ export class RecentPegsListComponent implements OnInit {
       this.recentPegsList$ = combineLatest([
         this.auditStatus$,
         this.auditUpdated$,
-        this.startingIndexSubject
+        this.startingIndexSubject,
       ]).pipe(
         filter(([auditStatus, auditUpdated, startingIndex]) => {
           const auditStatusCheck = auditStatus.isAuditSynced === true;
@@ -165,11 +212,12 @@ export class RecentPegsListComponent implements OnInit {
           this.currentIndex = startingIndex;
           this.isLoading = true;
         }),
-        switchMap(([_, __, startingIndex]) => this.apiService.recentPegsList$(startingIndex)),
-        tap(() => this.isLoading = false),
+        switchMap(([_, __, startingIndex]) =>
+          this.apiService.recentPegsList$(startingIndex)
+        ),
+        tap(() => (this.isLoading = false)),
         share()
       );
-
     }
   }
 
@@ -183,5 +231,4 @@ export class RecentPegsListComponent implements OnInit {
   pageChange(page: number): void {
     this.router.navigate(['audit', 'pegs', page]);
   }
-
 }

@@ -10,7 +10,11 @@ import { AddressMatch, AddressTypeInfo } from '@app/shared/address-utils';
 export class AddressTextComponent {
   @Input() address: string;
   @Input() info: AddressTypeInfo | null;
-  @Input() similarity: { score: number, match: AddressMatch, group: number } | null;
+  @Input() similarity: {
+    score: number;
+    match: AddressMatch;
+    group: number;
+  } | null;
 
   min = Math.min;
 

@@ -1,4 +1,11 @@
-import { Component, OnInit, ChangeDetectionStrategy, Input, ChangeDetectorRef, OnDestroy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectionStrategy,
+  Input,
+  ChangeDetectorRef,
+  OnDestroy,
+} from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
 import { Price } from '@app/services/price.service';
 import { StateService } from '@app/services/state.service';
@@ -22,12 +29,14 @@ export class FiatComponent implements OnInit, OnDestroy {
 
   constructor(
     private stateService: StateService,
-    private cd: ChangeDetectorRef,
+    private cd: ChangeDetectorRef
   ) {
-    this.currencySubscription = this.stateService.fiatCurrency$.subscribe((fiat) => {
-      this.currency = fiat;
-      this.cd.markForCheck();
-    });
+    this.currencySubscription = this.stateService.fiatCurrency$.subscribe(
+      (fiat) => {
+        this.currency = fiat;
+        this.cd.markForCheck();
+      }
+    );
   }
 
   ngOnInit(): void {
@@ -37,5 +46,4 @@ export class FiatComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.currencySubscription.unsubscribe();
   }
-
 }
