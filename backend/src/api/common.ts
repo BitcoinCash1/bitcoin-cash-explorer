@@ -40,17 +40,7 @@ const DEFAULT_PERMIT_BAREMULTISIG = true;
 const MAX_TX_LEGACY_SIGOPS = 2_500 * 4; // witness-adjusted sigops
 
 export class Common {
-  static nativeAssetId =
-    config.MEMPOOL.NETWORK === 'liquidtestnet'
-      ? '144c654344aa716d6f3abcc1ca90e5641e4e2a7f633bc09fe3baf64585819a49'
-      : '6f0279e9ed041c3d710a9f57d0c02928416460c4b722ae3457a11eec381c526d';
-
-  static isLiquid(): boolean {
-    return (
-      config?.MEMPOOL?.NETWORK === 'liquid' ||
-      config?.MEMPOOL?.NETWORK === 'liquidtestnet'
-    );
-  }
+  static nativeAssetId = '6f0279e9ed041c3d710a9f57d0c02928416460c4b722ae3457a11eec381c526d';
 
   static median(numbers: number[]) {
     let medianNr = 0;
@@ -101,128 +91,6 @@ export class Common {
 
     arr.push(filtered[0].effectiveFeePerVsize);
     return arr;
-  }
-
-  static findRbfTransactions(
-    added: MempoolTransactionExtended[],
-    deleted: MempoolTransactionExtended[],
-    forceScalable = false
-  ): {
-    [txid: string]: {
-      replaced: MempoolTransactionExtended[];
-      replacedBy: TransactionExtended;
-    };
-  } {
-    const matches: {
-      [txid: string]: {
-        replaced: MempoolTransactionExtended[];
-        replacedBy: TransactionExtended;
-      };
-    } = {};
-
-    // For small N, a naive nested loop is extremely fast, but it doesn't scale
-    if (added.length < 1000 && deleted.length < 50 && !forceScalable) {
-      added.forEach((addedTx) => {
-        const foundMatches = deleted.filter((deletedTx) => {
-          // The new tx must, absolutely speaking, pay at least as much fee as the replaced tx.
-          return (
-            addedTx.fee > deletedTx.fee &&
-            // The new transaction must pay more fee per kB than the replaced tx.
-            addedTx.adjustedFeePerVsize > deletedTx.adjustedFeePerVsize &&
-            // Spends one or more of the same inputs
-            deletedTx.vin.some((deletedVin) =>
-              addedTx.vin.some(
-                (vin) =>
-                  vin.txid === deletedVin.txid && vin.vout === deletedVin.vout
-              )
-            )
-          );
-        });
-        if (foundMatches?.length) {
-          matches[addedTx.txid] = {
-            replaced: [...new Set(foundMatches)],
-            replacedBy: addedTx,
-          };
-        }
-      });
-    } else {
-      // for large N, build a lookup table of prevouts we can check in ~constant time
-      const deletedSpendMap: {
-        [txid: string]: { [vout: number]: MempoolTransactionExtended };
-      } = {};
-      for (const tx of deleted) {
-        for (const vin of tx.vin) {
-          if (!deletedSpendMap[vin.txid]) {
-            deletedSpendMap[vin.txid] = {};
-          }
-          deletedSpendMap[vin.txid][vin.vout] = tx;
-        }
-      }
-
-      for (const addedTx of added) {
-        const foundMatches = new Set<MempoolTransactionExtended>();
-        for (const vin of addedTx.vin) {
-          const deletedTx = deletedSpendMap[vin.txid]?.[vin.vout];
-          if (
-            deletedTx &&
-            deletedTx.txid !== addedTx.txid &&
-            // The new tx must, absolutely speaking, pay at least as much fee as the replaced tx.
-            addedTx.fee > deletedTx.fee &&
-            // The new transaction must pay more fee per kB than the replaced tx.
-            addedTx.adjustedFeePerVsize > deletedTx.adjustedFeePerVsize
-          ) {
-            foundMatches.add(deletedTx);
-          }
-          if (foundMatches.size) {
-            matches[addedTx.txid] = {
-              replaced: [...foundMatches],
-              replacedBy: addedTx,
-            };
-          }
-        }
-      }
-    }
-
-    return matches;
-  }
-
-  static findMinedRbfTransactions(
-    minedTransactions: TransactionExtended[],
-    spendMap: Map<string, MempoolTransactionExtended>
-  ): {
-    [txid: string]: {
-      replaced: MempoolTransactionExtended[];
-      replacedBy: TransactionExtended;
-    };
-  } {
-    const matches: {
-      [txid: string]: {
-        replaced: MempoolTransactionExtended[];
-        replacedBy: TransactionExtended;
-      };
-    } = {};
-    for (const tx of minedTransactions) {
-      const replaced: Set<MempoolTransactionExtended> = new Set();
-      for (let i = 0; i < tx.vin.length; i++) {
-        const vin = tx.vin[i];
-        const key = `${vin.txid}:${vin.vout}`;
-        const match = spendMap.get(key);
-        if (match && match.txid !== tx.txid) {
-          replaced.add(match);
-          // remove this tx from the spendMap
-          // prevents the same tx being replaced more than once
-          for (const replacedVin of match.vin) {
-            const replacedKey = `${replacedVin.txid}:${replacedVin.vout}`;
-            spendMap.delete(replacedKey);
-          }
-        }
-        spendMap.delete(key);
-      }
-      if (replaced.size) {
-        matches[tx.txid] = { replaced: Array.from(replaced), replacedBy: tx };
-      }
-    }
-    return matches;
   }
 
   static setSchnorrSighashFlags(flags: bigint, witness: string[]): bigint {
@@ -745,20 +613,6 @@ export class Common {
   static getTransactionFlags(tx: TransactionExtended, height?: number): number {
     let flags = tx.flags ? BigInt(tx.flags) : 0n;
 
-    // Update variable flags (CPFP, RBF)
-    flags &= ~TransactionFlags.cpfp_child;
-    if (tx.ancestors?.length) {
-      flags |= TransactionFlags.cpfp_child;
-    }
-    flags &= ~TransactionFlags.cpfp_parent;
-    if (tx.descendants?.length) {
-      flags |= TransactionFlags.cpfp_parent;
-    }
-    flags &= ~TransactionFlags.replacement;
-    if (tx.replacement) {
-      flags |= TransactionFlags.replacement;
-    }
-
     // Already processed static flags, no need to do it again
     if (tx.flags) {
       return Number(flags);
@@ -776,11 +630,7 @@ export class Common {
     const reusedOutputAddresses: { [address: string]: number } = {};
     const inValues = {};
     const outValues = {};
-    let rbf = false;
     for (const vin of tx.vin) {
-      if (vin.sequence < 0xfffffffe) {
-        rbf = true;
-      }
       if (vin.prevout?.scriptpubkey_type) {
         switch (vin.prevout?.scriptpubkey_type) {
           case 'p2pk':
@@ -848,11 +698,8 @@ export class Common {
       inValues[vin.prevout?.value || Math.random()] =
         (inValues[vin.prevout?.value || Math.random()] || 0) + 1;
     }
-    if (rbf) {
-      flags |= TransactionFlags.rbf;
-    } else {
-      flags |= TransactionFlags.no_rbf;
-    }
+    // BCH has never RBF
+    flags |= TransactionFlags.no_rbf;
     let hasFakePubkey = false;
     let P2WSHCount = 0;
     let olgaSize = 0;
@@ -997,7 +844,6 @@ export class Common {
         (acc, vout) => acc + (vout.value ? vout.value : 0),
         0
       ),
-      acc: tx.acceleration || undefined,
       rate: tx.effectiveFeePerVsize,
       time: tx.firstSeen || undefined,
     };
@@ -1104,10 +950,6 @@ export class Common {
     );
   }
 
-  static cpfpIndexingEnabled(): boolean {
-    return Common.indexingEnabled() && config.MEMPOOL.CPFP_INDEXING === true;
-  }
-
   static setDateMidnight(date: Date): void {
     date.setUTCHours(0);
     date.setUTCMinutes(0);
@@ -1169,10 +1011,6 @@ export class Common {
     let network: string | null = null;
     let url: string = addr;
 
-    if (config.LIGHTNING.BACKEND === 'cln') {
-      url = addr.split('://')[1];
-    }
-
     if (!url?.length) {
       return {
         network: null,
@@ -1189,8 +1027,7 @@ export class Common {
     } else if (addr.indexOf('i2p') !== -1) {
       network = 'i2p';
     } else if (
-      addr.indexOf('ipv4') !== -1 ||
-      (config.LIGHTNING.BACKEND === 'lnd' && isIP(url.split(':')[0]) === 4)
+      addr.indexOf('ipv4') !== -1
     ) {
       const ipv = isIP(url.split(':')[0]);
       if (ipv === 4) {
@@ -1202,8 +1039,7 @@ export class Common {
         };
       }
     } else if (
-      addr.indexOf('ipv6') !== -1 ||
-      (config.LIGHTNING.BACKEND === 'lnd' && url.indexOf(']:'))
+      addr.indexOf('ipv6') !== -1
     ) {
       const parts = url.split('[');
       if (parts.length < 2) {
@@ -1242,20 +1078,13 @@ export class Common {
     publicKey: string,
     socket: { network: string; addr: string }
   ): NodeSocket {
-    if (config.LIGHTNING.BACKEND === 'cln') {
-      return {
-        publicKey: publicKey,
-        network: socket.network,
-        addr: socket.addr,
-      };
-    } /* if (config.LIGHTNING.BACKEND === 'lnd') */ else {
-      const formatted = this.findSocketNetwork(socket.addr);
-      return {
-        publicKey: publicKey,
-        network: formatted.network,
-        addr: formatted.url,
-      };
-    }
+    // lnd (lightning backend? We don't use that anyways)
+    const formatted = this.findSocketNetwork(socket.addr);
+    return {
+      publicKey: publicKey,
+      network: formatted.network,
+      addr: formatted.url,
+    };
   }
 
   static calcEffectiveFeeStatistics(
@@ -1264,7 +1093,6 @@ export class Common {
       fee?: number;
       effectiveFeePerVsize?: number;
       txid: string;
-      acceleration?: boolean;
     }[]
   ): EffectiveFeeStats {
     const sortedTxs = transactions

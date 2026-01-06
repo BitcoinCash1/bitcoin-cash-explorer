@@ -31,7 +31,6 @@
     "AUDIT": false,
     "RUST_GBT": true,
     "LIMIT_GBT": false,
-    "CPFP_INDEXING": false,
     "DISK_CACHE_BLOCK_INTERVAL": 6,
     "MAX_PUSH_TX_SIZE_WEIGHT": 4000000,
     "ALLOW_UNREACHABLE": true,
@@ -53,16 +52,6 @@
     "HOST": "127.0.0.1",
     "PORT": 50002,
     "TLS_ENABLED": true
-  },
-  "ESPLORA": {
-    "REST_API_URL": "http://127.0.0.1:3000",
-    "UNIX_SOCKET_PATH": "/tmp/esplora-bitcoin-mainnet",
-    "BATCH_QUERY_BASE_SIZE": 1000,
-    "RETRY_UNIX_SOCKET_AFTER": 30000,
-    "REQUEST_TIMEOUT": 10000,
-    "FALLBACK_TIMEOUT": 5000,
-    "FALLBACK": [],
-    "MAX_BEHIND_TIP": 2
   },
   "SECOND_CORE_RPC": {
     "HOST": "127.0.0.1",
@@ -101,24 +90,6 @@
     "GEOLITE2_ASN": "/usr/local/share/GeoIP/GeoLite2-ASN.mmdb",
     "GEOIP2_ISP": "/usr/local/share/GeoIP/GeoIP2-ISP.mmdb"
   },
-  "LIGHTNING": {
-    "ENABLED": false,
-    "BACKEND": "lnd",
-    "STATS_REFRESH_INTERVAL": 600,
-    "GRAPH_REFRESH_INTERVAL": 600,
-    "LOGGER_UPDATE_INTERVAL": 30,
-    "FORENSICS_INTERVAL": 43200,
-    "FORENSICS_RATE_LIMIT": 20
-  },
-  "LND": {
-    "TLS_CERT_PATH": "tls.cert",
-    "MACAROON_PATH": "readonly.macaroon",
-    "REST_API_URL": "https://localhost:8080",
-    "TIMEOUT": 10000
-  },
-  "CLIGHTNING": {
-    "SOCKET": "lightning-rpc"
-  },
   "SOCKS5PROXY": {
     "ENABLED": false,
     "USE_ONION": true,
@@ -129,9 +100,7 @@
   },
   "EXTERNAL_DATA_SERVER": {
     "MEMPOOL_API": "https://explorer.melroy.org/api/v1",
-    "MEMPOOL_ONION": "http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/api/v1",
-    "LIQUID_API": "https://liquid.network/api/v1",
-    "LIQUID_ONION": "http://liquidmom47f6s3m53ebfxn47p76a6tlnxib3wp6deux7wuzotdr6cyd.onion/api/v1"
+    "MEMPOOL_ONION": "http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/api/v1"
   },
   "REDIS": {
     "ENABLED": false,
@@ -145,10 +114,6 @@
     "STATISTICS": false,
     "STATISTICS_START_TIME": 1481932800,
     "SERVERS": []
-  },
-  "MEMPOOL_SERVICES": {
-    "API": "https://mempool.space/api/v1/services",
-    "ACCELERATIONS": false
   },
   "STRATUM": {
     "ENABLED": false,

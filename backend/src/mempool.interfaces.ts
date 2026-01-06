@@ -37,10 +37,8 @@ export interface BlockAudit {
   missingTxs: string[];
   freshTxs: string[];
   sigopTxs: string[];
-  fullrbfTxs: string[];
   addedTxs: string[];
   prioritizedTxs: string[];
-  acceleratedTxs: string[];
   matchRate: number;
   expectedFees?: number;
   expectedWeight?: number;
@@ -53,8 +51,6 @@ export interface TransactionAudit {
   added?: boolean;
   prioritized?: boolean;
   delayed?: number;
-  accelerated?: boolean;
-  conflict?: boolean;
   coinbase?: boolean;
   firstSeen?: number;
 }
@@ -91,7 +87,7 @@ export interface MempoolDeltaTxids {
   added: string[];
   removed: string[];
   mined: string[];
-  replaced: { replaced: string; by: string }[];
+  // replaced; Not used in BCH (since we do not have RBF)
 }
 
 export interface MempoolDelta {
@@ -99,7 +95,7 @@ export interface MempoolDelta {
   added: MempoolTransactionExtended[];
   removed: string[];
   mined: string[];
-  replaced: { replaced: string; by: TransactionExtended }[];
+  // replaced;  Not used in BCH (since we do not have RBF)
 }
 
 interface VinStrippedToScriptsig {
@@ -120,16 +116,12 @@ export interface TransactionExtended extends IEsploraApi.Transaction {
   ancestors?: Ancestor[];
   descendants?: Ancestor[];
   bestDescendant?: BestDescendant | null;
-  cpfpChecked?: boolean;
   position?: {
     block: number;
     vsize: number;
   };
-  acceleration?: boolean;
-  acceleratedBy?: number[];
-  acceleratedAt?: number;
-  feeDelta?: number;
-  replacement?: boolean;
+  feeDelta?: number; // Does BCH has fee delta? I suspect this was part of CPFP
+  replacement?: boolean; // Does BCH has replacement? This is part of RBF
   uid?: number;
   flags?: number;
 }
@@ -141,8 +133,6 @@ export interface MempoolTransactionExtended extends TransactionExtended {
   adjustedFeePerVsize: number;
   inputs?: number[];
   lastBoosted?: number;
-  cpfpDirty?: boolean;
-  cpfpUpdated?: number;
 }
 
 export interface AuditTransaction {
@@ -218,23 +208,11 @@ interface BestDescendant {
   fee: number;
 }
 
-export interface CpfpInfo {
-  ancestors: Ancestor[];
-  bestDescendant?: BestDescendant | null;
-  descendants?: Ancestor[];
-  effectiveFeePerVsize?: number;
-  sigops?: number;
-  adjustedVsize?: number;
-  acceleration?: boolean;
-  fee?: number;
-}
-
 export interface TransactionStripped {
   txid: string;
   fee: number;
   vsize: number;
   value: number;
-  acc?: boolean;
   rate?: number; // effective fee rate
   time?: number;
 }
@@ -260,8 +238,8 @@ export type MempoolDeltaChange = [string, number, number, 1 | 0];
 // binary flags for transaction classification
 export const TransactionFlags = {
   // features
-  rbf: 0b00000001n,
-  no_rbf: 0b00000010n,
+  rbf: 0b00000001n, // Not used by BCH
+  no_rbf: 0b00000010n, // Not used by BCH
   v1: 0b00000100n,
   v2: 0b00001000n,
   v3: 0b00010000n,
@@ -275,9 +253,9 @@ export const TransactionFlags = {
   p2wsh: 0b00100000_00000000n,
   p2tr: 0b01000000_00000000n,
   // behavior
-  cpfp_parent: 0b00000001_00000000_00000000n,
-  cpfp_child: 0b00000010_00000000_00000000n,
-  replacement: 0b00000100_00000000_00000000n,
+  cpfp_parent: 0b00000001_00000000_00000000n, // Not used by BCH
+  cpfp_child: 0b00000010_00000000_00000000n, // Not used by BCH
+  replacement: 0b00000100_00000000_00000000n, // Not used by BCH
   // data
   op_return: 0b00000001_00000000_00000000_00000000n,
   fake_pubkey: 0b00000010_00000000_00000000_00000000n,
@@ -392,19 +370,6 @@ export interface WorkingEffectiveFeeStats extends EffectiveFeeStats {
   maxFee: number;
 }
 
-export interface CpfpCluster {
-  root: string;
-  height: number;
-  txs: Ancestor[];
-  effectiveFeePerVsize: number;
-}
-
-export interface CpfpSummary {
-  transactions: MempoolTransactionExtended[];
-  clusters: CpfpCluster[];
-  version: number;
-}
-
 export interface Statistic {
   id?: number;
   added: string;
@@ -468,28 +433,13 @@ export interface OptimizedStatistic {
 }
 
 export interface TxTrackingInfo {
-  replacedBy?: string;
   position?: {
     block: number;
     vsize: number;
-    accelerated?: boolean;
-    acceleratedBy?: number[];
-    acceleratedAt?: number;
     feeDelta?: number;
   };
-  cpfp?: {
-    ancestors?: Ancestor[];
-    bestDescendant?: Ancestor | null;
-    descendants?: Ancestor[] | null;
-    effectiveFeePerVsize?: number | null;
-    sigops: number;
-    adjustedVsize: number;
-  };
   utxoSpent?: { [vout: number]: { vin: number; txid: string } };
-  accelerated?: boolean;
-  acceleratedBy?: number[];
-  acceleratedAt?: number;
-  feeDelta?: number;
+  feeDelta?: number; // Used by BCH at all?
   confirmed?: boolean;
 }
 
@@ -523,9 +473,8 @@ export interface IBackendInfo {
   hostname: string;
   gitCommit: string;
   version: string;
-  lightning: boolean;
   coreVersion: string;
-  backend: 'esplora' | 'electrum' | 'none';
+  backend: 'electrum' | 'none';
 }
 
 export interface INetworkInfo {

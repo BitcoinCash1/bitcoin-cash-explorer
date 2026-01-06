@@ -3,7 +3,6 @@ import DB from '../database';
 import logger from '../logger';
 import { Common } from './common';
 import blocksRepository from '../repositories/BlocksRepository';
-import cpfpRepository from '../repositories/CpfpRepository';
 import { RowDataPacket } from 'mysql2';
 
 class DatabaseMigration {
@@ -421,12 +420,6 @@ class DatabaseMigration {
     }
 
     if (databaseSchemaVersion < 26 && isBitcoin === true) {
-      if (config.LIGHTNING.ENABLED) {
-        this.uniqueLog(
-          logger.notice,
-          `'lightning_stats' table has been truncated.`
-        );
-      }
       await this.$executeQuery(`TRUNCATE lightning_stats`);
       await this.$executeQuery(
         'ALTER TABLE `lightning_stats` ADD tor_nodes int(11) NOT NULL DEFAULT "0"'
@@ -463,12 +456,6 @@ class DatabaseMigration {
     }
 
     if (databaseSchemaVersion < 28 && isBitcoin === true) {
-      if (config.LIGHTNING.ENABLED) {
-        this.uniqueLog(
-          logger.notice,
-          `'lightning_stats' and 'node_stats' tables have been truncated.`
-        );
-      }
       await this.$executeQuery(`TRUNCATE lightning_stats`);
       await this.$executeQuery(`TRUNCATE node_stats`);
       await this.$executeQuery(`ALTER TABLE lightning_stats MODIFY added DATE`);
@@ -571,12 +558,6 @@ class DatabaseMigration {
     }
 
     if (databaseSchemaVersion < 38 && isBitcoin == true) {
-      if (config.LIGHTNING.ENABLED) {
-        this.uniqueLog(
-          logger.notice,
-          `'lightning_stats' and 'node_stats' tables have been truncated.`
-        );
-      }
       await this.$executeQuery(`TRUNCATE lightning_stats`);
       await this.$executeQuery(`TRUNCATE node_stats`);
       await this.$executeQuery(
@@ -728,7 +709,6 @@ class DatabaseMigration {
         await this.$checkIfTableExists('compact_transactions')
       );
       try {
-        await this.$convertCompactCpfpTables();
         await this.$executeQuery('DROP TABLE IF EXISTS `transactions`');
         await this.$executeQuery('DROP TABLE IF EXISTS `cpfp_clusters`');
         await this.updateToSchemaVersion(52);
@@ -878,35 +858,7 @@ class DatabaseMigration {
       await this.updateToSchemaVersion(67);
     }
 
-    if (databaseSchemaVersion < 68 && config.MEMPOOL.NETWORK === 'liquid') {
-      await this.$executeQuery('TRUNCATE TABLE elements_pegs');
-      await this.$executeQuery(
-        'ALTER TABLE elements_pegs ADD PRIMARY KEY (txid, txindex);'
-      );
-      await this.$executeQuery(
-        `UPDATE state SET number = 0 WHERE name = 'last_elements_block';`
-      );
-      // Create the federation_addresses table and add the two Liquid Federation change addresses in
-      await this.$executeQuery(
-        this.getCreateFederationAddressesTableQuery(),
-        await this.$checkIfTableExists('federation_addresses')
-      );
-      await this.$executeQuery(
-        `INSERT INTO federation_addresses (bitcoinaddress) VALUES ('bc1qxvay4an52gcghxq5lavact7r6qe9l4laedsazz8fj2ee2cy47tlqff4aj4')`
-      ); // Federation change address
-      await this.$executeQuery(
-        `INSERT INTO federation_addresses (bitcoinaddress) VALUES ('3EiAcrzq1cELXScc98KeCswGWZaPGceT1d')`
-      ); // Federation change address
-      // Create the federation_txos table that uses the federation_addresses table as a foreign key
-      await this.$executeQuery(
-        this.getCreateFederationTxosTableQuery(),
-        await this.$checkIfTableExists('federation_txos')
-      );
-      await this.$executeQuery(
-        `INSERT INTO state VALUES('last_bitcoin_block_audit', 0, NULL);`
-      );
-      await this.updateToSchemaVersion(68);
-    }
+    await this.updateToSchemaVersion(68);
 
     if (databaseSchemaVersion < 69 && config.MEMPOOL.NETWORK === 'mainnet') {
       await this.$executeQuery(
@@ -923,35 +875,7 @@ class DatabaseMigration {
       await this.updateToSchemaVersion(70);
     }
 
-    if (databaseSchemaVersion < 71 && config.MEMPOOL.NETWORK === 'liquid') {
-      await this.$executeQuery('TRUNCATE TABLE elements_pegs');
-      await this.$executeQuery('TRUNCATE TABLE federation_txos');
-      await this.$executeQuery('SET FOREIGN_KEY_CHECKS = 0');
-      await this.$executeQuery('TRUNCATE TABLE federation_addresses');
-      await this.$executeQuery('SET FOREIGN_KEY_CHECKS = 1');
-      await this.$executeQuery(
-        `INSERT INTO federation_addresses (bitcoinaddress) VALUES ('bc1qxvay4an52gcghxq5lavact7r6qe9l4laedsazz8fj2ee2cy47tlqff4aj4')`
-      ); // Federation change address
-      await this.$executeQuery(
-        `INSERT INTO federation_addresses (bitcoinaddress) VALUES ('3EiAcrzq1cELXScc98KeCswGWZaPGceT1d')`
-      ); // Federation change address
-      await this.$executeQuery(
-        `UPDATE state SET number = 0 WHERE name = 'last_elements_block';`
-      );
-      await this.$executeQuery(
-        `UPDATE state SET number = 0 WHERE name = 'last_bitcoin_block_audit';`
-      );
-      await this.$executeQuery(
-        'ALTER TABLE `federation_txos` ADD timelock INT NOT NULL DEFAULT 0'
-      );
-      await this.$executeQuery(
-        'ALTER TABLE `federation_txos` ADD expiredAt INT NOT NULL DEFAULT 0'
-      );
-      await this.$executeQuery(
-        'ALTER TABLE `federation_txos` ADD emergencyKey TINYINT NOT NULL DEFAULT 0'
-      );
-      await this.updateToSchemaVersion(71);
-    }
+    await this.updateToSchemaVersion(71);
 
     if (databaseSchemaVersion < 72 && isBitcoin === true) {
       // reindex Goggles flags for mined block templates above height 832000
@@ -1211,30 +1135,10 @@ class DatabaseMigration {
     }
 
     // elements_pegs indexes
-    if (databaseSchemaVersion < 92 && config.MEMPOOL.NETWORK === 'liquid') {
-      await this.$executeQuery(`
-        ALTER TABLE \`elements_pegs\`
-          ADD INDEX \`block\` (\`block\`),
-          ADD INDEX \`datetime\` (\`datetime\`),
-          ADD INDEX \`amount\` (\`amount\`),
-          ADD INDEX \`bitcoinaddress\` (\`bitcoinaddress\`),
-          ADD INDEX \`bitcointxid\` (\`bitcointxid\`)
-      `);
-      await this.updateToSchemaVersion(92);
-    }
+    await this.updateToSchemaVersion(92);
 
     // federation_txos indexes
-    if (databaseSchemaVersion < 93 && config.MEMPOOL.NETWORK === 'liquid') {
-      await this.$executeQuery(`
-        ALTER TABLE \`federation_txos\`
-          ADD INDEX \`unspent\` (\`unspent\`),
-          ADD INDEX \`lastblockupdate\` (\`lastblockupdate\`),
-          ADD INDEX \`blocktime\` (\`blocktime\`),
-          ADD INDEX \`emergencyKey\` (\`emergencyKey\`),
-          ADD INDEX \`expiredAt\` (\`expiredAt\`)
-      `);
-      await this.updateToSchemaVersion(93);
-    }
+    await this.updateToSchemaVersion(93);
 
     // Unify database schema for all mempool netwoks
     // versions above 94 should not use network-specific flags
@@ -1749,52 +1653,50 @@ class DatabaseMigration {
         );
       }
 
-      if (config.MEMPOOL.NETWORK !== 'liquid') {
-        // Apply all the liquid specific migrations to all other networks
-        // Version 68
-        await this.$executeQuery(
-          'ALTER TABLE elements_pegs ADD PRIMARY KEY (txid, txindex);'
-        );
-        await this.$executeQuery(
-          this.getCreateFederationAddressesTableQuery(),
-          await this.$checkIfTableExists('federation_addresses')
-        );
-        await this.$executeQuery(
-          this.getCreateFederationTxosTableQuery(),
-          await this.$checkIfTableExists('federation_txos')
-        );
+      // Apply all the liquid specific migrations (we do not use liquid) to all other networks
+      // Version 68
+      await this.$executeQuery(
+        'ALTER TABLE elements_pegs ADD PRIMARY KEY (txid, txindex);'
+      );
+      await this.$executeQuery(
+        this.getCreateFederationAddressesTableQuery(),
+        await this.$checkIfTableExists('federation_addresses')
+      );
+      await this.$executeQuery(
+        this.getCreateFederationTxosTableQuery(),
+        await this.$checkIfTableExists('federation_txos')
+      );
 
-        // Version 71
-        await this.$executeQuery(
-          'ALTER TABLE `federation_txos` ADD timelock INT NOT NULL DEFAULT 0'
-        );
-        await this.$executeQuery(
-          'ALTER TABLE `federation_txos` ADD expiredAt INT NOT NULL DEFAULT 0'
-        );
-        await this.$executeQuery(
-          'ALTER TABLE `federation_txos` ADD emergencyKey TINYINT NOT NULL DEFAULT 0'
-        );
+      // Version 71
+      await this.$executeQuery(
+        'ALTER TABLE `federation_txos` ADD timelock INT NOT NULL DEFAULT 0'
+      );
+      await this.$executeQuery(
+        'ALTER TABLE `federation_txos` ADD expiredAt INT NOT NULL DEFAULT 0'
+      );
+      await this.$executeQuery(
+        'ALTER TABLE `federation_txos` ADD emergencyKey TINYINT NOT NULL DEFAULT 0'
+      );
 
-        // Version 92
-        await this.$executeQuery(`
-          ALTER TABLE \`elements_pegs\`
-            ADD INDEX \`block\` (\`block\`),
-            ADD INDEX \`datetime\` (\`datetime\`),
-            ADD INDEX \`amount\` (\`amount\`),
-            ADD INDEX \`bitcoinaddress\` (\`bitcoinaddress\`),
-            ADD INDEX \`bitcointxid\` (\`bitcointxid\`)
-        `);
+      // Version 92
+      await this.$executeQuery(`
+        ALTER TABLE \`elements_pegs\`
+          ADD INDEX \`block\` (\`block\`),
+          ADD INDEX \`datetime\` (\`datetime\`),
+          ADD INDEX \`amount\` (\`amount\`),
+          ADD INDEX \`bitcoinaddress\` (\`bitcoinaddress\`),
+          ADD INDEX \`bitcointxid\` (\`bitcointxid\`)
+      `);
 
-        // Version 93
-        await this.$executeQuery(`
-          ALTER TABLE \`federation_txos\`
-            ADD INDEX \`unspent\` (\`unspent\`),
-            ADD INDEX \`lastblockupdate\` (\`lastblockupdate\`),
-            ADD INDEX \`blocktime\` (\`blocktime\`),
-            ADD INDEX \`emergencyKey\` (\`emergencyKey\`),
-            ADD INDEX \`expiredAt\` (\`expiredAt\`)
-        `);
-      }
+      // Version 93
+      await this.$executeQuery(`
+        ALTER TABLE \`federation_txos\`
+          ADD INDEX \`unspent\` (\`unspent\`),
+          ADD INDEX \`lastblockupdate\` (\`lastblockupdate\`),
+          ADD INDEX \`blocktime\` (\`blocktime\`),
+          ADD INDEX \`emergencyKey\` (\`emergencyKey\`),
+          ADD INDEX \`expiredAt\` (\`expiredAt\`)
+      `);
 
       if (config.MEMPOOL.NETWORK !== 'mainnet') {
         // Apply all the mainnet specific migrations to all other networks
@@ -2023,17 +1925,12 @@ class DatabaseMigration {
     );
 
     if (version < 1) {
-      if (
-        config.MEMPOOL.NETWORK !== 'liquid' &&
-        config.MEMPOOL.NETWORK !== 'liquidtestnet'
-      ) {
-        if (version > 0) {
-          logger.notice(
-            `MIGRATIONS: Migrating (shifting) statistics table data`
-          );
-        }
-        queries.push(this.getShiftStatisticsQuery());
+      if (version > 0) {
+        logger.notice(
+          `MIGRATIONS: Migrating (shifting) statistics table data`
+        );
       }
+      queries.push(this.getShiftStatisticsQuery());
     }
 
     if (version < 7 && isBitcoin === true) {
@@ -2206,7 +2103,7 @@ class DatabaseMigration {
       pegtxid varchar(65) NOT NULL,
       pegindex int(11) NOT NULL,
       pegblocktime int(11) unsigned NOT NULL,
-      PRIMARY KEY (txid, txindex), 
+      PRIMARY KEY (txid, txindex),
       FOREIGN KEY (bitcoinaddress) REFERENCES federation_addresses (bitcoinaddress)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
   }
@@ -2513,62 +2410,6 @@ class DatabaseMigration {
     await this.$executeQuery(
       `UPDATE state SET string = NULL WHERE name = 'pools_json_sha'`
     );
-  }
-
-  private async $convertCompactCpfpTables(): Promise<void> {
-    try {
-      const batchSize = 250;
-      const maxHeight = (await blocksRepository.$mostRecentBlockHeight()) || 0;
-      const [minHeightRows]: any = await DB.query(
-        `SELECT MIN(height) AS minHeight from cpfp_clusters`
-      );
-      const minHeight =
-        minHeightRows.length && minHeightRows[0].minHeight != null
-          ? minHeightRows[0].minHeight
-          : maxHeight;
-      let height = maxHeight;
-
-      // Logging
-      let timer = new Date().getTime() / 1000;
-      const startedAt = new Date().getTime() / 1000;
-
-      while (height > minHeight) {
-        const [rows] = (await DB.query(
-          `
-            SELECT * from cpfp_clusters
-            WHERE height <= ? AND height > ?
-            ORDER BY height
-          `,
-          [height, height - batchSize]
-        )) as RowDataPacket[][];
-        if (rows?.length) {
-          await cpfpRepository.$batchSaveClusters(
-            rows.map((row) => {
-              return {
-                root: row.root,
-                height: row.height,
-                txs: JSON.parse(row.txs),
-                effectiveFeePerVsize: row.fee_rate,
-              };
-            })
-          );
-        }
-
-        const elapsed = new Date().getTime() / 1000 - timer;
-        const runningFor = new Date().getTime() / 1000 - startedAt;
-        logger.debug(
-          `Migrated cpfp data from block ${height} to ${
-            height - batchSize
-          } in ${elapsed.toFixed(
-            2
-          )} seconds | total elapsed: ${runningFor.toFixed(2)} seconds`
-        );
-        timer = new Date().getTime() / 1000;
-        height -= batchSize;
-      }
-    } catch (e) {
-      logger.warn(`Failed to migrate cpfp transaction data`);
-    }
   }
 
   private async $fixBadV1AuditBlocks(): Promise<void> {

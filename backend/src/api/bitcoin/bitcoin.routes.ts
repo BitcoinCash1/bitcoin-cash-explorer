@@ -1,5 +1,4 @@
 import { Application, Request, Response } from 'express';
-import axios from 'axios';
 import * as bitcoinjs from 'bitcoinjs-lib';
 import config from '../../config';
 import websocketHandler from '../websocket-handler';
@@ -17,9 +16,6 @@ import logger from '../../logger';
 import blocks from '../blocks';
 import bitcoinClient from './bitcoin-client';
 import difficultyAdjustment from '../difficulty-adjustment';
-import transactionRepository from '../../repositories/TransactionRepository';
-import rbfCache from '../rbf-cache';
-import { calculateMempoolTxCpfp } from '../cpfp';
 import { handleError } from '../../utils/api';
 import poolsUpdater from '../../tasks/pools-updater';
 import chainTips from '../chain-tips';
@@ -36,7 +32,6 @@ class BitcoinRoutes {
         config.MEMPOOL.API_URL_PREFIX + 'transaction-times',
         this.getTransactionTimes
       )
-      .get(config.MEMPOOL.API_URL_PREFIX + 'cpfp/:txId', this.$getCpfpInfo)
       .get(
         config.MEMPOOL.API_URL_PREFIX + 'difficulty-adjustment',
         this.getDifficultyChange
@@ -58,16 +53,6 @@ class BitcoinRoutes {
       .get(
         config.MEMPOOL.API_URL_PREFIX + 'validate-address/:address',
         this.validateAddress
-      )
-      .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/rbf', this.getRbfHistory)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/cached', this.getCachedTx)
-      .get(
-        config.MEMPOOL.API_URL_PREFIX + 'replacements',
-        this.getRbfReplacements
-      )
-      .get(
-        config.MEMPOOL.API_URL_PREFIX + 'fullrbf/replacements',
-        this.getFullRbfReplacements
       )
       .post(
         config.MEMPOOL.API_URL_PREFIX + 'tx/push',
@@ -120,7 +105,6 @@ class BitcoinRoutes {
         this.getStaleTips.bind(this)
       )
       .post(config.MEMPOOL.API_URL_PREFIX + 'prevouts', this.$getPrevouts)
-      .post(config.MEMPOOL.API_URL_PREFIX + 'cpfp', this.getCpfpLocalTxs)
       // Temporarily add txs/package endpoint for all backends until esplora supports it
       .post(config.MEMPOOL.API_URL_PREFIX + 'txs/package', this.$submitPackage)
       // Internal routes
@@ -135,110 +119,106 @@ class BitcoinRoutes {
       .get(
         config.MEMPOOL.API_URL_PREFIX + 'internal/blocks/:definitionHash',
         this.getBlocksByDefinitionHash
+      )
+      .get(config.MEMPOOL.API_URL_PREFIX + 'mempool', this.getMempool)
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'mempool/txids',
+        this.getMempoolTxIds
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'mempool/recent',
+        this.getRecentMempoolTransactions
+      )
+      .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId', this.getTransaction)
+      .post(config.MEMPOOL.API_URL_PREFIX + 'tx', this.$postTransaction)
+      .post(
+        config.MEMPOOL.API_URL_PREFIX + 'txs/test',
+        this.$testTransactions
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/hex',
+        this.getRawTransaction
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/status',
+        this.getTransactionStatus
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/outspends',
+        this.getTransactionOutspends
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/merkle-proof',
+        this.getTransactionMerkleProof
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'txs/outspends',
+        this.$getBatchedOutspends
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'block/:hash/header',
+        this.getBlockHeader
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'blocks/tip/hash',
+        this.getBlockTipHash
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'block/:hash/raw',
+        this.getRawBlock
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'block/:hash/txids',
+        this.getTxIdsForBlock
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'block/:hash/txs',
+        this.getBlockTransactions
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'block/:hash/txs/:index',
+        this.getBlockTransactions
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'block-height/:height',
+        this.getBlockHeight
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'address/:address',
+        this.getAddress
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs',
+        this.getAddressTransactions
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/summary',
+        this.getAddressTransactionSummary
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'address/:address/utxo',
+        this.getAddressUtxo
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash',
+        this.getScriptHash
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/txs',
+        this.getScriptHashTransactions
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/txs/summary',
+        this.getScriptHashTransactionSummary
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/utxo',
+        this.getScriptHashUtxo
+      )
+      .get(
+        config.MEMPOOL.API_URL_PREFIX + 'address-prefix/:prefix',
+        this.getAddressPrefix
       );
-
-    if (config.MEMPOOL.BACKEND !== 'esplora') {
-      app
-        .get(config.MEMPOOL.API_URL_PREFIX + 'mempool', this.getMempool)
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'mempool/txids',
-          this.getMempoolTxIds
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'mempool/recent',
-          this.getRecentMempoolTransactions
-        )
-        .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId', this.getTransaction)
-        .post(config.MEMPOOL.API_URL_PREFIX + 'tx', this.$postTransaction)
-        .post(
-          config.MEMPOOL.API_URL_PREFIX + 'txs/test',
-          this.$testTransactions
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/hex',
-          this.getRawTransaction
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/status',
-          this.getTransactionStatus
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/outspends',
-          this.getTransactionOutspends
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/merkle-proof',
-          this.getTransactionMerkleProof
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'txs/outspends',
-          this.$getBatchedOutspends
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'block/:hash/header',
-          this.getBlockHeader
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'blocks/tip/hash',
-          this.getBlockTipHash
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'block/:hash/raw',
-          this.getRawBlock
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'block/:hash/txids',
-          this.getTxIdsForBlock
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'block/:hash/txs',
-          this.getBlockTransactions
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'block/:hash/txs/:index',
-          this.getBlockTransactions
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'block-height/:height',
-          this.getBlockHeight
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'address/:address',
-          this.getAddress
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs',
-          this.getAddressTransactions
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/summary',
-          this.getAddressTransactionSummary
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'address/:address/utxo',
-          this.getAddressUtxo
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash',
-          this.getScriptHash
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/txs',
-          this.getScriptHashTransactions
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/txs/summary',
-          this.getScriptHashTransactionSummary
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/utxo',
-          this.getScriptHashUtxo
-        )
-        .get(
-          config.MEMPOOL.API_URL_PREFIX + 'address-prefix/:prefix',
-          this.getAddressPrefix
-        );
-    }
   }
 
   private getInitData(req: Request, res: Response) {
@@ -323,57 +303,6 @@ class BitcoinRoutes {
       res.json(batchedOutspends);
     } catch (e) {
       handleError(req, res, 500, 'Failed to get batched outspends');
-    }
-  }
-
-  private async $getCpfpInfo(req: Request, res: Response) {
-    if (!TXID_REGEX.test(req.params.txId)) {
-      handleError(req, res, 501, `Invalid transaction ID`);
-      return;
-    }
-
-    const tx = mempool.getMempool()[req.params.txId];
-    if (tx) {
-      if (tx?.cpfpChecked) {
-        res.json({
-          ancestors: tx.ancestors,
-          bestDescendant: tx.bestDescendant || null,
-          descendants: tx.descendants || null,
-          effectiveFeePerVsize: tx.effectiveFeePerVsize || null,
-          sigops: tx.sigops,
-          fee: tx.fee,
-          adjustedVsize: tx.adjustedVsize,
-          acceleration: tx.acceleration,
-          acceleratedBy: tx.acceleratedBy || undefined,
-          acceleratedAt: tx.acceleratedAt || undefined,
-          feeDelta: tx.feeDelta || undefined,
-        });
-        return;
-      }
-
-      const cpfpInfo = calculateMempoolTxCpfp(tx, mempool.getMempool());
-
-      res.json(cpfpInfo);
-      return;
-    } else {
-      let cpfpInfo;
-      if (config.DATABASE.ENABLED) {
-        try {
-          cpfpInfo = await transactionRepository.$getCpfpInfo(req.params.txId);
-        } catch (e) {
-          handleError(req, res, 500, 'Failed to get CPFP info');
-          return;
-        }
-      }
-      if (cpfpInfo) {
-        res.json(cpfpInfo);
-        return;
-      } else {
-        res.json({
-          ancestors: [],
-        });
-        return;
-      }
     }
   }
 
@@ -1061,15 +990,14 @@ class BitcoinRoutes {
     req: Request,
     res: Response
   ): Promise<void> {
-    if (config.MEMPOOL.BACKEND !== 'esplora') {
-      handleError(
-        req,
-        res,
-        405,
-        'Address summary lookups require mempool/electrs backend.'
-      );
-      return;
-    }
+    // if (config.MEMPOOL.BACKEND !== 'esplora') {
+    handleError(
+      req,
+      res,
+      405,
+      'Address summary lookups require mempool/electrs backend.'
+    );
+    return;
   }
 
   private async getScriptHash(req: Request, res: Response) {
@@ -1193,15 +1121,15 @@ class BitcoinRoutes {
     req: Request,
     res: Response
   ): Promise<void> {
-    if (config.MEMPOOL.BACKEND !== 'esplora') {
-      handleError(
-        req,
-        res,
-        405,
-        'Scripthash summary lookups require mempool/electrs backend.'
-      );
-      return;
-    }
+    // It used to have a: if (config.MEMPOOL.BACKEND !== 'esplora') {
+    // We only support Fulcrum electrum..
+    handleError(
+      req,
+      res,
+      405,
+      'Scripthash summary lookups require mempool/electrs backend.'
+    );
+    return;
   }
 
   private async getAddressPrefix(req: Request, res: Response) {
@@ -1361,58 +1289,6 @@ class BitcoinRoutes {
       res.json(result);
     } catch (e) {
       handleError(req, res, 500, 'Failed to validate address');
-    }
-  }
-
-  private async getRbfHistory(req: Request, res: Response) {
-    if (!TXID_REGEX.test(req.params.txId)) {
-      handleError(req, res, 501, `Invalid transaction ID`);
-      return;
-    }
-    try {
-      const replacements = rbfCache.getRbfTree(req.params.txId) || null;
-      const replaces = rbfCache.getReplaces(req.params.txId) || null;
-      res.json({
-        replacements,
-        replaces,
-      });
-    } catch (e) {
-      handleError(req, res, 500, 'Failed to get rbf history');
-    }
-  }
-
-  private async getRbfReplacements(req: Request, res: Response) {
-    try {
-      const result = rbfCache.getRbfTrees(false);
-      res.json(result);
-    } catch (e) {
-      handleError(req, res, 500, 'Failed to get rbf trees');
-    }
-  }
-
-  private async getFullRbfReplacements(req: Request, res: Response) {
-    try {
-      const result = rbfCache.getRbfTrees(true);
-      res.json(result);
-    } catch (e) {
-      handleError(req, res, 500, 'Failed to get full rbf replacements');
-    }
-  }
-
-  private async getCachedTx(req: Request, res: Response) {
-    if (!TXID_REGEX.test(req.params.txId)) {
-      handleError(req, res, 501, `Invalid transaction ID`);
-      return;
-    }
-    try {
-      const result = rbfCache.getTx(req.params.txId);
-      if (result) {
-        res.json(result);
-      } else {
-        res.status(204).send();
-      }
-    } catch (e) {
-      handleError(req, res, 500, 'Failed to get cached tx');
     }
   }
 
@@ -1617,49 +1493,6 @@ class BitcoinRoutes {
       res.json(result);
     } catch (e) {
       handleError(req, res, 500, 'Failed to get prevouts');
-    }
-  }
-
-  private getCpfpLocalTxs(req: Request, res: Response) {
-    try {
-      const transactions = req.body;
-
-      if (
-        !Array.isArray(transactions) ||
-        transactions.some(
-          (tx) =>
-            !tx ||
-            typeof tx !== 'object' ||
-            !/^[a-fA-F0-9]{64}$/.test(tx.txid) ||
-            typeof tx.weight !== 'number' ||
-            typeof tx.sigops !== 'number' ||
-            typeof tx.fee !== 'number' ||
-            !Array.isArray(tx.vin) ||
-            !Array.isArray(tx.vout)
-        )
-      ) {
-        handleError(req, res, 400, 'Invalid transactions format');
-        return;
-      }
-
-      if (transactions.length > 1) {
-        handleError(
-          req,
-          res,
-          400,
-          'More than one transaction is not supported yet'
-        );
-        return;
-      }
-
-      const cpfpInfo = calculateMempoolTxCpfp(
-        transactions[0],
-        mempool.getMempool(),
-        true
-      );
-      res.json([cpfpInfo]);
-    } catch (e) {
-      handleError(req, res, 500, 'Failed to calculate CPFP info');
     }
   }
 }

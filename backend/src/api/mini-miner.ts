@@ -1,4 +1,3 @@
-import { Acceleration } from './acceleration/acceleration';
 import { MempoolTransactionExtended } from '../mempool.interfaces';
 import logger from '../logger';
 
@@ -306,7 +305,6 @@ export function mempoolComparator(a: GraphTx, b: GraphTx): number {
  */
 export function makeBlockTemplate(
   candidates: MempoolTransactionExtended[],
-  accelerations: Acceleration[],
   maxBlocks: number = 8,
   weightLimit: number = BLOCK_WEIGHT_UNITS,
   sigopLimit: number = BLOCK_SIGOPS
@@ -346,17 +344,6 @@ export function makeBlockTemplate(
     });
     mempoolArray.push(auditPool.get(tx.txid) as MinerTransaction);
   });
-
-  // set accelerated effective fee
-  for (const acceleration of accelerations) {
-    const tx = auditPool.get(acceleration.txid);
-    if (tx) {
-      tx.feeDelta = acceleration.max_bid;
-      tx.feePerVsize = (tx.fee + tx.feeDelta) / tx.adjustedVsize;
-      tx.effectiveFeePerVsize = tx.feePerVsize;
-      tx.dependencyRate = tx.feePerVsize;
-    }
-  }
 
   // Build relatives graph & calculate ancestor scores
   for (const tx of mempoolArray) {

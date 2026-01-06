@@ -146,8 +146,6 @@ class AuditReplication {
       prioritizedTxs: auditSummary.prioritizedTxs || [],
       freshTxs: auditSummary.freshTxs || [],
       sigopTxs: auditSummary.sigopTxs || [],
-      fullrbfTxs: auditSummary.fullrbfTxs || [],
-      acceleratedTxs: auditSummary.acceleratedTxs || [],
       matchRate: auditSummary.matchRate,
       expectedFees: auditSummary.expectedFees,
       expectedWeight: auditSummary.expectedWeight,

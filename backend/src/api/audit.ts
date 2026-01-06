@@ -4,7 +4,6 @@ import {
   MempoolTransactionExtended,
   MempoolBlockWithTransactions,
 } from '../mempool.interfaces';
-import rbfCache from './rbf-cache';
 import transactionUtils from './transaction-utils';
 
 const PROPAGATION_MARGIN = 180; // in seconds, time since a transaction is first seen after which it is assumed to have propagated to all miners
@@ -22,8 +21,6 @@ class Audit {
     prioritized: string[];
     fresh: string[];
     sigop: string[];
-    fullrbf: string[];
-    accelerated: string[];
     score: number;
     similarity: number;
   } {
@@ -35,8 +32,6 @@ class Audit {
         prioritized: [],
         fresh: [],
         sigop: [],
-        fullrbf: [],
-        accelerated: [],
         score: 1,
         similarity: 1,
       };
@@ -48,11 +43,8 @@ class Audit {
     let prioritized: string[] = []; // higher in the block than would be expected by in-band feerate alone
     let deprioritized: string[] = []; // lower in the block than would be expected by in-band feerate alone
     const fresh: string[] = []; // missing, but firstSeen or lastBoosted within PROPAGATION_MARGIN
-    const rbf: string[] = []; // either missing or present, and either part of a full-rbf replacement, or a conflict with the mined block
-    const accelerated: string[] = []; // prioritized by the mempool accelerator
     const isCensored = {}; // missing, without excuse
     const isDisplaced = {};
-    const isAccelerated = {};
     let displacedWeight = 0;
     let matchedWeight = 0;
     let projectedWeight = 0;
@@ -63,10 +55,6 @@ class Audit {
     const now = Math.round(Date.now() / 1000);
     for (const tx of transactions) {
       inBlock[tx.txid] = tx;
-      if (mempool[tx.txid] && mempool[tx.txid].acceleration) {
-        accelerated.push(tx.txid);
-        isAccelerated[tx.txid] = true;
-      }
     }
     // coinbase is always expected
     if (transactions[0]) {
@@ -75,14 +63,8 @@ class Audit {
     // look for transactions that were expected in the template, but missing from the mined block
     for (const txid of projectedBlocks[0].transactionIds) {
       if (!inBlock[txid]) {
-        // allow missing transactions which either belong to a full rbf tree, or conflict with any transaction in the mined block
+        // conflict with any transaction in the mined block
         if (
-          rbfCache.has(txid) &&
-          (rbfCache.isFullRbf(txid) ||
-            rbfCache.anyInSameTree(txid, (tx) => inBlock[tx.txid]))
-        ) {
-          rbf.push(txid);
-        } else if (
           mempool[txid]?.firstSeen != null &&
           now - (mempool[txid]?.firstSeen || 0) <= PROPAGATION_MARGIN
         ) {
@@ -162,19 +144,12 @@ class Audit {
       if (inTemplate[tx.txid]) {
         matches.push(tx.txid);
       } else {
-        if (rbfCache.has(tx.txid)) {
-          rbf.push(tx.txid);
-          if (!mempool[tx.txid] && !rbfCache.getReplacedBy(tx.txid)) {
-            unseen.push(tx.txid);
+        if (mempool[tx.txid]) {
+          if (isDisplaced[tx.txid]) {
+            added.push(tx.txid);
           }
         } else {
-          if (mempool[tx.txid]) {
-            if (isDisplaced[tx.txid]) {
-              added.push(tx.txid);
-            }
-          } else {
-            unseen.push(tx.txid);
-          }
+          unseen.push(tx.txid);
         }
         overflowWeight += tx.weight;
       }
@@ -235,8 +210,6 @@ class Audit {
       prioritized,
       fresh,
       sigop: [],
-      fullrbf: rbf,
-      accelerated,
       score,
       similarity,
     };

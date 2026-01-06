@@ -1,6 +1,5 @@
 import DB from '../database';
 import logger from '../logger';
-import bitcoinApi from '../api/bitcoin/bitcoin-api-factory';
 import {
   BlockAudit,
   AuditScore,
@@ -23,8 +22,8 @@ class BlocksAuditRepositories {
   public async $saveAudit(audit: BlockAudit): Promise<void> {
     try {
       await DB.query(
-        `INSERT INTO blocks_audits(version, time, height, hash, unseen_txs, missing_txs, added_txs, prioritized_txs, fresh_txs, sigop_txs, fullrbf_txs, accelerated_txs, match_rate, expected_fees, expected_weight)
-        VALUE (?, FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        `INSERT INTO blocks_audits(version, time, height, hash, unseen_txs, missing_txs, added_txs, prioritized_txs, fresh_txs, sigop_txs, match_rate, expected_fees, expected_weight)
+        VALUE (?, FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           audit.version,
           audit.time,
@@ -36,8 +35,6 @@ class BlocksAuditRepositories {
           JSON.stringify(audit.prioritizedTxs),
           JSON.stringify(audit.freshTxs),
           JSON.stringify(audit.sigopTxs),
-          JSON.stringify(audit.fullrbfTxs),
-          JSON.stringify(audit.acceleratedTxs),
           audit.matchRate,
           audit.expectedFees,
           audit.expectedWeight,
@@ -135,8 +132,6 @@ class BlocksAuditRepositories {
           prioritized_txs as prioritizedTxs,
           fresh_txs as freshTxs,
           sigop_txs as sigopTxs,
-          fullrbf_txs as fullrbfTxs,
-          accelerated_txs as acceleratedTxs,
           match_rate as matchRate,
           expected_fees as expectedFees,
           expected_weight as expectedWeight
@@ -154,8 +149,6 @@ class BlocksAuditRepositories {
         rows[0].prioritizedTxs = JSON.parse(rows[0].prioritizedTxs);
         rows[0].freshTxs = JSON.parse(rows[0].freshTxs);
         rows[0].sigopTxs = JSON.parse(rows[0].sigopTxs);
-        rows[0].fullrbfTxs = JSON.parse(rows[0].fullrbfTxs);
-        rows[0].acceleratedTxs = JSON.parse(rows[0].acceleratedTxs);
         rows[0].template = JSON.parse(rows[0].template);
 
         return rows[0];
@@ -180,8 +173,6 @@ class BlocksAuditRepositories {
       if (blockAudit) {
         const isAdded = blockAudit.addedTxs.includes(txid);
         const isPrioritized = blockAudit.prioritizedTxs.includes(txid);
-        const isAccelerated = blockAudit.acceleratedTxs.includes(txid);
-        const isConflict = blockAudit.fullrbfTxs.includes(txid);
         let isExpected = false;
         let firstSeen = undefined;
         blockAudit.template?.forEach((tx) => {
@@ -193,15 +184,13 @@ class BlocksAuditRepositories {
         const wasSeen =
           blockAudit.version === 1
             ? !blockAudit.unseenTxs.includes(txid)
-            : isExpected || isPrioritized || isAccelerated;
+            : isExpected || isPrioritized;
 
         return {
           seen: wasSeen,
           expected: isExpected,
           added: isAdded && (blockAudit.version === 0 || !wasSeen),
           prioritized: isPrioritized,
-          conflict: isConflict,
-          accelerated: isAccelerated,
           firstSeen,
         };
       }

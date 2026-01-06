@@ -43,8 +43,7 @@ interface FailoverHost {
 class FailoverRouter {
   activeHost: FailoverHost;
   fallbackHost: FailoverHost;
-  maxSlippage: number =
-    config.ESPLORA.MAX_BEHIND_TIP ?? (Common.isLiquid() ? 8 : 2);
+  maxSlippage: number = 2;
   maxHeight: number = 0;
   hosts: FailoverHost[];
   multihost: boolean;
@@ -64,7 +63,7 @@ class FailoverRouter {
       logger.warn('Failed to set local hostname, using "localhost"');
     }
     // setup list of hosts
-    this.hosts = (config.ESPLORA.FALLBACK || []).map((domain) => {
+    this.hosts = ([]).map((domain) => {
       return {
         host: domain,
         checked: false,
@@ -78,11 +77,11 @@ class FailoverRouter {
       };
     });
     this.activeHost = {
-      host: config.ESPLORA.UNIX_SOCKET_PATH || config.ESPLORA.REST_API_URL,
+      host: "",
       rtts: [],
       rtt: 0,
       failures: 0,
-      socket: !!config.ESPLORA.UNIX_SOCKET_PATH,
+      socket: false,
       preferred: true,
       checked: false,
       publicDomain: `http://${this.localHostname}`,
@@ -126,10 +125,10 @@ class FailoverRouter {
         const result = await (host.socket
           ? this.pollConnection.get<number>('http://api/blocks/tip/height', {
               socketPath: host.host,
-              timeout: config.ESPLORA.FALLBACK_TIMEOUT,
+              timeout: 20
             })
           : this.pollConnection.get<number>(host.host + '/blocks/tip/height', {
-              timeout: config.ESPLORA.FALLBACK_TIMEOUT,
+              timeout: 20,
             }));
         if (result) {
           const height = result.data;
@@ -329,7 +328,7 @@ class FailoverRouter {
     try {
       const url = `${host.publicDomain}/resources/config.js`;
       const response = await this.pollConnection.get<string>(url, {
-        timeout: config.ESPLORA.FALLBACK_TIMEOUT,
+        timeout: 15,
       });
       const match = response.data.match(/GIT_COMMIT_HASH\s*=\s*['"](.*?)['"]/);
       if (match && match[1]?.length) {
@@ -360,7 +359,7 @@ class FailoverRouter {
             headers: {
               Host: 'mempool.space',
             },
-            timeout: config.ESPLORA.FALLBACK_TIMEOUT,
+            timeout: 15,
           },
           (res) => {
             let data = '';
@@ -396,7 +395,7 @@ class FailoverRouter {
     try {
       const url = `${host.publicDomain}/api/v1/backend-info`;
       const response = await this.pollConnection.get<any>(url, {
-        timeout: config.ESPLORA.FALLBACK_TIMEOUT,
+        timeout: 15,
       });
       if (response.data?.gitCommit) {
         host.hashes.backend = response.data.gitCommit;
@@ -413,7 +412,7 @@ class FailoverRouter {
     try {
       const url = `${host.publicDomain}/ssr/api/status`;
       const response = await this.pollConnection.get<any>(url, {
-        timeout: config.ESPLORA.FALLBACK_TIMEOUT,
+        timeout: 15,
       });
       if (response.data?.gitHash) {
         host.hashes.ssr = response.data.gitHash;
@@ -451,12 +450,12 @@ class FailoverRouter {
     if (host.socket) {
       axiosConfig = {
         socketPath: host.host,
-        timeout: config.ESPLORA.REQUEST_TIMEOUT,
+        timeout: 15,
         responseType,
       };
       url = 'http://api' + path;
     } else {
-      axiosConfig = { timeout: config.ESPLORA.REQUEST_TIMEOUT, responseType };
+      axiosConfig = { timeout: 15, responseType };
       url = host.host + path;
     }
     if (data?.params) {

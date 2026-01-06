@@ -35,7 +35,6 @@ module.exports = async () => {
       'node_records',
       'nodes_sockets',
       'nodes',
-      'lightning_stats',
       'transactions',
       'elements_pegs',
       'federation_txos',

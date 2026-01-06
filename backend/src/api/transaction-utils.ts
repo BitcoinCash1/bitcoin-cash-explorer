@@ -103,15 +103,6 @@ class TransactionUtils {
       );
     }
 
-    if (Common.isLiquid()) {
-      if (!isFinite(Number(transaction.fee))) {
-        transaction.fee = Object.values(transaction.fee || {}).reduce(
-          (total, output) => total + output,
-          0
-        );
-      }
-    }
-
     if (addMempoolData || !transaction?.status?.confirmed) {
       return this.extendMempoolTransaction(transaction);
     } else {
@@ -140,40 +131,24 @@ class TransactionUtils {
     lazyPrevouts = false,
     forceCore = false
   ): Promise<MempoolTransactionExtended[]> {
-    if (forceCore || config.MEMPOOL.BACKEND !== 'esplora') {
-      const limiter = pLimit(8); // Run 8 requests at a time
-      const results = await Promise.allSettled(
-        txids.map((txid) =>
-          limiter(() =>
-            this.$getMempoolTransactionExtended(
-              txid,
-              addPrevouts,
-              lazyPrevouts,
-              forceCore
-            )
+    const limiter = pLimit(8); // Run 8 requests at a time
+    const results = await Promise.allSettled(
+      txids.map((txid) =>
+        limiter(() =>
+          this.$getMempoolTransactionExtended(
+            txid,
+            addPrevouts,
+            lazyPrevouts,
+            forceCore
           )
         )
+      )
+    );
+    return results
+      .filter((reply) => reply.status === 'fulfilled')
+      .map(
+        (r) => (r as PromiseFulfilledResult<MempoolTransactionExtended>).value
       );
-      return results
-        .filter((reply) => reply.status === 'fulfilled')
-        .map(
-          (r) => (r as PromiseFulfilledResult<MempoolTransactionExtended>).value
-        );
-    } else {
-      const transactions = await bitcoinApi.$getMempoolTransactions(txids);
-      return transactions.map((transaction) => {
-        if (Common.isLiquid()) {
-          if (!isFinite(Number(transaction.fee))) {
-            transaction.fee = Object.values(transaction.fee || {}).reduce(
-              (total, output) => total + output,
-              0
-            );
-          }
-        }
-
-        return this.extendMempoolTransaction(transaction);
-      });
-    }
   }
 
   public extendTransaction(
@@ -204,9 +179,7 @@ class TransactionUtils {
   ): MempoolTransactionExtended {
     const vsize = Math.ceil(transaction.weight / 4);
     const fractionalVsize = transaction.weight / 4;
-    const sigops = Common.isLiquid()
-      ? 0
-      : transaction.sigops != null
+    const sigops = transaction.sigops != null
       ? transaction.sigops
       : this.countSigops(transaction);
     // https://github.com/bitcoin/bitcoin/blob/e9262ea32a6e1d364fb7974844fadc36f931f8c6/src/policy/policy.cpp#L295-L298

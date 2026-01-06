@@ -15,36 +15,24 @@ import logger from './logger';
 import backendInfo from './api/backend-info';
 import loadingIndicators from './api/loading-indicators';
 import mempool from './api/mempool';
-import elementsParser from './api/liquid/elements-parser';
 import databaseMigration from './api/database-migration';
 import syncAssets from './sync-assets';
-import icons from './api/liquid/icons';
 import { Common } from './api/common';
 import poolsUpdater from './tasks/pools-updater';
 import indexer from './indexer';
-import nodesRoutes from './api/explorer/nodes.routes';
-import channelsRoutes from './api/explorer/channels.routes';
-import generalLightningRoutes from './api/explorer/general.routes';
-import lightningStatsUpdater from './tasks/lightning/stats-updater.service';
-import networkSyncService from './tasks/lightning/network-sync.service';
 import statisticsRoutes from './api/statistics/statistics.routes';
 import pricesRoutes from './api/prices/prices.routes';
 import miningRoutes from './api/mining/mining-routes';
-import liquidRoutes from './api/liquid/liquid.routes';
 import bitcoinRoutes from './api/bitcoin/bitcoin.routes';
 import servicesRoutes from './api/services/services-routes';
-import fundingTxFetcher from './tasks/lightning/sync-tasks/funding-tx-fetcher';
-import forensicsService from './tasks/lightning/forensics.service';
 import priceUpdater from './tasks/price-updater';
 import chainTips from './api/chain-tips';
 import { AxiosError } from 'axios';
 import v8 from 'v8';
 import { formatBytes, getBytesUnit } from './utils/format';
 import redisCache from './api/redis-cache';
-import accelerationApi from './api/services/acceleration';
 import bitcoinCoreRoutes from './api/bitcoin/bitcoin-core.routes';
 import bitcoinSecondClient from './api/bitcoin/bitcoin-second-client';
-import accelerationRoutes from './api/acceleration/acceleration.routes';
 import aboutRoutes from './api/about.routes';
 import mempoolBlocks from './api/mempool-blocks';
 import walletApi from './api/services/wallets';
@@ -131,10 +119,6 @@ class Server {
       console.error(`unhandledRejection:`, reason, promise);
       this.forceExit('unhandledRejection', 1);
     });
-
-    if (config.MEMPOOL.BACKEND === 'esplora') {
-      bitcoinApi.startHealthChecks();
-    }
 
     if (config.DATABASE.ENABLED) {
       DB.getPidLock();
@@ -227,23 +211,6 @@ class Server {
       statistics.startStatistics();
     }
 
-    if (Common.isLiquid()) {
-      const refreshIcons = () => {
-        try {
-          icons.loadIcons();
-        } catch (e) {
-          logger.err(
-            'Cannot load liquid icons. Ignoring. Reason: ' +
-              (e instanceof Error ? e.message : e)
-          );
-        }
-      };
-      // Run once on startup.
-      refreshIcons();
-      // Matches crontab refresh interval for asset db.
-      setInterval(refreshIcons, 3600_000);
-    }
-
     if (config.FIAT_PRICE.ENABLED) {
       priceUpdater.$run();
     }
@@ -258,10 +225,6 @@ class Server {
     setInterval(() => {
       this.healthCheck();
     }, 2500);
-
-    if (config.LIGHTNING.ENABLED) {
-      this.$runLightningBackend();
-    }
 
     this.server.listen(config.MEMPOOL.HTTP_PORT, () => {
       if (worker) {
@@ -308,14 +271,12 @@ class Server {
       const minFeeTip = memPool.limitGBT
         ? await bitcoinSecondClient.getBlockCount()
         : -1;
-      const latestAccelerations = await accelerationApi.$updateAccelerations();
       const numHandledBlocks = await blocks.$updateBlocks();
       const pollRate =
         config.MEMPOOL.POLL_RATE_MS * (indexer.indexerIsRunning() ? 10 : 1);
       if (numHandledBlocks === 0) {
         await memPool.$updateMempool(
           newMempool,
-          latestAccelerations,
           minFeeMempool,
           minFeeTip,
           pollRate
@@ -365,23 +326,6 @@ class Server {
     }
   }
 
-  async $runLightningBackend(): Promise<void> {
-    try {
-      await fundingTxFetcher.$init();
-      await networkSyncService.$startService();
-      await lightningStatsUpdater.$startService();
-      await forensicsService.$startService();
-    } catch (e) {
-      logger.err(
-        `Exception in $runLightningBackend. Restarting in 1 minute. Reason: ${
-          e instanceof Error ? e.message : e
-        }`
-      );
-      await Common.sleep$(1000 * 60);
-      this.$runLightningBackend();
-    }
-  }
-
   setUpWebsocketHandling(): void {
     if (this.wss) {
       websocketHandler.addWebsocketServer(this.wss);
@@ -390,18 +334,6 @@ class Server {
       websocketHandler.addWebsocketServer(this.wssUnixSocket);
     }
 
-    if (Common.isLiquid() && config.DATABASE.ENABLED) {
-      blocks.setNewBlockCallback(async () => {
-        try {
-          await elementsParser.$parse();
-          await elementsParser.$updateFederationUtxos();
-        } catch (e) {
-          logger.warn(
-            'Elements parsing error: ' + (e instanceof Error ? e.message : e)
-          );
-        }
-      });
-    }
     websocketHandler.setupConnectionHandling();
     if (config.MEMPOOL.ENABLED) {
       statistics.setNewStatisticsEntryCallback(
@@ -423,7 +355,6 @@ class Server {
       websocketHandler.handleLoadingChanged.bind(websocketHandler)
     );
 
-    accelerationApi.connectWebsocket();
     if (config.STRATUM.ENABLED) {
       stratumApi.connectWebsocket();
     }
@@ -444,17 +375,6 @@ class Server {
     }
     if (Common.indexingEnabled() && config.MEMPOOL.ENABLED) {
       miningRoutes.initRoutes(this.app);
-    }
-    if (Common.isLiquid()) {
-      liquidRoutes.initRoutes(this.app);
-    }
-    if (config.LIGHTNING.ENABLED) {
-      generalLightningRoutes.initRoutes(this.app);
-      nodesRoutes.initRoutes(this.app);
-      channelsRoutes.initRoutes(this.app);
-    }
-    if (config.MEMPOOL_SERVICES.ACCELERATIONS) {
-      accelerationRoutes.initRoutes(this.app);
     }
     if (config.WALLETS.ENABLED) {
       servicesRoutes.initRoutes(this.app);

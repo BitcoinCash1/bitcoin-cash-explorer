@@ -421,7 +421,7 @@ class BlocksRepository {
 
     const params: any[] = [];
     let query = `SELECT count(height) as blockCount
-      FROM blocks 
+      FROM blocks
       WHERE stale = 0`;
 
     if (poolId) {
@@ -1508,21 +1508,9 @@ class BlocksRepository {
       if (extras.feePercentiles === null) {
         let summary;
         let summaryVersion = 0;
-        if (config.MEMPOOL.BACKEND === 'esplora') {
-          const txs = (
-            await bitcoinApi.$getTxsForBlock(dbBlk.id, dbBlk.stale)
-          ).map((tx) => transactionUtils.extendTransaction(tx));
-          summary = blocks.summarizeBlockTransactions(
-            dbBlk.id,
-            dbBlk.height,
-            txs
-          );
-          summaryVersion = 1;
-        } else {
-          // Call Core RPC
-          const block = await bitcoinClient.getBlock(dbBlk.id, 2);
-          summary = blocks.summarizeBlock(block);
-        }
+        // Call Core RPC
+        const block = await bitcoinClient.getBlock(dbBlk.id, 2);
+        summary = blocks.summarizeBlock(block);
 
         await BlocksSummariesRepository.$saveTransactions(
           dbBlk.height,
@@ -1599,8 +1587,7 @@ class BlocksRepository {
           transactions.map((tx) => ({
             weight: tx.vsize * 4,
             effectiveFeePerVsize: tx.rate,
-            txid: tx.txid,
-            acceleration: tx.acc,
+            txid: tx.txid
           }))
         );
 

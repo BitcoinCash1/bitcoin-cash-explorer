@@ -47,7 +47,6 @@ describe('Mempool Backend Config', () => {
         AUDIT: false,
         RUST_GBT: true,
         LIMIT_GBT: false,
-        CPFP_INDEXING: false,
         MAX_BLOCKS_BULK_QUERY: 0,
         DISK_CACHE_BLOCK_INTERVAL: 6,
         MAX_PUSH_TX_SIZE_WEIGHT: 400000,
@@ -59,18 +58,7 @@ describe('Mempool Backend Config', () => {
       expect(config.ELECTRUM).toStrictEqual({
         HOST: '127.0.0.1',
         PORT: 3306,
-        TLS_ENABLED: true,
-      });
-
-      expect(config.ESPLORA).toStrictEqual({
-        REST_API_URL: 'http://127.0.0.1:3000',
-        UNIX_SOCKET_PATH: null,
-        BATCH_QUERY_BASE_SIZE: 1000,
-        RETRY_UNIX_SOCKET_AFTER: 30000,
-        REQUEST_TIMEOUT: 10000,
-        FALLBACK_TIMEOUT: 5000,
-        FALLBACK: [],
-        MAX_BEHIND_TIP: 2,
+        TLS_ENABLED: true
       });
 
       expect(config.CORE_RPC).toStrictEqual({
@@ -152,11 +140,6 @@ describe('Mempool Backend Config', () => {
         STATISTICS: false,
         STATISTICS_START_TIME: 1481932800,
         SERVERS: [],
-      });
-
-      expect(config.MEMPOOL_SERVICES).toStrictEqual({
-        API: '',
-        ACCELERATIONS: false,
       });
 
       expect(config.REDIS).toStrictEqual({

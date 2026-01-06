@@ -1,12 +1,7 @@
 import { MempoolBlock } from '../mempool.interfaces';
 import { IBitcoinApi } from './bitcoin/bitcoin-api.interface';
-import config from '../config';
 import mempool from './mempool';
 import projectedBlocks from './mempool-blocks';
-
-const isLiquid =
-  config.MEMPOOL.NETWORK === 'liquid' ||
-  config.MEMPOOL.NETWORK === 'liquidtestnet';
 
 interface RecommendedFees {
   fastestFee: number;
@@ -19,10 +14,10 @@ interface RecommendedFees {
 class FeeApi {
   constructor() {}
 
-  minimumIncrement = isLiquid ? 0.1 : 1;
-  minFastestFee = isLiquid ? 0.1 : 1;
-  minHalfHourFee = isLiquid ? 0.1 : 0.5;
-  priorityFactor = isLiquid ? 0 : 0.5;
+  minimumIncrement = 1;
+  minFastestFee = 1;
+  minHalfHourFee = 0.5;
+  priorityFactor = 0.5;
 
   public getRecommendedFee(): RecommendedFees {
     const pBlocks = projectedBlocks.getMempoolBlocks();

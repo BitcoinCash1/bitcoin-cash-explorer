@@ -8,7 +8,6 @@ import logger from '../logger';
 
 class BackendInfo {
   private backendInfo: IBackendInfo;
-  private timer;
 
   constructor() {
     // This file is created by ./fetch-version.ts during building
@@ -27,12 +26,11 @@ class BackendInfo {
       hostname: os.hostname(),
       version: versionInfo.version,
       gitCommit: versionInfo.gitCommit,
-      lightning: config.LIGHTNING.ENABLED,
       backend: config.MEMPOOL.BACKEND,
       coreVersion: '?',
     };
 
-    this.timer = setInterval(
+    const _ = setInterval(
       async () => {
         await this.$updateCoreVersion();
       },

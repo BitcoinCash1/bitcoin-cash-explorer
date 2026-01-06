@@ -8,7 +8,6 @@ import {
   BlockSummary,
   MempoolTransactionExtended,
 } from '../mempool.interfaces';
-import rbfCache from './rbf-cache';
 import transactionUtils from './transaction-utils';
 
 enum NetworkDB {
@@ -28,8 +27,6 @@ class RedisCache {
   private pauseFlush: boolean = false;
   private cacheQueue: MempoolTransactionExtended[] = [];
   private removeQueue: string[] = [];
-  private rbfCacheQueue: { type: string; txid: string; value: any }[] = [];
-  private rbfRemoveQueue: { type: string; txid: string }[] = [];
   private txFlushLimit: number = 10000;
   private ignoreBlocksCache = false;
 
@@ -106,7 +103,6 @@ class RedisCache {
   private async $onConnected(): Promise<void> {
     await this.$flushTransactions();
     await this.$removeTransactions([]);
-    await this.$flushRbfQueues();
   }
 
   async $updateBlocks(blocks: BlockExtended[]): Promise<void> {
@@ -246,82 +242,6 @@ class RedisCache {
     }
   }
 
-  async $setRbfEntry(type: string, txid: string, value: any): Promise<void> {
-    if (!config.REDIS.ENABLED) {
-      return;
-    }
-    if (!this.connected) {
-      this.rbfCacheQueue.push({ type, txid, value });
-      logger.warn(
-        `Failed to set RBF ${type} in Redis cache: Redis is not connected`
-      );
-      return;
-    }
-    try {
-      await this.client.set(`rbf:${type}:${txid}`, JSON.stringify(value));
-    } catch (e) {
-      logger.warn(
-        `Failed to set RBF ${type} in Redis cache: ${
-          e instanceof Error ? e.message : e
-        }`
-      );
-    }
-  }
-
-  async $removeRbfEntry(type: string, txid: string): Promise<void> {
-    if (!config.REDIS.ENABLED) {
-      return;
-    }
-    if (!this.connected) {
-      this.rbfRemoveQueue.push({ type, txid });
-      logger.warn(
-        `Failed to remove RBF ${type} from Redis cache: Redis is not connected`
-      );
-      return;
-    }
-    try {
-      await this.client.unlink(`rbf:${type}:${txid}`);
-    } catch (e) {
-      logger.warn(
-        `Failed to remove RBF ${type} from Redis cache: ${
-          e instanceof Error ? e.message : e
-        }`
-      );
-    }
-  }
-
-  private async $flushRbfQueues(): Promise<void> {
-    if (!config.REDIS.ENABLED) {
-      return;
-    }
-    if (!this.connected) {
-      return;
-    }
-    try {
-      const toAdd = this.rbfCacheQueue;
-      this.rbfCacheQueue = [];
-      for (const { type, txid, value } of toAdd) {
-        await this.$setRbfEntry(type, txid, value);
-      }
-      logger.debug(
-        `Saved ${toAdd.length} queued RBF entries to the Redis cache`
-      );
-      const toRemove = this.rbfRemoveQueue;
-      this.rbfRemoveQueue = [];
-      for (const { type, txid } of toRemove) {
-        await this.$removeRbfEntry(type, txid);
-      }
-      logger.debug(
-        `Removed ${toRemove.length} queued RBF entries from the Redis cache`
-      );
-    } catch (e) {
-      logger.warn(
-        `Failed to flush RBF cache event queues after reconnecting to Redis: ${
-          e instanceof Error ? e.message : e
-        }`
-      );
-    }
-  }
 
   async $getBlocks(): Promise<BlockExtended[]> {
     if (!config.REDIS.ENABLED) {
@@ -402,31 +322,6 @@ class RedisCache {
     return {};
   }
 
-  async $getRbfEntries(type: string): Promise<any[]> {
-    if (!config.REDIS.ENABLED) {
-      return [];
-    }
-    if (!this.connected) {
-      logger.warn(
-        `Failed to retrieve Rbf ${type}s from Redis cache: Redis is not connected`
-      );
-      return [];
-    }
-    try {
-      const rbfEntries = await this.scanKeys<MempoolTransactionExtended[]>(
-        `rbf:${type}:*`
-      );
-      return rbfEntries;
-    } catch (e) {
-      logger.warn(
-        `Failed to retrieve Rbf ${type}s from Redis cache: ${
-          e instanceof Error ? e.message : e
-        }`
-      );
-      return [];
-    }
-  }
-
   async $loadCache(): Promise<void> {
     if (!config.REDIS.ENABLED) {
       return;
@@ -436,10 +331,6 @@ class RedisCache {
     // Load mempool
     const loadedMempool = await this.$getMempool();
     this.inflateLoadedTxs(loadedMempool);
-    // Load rbf data
-    const rbfTxs = await this.$getRbfEntries('tx');
-    const rbfTrees = await this.$getRbfEntries('tree');
-    const rbfExpirations = await this.$getRbfEntries('exp');
 
     // Load & set block data
     if (!this.ignoreBlocksCache) {
@@ -450,16 +341,6 @@ class RedisCache {
     }
     // Set other data
     await memPool.$setMempool(loadedMempool);
-    await rbfCache.load({
-      txs: rbfTxs,
-      trees: rbfTrees.map((loadedTree) => {
-        loadedTree.value.key = loadedTree.key;
-        return loadedTree.value;
-      }),
-      expiring: rbfExpirations,
-      mempool: memPool.getMempool(),
-      spendMap: memPool.getSpendMap(),
-    });
   }
 
   private inflateLoadedTxs(mempool: {

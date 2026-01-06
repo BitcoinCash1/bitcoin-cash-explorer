@@ -13,9 +13,6 @@ import { IBitcoinApi } from './bitcoin/bitcoin-api.interface';
 import loadingIndicators from './loading-indicators';
 import bitcoinClient from './bitcoin/bitcoin-client';
 import bitcoinSecondClient from './bitcoin/bitcoin-second-client';
-import rbfCache from './rbf-cache';
-import { Acceleration } from './services/acceleration';
-import accelerationApi from './services/acceleration';
 import redisCache from './redis-cache';
 import blocks from './blocks';
 
@@ -31,8 +28,7 @@ class Mempool {
     | ((
         newMempool: { [txId: string]: MempoolTransactionExtended },
         newTransactions: MempoolTransactionExtended[],
-        deletedTransactions: MempoolTransactionExtended[][],
-        accelerationDelta: string[]
+        deletedTransactions: MempoolTransactionExtended[][]
       ) => void)
     | undefined;
   private $asyncMempoolChangedCallback:
@@ -41,20 +37,9 @@ class Mempool {
         mempoolSize: number,
         newTransactions: MempoolTransactionExtended[],
         deletedTransactions: MempoolTransactionExtended[][],
-        accelerationDelta: string[],
         candidates?: GbtCandidates
       ) => Promise<void>)
     | undefined;
-
-  private accelerations: { [txId: string]: Acceleration } = {};
-  private accelerationPositions: {
-    [txid: string]: {
-      poolId: number;
-      pool: string;
-      block: number;
-      vsize: number;
-    }[];
-  } = {};
 
   private txPerSecondArray: number[] = [];
   private txPerSecond: number = 0;
@@ -65,6 +50,7 @@ class Mempool {
   private latestTransactions: any[] = [];
 
   private ESPLORA_MISSING_TX_WARNING_THRESHOLD = 100;
+  private ESPLORA_BATCH_QUERY_BASE_SIZE = 1000;
   private SAMPLE_TIME = 10000; // In ms
   private timer = new Date().getTime();
   private missingTxCount = 0;
@@ -77,9 +63,6 @@ class Mempool {
   constructor() {
     // Initialize mempoolInfo here to avoid circular dependency issues
     // Use config directly instead of Common.isLiquid() to break circular dependency
-    const isLiquid =
-      config.MEMPOOL.NETWORK === 'liquid' ||
-      config.MEMPOOL.NETWORK === 'liquidtestnet';
     this.mempoolInfo = {
       loaded: false,
       size: 0,
@@ -87,8 +70,8 @@ class Mempool {
       usage: 0,
       total_fee: 0,
       maxmempool: 300000000,
-      mempoolminfee: isLiquid ? 0.000001 : 0.00001,
-      minrelaytxfee: isLiquid ? 0.000001 : 0.00001,
+      mempoolminfee: 0.00001,
+      minrelaytxfee: 0.00001,
     };
     this.txPerSecondInterval = setInterval(
       this.updateTxPerSecond.bind(this),
@@ -135,8 +118,7 @@ class Mempool {
     fn: (
       newMempool: { [txId: string]: MempoolTransactionExtended },
       newTransactions: MempoolTransactionExtended[],
-      deletedTransactions: MempoolTransactionExtended[][],
-      accelerationDelta: string[]
+      deletedTransactions: MempoolTransactionExtended[][]
     ) => void
   ): void {
     this.mempoolChangedCallback = fn;
@@ -148,7 +130,6 @@ class Mempool {
       mempoolSize: number,
       newTransactions: MempoolTransactionExtended[],
       deletedTransactions: MempoolTransactionExtended[][],
-      accelerationDelta: string[],
       candidates?: GbtCandidates
     ) => Promise<void>
   ): void {
@@ -203,9 +184,6 @@ class Mempool {
       this.mempoolCache[txid].flags = Common.getTransactionFlags(
         this.mempoolCache[txid]
       );
-      this.mempoolCache[txid].cpfpChecked = false;
-      this.mempoolCache[txid].cpfpDirty = true;
-      this.mempoolCache[txid].cpfpUpdated = undefined;
     }
     if (config.MEMPOOL.CACHE_ENABLED && config.REDIS.ENABLED) {
       await redisCache.$flushTransactions();
@@ -217,13 +195,12 @@ class Mempool {
       );
     }
     if (this.mempoolChangedCallback) {
-      this.mempoolChangedCallback(this.mempoolCache, [], [], []);
+      this.mempoolChangedCallback(this.mempoolCache, [], []);
     }
     if (this.$asyncMempoolChangedCallback) {
       await this.$asyncMempoolChangedCallback(
         this.mempoolCache,
         count,
-        [],
         [],
         [],
         this.limitGBT ? { txs: {}, added: [], removed: [] } : undefined
@@ -232,6 +209,7 @@ class Mempool {
     this.addToSpendMap(Object.values(this.mempoolCache));
   }
 
+  // Melroy: Only used with esplora?
   public async $reloadMempool(
     expectedCount: number
   ): Promise<MempoolTransactionExtended[]> {
@@ -244,7 +222,7 @@ class Mempool {
       try {
         const result = await bitcoinApi.$getAllMempoolTransactions(
           last_txid,
-          config.ESPLORA.BATCH_QUERY_BASE_SIZE
+          this.ESPLORA_BATCH_QUERY_BASE_SIZE
         );
         if (result) {
           for (const tx of result) {
@@ -314,9 +292,9 @@ class Mempool {
     return txTimes;
   }
 
+  // Melroy: Only used with esplora?
   public async $updateMempool(
     transactions: string[],
-    accelerations: Record<string, Acceleration> | null,
     minFeeMempool: string[],
     minFeeTip: number,
     pollRate: number
@@ -357,37 +335,11 @@ class Mempool {
     let intervalTimer = Date.now();
 
     let loaded = false;
-    if (
-      config.MEMPOOL.BACKEND === 'esplora' &&
-      currentMempoolSize < transactions.length * 0.5 &&
-      transactions.length > 20_000
-    ) {
-      this.inSync = false;
-      logger.info(
-        `Missing ${
-          transactions.length - currentMempoolSize
-        } mempool transactions, attempting to reload in bulk from esplora`
-      );
-      try {
-        newTransactions = await this.$reloadMempool(transactions.length);
-        if (config.REDIS.ENABLED) {
-          for (const tx of newTransactions) {
-            await redisCache.$addTransaction(tx);
-          }
-        }
-        loaded = true;
-      } catch (e) {
-        logger.err(
-          'failed to load mempool in bulk from esplora, falling back to fetching individual transactions'
-        );
-      }
-    }
-
     if (!loaded) {
       const remainingTxids = transactions.filter(
         (txid) => !this.mempoolCache[txid]
       );
-      const sliceLength = config.ESPLORA.BATCH_QUERY_BASE_SIZE;
+      const sliceLength = this.ESPLORA_BATCH_QUERY_BASE_SIZE;
       for (let i = 0; i < Math.ceil(remainingTxids.length / sliceLength); i++) {
         const slice = remainingTxids.slice(
           i * sliceLength,
@@ -421,9 +373,6 @@ class Mempool {
 
         if (txs.length < slice.length) {
           const missing = slice.length - txs.length;
-          if (config.MEMPOOL.BACKEND === 'esplora') {
-            this.missingTxCount += missing;
-          }
           logger.debug(
             `Error finding ${missing} transactions in the mempool: `
           );
@@ -524,14 +473,6 @@ class Mempool {
       .concat(this.latestTransactions)
       .slice(0, 6);
 
-    const accelerationDelta =
-      accelerations != null
-        ? await this.updateAccelerations(accelerations)
-        : [];
-    if (accelerationDelta.length) {
-      hasChange = true;
-    }
-
     this.mempoolCacheDelta = Math.abs(transactions.length - newMempoolSize);
 
     const candidatesChanged =
@@ -547,8 +488,7 @@ class Mempool {
       this.mempoolChangedCallback(
         this.mempoolCache,
         newTransactions,
-        this.recentlyDeleted,
-        accelerationDelta
+        this.recentlyDeleted
       );
     }
     if (
@@ -564,7 +504,6 @@ class Mempool {
         newMempoolSize,
         newTransactions,
         this.recentlyDeleted,
-        accelerationDelta,
         candidates
       );
       this.updateTimerProgress(timer, 'completed async mempool callback');
@@ -582,7 +521,6 @@ class Mempool {
       await redisCache.$removeTransactions(
         deletedTransactions.map((tx) => tx.txid)
       );
-      await rbfCache.updateCache();
     }
 
     const end = new Date().getTime();
@@ -594,29 +532,6 @@ class Mempool {
     );
 
     this.clearTimer(timer);
-  }
-
-  public getAccelerations(): { [txid: string]: Acceleration } {
-    return this.accelerations;
-  }
-
-  public updateAccelerations(
-    newAccelerationMap: Record<string, Acceleration>
-  ): string[] {
-    try {
-      const accelerationDelta = accelerationApi.getAccelerationDelta(
-        this.accelerations,
-        newAccelerationMap
-      );
-      this.accelerations = newAccelerationMap;
-      return accelerationDelta;
-    } catch (e: any) {
-      logger.debug(
-        `Failed to update accelerations: ` +
-          (e instanceof Error ? e.message : e)
-      );
-      return [];
-    }
   }
 
   public getNextCandidates(
@@ -631,12 +546,6 @@ class Mempool {
       }
       const newCandidateTxMap = {};
       for (const txid of minFeeTransactions) {
-        if (this.mempoolCache[txid]) {
-          newCandidateTxMap[txid] = true;
-        }
-      }
-      const accelerations = this.getAccelerations();
-      for (const txid of Object.keys(accelerations)) {
         if (this.mempoolCache[txid]) {
           newCandidateTxMap[txid] = true;
         }
@@ -658,8 +567,6 @@ class Mempool {
               this.mempoolCache[txid].ancestors = [];
               this.mempoolCache[txid].descendants = [];
               this.mempoolCache[txid].bestDescendant = null;
-              this.mempoolCache[txid].cpfpChecked = false;
-              this.mempoolCache[txid].cpfpUpdated = undefined;
             } else if (deletedTxsMap[txid]) {
               removed.push(deletedTxsMap[txid]);
             }
@@ -682,32 +589,6 @@ class Mempool {
     }
   }
 
-  setAccelerationPositions(positions: {
-    [txid: string]: {
-      poolId: number;
-      pool: string;
-      block: number;
-      vsize: number;
-    }[];
-  }): void {
-    this.accelerationPositions = positions;
-  }
-
-  getAccelerationPositions(
-    txid: string
-  ):
-    | {
-        [pool: number]: {
-          poolId: number;
-          pool: string;
-          block: number;
-          vsize: number;
-        };
-      }
-    | undefined {
-    return this.accelerationPositions[txid];
-  }
-
   private startTimer() {
     const state: any = {
       start: Date.now(),
@@ -727,28 +608,6 @@ class Mempool {
   private clearTimer(state) {
     if (state.timer) {
       clearTimeout(state.timer);
-    }
-  }
-
-  public handleRbfTransactions(rbfTransactions: {
-    [txid: string]: {
-      replaced: MempoolTransactionExtended[];
-      replacedBy: TransactionExtended;
-    };
-  }): void {
-    for (const rbfTransaction in rbfTransactions) {
-      if (
-        rbfTransactions[rbfTransaction].replacedBy &&
-        rbfTransactions[rbfTransaction]?.replaced?.length
-      ) {
-        // Store replaced transactions
-        rbfCache.add(
-          rbfTransactions[rbfTransaction].replaced,
-          transactionUtils.extendMempoolTransaction(
-            rbfTransactions[rbfTransaction].replacedBy
-          )
-        );
-      }
     }
   }
 

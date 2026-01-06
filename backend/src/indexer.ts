@@ -9,7 +9,6 @@ import PricesRepository from './repositories/PricesRepository';
 import config from './config';
 import auditReplicator from './replication/AuditReplication';
 import statisticsReplicator from './replication/StatisticsReplication';
-import AccelerationRepository from './repositories/AccelerationRepository';
 import BlocksAuditsRepository from './repositories/BlocksAuditsRepository';
 import BlocksRepository from './repositories/BlocksRepository';
 
@@ -263,11 +262,9 @@ class Indexer {
       await mining.$generateNetworkHashrateHistory();
       await mining.$generatePoolHashrateHistory();
       await blocks.$generateBlocksSummariesDatabase();
-      await blocks.$generateCPFPDatabase();
       await blocks.$generateAuditStats();
       await auditReplicator.$sync();
       await statisticsReplicator.$sync();
-      await AccelerationRepository.$indexPastAccelerations();
       await BlocksAuditsRepository.$migrateAuditsV0toV1();
       await BlocksRepository.$migrateBlocks();
       // do not wait for classify blocks to finish
