@@ -1,20 +1,15 @@
-BASE_HEIGHT=$(curl -sk https://node202.tk7.mempool.space/api/v1/blocks/tip/height)
+BASE_HEIGHT=$(curl -sk https://explorer.melroy.org/api/v1/blocks/tip/height)
 IN_SYNC=true
-echo "Base height (node202.tk7): $BASE_HEIGHT"
+echo "Base height (my only server): $BASE_HEIGHT"
 
-for LOCATION in fmt va1 fra tk7
-do
-  for NODE in 201 202 203 204 205 206
-  do
-    NODE_HEIGHT=$(curl -sk https://node$NODE.$LOCATION.mempool.space/api/v1/blocks/tip/height)
-    echo $(echo node$NODE.$LOCATION.mempool.space) - $NODE_HEIGHT
-    if [ "$NODE_HEIGHT" -ne "$BASE_HEIGHT" ]; then
-      COUNT=$((BASE_HEIGHT-NODE_HEIGHT))
-      echo $(echo node$NODE.$LOCATION.mempool.space) is not in sync. delta: $COUNT
-      IN_SYNC=false
-    fi
-  done
-done
+# Compare it with itself, for now :D
+NODE_HEIGHT=$(curl -sk https://explorer.melroy.org/api/v1/blocks/tip/height)
+echo $(echo https://explorer.melroy.org) - $NODE_HEIGHT
+if [ "$NODE_HEIGHT" -ne "$BASE_HEIGHT" ]; then
+  COUNT=$((BASE_HEIGHT-NODE_HEIGHT))
+  echo $(echo https://explorer.melroy.org) is not in sync. delta: $COUNT
+  IN_SYNC=false
+fi
 
 if [ "$IN_SYNC" = false ]; then
   echo "One or more servers are out of sync. Check the logs."
