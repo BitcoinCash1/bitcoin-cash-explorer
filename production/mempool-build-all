@@ -59,8 +59,8 @@ build_frontend()
     echo "[*] Building frontend for ${site}"
     [ -z "${HASH}" ] && exit 1
     cd "$HOME/${site}/frontend" || exit 1
-    if [ ! -e "mempool-frontend-config.json" ];then
-        cp "${HOME}/mempool/production/mempool-frontend-config.${site}.json" "mempool-frontend-config.json"
+    if [ ! -e "explorer-frontend-config.json" ];then
+        cp "${HOME}/mempool/production/explorer-frontend-config.${site}.json" "explorer-frontend-config.json"
     fi
     npm install --omit=dev --omit=optional || exit 1
     npm run build || exit 1

@@ -3,7 +3,7 @@ const fs = require('fs');
 let PROXY_CONFIG;
 let configContent;
 
-const CONFIG_FILE_NAME = 'mempool-frontend-config.json';
+const CONFIG_FILE_NAME = 'explorer-frontend-config.json';
 
 try {
     const rawConfig = fs.readFileSync(CONFIG_FILE_NAME);

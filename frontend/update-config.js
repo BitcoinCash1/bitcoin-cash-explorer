@@ -1,6 +1,6 @@
 const fs = require('fs');
 
-const CONFIG_FILE_NAME = 'mempool-frontend-config.json';
+const CONFIG_FILE_NAME = 'explorer-frontend-config.json';
 const GENERATED_CONFIG_FILE_NAME = 'generated-config.js';
 
 let settings = [];

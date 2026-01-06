@@ -14,7 +14,7 @@ export default defineConfig({
   e2e: {
     setupNodeEvents(on: any, config: any) {
       const fs = require('fs');
-      const CONFIG_FILE = 'mempool-frontend-config.json';
+      const CONFIG_FILE = 'explorer-frontend-config.json';
       if (fs.existsSync(CONFIG_FILE)) {
         let contents = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
         config.env.BASE_MODULE = contents.BASE_MODULE ? contents.BASE_MODULE : 'mempool';

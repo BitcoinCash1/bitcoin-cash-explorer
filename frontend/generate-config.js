@@ -1,7 +1,7 @@
 var fs = require('fs');
 const { spawnSync } = require('child_process');
 
-const CONFIG_FILE_NAME = 'mempool-frontend-config.json';
+const CONFIG_FILE_NAME = 'explorer-frontend-config.json';
 const GENERATED_CONFIG_FILE_NAME = 'src/resources/config.js';
 const GENERATED_TEMPLATE_CONFIG_FILE_NAME = 'src/resources/config.template.js';
 const GENERATED_CUSTOMIZATION_FILE_NAME = 'src/resources/customize.js';

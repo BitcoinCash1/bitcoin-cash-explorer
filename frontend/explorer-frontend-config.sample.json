@@ -14,7 +14,7 @@
   "MEMPOOL_BLOCKS_AMOUNT": 8,
   "BASE_MODULE": "mempool",
   "ROOT_NETWORK": "",
-  "MEMPOOL_WEBSITE_URL": "https://mempool.space",
+  "MEMPOOL_WEBSITE_URL": "https://explorer.melroy.org",
   "LIQUID_WEBSITE_URL": "https://liquid.network",
   "MINING_DASHBOARD": true,
   "AUDIT": false,

@@ -5,7 +5,7 @@ const path = require('node:path');
 
 // Configuration
 const LOG_TAG = '[sync-assets]';
-const CONFIG_FILE_NAME = 'mempool-frontend-config.json';
+const CONFIG_FILE_NAME = 'explorer-frontend-config.json';
 
 const config = {
   verbose: parseInt(process.env.VERBOSE) === 1,

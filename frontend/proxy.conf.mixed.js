@@ -1,10 +1,10 @@
 const fs = require('fs');
 
-const FRONTEND_CONFIG_FILE_NAME = 'mempool-frontend-config.json';
+const FRONTEND_CONFIG_FILE_NAME = 'explorer-frontend-config.json';
 
 let configContent;
 
-// Read frontend config 
+// Read frontend config
 try {
     const rawConfig = fs.readFileSync(FRONTEND_CONFIG_FILE_NAME);
     configContent = JSON.parse(rawConfig);

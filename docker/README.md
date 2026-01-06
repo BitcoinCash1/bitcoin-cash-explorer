@@ -79,13 +79,13 @@ docker-compose up
 
 ## Further Configuration
 
-Optionally, you can override any other backend settings from `mempool-config.json`.
+Optionally, you can override any other backend settings from `explorer-config.json`.
 
-Below we list all settings from `mempool-config.json` and the corresponding overrides you can make in the `api` > `environment` section of `docker-compose.yml`. 
+Below we list all settings from `explorer-config.json` and the corresponding overrides you can make in the `api` > `environment` section of `docker-compose.yml`. 
 
 <br/>
 
-`mempool-config.json`:
+`explorer-config.json`:
 ```json
   "MEMPOOL": {
     "NETWORK": "mainnet",
@@ -153,7 +153,7 @@ Corresponding `docker-compose.yml` overrides:
 
 <br/>
 
-`mempool-config.json`:
+`explorer-config.json`:
 ```json
   "CORE_RPC": {
     "HOST": "127.0.0.1",
@@ -182,7 +182,7 @@ Corresponding `docker-compose.yml` overrides:
 
 <br/>
 
-`mempool-config.json`:
+`explorer-config.json`:
 ```json
   "ELECTRUM": {
     "HOST": "127.0.0.1",
@@ -203,7 +203,7 @@ Corresponding `docker-compose.yml` overrides:
 
 <br/>
 
-`mempool-config.json`:
+`explorer-config.json`:
 ```json
   "ESPLORA": {
     "REST_API_URL": "http://127.0.0.1:3000",
@@ -224,7 +224,7 @@ Corresponding `docker-compose.yml` overrides:
 
 <br/>
 
-`mempool-config.json`:
+`explorer-config.json`:
 ```json
   "SECOND_CORE_RPC": {
     "HOST": "127.0.0.1",
@@ -253,7 +253,7 @@ Corresponding `docker-compose.yml` overrides:
 
 <br/>
 
-`mempool-config.json`:
+`explorer-config.json`:
 ```json
   "DATABASE": {
     "ENABLED": true,
@@ -281,7 +281,7 @@ Corresponding `docker-compose.yml` overrides:
 
 <br/>
 
-`mempool-config.json`:
+`explorer-config.json`:
 ```json
   "SYSLOG": {
     "ENABLED": true,
@@ -306,7 +306,7 @@ Corresponding `docker-compose.yml` overrides:
 
 <br/>
 
-`mempool-config.json`:
+`explorer-config.json`:
 ```json
   "STATISTICS": {
     "ENABLED": true,
@@ -325,7 +325,7 @@ Corresponding `docker-compose.yml` overrides:
 
 <br/>
 
-`mempool-config.json`:
+`explorer-config.json`:
 ```json
   "SOCKS5PROXY": {
     "ENABLED": false,
@@ -350,7 +350,7 @@ Corresponding `docker-compose.yml` overrides:
 
 <br/>
 
-`mempool-config.json`:
+`explorer-config.json`:
 ```json
   "LIGHTNING": {
     "ENABLED": false
@@ -377,7 +377,7 @@ Corresponding `docker-compose.yml` overrides:
 
 <br/>
 
-`mempool-config.json`:
+`explorer-config.json`:
 ```json
   "LND": {
     "TLS_CERT_PATH": ""
@@ -400,7 +400,7 @@ Corresponding `docker-compose.yml` overrides:
 
 <br/>
 
-`mempool-config.json`:
+`explorer-config.json`:
 ```json
   "CLIGHTNING": {
     "SOCKET": ""
@@ -417,7 +417,7 @@ Corresponding `docker-compose.yml` overrides:
 
 <br/>
 
-`mempool-config.json`:
+`explorer-config.json`:
 ```json
   "MAXMIND": {
     "ENABLED": true,
