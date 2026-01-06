@@ -1,11 +1,11 @@
 // Setup that runs BEFORE setupFiles
-// This ensures MEMPOOL_CONFIG_FILE is set before any modules are loaded
+// This ensures EXPLORER_CONFIG_FILE is set before any modules are loaded
 import * as path from 'path';
 import { execSync } from 'child_process';
 
 // Set the config file path if not already set
-if (!process.env.MEMPOOL_CONFIG_FILE) {
-  process.env.MEMPOOL_CONFIG_FILE = path.join(__dirname, 'mempool-config.test.json');
+if (!process.env.EXPLORER_CONFIG_FILE) {
+  process.env.EXPLORER_CONFIG_FILE = path.join(__dirname, 'mempool-config.test.json');
 }
 
 // Helper to get docker compose command (v1 or v2)
@@ -35,18 +35,18 @@ module.exports = async () => {
   try {
     const composeFile = path.join(__dirname, 'docker-compose.test.yml');
     const dockerComposeCmd = getDockerComposeCmd();
-    
+
     // Start the container
-    execSync(`${dockerComposeCmd} -f "${composeFile}" up -d`, { 
+    execSync(`${dockerComposeCmd} -f "${composeFile}" up -d`, {
       stdio: 'inherit',
       cwd: __dirname
     });
-    
+
     // Wait for database to be ready
     console.log('Waiting for database to be ready...');
     let attempts = 0;
     const maxAttempts = 30;
-    
+
     while (attempts < maxAttempts) {
       try {
         execSync(`${dockerComposeCmd} -f "${composeFile}" exec -T db-test mysqladmin ping -h localhost -u mempool_test -pmempool_test --silent`, {

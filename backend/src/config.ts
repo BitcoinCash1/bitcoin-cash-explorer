@@ -1,5 +1,5 @@
 const configFromFile = require(
-    process.env.MEMPOOL_CONFIG_FILE ? process.env.MEMPOOL_CONFIG_FILE : '../mempool-config.json'
+    process.env.EXPLORER_CONFIG_FILE ? process.env.EXPLORER_CONFIG_FILE : '../explorer-config.json'
 );
 
 interface IConfig {

@@ -1,4 +1,4 @@
-jest.mock('./mempool-config.json', () => ({}), { virtual: true });
+jest.mock('./explorer-config.json', () => ({}), { virtual: true });
 jest.mock('./src/logger.ts', () => ({
   emerg: jest.fn(),
   alert: jest.fn(),

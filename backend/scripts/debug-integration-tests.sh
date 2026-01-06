@@ -21,7 +21,7 @@ cd "$BACKEND_DIR"
 if ! docker-compose -f docker-compose.test.yml ps | grep -q "Up"; then
     echo -e "${YELLOW}Starting MariaDB container...${NC}"
     docker-compose -f docker-compose.test.yml up -d
-    
+
     # Wait for MariaDB
     echo -e "${YELLOW}Waiting for MariaDB...${NC}"
     sleep 5
@@ -30,10 +30,10 @@ fi
 # Run tests with pattern if provided
 if [ -n "$1" ]; then
     echo -e "${GREEN}Running tests matching: $1${NC}"
-    MEMPOOL_CONFIG_FILE="$BACKEND_DIR/mempool-config.test.json" npx jest --config=jest.integration.config.ts --runInBand --verbose "$1"
+    EXPLORER_CONFIG_FILE="$BACKEND_DIR/mempool-config.test.json" npx jest --config=jest.integration.config.ts --runInBand --verbose "$1"
 else
     echo -e "${GREEN}Running all integration tests${NC}"
-    MEMPOOL_CONFIG_FILE="$BACKEND_DIR/mempool-config.test.json" npm run test:integration
+    EXPLORER_CONFIG_FILE="$BACKEND_DIR/mempool-config.test.json" npm run test:integration
 fi
 
 echo -e "${GREEN}Tests completed${NC}"

@@ -1,10 +1,10 @@
-# Mempool Backend
+# BCH Explorer Backend
 
 These instructions are mostly intended for developers. 
 
-If you choose to use these instructions for a production setup, be aware that you will still probably need to do additional configuration for your specific OS, environment, use-case, etc. We do our best here to provide a good starting point, but only proceed if you know what you're doing. Mempool only provides support for custom setups to project sponsors through [Mempool Enterprise®](https://mempool.space/enterprise).
+If you choose to use these instructions for a production setup, be aware that you will still probably need to do additional configuration for your specific OS, environment, use-case, etc.
 
-See other ways to set up Mempool on [the main README](/../../#installation-methods).
+See other ways to set up BCH Explorer on [the main README](/../../#installation-methods).
 
 Jump to a section in this doc:
 - [Set Up the Backend](#setup)
@@ -12,19 +12,19 @@ Jump to a section in this doc:
 
 ## Setup
 
-### 1. Clone Mempool Repository
+### 1. Clone BCH Explorer Repository
 
-Get the latest Mempool code:
+Get the latest BCH Explorer code:
 
 ```
-git clone https://github.com/mempool/mempool
-cd mempool
+git clone https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer.git
+cd bitcoin-cash-explorer
 ```
 
 Check out the latest release:
 
 ```
-latestrelease=$(curl -s https://api.github.com/repos/mempool/mempool/releases/latest|grep tag_name|head -1|cut -d '"' -f4)
+latestrelease=$(curl -s https://gitlab.melroy.org/latest/release/....|grep tag_name|head -1|cut -d '"' -f4)
 git checkout $latestrelease
 ```
 
@@ -35,19 +35,19 @@ Turn on `txindex`, enable RPC, and set RPC credentials in `bitcoin.conf`:
 ```
 txindex=1
 server=1
-rpcuser=mempool
-rpcpassword=mempool
+rpcuser=explorer
+rpcpassword=explorer
 ```
 
 ### 3. Configure Electrum Server
 
-[Pick an Electrum Server implementation](https://mempool.space/docs/faq#address-lookup-issues), configure it, and make sure it's synced.
+[Pick an Electrum Server implementation](https://explorer.melroy.org/docs/faq#address-lookup-issues), configure it, and make sure it's synced.
 
-**This step is optional.** You can run Mempool without configuring an Electrum Server for it, but address lookups will be disabled.
+**This step is optional.** You can run BCH Explorer without configuring an Electrum Server for it, but address lookups will be disabled.
 
 ### 4. Configure MariaDB
 
-_Mempool needs MariaDB v10.5 or later. If you already have MySQL installed, make sure to migrate any existing databases **before** installing MariaDB._
+_BCH Explorer needs MariaDB v10.5 or later. If you already have MySQL installed, make sure to migrate any existing databases **before** installing MariaDB._
 
 Get MariaDB from your operating system's package manager:
 
@@ -63,17 +63,17 @@ mysql.server start
 Create a database and grant privileges:
 
 ```
-MariaDB [(none)]> drop database mempool;
+MariaDB [(none)]> drop database explorer;
 Query OK, 0 rows affected (0.00 sec)
 
-MariaDB [(none)]> create database mempool;
+MariaDB [(none)]> create database explorer;
 Query OK, 1 row affected (0.00 sec)
 
-MariaDB [(none)]> grant all privileges on mempool.* to 'mempool'@'%' identified by 'mempool';
+MariaDB [(none)]> grant all privileges on explorer.* to 'explorer'@'%' identified by 'explorer';
 Query OK, 0 rows affected (0.00 sec)
 ```
 
-### 5. Prepare Mempool Backend
+### 5. Prepare BCH Explorer Backend
 
 #### Build
 
@@ -94,40 +94,39 @@ npm run build
 In the backend folder, make a copy of the sample config file:
 
 ```
-cp mempool-config.sample.json mempool-config.json
+cp explorer-config.sample.json explorer-config.json
 ```
 
-Edit `mempool-config.json` as needed. 
+Edit `explorer-config.json` as needed. 
 
 In particular, make sure:
 - the correct Bitcoin Core RPC credentials are specified in `CORE_RPC`
-- the correct `BACKEND` is specified in `MEMPOOL`:
-  - "electrum" if you're using [romanz/electrs](https://github.com/romanz/electrs) or [cculianu/Fulcrum](https://github.com/cculianu/Fulcrum)
-  - "esplora" if you're using [mempool/electrs](https://github.com/mempool/electrs)
+- the correct `BACKEND` is specified in `explorer`:
+  - "electrum" for [cculianu/Fulcrum](https://github.com/cculianu/Fulcrum)
   - "none" if you're not using any Electrum Server
 
-### 6. Run Mempool Backend
+### 6. Run BCH Explorer Backend
 
-Run the Mempool backend:
+Run the BCH Explorer backend:
 
 ```
 npm run start
 
 ```
-You can also set env var `MEMPOOL_CONFIG_FILE` to specify a custom config file location:
+You can also set env var `EXPLORER_CONFIG_FILE` to specify a custom config file location:
 ```
-MEMPOOL_CONFIG_FILE=/path/to/mempool-config.json npm run start
+EXPLORER_CONFIG_FILE=/path/to/explorer-config.json npm run start
 ```
 
 When it's running, you should see output like this:
 
 ```
-Mempool updated in 0.189 seconds
-Updating mempool
-Mempool updated in 0.096 seconds
-Updating mempool
-Mempool updated in 0.099 seconds
-Updating mempool
+BCH Explorer updated in 0.189 seconds
+Updating BCH Explorer
+BCH Explorer updated in 0.096 seconds
+Updating BCH Explorer
+BCH Explorer updated in 0.099 seconds
+Updating BCH Explorer
 Calculated fee for transaction 1 / 10
 Calculated fee for transaction 2 / 10
 Calculated fee for transaction 3 / 10
@@ -138,18 +137,18 @@ Calculated fee for transaction 7 / 10
 Calculated fee for transaction 8 / 10
 Calculated fee for transaction 9 / 10
 Calculated fee for transaction 10 / 10
-Mempool updated in 0.243 seconds
-Updating mempool
+BCH Explorer updated in 0.243 seconds
+Updating BCH Explorer
 ```
 
-### 7. Set Up Mempool Frontend
-With the backend configured and running, proceed to set up the [Mempool frontend](../frontend#manual-setup).
+### 7. Set Up BCH Explorer Frontend
+With the backend configured and running, proceed to set up the [BCH Explorer frontend](../frontend#manual-setup).
 
 ## Development Tips
 
 ### Set Up Backend Watchers
 
-The Mempool backend is static. TypeScript scripts are compiled into the `dist` folder and served through a Node.js web server. 
+The BCH Explorer backend is static. TypeScript scripts are compiled into the `dist` folder and served through a Node.js web server. 
 
 As a result, for development purposes, you may find it helpful to set up backend watchers to avoid the manual shutdown/recompile/restart command-line cycle.
 
@@ -206,7 +205,7 @@ See more example of `sendtoaddress`:
    bitcoin-cli sendtoaddress # will print the help
    ```
 
-Mini script to generate random network activity (random TX count with random tx fee-rate). It's slow so don't expect to use this to test mempool spam, except if you let it run for a long time, or maybe with multiple regtest nodes connected to each other.
+Mini script to generate random network activity (random TX count with random tx fee-rate). It's slow so don't expect to use this to test BCH Explorer spam, except if you let it run for a long time, or maybe with multiple regtest nodes connected to each other.
    ```
    #!/bin/bash
    address=$(bitcoin-cli -regtest getnewaddress)
@@ -229,11 +228,11 @@ Generate block at regular interval (every 10 seconds in this example):
 
 ### Mining pools update
 
-By default, mining pools will be not automatically updated regularly (`config.MEMPOOL.AUTOMATIC_POOLS_UPDATE` is set to `false`). 
+By default, mining pools will be not automatically updated regularly (`config.explorer.AUTOMATIC_POOLS_UPDATE` is set to `false`). 
 
 To manually update your mining pools, you can use the `--update-pools` command line flag when you run the nodejs backend. For example `npm run start --update-pools`. This will trigger the mining pools update and automatically re-index appropriate blocks.
 
-You can enable the automatic mining pools update by settings `config.MEMPOOL.AUTOMATIC_POOLS_UPDATE` to `true` in your `mempool-config.json`.
+You can enable the automatic mining pools update by settings `config.explorer.AUTOMATIC_POOLS_UPDATE` to `true` in your `explorer-config.json`.
 
 When a `coinbase tag` or `coinbase address` change is detected, pool assignments for all relevant blocks (tagged to that pool or the `unknown` mining pool, starting from height 130635) are updated using the new criteria.
 
@@ -252,5 +251,3 @@ Example output:
 Feb 13 14:55:27 [63246] WARN: <lightning> Indexed data for "hashrates" tables will be erased in 5 seconds (using '--reindex')
 Feb 13 14:55:32 [63246] NOTICE: <lightning> Table hashrates has been truncated
 ```
-
-Reference: https://github.com/mempool/mempool/pull/1269

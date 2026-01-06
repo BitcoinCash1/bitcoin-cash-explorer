@@ -79,13 +79,13 @@ npm run build
 # Run integration tests with absolute path to config
 # SKIP_DB_SETUP=1 and SKIP_DB_TEARDOWN=1 tell Jest that we're managing the database lifecycle
 echo -e "${GREEN}Running integration tests...${NC}"
-export MEMPOOL_CONFIG_FILE="$BACKEND_DIR/mempool-config.test.json"
+export EXPLORER_CONFIG_FILE="$BACKEND_DIR/mempool-config.test.json"
 export SKIP_DB_SETUP=1
 export SKIP_DB_TEARDOWN=1
 npm run test:integration
 
 # Start the backend server in the background
-# MEMPOOL_CONFIG_FILE is already exported above
+# EXPLORER_CONFIG_FILE is already exported above
 echo -e "${GREEN}Starting backend server...${NC}"
 node dist/index.js &
 SERVER_PID=$!
@@ -97,7 +97,7 @@ sleep 10
 # Check if server is still running
 if ps -p $SERVER_PID > /dev/null 2>&1; then
   echo -e "${GREEN}Server started successfully and connected to database!${NC}"
-  
+
   # Kill the server (it will be in the cleanup function too, but do it here as well)
   kill $SERVER_PID 2>/dev/null || true
   wait $SERVER_PID 2>/dev/null || true
