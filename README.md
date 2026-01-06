@@ -4,6 +4,8 @@ Bitcoin Cash Explorer is a fork of Mempool, a fully-featured mempool visualizer,
 
 It is a Bitcoin Cash specific fork of Mempool and fully open source, under the same AGPL license.
 
+I don't retrieve any money for building, maintaining or running this project. However, I do accept donations to support the development of this project, my Bitcoin Cash Address is: `bitcoincash:qzqmakefvntudp0fv7sunt5fjxdswlxv2yhezq7pdl`.
+
 # Installation Methods
 
 BCH Explorer can be self-hosted on a wide variety of your own hardware, ranging from a simple one-click installation on a Raspberry Pi full-node distro all the way to a robust production instance on a powerful FreeBSD server. 
