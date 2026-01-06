@@ -12,7 +12,7 @@ Most people should use a <a href="#one-click-installation">one-click install met
 
 Other install methods are meant for developers and others with experience managing servers. If you want support for your own production instance of BCH Explorer.
 
-We do *not* offer any paid Enterprise version, everything is open source and you will need to host it yourself, if you wish to run your own instance.
+We do **not** offer any paid Enterprise versions, everything is open-source and you will need to host it yourself, if you wish to run your own instance and having fun!
 
 <a id="one-click-installation"></a>
 ## One-Click Installation
