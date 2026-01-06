@@ -1,12 +1,13 @@
 # BCH Explorer Backend
 
-These instructions are mostly intended for developers. 
+These instructions are mostly intended for developers.
 
 If you choose to use these instructions for a production setup, be aware that you will still probably need to do additional configuration for your specific OS, environment, use-case, etc.
 
 See other ways to set up BCH Explorer on [the main README](/../../#installation-methods).
 
 Jump to a section in this doc:
+
 - [Set Up the Backend](#setup)
 - [Development Tips](#development-tips)
 
@@ -16,14 +17,14 @@ Jump to a section in this doc:
 
 Get the latest BCH Explorer code:
 
-```
+```sh
 git clone https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer.git
 cd bitcoin-cash-explorer
 ```
 
 Check out the latest release:
 
-```
+```sh
 latestrelease=$(curl -s https://gitlab.melroy.org/latest/release/....|grep tag_name|head -1|cut -d '"' -f4)
 git checkout $latestrelease
 ```
@@ -32,7 +33,7 @@ git checkout $latestrelease
 
 Turn on `txindex`, enable RPC, and set RPC credentials in `bitcoin.conf`:
 
-```
+```ini
 txindex=1
 server=1
 rpcuser=explorer
@@ -53,7 +54,7 @@ Get MariaDB from your operating system's package manager:
 
 ```
 # Debian, Ubuntu, etc.
-apt-get install mariadb-server mariadb-client
+apt install mariadb-server mariadb-client
 
 # macOS
 brew install mariadb
@@ -83,9 +84,9 @@ _The build process requires [Rust](https://www.rust-lang.org/tools/install) to b
 
 Install dependencies with `npm` and build the backend:
 
-```
+```sh
 cd backend
-npm install --no-install-links # npm@9.4.2 and later can omit the --no-install-links
+npm install
 npm run build
 ```
 
@@ -93,13 +94,14 @@ npm run build
 
 In the backend folder, make a copy of the sample config file:
 
-```
+```sh
 cp explorer-config.sample.json explorer-config.json
 ```
 
-Edit `explorer-config.json` as needed. 
+Edit `explorer-config.json` as needed.
 
 In particular, make sure:
+
 - the correct Bitcoin Cash Node RPC credentials are specified in `CORE_RPC`
 - the correct `BACKEND` is specified in `explorer`:
   - "electrum" for [cculianu/Fulcrum](https://github.com/cculianu/Fulcrum)
@@ -109,18 +111,19 @@ In particular, make sure:
 
 Run the BCH Explorer backend:
 
-```
+```sh
 npm run start
+```
 
-```
 You can also set env var `EXPLORER_CONFIG_FILE` to specify a custom config file location:
-```
+
+```sh
 EXPLORER_CONFIG_FILE=/path/to/explorer-config.json npm run start
 ```
 
 When it's running, you should see output like this:
 
-```
+```sh
 BCH Explorer updated in 0.189 seconds
 Updating BCH Explorer
 BCH Explorer updated in 0.096 seconds
@@ -142,13 +145,14 @@ Updating BCH Explorer
 ```
 
 ### 7. Set Up BCH Explorer Frontend
+
 With the backend configured and running, proceed to set up the [BCH Explorer frontend](../frontend#manual-setup).
 
 ## Development Tips
 
 ### Set Up Backend Watchers
 
-The BCH Explorer backend is static. TypeScript scripts are compiled into the `dist` folder and served through a Node.js web server. 
+The BCH Explorer backend is static. TypeScript scripts are compiled into the `dist` folder and served through a Node.js web server.
 
 As a result, for development purposes, you may find it helpful to set up backend watchers to avoid the manual shutdown/recompile/restart command-line cycle.
 
@@ -171,64 +175,73 @@ nodemon src/index.ts --ignore cache/
 Helpful link: https://gist.github.com/System-Glitch/cb4e87bf1ae3fec9925725bb3ebe223a
 
 Run bitcoind on regtest:
-   ```
-   bitcoind -regtest
-   ```
+
+```
+bitcoind -regtest
+```
 
 Create a new wallet, if needed:
-   ```
-   bitcoin-cli -regtest createwallet test
-   ```
+
+```
+bitcoin-cli -regtest createwallet test
+```
 
 Load wallet (this command may take a while if you have a lot of UTXOs):
-   ```
-   bitcoin-cli -regtest loadwallet test
-   ```
+
+```
+bitcoin-cli -regtest loadwallet test
+```
 
 Get a new address:
-   ```
-   address=$(bitcoin-cli -regtest getnewaddress)
-   ```
+
+```
+address=$(bitcoin-cli -regtest getnewaddress)
+```
 
 Mine blocks to the previously generated address. You need at least 101 blocks before you can spend. This will take some time to execute (~1 min):
-   ```
-   bitcoin-cli -regtest generatetoaddress 101 $address
-   ```
+
+```
+bitcoin-cli -regtest generatetoaddress 101 $address
+```
 
 Send 0.1 BTC at 5 sat/vB to another address:
-   ```
-   bitcoin-cli -named -regtest sendtoaddress address=$(bitcoin-cli -regtest getnewaddress) amount=0.1 fee_rate=5
-   ```
+
+```
+bitcoin-cli -named -regtest sendtoaddress address=$(bitcoin-cli -regtest getnewaddress) amount=0.1 fee_rate=5
+```
 
 See more example of `sendtoaddress`:
-   ```
-   bitcoin-cli sendtoaddress # will print the help
-   ```
+
+```
+bitcoin-cli sendtoaddress # will print the help
+```
 
 Mini script to generate random network activity (random TX count with random tx fee-rate). It's slow so don't expect to use this to test BCH Explorer spam, except if you let it run for a long time, or maybe with multiple regtest nodes connected to each other.
-   ```
-   #!/bin/bash
-   address=$(bitcoin-cli -regtest getnewaddress)
-   bitcoin-cli -regtest generatetoaddress 101 $address
-   for i in {1..1000000}
+
+```
+#!/bin/bash
+address=$(bitcoin-cli -regtest getnewaddress)
+bitcoin-cli -regtest generatetoaddress 101 $address
+for i in {1..1000000}
+do
+   for y in $(seq 1 "$(jot -r 1 1 1000)")
    do
-      for y in $(seq 1 "$(jot -r 1 1 1000)")
-      do
-         bitcoin-cli -regtest -named sendtoaddress address=$address amount=0.01 fee_rate=$(jot -r 1 1 100)
-      done
-      bitcoin-cli -regtest generatetoaddress 1 $address
-      sleep 5
+      bitcoin-cli -regtest -named sendtoaddress address=$address amount=0.01 fee_rate=$(jot -r 1 1 100)
    done
-   ```
+   bitcoin-cli -regtest generatetoaddress 1 $address
+   sleep 5
+done
+```
 
 Generate block at regular interval (every 10 seconds in this example):
-   ```
-   watch -n 10 "bitcoin-cli -regtest generatetoaddress 1 $address"
-   ```
+
+```
+watch -n 10 "bitcoin-cli -regtest generatetoaddress 1 $address"
+```
 
 ### Mining pools update
 
-By default, mining pools will be not automatically updated regularly (`config.explorer.AUTOMATIC_POOLS_UPDATE` is set to `false`). 
+By default, mining pools will be not automatically updated regularly (`config.explorer.AUTOMATIC_POOLS_UPDATE` is set to `false`).
 
 To manually update your mining pools, you can use the `--update-pools` command line flag when you run the nodejs backend. For example `npm run start --update-pools`. This will trigger the mining pools update and automatically re-index appropriate blocks.
 
@@ -243,10 +256,13 @@ You can manually force the nodejs backend to drop all data from a specified set 
 Use the `--reindex` command to specify a list of comma separated table which will be truncated at start. Note that a 5 seconds delay will be observed before truncating tables in order to give you a chance to cancel (CTRL+C) in case of misuse of the command.
 
 Usage:
+
 ```
 npm run start --reindex=blocks,hashrates
 ```
+
 Example output:
+
 ```
 Feb 13 14:55:27 [63246] WARN: <lightning> Indexed data for "hashrates" tables will be erased in 5 seconds (using '--reindex')
 Feb 13 14:55:32 [63246] NOTICE: <lightning> Table hashrates has been truncated
