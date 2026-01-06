@@ -72,8 +72,8 @@ build_backend()
     echo "[*] Building backend for ${site}"
     [ -z "${HASH}" ] && exit 1
     cd "$HOME/${site}/backend" || exit 1
-    if [ ! -e "mempool-config.json" ];then
-        cp "${HOME}/mempool/production/mempool-config.${site}.json" "mempool-config.json"
+    if [ ! -e "explorer-config.json" ];then
+        cp "${HOME}/mempool/production/explorer-config.${site}.json" "explorer-config.json"
 	sed -i .orig \
 	-e "s!__BITCOIN_RPC_USER__!${BITCOIN_RPC_USER}!" \
 	-e "s!__BITCOIN_RPC_PASS__!${BITCOIN_RPC_PASS}!" \
@@ -97,7 +97,7 @@ build_backend()
         -e "s!__MEMPOOL_LIQUID_PASS__!${MEMPOOL_LIQUID_PASS}!" \
         -e "s!__MEMPOOL_LIQUIDTESTNET_USER__!${MEMPOOL_LIQUIDTESTNET_USER}!" \
         -e "s!__MEMPOOL_LIQUIDTESTNET_PASS__!${MEMPOOL_LIQUIDTESTNET_PASS}!" \
-	"mempool-config.json"
+	"explorer-config.json"
     fi
     npm install --omit=dev --omit=optional || exit 1
     npm run build || exit 1
