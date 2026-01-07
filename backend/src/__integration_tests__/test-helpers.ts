@@ -30,18 +30,11 @@ export async function cleanupTestData(): Promise<void> {
     'blocks_summaries',
     'blocks_prices',
     'blocks_templates',
-    'cpfp_clusters',
     'blocks', // blocks references pools
     'difficulty_adjustments',
     'hashrates',
     'prices',
-    'node_records',
-    'nodes_sockets',
-    'nodes',
-    'lightning_stats',
     'transactions',
-    'elements_pegs',
-    'federation_txos',
     'pools',
   ];
 

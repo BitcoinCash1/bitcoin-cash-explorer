@@ -4,14 +4,12 @@ import {
   EffectiveFeeStats,
   MempoolBlockWithTransactions,
   TransactionExtended,
-  MempoolTransactionExtended,
   TransactionStripped,
   WorkingEffectiveFeeStats,
   TransactionClassified,
   TransactionFlags,
 } from '../mempool.interfaces';
 import config from '../config';
-import { NodeSocket } from '../repositories/NodesSocketsRepository';
 import { isIP } from 'net';
 import transactionUtils from './transaction-utils';
 import { isPoint } from '../utils/secp256k1';
@@ -1068,19 +1066,6 @@ export class Common {
     return {
       network: network,
       url: url,
-    };
-  }
-
-  static formatSocket(
-    publicKey: string,
-    socket: { network: string; addr: string }
-  ): NodeSocket {
-    // lnd (lightning backend? We don't use that anyways)
-    const formatted = this.findSocketNetwork(socket.addr);
-    return {
-      publicKey: publicKey,
-      network: formatted.network,
-      addr: formatted.url,
     };
   }
 

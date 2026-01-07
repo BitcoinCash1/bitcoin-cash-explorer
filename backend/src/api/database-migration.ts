@@ -2,11 +2,9 @@ import config from '../config';
 import DB from '../database';
 import logger from '../logger';
 import { Common } from './common';
-import blocksRepository from '../repositories/BlocksRepository';
-import { RowDataPacket } from 'mysql2';
 
 class DatabaseMigration {
-  private static currentVersion = 104;
+  private static currentVersion = 105;
   private queryTimeout = 3600_000;
   private statisticsAddedIndexed = false;
   private uniqueLogs: string[] = [];
@@ -1653,30 +1651,9 @@ class DatabaseMigration {
         );
       }
 
-      // Apply all the liquid specific migrations (we do not use liquid) to all other networks
+      // Skipp all the liquid specific migrations (we do not use liquid)
       // Version 68
-      await this.$executeQuery(
-        'ALTER TABLE elements_pegs ADD PRIMARY KEY (txid, txindex);'
-      );
-      await this.$executeQuery(
-        this.getCreateFederationAddressesTableQuery(),
-        await this.$checkIfTableExists('federation_addresses')
-      );
-      await this.$executeQuery(
-        this.getCreateFederationTxosTableQuery(),
-        await this.$checkIfTableExists('federation_txos')
-      );
-
       // Version 71
-      await this.$executeQuery(
-        'ALTER TABLE `federation_txos` ADD timelock INT NOT NULL DEFAULT 0'
-      );
-      await this.$executeQuery(
-        'ALTER TABLE `federation_txos` ADD expiredAt INT NOT NULL DEFAULT 0'
-      );
-      await this.$executeQuery(
-        'ALTER TABLE `federation_txos` ADD emergencyKey TINYINT NOT NULL DEFAULT 0'
-      );
 
       // Version 92
       await this.$executeQuery(`
@@ -1689,33 +1666,6 @@ class DatabaseMigration {
       `);
 
       // Version 93
-      await this.$executeQuery(`
-        ALTER TABLE \`federation_txos\`
-          ADD INDEX \`unspent\` (\`unspent\`),
-          ADD INDEX \`lastblockupdate\` (\`lastblockupdate\`),
-          ADD INDEX \`blocktime\` (\`blocktime\`),
-          ADD INDEX \`emergencyKey\` (\`emergencyKey\`),
-          ADD INDEX \`expiredAt\` (\`expiredAt\`)
-      `);
-
-      if (config.MEMPOOL.NETWORK !== 'mainnet') {
-        // Apply all the mainnet specific migrations to all other networks
-        // Version 69
-        await this.$executeQuery(
-          this.getCreateAccelerationsTableQuery(),
-          await this.$checkIfTableExists('accelerations')
-        );
-
-        // Version 70
-        await this.$executeQuery(
-          'ALTER TABLE accelerations MODIFY COLUMN added DATETIME;'
-        );
-
-        // Version 77
-        await this.$executeQuery(
-          'ALTER TABLE `accelerations` ADD requested datetime DEFAULT NULL'
-        );
-      }
       await this.updateToSchemaVersion(94);
     }
 
@@ -1801,6 +1751,24 @@ class DatabaseMigration {
         'ALTER TABLE `blocks` ADD INDEX `stale` (`stale`)'
       );
       await this.updateToSchemaVersion(103);
+    }
+
+    if (databaseSchemaVersion < 105) {
+      // Remove all BTC specific tables we do not need
+      await this.$executeQuery('DROP TABLE IF EXISTS accelerations;');
+      await this.$executeQuery('DROP TABLE IF EXISTS channels;');
+      await this.$executeQuery('DROP TABLE IF EXISTS compact_cpfp_clusters;');
+      await this.$executeQuery('DROP TABLE IF EXISTS elements_pegs;');
+      await this.$executeQuery('DROP TABLE IF EXISTS federation_txos;');
+      await this.$executeQuery('DROP TABLE IF EXISTS federation_addresses;');
+      await this.$executeQuery('DROP TABLE IF EXISTS geo_names;');
+      await this.$executeQuery('DROP TABLE IF EXISTS lightning_stats;');
+      await this.$executeQuery('DROP TABLE IF EXISTS nodes_records;');
+      await this.$executeQuery('DROP TABLE IF EXISTS nodes_sockets;');
+      await this.$executeQuery('DROP TABLE IF EXISTS node_stats;');
+      await this.$executeQuery('DROP TABLE IF EXISTS nodes;');
+
+      await this.updateToSchemaVersion(105);
     }
   }
 
