@@ -34,7 +34,7 @@ class MempoolBlocks {
   private txSelectionWorker: Worker | null = null;
   private rustInitialized: boolean = false;
   private rustGbtGenerator: GbtGenerator = new GbtGenerator(
-    config.MEMPOOL.BLOCK_WEIGHT_UNITS,
+    config.MEMPOOL.MIN_BLOCK_SIZE_UNITS,
     config.MEMPOOL.MEMPOOL_BLOCKS_AMOUNT
   );
 
@@ -297,7 +297,7 @@ class MempoolBlocks {
 
   private resetRustGbt(): void {
     this.rustInitialized = false;
-    this.rustGbtGenerator = new GbtGenerator(config.MEMPOOL.BLOCK_WEIGHT_UNITS, config.MEMPOOL.MEMPOOL_BLOCKS_AMOUNT);
+    this.rustGbtGenerator = new GbtGenerator(config.MEMPOOL.MIN_BLOCK_SIZE_UNITS, config.MEMPOOL.MEMPOOL_BLOCKS_AMOUNT);
   }
 
   public async $rustMakeBlockTemplates(
@@ -328,7 +328,7 @@ class MempoolBlocks {
     // run the block construction algorithm in a separate thread, and wait for a result
     const rustGbt = saveResults
       ? this.rustGbtGenerator
-      : new GbtGenerator(config.MEMPOOL.BLOCK_WEIGHT_UNITS, config.MEMPOOL.MEMPOOL_BLOCKS_AMOUNT);
+      : new GbtGenerator(config.MEMPOOL.MIN_BLOCK_SIZE_UNITS, config.MEMPOOL.MEMPOOL_BLOCKS_AMOUNT);
     try {
       const { blocks, blockWeights, rates, clusters, overflow } = this.convertNapiResultTxids(
         await rustGbt.make(transactions as RustThreadTransaction[], [] as RustThreadAcceleration[], this.nextUid)
@@ -471,7 +471,7 @@ class MempoolBlocks {
       } else {
         stackWeight = blocks[lastBlockIndex].reduce((total, tx) => total + (mempool[tx]?.size || 0), 0);
       }
-      hasBlockStack = stackWeight > config.MEMPOOL.BLOCK_WEIGHT_UNITS;
+      hasBlockStack = stackWeight > config.MEMPOOL.MIN_BLOCK_SIZE_UNITS;
       feeStatsCalculator = new OnlineFeeStatsCalculator(stackWeight, 0.5, [10, 20, 30, 40, 50, 60, 70, 80, 90]);
     }
 
@@ -527,7 +527,7 @@ class MempoolBlocks {
       }
     }
 
-    const sizeLimit = (config.MEMPOOL.BLOCK_WEIGHT_UNITS / 4) * 1.2;
+    const sizeLimit = config.MEMPOOL.MIN_BLOCK_SIZE_UNITS;
     // update this thread's mempool with the results
     let mempoolTx: MempoolTransactionExtended;
     const mempoolBlocks: MempoolBlockWithTransactions[] = [];

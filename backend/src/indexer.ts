@@ -231,7 +231,6 @@ class Indexer {
       await auditReplicator.$sync();
       await statisticsReplicator.$sync();
       await BlocksAuditsRepository.$migrateAuditsV0toV1();
-      await BlocksRepository.$migrateBlocks();
       // do not wait for classify blocks to finish
       blocks.$classifyBlocks();
       runSuccessful = true;

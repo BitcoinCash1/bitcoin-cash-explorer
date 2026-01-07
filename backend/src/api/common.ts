@@ -798,6 +798,7 @@ export class Common {
     };
   }
 
+  // TODO: Update calculation for BCH
   static calcEffectiveFeeStatistics(
     transactions: {
       size: number;
@@ -818,14 +819,14 @@ export class Common {
     const totalSize = transactions.reduce((acc, tx) => acc + tx.size, 0);
 
     // include any unused space
-    let sizeCount = config.MEMPOOL.BLOCK_WEIGHT_UNITS - totalSize;
+    let sizeCount = config.MEMPOOL.MIN_BLOCK_SIZE_UNITS - totalSize;
     let medianFee = 0;
     let medianSize = 0;
 
     // calculate the "medianFee" as the average fee rate of the middle 0.25% weight units of the conceptual block
-    const halfWidth = config.MEMPOOL.BLOCK_WEIGHT_UNITS / 800;
-    const leftBound = Math.floor(config.MEMPOOL.BLOCK_WEIGHT_UNITS / 2 - halfWidth);
-    const rightBound = Math.ceil(config.MEMPOOL.BLOCK_WEIGHT_UNITS / 2 + halfWidth);
+    const halfWidth = config.MEMPOOL.MIN_BLOCK_SIZE_UNITS / 800;
+    const leftBound = Math.floor(config.MEMPOOL.MIN_BLOCK_SIZE_UNITS / 2 - halfWidth);
+    const rightBound = Math.ceil(config.MEMPOOL.MIN_BLOCK_SIZE_UNITS / 2 + halfWidth);
     for (let i = 0; i < sortedTxs.length && sizeCount < rightBound; i++) {
       const left = sizeCount;
       const right = sizeCount + sortedTxs[i].size;

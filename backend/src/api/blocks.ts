@@ -584,7 +584,7 @@ class Blocks {
   }
 
   /**
-   * [INDEXING] Index expected fees & weight for all audited blocks
+   * [INDEXING] Index expected fees & size for all audited blocks
    */
   public async $generateAuditStats(): Promise<void> {
     const blockIds = await BlocksAuditsRepository.$getBlocksWithoutSummaries();

@@ -17,7 +17,7 @@ interface IConfig {
     CACHE_ENABLED: boolean;
     CLEAR_PROTECTION_MINUTES: number;
     RECOMMENDED_FEE_PERCENTILE: number;
-    BLOCK_WEIGHT_UNITS: number;
+    MIN_BLOCK_SIZE_UNITS: number;
     INITIAL_BLOCKS_AMOUNT: number;
     MEMPOOL_BLOCKS_AMOUNT: number;
     INDEXING_BLOCKS_AMOUNT: number;
@@ -152,9 +152,9 @@ const defaults: IConfig = {
     CACHE_ENABLED: true,
     CLEAR_PROTECTION_MINUTES: 20,
     RECOMMENDED_FEE_PERCENTILE: 50,
-    BLOCK_WEIGHT_UNITS: 4000000,
+    MIN_BLOCK_SIZE_UNITS: 32000000,
     INITIAL_BLOCKS_AMOUNT: 8,
-    MEMPOOL_BLOCKS_AMOUNT: 8,
+    MEMPOOL_BLOCKS_AMOUNT: 1,
     INDEXING_BLOCKS_AMOUNT: 11000, // 0 = disable indexing, -1 = index all blocks
     BLOCKS_SUMMARIES_INDEXING: false,
     GOGGLES_INDEXING: false,
@@ -162,7 +162,7 @@ const defaults: IConfig = {
     EXTERNAL_ASSETS: [],
     EXTERNAL_MAX_RETRY: 1,
     EXTERNAL_RETRY_INTERVAL: 0,
-    USER_AGENT: 'mempool',
+    USER_AGENT: 'explorer',
     STDOUT_LOG_MIN_PRIORITY: 'debug',
     AUTOMATIC_POOLS_UPDATE: false,
     POOLS_JSON_URL: 'https://raw.githubusercontent.com/mempool/mining-pools/master/pools-v2.json',
@@ -180,14 +180,14 @@ const defaults: IConfig = {
   },
   ELECTRUM: {
     HOST: '127.0.0.1',
-    PORT: 3306,
-    TLS_ENABLED: true,
+    PORT: 50001,
+    TLS_ENABLED: false,
   },
   CORE_RPC: {
     HOST: '127.0.0.1',
     PORT: 8332,
-    USERNAME: 'mempool',
-    PASSWORD: 'mempool',
+    USERNAME: 'explorer',
+    PASSWORD: 'explorer',
     TIMEOUT: 60000,
     COOKIE: false,
     COOKIE_PATH: '/bitcoin/.cookie',
@@ -196,8 +196,8 @@ const defaults: IConfig = {
   SECOND_CORE_RPC: {
     HOST: '127.0.0.1',
     PORT: 8332,
-    USERNAME: 'mempool',
-    PASSWORD: 'mempool',
+    USERNAME: 'explorer',
+    PASSWORD: 'explorer',
     TIMEOUT: 60000,
     COOKIE: false,
     COOKIE_PATH: '/bitcoin/.cookie',
@@ -207,9 +207,9 @@ const defaults: IConfig = {
     HOST: '127.0.0.1',
     SOCKET: '',
     PORT: 3306,
-    DATABASE: 'mempool',
-    USERNAME: 'mempool',
-    PASSWORD: 'mempool',
+    DATABASE: 'explorer',
+    USERNAME: 'explorer',
+    PASSWORD: 'explorer',
     TIMEOUT: 180000,
     PID_DIR: '',
     POOL_SIZE: 100,
