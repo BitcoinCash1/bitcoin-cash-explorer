@@ -877,7 +877,7 @@ class WebsocketHandler {
       }
 
       if (Common.indexingEnabled()) {
-        const { unseen, censored, added, prioritized, fresh, sigop, score, similarity } = Audit.auditBlock(
+        const { unseen, censored, added, fresh, sigop, score, similarity } = Audit.auditBlock(
           block.height,
           blockTransactions,
           projectedBlocks,

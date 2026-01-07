@@ -15,7 +15,6 @@ class Audit {
     unseen: string[];
     censored: string[];
     added: string[];
-    prioritized: string[];
     fresh: string[];
     sigop: string[];
     score: number;
@@ -26,7 +25,6 @@ class Audit {
         unseen: [],
         censored: [],
         added: [],
-        prioritized: [],
         fresh: [],
         sigop: [],
         score: 1,
@@ -37,8 +35,6 @@ class Audit {
     const matches: string[] = []; // present in both mined block and template
     const added: string[] = []; // present in mined block, not in template
     const unseen: string[] = []; // present in the mined block, not in our mempool
-    let prioritized: string[] = []; // higher in the block than would be expected by in-band feerate alone
-    let deprioritized: string[] = []; // lower in the block than would be expected by in-band feerate alone
     const fresh: string[] = []; // missing, but firstSeen or lastBoosted within PROPAGATION_MARGIN
     const isCensored = {}; // missing, without excuse
     const isDisplaced = {};
@@ -144,11 +140,6 @@ class Audit {
       totalSize += tx.size;
     }
 
-    ({ prioritized, deprioritized } = transactionUtils.identifyPrioritizedTransactions(
-      transactions,
-      'effectiveFeePerSize'
-    ));
-
     // transactions missing from near the end of our template are probably not being censored
     let overflowSizeRemaining = overflowSize - (config.MEMPOOL.MIN_BLOCK_SIZE_UNITS - totalSize);
     let maxOverflowRate = 0;
@@ -193,7 +184,6 @@ class Audit {
       unseen,
       censored: Object.keys(isCensored),
       added,
-      prioritized,
       fresh,
       sigop: [],
       score,
