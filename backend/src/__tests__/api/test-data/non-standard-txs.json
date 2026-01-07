@@ -21,12 +21,7 @@
                 "sequence": 4294967295,
                 "txid": "9b93dab94a3334b6119f75d107da6bcef9435fa52ec6c0de14aa8a094794551a",
                 "vout": 0,
-                "witness": [
-                    "6840b6fa27a00ba001cc92797ce4f3ab7b7a32c21d1fce49e893b42e506bd92e8db187966a84ef799915cf671334cc59779915b192bfb66b2afcf384bb61d0f4",
-                    "500049276d20616e20616e6e6578212041726520796f7520616e20616e6e65783f00"
-                ],
-                "inner_redeemscript_asm": "",
-                "inner_witnessscript_asm": ""
+                "inner_redeemscript_asm": ""
             }
         ],
         "vout": [

@@ -7,8 +7,6 @@ interface MigrationAudit {
   height: number;
   id: string;
   timestamp: number;
-  prioritizedTxs: string[];
-  acceleratedTxs: string[];
   template: TransactionStripped[];
   transactions: TransactionStripped[];
 }
@@ -17,7 +15,7 @@ class BlocksAuditRepositories {
   public async $saveAudit(audit: BlockAudit): Promise<void> {
     try {
       await DB.query(
-        `INSERT INTO blocks_audits(version, time, height, hash, unseen_txs, missing_txs, added_txs, prioritized_txs, fresh_txs, sigop_txs, match_rate, expected_fees, expected_weight)
+        `INSERT INTO blocks_audits(version, time, height, hash, unseen_txs, missing_txs, added_txs, fresh_txs, sigop_txs, match_rate, expected_fees, expected_weight)
         VALUE (?, FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           audit.version,
@@ -27,7 +25,6 @@ class BlocksAuditRepositories {
           JSON.stringify(audit.unseenTxs),
           JSON.stringify(audit.missingTxs),
           JSON.stringify(audit.addedTxs),
-          JSON.stringify(audit.prioritizedTxs),
           JSON.stringify(audit.freshTxs),
           JSON.stringify(audit.sigopTxs),
           audit.matchRate,
@@ -266,17 +263,10 @@ class BlocksAuditRepositories {
           audit.transactions = JSON.parse((audit.transactions as any as string) || '[]');
           audit.template = JSON.parse((audit.template as any as string) || '[]');
 
-          // we know transactions in the template, or marked "prioritized" or "accelerated"
-          // were seen in our mempool before the block was mined.
+          // we know transactions in the template were seen in our mempool before the block was mined.
           const isSeen = new Set<string>();
           for (const tx of audit.template) {
             isSeen.add(tx.txid);
-          }
-          for (const txid of audit.prioritizedTxs) {
-            isSeen.add(txid);
-          }
-          for (const txid of audit.acceleratedTxs) {
-            isSeen.add(txid);
           }
           const unseenTxs = audit.transactions
             .slice(0)

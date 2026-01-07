@@ -202,7 +202,6 @@ interface BestDescendant {
   fee: number;
 }
 
-// Is stripped transaction used for witness data? BCH doesn't have witness after all.
 export interface TransactionStripped {
   txid: string;
   fee: number;
@@ -245,7 +244,7 @@ export const TransactionFlags = {
   // data
   op_return: 0b00000001_00000000_00000000_00000000n,
   fake_pubkey: 0b00000010_00000000_00000000_00000000n,
-  inscription: 0b00000100_00000000_00000000_00000000n,
+  inscription: 0b00000100_00000000_00000000_00000000n, // related to witness, not used by BCH
   fake_scripthash: 0b00001000_00000000_00000000_00000000n,
   annex: 0b00010000_00000000_00000000_00000000n, // related to witness, not used by BCH
   // heuristics

@@ -407,33 +407,6 @@ export class Common {
     ].includes(pubkey);
   }
 
-  static isInscription(vin, flags): bigint {
-    // in taproot, if the last witness item begins with 0x50, it's an annex
-    const hasAnnex = vin.witness?.[vin.witness.length - 1].startsWith('50');
-    // script spends have more than one witness item, not counting the annex (if present)
-    if (vin.witness.length > (hasAnnex ? 2 : 1)) {
-      // the script itself is the second-to-last witness item, not counting the annex
-      const asm =
-        vin.inner_witnessscript_asm ||
-        transactionUtils.convertScriptSigAsm(vin.witness[vin.witness.length - (hasAnnex ? 3 : 2)]);
-      // inscriptions smuggle data within an 'OP_0 OP_IF ... OP_ENDIF' envelope
-      if (asm?.includes('OP_0 OP_IF')) {
-        flags |= TransactionFlags.inscription;
-      }
-    }
-    return flags;
-  }
-
-  static inputIsMaybeInscription(vin: IEsploraApi.Vin): boolean {
-    // check if this is actually a taproot input
-    const isTaproot = false;
-    const isNotTaproot = true;
-
-    // BCH does not have tap root implemented
-
-    return isTaproot || !isNotTaproot;
-  }
-
   static getTransactionFlags(tx: TransactionExtended, height?: number): number {
     let flags = tx.flags ? BigInt(tx.flags) : 0n;
 
@@ -456,6 +429,7 @@ export class Common {
     const outValues = {};
     for (const vin of tx.vin) {
       if (vin.prevout?.scriptpubkey_type) {
+        // Only switch between BCH supported types
         switch (vin.prevout?.scriptpubkey_type) {
           case 'p2pk':
             flags |= TransactionFlags.p2pk;
@@ -468,12 +442,6 @@ export class Common {
             break;
           case 'p2sh':
             flags |= TransactionFlags.p2sh;
-            break;
-          case 'v0_p2wpkh':
-            flags |= TransactionFlags.p2wpkh;
-            break;
-          case 'v0_p2wsh':
-            flags |= TransactionFlags.p2wsh;
             break;
         }
       }

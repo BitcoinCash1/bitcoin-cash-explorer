@@ -162,9 +162,9 @@ class TransactionUtils {
   }
 
   /**
-   *  Calculate the witness-adjusted sigops cost of an asm script
+   *  Calculate the sigops cost of an asm script
    */
-  public countScriptSigops(script: string, isRawScript: boolean = false, witness: boolean = false): number {
+  public countScriptSigops(script: string, isRawScript: boolean = false): number {
     if (!script?.length) {
       return 0;
     }
@@ -190,7 +190,7 @@ class TransactionUtils {
       }
     }
 
-    return witness ? sigops : sigops * 4;
+    return sigops * 4;
   }
 
   public countSigops(transaction: IEsploraApi.Transaction): number {

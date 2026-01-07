@@ -333,7 +333,6 @@ class BitcoinApi implements AbstractBitcoinApi {
         txid: vin.txid || '',
         vout: vin.vout || 0,
         inner_redeemscript_asm: '',
-        inner_witnessscript_asm: '',
       };
     });
 

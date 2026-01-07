@@ -158,7 +158,6 @@ class RedisCache {
         delete minified.hex;
         for (const vin of minified.vin) {
           delete vin.inner_redeemscript_asm;
-          delete vin.inner_witnessscript_asm;
           delete vin.scriptsig_asm;
         }
         for (const vout of minified.vout) {
