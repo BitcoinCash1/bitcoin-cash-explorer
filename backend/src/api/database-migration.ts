@@ -1758,6 +1758,7 @@ class DatabaseMigration {
       await this.$executeQuery('DROP TABLE IF EXISTS accelerations;');
       await this.$executeQuery('DROP TABLE IF EXISTS channels;');
       await this.$executeQuery('DROP TABLE IF EXISTS compact_cpfp_clusters;');
+      await this.$executeQuery('DROP TABLE IF EXISTS compact_transactions;');
       await this.$executeQuery('DROP TABLE IF EXISTS elements_pegs;');
       await this.$executeQuery('DROP TABLE IF EXISTS federation_txos;');
       await this.$executeQuery('DROP TABLE IF EXISTS federation_addresses;');
