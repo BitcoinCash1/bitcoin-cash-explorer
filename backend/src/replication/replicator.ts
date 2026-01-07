@@ -4,17 +4,12 @@ import axios, { AxiosResponse } from 'axios';
 import { SocksProxyAgent } from 'socks-proxy-agent';
 import * as https from 'https';
 
-export async function $sync(
-  path
-): Promise<{ data?: any; exists: boolean; server?: string }> {
+export async function $sync(path): Promise<{ data?: any; exists: boolean; server?: string }> {
   // start with a random server so load is uniformly spread
   let allMissing = true;
   const offset = Math.floor(Math.random() * config.REPLICATION.SERVERS.length);
   for (let i = 0; i < config.REPLICATION.SERVERS.length; i++) {
-    const server =
-      config.REPLICATION.SERVERS[
-        (i + offset) % config.REPLICATION.SERVERS.length
-      ];
+    const server = config.REPLICATION.SERVERS[(i + offset) % config.REPLICATION.SERVERS.length];
     // don't query ourself
     if (server === backendInfo.getBackendInfo().hostname) {
       continue;

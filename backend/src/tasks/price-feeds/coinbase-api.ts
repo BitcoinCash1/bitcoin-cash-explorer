@@ -20,10 +20,7 @@ class CoinbaseApi implements PriceFeed {
     }
   }
 
-  public async $fetchRecentPrice(
-    currencies: string[],
-    type: 'hour' | 'day'
-  ): Promise<PriceHistory> {
+  public async $fetchRecentPrice(currencies: string[], type: 'hour' | 'day'): Promise<PriceHistory> {
     const priceHistory: PriceHistory = {};
 
     for (const currency of currencies) {
@@ -32,9 +29,7 @@ class CoinbaseApi implements PriceFeed {
       }
 
       const response = await query(
-        this.urlHist
-          .replace('{GRANULARITY}', type === 'hour' ? '3600' : '86400')
-          .replace('{CURRENCY}', currency)
+        this.urlHist.replace('{GRANULARITY}', type === 'hour' ? '3600' : '86400').replace('{CURRENCY}', currency)
       );
       const pricesRaw = response ? response : [];
 

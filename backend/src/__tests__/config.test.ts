@@ -39,10 +39,8 @@ describe('Mempool Backend Config', () => {
         EXTERNAL_RETRY_INTERVAL: 0,
         USER_AGENT: 'mempool',
         STDOUT_LOG_MIN_PRIORITY: 'debug',
-        POOLS_JSON_TREE_URL:
-          'https://api.github.com/repos/mempool/mining-pools/git/trees/master',
-        POOLS_JSON_URL:
-          'https://raw.githubusercontent.com/mempool/mining-pools/master/pools-v2.json',
+        POOLS_JSON_TREE_URL: 'https://api.github.com/repos/mempool/mining-pools/git/trees/master',
+        POOLS_JSON_URL: 'https://raw.githubusercontent.com/mempool/mining-pools/master/pools-v2.json',
         POOLS_UPDATE_DELAY: 604800,
         AUDIT: false,
         RUST_GBT: true,
@@ -119,11 +117,9 @@ describe('Mempool Backend Config', () => {
 
       expect(config.EXTERNAL_DATA_SERVER).toStrictEqual({
         MEMPOOL_API: 'https://mempool.space/api/v1',
-        MEMPOOL_ONION:
-          'http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/api/v1',
+        MEMPOOL_ONION: 'http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/api/v1',
         LIQUID_API: 'https://liquid.network/api/v1',
-        LIQUID_ONION:
-          'http://liquidmom47f6s3m53ebfxn47p76a6tlnxib3wp6deux7wuzotdr6cyd.onion/api/v1',
+        LIQUID_ONION: 'http://liquidmom47f6s3m53ebfxn47p76a6tlnxib3wp6deux7wuzotdr6cyd.onion/api/v1',
       });
 
       expect(config.MAXMIND).toStrictEqual({
@@ -163,12 +159,7 @@ describe('Mempool Backend Config', () => {
 
   test('should override the default values with the passed values', () => {
     jest.isolateModules(() => {
-      const fixture = JSON.parse(
-        fs.readFileSync(
-          `${__dirname}/../__fixtures__/mempool-config.template.json`,
-          'utf8'
-        )
-      );
+      const fixture = JSON.parse(fs.readFileSync(`${__dirname}/../__fixtures__/mempool-config.template.json`, 'utf8'));
       jest.mock('../../mempool-config.json', () => fixture, { virtual: true });
 
       const config = jest.requireActual('../config').default;
@@ -191,9 +182,7 @@ describe('Mempool Backend Config', () => {
 
       expect(config.SOCKS5PROXY).toStrictEqual(fixture.SOCKS5PROXY);
 
-      expect(config.EXTERNAL_DATA_SERVER).toStrictEqual(
-        fixture.EXTERNAL_DATA_SERVER
-      );
+      expect(config.EXTERNAL_DATA_SERVER).toStrictEqual(fixture.EXTERNAL_DATA_SERVER);
 
       expect(config.MEMPOOL_SERVICES).toStrictEqual(fixture.MEMPOOL_SERVICES);
 
@@ -203,16 +192,8 @@ describe('Mempool Backend Config', () => {
 
   test('should ensure the docker start.sh script has default values', () => {
     jest.isolateModules(() => {
-      const startSh = fs.readFileSync(
-        `${__dirname}/../../../docker/backend/start.sh`,
-        'utf-8'
-      );
-      const fixture = JSON.parse(
-        fs.readFileSync(
-          `${__dirname}/../__fixtures__/mempool-config.template.json`,
-          'utf8'
-        )
-      );
+      const startSh = fs.readFileSync(`${__dirname}/../../../docker/backend/start.sh`, 'utf-8');
+      const fixture = JSON.parse(fs.readFileSync(`${__dirname}/../__fixtures__/mempool-config.template.json`, 'utf8'));
 
       function parseJson(jsonObj, root?) {
         for (const [key, value] of Object.entries(jsonObj)) {
@@ -236,31 +217,21 @@ describe('Mempool Backend Config', () => {
             if (Array.isArray(value)) {
               defaultEntry = `${replaceStr}=\${${envVarStr}:=[]}`;
               if (process.env.CI) {
-                console.log(
-                  `looking for ${defaultEntry} in the start.sh script`
-                );
+                console.log(`looking for ${defaultEntry} in the start.sh script`);
               }
               //Regex matching does not work with the array values
               expect(startSh).toContain(defaultEntry);
             } else {
-              defaultEntry =
-                replaceStr + '=' + '\\${' + envVarStr + ':=(.*)' + '}';
+              defaultEntry = replaceStr + '=' + '\\${' + envVarStr + ':=(.*)' + '}';
               if (process.env.CI) {
-                console.log(
-                  `looking for ${defaultEntry} in the start.sh script`
-                );
+                console.log(`looking for ${defaultEntry} in the start.sh script`);
               }
               const re = new RegExp(defaultEntry);
               expect(startSh).toMatch(re);
             }
 
             //The string that actually replaces the values in the config file
-            const sedStr =
-              'sed -i "s!' +
-              replaceStr +
-              '!${' +
-              replaceStr +
-              '}!g" mempool-config.json';
+            const sedStr = 'sed -i "s!' + replaceStr + '!${' + replaceStr + '}!g" mempool-config.json';
             if (process.env.CI) {
               console.log(`looking for ${sedStr} in the start.sh script`);
             }
@@ -277,16 +248,8 @@ describe('Mempool Backend Config', () => {
 
   test('should ensure that the mempool-config.json Docker template has all the keys', () => {
     jest.isolateModules(() => {
-      const fixture = JSON.parse(
-        fs.readFileSync(
-          `${__dirname}/../__fixtures__/mempool-config.template.json`,
-          'utf8'
-        )
-      );
-      const dockerJson = fs.readFileSync(
-        `${__dirname}/../../../docker/backend/mempool-config.json`,
-        'utf-8'
-      );
+      const fixture = JSON.parse(fs.readFileSync(`${__dirname}/../__fixtures__/mempool-config.template.json`, 'utf8'));
+      const dockerJson = fs.readFileSync(`${__dirname}/../../../docker/backend/mempool-config.json`, 'utf-8');
 
       function parseJson(jsonObj, root?) {
         for (const [key, value] of Object.entries(jsonObj)) {

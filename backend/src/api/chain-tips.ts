@@ -12,12 +12,7 @@ export interface ChainTip {
   height: number;
   hash: string;
   branchlen: number;
-  status:
-    | 'invalid'
-    | 'active'
-    | 'valid-fork'
-    | 'valid-headers'
-    | 'headers-only';
+  status: 'invalid' | 'active' | 'valid-fork' | 'valid-headers' | 'headers-only';
 }
 
 export interface StaleTip extends ChainTip {
@@ -53,13 +48,9 @@ class ChainTips {
       this.chainTips = await bitcoinClient.getChainTips();
 
       const activeTipHeight =
-        this.chainTips.find((tip) => tip.status === 'active')?.height ||
-        (await bitcoinApi.$getBlockHeightTip());
+        this.chainTips.find((tip) => tip.status === 'active')?.height || (await bitcoinApi.$getBlockHeightTip());
       let minIndexHeight = 0;
-      const indexedBlockAmount = Math.min(
-        config.MEMPOOL.INDEXING_BLOCKS_AMOUNT,
-        activeTipHeight
-      );
+      const indexedBlockAmount = Math.min(config.MEMPOOL.INDEXING_BLOCKS_AMOUNT, activeTipHeight);
       if (indexedBlockAmount > 0) {
         minIndexHeight = Math.max(0, activeTipHeight - indexedBlockAmount + 1);
       }
@@ -96,17 +87,12 @@ class ChainTips {
                   }
                 }
                 // make sure the cached canonical block at this height is correct & up to date
-                if (
-                  block.height >=
-                  activeTipHeight - config.MEMPOOL.INITIAL_BLOCKS_AMOUNT * 4
-                ) {
+                if (block.height >= activeTipHeight - config.MEMPOOL.INITIAL_BLOCKS_AMOUNT * 4) {
                   const cachedBlocks = blocks.getBlocks();
                   for (const cachedBlock of cachedBlocks) {
                     if (cachedBlock.height === block.height) {
                       // ensure this stale block is included in the orphans list
-                      cachedBlock.extras.orphans = Array.from(
-                        new Set([...(cachedBlock.extras.orphans || []), orphan])
-                      );
+                      cachedBlock.extras.orphans = Array.from(new Set([...(cachedBlock.extras.orphans || []), orphan]));
                     }
                   }
                 }
@@ -122,9 +108,7 @@ class ChainTips {
           }
         }
         if (Date.now() >= breakAt) {
-          logger.debug(
-            `Breaking orphaned blocks updater after 10s, will continue next block`
-          );
+          logger.debug(`Breaking orphaned blocks updater after 10s, will continue next block`);
           break;
         }
       }
@@ -139,11 +123,7 @@ class ChainTips {
         this.orphansByHeight[orphan.height].push(orphan);
       }
 
-      const heightsToKeep = new Set(
-        this.chainTips
-          .filter((tip) => tip.status !== 'active')
-          .map((tip) => tip.height)
-      );
+      const heightsToKeep = new Set(this.chainTips.filter((tip) => tip.status !== 'active').map((tip) => tip.height));
       const heightsToRemove: number[] = Object.keys(this.staleTips)
         .map(Number)
         .filter((height) => !heightsToKeep.has(height));
@@ -160,11 +140,7 @@ class ChainTips {
         `Updated orphaned blocks cache. Fetched ${newOrphans} new orphaned blocks. Total ${allOrphans.length}`
       );
     } catch (e) {
-      logger.err(
-        `Cannot get fetch orphaned blocks. Reason: ${
-          e instanceof Error ? e.message : e
-        }`
-      );
+      logger.err(`Cannot get fetch orphaned blocks. Reason: ${e instanceof Error ? e.message : e}`);
     }
   }
 
@@ -187,8 +163,7 @@ class ChainTips {
       }
       try {
         let staleBlock: BlockExtended | undefined;
-        const alreadyIndexed =
-          await BlocksSummariesRepository.$isSummaryIndexed(block.id);
+        const alreadyIndexed = await BlocksSummariesRepository.$isSummaryIndexed(block.id);
         const needToCache =
           Object.keys(this.staleTips).length < this.staleTipsCacheSize ||
           block.height >
@@ -201,16 +176,11 @@ class ChainTips {
           // don't DDOS core by indexing too fast
           await Common.sleep$(5000);
         } else if (needToCache) {
-          staleBlock = (await blocks.$getBlock(
-            block.id,
-            true
-          )) as BlockExtended;
+          staleBlock = (await blocks.$getBlock(block.id, true)) as BlockExtended;
         }
 
         if (staleBlock && needToCache) {
-          const canonicalBlock = await blocks.$indexBlockByHeight(
-            staleBlock.height
-          );
+          const canonicalBlock = await blocks.$indexBlockByHeight(staleBlock.height);
           this.staleTips[staleBlock.height] = {
             height: staleBlock.height,
             hash: staleBlock.id,
@@ -223,9 +193,9 @@ class ChainTips {
         }
       } catch (e) {
         logger.err(
-          `Failed to index orphaned block ${block.id} at height ${
-            block.height
-          }. Reason: ${e instanceof Error ? e.message : e}`
+          `Failed to index orphaned block ${block.id} at height ${block.height}. Reason: ${
+            e instanceof Error ? e.message : e
+          }`
         );
       }
     }
@@ -244,9 +214,7 @@ class ChainTips {
     }
   }
 
-  public getOrphanedBlocksAtHeight(
-    height: number | undefined
-  ): OrphanedBlock[] {
+  public getOrphanedBlocksAtHeight(height: number | undefined): OrphanedBlock[] {
     if (height === undefined) {
       return [];
     }

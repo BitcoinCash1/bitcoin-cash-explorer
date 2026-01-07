@@ -14,8 +14,7 @@ var IPCheck = (module.exports = function (input) {
 IPCheck.prototype.parse = function () {
   var self = this;
 
-  if (!self.input || typeof self.input !== "string")
-    return (self.valid = false);
+  if (!self.input || typeof self.input !== "string") return (self.valid = false);
 
   var ip;
 

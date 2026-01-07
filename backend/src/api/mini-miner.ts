@@ -114,9 +114,7 @@ export function convertToGraphTx(
       base: tx.fee || 0,
       ancestor: tx.fee || 0,
     },
-    depends: tx.vin
-      .map((vin) => vin.txid)
-      .filter((depend) => depend) as string[],
+    depends: tx.vin.map((vin) => vin.txid).filter((depend) => depend) as string[],
     spentby: spendMap
       ? (tx.vout
           .map((vout, index) => {
@@ -190,9 +188,7 @@ function setAncestors(
 ): Map<string, GraphTx> {
   // sanity check for infinite recursion / too many ancestors (should never happen)
   if (depth > MAX_RELATIVE_GRAPH_SIZE) {
-    logger.warn(
-      'cpfp dependency calculation failed: setAncestors reached depth of 100, unable to proceed'
-    );
+    logger.warn('cpfp dependency calculation failed: setAncestors reached depth of 100, unable to proceed');
     return tx.ancestors;
   }
 
@@ -227,13 +223,9 @@ function setAncestors(
  *
  * @param all
  */
-export function initializeRelatives(
-  mempoolTxs: Map<string, GraphTx>
-): Map<string, GraphTx> {
+export function initializeRelatives(mempoolTxs: Map<string, GraphTx>): Map<string, GraphTx> {
   const visited: Map<string, Map<string, GraphTx>> = new Map();
-  const leaves: GraphTx[] = Array.from(mempoolTxs.values()).filter(
-    (entry) => entry.spentby.length === 0
-  );
+  const leaves: GraphTx[] = Array.from(mempoolTxs.values()).filter((entry) => entry.spentby.length === 0);
   for (const leaf of leaves) {
     setAncestors(leaf, mempoolTxs, visited);
   }
@@ -255,10 +247,7 @@ export function initializeRelatives(
  * @param cluster
  * @param ancestors
  */
-export function removeAncestors(
-  cluster: Map<string, GraphTx>,
-  all: Map<string, GraphTx>
-): void {
+export function removeAncestors(cluster: Map<string, GraphTx>, all: Map<string, GraphTx>): void {
   // remove
   cluster.forEach((tx) => {
     all.delete(tx.txid);
@@ -370,10 +359,7 @@ export function makeBlockTemplate(
     let nextTx;
     const nextPoolTx = mempoolArray[0];
     const nextModifiedTx = modified[0];
-    if (
-      nextPoolTx &&
-      (!nextModifiedTx || (nextPoolTx.score || 0) > (nextModifiedTx.score || 0))
-    ) {
+    if (nextPoolTx && (!nextModifiedTx || (nextPoolTx.score || 0) > (nextModifiedTx.score || 0))) {
       nextTx = nextPoolTx;
       mempoolArray.shift();
     } else {
@@ -388,12 +374,9 @@ export function makeBlockTemplate(
       // TODO: Update for BCH. It used to be: blockWeight + 4 * nextTx.ancestorWeight
       if (
         blocks.length >= maxBlocks - 1 ||
-        (blockSize + nextTx.ancestorSize < sizeLimit &&
-          blockSigops + nextTx.ancestorSigops <= sigopLimit)
+        (blockSize + nextTx.ancestorSize < sizeLimit && blockSigops + nextTx.ancestorSigops <= sigopLimit)
       ) {
-        const ancestors: MinerTransaction[] = Array.from(
-          nextTx.ancestorMap.values()
-        );
+        const ancestors: MinerTransaction[] = Array.from(nextTx.ancestorMap.values());
         // sort ancestors by dependency graph (equivalent to sorting by ascending ancestor count)
         const sortedTxSet = [
           ...ancestors.sort((a, b) => {
@@ -402,10 +385,7 @@ export function makeBlockTemplate(
           nextTx,
         ];
         const clusterTxids = sortedTxSet.map((tx) => tx.txid);
-        const effectiveFeeRate = Math.min(
-          nextTx.dependencyRate || Infinity,
-          nextTx.ancestorFee / nextTx.ancestorSize
-        );
+        const effectiveFeeRate = Math.min(nextTx.dependencyRate || Infinity, nextTx.ancestorFee / nextTx.ancestorSize);
         const used: MinerTransaction[] = [];
         while (sortedTxSet.length) {
           const ancestor = sortedTxSet.pop();
@@ -428,12 +408,7 @@ export function makeBlockTemplate(
         // remove these as valid package ancestors for any descendants remaining in the mempool
         if (used.length) {
           used.forEach((tx) => {
-            modified = updateDescendants(
-              tx,
-              auditPool,
-              modified,
-              effectiveFeeRate
-            );
+            modified = updateDescendants(tx, auditPool, modified, effectiveFeeRate);
           });
         }
 
@@ -446,8 +421,7 @@ export function makeBlockTemplate(
     }
 
     // this block is full
-    const exceededPackageTries =
-      failures > 1000 && blockSize > sizeLimit - 4000;
+    const exceededPackageTries = failures > 1000 && blockSize > sizeLimit - 4000;
     const queueEmpty = !mempoolArray.length && !modified.length;
 
     if (exceededPackageTries || queueEmpty) {
@@ -464,10 +438,7 @@ export function makeBlockTemplate(
 
 // traverse in-mempool ancestors
 // recursion unavoidable, but should be limited to depth < 25 by mempool policy
-function setRelatives(
-  tx: MinerTransaction,
-  mempool: Map<string, MinerTransaction>
-): void {
+function setRelatives(tx: MinerTransaction, mempool: Map<string, MinerTransaction>): void {
   for (const parent of tx.inputs) {
     const parentTx = mempool.get(parent);
     if (parentTx && !tx.ancestorMap?.has(parent)) {
@@ -514,11 +485,7 @@ function updateDescendants(
   });
   while (descendants.length) {
     descendantTx = descendants.pop();
-    if (
-      descendantTx &&
-      descendantTx.ancestorMap &&
-      descendantTx.ancestorMap.has(rootTx.txid)
-    ) {
+    if (descendantTx && descendantTx.ancestorMap && descendantTx.ancestorMap.has(rootTx.txid)) {
       // remove tx as ancestor
       descendantTx.ancestorMap.delete(rootTx.txid);
       descendantTx.ancestorFee -= rootTx.fee + rootTx.feeDelta;
@@ -561,10 +528,7 @@ function priorityComparator(a: MinerTransaction, b: MinerTransaction): number {
 // returns the most significant 4 bytes of the txid as an integer
 function txidToOrdering(txid: string): number {
   return parseInt(
-    txid.substring(62, 64) +
-      txid.substring(60, 62) +
-      txid.substring(58, 60) +
-      txid.substring(56, 58),
+    txid.substring(62, 64) + txid.substring(60, 62) + txid.substring(58, 60) + txid.substring(56, 58),
     16
   );
 }

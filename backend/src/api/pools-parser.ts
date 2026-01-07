@@ -47,17 +47,13 @@ class PoolsParser {
 
     for (const pool of this.miningPools) {
       if (!pool.id) {
-        logger.info(
-          `Mining pool ${pool.name} has no unique 'id' defined. Skipping.`
-        );
+        logger.info(`Mining pool ${pool.name} has no unique 'id' defined. Skipping.`);
         continue;
       }
 
       // One of the two fields 'addresses' or 'regexes' must be a non-empty array
       if (!pool.addresses && !pool.regexes) {
-        logger.err(
-          `Mining pool ${pool.name} must have at least one of the fields 'addresses' or 'regexes'. Skipping.`
-        );
+        logger.err(`Mining pool ${pool.name} must have at least one of the fields 'addresses' or 'regexes'. Skipping.`);
         continue;
       }
 
@@ -65,9 +61,7 @@ class PoolsParser {
       pool.regexes = pool.regexes || [];
 
       if (pool.addresses.length === 0 && pool.regexes.length === 0) {
-        logger.err(
-          `Mining pool ${pool.name} has no 'addresses' nor 'regexes' defined. Skipping.`
-        );
+        logger.err(`Mining pool ${pool.name} has no 'addresses' nor 'regexes' defined. Skipping.`);
         continue;
       }
 
@@ -94,11 +88,7 @@ class PoolsParser {
           logger.warn(
             `Renaming ${poolDB.name} mining pool to ${pool.name}. Slug has been updated. Maybe you want to make a redirection from 'https://mempool.space/mining/pool/${poolDB.slug}' to 'https://mempool.space/mining/pool/${newSlug}`
           );
-          await PoolsRepository.$renameMiningPool(
-            poolDB.id,
-            newSlug,
-            pool.name
-          );
+          await PoolsRepository.$renameMiningPool(poolDB.id, newSlug, pool.name);
           clearCache = true;
         }
         if (poolDB.link !== pool.link) {
@@ -107,19 +97,10 @@ class PoolsParser {
           await PoolsRepository.$updateMiningPoolLink(poolDB.id, pool.link);
           clearCache = true;
         }
-        if (
-          JSON.stringify(pool.addresses) !== poolDB.addresses ||
-          JSON.stringify(pool.regexes) !== poolDB.regexes
-        ) {
+        if (JSON.stringify(pool.addresses) !== poolDB.addresses || JSON.stringify(pool.regexes) !== poolDB.regexes) {
           // Pool addresses changed or coinbase tags changed
-          logger.notice(
-            `Updating addresses and/or coinbase tags for ${pool.name} mining pool.`
-          );
-          await PoolsRepository.$updateMiningPoolTags(
-            poolDB.id,
-            pool.addresses,
-            pool.regexes
-          );
+          logger.notice(`Updating addresses and/or coinbase tags for ${pool.name} mining pool.`);
+          await PoolsRepository.$updateMiningPoolTags(poolDB.id, pool.addresses, pool.regexes);
           reindexUnknown = true;
           clearCache = true;
           await this.$reindexBlocksForPool(poolDB.id);
@@ -128,9 +109,7 @@ class PoolsParser {
     }
 
     if (reindexUnknown) {
-      logger.notice(
-        `Updating addresses and/or coinbase tags for unknown mining pool.`
-      );
+      logger.notice(`Updating addresses and/or coinbase tags for unknown mining pool.`);
       let unknownPool;
       if (config.DATABASE.ENABLED === true) {
         unknownPool = await PoolsRepository.$getUnknownPool();
@@ -152,19 +131,13 @@ class PoolsParser {
     }
   }
 
-  public matchBlockMiner(
-    scriptsig: string,
-    addresses: string[],
-    pools: PoolTag[]
-  ): PoolTag | undefined {
+  public matchBlockMiner(scriptsig: string, addresses: string[], pools: PoolTag[]): PoolTag | undefined {
     const asciiScriptSig = transactionUtils.hex2ascii(scriptsig);
 
     for (let i = 0; i < pools.length; ++i) {
       if (addresses.length) {
         const poolAddresses: string[] =
-          typeof pools[i].addresses === 'string'
-            ? JSON.parse(pools[i].addresses)
-            : pools[i].addresses;
+          typeof pools[i].addresses === 'string' ? JSON.parse(pools[i].addresses) : pools[i].addresses;
         for (let y = 0; y < poolAddresses.length; y++) {
           if (addresses.indexOf(poolAddresses[y]) !== -1) {
             return pools[i];
@@ -172,10 +145,7 @@ class PoolsParser {
         }
       }
 
-      const regexes: string[] =
-        typeof pools[i].regexes === 'string'
-          ? JSON.parse(pools[i].regexes)
-          : pools[i].regexes;
+      const regexes: string[] = typeof pools[i].regexes === 'string' ? JSON.parse(pools[i].regexes) : pools[i].regexes;
       for (let y = 0; y < regexes.length; ++y) {
         const regex = new RegExp(regexes[y], 'i');
         const match = asciiScriptSig.match(regex);
@@ -215,11 +185,7 @@ class PoolsParser {
         `);
       }
     } catch (e) {
-      logger.err(
-        `Unable to insert or update "Unknown" mining pool. Reason: ${
-          e instanceof Error ? e.message : e
-        }`
-      );
+      logger.err(`Unable to insert or update "Unknown" mining pool. Reason: ${e instanceof Error ? e.message : e}`);
     }
   }
 
@@ -257,11 +223,7 @@ class PoolsParser {
     let changed = 0;
     for (const block of blocks) {
       const addresses = JSON.parse(block.coinbase_addresses) || [];
-      const newPool = this.matchBlockMiner(
-        block.coinbase_raw,
-        addresses,
-        pools
-      );
+      const newPool = this.matchBlockMiner(block.coinbase_raw, addresses, pools);
       if (newPool && newPool.id !== poolId) {
         changed++;
         await BlocksRepository.$savePool(block.hash, newPool.id);

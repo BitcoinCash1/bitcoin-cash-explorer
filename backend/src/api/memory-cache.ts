@@ -23,9 +23,7 @@ class MemoryCache {
   }
 
   public get<T>(type: string, id: string): T | null {
-    const found = this.cache.find(
-      (cache) => cache.type === type && cache.id === id
-    );
+    const found = this.cache.find((cache) => cache.type === type && cache.id === id);
     if (found) {
       return found.data;
     }

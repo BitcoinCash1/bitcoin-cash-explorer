@@ -94,19 +94,14 @@ export function calcDifficultyAdjustment(
 
   const diffSeconds = Math.max(0, nowSeconds - DATime);
   const blocksInEpoch = blockHeight >= 0 ? blockHeight % EPOCH_BLOCK_LENGTH : 0;
-  const progressPercent =
-    blockHeight >= 0 ? (blocksInEpoch / EPOCH_BLOCK_LENGTH) * 100 : 100;
+  const progressPercent = blockHeight >= 0 ? (blocksInEpoch / EPOCH_BLOCK_LENGTH) * 100 : 100;
   const remainingBlocks = EPOCH_BLOCK_LENGTH - blocksInEpoch;
-  const nextRetargetHeight =
-    blockHeight >= 0 ? blockHeight + remainingBlocks : 0;
+  const nextRetargetHeight = blockHeight >= 0 ? blockHeight + remainingBlocks : 0;
   const expectedBlocks = diffSeconds / BLOCK_SECONDS_TARGET;
-  const actualTimespan =
-    (blocksInEpoch === 2015 ? latestBlockTimestamp : nowSeconds) - DATime;
+  const actualTimespan = (blocksInEpoch === 2015 ? latestBlockTimestamp : nowSeconds) - DATime;
 
   let difficultyChange = 0;
-  let timeAvgSecs = blocksInEpoch
-    ? diffSeconds / blocksInEpoch
-    : BLOCK_SECONDS_TARGET;
+  let timeAvgSecs = blocksInEpoch ? diffSeconds / blocksInEpoch : BLOCK_SECONDS_TARGET;
   let adjustedTimeAvgSecs = timeAvgSecs;
 
   // for the first 504 blocks of the epoch, calculate the expected avg block interval
@@ -116,11 +111,9 @@ export function calcDifficultyAdjustment(
     const adjustedTimeLastEpoch = timeLastEpoch * (1 + previousRetarget / 100);
     const adjustedTimeSpan = diffSeconds + adjustedTimeLastEpoch;
     adjustedTimeAvgSecs = adjustedTimeSpan / 503;
-    difficultyChange =
-      (BLOCK_SECONDS_TARGET / (adjustedTimeSpan / 504) - 1) * 100;
+    difficultyChange = (BLOCK_SECONDS_TARGET / (adjustedTimeSpan / 504) - 1) * 100;
   } else {
-    difficultyChange =
-      (BLOCK_SECONDS_TARGET / (actualTimespan / (blocksInEpoch + 1)) - 1) * 100;
+    difficultyChange = (BLOCK_SECONDS_TARGET / (actualTimespan / (blocksInEpoch + 1)) - 1) * 100;
   }
 
   // Max increase is x4 (+300%)
@@ -142,8 +135,7 @@ export function calcDifficultyAdjustment(
 
     const secondsSinceLastBlock = nowSeconds - latestBlockTimestamp;
     if (secondsSinceLastBlock + timeAvgSecs > TESTNET_MAX_BLOCK_SECONDS) {
-      timeOffset =
-        -Math.min(secondsSinceLastBlock, TESTNET_MAX_BLOCK_SECONDS) * 1000;
+      timeOffset = -Math.min(secondsSinceLastBlock, TESTNET_MAX_BLOCK_SECONDS) * 1000;
     }
   }
 

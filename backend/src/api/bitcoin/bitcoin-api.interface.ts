@@ -134,12 +134,7 @@ export namespace IBitcoinApi {
     height: number; //  (numeric) height of the chain tip
     hash: string; //  (string) block hash of the tip
     branchlen: number; //  (numeric) zero for main chain, otherwise length of branch connecting the tip to the main chain
-    status:
-      | 'invalid'
-      | 'headers-only'
-      | 'valid-headers'
-      | 'valid-fork'
-      | 'active';
+    status: 'invalid' | 'headers-only' | 'valid-headers' | 'valid-fork' | 'active';
   }
 
   export interface BlockchainInfo {

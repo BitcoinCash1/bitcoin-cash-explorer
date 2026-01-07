@@ -5,19 +5,10 @@ import priceUpdater, { PriceFeed, PriceHistory } from '../price-updater';
 
 class KrakenApi implements PriceFeed {
   public name: string = 'Kraken';
-  public currencies: string[] = [
-    'USD',
-    'EUR',
-    'GBP',
-    'CAD',
-    'CHF',
-    'AUD',
-    'JPY',
-  ];
+  public currencies: string[] = ['USD', 'EUR', 'GBP', 'CAD', 'CHF', 'AUD', 'JPY'];
 
   public url: string = 'https://api.kraken.com/0/public/Ticker?pair=XBT';
-  public urlHist: string =
-    'https://api.kraken.com/0/public/OHLC?interval={GRANULARITY}&pair=XBT';
+  public urlHist: string = 'https://api.kraken.com/0/public/OHLC?interval={GRANULARITY}&pair=XBT';
 
   constructor() {}
 
@@ -45,10 +36,7 @@ class KrakenApi implements PriceFeed {
     }
   }
 
-  public async $fetchRecentPrice(
-    currencies: string[],
-    type: 'hour' | 'day'
-  ): Promise<PriceHistory> {
+  public async $fetchRecentPrice(currencies: string[], type: 'hour' | 'day'): Promise<PriceHistory> {
     const priceHistory: PriceHistory = {};
 
     for (const currency of currencies) {
@@ -56,12 +44,8 @@ class KrakenApi implements PriceFeed {
         continue;
       }
 
-      const response = await query(
-        this.urlHist.replace('{GRANULARITY}', '60') + currency
-      );
-      const pricesRaw = response
-        ? response['result'][this.getTicker(currency)]
-        : [];
+      const response = await query(this.urlHist.replace('{GRANULARITY}', '60') + currency);
+      const pricesRaw = response ? response['result'][this.getTicker(currency)] : [];
 
       for (const price of pricesRaw) {
         if (priceHistory[price[0]] === undefined) {
@@ -91,12 +75,8 @@ class KrakenApi implements PriceFeed {
     const priceHistory: any = {}; // map: timestamp -> Prices
 
     for (const currency of this.currencies) {
-      const response = await query(
-        this.urlHist.replace('{GRANULARITY}', '10080') + currency
-      );
-      const priceHistoryRaw = response
-        ? response['result'][this.getTicker(currency)]
-        : [];
+      const response = await query(this.urlHist.replace('{GRANULARITY}', '10080') + currency);
+      const priceHistoryRaw = response ? response['result'][this.getTicker(currency)] : [];
 
       for (const price of priceHistoryRaw) {
         if (existingPriceTimes.includes(parseInt(price[0]))) {
@@ -117,10 +97,7 @@ class KrakenApi implements PriceFeed {
         delete priceHistory[time];
         continue;
       }
-      await PricesRepository.$savePrices(
-        parseInt(time, 10),
-        priceHistory[time]
-      );
+      await PricesRepository.$savePrices(parseInt(time, 10), priceHistory[time]);
     }
 
     if (Object.keys(priceHistory).length > 0) {

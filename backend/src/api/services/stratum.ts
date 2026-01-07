@@ -92,15 +92,10 @@ class StratumApi {
 
         this.ws.on('message', (data, isBinary) => {
           try {
-            const parsedMsg = JSON.parse(
-              (isBinary ? data : data.toString()) as string
-            );
+            const parsedMsg = JSON.parse((isBinary ? data : data.toString()) as string);
             this.handleWebsocketMessage(parsedMsg);
           } catch (e) {
-            logger.warn(
-              'Failed to parse stratum websocket message: ' +
-                (e instanceof Error ? e.message : e)
-            );
+            logger.warn('Failed to parse stratum websocket message: ' + (e instanceof Error ? e.message : e));
           }
         });
       }

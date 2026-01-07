@@ -14,11 +14,7 @@ import { isIP } from 'net';
 import transactionUtils from './transaction-utils';
 import { isPoint } from '../utils/secp256k1';
 import logger from '../logger';
-import {
-  getVarIntLength,
-  opcodes,
-  parseMultisigScript,
-} from '../utils/bitcoin-script';
+import { getVarIntLength, opcodes, parseMultisigScript } from '../utils/bitcoin-script';
 import { IEsploraApi } from './bitcoin/esplora-api.interface';
 
 // Bitcoin Cash Node default policy settings
@@ -37,8 +33,7 @@ const DEFAULT_PERMIT_BAREMULTISIG = true;
 const MAX_TX_LEGACY_SIGOPS = 2_500 * 4; // witness-adjusted sigops
 
 export class Common {
-  static nativeAssetId =
-    '6f0279e9ed041c3d710a9f57d0c02928416460c4b722ae3457a11eec381c526d';
+  static nativeAssetId = '6f0279e9ed041c3d710a9f57d0c02928416460c4b722ae3457a11eec381c526d';
 
   static median(numbers: number[]) {
     let medianNr = 0;
@@ -62,10 +57,7 @@ export class Common {
     return numbers[index];
   }
 
-  static getFeesInRange(
-    transactions: TransactionExtended[],
-    rangeLength: number
-  ) {
+  static getFeesInRange(transactions: TransactionExtended[], rangeLength: number) {
     const filtered: TransactionExtended[] = [];
     let lastValidRate = Infinity;
     // filter out anomalous fee rates to ensure monotonic range
@@ -80,10 +72,7 @@ export class Common {
     let itemsToAdd = rangeLength - 2;
 
     while (itemsToAdd > 0) {
-      arr.push(
-        filtered[Math.floor(filtered.length * chunk * itemsToAdd)]
-          .effectiveFeePerSize
-      );
+      arr.push(filtered[Math.floor(filtered.length * chunk * itemsToAdd)].effectiveFeePerSize);
       itemsToAdd--;
     }
 
@@ -96,8 +85,7 @@ export class Common {
     if (!witness?.length) {
       return flags;
     }
-    const hasAnnex =
-      witness.length > 1 && witness[witness.length - 1].startsWith('50');
+    const hasAnnex = witness.length > 1 && witness[witness.length - 1].startsWith('50');
     if (witness?.length === (hasAnnex ? 2 : 1)) {
       // keypath spend, signature is the only witness item
       if (witness[0].length === 130) {
@@ -181,21 +169,13 @@ export class Common {
       if (vin.prevout?.scriptpubkey_type === 'p2sh') {
         // TODO: evaluate script (https://github.com/bitcoin/bitcoin/blob/1ac627c485a43e50a9a49baddce186ee3ad4daad/src/policy/policy.cpp#L177)
         // countScriptSigops returns the witness-scaled sigops, so divide by 4 before comparison with MAX_P2SH_SIGOPS
-        const sigops =
-          transactionUtils.countScriptSigops(vin.inner_redeemscript_asm) / 4;
+        const sigops = transactionUtils.countScriptSigops(vin.inner_redeemscript_asm) / 4;
         if (sigops > MAX_P2SH_SIGOPS) {
           return true;
         }
-      } else if (
-        ['unknown', 'provably_unspendable', 'empty'].includes(
-          vin.prevout?.scriptpubkey_type || ''
-        )
-      ) {
+      } else if (['unknown', 'provably_unspendable', 'empty'].includes(vin.prevout?.scriptpubkey_type || '')) {
         return true;
-      } else if (
-        vin.prevout?.scriptpubkey_type === 'anchor' &&
-        this.isNonStandardAnchor(vin, height)
-      ) {
+      } else if (vin.prevout?.scriptpubkey_type === 'anchor' && this.isNonStandardAnchor(vin, height)) {
         return true;
       }
     }
@@ -205,20 +185,13 @@ export class Common {
     let opreturnBytes = 0;
     for (const vout of tx.vout) {
       // scriptpubkey
-      if (
-        ['nonstandard', 'provably_unspendable', 'empty'].includes(
-          vout.scriptpubkey_type
-        )
-      ) {
+      if (['nonstandard', 'provably_unspendable', 'empty'].includes(vout.scriptpubkey_type)) {
         // (non-standard output type)
         return true;
       } else if (vout.scriptpubkey_type === 'unknown') {
         // undefined segwit version/length combinations are actually standard in outputs
         // https://github.com/bitcoin/bitcoin/blob/2c79abc7ad4850e9e3ba32a04c530155cda7f980/src/script/interpreter.cpp#L1950-L1951
-        if (
-          vout.scriptpubkey.startsWith('00') ||
-          !this.isWitnessProgram(vout.scriptpubkey)
-        ) {
+        if (vout.scriptpubkey.startsWith('00') || !this.isWitnessProgram(vout.scriptpubkey)) {
           return true;
         }
       } else if (vout.scriptpubkey_type === 'multisig') {
@@ -227,13 +200,7 @@ export class Common {
           return true;
         }
         const mOfN = parseMultisigScript(vout.scriptpubkey_asm);
-        if (
-          !mOfN ||
-          mOfN.n < 1 ||
-          mOfN.n > 3 ||
-          mOfN.m < 1 ||
-          mOfN.m > mOfN.n
-        ) {
+        if (!mOfN || mOfN.n < 1 || mOfN.n > 3 || mOfN.m < 1 || mOfN.m > mOfN.n) {
           // (non-standard bare multisig threshold)
           return true;
         }
@@ -276,9 +243,7 @@ export class Common {
   // A witness program is any valid scriptpubkey that consists of a 1-byte push opcode
   // followed by a data push between 2 and 40 bytes.
   // https://github.com/bitcoin/bitcoin/blob/2c79abc7ad4850e9e3ba32a04c530155cda7f980/src/script/script.cpp#L224-L240
-  static isWitnessProgram(
-    scriptpubkey: string
-  ): false | { version: number; program: string } {
+  static isWitnessProgram(scriptpubkey: string): false | { version: number; program: string } {
     if (scriptpubkey.length < 8 || scriptpubkey.length > 84) {
       return false;
     }
@@ -304,10 +269,7 @@ export class Common {
     signet: 211_000,
     '': 863_500,
   };
-  static isNonStandardVersion(
-    tx: TransactionExtended,
-    height?: number
-  ): boolean {
+  static isNonStandardVersion(tx: TransactionExtended, height?: number): boolean {
     let TX_MAX_STANDARD_VERSION = 3;
     if (
       height != null &&
@@ -334,8 +296,7 @@ export class Common {
     if (
       height != null &&
       this.ANCHOR_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK] &&
-      height <=
-        this.ANCHOR_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK] &&
+      height <= this.ANCHOR_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK] &&
       vin.prevout?.scriptpubkey === '51024e73'
     ) {
       // anchor outputs were non-standard to spend before v28.x (scheduled for 2024/09/30 https://github.com/bitcoin/bitcoin/issues/29891)
@@ -351,20 +312,12 @@ export class Common {
     signet: 260_000,
     '': 905_000,
   };
-  static isStandardEphemeralDust(
-    tx: TransactionExtended,
-    height?: number
-  ): boolean {
+  static isStandardEphemeralDust(tx: TransactionExtended, height?: number): boolean {
     if (
       tx.fee === 0 &&
       (height == null ||
-        (this.EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT[
-          config.MEMPOOL.NETWORK
-        ] &&
-          height >=
-            this.EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT[
-              config.MEMPOOL.NETWORK
-            ]))
+        (this.EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK] &&
+          height >= this.EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK]))
     ) {
       return true;
     }
@@ -379,18 +332,11 @@ export class Common {
     '': 921_000,
   };
   static MAX_DATACARRIER_BYTES = 83;
-  static isStandardOpReturn(
-    bytes: number,
-    outputs: number,
-    height?: number
-  ): boolean {
+  static isStandardOpReturn(bytes: number, outputs: number, height?: number): boolean {
     if (
       height == null ||
       (this.OP_RETURN_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK] &&
-        height >=
-          this.OP_RETURN_STANDARDNESS_ACTIVATION_HEIGHT[
-            config.MEMPOOL.NETWORK
-          ]) || // limits lifted
+        height >= this.OP_RETURN_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK]) || // limits lifted
       // OR
       (bytes <= this.MAX_DATACARRIER_BYTES && outputs <= 1) // below old limits
     ) {
@@ -406,19 +352,11 @@ export class Common {
     signet: 276_500,
     '': 921_000,
   };
-  static isNonStandardLegacySigops(
-    tx: TransactionExtended,
-    height?: number
-  ): boolean {
+  static isNonStandardLegacySigops(tx: TransactionExtended, height?: number): boolean {
     if (
       height == null ||
-      (this.LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT[
-        config.MEMPOOL.NETWORK
-      ] &&
-        height >=
-          this.LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT[
-            config.MEMPOOL.NETWORK
-          ])
+      (this.LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK] &&
+        height >= this.LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK])
     ) {
       if (!transactionUtils.checkSigopsBIP54(tx, MAX_TX_LEGACY_SIGOPS)) {
         return true;
@@ -450,17 +388,11 @@ export class Common {
       case '03':
         return flags | TransactionFlags.sighash_single;
       case '81':
-        return (
-          flags | TransactionFlags.sighash_all | TransactionFlags.sighash_acp
-        );
+        return flags | TransactionFlags.sighash_all | TransactionFlags.sighash_acp;
       case '82':
-        return (
-          flags | TransactionFlags.sighash_none | TransactionFlags.sighash_acp
-        );
+        return flags | TransactionFlags.sighash_none | TransactionFlags.sighash_acp;
       case '83':
-        return (
-          flags | TransactionFlags.sighash_single | TransactionFlags.sighash_acp
-        );
+        return flags | TransactionFlags.sighash_single | TransactionFlags.sighash_acp;
       default:
         return flags | TransactionFlags.sighash_default; // taproot only
     }
@@ -483,9 +415,7 @@ export class Common {
       // the script itself is the second-to-last witness item, not counting the annex
       const asm =
         vin.inner_witnessscript_asm ||
-        transactionUtils.convertScriptSigAsm(
-          vin.witness[vin.witness.length - (hasAnnex ? 3 : 2)]
-        );
+        transactionUtils.convertScriptSigAsm(vin.witness[vin.witness.length - (hasAnnex ? 3 : 2)]);
       // inscriptions smuggle data within an 'OP_0 OP_IF ... OP_ENDIF' envelope
       if (asm?.includes('OP_0 OP_IF')) {
         flags |= TransactionFlags.inscription;
@@ -552,8 +482,7 @@ export class Common {
         reusedInputAddresses[vin.prevout?.scriptpubkey_address] =
           (reusedInputAddresses[vin.prevout?.scriptpubkey_address] || 0) + 1;
       }
-      inValues[vin.prevout?.value || Math.random()] =
-        (inValues[vin.prevout?.value || Math.random()] || 0) + 1;
+      inValues[vin.prevout?.value || Math.random()] = (inValues[vin.prevout?.value || Math.random()] || 0) + 1;
     }
     // BCH has never RBF
     flags |= TransactionFlags.no_rbf;
@@ -565,21 +494,17 @@ export class Common {
           {
             flags |= TransactionFlags.p2pk;
             // detect fake pubkey (i.e. not a valid DER point on the secp256k1 curve)
-            hasFakePubkey =
-              hasFakePubkey || !isPoint(vout.scriptpubkey?.slice(2, -2));
+            hasFakePubkey = hasFakePubkey || !isPoint(vout.scriptpubkey?.slice(2, -2));
           }
           break;
         case 'multisig':
           {
             flags |= TransactionFlags.p2ms;
             // detect fake pubkeys (i.e. not valid DER points on the secp256k1 curve)
-            const asm =
-              vout.scriptpubkey_asm ||
-              transactionUtils.convertScriptSigAsm(vout.scriptpubkey);
+            const asm = vout.scriptpubkey_asm || transactionUtils.convertScriptSigAsm(vout.scriptpubkey);
             for (const key of asm?.split(' ') || []) {
               if (!hasFakePubkey && !key.startsWith('OP_')) {
-                hasFakePubkey =
-                  hasFakePubkey || this.isBurnKey(key) || !isPoint(key);
+                hasFakePubkey = hasFakePubkey || this.isBurnKey(key) || !isPoint(key);
               }
             }
           }
@@ -595,11 +520,9 @@ export class Common {
           break;
       }
       if (vout.scriptpubkey_address) {
-        reusedOutputAddresses[vout.scriptpubkey_address] =
-          (reusedOutputAddresses[vout.scriptpubkey_address] || 0) + 1;
+        reusedOutputAddresses[vout.scriptpubkey_address] = (reusedOutputAddresses[vout.scriptpubkey_address] || 0) + 1;
       }
-      outValues[vout.value || Math.random()] =
-        (outValues[vout.value || Math.random()] || 0) + 1;
+      outValues[vout.value || Math.random()] = (outValues[vout.value || Math.random()] || 0) + 1;
     }
     if (hasFakePubkey) {
       flags |= TransactionFlags.fake_pubkey;
@@ -609,19 +532,14 @@ export class Common {
     // (at least 5 inputs and 5 outputs, less than half of which are unique amounts, with no address reuse)
     const addressReuse =
       Object.keys(reusedOutputAddresses).reduce(
-        (acc, key) =>
-          Math.max(
-            acc,
-            (reusedInputAddresses[key] || 0) + (reusedOutputAddresses[key] || 0)
-          ),
+        (acc, key) => Math.max(acc, (reusedInputAddresses[key] || 0) + (reusedOutputAddresses[key] || 0)),
         0
       ) > 1;
     if (
       !addressReuse &&
       tx.vin.length >= 5 &&
       tx.vout.length >= 5 &&
-      Object.keys(inValues).length + Object.keys(outValues).length <=
-        (tx.vin.length + tx.vout.length) / 2
+      Object.keys(inValues).length + Object.keys(outValues).length <= (tx.vin.length + tx.vout.length) / 2
     ) {
       flags |= TransactionFlags.coinjoin;
     }
@@ -641,18 +559,12 @@ export class Common {
     return Number(flags);
   }
 
-  static classifyTransaction(
-    tx: TransactionExtended,
-    height?: number
-  ): TransactionClassified {
+  static classifyTransaction(tx: TransactionExtended, height?: number): TransactionClassified {
     let flags = 0;
     try {
       flags = Common.getTransactionFlags(tx, height);
     } catch (e) {
-      logger.warn(
-        'Failed to add classification flags to transaction: ' +
-          (e instanceof Error ? e.message : e)
-      );
+      logger.warn('Failed to add classification flags to transaction: ' + (e instanceof Error ? e.message : e));
     }
     tx.flags = flags;
     return {
@@ -661,10 +573,7 @@ export class Common {
     };
   }
 
-  static classifyTransactions(
-    txs: TransactionExtended[],
-    height?: number
-  ): TransactionClassified[] {
+  static classifyTransactions(txs: TransactionExtended[], height?: number): TransactionClassified[] {
     return txs.map((tx) => Common.classifyTransaction(tx, height));
   }
 
@@ -673,10 +582,7 @@ export class Common {
       txid: tx.txid,
       fee: tx.fee || 0,
       size: tx.size,
-      value: tx.vout.reduce(
-        (acc, vout) => acc + (vout.value ? vout.value : 0),
-        0
-      ),
+      value: tx.vout.reduce((acc, vout) => acc + (vout.value ? vout.value : 0), 0),
       rate: tx.effectiveFeePerSize,
       time: tx.firstSeen || undefined,
     };
@@ -702,10 +608,7 @@ export class Common {
   }
 
   // calculates the ratio of matched transactions to projected transactions by size
-  static getSimilarity(
-    projectedBlock: MempoolBlockWithTransactions,
-    transactions: TransactionExtended[]
-  ): number {
+  static getSimilarity(projectedBlock: MempoolBlockWithTransactions, transactions: TransactionExtended[]): number {
     let matchedSize = 0;
     let projectedSize = 0;
     const inBlock = {};
@@ -757,19 +660,14 @@ export class Common {
 
   static indexingEnabled(): boolean {
     return (
-      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(
-        config.MEMPOOL.NETWORK
-      ) &&
+      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK) &&
       config.DATABASE.ENABLED === true &&
       config.MEMPOOL.INDEXING_BLOCKS_AMOUNT !== 0
     );
   }
 
   static blocksSummariesIndexingEnabled(): boolean {
-    return (
-      Common.indexingEnabled() &&
-      config.MEMPOOL.BLOCKS_SUMMARIES_INDEXING === true
-    );
+    return Common.indexingEnabled() && config.MEMPOOL.BLOCKS_SUMMARIES_INDEXING === true;
   }
 
   static auditIndexingEnabled(): boolean {
@@ -777,10 +675,7 @@ export class Common {
   }
 
   static gogglesIndexingEnabled(): boolean {
-    return (
-      Common.blocksSummariesIndexingEnabled() &&
-      config.MEMPOOL.GOGGLES_INDEXING === true
-    );
+    return Common.blocksSummariesIndexingEnabled() && config.MEMPOOL.GOGGLES_INDEXING === true;
   }
 
   static setDateMidnight(date: Date): void {
@@ -929,12 +824,8 @@ export class Common {
 
     // calculate the "medianFee" as the average fee rate of the middle 0.25% weight units of the conceptual block
     const halfWidth = config.MEMPOOL.BLOCK_WEIGHT_UNITS / 800;
-    const leftBound = Math.floor(
-      config.MEMPOOL.BLOCK_WEIGHT_UNITS / 2 - halfWidth
-    );
-    const rightBound = Math.ceil(
-      config.MEMPOOL.BLOCK_WEIGHT_UNITS / 2 + halfWidth
-    );
+    const leftBound = Math.floor(config.MEMPOOL.BLOCK_WEIGHT_UNITS / 2 - halfWidth);
+    const rightBound = Math.ceil(config.MEMPOOL.BLOCK_WEIGHT_UNITS / 2 + halfWidth);
     for (let i = 0; i < sortedTxs.length && sizeCount < rightBound; i++) {
       const left = sizeCount;
       const right = sizeCount + sortedTxs[i].size;
@@ -971,36 +862,23 @@ export class Common {
 
     return {
       medianFee: medianFeeRate,
-      feeRange: [
-        minFee,
-        [10, 25, 50, 75, 90].map(
-          (n) => Common.getNthPercentile(n, sortedTxs).rate
-        ),
-        maxFee,
-      ].flat(),
+      feeRange: [minFee, [10, 25, 50, 75, 90].map((n) => Common.getNthPercentile(n, sortedTxs).rate), maxFee].flat(),
     };
   }
 
   static getNthPercentile(n: number, sortedDistribution: any[]): any {
-    return sortedDistribution[
-      Math.floor((sortedDistribution.length - 1) * (n / 100))
-    ];
+    return sortedDistribution[Math.floor((sortedDistribution.length - 1) * (n / 100))];
   }
 
   static getTransactionFromRequest(req: Request, form: boolean): string {
-    const rawTx: any =
-      typeof req.body === 'object' && form
-        ? (Object.values(req.body)[0] as any)
-        : req.body;
+    const rawTx: any = typeof req.body === 'object' && form ? (Object.values(req.body)[0] as any) : req.body;
     if (typeof rawTx !== 'string') {
       throw Object.assign(new Error('Non-string request body'), { code: -1 });
     }
 
     // Support both upper and lower case hex
     // Support both txHash= Form and direct API POST
-    const reg = form
-      ? /^txHash=((?:[a-fA-F0-9]{2})+)$/
-      : /^((?:[a-fA-F0-9]{2})+)$/;
+    const reg = form ? /^txHash=((?:[a-fA-F0-9]{2})+)$/ : /^((?:[a-fA-F0-9]{2})+)$/;
     const matches = reg.exec(rawTx);
     if (!matches || !matches[1]) {
       throw Object.assign(new Error('Non-hex request body'), { code: -2 });
@@ -1012,20 +890,9 @@ export class Common {
     return this.validateTransactionHex(matches[1].toLowerCase());
   }
 
-  static getTransactionsFromRequest(
-    req: Request,
-    limit: number = 25
-  ): string[] {
-    if (
-      !Array.isArray(req.body) ||
-      req.body.some((hex) => typeof hex !== 'string')
-    ) {
-      throw Object.assign(
-        new Error(
-          'Invalid request body (should be an array of hexadecimal strings)'
-        ),
-        { code: -1 }
-      );
+  static getTransactionsFromRequest(req: Request, limit: number = 25): string[] {
+    if (!Array.isArray(req.body) || req.body.some((hex) => typeof hex !== 'string')) {
+      throw Object.assign(new Error('Invalid request body (should be an array of hexadecimal strings)'), { code: -1 });
     }
 
     if (limit && req.body.length > limit) {
@@ -1070,9 +937,7 @@ export class Common {
     // Check 2: Simple size check
     if (tx.weight() > config.MEMPOOL.MAX_PUSH_TX_SIZE_WEIGHT) {
       throw Object.assign(
-        new Error(
-          `Transaction too large (max ${config.MEMPOOL.MAX_PUSH_TX_SIZE_WEIGHT} weight units)`
-        ),
+        new Error(`Transaction too large (max ${config.MEMPOOL.MAX_PUSH_TX_SIZE_WEIGHT} weight units)`),
         { code: -3 }
       );
     }
@@ -1082,18 +947,13 @@ export class Common {
       tx.ins.forEach((input) => {
         const witness = input.witness;
         // See BIP 341: Script validation rules
-        const hasAnnex =
-          witness.length >= 2 && witness[witness.length - 1][0] === 0x50;
+        const hasAnnex = witness.length >= 2 && witness[witness.length - 1][0] === 0x50;
         const scriptSpendMinLength = hasAnnex ? 3 : 2;
         const maybeScriptSpend = witness.length >= scriptSpendMinLength;
 
         if (maybeScriptSpend) {
-          const controlBlock =
-            witness[witness.length - scriptSpendMinLength + 1];
-          if (
-            controlBlock.length === 0 ||
-            !this.isValidLeafVersion(controlBlock[0])
-          ) {
+          const controlBlock = witness[witness.length - scriptSpendMinLength + 1];
+          if (controlBlock.length === 0 || !this.isValidLeafVersion(controlBlock[0])) {
             // Skip this input, it's not taproot
             return;
           }
@@ -1108,14 +968,8 @@ export class Common {
           for (let i = 0; i < decompiled.length - 1; i++) {
             const first = decompiled[i];
             const second = decompiled[i + 1];
-            if (
-              first === bitcoinjs.opcodes.OP_FALSE &&
-              second === bitcoinjs.opcodes.OP_IF
-            ) {
-              throw Object.assign(
-                new Error('Unreachable taproot scripts not allowed'),
-                { code: -5 }
-              );
+            if (first === bitcoinjs.opcodes.OP_FALSE && second === bitcoinjs.opcodes.OP_IF) {
+              throw Object.assign(new Error('Unreachable taproot scripts not allowed'), { code: -5 });
             }
           }
         }
@@ -1133,11 +987,7 @@ export class Common {
 
     // Must be an integer between 0 and 255
     // Since we're parsing a byte
-    if (
-      Math.floor(leafVersion) !== leafVersion ||
-      leafVersion < 0 ||
-      leafVersion > 255
-    ) {
+    if (Math.floor(leafVersion) !== leafVersion || leafVersion < 0 || leafVersion > 255) {
       return false;
     }
     // "the leaf version cannot be odd"
@@ -1150,11 +1000,7 @@ export class Common {
       return true;
     }
     // and also 0x66, 0x7e, 0x80, 0x84, 0x96, 0x98, 0xba, 0xbc, 0xbe."
-    if (
-      [0x66, 0x7e, 0x80, 0x84, 0x96, 0x98, 0xba, 0xbc, 0xbe].includes(
-        leafVersion
-      )
-    ) {
+    if ([0x66, 0x7e, 0x80, 0x84, 0x96, 0x98, 0xba, 0xbc, 0xbe].includes(leafVersion)) {
       return true;
     }
     // Otherwise, invalid
@@ -1193,11 +1039,7 @@ export class OnlineFeeStatsCalculator {
   private feeRange: { avg: number; min: number; max: number }[] = [];
   private totalSize: number = 0;
 
-  constructor(
-    maxWeight: number,
-    percentileBandWidth?: number,
-    percentiles?: number[]
-  ) {
+  constructor(maxWeight: number, percentileBandWidth?: number, percentiles?: number[]) {
     this.maxWeight = maxWeight;
     if (percentiles && percentiles.length) {
       this.percentiles = percentiles;
@@ -1231,8 +1073,7 @@ export class OnlineFeeStatsCalculator {
       if (right > this.leftBound) {
         this.inBand = true;
         const txRate = tx.rate || tx.effectiveFeePerSize || tx.feePerVsize || 0;
-        const weight =
-          Math.min(right, this.rightBound) - Math.max(left, this.leftBound);
+        const weight = Math.min(right, this.rightBound) - Math.max(left, this.leftBound);
         this.totalBandFee += txRate * weight;
         this.totalBandWeight += weight;
         this.maxBandRate = Math.max(this.maxBandRate, txRate);
@@ -1242,9 +1083,7 @@ export class OnlineFeeStatsCalculator {
 
       if (left >= this.rightBound) {
         this.inBand = false;
-        const avgBandFeeRate = this.totalBandWeight
-          ? this.totalBandFee / this.totalBandWeight
-          : 0;
+        const avgBandFeeRate = this.totalBandWeight ? this.totalBandFee / this.totalBandWeight : 0;
         this.feeRange.unshift({
           avg: avgBandFeeRate,
           min: this.minBandRate,
@@ -1264,8 +1103,7 @@ export class OnlineFeeStatsCalculator {
   private setNextBounds(): void {
     const nextPercentile = this.percentiles[this.bandIndex];
     if (nextPercentile != null) {
-      this.leftBound =
-        (nextPercentile / 100) * this.maxWeight - this.bandWidth / 2;
+      this.leftBound = (nextPercentile / 100) * this.maxWeight - this.bandWidth / 2;
       this.rightBound = this.leftBound + this.bandWidth;
     } else {
       this.leftBound = Infinity;
@@ -1275,9 +1113,7 @@ export class OnlineFeeStatsCalculator {
 
   getRawFeeStats(): WorkingEffectiveFeeStats {
     if (this.totalBandWeight > 0) {
-      const avgBandFeeRate = this.totalBandWeight
-        ? this.totalBandFee / this.totalBandWeight
-        : 0;
+      const avgBandFeeRate = this.totalBandWeight ? this.totalBandFee / this.totalBandWeight : 0;
       this.feeRange.unshift({
         avg: avgBandFeeRate,
         min: this.minBandRate,

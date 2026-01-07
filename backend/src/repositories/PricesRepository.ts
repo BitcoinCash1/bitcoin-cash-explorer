@@ -188,16 +188,7 @@ class PricesRepository {
           `
           INSERT INTO prices(time,             USD, EUR, GBP, CAD, CHF, AUD, JPY)
           VALUE             (FROM_UNIXTIME(?), ?,   ?,   ?,   ?,   ?,   ?,   ?  )`,
-          [
-            time,
-            prices.USD,
-            prices.EUR,
-            prices.GBP,
-            prices.CAD,
-            prices.CHF,
-            prices.AUD,
-            prices.JPY,
-          ]
+          [time, prices.USD, prices.EUR, prices.GBP, prices.CAD, prices.CHF, prices.AUD, prices.JPY]
         );
       } else {
         // Store all 7 main currencies + all the currencies obtained with the external API
@@ -244,10 +235,7 @@ class PricesRepository {
         );
       }
     } catch (e) {
-      logger.err(
-        `Cannot save exchange rate into db. Reason: ` +
-          (e instanceof Error ? e.message : e)
-      );
+      logger.err(`Cannot save exchange rate into db. Reason: ` + (e instanceof Error ? e.message : e));
       throw e;
     }
   }
@@ -303,10 +291,7 @@ class PricesRepository {
         );
       }
     } catch (e) {
-      logger.err(
-        `Cannot update exchange rate into db. Reason: ` +
-          (e instanceof Error ? e.message : e)
-      );
+      logger.err(`Cannot update exchange rate into db. Reason: ` + (e instanceof Error ? e.message : e));
       throw e;
     }
   }
@@ -394,9 +379,7 @@ class PricesRepository {
     }[];
   }
 
-  public async $getPricesTimesAndId(): Promise<
-    { time: number; id: number; USD: number }[]
-  > {
+  public async $getPricesTimesAndId(): Promise<{ time: number; id: number; USD: number }[]> {
     const [times] = await DB.query(`
       SELECT
         UNIX_TIMESTAMP(time) AS time,
@@ -536,18 +519,12 @@ class PricesRepository {
         exchangeRates: exchangeRates,
       };
     } catch (e) {
-      logger.err(
-        `Cannot fetch single historical prices from the db. Reason ${
-          e instanceof Error ? e.message : e
-        }`
-      );
+      logger.err(`Cannot fetch single historical prices from the db. Reason ${e instanceof Error ? e.message : e}`);
       return null;
     }
   }
 
-  public async $getHistoricalPrices(
-    currency?: string
-  ): Promise<Conversion | null> {
+  public async $getHistoricalPrices(currency?: string): Promise<Conversion | null> {
     try {
       const [rates] = await DB.query(`
         SELECT ${ApiPriceFields}
@@ -634,11 +611,7 @@ class PricesRepository {
         exchangeRates: exchangeRates,
       };
     } catch (e) {
-      logger.err(
-        `Cannot fetch historical prices from the db. Reason ${
-          e instanceof Error ? e.message : e
-        }`
-      );
+      logger.err(`Cannot fetch historical prices from the db. Reason ${e instanceof Error ? e.message : e}`);
       return null;
     }
   }

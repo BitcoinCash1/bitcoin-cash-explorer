@@ -1,10 +1,5 @@
 import PoolsRepository from '../repositories/PoolsRepository';
-import {
-  setupTestDatabase,
-  waitForDatabase,
-  cleanupTestData,
-  insertTestPool,
-} from './test-helpers';
+import { setupTestDatabase, waitForDatabase, cleanupTestData, insertTestPool } from './test-helpers';
 
 describe('PoolsRepository Integration Tests', () => {
   beforeAll(async () => {
@@ -117,11 +112,7 @@ describe('PoolsRepository Integration Tests', () => {
     });
 
     // Update the pool name
-    await PoolsRepository.$renameMiningPool(
-      poolDbId,
-      'updated-pool',
-      'Updated Pool Name'
-    );
+    await PoolsRepository.$renameMiningPool(poolDbId, 'updated-pool', 'Updated Pool Name');
 
     const pool = await PoolsRepository.$getPool('updated-pool');
     expect(pool).toBeDefined();

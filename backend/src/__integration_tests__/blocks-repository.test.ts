@@ -1,11 +1,5 @@
 import BlocksRepository from '../repositories/BlocksRepository';
-import {
-  setupTestDatabase,
-  waitForDatabase,
-  cleanupTestData,
-  insertTestPool,
-  insertTestBlock,
-} from './test-helpers';
+import { setupTestDatabase, waitForDatabase, cleanupTestData, insertTestPool, insertTestBlock } from './test-helpers';
 
 describe('BlocksRepository Integration Tests', () => {
   let defaultPoolId: number;
@@ -31,8 +25,7 @@ describe('BlocksRepository Integration Tests', () => {
   });
 
   test('should insert and retrieve a block', async () => {
-    const blockHash =
-      '00000000000000000001a0e3e9b2e6d6e8a4b0e9b2e6d6e8a4b0e9b2e6d6e8a4';
+    const blockHash = '00000000000000000001a0e3e9b2e6d6e8a4b0e9b2e6d6e8a4b0e9b2e6d6e8a4';
     const height = 800000;
 
     await insertTestBlock({
@@ -54,8 +47,7 @@ describe('BlocksRepository Integration Tests', () => {
   });
 
   test('should get block by hash', async () => {
-    const blockHash =
-      '00000000000000000002b0e3e9b2e6d6e8a4b0e9b2e6d6e8a4b0e9b2e6d6e8a4';
+    const blockHash = '00000000000000000002b0e3e9b2e6d6e8a4b0e9b2e6d6e8a4b0e9b2e6d6e8a4';
     const height = 800001;
 
     await insertTestBlock({
@@ -90,8 +82,7 @@ describe('BlocksRepository Integration Tests', () => {
       poolId: defaultPoolId,
     });
 
-    const missingBlocks =
-      await BlocksRepository.$getMissingBlocksBetweenHeights(800100, 800102);
+    const missingBlocks = await BlocksRepository.$getMissingBlocksBetweenHeights(800100, 800102);
 
     expect(missingBlocks).toContain(800101);
   });
@@ -122,8 +113,7 @@ describe('BlocksRepository Integration Tests', () => {
       regexes: '[]',
     });
 
-    const blockHash =
-      '0000000000000000000300000000000000000000000000000000000000000001';
+    const blockHash = '0000000000000000000300000000000000000000000000000000000000000001';
     await insertTestBlock({
       height: 800300,
       hash: blockHash,

@@ -1,9 +1,6 @@
 import config from '../config';
 import logger from '../logger';
-import {
-  MempoolTransactionExtended,
-  MempoolBlockWithTransactions,
-} from '../mempool.interfaces';
+import { MempoolTransactionExtended, MempoolBlockWithTransactions } from '../mempool.interfaces';
 import transactionUtils from './transaction-utils';
 
 const PROPAGATION_MARGIN = 180; // in seconds, time since a transaction is first seen after which it is assumed to have propagated to all miners
@@ -64,10 +61,7 @@ class Audit {
     for (const txid of projectedBlocks[0].transactionIds) {
       if (!inBlock[txid]) {
         // conflict with any transaction in the mined block
-        if (
-          mempool[txid]?.firstSeen != null &&
-          now - (mempool[txid]?.firstSeen || 0) <= PROPAGATION_MARGIN
-        ) {
+        if (mempool[txid]?.firstSeen != null && now - (mempool[txid]?.firstSeen || 0) <= PROPAGATION_MARGIN) {
           // tx is recent, may have reached the miner too late for inclusion
           fresh.push(txid);
         } else if (
@@ -112,15 +106,9 @@ class Audit {
           isDisplaced[txid] = true;
           if (fits) {
             // (tx.effectiveFeePerSize * tx.size) / Math.ceil(tx.size) attempts to correct for size rounding in the simple non-CPFP case
-            lastFeeRate = Math.min(
-              lastFeeRate,
-              (tx.effectiveFeePerSize * tx.size) / Math.ceil(tx.size)
-            );
+            lastFeeRate = Math.min(lastFeeRate, (tx.effectiveFeePerSize * tx.size) / Math.ceil(tx.size));
           }
-          if (
-            tx.firstSeen == null ||
-            now - (tx?.firstSeen || 0) > PROPAGATION_MARGIN
-          ) {
+          if (tx.firstSeen == null || now - (tx?.firstSeen || 0) > PROPAGATION_MARGIN) {
             displacedSizeRemaining -= tx.size;
           }
           failures = 0;
@@ -156,15 +144,13 @@ class Audit {
       totalSize += tx.size;
     }
 
-    ({ prioritized, deprioritized } =
-      transactionUtils.identifyPrioritizedTransactions(
-        transactions,
-        'effectiveFeePerSize'
-      ));
+    ({ prioritized, deprioritized } = transactionUtils.identifyPrioritizedTransactions(
+      transactions,
+      'effectiveFeePerSize'
+    ));
 
     // transactions missing from near the end of our template are probably not being censored
-    let overflowSizeRemaining =
-      overflowSize - (config.MEMPOOL.BLOCK_WEIGHT_UNITS - totalSize);
+    let overflowSizeRemaining = overflowSize - (config.MEMPOOL.BLOCK_WEIGHT_UNITS - totalSize);
     let maxOverflowRate = 0;
     let rateThreshold = 0;
     index = projectedBlocks[0].transactionIds.length - 1;

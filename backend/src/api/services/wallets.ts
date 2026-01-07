@@ -45,8 +45,7 @@ class WalletApi {
   private isSaving = false;
   private cacheSchemaVersion = 1;
 
-  private static TMP_FILE_NAME =
-    config.MEMPOOL.CACHE_DIR + '/tmp-wallets-cache.json';
+  private static TMP_FILE_NAME = config.MEMPOOL.CACHE_DIR + '/tmp-wallets-cache.json';
   private static FILE_NAME = config.MEMPOOL.CACHE_DIR + '/wallets-cache.json';
 
   constructor() {
@@ -76,9 +75,7 @@ class WalletApi {
       const data = JSON.parse(cacheData);
 
       if (data.cacheSchemaVersion !== this.cacheSchemaVersion) {
-        logger.notice(
-          'Wallets cache contains an outdated schema version. Clearing it.'
-        );
+        logger.notice('Wallets cache contains an outdated schema version. Clearing it.');
         return this.$wipeCache();
       }
 
@@ -94,10 +91,7 @@ class WalletApi {
       }
       logger.info('Restored wallets data from disk cache');
     } catch (e) {
-      logger.warn(
-        'Failed to parse wallets cache. Skipping. Reason: ' +
-          (e instanceof Error ? e.message : e)
-      );
+      logger.warn('Failed to parse wallets cache. Skipping. Reason: ' + (e instanceof Error ? e.message : e));
     }
   }
 
@@ -116,20 +110,13 @@ class WalletApi {
         treasuries: this.treasuries,
       };
 
-      await fsPromises.writeFile(
-        WalletApi.TMP_FILE_NAME,
-        JSON.stringify(cacheData),
-        { flag: 'w' }
-      );
+      await fsPromises.writeFile(WalletApi.TMP_FILE_NAME, JSON.stringify(cacheData), { flag: 'w' });
 
       await fsPromises.rename(WalletApi.TMP_FILE_NAME, WalletApi.FILE_NAME);
 
       logger.debug('Wallets data saved to disk cache');
     } catch (e) {
-      logger.warn(
-        'Error writing to wallets cache file: ' +
-          (e instanceof Error ? e.message : e)
-      );
+      logger.warn('Error writing to wallets cache file: ' + (e instanceof Error ? e.message : e));
     } finally {
       this.isSaving = false;
     }
@@ -140,11 +127,7 @@ class WalletApi {
       await fsPromises.unlink(WalletApi.FILE_NAME);
     } catch (e: any) {
       if (e?.code !== 'ENOENT') {
-        logger.err(
-          `Cannot wipe wallets cache file ${
-            WalletApi.FILE_NAME
-          }. Exception ${JSON.stringify(e)}`
-        );
+        logger.err(`Cannot wipe wallets cache file ${WalletApi.FILE_NAME}. Exception ${JSON.stringify(e)}`);
       }
     }
   }
@@ -162,10 +145,7 @@ class WalletApi {
   }
 
   public getTreasuries(): Treasury[] {
-    return (
-      this.treasuries?.filter((treasury) => !!this.wallets[treasury.wallet]) ||
-      []
-    );
+    return this.treasuries?.filter((treasury) => !!this.wallets[treasury.wallet]) || [];
   }
 
   // resync wallet addresses from the services backend
@@ -284,10 +264,7 @@ class WalletApi {
   // }
 
   // check a new block for transactions that affect wallet address balances, and add relevant transactions to wallets
-  processBlock(
-    block: IEsploraApi.Block,
-    blockTxs: TransactionExtended[]
-  ): Record<string, IEsploraApi.Transaction[]> {
+  processBlock(block: IEsploraApi.Block, blockTxs: TransactionExtended[]): Record<string, IEsploraApi.Transaction[]> {
     const walletTransactions: Record<string, IEsploraApi.Transaction[]> = {};
     for (const walletKey of Object.keys(this.wallets)) {
       const wallet = this.wallets[walletKey];
@@ -317,12 +294,9 @@ class WalletApi {
         for (const address of Object.keys({ ...funded, ...spent })) {
           // update address stats
           wallet.addresses[address].stats.tx_count++;
-          wallet.addresses[address].stats.funded_txo_count +=
-            fundedCount[address] || 0;
-          wallet.addresses[address].stats.spent_txo_count +=
-            spentCount[address] || 0;
-          wallet.addresses[address].stats.funded_txo_sum +=
-            funded[address] || 0;
+          wallet.addresses[address].stats.funded_txo_count += fundedCount[address] || 0;
+          wallet.addresses[address].stats.spent_txo_count += spentCount[address] || 0;
+          wallet.addresses[address].stats.funded_txo_sum += funded[address] || 0;
           wallet.addresses[address].stats.spent_txo_sum += spent[address] || 0;
           // add tx to summary
           const txSummary: IEsploraApi.AddressTxSummary = {
@@ -342,10 +316,7 @@ class WalletApi {
   }
 }
 
-function convertBalancesToWalletAddress(
-  wallet: string,
-  balances: { balance: number; time: number }[]
-): WalletAddress {
+function convertBalancesToWalletAddress(wallet: string, balances: { balance: number; time: number }[]): WalletAddress {
   // represent the off-chain balance as a series of transactions modifying a single notional UTXO
   const sortedBalances = balances.sort((a, b) => a.time - b.time);
   const walletAddress: WalletAddress = {

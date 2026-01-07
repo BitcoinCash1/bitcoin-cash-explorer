@@ -1,10 +1,6 @@
 import DB from '../database';
 import config from '../config';
-import {
-  setupTestDatabase,
-  waitForDatabase,
-  getTestDatabaseConfig,
-} from './test-helpers';
+import { setupTestDatabase, waitForDatabase, getTestDatabaseConfig } from './test-helpers';
 
 describe('Database Connection Integration Tests', () => {
   beforeAll(async () => {

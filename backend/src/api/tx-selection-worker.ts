@@ -1,9 +1,6 @@
 import config from '../config';
 import logger from '../logger';
-import {
-  CompactThreadTransaction,
-  AuditTransaction,
-} from '../mempool.interfaces';
+import { CompactThreadTransaction, AuditTransaction } from '../mempool.interfaces';
 import { PairingHeap } from '../utils/pairing-heap';
 import { parentPort } from 'worker_threads';
 
@@ -93,25 +90,20 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
   let blockSize = 4000;
   const blockSigops = 0;
   let transactions: AuditTransaction[] = [];
-  const modified: PairingHeap<AuditTransaction> = new PairingHeap(
-    (a, b): boolean => {
-      if (a.score === b.score) {
-        // tie-break by uid for stability
-        return a.uid > b.uid;
-      } else {
-        return (a.score || 0) > (b.score || 0);
-      }
+  const modified: PairingHeap<AuditTransaction> = new PairingHeap((a, b): boolean => {
+    if (a.score === b.score) {
+      // tie-break by uid for stability
+      return a.uid > b.uid;
+    } else {
+      return (a.score || 0) > (b.score || 0);
     }
-  );
+  });
   let overflow: AuditTransaction[] = [];
   let failures = 0;
   let top = 0;
   while (top < mempoolArray.length || !modified.isEmpty()) {
     // skip invalid transactions
-    while (
-      top < mempoolArray.length &&
-      (mempoolArray[top].used || mempoolArray[top].modified)
-    ) {
+    while (top < mempoolArray.length && (mempoolArray[top].used || mempoolArray[top].modified)) {
       top++;
     }
 
@@ -119,10 +111,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
     let nextTx;
     const nextPoolTx = mempoolArray[top];
     const nextModifiedTx = modified.peek();
-    if (
-      nextPoolTx &&
-      (!nextModifiedTx || (nextPoolTx.score || 0) > (nextModifiedTx.score || 0))
-    ) {
+    if (nextPoolTx && (!nextModifiedTx || (nextPoolTx.score || 0) > (nextModifiedTx.score || 0))) {
       nextTx = nextPoolTx;
       top++;
     } else {
@@ -140,9 +129,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
         (blockSize + nextTx.ancestorSize < config.MEMPOOL.BLOCK_WEIGHT_UNITS &&
           blockSigops + nextTx.ancestorSigops <= 80000)
       ) {
-        const ancestors: AuditTransaction[] = Array.from(
-          nextTx.ancestorMap.values()
-        );
+        const ancestors: AuditTransaction[] = Array.from(nextTx.ancestorMap.values());
         // sort ancestors by dependency graph (equivalent to sorting by ascending ancestor count)
         const sortedTxSet = [
           ...ancestors.sort((a, b) => {
@@ -189,8 +176,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
     }
 
     // this block is full
-    const exceededPackageTries =
-      failures > 1000 && blockSize > config.MEMPOOL.BLOCK_WEIGHT_UNITS - 4000;
+    const exceededPackageTries = failures > 1000 && blockSize > config.MEMPOOL.BLOCK_WEIGHT_UNITS - 4000;
     const queueEmpty = top >= mempoolArray.length && modified.isEmpty();
 
     if ((exceededPackageTries || queueEmpty) && blocks.length < 7) {
@@ -218,9 +204,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
   }
 
   if (overflow.length > 0) {
-    logger.warn(
-      'GBT overflow list unexpectedly non-empty after final block constructed'
-    );
+    logger.warn('GBT overflow list unexpectedly non-empty after final block constructed');
   }
   // add the final unbounded block if it contains any transactions
   if (transactions.length > 0) {
@@ -244,10 +228,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
 
 // traverse in-mempool ancestors
 // recursion unavoidable, but should be limited to depth < 25 by mempool policy
-function setRelatives(
-  tx: AuditTransaction,
-  mempool: Map<number, AuditTransaction>
-): void {
+function setRelatives(tx: AuditTransaction, mempool: Map<number, AuditTransaction>): void {
   for (const parent of tx.inputs) {
     const parentTx = mempool.get(parent);
     if (parentTx && !tx.ancestorMap?.has(parent)) {
@@ -295,19 +276,14 @@ function updateDescendants(
   });
   while (descendants.length) {
     descendantTx = descendants.pop();
-    if (
-      descendantTx &&
-      descendantTx.ancestorMap &&
-      descendantTx.ancestorMap.has(rootTx.uid)
-    ) {
+    if (descendantTx && descendantTx.ancestorMap && descendantTx.ancestorMap.has(rootTx.uid)) {
       // remove tx as ancestor
       descendantTx.ancestorMap.delete(rootTx.uid);
       descendantTx.ancestorFee -= rootTx.fee;
       descendantTx.ancestorSize -= rootTx.size;
       descendantTx.ancestorSigops -= rootTx.sigops;
       tmpScore = descendantTx.score;
-      descendantTx.score =
-        descendantTx.ancestorFee / (descendantTx.ancestorSize || 1);
+      descendantTx.score = descendantTx.ancestorFee / (descendantTx.ancestorSize || 1);
       descendantTx.dependencyRate = descendantTx.dependencyRate
         ? Math.min(descendantTx.dependencyRate, clusterRate)
         : clusterRate;

@@ -129,17 +129,12 @@ JsonRPC.prototype.call = function (method, params) {
           var decoded = JSON.parse(buffer);
         } catch (e) {
           // if we authenticated using a cookie and it failed, read the cookie file again
-          if (
-            response.statusCode === 401 /* Unauthorized */ &&
-            this.opts.cookie
-          ) {
+          if (response.statusCode === 401 /* Unauthorized */ && this.opts.cookie) {
             this.cachedCookie = undefined;
           }
 
           if (response.statusCode !== 200) {
-            err = new Error(
-              'Invalid params, response status code: ' + response.statusCode
-            );
+            err = new Error('Invalid params, response status code: ' + response.statusCode);
             err.code = -32602;
             reject(err);
           } else {
@@ -157,10 +152,7 @@ JsonRPC.prototype.call = function (method, params) {
         // iterate over each response, normally there will be just one
         // unless a batch rpc call response is being processed
         decoded.forEach(function (decodedResponse, i) {
-          if (
-            decodedResponse.hasOwnProperty('error') &&
-            decodedResponse.error != null
-          ) {
+          if (decodedResponse.hasOwnProperty('error') && decodedResponse.error != null) {
             if (reject) {
               err = new Error(decodedResponse.error.message || '');
               if (decodedResponse.error.code) {

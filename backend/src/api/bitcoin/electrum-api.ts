@@ -25,15 +25,13 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     const electrumCallbacks = {
       onConnect: (client, versionInfo) => {
         logger.info(
-          `Connected to Electrum Server at ${config.ELECTRUM.HOST}:${
-            config.ELECTRUM.PORT
-          } (${JSON.stringify(versionInfo)})`
+          `Connected to Electrum Server at ${config.ELECTRUM.HOST}:${config.ELECTRUM.PORT} (${JSON.stringify(
+            versionInfo
+          )})`
         );
       },
       onClose: (client) => {
-        logger.info(
-          `Disconnected from Electrum Server at ${config.ELECTRUM.HOST}:${config.ELECTRUM.PORT}`
-        );
+        logger.info(`Disconnected from Electrum Server at ${config.ELECTRUM.HOST}:${config.ELECTRUM.PORT}`);
       },
       onError: (err) => {
         logger.err(`Electrum error: ${JSON.stringify(err)}`);
@@ -55,9 +53,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       .initElectrum(electrumConfig, electrumPersistencePolicy)
       .then(() => {})
       .catch((err) => {
-        logger.err(
-          `Error connecting to Electrum Server at ${config.ELECTRUM.HOST}:${config.ELECTRUM.PORT}`
-        );
+        logger.err(`Error connecting to Electrum Server at ${config.ELECTRUM.HOST}:${config.ELECTRUM.PORT}`);
       });
   }
 
@@ -84,12 +80,8 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     }
 
     try {
-      const balance = await this.$getScriptHashBalance(
-        addressInfo.scriptPubKey
-      );
-      const history = await this.$getScriptHashHistory(
-        addressInfo.scriptPubKey
-      );
+      const balance = await this.$getScriptHashBalance(addressInfo.scriptPubKey);
+      const history = await this.$getScriptHashHistory(addressInfo.scriptPubKey);
 
       const unconfirmed = history.filter((h) => h.fee).length;
 
@@ -116,10 +108,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     }
   }
 
-  async $getAddressTransactions(
-    address: string,
-    lastSeenTxId: string
-  ): Promise<IEsploraApi.Transaction[]> {
+  async $getAddressTransactions(address: string, lastSeenTxId: string): Promise<IEsploraApi.Transaction[]> {
     const addressInfo = await this.bitcoindClient.validateAddress(address);
     if (!addressInfo || !addressInfo.isvalid) {
       return [];
@@ -129,16 +118,12 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       loadingIndicators.setProgress('address-' + address, 0);
 
       const transactions: IEsploraApi.Transaction[] = [];
-      const history = await this.$getScriptHashHistory(
-        addressInfo.scriptPubKey
-      );
+      const history = await this.$getScriptHashHistory(addressInfo.scriptPubKey);
       history.sort((a, b) => (b.height || 9999999) - (a.height || 9999999));
 
       let startingIndex = 0;
       if (lastSeenTxId) {
-        const pos = history.findIndex(
-          (historicalTx) => historicalTx.tx_hash === lastSeenTxId
-        );
+        const pos = history.findIndex((historicalTx) => historicalTx.tx_hash === lastSeenTxId);
         if (pos) {
           startingIndex = pos + 1;
         }
@@ -146,16 +131,9 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       const endIndex = Math.min(startingIndex + 10, history.length);
 
       for (let i = startingIndex; i < endIndex; i++) {
-        const tx = await this.$getRawTransaction(
-          history[i].tx_hash,
-          false,
-          true
-        );
+        const tx = await this.$getRawTransaction(history[i].tx_hash, false, true);
         transactions.push(tx);
-        loadingIndicators.setProgress(
-          'address-' + address,
-          ((i + 1) / endIndex) * 100
-        );
+        loadingIndicators.setProgress('address-' + address, ((i + 1) / endIndex) * 100);
       }
 
       return transactions;
@@ -167,17 +145,10 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
 
   async $getScriptHash(scripthash: string): Promise<IEsploraApi.ScriptHash> {
     try {
-      const balance = await this.electrumClient.blockchainScripthash_getBalance(
-        scripthash
-      );
-      let history = memoryCache.get<IElectrumApi.ScriptHashHistory[]>(
-        'Scripthash_getHistory',
-        scripthash
-      );
+      const balance = await this.electrumClient.blockchainScripthash_getBalance(scripthash);
+      let history = memoryCache.get<IElectrumApi.ScriptHashHistory[]>('Scripthash_getHistory', scripthash);
       if (!history) {
-        history = await this.electrumClient.blockchainScripthash_getHistory(
-          scripthash
-        );
+        history = await this.electrumClient.blockchainScripthash_getHistory(scripthash);
         memoryCache.set('Scripthash_getHistory', scripthash, history, 2);
       }
 
@@ -215,22 +186,14 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     return this.$getScriptHashUtxos(scripthash);
   }
 
-  async $getScriptHashTransactions(
-    scripthash: string,
-    lastSeenTxId?: string
-  ): Promise<IEsploraApi.Transaction[]> {
+  async $getScriptHashTransactions(scripthash: string, lastSeenTxId?: string): Promise<IEsploraApi.Transaction[]> {
     try {
       loadingIndicators.setProgress('address-' + scripthash, 0);
 
       const transactions: IEsploraApi.Transaction[] = [];
-      let history = memoryCache.get<IElectrumApi.ScriptHashHistory[]>(
-        'Scripthash_getHistory',
-        scripthash
-      );
+      let history = memoryCache.get<IElectrumApi.ScriptHashHistory[]>('Scripthash_getHistory', scripthash);
       if (!history) {
-        history = await this.electrumClient.blockchainScripthash_getHistory(
-          scripthash
-        );
+        history = await this.electrumClient.blockchainScripthash_getHistory(scripthash);
         memoryCache.set('Scripthash_getHistory', scripthash, history, 2);
       }
       if (!history) {
@@ -240,9 +203,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
 
       let startingIndex = 0;
       if (lastSeenTxId) {
-        const pos = history.findIndex(
-          (historicalTx) => historicalTx.tx_hash === lastSeenTxId
-        );
+        const pos = history.findIndex((historicalTx) => historicalTx.tx_hash === lastSeenTxId);
         if (pos) {
           startingIndex = pos + 1;
         }
@@ -250,16 +211,9 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       const endIndex = Math.min(startingIndex + 10, history.length);
 
       for (let i = startingIndex; i < endIndex; i++) {
-        const tx = await this.$getRawTransaction(
-          history[i].tx_hash,
-          false,
-          true
-        );
+        const tx = await this.$getRawTransaction(history[i].tx_hash, false, true);
         transactions.push(tx);
-        loadingIndicators.setProgress(
-          'address-' + scripthash,
-          ((i + 1) / endIndex) * 100
-        );
+        loadingIndicators.setProgress('address-' + scripthash, ((i + 1) / endIndex) * 100);
       }
 
       return transactions;
@@ -303,52 +257,32 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     return result;
   }
 
-  private $getScriptHashUnspent(
-    scriptHash: string
-  ): Promise<IElectrumApi.ScriptHashUtxos[]> {
+  private $getScriptHashUnspent(scriptHash: string): Promise<IElectrumApi.ScriptHashUtxos[]> {
     return this.electrumClient.blockchainScripthash_listunspent(scriptHash);
   }
 
-  async $getTransactionMerkleProof(
-    txId: string
-  ): Promise<IEsploraApi.MerkleProof> {
+  async $getTransactionMerkleProof(txId: string): Promise<IEsploraApi.MerkleProof> {
     const tx = await this.$getRawTransaction(txId);
-    return this.electrumClient.blockchainTransaction_getMerkle(
-      txId,
-      tx.status.block_height
-    );
+    return this.electrumClient.blockchainTransaction_getMerkle(txId, tx.status.block_height);
   }
 
-  private $getScriptHashBalance(
-    scriptHash: string
-  ): Promise<IElectrumApi.ScriptHashBalance> {
-    return this.electrumClient.blockchainScripthash_getBalance(
-      this.encodeScriptHash(scriptHash)
-    );
+  private $getScriptHashBalance(scriptHash: string): Promise<IElectrumApi.ScriptHashBalance> {
+    return this.electrumClient.blockchainScripthash_getBalance(this.encodeScriptHash(scriptHash));
   }
 
-  private $getScriptHashHistory(
-    scriptHash: string
-  ): Promise<IElectrumApi.ScriptHashHistory[]> {
-    const fromCache = memoryCache.get<IElectrumApi.ScriptHashHistory[]>(
-      'Scripthash_getHistory',
-      scriptHash
-    );
+  private $getScriptHashHistory(scriptHash: string): Promise<IElectrumApi.ScriptHashHistory[]> {
+    const fromCache = memoryCache.get<IElectrumApi.ScriptHashHistory[]>('Scripthash_getHistory', scriptHash);
     if (fromCache) {
       return Promise.resolve(fromCache);
     }
-    return this.electrumClient
-      .blockchainScripthash_getHistory(this.encodeScriptHash(scriptHash))
-      .then((history) => {
-        memoryCache.set('Scripthash_getHistory', scriptHash, history, 2);
-        return history;
-      });
+    return this.electrumClient.blockchainScripthash_getHistory(this.encodeScriptHash(scriptHash)).then((history) => {
+      memoryCache.set('Scripthash_getHistory', scriptHash, history, 2);
+      return history;
+    });
   }
 
   private encodeScriptHash(scriptPubKey: string): string {
-    const addrScripthash = crypto.enc.Hex.stringify(
-      crypto.SHA256(crypto.enc.Hex.parse(scriptPubKey))
-    );
+    const addrScripthash = crypto.enc.Hex.stringify(crypto.SHA256(crypto.enc.Hex.parse(scriptPubKey)));
     return addrScripthash!.match(/.{2}/g)!.reverse().join('');
   }
 }

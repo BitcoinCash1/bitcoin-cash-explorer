@@ -1,11 +1,6 @@
 import DB from '../database';
 import logger from '../logger';
-import {
-  BlockAudit,
-  AuditScore,
-  TransactionAudit,
-  TransactionStripped,
-} from '../mempool.interfaces';
+import { BlockAudit, AuditScore, TransactionAudit, TransactionStripped } from '../mempool.interfaces';
 
 interface MigrationAudit {
   version: number;
@@ -43,23 +38,14 @@ class BlocksAuditRepositories {
     } catch (e: any) {
       if (e.errno === 1062) {
         // ER_DUP_ENTRY - This scenario is possible upon node backend restart
-        logger.debug(
-          `Cannot save block audit for block ${audit.hash} because it has already been indexed, ignoring`
-        );
+        logger.debug(`Cannot save block audit for block ${audit.hash} because it has already been indexed, ignoring`);
       } else {
-        logger.err(
-          `Cannot save block audit into db. Reason: ` +
-            (e instanceof Error ? e.message : e)
-        );
+        logger.err(`Cannot save block audit into db. Reason: ` + (e instanceof Error ? e.message : e));
       }
     }
   }
 
-  public async $setSummary(
-    hash: string,
-    expectedFees: number,
-    expectedSize: number
-  ) {
+  public async $setSummary(hash: string, expectedFees: number, expectedSize: number) {
     try {
       await DB.query(
         `
@@ -71,17 +57,11 @@ class BlocksAuditRepositories {
         [expectedFees, expectedSize, hash]
       );
     } catch (e: any) {
-      logger.err(
-        `Cannot update block audit in db. Reason: ` +
-          (e instanceof Error ? e.message : e)
-      );
+      logger.err(`Cannot update block audit in db. Reason: ` + (e instanceof Error ? e.message : e));
     }
   }
 
-  public async $getBlocksHealthHistory(
-    div: number,
-    interval: string | null
-  ): Promise<any> {
+  public async $getBlocksHealthHistory(div: number, interval: string | null): Promise<any> {
     try {
       let query = `SELECT UNIX_TIMESTAMP(time) as time, height, match_rate FROM blocks_audits`;
 
@@ -94,25 +74,17 @@ class BlocksAuditRepositories {
       const [rows] = await DB.query(query);
       return rows;
     } catch (e: any) {
-      logger.err(
-        `Cannot fetch blocks health history. Reason: ` +
-          (e instanceof Error ? e.message : e)
-      );
+      logger.err(`Cannot fetch blocks health history. Reason: ` + (e instanceof Error ? e.message : e));
       throw e;
     }
   }
 
   public async $getBlocksHealthCount(): Promise<number> {
     try {
-      const [rows] = await DB.query(
-        `SELECT count(hash) as count FROM blocks_audits`
-      );
+      const [rows] = await DB.query(`SELECT count(hash) as count FROM blocks_audits`);
       return rows[0].count;
     } catch (e: any) {
-      logger.err(
-        `Cannot fetch blocks health count. Reason: ` +
-          (e instanceof Error ? e.message : e)
-      );
+      logger.err(`Cannot fetch blocks health count. Reason: ` + (e instanceof Error ? e.message : e));
       throw e;
     }
   }
@@ -155,18 +127,12 @@ class BlocksAuditRepositories {
       }
       return null;
     } catch (e: any) {
-      logger.err(
-        `Cannot fetch block audit from db. Reason: ` +
-          (e instanceof Error ? e.message : e)
-      );
+      logger.err(`Cannot fetch block audit from db. Reason: ` + (e instanceof Error ? e.message : e));
       throw e;
     }
   }
 
-  public async $getBlockTxAudit(
-    hash: string,
-    txid: string
-  ): Promise<TransactionAudit | null> {
+  public async $getBlockTxAudit(hash: string, txid: string): Promise<TransactionAudit | null> {
     try {
       const blockAudit = await this.$getBlockAudit(hash);
 
@@ -181,10 +147,7 @@ class BlocksAuditRepositories {
             firstSeen = tx.time;
           }
         });
-        const wasSeen =
-          blockAudit.version === 1
-            ? !blockAudit.unseenTxs.includes(txid)
-            : isExpected || isPrioritized;
+        const wasSeen = blockAudit.version === 1 ? !blockAudit.unseenTxs.includes(txid) : isExpected || isPrioritized;
 
         return {
           seen: wasSeen,
@@ -196,10 +159,7 @@ class BlocksAuditRepositories {
       }
       return null;
     } catch (e: any) {
-      logger.err(
-        `Cannot fetch block transaction audit from db. Reason: ` +
-          (e instanceof Error ? e.message : e)
-      );
+      logger.err(`Cannot fetch block transaction audit from db. Reason: ` + (e instanceof Error ? e.message : e));
       throw e;
     }
   }
@@ -215,18 +175,12 @@ class BlocksAuditRepositories {
       );
       return rows[0];
     } catch (e: any) {
-      logger.err(
-        `Cannot fetch block audit from db. Reason: ` +
-          (e instanceof Error ? e.message : e)
-      );
+      logger.err(`Cannot fetch block audit from db. Reason: ` + (e instanceof Error ? e.message : e));
       throw e;
     }
   }
 
-  public async $getBlockAuditScores(
-    maxHeight: number,
-    minHeight: number
-  ): Promise<AuditScore[]> {
+  public async $getBlockAuditScores(maxHeight: number, minHeight: number): Promise<AuditScore[]> {
     try {
       const [rows]: any[] = await DB.query(
         `SELECT hash, match_rate as matchRate, expected_fees as expectedFees, expected_weight as expectedWeight
@@ -237,10 +191,7 @@ class BlocksAuditRepositories {
       );
       return rows;
     } catch (e: any) {
-      logger.err(
-        `Cannot fetch block audit from db. Reason: ` +
-          (e instanceof Error ? e.message : e)
-      );
+      logger.err(`Cannot fetch block audit from db. Reason: ` + (e instanceof Error ? e.message : e));
       throw e;
     }
   }
@@ -269,10 +220,7 @@ class BlocksAuditRepositories {
       );
       return idRows.map((row) => row.hash);
     } catch (e: any) {
-      logger.err(
-        `Cannot fetch block audit from db. Reason: ` +
-          (e instanceof Error ? e.message : e)
-      );
+      logger.err(`Cannot fetch block audit from db. Reason: ` + (e instanceof Error ? e.message : e));
       throw e;
     }
   }
@@ -315,12 +263,8 @@ class BlocksAuditRepositories {
 
         for (const audit of toMigrate) {
           // unpack JSON-serialized transaction lists
-          audit.transactions = JSON.parse(
-            (audit.transactions as any as string) || '[]'
-          );
-          audit.template = JSON.parse(
-            (audit.template as any as string) || '[]'
-          );
+          audit.transactions = JSON.parse((audit.transactions as any as string) || '[]');
+          audit.template = JSON.parse((audit.template as any as string) || '[]');
 
           // we know transactions in the template, or marked "prioritized" or "accelerated"
           // were seen in our mempool before the block was mined.
@@ -365,12 +309,7 @@ class BlocksAuditRepositories {
               prioritized_txs = ?
             WHERE hash = ?
           `,
-            [
-              1,
-              JSON.stringify(unseenTxs),
-              JSON.stringify(prioritizedTxs),
-              audit.id,
-            ]
+            [1, JSON.stringify(unseenTxs), JSON.stringify(prioritizedTxs), audit.id]
           );
         }
 

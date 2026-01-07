@@ -44,11 +44,7 @@ class BackendInfo {
       const networkInfo = await bitcoinClient.getNetworkInfo();
       this.backendInfo.coreVersion = networkInfo.subversion;
     } catch (e) {
-      logger.err(
-        `Exception in $updateCoreVersion. Reason: ${
-          e instanceof Error ? e.message : e
-        }`
-      );
+      logger.err(`Exception in $updateCoreVersion. Reason: ${e instanceof Error ? e.message : e}`);
     }
   }
 

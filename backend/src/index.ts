@@ -62,9 +62,7 @@ class Server {
 
     if (cluster.isPrimary) {
       logger.notice(
-        `Mempool Server (Master) is running on port ${
-          config.MEMPOOL.HTTP_PORT
-        } (${backendInfo.getShortCommitHash()})`
+        `Mempool Server (Master) is running on port ${config.MEMPOOL.HTTP_PORT} (${backendInfo.getShortCommitHash()})`
       );
 
       const numCPUs = config.MEMPOOL.SPAWN_CLUSTER_PROCS;
@@ -77,9 +75,7 @@ class Server {
       cluster.on('exit', (worker, code, signal) => {
         const workerId = worker.process['env'].workerId;
         logger.warn(
-          `Mempool Worker PID #${
-            worker.process.pid
-          } workerId: ${workerId} died. Restarting in 10 seconds... ${
+          `Mempool Worker PID #${worker.process.pid} workerId: ${workerId} died. Restarting in 10 seconds... ${
             signal || code
           }`
         );
@@ -95,11 +91,7 @@ class Server {
   }
 
   async startServer(worker = false): Promise<void> {
-    logger.notice(
-      `Starting Mempool Server${
-        worker ? ' (worker)' : ''
-      }... (${backendInfo.getShortCommitHash()})`
-    );
+    logger.notice(`Starting Mempool Server${worker ? ' (worker)' : ''}... (${backendInfo.getShortCommitHash()})`);
 
     // Register cleanup listeners for exit events
     ['SIGHUP', 'SIGINT', 'SIGTERM', 'SIGUSR1', 'SIGUSR2'].forEach((event) => {
@@ -138,18 +130,12 @@ class Server {
     this.app
       .use((req: Request, res: Response, next: NextFunction) => {
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.setHeader(
-          'Access-Control-Allow-Methods',
-          'GET, POST, PUT, DELETE, OPTIONS'
-        );
+        res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
         res.setHeader(
           'Access-Control-Allow-Headers',
           'Accept,Authorization,Cache-Control,Content-Type,DNT,If-Modified-Since,Keep-Alive,Origin,User-Agent,X-Requested-With'
         );
-        res.setHeader(
-          'Access-Control-Expose-Headers',
-          'X-Total-Count,X-Mempool-Auth'
-        );
+        res.setHeader('Access-Control-Expose-Headers', 'X-Total-Count,X-Mempool-Auth');
         next();
       })
       .use(express.urlencoded({ extended: true, limit: '10mb' }))
@@ -180,9 +166,7 @@ class Server {
     if (
       config.DATABASE.ENABLED === true &&
       config.MEMPOOL.ENABLED &&
-      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(
-        config.MEMPOOL.NETWORK
-      ) &&
+      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK) &&
       !poolsUpdater.currentSha
     ) {
       logger.err(
@@ -203,11 +187,7 @@ class Server {
       }
     }
 
-    if (
-      config.STATISTICS.ENABLED &&
-      config.DATABASE.ENABLED &&
-      cluster.isPrimary
-    ) {
+    if (config.STATISTICS.ENABLED && config.DATABASE.ENABLED && cluster.isPrimary) {
       statistics.startStatistics();
     }
 
@@ -230,9 +210,7 @@ class Server {
       if (worker) {
         logger.info(`Mempool Server worker #${process.pid} started`);
       } else {
-        logger.notice(
-          `Mempool Server is running on port ${config.MEMPOOL.HTTP_PORT}`
-        );
+        logger.notice(`Mempool Server is running on port ${config.MEMPOOL.HTTP_PORT}`);
       }
     });
 
@@ -241,9 +219,7 @@ class Server {
         if (worker) {
           logger.info(`Mempool Server worker #${process.pid} started`);
         } else {
-          logger.notice(
-            `Mempool Server is listening on ${config.MEMPOOL.UNIX_SOCKET_PATH}`
-          );
+          logger.notice(`Mempool Server is listening on ${config.MEMPOOL.UNIX_SOCKET_PATH}`);
         }
       });
     }
@@ -265,22 +241,12 @@ class Server {
         }
       }
       const newMempool = await bitcoinApi.$getRawMempool();
-      const minFeeMempool = memPool.limitGBT
-        ? await bitcoinSecondClient.getRawMemPool()
-        : null;
-      const minFeeTip = memPool.limitGBT
-        ? await bitcoinSecondClient.getBlockCount()
-        : -1;
+      const minFeeMempool = memPool.limitGBT ? await bitcoinSecondClient.getRawMemPool() : null;
+      const minFeeTip = memPool.limitGBT ? await bitcoinSecondClient.getBlockCount() : -1;
       const numHandledBlocks = await blocks.$updateBlocks();
-      const pollRate =
-        config.MEMPOOL.POLL_RATE_MS * (indexer.indexerIsRunning() ? 10 : 1);
+      const pollRate = config.MEMPOOL.POLL_RATE_MS * (indexer.indexerIsRunning() ? 10 : 1);
       if (numHandledBlocks === 0) {
-        await memPool.$updateMempool(
-          newMempool,
-          minFeeMempool,
-          minFeeTip,
-          pollRate
-        );
+        await memPool.$updateMempool(newMempool, minFeeMempool, minFeeTip, pollRate);
       }
       indexer.$run();
       if (config.WALLETS.ENABLED) {
@@ -294,10 +260,7 @@ class Server {
       // rerun immediately if we skipped the mempool update, otherwise wait POLL_RATE_MS
       const elapsed = Date.now() - start;
       const remainingTime = Math.max(0, pollRate - elapsed);
-      setTimeout(
-        this.runMainUpdateLoop.bind(this),
-        numHandledBlocks > 0 ? 0 : remainingTime
-      );
+      setTimeout(this.runMainUpdateLoop.bind(this), numHandledBlocks > 0 ? 0 : remainingTime);
       this.backendRetryCount = 0;
     } catch (e: any) {
       this.backendRetryCount++;
@@ -317,10 +280,7 @@ class Server {
       if (e instanceof AxiosError) {
         logger.debug(`AxiosError: ${e?.message}`);
       }
-      setTimeout(
-        this.runMainUpdateLoop.bind(this),
-        1000 * this.currentBackendRetryInterval
-      );
+      setTimeout(this.runMainUpdateLoop.bind(this), 1000 * this.currentBackendRetryInterval);
     } finally {
       diskCache.unlock();
     }
@@ -336,24 +296,14 @@ class Server {
 
     websocketHandler.setupConnectionHandling();
     if (config.MEMPOOL.ENABLED) {
-      statistics.setNewStatisticsEntryCallback(
-        websocketHandler.handleNewStatistic.bind(websocketHandler)
-      );
-      memPool.setAsyncMempoolChangedCallback(
-        websocketHandler.$handleMempoolChange.bind(websocketHandler)
-      );
-      blocks.setNewAsyncBlockCallback(
-        websocketHandler.handleNewBlock.bind(websocketHandler)
-      );
+      statistics.setNewStatisticsEntryCallback(websocketHandler.handleNewStatistic.bind(websocketHandler));
+      memPool.setAsyncMempoolChangedCallback(websocketHandler.$handleMempoolChange.bind(websocketHandler));
+      blocks.setNewAsyncBlockCallback(websocketHandler.handleNewBlock.bind(websocketHandler));
     }
     if (config.FIAT_PRICE.ENABLED) {
-      priceUpdater.setRatesChangedCallback(
-        websocketHandler.handleNewConversionRates.bind(websocketHandler)
-      );
+      priceUpdater.setRatesChangedCallback(websocketHandler.handleNewConversionRates.bind(websocketHandler));
     }
-    loadingIndicators.setProgressChangedCallback(
-      websocketHandler.handleLoadingChanged.bind(websocketHandler)
-    );
+    loadingIndicators.setProgressChangedCallback(websocketHandler.handleLoadingChanged.bind(websocketHandler));
 
     if (config.STRATUM.ENABLED) {
       stratumApi.connectWebsocket();
@@ -366,11 +316,7 @@ class Server {
       bitcoinCoreRoutes.initRoutes(this.app);
     }
     pricesRoutes.initRoutes(this.app);
-    if (
-      config.STATISTICS.ENABLED &&
-      config.DATABASE.ENABLED &&
-      config.MEMPOOL.ENABLED
-    ) {
+    if (config.STATISTICS.ENABLED && config.DATABASE.ENABLED && config.MEMPOOL.ENABLED) {
       statisticsRoutes.initRoutes(this.app);
     }
     if (Common.indexingEnabled() && config.MEMPOOL.ENABLED) {
@@ -390,31 +336,21 @@ class Server {
     this.maxHeapSize = Math.max(stats.used_heap_size, this.maxHeapSize);
     const warnThreshold = 0.8 * stats.heap_size_limit;
 
-    const byteUnits = getBytesUnit(
-      Math.max(this.maxHeapSize, stats.heap_size_limit)
-    );
+    const byteUnits = getBytesUnit(Math.max(this.maxHeapSize, stats.heap_size_limit));
 
     if (!this.warnedHeapCritical && this.maxHeapSize > warnThreshold) {
       this.warnedHeapCritical = true;
       logger.warn(
-        `Used ${((this.maxHeapSize / stats.heap_size_limit) * 100).toFixed(
-          2
-        )}% of heap limit (${formatBytes(
+        `Used ${((this.maxHeapSize / stats.heap_size_limit) * 100).toFixed(2)}% of heap limit (${formatBytes(
           this.maxHeapSize,
           byteUnits,
           true
         )} / ${formatBytes(stats.heap_size_limit, byteUnits)})!`
       );
     }
-    if (
-      this.lastHeapLogTime === null ||
-      now - this.lastHeapLogTime > this.heapLogInterval * 1000
-    ) {
+    if (this.lastHeapLogTime === null || now - this.lastHeapLogTime > this.heapLogInterval * 1000) {
       logger.debug(
-        `Memory usage: ${formatBytes(
-          this.maxHeapSize,
-          byteUnits
-        )} / ${formatBytes(stats.heap_size_limit, byteUnits)}`
+        `Memory usage: ${formatBytes(this.maxHeapSize, byteUnits)} / ${formatBytes(stats.heap_size_limit, byteUnits)}`
       );
       this.warnedHeapCritical = false;
       this.maxHeapSize = 0;

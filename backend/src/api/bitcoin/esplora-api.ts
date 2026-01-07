@@ -2,17 +2,11 @@ import config from '../../config';
 import axios, { isAxiosError } from 'axios';
 import http from 'http';
 import https from 'https';
-import {
-  AbstractBitcoinApi,
-  HealthCheckHost,
-} from './bitcoin-api-abstract-factory';
+import { AbstractBitcoinApi, HealthCheckHost } from './bitcoin-api-abstract-factory';
 import { IEsploraApi } from './esplora-api.interface';
 import logger from '../../logger';
 import { Common } from '../common';
-import {
-  SubmitPackageResult,
-  TestMempoolAcceptResult,
-} from './bitcoin-api.interface';
+import { SubmitPackageResult, TestMempoolAcceptResult } from './bitcoin-api.interface';
 import os from 'os';
 import { bitcoinCoreApi } from './bitcoin-api-factory';
 interface FailoverHost {
@@ -101,8 +95,7 @@ class FailoverRouter {
       return config;
     });
     this.pollConnection.interceptors.response.use((response) => {
-      response.config['meta'].rtt =
-        Date.now() - response.config['meta'].startTime;
+      response.config['meta'].rtt = Date.now() - response.config['meta'].startTime;
       return response;
     });
 
@@ -135,22 +128,13 @@ class FailoverRouter {
           host.latestHeight = height;
           this.maxHeight = Math.max(
             height || 0,
-            ...this.hosts.map((h) =>
-              !(h.unreachable || h.timedOut || h.outOfSync)
-                ? h.latestHeight || 0
-                : 0
-            )
+            ...this.hosts.map((h) => (!(h.unreachable || h.timedOut || h.outOfSync) ? h.latestHeight || 0 : 0))
           );
           const rtt = result.config['meta'].rtt;
           host.rtts.unshift(rtt);
           host.rtts.slice(0, 5);
-          host.rtt =
-            host.rtts.reduce((acc, l) => acc + l, 0) / host.rtts.length;
-          if (
-            height == null ||
-            isNaN(height) ||
-            this.maxHeight - height > this.maxSlippage
-          ) {
+          host.rtt = host.rtts.reduce((acc, l) => acc + l, 0) / host.rtts.length;
+          if (height == null || isNaN(height) || this.maxHeight - height > this.maxSlippage) {
             host.outOfSync = true;
           } else {
             host.outOfSync = false;
@@ -172,9 +156,7 @@ class FailoverRouter {
               this.$updateFrontendGitHash(host),
               this.$updateBackendVersions(host),
               this.$updateSSRGitHash(host),
-              config.MEMPOOL.OFFICIAL
-                ? this.$updateHybridGitHash(host)
-                : Promise.resolve(),
+              config.MEMPOOL.OFFICIAL ? this.$updateHybridGitHash(host) : Promise.resolve(),
             ]);
             host.hashes.lastUpdated = Date.now();
           }
@@ -190,10 +172,7 @@ class FailoverRouter {
         host.unreachable = true;
         host.rtts = [];
         host.rtt = Infinity;
-        if (
-          isAxiosError(e) &&
-          (e.code === 'ECONNABORTED' || e.code === 'ETIMEDOUT')
-        ) {
+        if (isAxiosError(e) && (e.code === 'ECONNABORTED' || e.code === 'ETIMEDOUT')) {
           host.timedOut = true;
         } else {
           host.timedOut = false;
@@ -208,21 +187,14 @@ class FailoverRouter {
         this.activeHost.outOfSync ||
         this.activeHost.unreachable ||
         (this.activeHost !== rankOrder[0] && rankOrder[0].preferred) ||
-        (!this.activeHost.preferred &&
-          this.activeHost.rtt > rankOrder[0].rtt * 2 + 50)
+        (!this.activeHost.preferred && this.activeHost.rtt > rankOrder[0].rtt * 2 + 50)
       ) {
         if (this.activeHost.unreachable) {
-          logger.warn(
-            `🚨🚨🚨 Unable to reach ${this.activeHost.host}, failing over to next best alternative 🚨🚨🚨`
-          );
+          logger.warn(`🚨🚨🚨 Unable to reach ${this.activeHost.host}, failing over to next best alternative 🚨🚨🚨`);
         } else if (this.activeHost.outOfSync) {
-          logger.warn(
-            `🚨🚨🚨 ${this.activeHost.host} has fallen behind, failing over to next best alternative 🚨🚨🚨`
-          );
+          logger.warn(`🚨🚨🚨 ${this.activeHost.host} has fallen behind, failing over to next best alternative 🚨🚨🚨`);
         } else {
-          logger.debug(
-            `🛠️ ${this.activeHost.host} is no longer the best esplora host 🛠️`
-          );
+          logger.debug(`🛠️ ${this.activeHost.host} is no longer the best esplora host 🛠️`);
         }
         this.electHost();
       }
@@ -232,9 +204,7 @@ class FailoverRouter {
     const rankOrder = this.updateFallback();
     logger.debug(
       `Tomahawk ranking:\n${rankOrder
-        .map((host, index) =>
-          this.formatRanking(index, host, this.activeHost, this.maxHeight)
-        )
+        .map((host, index) => this.formatRanking(index, host, this.activeHost, this.maxHeight))
         .join('\n')}`
     );
 
@@ -248,12 +218,7 @@ class FailoverRouter {
     );
   }
 
-  private formatRanking(
-    index: number,
-    host: FailoverHost,
-    active: FailoverHost,
-    maxHeight: number
-  ): string {
+  private formatRanking(index: number, host: FailoverHost, active: FailoverHost, maxHeight: number): string {
     const heightStatus = !host.checked
       ? '⏳'
       : host.outOfSync
@@ -334,9 +299,7 @@ class FailoverRouter {
       if (match && match[1]?.length) {
         host.hashes.frontend = match[1];
       }
-      const hybridMatch = response.data.match(
-        /GIT_COMMIT_HASH_MEMPOOL_SPACE\s*=\s*['"](.*?)['"]/
-      );
+      const hybridMatch = response.data.match(/GIT_COMMIT_HASH_MEMPOOL_SPACE\s*=\s*['"](.*?)['"]/);
       if (hybridMatch && hybridMatch[1]?.length) {
         host.hashes.hybrid = hybridMatch[1];
       }
@@ -350,9 +313,7 @@ class FailoverRouter {
       const response: string = await new Promise((resolve, reject) => {
         const req = https.request(
           {
-            hostname: host.publicDomain
-              .replace('https://', '')
-              .replace('http://', ''),
+            hostname: host.publicDomain.replace('https://', '').replace('http://', ''),
             port: 443,
             path: '/en-US/resources/config.js',
             method: 'GET',
@@ -368,9 +329,7 @@ class FailoverRouter {
               if (res.statusCode === 200) {
                 resolve(data);
               } else {
-                reject(
-                  new Error(`Failed to get hybrid git hash: ${res.statusCode}`)
-                );
+                reject(new Error(`Failed to get hybrid git hash: ${res.statusCode}`));
               }
             });
           }
@@ -380,9 +339,7 @@ class FailoverRouter {
         });
         req.end();
       });
-      const match = response.match(
-        /GIT_COMMIT_HASH_MEMPOOL_SPACE\s*=\s*['"](.*?)['"]/
-      );
+      const match = response.match(/GIT_COMMIT_HASH_MEMPOOL_SPACE\s*=\s*['"](.*?)['"]/);
       if (match && match[1]?.length) {
         host.hashes.hybrid = match[1];
       }
@@ -473,39 +430,21 @@ class FailoverRouter {
       .catch((e) => {
         let fallbackHost = this.fallbackHost;
         if (e?.response?.status !== 404) {
-          logger.warn(
-            `esplora request failed ${e?.response?.status} ${host.host}${path}`
-          );
+          logger.warn(`esplora request failed ${e?.response?.status} ${host.host}${path}`);
           logger.warn(e instanceof Error ? e.message : e);
           fallbackHost = this.addFailure(host);
         }
         if (retry && e?.code === 'ECONNREFUSED' && this.multihost) {
           // Retry immediately
-          return this.$query(
-            method,
-            path,
-            data,
-            responseType,
-            fallbackHost,
-            false
-          );
+          return this.$query(method, path, data, responseType, fallbackHost, false);
         } else {
           throw e;
         }
       });
   }
 
-  public async $get<T>(
-    path,
-    responseType = 'json',
-    params: any = null
-  ): Promise<T> {
-    return this.$query<T>(
-      'get',
-      path,
-      params ? { params } : null,
-      responseType
-    );
+  public async $get<T>(path, responseType = 'json', params: any = null): Promise<T> {
+    return this.$query<T>('get', path, params ? { params } : null, responseType);
   }
 
   public async $post<T>(path, data: any, responseType = 'json'): Promise<T> {
@@ -517,39 +456,22 @@ class ElectrsApi implements AbstractBitcoinApi {
   private failoverRouter = new FailoverRouter();
 
   $getRawMempool(): Promise<IEsploraApi.Transaction['txid'][]> {
-    return this.failoverRouter.$get<IEsploraApi.Transaction['txid'][]>(
-      '/mempool/txids'
-    );
+    return this.failoverRouter.$get<IEsploraApi.Transaction['txid'][]>('/mempool/txids');
   }
 
   $getRawTransaction(txId: string): Promise<IEsploraApi.Transaction> {
     return this.failoverRouter.$get<IEsploraApi.Transaction>('/tx/' + txId);
   }
 
-  async $getRawTransactions(
-    txids: string[]
-  ): Promise<IEsploraApi.Transaction[]> {
-    return this.failoverRouter.$post<IEsploraApi.Transaction[]>(
-      '/internal/txs',
-      txids,
-      'json'
-    );
+  async $getRawTransactions(txids: string[]): Promise<IEsploraApi.Transaction[]> {
+    return this.failoverRouter.$post<IEsploraApi.Transaction[]>('/internal/txs', txids, 'json');
   }
 
-  async $getMempoolTransactions(
-    txids: string[]
-  ): Promise<IEsploraApi.Transaction[]> {
-    return this.failoverRouter.$post<IEsploraApi.Transaction[]>(
-      '/internal/mempool/txs',
-      txids,
-      'json'
-    );
+  async $getMempoolTransactions(txids: string[]): Promise<IEsploraApi.Transaction[]> {
+    return this.failoverRouter.$post<IEsploraApi.Transaction[]>('/internal/mempool/txs', txids, 'json');
   }
 
-  async $getAllMempoolTransactions(
-    lastSeenTxid?: string,
-    max_txs?: number
-  ): Promise<IEsploraApi.Transaction[]> {
+  async $getAllMempoolTransactions(lastSeenTxid?: string, max_txs?: number): Promise<IEsploraApi.Transaction[]> {
     return this.failoverRouter.$get<IEsploraApi.Transaction[]>(
       '/internal/mempool/txs' + (lastSeenTxid ? '/' + lastSeenTxid : ''),
       'json',
@@ -562,9 +484,7 @@ class ElectrsApi implements AbstractBitcoinApi {
   }
 
   $getTransactionMerkleProof(txId: string): Promise<IEsploraApi.MerkleProof> {
-    return this.failoverRouter.$get<IEsploraApi.MerkleProof>(
-      '/tx/' + txId + '/merkle-proof'
-    );
+    return this.failoverRouter.$get<IEsploraApi.MerkleProof>('/tx/' + txId + '/merkle-proof');
   }
 
   $getBlockHeightTip(): Promise<number> {
@@ -575,14 +495,9 @@ class ElectrsApi implements AbstractBitcoinApi {
     return this.failoverRouter.$get<string>('/blocks/tip/hash');
   }
 
-  async $getTxIdsForBlock(
-    hash: string,
-    fallbackToCore = false
-  ): Promise<string[]> {
+  async $getTxIdsForBlock(hash: string, fallbackToCore = false): Promise<string[]> {
     try {
-      const txids = await this.failoverRouter.$get<string[]>(
-        '/block/' + hash + '/txids'
-      );
+      const txids = await this.failoverRouter.$get<string[]>('/block/' + hash + '/txids');
       return txids;
     } catch (e) {
       if (fallbackToCore && isAxiosError(e) && e.response?.status === 404) {
@@ -596,14 +511,9 @@ class ElectrsApi implements AbstractBitcoinApi {
     }
   }
 
-  async $getTxsForBlock(
-    hash: string,
-    fallbackToCore = false
-  ): Promise<IEsploraApi.Transaction[]> {
+  async $getTxsForBlock(hash: string, fallbackToCore = false): Promise<IEsploraApi.Transaction[]> {
     try {
-      const txs = await this.failoverRouter.$get<IEsploraApi.Transaction[]>(
-        '/internal/block/' + hash + '/txs'
-      );
+      const txs = await this.failoverRouter.$get<IEsploraApi.Transaction[]>('/internal/block/' + hash + '/txs');
       return txs;
     } catch (e) {
       if (fallbackToCore && isAxiosError(e) && e.response?.status === 404) {
@@ -630,38 +540,28 @@ class ElectrsApi implements AbstractBitcoinApi {
   }
 
   $getRawBlock(hash: string): Promise<Buffer> {
-    return this.failoverRouter
-      .$get<any>('/block/' + hash + '/raw', 'arraybuffer')
-      .then((response) => {
-        return Buffer.from(response.data);
-      });
+    return this.failoverRouter.$get<any>('/block/' + hash + '/raw', 'arraybuffer').then((response) => {
+      return Buffer.from(response.data);
+    });
   }
 
   $getAddress(address: string): Promise<IEsploraApi.Address> {
     return this.failoverRouter.$get<IEsploraApi.Address>('/address/' + address);
   }
 
-  $getAddressTransactions(
-    address: string,
-    txId?: string
-  ): Promise<IEsploraApi.Transaction[]> {
+  $getAddressTransactions(address: string, txId?: string): Promise<IEsploraApi.Transaction[]> {
     throw new Error('Method getAddressTransactions not implemented.');
   }
 
   $getAddressUtxos(address: string): Promise<IEsploraApi.UTXO[]> {
-    return this.failoverRouter.$get<IEsploraApi.UTXO[]>(
-      '/address/' + address + '/utxo'
-    );
+    return this.failoverRouter.$get<IEsploraApi.UTXO[]>('/address/' + address + '/utxo');
   }
 
   $getScriptHash(scripthash: string): Promise<IEsploraApi.ScriptHash> {
     throw new Error('Method getScriptHash not implemented.');
   }
 
-  $getScriptHashTransactions(
-    scripthash: string,
-    txId?: string
-  ): Promise<IEsploraApi.Transaction[]> {
+  $getScriptHashTransactions(scripthash: string, txId?: string): Promise<IEsploraApi.Transaction[]> {
     throw new Error('Method getScriptHashTransactions not implemented.');
   }
 
@@ -677,10 +577,7 @@ class ElectrsApi implements AbstractBitcoinApi {
     throw new Error('Method not implemented.');
   }
 
-  $testMempoolAccept(
-    rawTransactions: string[],
-    maxfeerate?: number
-  ): Promise<TestMempoolAcceptResult[]> {
+  $testMempoolAccept(rawTransactions: string[], maxfeerate?: number): Promise<TestMempoolAcceptResult[]> {
     throw new Error('Method not implemented.');
   }
 
@@ -689,36 +586,22 @@ class ElectrsApi implements AbstractBitcoinApi {
   }
 
   $getOutspend(txId: string, vout: number): Promise<IEsploraApi.Outspend> {
-    return this.failoverRouter.$get<IEsploraApi.Outspend>(
-      '/tx/' + txId + '/outspend/' + vout
-    );
+    return this.failoverRouter.$get<IEsploraApi.Outspend>('/tx/' + txId + '/outspend/' + vout);
   }
 
   $getOutspends(txId: string): Promise<IEsploraApi.Outspend[]> {
-    return this.failoverRouter.$get<IEsploraApi.Outspend[]>(
-      '/tx/' + txId + '/outspends'
-    );
+    return this.failoverRouter.$get<IEsploraApi.Outspend[]>('/tx/' + txId + '/outspends');
   }
 
-  async $getBatchedOutspends(
-    txids: string[]
-  ): Promise<IEsploraApi.Outspend[][]> {
+  async $getBatchedOutspends(txids: string[]): Promise<IEsploraApi.Outspend[][]> {
     throw new Error('Method not implemented.');
   }
 
-  async $getBatchedOutspendsInternal(
-    txids: string[]
-  ): Promise<IEsploraApi.Outspend[][]> {
-    return this.failoverRouter.$post<IEsploraApi.Outspend[][]>(
-      '/internal/txs/outspends/by-txid',
-      txids,
-      'json'
-    );
+  async $getBatchedOutspendsInternal(txids: string[]): Promise<IEsploraApi.Outspend[][]> {
+    return this.failoverRouter.$post<IEsploraApi.Outspend[][]>('/internal/txs/outspends/by-txid', txids, 'json');
   }
 
-  async $getOutSpendsByOutpoint(
-    outpoints: { txid: string; vout: number }[]
-  ): Promise<IEsploraApi.Outspend[]> {
+  async $getOutSpendsByOutpoint(outpoints: { txid: string; vout: number }[]): Promise<IEsploraApi.Outspend[]> {
     return this.failoverRouter.$post<IEsploraApi.Outspend[]>(
       '/internal/txs/outspends/by-outpoint',
       outpoints.map((out) => `${out.txid}:${out.vout}`),
@@ -727,18 +610,12 @@ class ElectrsApi implements AbstractBitcoinApi {
   }
 
   async $getCoinbaseTx(blockhash: string): Promise<IEsploraApi.Transaction> {
-    const txid = await this.failoverRouter.$get<string>(
-      `/block/${blockhash}/txid/0`
-    );
+    const txid = await this.failoverRouter.$get<string>(`/block/${blockhash}/txid/0`);
     return this.failoverRouter.$get<IEsploraApi.Transaction>('/tx/' + txid);
   }
 
-  async $getAddressTransactionSummary(
-    address: string
-  ): Promise<IEsploraApi.AddressTxSummary[]> {
-    return this.failoverRouter.$get<IEsploraApi.AddressTxSummary[]>(
-      '/address/' + address + '/txs/summary'
-    );
+  async $getAddressTransactionSummary(address: string): Promise<IEsploraApi.AddressTxSummary[]> {
+    return this.failoverRouter.$get<IEsploraApi.AddressTxSummary[]>('/address/' + address + '/txs/summary');
   }
 
   public startHealthChecks(): void {

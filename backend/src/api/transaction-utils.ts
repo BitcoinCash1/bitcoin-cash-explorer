@@ -1,8 +1,4 @@
-import {
-  TransactionExtended,
-  MempoolTransactionExtended,
-  TransactionMinerInfo,
-} from '../mempool.interfaces';
+import { TransactionExtended, MempoolTransactionExtended, TransactionMinerInfo } from '../mempool.interfaces';
 import { IEsploraApi } from './bitcoin/esplora-api.interface';
 import { Common } from './common';
 import bitcoinApi, { bitcoinCoreApi } from './bitcoin/bitcoin-api-factory';
@@ -14,9 +10,7 @@ import pLimit from '../utils/p-limit';
 class TransactionUtils {
   constructor() {}
 
-  public stripCoinbaseTransaction(
-    tx: TransactionExtended
-  ): TransactionMinerInfo {
+  public stripCoinbaseTransaction(tx: TransactionExtended): TransactionMinerInfo {
     return {
       vin: [
         {
@@ -43,34 +37,17 @@ class TransactionUtils {
     addMempoolData = false
   ): Promise<TransactionExtended> {
     try {
-      const result = await this.$getTransactionExtended(
-        txid,
-        addPrevouts,
-        lazyPrevouts,
-        forceCore,
-        addMempoolData
-      );
+      const result = await this.$getTransactionExtended(txid, addPrevouts, lazyPrevouts, forceCore, addMempoolData);
       if (result) {
         return result;
       } else {
-        logger.err(
-          `Cannot fetch tx ${txid}. Reason: backend returned null data`
-        );
+        logger.err(`Cannot fetch tx ${txid}. Reason: backend returned null data`);
       }
     } catch (e) {
-      logger.err(
-        `Cannot fetch tx ${txid}. Reason: ` +
-          (e instanceof Error ? e.message : e)
-      );
+      logger.err(`Cannot fetch tx ${txid}. Reason: ` + (e instanceof Error ? e.message : e));
     }
     // retry direct from Core if first request failed
-    return this.$getTransactionExtended(
-      txid,
-      addPrevouts,
-      lazyPrevouts,
-      true,
-      addMempoolData
-    );
+    return this.$getTransactionExtended(txid, addPrevouts, lazyPrevouts, true, addMempoolData);
   }
 
   /**
@@ -88,19 +65,9 @@ class TransactionUtils {
   ): Promise<TransactionExtended> {
     let transaction: IEsploraApi.Transaction;
     if (forceCore === true) {
-      transaction = await bitcoinCoreApi.$getRawTransaction(
-        txId,
-        false,
-        addPrevouts,
-        lazyPrevouts
-      );
+      transaction = await bitcoinCoreApi.$getRawTransaction(txId, false, addPrevouts, lazyPrevouts);
     } else {
-      transaction = await bitcoinApi.$getRawTransaction(
-        txId,
-        false,
-        addPrevouts,
-        lazyPrevouts
-      );
+      transaction = await bitcoinApi.$getRawTransaction(txId, false, addPrevouts, lazyPrevouts);
     }
 
     if (addMempoolData || !transaction?.status?.confirmed) {
@@ -134,26 +101,15 @@ class TransactionUtils {
     const limiter = pLimit(8); // Run 8 requests at a time
     const results = await Promise.allSettled(
       txids.map((txid) =>
-        limiter(() =>
-          this.$getMempoolTransactionExtended(
-            txid,
-            addPrevouts,
-            lazyPrevouts,
-            forceCore
-          )
-        )
+        limiter(() => this.$getMempoolTransactionExtended(txid, addPrevouts, lazyPrevouts, forceCore))
       )
     );
     return results
       .filter((reply) => reply.status === 'fulfilled')
-      .map(
-        (r) => (r as PromiseFulfilledResult<MempoolTransactionExtended>).value
-      );
+      .map((r) => (r as PromiseFulfilledResult<MempoolTransactionExtended>).value);
   }
 
-  public extendTransaction(
-    transaction: IEsploraApi.Transaction
-  ): TransactionExtended {
+  public extendTransaction(transaction: IEsploraApi.Transaction): TransactionExtended {
     // @ts-ignore
     if (transaction.vsize) {
       // @ts-ignore
@@ -174,36 +130,24 @@ class TransactionUtils {
     return transactionExtended;
   }
 
-  public extendMempoolTransaction(
-    transaction: IEsploraApi.Transaction
-  ): MempoolTransactionExtended {
+  public extendMempoolTransaction(transaction: IEsploraApi.Transaction): MempoolTransactionExtended {
     const size = Math.ceil(transaction.size);
-    const sigops =
-      transaction.sigops != null
-        ? transaction.sigops
-        : this.countSigops(transaction);
+    const sigops = transaction.sigops != null ? transaction.sigops : this.countSigops(transaction);
     // https://github.com/bitcoin/bitcoin/blob/e9262ea32a6e1d364fb7974844fadc36f931f8c6/src/policy/policy.cpp#L295-L298
     const adjustedSize = Math.max(transaction.size, sigops * 5); // adjusted vsize = Max(weight, sigops * bytes_per_sigop) / witness_scale_factor, this need to be changed for BCH
     const feePerBytes = (transaction.fee || 0) / transaction.size;
     const adjustedFeePerSize = (transaction.fee || 0) / adjustedSize;
-    const effectiveFeePerSize =
-      transaction['effectiveFeePerSize'] || adjustedFeePerSize || feePerBytes;
-    const transactionExtended: MempoolTransactionExtended = Object.assign(
-      transaction,
-      {
-        order: this.txidToOrdering(transaction.txid),
-        size: size,
-        adjustedSize: adjustedSize,
-        sigops,
-        feePerSize: feePerBytes,
-        adjustedFeePerSize: adjustedFeePerSize,
-        effectiveFeePerSize: effectiveFeePerSize,
-      }
-    );
-    if (
-      !transactionExtended?.status?.confirmed &&
-      !transactionExtended.firstSeen
-    ) {
+    const effectiveFeePerSize = transaction['effectiveFeePerSize'] || adjustedFeePerSize || feePerBytes;
+    const transactionExtended: MempoolTransactionExtended = Object.assign(transaction, {
+      order: this.txidToOrdering(transaction.txid),
+      size: size,
+      adjustedSize: adjustedSize,
+      sigops,
+      feePerSize: feePerBytes,
+      adjustedFeePerSize: adjustedFeePerSize,
+      effectiveFeePerSize: effectiveFeePerSize,
+    });
+    if (!transactionExtended?.status?.confirmed && !transactionExtended.firstSeen) {
       transactionExtended.firstSeen = Math.round(Date.now() / 1000);
     }
     return transactionExtended;
@@ -220,11 +164,7 @@ class TransactionUtils {
   /**
    *  Calculate the witness-adjusted sigops cost of an asm script
    */
-  public countScriptSigops(
-    script: string,
-    isRawScript: boolean = false,
-    witness: boolean = false
-  ): number {
+  public countScriptSigops(script: string, isRawScript: boolean = false, witness: boolean = false): number {
     if (!script?.length) {
       return 0;
     }
@@ -239,9 +179,7 @@ class TransactionUtils {
       sigops += 20 * (script.match(/OP_CHECKMULTISIG/g)?.length || 0);
     } else {
       // in redeem scripts and witnesses, worth N if preceded by OP_N, 20 otherwise
-      const matches = script.matchAll(
-        /(?:OP_(?:PUSHNUM_)?(\d+))? OP_CHECKMULTISIG/g
-      );
+      const matches = script.matchAll(/(?:OP_(?:PUSHNUM_)?(\d+))? OP_CHECKMULTISIG/g);
       for (const match of matches) {
         const n = parseInt(match[1]);
         if (Number.isInteger(n)) {
@@ -265,12 +203,8 @@ class TransactionUtils {
       if (input.prevout) {
         // BCH  does not have v0_p2wpkh, v0_p2wsh or v1_p2tr
         switch (true) {
-          case input.prevout.scriptpubkey_type === 'p2sh' &&
-            input.scriptsig &&
-            input.scriptsig.startsWith('160014'):
-          case input.prevout?.scriptpubkey_type === 'p2sh' &&
-            input.scriptsig &&
-            input.scriptsig.startsWith('220020'):
+          case input.prevout.scriptpubkey_type === 'p2sh' && input.scriptsig && input.scriptsig.startsWith('160014'):
+          case input.prevout?.scriptpubkey_type === 'p2sh' && input.scriptsig && input.scriptsig.startsWith('220020'):
           case input.prevout.scriptpubkey_type === 'p2sh':
             if (input.inner_redeemscript_asm) {
               sigops += this.countScriptSigops(input.inner_redeemscript_asm);
@@ -309,10 +243,7 @@ class TransactionUtils {
       }
       if (input.prevout) {
         // P2SH redeem script
-        if (
-          input.prevout.scriptpubkey_type === 'p2sh' &&
-          input.inner_redeemscript_asm
-        ) {
+        if (input.prevout.scriptpubkey_type === 'p2sh' && input.inner_redeemscript_asm) {
           sigops += this.countScriptSigops(input.inner_redeemscript_asm);
         } else {
           // prevout scriptpubkey
@@ -329,13 +260,7 @@ class TransactionUtils {
 
   // returns the most significant 4 bytes of the txid as an integer
   public txidToOrdering(txid: string): number {
-    return parseInt(
-      txid.substr(62, 2) +
-        txid.substr(60, 2) +
-        txid.substr(58, 2) +
-        txid.substr(56, 2),
-      16
-    );
+    return parseInt(txid.substr(62, 2) + txid.substr(60, 2) + txid.substr(58, 2) + txid.substr(56, 2), 16);
   }
 
   public addInnerScriptsToVin(vin: IEsploraApi.Vin): void {

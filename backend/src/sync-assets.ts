@@ -15,10 +15,7 @@ class SyncAssets {
       try {
         await this.downloadFile$(url);
       } catch (e) {
-        throw new Error(
-          `Failed to download external asset. ` +
-            (e instanceof Error ? e.message : e)
-        );
+        throw new Error(`Failed to download external asset. ` + (e instanceof Error ? e.message : e));
       }
     }
   }
@@ -44,9 +41,7 @@ class SyncAssets {
 
           const agent = new SocksProxyAgent(socksOptions);
 
-          logger.info(
-            `Downloading external asset ${fileName} over the Tor network...`
-          );
+          logger.info(`Downloading external asset ${fileName} over the Tor network...`);
           return axios
             .get(url, {
               headers: {
@@ -63,17 +58,13 @@ class SyncAssets {
             .then(function (response) {
               const writer = fs.createWriteStream(PATH + fileName);
               writer.on('finish', () => {
-                logger.info(
-                  `External asset ${fileName} saved to ${PATH + fileName}`
-                );
+                logger.info(`External asset ${fileName} saved to ${PATH + fileName}`);
                 resolve(0);
               });
               response.data.pipe(writer);
             });
         } else {
-          logger.info(
-            `Downloading external asset ${fileName} over clearnet...`
-          );
+          logger.info(`Downloading external asset ${fileName} over clearnet...`);
           return axios
             .get(url, {
               headers: {
@@ -88,9 +79,7 @@ class SyncAssets {
             .then(function (response) {
               const writer = fs.createWriteStream(PATH + fileName);
               writer.on('finish', () => {
-                logger.info(
-                  `External asset ${fileName} saved to ${PATH + fileName}`
-                );
+                logger.info(`External asset ${fileName} saved to ${PATH + fileName}`);
                 resolve(0);
               });
               response.data.pipe(writer);

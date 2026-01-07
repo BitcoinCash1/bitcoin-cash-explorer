@@ -11,10 +11,7 @@ export async function setupTestDatabase(): Promise<void> {
     await DB.checkDbConnection();
     await databaseMigration.$initializeOrMigrateDatabase();
   } catch (error) {
-    logger.err(
-      'Failed to setup test database: ' +
-        (error instanceof Error ? error.message : error)
-    );
+    logger.err('Failed to setup test database: ' + (error instanceof Error ? error.message : error));
     throw error;
   }
 }
@@ -61,10 +58,7 @@ export async function cleanupTestData(): Promise<void> {
     } catch (e) {
       // Ignore
     }
-    logger.err(
-      'Failed to cleanup test data: ' +
-        (error instanceof Error ? error.message : error)
-    );
+    logger.err('Failed to cleanup test data: ' + (error instanceof Error ? error.message : error));
     throw error;
   }
 }
@@ -72,10 +66,7 @@ export async function cleanupTestData(): Promise<void> {
 /**
  * Wait for database to be ready
  */
-export async function waitForDatabase(
-  maxRetries = 30,
-  retryInterval = 1000
-): Promise<void> {
+export async function waitForDatabase(maxRetries = 30, retryInterval = 1000): Promise<void> {
   for (let i = 0; i < maxRetries; i++) {
     try {
       await DB.query('SELECT 1');

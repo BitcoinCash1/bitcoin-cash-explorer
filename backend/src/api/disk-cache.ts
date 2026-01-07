@@ -11,8 +11,7 @@ import { Common } from './common';
 class DiskCache {
   private cacheSchemaVersion = 3;
   private static TMP_FILE_NAME = config.MEMPOOL.CACHE_DIR + '/tmp-cache.json';
-  private static TMP_FILE_NAMES =
-    config.MEMPOOL.CACHE_DIR + '/tmp-cache{number}.json';
+  private static TMP_FILE_NAMES = config.MEMPOOL.CACHE_DIR + '/tmp-cache{number}.json';
   private static FILE_NAME = config.MEMPOOL.CACHE_DIR + '/cache.json';
   private static FILE_NAMES = config.MEMPOOL.CACHE_DIR + '/cache{number}.json';
   private static CHUNK_FILES = 25;
@@ -43,11 +42,7 @@ class DiskCache {
       return;
     }
     try {
-      logger.debug(
-        `Writing mempool and blocks data to disk cache (${
-          sync ? 'sync' : 'async'
-        })...`
-      );
+      logger.debug(`Writing mempool and blocks data to disk cache (${sync ? 'sync' : 'async'})...`);
       this.isWritingCache = true;
 
       const mempool = memPool.getMempool();
@@ -131,9 +126,7 @@ class DiskCache {
       logger.debug('Mempool and blocks data saved to disk cache');
       this.isWritingCache = false;
     } catch (e) {
-      logger.warn(
-        'Error writing to cache file: ' + (e instanceof Error ? e.message : e)
-      );
+      logger.warn('Error writing to cache file: ' + (e instanceof Error ? e.message : e));
       this.isWritingCache = false;
     }
   }
@@ -144,11 +137,7 @@ class DiskCache {
       fs.unlinkSync(DiskCache.FILE_NAME);
     } catch (e: any) {
       if (e?.code !== 'ENOENT') {
-        logger.err(
-          `Cannot wipe cache file ${
-            DiskCache.FILE_NAME
-          }. Exception ${JSON.stringify(e)}`
-        );
+        logger.err(`Cannot wipe cache file ${DiskCache.FILE_NAME}. Exception ${JSON.stringify(e)}`);
       }
     }
 
@@ -158,9 +147,7 @@ class DiskCache {
         fs.unlinkSync(filename);
       } catch (e: any) {
         if (e?.code !== 'ENOENT') {
-          logger.err(
-            `Cannot wipe cache file ${filename}. Exception ${JSON.stringify(e)}`
-          );
+          logger.err(`Cannot wipe cache file ${filename}. Exception ${JSON.stringify(e)}`);
         }
       }
     }
@@ -177,13 +164,8 @@ class DiskCache {
       if (cacheData) {
         logger.info('Restoring mempool and blocks data from disk cache');
         data = JSON.parse(cacheData);
-        if (
-          data.cacheSchemaVersion === undefined ||
-          data.cacheSchemaVersion !== this.cacheSchemaVersion
-        ) {
-          logger.notice(
-            'Disk cache contains an outdated schema version. Clearing it and skipping the cache loading.'
-          );
+        if (data.cacheSchemaVersion === undefined || data.cacheSchemaVersion !== this.cacheSchemaVersion) {
+          logger.notice('Disk cache contains an outdated schema version. Clearing it and skipping the cache loading.');
           return this.wipeCache();
         }
         if (data.network && data.network !== config.MEMPOOL.NETWORK) {
@@ -216,12 +198,7 @@ class DiskCache {
             }
           }
         } catch (e) {
-          logger.err(
-            'Error parsing ' +
-              fileName +
-              '. Skipping. Reason: ' +
-              (e instanceof Error ? e.message : e)
-          );
+          logger.err('Error parsing ' + fileName + '. Skipping. Reason: ' + (e instanceof Error ? e.message : e));
         }
       }
 
@@ -237,17 +214,14 @@ class DiskCache {
       }
     } catch (e) {
       logger.warn(
-        'Failed to parse mempoool and blocks cache. Skipping. Reason: ' +
-          (e instanceof Error ? e.message : e)
+        'Failed to parse mempoool and blocks cache. Skipping. Reason: ' + (e instanceof Error ? e.message : e)
       );
     }
   }
 
   private $yield(): Promise<void> {
     if (this.semaphore.locks) {
-      logger.debug(
-        'Pause writing mempool and blocks data to disk cache (async)'
-      );
+      logger.debug('Pause writing mempool and blocks data to disk cache (async)');
       return new Promise((resolve) => {
         this.semaphore.resume.push(resolve);
       });
@@ -265,9 +239,7 @@ class DiskCache {
     if (!this.semaphore.locks && this.semaphore.resume.length) {
       const nextResume = this.semaphore.resume.shift();
       if (nextResume) {
-        logger.debug(
-          'Resume writing mempool and blocks data to disk cache (async)'
-        );
+        logger.debug('Resume writing mempool and blocks data to disk cache (async)');
         nextResume();
       }
     }

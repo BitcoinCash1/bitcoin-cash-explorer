@@ -24,10 +24,7 @@ class PoolsUpdater {
       try {
         await this.updatePoolsJson();
       } catch (e: any) {
-        logger.info(
-          `Exception ${e} in PoolsUpdater::$startService. Code: ${e.code}. Message: ${e.message}`,
-          this.tag
-        );
+        logger.info(`Exception ${e} in PoolsUpdater::$startService. Code: ${e.code}. Message: ${e.message}`, this.tag);
       }
       await Common.sleep$(10000);
     }
@@ -35,9 +32,7 @@ class PoolsUpdater {
 
   public async updatePoolsJson(): Promise<void> {
     if (
-      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(
-        config.MEMPOOL.NETWORK
-      ) === false ||
+      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK) === false ||
       config.MEMPOOL.ENABLED === false
     ) {
       return;
@@ -61,10 +56,7 @@ class PoolsUpdater {
         return;
       }
 
-      logger.debug(
-        `pools-v2.json sha | Current: ${this.currentSha} | Github: ${githubSha}`,
-        this.tag
-      );
+      logger.debug(`pools-v2.json sha | Current: ${this.currentSha} | Github: ${githubSha}`, this.tag);
       if (this.currentSha !== null && this.currentSha === githubSha) {
         return;
       }
@@ -88,15 +80,9 @@ class PoolsUpdater {
 
       const network = config.SOCKS5PROXY.ENABLED ? 'tor' : 'clearnet';
       if (this.currentSha === null) {
-        logger.info(
-          `Downloading pools-v2.json for the first time from ${this.poolsUrl} over ${network}`,
-          this.tag
-        );
+        logger.info(`Downloading pools-v2.json for the first time from ${this.poolsUrl} over ${network}`, this.tag);
       } else {
-        logger.warn(
-          `pools-v2.json is outdated, fetching latest from ${this.poolsUrl} over ${network}`,
-          this.tag
-        );
+        logger.warn(`pools-v2.json is outdated, fetching latest from ${this.poolsUrl} over ${network}`, this.tag);
       }
       const poolsJson = await this.query(this.poolsUrl);
       if (poolsJson === undefined) {
@@ -106,10 +92,7 @@ class PoolsUpdater {
 
       if (config.DATABASE.ENABLED === false) {
         // Don't run db operations
-        logger.info(
-          `Mining pools-v2.json (${githubSha}) import completed (no database)`,
-          this.tag
-        );
+        logger.info(`Mining pools-v2.json (${githubSha}) import completed (no database)`, this.tag);
         return;
       }
 
@@ -119,28 +102,14 @@ class PoolsUpdater {
         await poolsParser.migratePoolsJson();
         await DB.query('COMMIT;');
       } catch (e) {
-        logger.err(
-          `Could not migrate mining pools, rolling back. Exception: ${JSON.stringify(
-            e
-          )}`,
-          this.tag
-        );
+        logger.err(`Could not migrate mining pools, rolling back. Exception: ${JSON.stringify(e)}`, this.tag);
         await DB.query('ROLLBACK;');
       }
-      logger.info(
-        `Mining pools-v2.json (${githubSha}) import completed`,
-        this.tag
-      );
+      logger.info(`Mining pools-v2.json (${githubSha}) import completed`, this.tag);
     } catch (e) {
       // fast-forward lastRun to 10 minutes before the next scheduled update
-      this.lastRun =
-        now - Math.max(config.MEMPOOL.POOLS_UPDATE_DELAY - 600, 600);
-      logger.err(
-        `PoolsUpdater failed. Will try again in 10 minutes. Exception: ${JSON.stringify(
-          e
-        )}`,
-        this.tag
-      );
+      this.lastRun = now - Math.max(config.MEMPOOL.POOLS_UPDATE_DELAY - 600, 600);
+      logger.err(`PoolsUpdater failed. Will try again in 10 minutes. Exception: ${JSON.stringify(e)}`, this.tag);
     }
   }
 
@@ -152,13 +121,10 @@ class PoolsUpdater {
     if (config.DATABASE.ENABLED === true) {
       try {
         await DB.query('DELETE FROM state where name="pools_json_sha"');
-        await DB.query(
-          `INSERT INTO state VALUES('pools_json_sha', NULL, '${githubSha}')`
-        );
+        await DB.query(`INSERT INTO state VALUES('pools_json_sha', NULL, '${githubSha}')`);
       } catch (e) {
         logger.err(
-          'Cannot save github pools-v2.json sha into the db. Reason: ' +
-            (e instanceof Error ? e.message : e),
+          'Cannot save github pools-v2.json sha into the db. Reason: ' + (e instanceof Error ? e.message : e),
           this.tag
         );
       }
@@ -170,16 +136,10 @@ class PoolsUpdater {
    */
   public async getShaFromDb(): Promise<string | null> {
     try {
-      const [rows]: any[] = await DB.query(
-        'SELECT string FROM state WHERE name="pools_json_sha"'
-      );
+      const [rows]: any[] = await DB.query('SELECT string FROM state WHERE name="pools_json_sha"');
       return rows.length > 0 ? rows[0].string : null;
     } catch (e) {
-      logger.err(
-        'Cannot fetch pools-v2.json sha from db. Reason: ' +
-          (e instanceof Error ? e.message : e),
-        this.tag
-      );
+      logger.err('Cannot fetch pools-v2.json sha from db. Reason: ' + (e instanceof Error ? e.message : e), this.tag);
       return null;
     }
   }
@@ -198,10 +158,7 @@ class PoolsUpdater {
       }
     }
 
-    logger.err(
-      `Cannot find "pools-v2.json" in git tree (${this.treeUrl})`,
-      this.tag
-    );
+    logger.err(`Cannot find "pools-v2.json" in git tree (${this.treeUrl})`, this.tag);
     return null;
   }
 
@@ -253,17 +210,11 @@ class PoolsUpdater {
 
         const data: AxiosResponse = await axios.get(path, axiosOptions);
         if (data.statusText === 'error' || !data.data) {
-          throw new Error(
-            `Could not fetch data from ${path}, Error: ${data.status}`
-          );
+          throw new Error(`Could not fetch data from ${path}, Error: ${data.status}`);
         }
         return data.data;
       } catch (e) {
-        logger.err(
-          'Could not connect to Github. Reason: ' +
-            (e instanceof Error ? e.message : e),
-          this.tag
-        );
+        logger.err('Could not connect to Github. Reason: ' + (e instanceof Error ? e.message : e), this.tag);
         retry++;
       }
       await setDelay(config.MEMPOOL.EXTERNAL_RETRY_INTERVAL);

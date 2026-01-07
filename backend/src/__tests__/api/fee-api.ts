@@ -26,10 +26,7 @@ const mempoolInfo: IBitcoinApi.MempoolInfo = {
 
 describe('Fee API', () => {
   test('should calculate recommended fees properly for sub-sat mempool', () => {
-    const fee = feeApi.calculateRecommendedFee(
-      feeMempoolBlocks.subsat,
-      subSatMempoolInfo
-    );
+    const fee = feeApi.calculateRecommendedFee(feeMempoolBlocks.subsat, subSatMempoolInfo);
     expect(fee.fastestFee).toBe(2);
     expect(fee.halfHourFee).toBe(1);
     expect(fee.hourFee).toBe(1);
@@ -38,10 +35,7 @@ describe('Fee API', () => {
   });
 
   test('should calculate recommended fees properly for full but low fee mempool', () => {
-    const fee = feeApi.calculateRecommendedFee(
-      feeMempoolBlocks.lowfee,
-      mempoolInfo
-    );
+    const fee = feeApi.calculateRecommendedFee(feeMempoolBlocks.lowfee, mempoolInfo);
     expect(fee.fastestFee).toBe(2);
     expect(fee.halfHourFee).toBe(2);
     expect(fee.hourFee).toBe(2);
@@ -50,10 +44,7 @@ describe('Fee API', () => {
   });
 
   test('should calculate recommended fees properly for empty mempool', () => {
-    const fee = feeApi.calculateRecommendedFee(
-      feeMempoolBlocks.empty,
-      mempoolInfo
-    );
+    const fee = feeApi.calculateRecommendedFee(feeMempoolBlocks.empty, mempoolInfo);
     expect(fee.fastestFee).toBe(1);
     expect(fee.halfHourFee).toBe(1);
     expect(fee.hourFee).toBe(1);

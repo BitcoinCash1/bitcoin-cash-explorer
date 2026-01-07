@@ -30,10 +30,7 @@ class AuditReplication {
 
     const missingAudits = await this.$getMissingAuditBlocks();
 
-    logger.debug(
-      `Fetching missing audit data for ${missingAudits.length} blocks from trusted servers`,
-      'Replication'
-    );
+    logger.debug(`Fetching missing audit data for ${missingAudits.length} blocks from trusted servers`, 'Replication');
 
     let totalSynced = 0;
     let totalMissed = 0;
@@ -41,31 +38,21 @@ class AuditReplication {
     // process missing audits in batches of BATCH_SIZE
     for (let i = 0; i < missingAudits.length; i += BATCH_SIZE) {
       const slice = missingAudits.slice(i, i + BATCH_SIZE);
-      const results = await Promise.all(
-        slice.map((hash) => this.$syncAudit(hash))
-      );
-      const synced = results.reduce(
-        (total, status) => (status ? total + 1 : total),
-        0
-      );
+      const results = await Promise.all(slice.map((hash) => this.$syncAudit(hash)));
+      const synced = results.reduce((total, status) => (status ? total + 1 : total), 0);
       totalSynced += synced;
       totalMissed += slice.length - synced;
       if (Date.now() - loggerTimer > 10000) {
         loggerTimer = Date.now();
         logger.info(
-          `Found ${totalSynced} / ${totalSynced + totalMissed} of ${
-            missingAudits.length
-          } missing audits`,
+          `Found ${totalSynced} / ${totalSynced + totalMissed} of ${missingAudits.length} missing audits`,
           'Replication'
         );
       }
       await Common.sleep$(1000);
     }
 
-    logger.debug(
-      `Fetched ${totalSynced} audits, ${totalMissed} still missing`,
-      'Replication'
-    );
+    logger.debug(`Fetched ${totalSynced} audits, ${totalMissed} still missing`, 'Replication');
 
     this.inProgress = false;
   }
@@ -82,9 +69,7 @@ class AuditReplication {
     if (syncResult) {
       if (syncResult.data?.template?.length) {
         await this.$saveAuditData(hash, syncResult.data);
-        logger.info(
-          `Imported audit data from ${syncResult.server} for block ${syncResult.data.height} (${hash})`
-        );
+        logger.info(`Imported audit data from ${syncResult.server} for block ${syncResult.data.height} (${hash})`);
         success = true;
       }
       if (!syncResult.data && !syncResult.exists) {
@@ -114,18 +99,12 @@ class AuditReplication {
       );
       return rows.map((row) => row.hash);
     } catch (e: any) {
-      logger.err(
-        `Cannot fetch missing audit blocks from db. Reason: ` +
-          (e instanceof Error ? e.message : e)
-      );
+      logger.err(`Cannot fetch missing audit blocks from db. Reason: ` + (e instanceof Error ? e.message : e));
       throw e;
     }
   }
 
-  private async $saveAuditData(
-    blockHash: string,
-    auditSummary: AuditSummary
-  ): Promise<void> {
+  private async $saveAuditData(blockHash: string, auditSummary: AuditSummary): Promise<void> {
     // save audit & template to DB
     await blocksSummariesRepository.$saveTemplate({
       height: auditSummary.height,
@@ -151,9 +130,7 @@ class AuditReplication {
       expectedSize: auditSummary.expectedSize,
     });
     // add missing data to cached blocks
-    const cachedBlock = blocks
-      .getBlocks()
-      .find((block) => block.id === blockHash);
+    const cachedBlock = blocks.getBlocks().find((block) => block.id === blockHash);
     if (cachedBlock) {
       cachedBlock.extras.matchRate = auditSummary.matchRate;
       cachedBlock.extras.expectedFees = auditSummary.expectedFees || null;

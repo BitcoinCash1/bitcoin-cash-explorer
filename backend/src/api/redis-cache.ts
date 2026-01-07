@@ -3,11 +3,7 @@ import memPool from './mempool';
 import blocks from './blocks';
 import logger from '../logger';
 import config from '../config';
-import {
-  BlockExtended,
-  BlockSummary,
-  MempoolTransactionExtended,
-} from '../mempool.interfaces';
+import { BlockExtended, BlockSummary, MempoolTransactionExtended } from '../mempool.interfaces';
 import transactionUtils from './transaction-utils';
 
 enum NetworkDB {
@@ -50,9 +46,7 @@ class RedisCache {
       try {
         this.client = createClient(this.redisConfig);
         this.client.on('error', async (e) => {
-          logger.err(
-            `Error in Redis client: ${e instanceof Error ? e.message : e}`
-          );
+          logger.err(`Error in Redis client: ${e instanceof Error ? e.message : e}`);
           this.connected = false;
           await this.client.disconnect();
         });
@@ -63,9 +57,7 @@ class RedisCache {
             if (version !== this.schemaVersion) {
               // schema changed
               // perform migrations or flush DB if necessary
-              logger.info(
-                `Redis schema version changed from ${version} to ${this.schemaVersion}`
-              );
+              logger.info(`Redis schema version changed from ${version} to ${this.schemaVersion}`);
               await this.client.set('schema_version', this.schemaVersion);
             }
             logger.info(`Redis client connected`);
@@ -79,9 +71,7 @@ class RedisCache {
         await this.$onConnected();
         return true;
       } catch (e) {
-        logger.warn(
-          'Error connecting to Redis: ' + (e instanceof Error ? e.message : e)
-        );
+        logger.warn('Error connecting to Redis: ' + (e instanceof Error ? e.message : e));
         return false;
       }
     } else {
@@ -90,9 +80,7 @@ class RedisCache {
         await this.client.get('schema_version');
         return true;
       } catch (e) {
-        logger.warn(
-          'Lost connection to Redis: ' + (e instanceof Error ? e.message : e)
-        );
+        logger.warn('Lost connection to Redis: ' + (e instanceof Error ? e.message : e));
         logger.warn('Attempting to reconnect in 10 seconds');
         this.connected = false;
         return false;
@@ -110,20 +98,14 @@ class RedisCache {
       return;
     }
     if (!this.connected) {
-      logger.warn(
-        `Failed to update blocks in Redis cache: Redis is not connected`
-      );
+      logger.warn(`Failed to update blocks in Redis cache: Redis is not connected`);
       return;
     }
     try {
       await this.client.set('blocks', JSON.stringify(blocks));
       logger.debug(`Saved latest blocks to Redis cache`);
     } catch (e) {
-      logger.warn(
-        `Failed to update blocks in Redis cache: ${
-          e instanceof Error ? e.message : e
-        }`
-      );
+      logger.warn(`Failed to update blocks in Redis cache: ${e instanceof Error ? e.message : e}`);
     }
   }
 
@@ -132,20 +114,14 @@ class RedisCache {
       return;
     }
     if (!this.connected) {
-      logger.warn(
-        `Failed to update block summaries in Redis cache: Redis is not connected`
-      );
+      logger.warn(`Failed to update block summaries in Redis cache: Redis is not connected`);
       return;
     }
     try {
       await this.client.set('block-summaries', JSON.stringify(summaries));
       logger.debug(`Saved latest block summaries to Redis cache`);
     } catch (e) {
-      logger.warn(
-        `Failed to update block summaries in Redis cache: ${
-          e instanceof Error ? e.message : e
-        }`
-      );
+      logger.warn(`Failed to update block summaries in Redis cache: ${e instanceof Error ? e.message : e}`);
     }
   }
 
@@ -169,9 +145,7 @@ class RedisCache {
       return;
     }
     if (!this.connected) {
-      logger.warn(
-        `Failed to add ${this.cacheQueue.length} transactions to Redis cache: Redis not connected`
-      );
+      logger.warn(`Failed to add ${this.cacheQueue.length} transactions to Redis cache: Redis not connected`);
       return;
     }
 
@@ -195,15 +169,9 @@ class RedisCache {
       await this.client.MSET(msetData);
       // successful, remove transactions from cache queue
       this.cacheQueue = this.cacheQueue.slice(toAdd.length);
-      logger.debug(
-        `Saved ${toAdd.length} transactions to Redis cache, ${this.cacheQueue.length} left in queue`
-      );
+      logger.debug(`Saved ${toAdd.length} transactions to Redis cache, ${this.cacheQueue.length} left in queue`);
     } catch (e) {
-      logger.warn(
-        `Failed to add ${toAdd.length} transactions to Redis cache: ${
-          e instanceof Error ? e.message : e
-        }`
-      );
+      logger.warn(`Failed to add ${toAdd.length} transactions to Redis cache: ${e instanceof Error ? e.message : e}`);
       this.pauseFlush = true;
     }
   }
@@ -223,14 +191,10 @@ class RedisCache {
         try {
           await this.client.unlink(slice.map((txid) => `mempool:tx:${txid}`));
           numRemoved += sliceLength;
-          logger.debug(
-            `Deleted ${slice.length} transactions from the Redis cache`
-          );
+          logger.debug(`Deleted ${slice.length} transactions from the Redis cache`);
         } catch (e) {
           logger.warn(
-            `Failed to remove ${slice.length} transactions from Redis cache: ${
-              e instanceof Error ? e.message : e
-            }`
+            `Failed to remove ${slice.length} transactions from Redis cache: ${e instanceof Error ? e.message : e}`
           );
           failed = failed.concat(slice);
         }
@@ -247,20 +211,14 @@ class RedisCache {
       return [];
     }
     if (!this.connected) {
-      logger.warn(
-        `Failed to retrieve blocks from Redis cache: Redis is not connected`
-      );
+      logger.warn(`Failed to retrieve blocks from Redis cache: Redis is not connected`);
       return [];
     }
     try {
       const json = await this.client.get('blocks');
       return JSON.parse(json);
     } catch (e) {
-      logger.warn(
-        `Failed to retrieve blocks from Redis cache: ${
-          e instanceof Error ? e.message : e
-        }`
-      );
+      logger.warn(`Failed to retrieve blocks from Redis cache: ${e instanceof Error ? e.message : e}`);
       return [];
     }
   }
@@ -270,20 +228,14 @@ class RedisCache {
       return [];
     }
     if (!this.connected) {
-      logger.warn(
-        `Failed to retrieve blocks from Redis cache: Redis is not connected`
-      );
+      logger.warn(`Failed to retrieve blocks from Redis cache: Redis is not connected`);
       return [];
     }
     try {
       const json = await this.client.get('block-summaries');
       return JSON.parse(json);
     } catch (e) {
-      logger.warn(
-        `Failed to retrieve blocks from Redis cache: ${
-          e instanceof Error ? e.message : e
-        }`
-      );
+      logger.warn(`Failed to retrieve blocks from Redis cache: ${e instanceof Error ? e.message : e}`);
       return [];
     }
   }
@@ -293,30 +245,20 @@ class RedisCache {
       return {};
     }
     if (!this.connected) {
-      logger.warn(
-        `Failed to retrieve mempool from Redis cache: Redis is not connected`
-      );
+      logger.warn(`Failed to retrieve mempool from Redis cache: Redis is not connected`);
       return {};
     }
     const start = Date.now();
     const mempool = {};
     try {
-      const mempoolList = await this.scanKeys<MempoolTransactionExtended>(
-        'mempool:tx:*'
-      );
+      const mempoolList = await this.scanKeys<MempoolTransactionExtended>('mempool:tx:*');
       for (const tx of mempoolList) {
         mempool[tx.key] = tx.value;
       }
-      logger.info(
-        `Loaded mempool from Redis cache in ${Date.now() - start} ms`
-      );
+      logger.info(`Loaded mempool from Redis cache in ${Date.now() - start} ms`);
       return mempool || {};
     } catch (e) {
-      logger.warn(
-        `Failed to retrieve mempool from Redis cache: ${
-          e instanceof Error ? e.message : e
-        }`
-      );
+      logger.warn(`Failed to retrieve mempool from Redis cache: ${e instanceof Error ? e.message : e}`);
     }
     return {};
   }
@@ -342,23 +284,17 @@ class RedisCache {
     await memPool.$setMempool(loadedMempool);
   }
 
-  private inflateLoadedTxs(mempool: {
-    [txid: string]: MempoolTransactionExtended;
-  }): void {
+  private inflateLoadedTxs(mempool: { [txid: string]: MempoolTransactionExtended }): void {
     for (const tx of Object.values(mempool)) {
       for (const vin of tx.vin) {
         if (vin.scriptsig) {
-          vin.scriptsig_asm = transactionUtils.convertScriptSigAsm(
-            vin.scriptsig
-          );
+          vin.scriptsig_asm = transactionUtils.convertScriptSigAsm(vin.scriptsig);
           transactionUtils.addInnerScriptsToVin(vin);
         }
       }
       for (const vout of tx.vout) {
         if (vout.scriptpubkey) {
-          vout.scriptpubkey_asm = transactionUtils.convertScriptSigAsm(
-            vout.scriptpubkey
-          );
+          vout.scriptpubkey_asm = transactionUtils.convertScriptSigAsm(vout.scriptpubkey);
         }
       }
     }

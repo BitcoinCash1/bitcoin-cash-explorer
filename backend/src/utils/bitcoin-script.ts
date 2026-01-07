@@ -146,9 +146,7 @@ for (let i = 187; i <= 255; i++) {
 export { opcodes };
 
 /** extracts m and n from a multisig script (asm), returns nothing if it is not a multisig script */
-export function parseMultisigScript(
-  script: string
-): void | { m: number; n: number } {
+export function parseMultisigScript(script: string): void | { m: number; n: number } {
   if (!script?.length) {
     return;
   }
@@ -205,9 +203,7 @@ export function getVarIntLength(n: number): number {
 }
 
 /** Extracts miner names from a DATUM coinbase transaction */
-export function parseDATUMTemplateCreator(
-  coinbaseRaw: string
-): string[] | null {
+export function parseDATUMTemplateCreator(coinbaseRaw: string): string[] | null {
   const bytes: number[] = [];
   for (let c = 0; c < coinbaseRaw.length; c += 2) {
     bytes.push(parseInt(coinbaseRaw.slice(c, c + 2), 16));
@@ -227,7 +223,5 @@ export function parseDATUMTemplateCreator(
   let tagString = String.fromCharCode(...tags);
   tagString = tagString.replace('\x00', '');
 
-  return tagString
-    .split('\x0f')
-    .map((name) => name.replace(/[^a-zA-Z0-9 ]/g, ''));
+  return tagString.split('\x0f').map((name) => name.replace(/[^a-zA-Z0-9 ]/g, ''));
 }

@@ -6,8 +6,7 @@ class BitfinexApi implements PriceFeed {
   public currencies: string[] = ['USD', 'EUR', 'GPB', 'JPY'];
 
   public url: string = 'https://api.bitfinex.com/v1/pubticker/BTC';
-  public urlHist: string =
-    'https://api-pub.bitfinex.com/v2/candles/trade:{GRANULARITY}:tBTC{CURRENCY}/hist';
+  public urlHist: string = 'https://api-pub.bitfinex.com/v2/candles/trade:{GRANULARITY}:tBTC{CURRENCY}/hist';
 
   public async $fetchPrice(currency): Promise<number> {
     const response = await query(this.url + currency);
@@ -18,10 +17,7 @@ class BitfinexApi implements PriceFeed {
     }
   }
 
-  public async $fetchRecentPrice(
-    currencies: string[],
-    type: 'hour' | 'day'
-  ): Promise<PriceHistory> {
+  public async $fetchRecentPrice(currencies: string[], type: 'hour' | 'day'): Promise<PriceHistory> {
     const priceHistory: PriceHistory = {};
 
     for (const currency of currencies) {
@@ -30,9 +26,7 @@ class BitfinexApi implements PriceFeed {
       }
 
       const response = await query(
-        this.urlHist
-          .replace('{GRANULARITY}', type === 'hour' ? '1h' : '1D')
-          .replace('{CURRENCY}', currency)
+        this.urlHist.replace('{GRANULARITY}', type === 'hour' ? '1h' : '1D').replace('{CURRENCY}', currency)
       );
       const pricesRaw = response ? response : [];
 

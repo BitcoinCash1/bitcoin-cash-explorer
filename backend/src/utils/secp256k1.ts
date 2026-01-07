@@ -23,9 +23,7 @@ function sqrtMod(x: bigint, P: bigint): bigint {
   return root;
 }
 
-const curveP = BigInt(
-  `0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F`
-);
+const curveP = BigInt(`0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEFFFFFC2F`);
 
 /**
  * This function tells whether the point given is a DER encoded point on the ECDSA curve.
@@ -42,8 +40,7 @@ export function isPoint(pointHex: string): boolean {
       (
         (pointHex.length === 130 && pointHex.startsWith('04')) ||
         // OR is compressed
-        (pointHex.length === 66 &&
-          (pointHex.startsWith('02') || pointHex.startsWith('03')))
+        (pointHex.length === 66 && (pointHex.startsWith('02') || pointHex.startsWith('03')))
       )
     )
   ) {

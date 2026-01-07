@@ -65,10 +65,7 @@ class StatisticsApi {
     }
   }
 
-  public async $create(
-    statistics: Statistic,
-    convertToDatetime = false
-  ): Promise<number | undefined> {
+  public async $create(statistics: Statistic, convertToDatetime = false): Promise<number | undefined> {
     try {
       const query = `INSERT INTO statistics(
               added,
@@ -120,9 +117,7 @@ class StatisticsApi {
               vsize_2000
             )
             VALUES (${
-              convertToDatetime
-                ? `FROM_UNIXTIME(${statistics.added})`
-                : statistics.added
+              convertToDatetime ? `FROM_UNIXTIME(${statistics.added})` : statistics.added
             }, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
@@ -227,11 +222,7 @@ class StatisticsApi {
       CAST(avg(vsize_1800) as DOUBLE) as vsize_1800,
       CAST(avg(vsize_2000) as DOUBLE) as vsize_2000 \
       FROM statistics \
-      ${
-        interval === 'all'
-          ? ''
-          : `WHERE added BETWEEN DATE_SUB(NOW(), INTERVAL ${interval}) AND NOW()`
-      } \
+      ${interval === 'all' ? '' : `WHERE added BETWEEN DATE_SUB(NOW(), INTERVAL ${interval}) AND NOW()`} \
       GROUP BY UNIX_TIMESTAMP(added) DIV ${div} \
       ORDER BY statistics.added DESC;`;
   }
@@ -282,11 +273,7 @@ class StatisticsApi {
       vsize_1800,
       vsize_2000 \
       FROM statistics \
-      ${
-        interval === 'all'
-          ? ''
-          : `WHERE added BETWEEN DATE_SUB(NOW(), INTERVAL ${interval}) AND NOW()`
-      } \
+      ${interval === 'all' ? '' : `WHERE added BETWEEN DATE_SUB(NOW(), INTERVAL ${interval}) AND NOW()`} \
       GROUP BY UNIX_TIMESTAMP(added) DIV ${div} \
       ORDER BY statistics.added DESC;`;
   }
@@ -424,9 +411,7 @@ class StatisticsApi {
     }
   }
 
-  private mapStatisticToOptimizedStatistic(
-    statistic: Statistic[]
-  ): OptimizedStatistic[] {
+  private mapStatisticToOptimizedStatistic(statistic: Statistic[]): OptimizedStatistic[] {
     return statistic.map((s) => {
       return {
         added: s.added,
@@ -480,9 +465,7 @@ class StatisticsApi {
     });
   }
 
-  public mapOptimizedStatisticToStatistic(
-    statistic: OptimizedStatistic[]
-  ): Statistic[] {
+  public mapOptimizedStatisticToStatistic(statistic: OptimizedStatistic[]): Statistic[] {
     return statistic.map((s) => {
       const completeSizes = s.sizes.length === 37 ? [0, ...s.sizes] : s.sizes;
       return {

@@ -100,28 +100,17 @@ class Logger {
     }
     const network = this.network ? ' <' + this.network + '>' : '';
     prionum = Logger.priorities[priority] || Logger.priorities.info;
-    consolemsg = `${this.ts()} [${
-      process.pid
-    }] ${priority.toUpperCase()}:${network} ${
+    consolemsg = `${this.ts()} [${process.pid}] ${priority.toUpperCase()}:${network} ${
       tag ? '[' + tag + '] ' : ''
     }${msg}`;
 
-    if (
-      config.SYSLOG.ENABLED &&
-      Logger.priorities[priority] <=
-        Logger.priorities[config.SYSLOG.MIN_PRIORITY]
-    ) {
-      syslogmsg = `<${
-        Logger.facilities[config.SYSLOG.FACILITY] * 8 + prionum
-      }> ${this.name}[${process.pid}]: ${priority.toUpperCase()}${network} ${
-        tag ? '[' + tag + '] ' : ''
-      }${msg}`;
+    if (config.SYSLOG.ENABLED && Logger.priorities[priority] <= Logger.priorities[config.SYSLOG.MIN_PRIORITY]) {
+      syslogmsg = `<${Logger.facilities[config.SYSLOG.FACILITY] * 8 + prionum}> ${this.name}[${
+        process.pid
+      }]: ${priority.toUpperCase()}${network} ${tag ? '[' + tag + '] ' : ''}${msg}`;
       this.syslog(syslogmsg);
     }
-    if (
-      Logger.priorities[priority] >
-      Logger.priorities[config.MEMPOOL.STDOUT_LOG_MIN_PRIORITY]
-    ) {
+    if (Logger.priorities[priority] > Logger.priorities[config.MEMPOOL.STDOUT_LOG_MIN_PRIORITY]) {
       return;
     }
     if (priority === 'warning') {
@@ -139,18 +128,11 @@ class Logger {
   private syslog(msg) {
     let msgbuf;
     msgbuf = Buffer.from(msg);
-    this.client.send(
-      msgbuf,
-      0,
-      msgbuf.length,
-      config.SYSLOG.PORT,
-      config.SYSLOG.HOST,
-      function (err, bytes) {
-        if (err) {
-          console.log(err);
-        }
+    this.client.send(msgbuf, 0, msgbuf.length, config.SYSLOG.PORT, config.SYSLOG.HOST, function (err, bytes) {
+      if (err) {
+        console.log(err);
       }
-    );
+    });
   }
 
   private leadZero(n: number): number | string {
@@ -171,23 +153,8 @@ class Logger {
     if (day < 10) {
       day = ' ' + day;
     }
-    months = [
-      'Jan',
-      'Feb',
-      'Mar',
-      'Apr',
-      'May',
-      'Jun',
-      'Jul',
-      'Aug',
-      'Sep',
-      'Oct',
-      'Nov',
-      'Dec',
-    ];
-    return (
-      months[month] + ' ' + day + ' ' + hours + ':' + minutes + ':' + seconds
-    );
+    months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return months[month] + ' ' + day + ' ' + hours + ':' + minutes + ':' + seconds;
   }
 
   /**
@@ -205,14 +172,6 @@ class Logger {
   }
 }
 
-export type LogLevel =
-  | 'emerg'
-  | 'alert'
-  | 'crit'
-  | 'err'
-  | 'warn'
-  | 'notice'
-  | 'info'
-  | 'debug';
+export type LogLevel = 'emerg' | 'alert' | 'crit' | 'err' | 'warn' | 'notice' | 'info' | 'debug';
 
 export default new Logger();

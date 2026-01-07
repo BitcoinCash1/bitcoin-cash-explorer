@@ -1,8 +1,4 @@
-import {
-  calcBitsDifference,
-  calcDifficultyAdjustment,
-  DifficultyAdjustment,
-} from '../../api/difficulty-adjustment';
+import { calcBitsDifference, calcDifficultyAdjustment, DifficultyAdjustment } from '../../api/difficulty-adjustment';
 
 describe('Mempool Difficulty Adjustment', () => {
   test('should calculate Difficulty Adjustments properly', () => {
@@ -124,10 +120,7 @@ describe('Mempool Difficulty Adjustment', () => {
           expectedBlocks: 2045.66,
         },
       ],
-    ] as [
-      [number, number, number, number, number, string, number],
-      DifficultyAdjustment,
-    ][];
+    ] as [[number, number, number, number, number, string, number], DifficultyAdjustment][];
 
     for (const vector of vectors) {
       const result = calcDifficultyAdjustment(...vector[0]);
@@ -160,22 +153,12 @@ describe('Mempool Difficulty Adjustment', () => {
     expect(calcBitsDifference(0x1d000001, 0x1c000400)).toEqual(-75);
     expect(calcBitsDifference(0x1d000001, 0x1c000800)).toEqual(-75);
     // Check error when exponents are too far apart
-    expect(() => calcBitsDifference(0x1d000001, 0x1a000800)).toThrow(
-      /Impossible exponent difference/
-    );
+    expect(() => calcBitsDifference(0x1d000001, 0x1a000800)).toThrow(/Impossible exponent difference/);
     // Check invalid inputs
-    expect(() => calcBitsDifference(0x7f000001, 0x1a000800)).toThrow(
-      /Invalid bits/
-    );
+    expect(() => calcBitsDifference(0x7f000001, 0x1a000800)).toThrow(/Invalid bits/);
     expect(() => calcBitsDifference(0, 0x1a000800)).toThrow(/Invalid bits/);
-    expect(() => calcBitsDifference(100.2783, 0x1a000800)).toThrow(
-      /Invalid bits/
-    );
-    expect(() => calcBitsDifference(0x00800000, 0x1a000800)).toThrow(
-      /Invalid bits/
-    );
-    expect(() => calcBitsDifference(0x1c000000, 0x1a000800)).toThrow(
-      /Invalid bits/
-    );
+    expect(() => calcBitsDifference(100.2783, 0x1a000800)).toThrow(/Invalid bits/);
+    expect(() => calcBitsDifference(0x00800000, 0x1a000800)).toThrow(/Invalid bits/);
+    expect(() => calcBitsDifference(0x1c000000, 0x1a000800)).toThrow(/Invalid bits/);
   });
 });

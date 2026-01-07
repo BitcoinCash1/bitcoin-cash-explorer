@@ -19,10 +19,7 @@ class BitflyerApi implements PriceFeed {
     }
   }
 
-  public async $fetchRecentPrice(
-    currencies: string[],
-    type: 'hour' | 'day'
-  ): Promise<PriceHistory> {
+  public async $fetchRecentPrice(currencies: string[], type: 'hour' | 'day'): Promise<PriceHistory> {
     return [];
   }
 }

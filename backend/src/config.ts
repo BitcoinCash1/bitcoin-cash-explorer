@@ -28,15 +28,7 @@ interface IConfig {
     EXTERNAL_MAX_RETRY: number;
     EXTERNAL_RETRY_INTERVAL: number;
     USER_AGENT: string;
-    STDOUT_LOG_MIN_PRIORITY:
-      | 'emerg'
-      | 'alert'
-      | 'crit'
-      | 'err'
-      | 'warn'
-      | 'notice'
-      | 'info'
-      | 'debug';
+    STDOUT_LOG_MIN_PRIORITY: 'emerg' | 'alert' | 'crit' | 'err' | 'warn' | 'notice' | 'info' | 'debug';
     AUTOMATIC_POOLS_UPDATE: boolean;
     POOLS_JSON_URL: string;
     POOLS_JSON_TREE_URL: string;
@@ -91,15 +83,7 @@ interface IConfig {
     ENABLED: boolean;
     HOST: string;
     PORT: number;
-    MIN_PRIORITY:
-      | 'emerg'
-      | 'alert'
-      | 'crit'
-      | 'err'
-      | 'warn'
-      | 'notice'
-      | 'info'
-      | 'debug';
+    MIN_PRIORITY: 'emerg' | 'alert' | 'crit' | 'err' | 'warn' | 'notice' | 'info' | 'debug';
     FACILITY: string;
   };
   STATISTICS: {
@@ -181,10 +165,8 @@ const defaults: IConfig = {
     USER_AGENT: 'mempool',
     STDOUT_LOG_MIN_PRIORITY: 'debug',
     AUTOMATIC_POOLS_UPDATE: false,
-    POOLS_JSON_URL:
-      'https://raw.githubusercontent.com/mempool/mining-pools/master/pools-v2.json',
-    POOLS_JSON_TREE_URL:
-      'https://api.github.com/repos/mempool/mining-pools/git/trees/master',
+    POOLS_JSON_URL: 'https://raw.githubusercontent.com/mempool/mining-pools/master/pools-v2.json',
+    POOLS_JSON_TREE_URL: 'https://api.github.com/repos/mempool/mining-pools/git/trees/master',
     POOLS_UPDATE_DELAY: 604800, // in seconds, default is one week
     AUDIT: false,
     RUST_GBT: true,
@@ -253,8 +235,7 @@ const defaults: IConfig = {
   },
   EXTERNAL_DATA_SERVER: {
     MEMPOOL_API: 'https://explorer.melroy.org/api/v1',
-    MEMPOOL_ONION:
-      'http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/api/v1',
+    MEMPOOL_ONION: 'http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/api/v1',
   },
   MAXMIND: {
     ENABLED: false,

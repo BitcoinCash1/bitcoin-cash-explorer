@@ -14,20 +14,13 @@ export function getBytesUnit(bytes: number): string {
   return byteUnits[unitIndex];
 }
 
-export function formatBytes(
-  bytes: number,
-  toUnit: string,
-  skipUnit = false
-): string {
+export function formatBytes(bytes: number, toUnit: string, skipUnit = false): string {
   if (isNaN(bytes) || !isFinite(bytes)) {
     return `${bytes}`;
   }
 
   let unitIndex = 0;
-  while (
-    unitIndex < byteUnits.length &&
-    ((toUnit && byteUnits[unitIndex] !== toUnit) || (!toUnit && bytes > 1024))
-  ) {
+  while (unitIndex < byteUnits.length && ((toUnit && byteUnits[unitIndex] !== toUnit) || (!toUnit && bytes > 1024))) {
     unitIndex++;
     bytes /= 1024;
   }

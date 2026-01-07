@@ -7,88 +7,79 @@ class AboutRoutes {
     app
       .get(config.MEMPOOL.API_URL_PREFIX + 'donations', async (req, res) => {
         try {
+          const response = await axios.get(`${config.EXTERNAL_DATA_SERVER.MEMPOOL_API}/donations`, {
+            responseType: 'stream',
+            timeout: 10000,
+          });
+          response.data.pipe(res);
+        } catch (e) {
+          res.status(500).end();
+        }
+      })
+      .get(config.MEMPOOL.API_URL_PREFIX + 'donations/images/:id', async (req, res) => {
+        try {
           const response = await axios.get(
-            `${config.EXTERNAL_DATA_SERVER.MEMPOOL_API}/donations`,
-            { responseType: 'stream', timeout: 10000 }
+            `${config.EXTERNAL_DATA_SERVER.MEMPOOL_API}/donations/images/${req.params.id}`,
+            {
+              responseType: 'stream',
+              timeout: 10000,
+            }
           );
           response.data.pipe(res);
         } catch (e) {
           res.status(500).end();
         }
       })
-      .get(
-        config.MEMPOOL.API_URL_PREFIX + 'donations/images/:id',
-        async (req, res) => {
-          try {
-            const response = await axios.get(
-              `${config.EXTERNAL_DATA_SERVER.MEMPOOL_API}/donations/images/${req.params.id}`,
-              {
-                responseType: 'stream',
-                timeout: 10000,
-              }
-            );
-            response.data.pipe(res);
-          } catch (e) {
-            res.status(500).end();
-          }
-        }
-      )
       .get(config.MEMPOOL.API_URL_PREFIX + 'contributors', async (req, res) => {
         try {
-          const response = await axios.get(
-            `${config.EXTERNAL_DATA_SERVER.MEMPOOL_API}/contributors`,
-            { responseType: 'stream', timeout: 10000 }
-          );
+          const response = await axios.get(`${config.EXTERNAL_DATA_SERVER.MEMPOOL_API}/contributors`, {
+            responseType: 'stream',
+            timeout: 10000,
+          });
           response.data.pipe(res);
         } catch (e) {
           res.status(500).end();
         }
       })
-      .get(
-        config.MEMPOOL.API_URL_PREFIX + 'contributors/images/:id',
-        async (req, res) => {
-          try {
-            const response = await axios.get(
-              `${config.EXTERNAL_DATA_SERVER.MEMPOOL_API}/contributors/images/${req.params.id}`,
-              {
-                responseType: 'stream',
-                timeout: 10000,
-              }
-            );
-            response.data.pipe(res);
-          } catch (e) {
-            res.status(500).end();
-          }
-        }
-      )
-      .get(config.MEMPOOL.API_URL_PREFIX + 'translators', async (req, res) => {
+      .get(config.MEMPOOL.API_URL_PREFIX + 'contributors/images/:id', async (req, res) => {
         try {
           const response = await axios.get(
-            `${config.EXTERNAL_DATA_SERVER.MEMPOOL_API}/translators`,
-            { responseType: 'stream', timeout: 10000 }
+            `${config.EXTERNAL_DATA_SERVER.MEMPOOL_API}/contributors/images/${req.params.id}`,
+            {
+              responseType: 'stream',
+              timeout: 10000,
+            }
           );
           response.data.pipe(res);
         } catch (e) {
           res.status(500).end();
         }
       })
-      .get(
-        config.MEMPOOL.API_URL_PREFIX + 'translators/images/:id',
-        async (req, res) => {
-          try {
-            const response = await axios.get(
-              `${config.EXTERNAL_DATA_SERVER.MEMPOOL_API}/translators/images/${req.params.id}`,
-              {
-                responseType: 'stream',
-                timeout: 10000,
-              }
-            );
-            response.data.pipe(res);
-          } catch (e) {
-            res.status(500).end();
-          }
+      .get(config.MEMPOOL.API_URL_PREFIX + 'translators', async (req, res) => {
+        try {
+          const response = await axios.get(`${config.EXTERNAL_DATA_SERVER.MEMPOOL_API}/translators`, {
+            responseType: 'stream',
+            timeout: 10000,
+          });
+          response.data.pipe(res);
+        } catch (e) {
+          res.status(500).end();
         }
-      );
+      })
+      .get(config.MEMPOOL.API_URL_PREFIX + 'translators/images/:id', async (req, res) => {
+        try {
+          const response = await axios.get(
+            `${config.EXTERNAL_DATA_SERVER.MEMPOOL_API}/translators/images/${req.params.id}`,
+            {
+              responseType: 'stream',
+              timeout: 10000,
+            }
+          );
+          response.data.pipe(res);
+        } catch (e) {
+          res.status(500).end();
+        }
+      });
   }
 }
 

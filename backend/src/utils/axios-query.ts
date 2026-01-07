@@ -5,10 +5,7 @@ import config from '../config';
 import logger from '../logger';
 import * as https from 'https';
 
-export async function query(
-  path,
-  throwOnFail: boolean = false
-): Promise<object | undefined> {
+export async function query(path, throwOnFail: boolean = false): Promise<object | undefined> {
   type axiosOptions = {
     headers: {
       'User-Agent': string;
@@ -54,17 +51,14 @@ export async function query(
 
       const data: AxiosResponse = await axios.get(path, axiosOptions);
       if (data.statusText === 'error' || !data.data) {
-        throw new Error(
-          `Could not fetch data from ${path}, Error: ${data.status}`
-        );
+        throw new Error(`Could not fetch data from ${path}, Error: ${data.status}`);
       }
       return data.data;
     } catch (e) {
       lastError = e;
       logger.warn(
-        `Could not connect to ${path} (Attempt ${retry + 1}/${
-          config.MEMPOOL.EXTERNAL_MAX_RETRY
-        }). Reason: ` + (e instanceof Error ? e.message : e)
+        `Could not connect to ${path} (Attempt ${retry + 1}/${config.MEMPOOL.EXTERNAL_MAX_RETRY}). Reason: ` +
+          (e instanceof Error ? e.message : e)
       );
       retry++;
     }
@@ -73,9 +67,7 @@ export async function query(
     }
   }
 
-  logger.err(
-    `Could not connect to ${path}. All ${config.MEMPOOL.EXTERNAL_MAX_RETRY} attempts failed`
-  );
+  logger.err(`Could not connect to ${path}. All ${config.MEMPOOL.EXTERNAL_MAX_RETRY} attempts failed`);
 
   if (throwOnFail && lastError) {
     throw lastError;
