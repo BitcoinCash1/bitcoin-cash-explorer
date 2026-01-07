@@ -1,9 +1,4 @@
-import {
-  GbtGenerator,
-  GbtResult,
-  ThreadTransaction as RustThreadTransaction,
-  ThreadAcceleration as RustThreadAcceleration,
-} from 'rust-gbt'; // TODO: Update rust-gbt? Remove all the acceleration code. eg RustThreadAcceleration (its not relevant for BCH)
+import { GbtGenerator, GbtResult, ThreadTransaction as RustThreadTransaction } from 'rust-gbt'; // TODO: Update rust-gbt? Remove all the acceleration code. eg RustThreadAcceleration (its not relevant for BCH)
 import logger from '../logger';
 import {
   MempoolBlock,
@@ -331,7 +326,7 @@ class MempoolBlocks {
       : new GbtGenerator(config.MEMPOOL.MIN_BLOCK_SIZE_UNITS, config.MEMPOOL.MEMPOOL_BLOCKS_AMOUNT);
     try {
       const { blocks, blockSizes, rates, clusters, overflow } = this.convertNapiResultTxids(
-        await rustGbt.make(transactions as RustThreadTransaction[], [] as RustThreadAcceleration[], this.nextUid)
+        await rustGbt.make(transactions as RustThreadTransaction[], this.nextUid)
       );
       if (saveResults) {
         this.rustInitialized = true;
@@ -406,7 +401,6 @@ class MempoolBlocks {
         await this.rustGbtGenerator.update(
           added as RustThreadTransaction[],
           removedTxs.map((tx) => tx.uid) as number[],
-          [] as RustThreadAcceleration[],
           this.nextUid
         )
       );
@@ -685,7 +679,7 @@ class MempoolBlocks {
     };
   }
 
-  private convertNapiResultTxids({ blocks, blockWeights: blockSizes, rates, clusters, overflow }: GbtResult): {
+  private convertNapiResultTxids({ blocks, blockSizes, rates, clusters, overflow }: GbtResult): {
     blocks: string[][];
     blockSizes: number[];
     rates: [string, number][];

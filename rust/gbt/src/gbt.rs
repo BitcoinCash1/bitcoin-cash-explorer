@@ -5,11 +5,11 @@ use tracing::{info, trace};
 use crate::{
     audit_transaction::{partial_cmp_uid_score, AuditTransaction},
     u32_hasher_types::{u32hashset_new, u32priority_queue_with_capacity, U32HasherState},
-    GbtResult, ThreadTransactionsMap, thread_acceleration::ThreadAcceleration,
+    GbtResult, ThreadTransactionsMap,
 };
 
 const BLOCK_SIGOPS: u32 = 80_000;
-const BLOCK_RESERVED_WEIGHT: u32 = 4_000;
+const BLOCK_RESERVED_SIZE: u32 = 32_000; // Min. block size in BCH
 const BLOCK_RESERVED_SIGOPS: u32 = 400;
 
 type AuditPool = Vec<Option<ManuallyDrop<AuditTransaction>>>;
@@ -53,29 +53,21 @@ impl Ord for TxPriority {
 #[allow(clippy::cognitive_complexity)]
 pub fn gbt(
     mempool: &mut ThreadTransactionsMap,
-    accelerations: &[ThreadAcceleration],
     max_uid: usize,
     max_block_weight: u32,
     max_blocks: usize,
 ) -> GbtResult {
-    let mut indexed_accelerations = Vec::with_capacity(max_uid + 1);
-    indexed_accelerations.resize(max_uid + 1, None);
-    for acceleration in accelerations {
-        indexed_accelerations[acceleration.uid as usize] = Some(acceleration);
-    }
-
     info!("Initializing working vecs with uid capacity for {}", max_uid + 1);
     let mempool_len = mempool.len();
     let mut audit_pool: AuditPool = Vec::with_capacity(max_uid + 1);
     audit_pool.resize(max_uid + 1, None);
     let mut mempool_stack: Vec<u32> = Vec::with_capacity(mempool_len);
     let mut clusters: Vec<Vec<u32>> = Vec::new();
-    let mut block_weights: Vec<u32> = Vec::new();
+    let mut block_sizes: Vec<u32> = Vec::new();
 
     info!("Initializing working structs");
     for (uid, tx) in &mut *mempool {
-        let acceleration = indexed_accelerations.get(*uid as usize);
-        let audit_tx = AuditTransaction::from_thread_transaction(tx, acceleration.copied());
+        let audit_tx = AuditTransaction::from_thread_transaction(tx);
         // Safety: audit_pool and mempool_stack must always contain the same transactions
         audit_pool[*uid as usize] = Some(ManuallyDrop::new(audit_tx));
         mempool_stack.push(*uid);
@@ -104,7 +96,7 @@ pub fn gbt(
     info!("Building blocks by greedily choosing the highest feerate package");
     info!("(i.e. the package rooted in the transaction with the best ancestor score)");
     let mut blocks: Vec<Vec<u32>> = Vec::new();
-    let mut block_weight: u32 = BLOCK_RESERVED_WEIGHT;
+    let mut block_size: u32 = BLOCK_RESERVED_SIZE;
     let mut block_sigops: u32 = BLOCK_RESERVED_SIGOPS;
     // No need to be bigger than 4096 transactions for the per-block transaction Vec.
     let initial_txes_per_block: usize = 4096.min(mempool_len);
@@ -122,7 +114,7 @@ pub fn gbt(
         trace!("modified: {:#?}", modified);
         trace!("audit_pool: {:#?}", audit_pool);
         trace!("blocks: {:#?}", blocks);
-        trace!("block_weight: {:#?}", block_weight);
+        trace!("block_weight: {:#?}", block_size);
         trace!("block_sigops: {:#?}", block_sigops);
         trace!("transactions: {:#?}", transactions);
         trace!("overflow: {:#?}", overflow);
@@ -151,7 +143,7 @@ pub fn gbt(
             }
 
             if blocks.len() < (max_blocks - 1)
-                && ((block_weight + (4 * next_tx.ancestor_sigop_adjusted_vsize())
+                && ((block_size + (4 * next_tx.ancestor_sigop_adjusted_size())
                     >= max_block_weight - 4_000)
                     || (block_sigops + next_tx.ancestor_sigops() > BLOCK_SIGOPS))
             {
@@ -189,7 +181,7 @@ pub fn gbt(
                         tx.used = true;
                         tx.set_dirty_if_different(cluster_rate);
                         transactions.push(tx.uid);
-                        block_weight += tx.weight;
+                        block_size += tx.size;
                         block_sigops += tx.sigops;
                     }
                     update_descendants(*txid, &mut audit_pool, &mut modified, cluster_rate);
@@ -205,7 +197,7 @@ pub fn gbt(
 
         // this block is full
         let exceeded_package_tries =
-            failures > 1000 && block_weight > (max_block_weight - 4_000 - BLOCK_RESERVED_WEIGHT);
+            failures > 1000 && block_size > (max_block_weight - 4_000 - BLOCK_RESERVED_SIZE);
         let queue_is_empty = mempool_stack.is_empty() && modified.is_empty();
         if (exceeded_package_tries || queue_is_empty) && blocks.len() < (max_blocks - 1) {
             // finalize this block
@@ -215,11 +207,11 @@ pub fn gbt(
             }
 
             blocks.push(transactions);
-            block_weights.push(block_weight);
+            block_sizes.push(block_size);
 
             // reset for the next block
             transactions = Vec::with_capacity(initial_txes_per_block);
-            block_weight = BLOCK_RESERVED_WEIGHT;
+            block_size = BLOCK_RESERVED_SIZE;
             block_sigops = BLOCK_RESERVED_SIGOPS;
             failures = 0;
             // 'overflow' packages didn't fit in this block, but are valid candidates for the next
@@ -246,7 +238,7 @@ pub fn gbt(
     info!("add the final unbounded block if it contains any transactions");
     if !transactions.is_empty() {
         blocks.push(transactions);
-        block_weights.push(block_weight);
+        block_sizes.push(block_size);
     }
 
     info!("make a list of dirty transactions and their new rates");
@@ -256,8 +248,8 @@ pub fn gbt(
         if let Some(Some(audit_tx)) = audit_pool.get_mut(*uid as usize).map(Option::take) {
             trace!("txid: {}, is_dirty: {}", uid, audit_tx.dirty);
             if audit_tx.dirty {
-                rates.push(vec![f64::from(*uid), audit_tx.effective_fee_per_vsize]);
-                thread_tx.effective_fee_per_vsize = audit_tx.effective_fee_per_vsize;
+                rates.push(vec![f64::from(*uid), audit_tx.effective_fee_per_size]);
+                thread_tx.effective_fee_per_size = audit_tx.effective_fee_per_size;
             }
             // Drops the AuditTransaction manually
             // There are no audit_txs that are not in the mempool HashMap
@@ -272,7 +264,7 @@ pub fn gbt(
 
     GbtResult {
         blocks,
-        block_weights,
+        block_sizes,
         clusters,
         rates,
         overflow,
@@ -341,8 +333,7 @@ fn set_relatives(txid: u32, audit_pool: &mut AuditPool) {
     }
 
     let mut total_fee: u64 = 0;
-    let mut total_sigop_adjusted_weight: u32 = 0;
-    let mut total_sigop_adjusted_vsize: u32 = 0;
+    let mut total_sigop_adjusted_size: u32 = 0;
     let mut total_sigops: u32 = 0;
 
     for ancestor_id in &ancestors {
@@ -351,8 +342,7 @@ fn set_relatives(txid: u32, audit_pool: &mut AuditPool) {
             .expect("audit_pool contains all ancestors")
         {
             total_fee += ancestor.fee;
-            total_sigop_adjusted_weight += ancestor.sigop_adjusted_weight;
-            total_sigop_adjusted_vsize += ancestor.sigop_adjusted_vsize;
+            total_sigop_adjusted_size += ancestor.sigop_adjusted_size;
             total_sigops += ancestor.sigops;
         } else { todo!() };
     }
@@ -361,9 +351,8 @@ fn set_relatives(txid: u32, audit_pool: &mut AuditPool) {
         tx.set_ancestors(
             ancestors,
             total_fee,
-            total_sigop_adjusted_weight,
-            total_sigop_adjusted_vsize,
-            total_sigops,
+            total_sigop_adjusted_size,
+            total_sigops
         );
     }
 }
@@ -378,8 +367,7 @@ fn update_descendants(
     let mut visited: HashSet<u32, U32HasherState> = u32hashset_new();
     let mut descendant_stack: Vec<u32> = Vec::new();
     let root_fee: u64;
-    let root_sigop_adjusted_weight: u32;
-    let root_sigop_adjusted_vsize: u32;
+    let root_sigop_adjusted_size: u32;
     let root_sigops: u32;
     if let Some(Some(root_tx)) = audit_pool.get(root_txid as usize) {
         for descendant_id in &root_tx.children {
@@ -389,8 +377,7 @@ fn update_descendants(
             }
         }
         root_fee = root_tx.fee;
-        root_sigop_adjusted_weight = root_tx.sigop_adjusted_weight;
-        root_sigop_adjusted_vsize = root_tx.sigop_adjusted_vsize;
+        root_sigop_adjusted_size = root_tx.sigop_adjusted_size;
         root_sigops = root_tx.sigops;
     } else {
         return;
@@ -401,8 +388,7 @@ fn update_descendants(
             let old_score = descendant.remove_root(
                 root_txid,
                 root_fee,
-                root_sigop_adjusted_weight,
-                root_sigop_adjusted_vsize,
+                root_sigop_adjusted_size,
                 root_sigops,
                 cluster_rate,
             );

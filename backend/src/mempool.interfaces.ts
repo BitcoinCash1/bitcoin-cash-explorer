@@ -159,8 +159,8 @@ export interface CompactThreadTransaction {
   fee: number;
   size: number;
   sigops: number;
-  feePerSize: number; // We might not have this in BCH
-  effectiveFeePerSize: number; // We might not have this in BCH
+  feePerSize: number;
+  effectiveFeePerSize: number;
   inputs: number[];
   dirty?: boolean;
 }
@@ -175,8 +175,8 @@ export interface ThreadTransaction {
   txid: string;
   fee: number;
   size: number;
-  feePerSize: number; // We might not have this in BCH
-  effectiveFeePerSize?: number; // We might not have this in BCH
+  feePerSize: number;
+  effectiveFeePerSize?: number;
   inputs: number[];
 }
 

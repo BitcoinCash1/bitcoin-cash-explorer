@@ -1,6 +1,6 @@
 # gbt
 
-**gbt:** rust implementation of the getBlockTemplate algorithm
+**gbt:** rust implementation of the getBlockTemplate algorithm for BCH.
 
 This project was bootstrapped by [napi](https://www.npmjs.com/package/@napi-rs/cli).
 
@@ -47,7 +47,7 @@ In the project directory, you can run:
 
 Installs the project, including running `npm run build-release`.
 
-### `npm build`
+### `npm run build`
 
 Builds the Node addon (`gbt.[TARGET_TRIPLE].node`) from source.
 
@@ -57,11 +57,11 @@ Additional [`cargo build`](https://doc.rust-lang.org/cargo/commands/cargo-build.
 npm run build -- --feature=beetle
 ```
 
-#### `npm build-debug`
+#### `npm run build-debug`
 
 Alias for `npm build`.
 
-#### `npm build-release`
+#### `npm run build-release`
 
 Same as [`npm build`](#npm-build) but, builds the module with the [`release`](https://doc.rust-lang.org/cargo/reference/profiles.html#release) profile. Release builds will compile slower, but run faster.
 

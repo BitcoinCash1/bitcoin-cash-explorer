@@ -1,7 +1,7 @@
 {
   "name": "gbt",
   "version": "3.0.1",
-  "description": "An efficient re-implementation of the getBlockTemplate algorithm in Rust",
+  "description": "An efficient re-implementation of the getBlockTemplate algorithm for BCH in Rust",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {

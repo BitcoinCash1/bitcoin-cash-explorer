@@ -9,7 +9,6 @@
 use napi::bindgen_prelude::Result;
 use napi_derive::napi;
 use thread_transaction::ThreadTransaction;
-use thread_acceleration::ThreadAcceleration;
 use tracing::{debug, info, trace};
 use tracing_log::LogTracer;
 use tracing_subscriber::{EnvFilter, FmtSubscriber};
@@ -20,7 +19,6 @@ use std::sync::{Arc, Mutex};
 mod audit_transaction;
 mod gbt;
 mod thread_transaction;
-mod thread_acceleration;
 mod u32_hasher_types;
 
 use u32_hasher_types::{u32hashmap_with_capacity, U32HasherState};
@@ -35,7 +33,7 @@ type ThreadTransactionsMap = HashMap<u32, ThreadTransaction, U32HasherState>;
 #[napi]
 pub struct GbtGenerator {
     thread_transactions: Arc<Mutex<ThreadTransactionsMap>>,
-    max_block_weight: u32,
+    max_block_size: u32,
     max_blocks: usize,
 }
 
@@ -67,11 +65,11 @@ impl GbtGenerator {
     #[napi(constructor)]
     #[allow(clippy::new_without_default)]
     #[must_use]
-    pub fn new(max_block_weight: u32, max_blocks: u32) -> Self {
+    pub fn new(max_block_size: u32, max_blocks: u32) -> Self {
         debug!("Created new GbtGenerator");
         Self {
             thread_transactions: Arc::new(Mutex::new(u32hashmap_with_capacity(STARTING_CAPACITY))),
-            max_block_weight,
+            max_block_size,
             max_blocks: max_blocks as usize,
         }
     }
@@ -83,15 +81,13 @@ impl GbtGenerator {
     pub async fn make(
         &self,
         mempool: Vec<ThreadTransaction>,
-        accelerations: Vec<ThreadAcceleration>,
         max_uid: u32,
     ) -> Result<GbtResult> {
         trace!("make: Current State {:#?}", self.thread_transactions);
         run_task(
             Arc::clone(&self.thread_transactions),
-            accelerations,
             max_uid as usize,
-            self.max_block_weight,
+            self.max_block_size,
             self.max_blocks,
             move |map| {
                 for tx in mempool {
@@ -110,15 +106,13 @@ impl GbtGenerator {
         &self,
         new_txs: Vec<ThreadTransaction>,
         remove_txs: Vec<u32>,
-        accelerations: Vec<ThreadAcceleration>,
         max_uid: u32,
     ) -> Result<GbtResult> {
         trace!("update: Current State {:#?}", self.thread_transactions);
         run_task(
             Arc::clone(&self.thread_transactions),
-            accelerations,
             max_uid as usize,
-            self.max_block_weight,
+            self.max_block_size,
             self.max_blocks,
             move |map| {
                 for tx in new_txs {
@@ -137,13 +131,13 @@ impl GbtGenerator {
 ///
 /// This tuple contains the following:
 ///        blocks: A 2D Vector of transaction IDs (u32), the inner Vecs each represent a block.
-/// block_weights: A Vector of total weights per block.
+/// block_sizes: A Vector of total sizes per block.
 ///      clusters: A 2D Vector of transaction IDs representing clusters of dependent mempool transactions
-///         rates: A Vector of tuples containing transaction IDs (u32) and effective fee per vsize (f64)
+///         rates: A Vector of tuples containing transaction IDs (u32) and effective fee per size (f64)
 #[napi(constructor)]
 pub struct GbtResult {
     pub blocks: Vec<Vec<u32>>,
-    pub block_weights: Vec<u32>,
+    pub block_sizes: Vec<u32>,
     pub clusters: Vec<Vec<u32>>,
     pub rates: Vec<Vec<f64>>, // Tuples not supported. u32 fits inside f64
     pub overflow: Vec<u32>,
@@ -160,9 +154,8 @@ pub struct GbtResult {
 /// to the `HashMap` as the only argument. (A move closure is recommended to meet the bounds)
 async fn run_task<F>(
     thread_transactions: Arc<Mutex<ThreadTransactionsMap>>,
-    accelerations: Vec<ThreadAcceleration>,
     max_uid: usize,
-    max_block_weight: u32,
+    max_block_size: u32,
     max_blocks: usize,
     callback: F,
 ) -> Result<GbtResult>
@@ -183,9 +176,8 @@ where
         info!("Starting gbt algorithm for {} elements...", map.len());
         let result = gbt::gbt(
             &mut map,
-            &accelerations,
             max_uid,
-            max_block_weight,
+            max_block_size,
             max_blocks as usize,
         );
         info!("Finished gbt algorithm for {} elements...", map.len());

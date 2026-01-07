@@ -1,8 +1,8 @@
 [package]
 name = "gbt"
-version = "1.0.0"
-description = "An efficient re-implementation of the getBlockTemplate algorithm in Rust"
-authors = ["mononaut"]
+version = "3.0.0"
+description = "An efficient re-implementation of the getBlockTemplate algorithm for BCH in Rust"
+authors = ["mononaut", "melroy"]
 edition = "2021"
 publish = false
 
