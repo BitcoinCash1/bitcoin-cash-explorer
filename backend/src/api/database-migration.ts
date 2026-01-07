@@ -1207,9 +1207,9 @@ class DatabaseMigration {
       await this.$executeQuery('ALTER TABLE `blocks` MODIFY COLUMN `size` bigint(20) UNSIGNED NOT NULL');
 
       // Rename BTC columns in statistics table (eg. vbytes_per_second, mempool_byte_weight, and vsize_*)
-      // Change mempool_byte_size to bigint as well.
+      // Change mempool_byte_size from int to bigint as well.
       await this.$executeQuery(
-        'ALTER TABLE `statistics` CHANGE `vbytes_per_second` `size_per_second` int(10) UNSIGNED NOT NULL'
+        'ALTER TABLE `statistics` CHANGE `vbytes_per_second` `bytes_per_second` int(10) UNSIGNED NOT NULL'
       );
       await this.$executeQuery(
         'ALTER TABLE `statistics` CHANGE `mempool_byte_weight` `mempool_byte_size` bigint(20) UNSIGNED NOT NULL'

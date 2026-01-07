@@ -119,17 +119,17 @@ class BlocksRepository {
 
     try {
       const query = `INSERT INTO blocks(
-        height,             hash,                     blockTimestamp,    size,
+        height,             hash,                     blockTimestamp,        size,
         tx_count,           coinbase_raw,             difficulty,
-        pool_id,            fees,                     fee_span,          median_fee,
-        reward,             version,                  bits,              nonce,
-        merkle_root,        previous_block_hash,      avg_fee,           avg_fee_rate,
-        median_timestamp,   header,                   coinbase_address,  coinbase_addresses,
-        coinbase_signature, utxoset_size,             utxoset_change,    avg_tx_size,
-        total_inputs,       total_outputs,            total_input_amt,   total_output_amt,
+        pool_id,            fees,                     fee_span,              median_fee,
+        reward,             version,                  bits,                  nonce,
+        merkle_root,        previous_block_hash,      avg_fee,               avg_fee_rate,
+        median_timestamp,   header,                   coinbase_address,      coinbase_addresses,
+        coinbase_signature, utxoset_size,             utxoset_change,        avg_tx_size,
+        total_inputs,       total_outputs,            total_input_amt,       total_output_amt,
         fee_percentiles,
-        median_fee_amt,     coinbase_signature_ascii, definition_hash,   index_version,
-        stale
+        median_fee_amt,     coinbase_signature_ascii, definition_hash,       index_version,
+        stale,              abla_block_size ,         abla_block_size_limit, abla_next_block_size_limit
       ) VALUE (
         ?, ?, FROM_UNIXTIME(?), ?,
         ?, ?, ?,
@@ -141,7 +141,7 @@ class BlocksRepository {
         ?, ?, ?, ?,
         ?,
         ?, ?, ?, ?,
-        ?
+        ?, ?, ?, ?
       )`;
 
       const poolDbId = await PoolsRepository.$getPoolByUniqueId(block.extras.pool.id);
@@ -189,6 +189,9 @@ class BlocksRepository {
         poolsUpdater.currentSha,
         BlocksRepository.version,
         block.stale ? 1 : 0,
+        block.abla_state.block_size,
+        block.abla_state.block_size_limit,
+        block.abla_state.next_block_size_limit,
       ];
 
       await DB.query(query, params);

@@ -330,7 +330,7 @@ class MempoolBlocks {
       ? this.rustGbtGenerator
       : new GbtGenerator(config.MEMPOOL.MIN_BLOCK_SIZE_UNITS, config.MEMPOOL.MEMPOOL_BLOCKS_AMOUNT);
     try {
-      const { blocks, blockWeights, rates, clusters, overflow } = this.convertNapiResultTxids(
+      const { blocks, blockSizes, rates, clusters, overflow } = this.convertNapiResultTxids(
         await rustGbt.make(transactions as RustThreadTransaction[], [] as RustThreadAcceleration[], this.nextUid)
       );
       if (saveResults) {
@@ -344,7 +344,7 @@ class MempoolBlocks {
       const processed = this.processBlockTemplates(
         newMempool,
         blocks,
-        blockWeights,
+        blockSizes,
         rates,
         clusters,
         candidates,
@@ -402,7 +402,7 @@ class MempoolBlocks {
 
     // run the block construction algorithm in a separate thread, and wait for a result
     try {
-      const { blocks, blockWeights, rates, clusters, overflow } = this.convertNapiResultTxids(
+      const { blocks, blockSizes, rates, clusters, overflow } = this.convertNapiResultTxids(
         await this.rustGbtGenerator.update(
           added as RustThreadTransaction[],
           removedTxs.map((tx) => tx.uid) as number[],
@@ -419,15 +419,7 @@ class MempoolBlocks {
           `GBT returned wrong number of transactions ${transactions.length} vs ${resultMempoolSize}, cache is probably out of sync`
         );
       } else {
-        const processed = this.processBlockTemplates(
-          newMempool,
-          blocks,
-          blockWeights,
-          rates,
-          clusters,
-          candidates,
-          true
-        );
+        const processed = this.processBlockTemplates(newMempool, blocks, blockSizes, rates, clusters, candidates, true);
         this.removeUids(removedTxs);
         logger.debug(`RUST updateBlockTemplates completed in ${(Date.now() - start) / 1000} seconds`);
         return processed;
@@ -442,7 +434,7 @@ class MempoolBlocks {
   private processBlockTemplates(
     mempool: { [txid: string]: MempoolTransactionExtended },
     blocks: string[][],
-    blockWeights: number[] | null,
+    blockSizes: number[] | null,
     rates: [string, number][],
     clusters: string[][],
     candidates: GbtCandidates | undefined,
@@ -463,16 +455,16 @@ class MempoolBlocks {
 
     const lastBlockIndex = blocks.length - 1;
     let hasBlockStack = blocks.length >= 8;
-    let stackWeight;
+    let stackSize;
     let feeStatsCalculator: OnlineFeeStatsCalculator | null = null;
     if (hasBlockStack) {
-      if (blockWeights && blockWeights[7] !== null) {
-        stackWeight = blockWeights[7];
+      if (blockSizes && blockSizes[7] !== null) {
+        stackSize = blockSizes[7];
       } else {
-        stackWeight = blocks[lastBlockIndex].reduce((total, tx) => total + (mempool[tx]?.size || 0), 0);
+        stackSize = blocks[lastBlockIndex].reduce((total, tx) => total + (mempool[tx]?.size || 0), 0);
       }
-      hasBlockStack = stackWeight > config.MEMPOOL.MIN_BLOCK_SIZE_UNITS;
-      feeStatsCalculator = new OnlineFeeStatsCalculator(stackWeight, 0.5, [10, 20, 30, 40, 50, 60, 70, 80, 90]);
+      hasBlockStack = stackSize > config.MEMPOOL.MIN_BLOCK_SIZE_UNITS;
+      feeStatsCalculator = new OnlineFeeStatsCalculator(stackSize, 0.5, [10, 20, 30, 40, 50, 60, 70, 80, 90]);
     }
 
     const ancestors: Ancestor[] = [];
@@ -693,9 +685,9 @@ class MempoolBlocks {
     };
   }
 
-  private convertNapiResultTxids({ blocks, blockWeights, rates, clusters, overflow }: GbtResult): {
+  private convertNapiResultTxids({ blocks, blockWeights: blockSizes, rates, clusters, overflow }: GbtResult): {
     blocks: string[][];
-    blockWeights: number[];
+    blockSizes: number[];
     rates: [string, number][];
     clusters: string[][];
     overflow: string[];
@@ -729,7 +721,7 @@ class MempoolBlocks {
     });
     return {
       blocks: convertedBlocks,
-      blockWeights,
+      blockSizes: blockSizes,
       rates: convertedRates,
       clusters: convertedClusters,
       overflow: convertedOverflow,

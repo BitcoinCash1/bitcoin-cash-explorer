@@ -875,9 +875,6 @@ class Blocks {
 
       const block = BitcoinApi.convertBlock(verboseBlock);
 
-      // Log block info
-      logger.debug(`Block ${this.currentBlockHeight} info: ${JSON.stringify(block, null, 2)}`);
-
       const txIds: string[] = verboseBlock.tx.map((tx) => tx.txid);
       const transactions = (await this.$getTransactionsExtended(
         blockHash,

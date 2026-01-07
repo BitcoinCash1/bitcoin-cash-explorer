@@ -92,8 +92,8 @@ export namespace IEsploraApi {
     size: number;
     previousblockhash: string;
     mediantime: number;
-    abla_state: AblaState;
     stale: boolean;
+    abla_state: AblaState;
   }
 
   export interface Address {
