@@ -35,9 +35,13 @@ class BitcoinApi implements AbstractBitcoinApi {
       merkle_root: block.merkleroot,
       tx_count: block.nTx,
       size: block.size,
-      weight: block.weight,
       previousblockhash: block.previousblockhash,
       mediantime: block.mediantime,
+      ablastate: {
+        block_size: block.ablastate.blocksize,
+        block_size_limit: block.ablastate.blocksizelimit,
+        next_block_size_limit: block.ablastate.nextblocksizelimit,
+      },
       stale: block.confirmations === -1,
     };
   }
@@ -372,7 +376,6 @@ class BitcoinApi implements AbstractBitcoinApi {
       version: transaction.version,
       locktime: transaction.locktime,
       size: transaction.size,
-      weight: transaction.weight,
       fee: 0,
       vin: [],
       vout: [],
@@ -411,7 +414,6 @@ class BitcoinApi implements AbstractBitcoinApi {
         sequence: vin.sequence,
         txid: vin.txid || '',
         vout: vin.vout || 0,
-        witness: vin.txinwitness || [],
         inner_redeemscript_asm: '',
         inner_witnessscript_asm: '',
       };

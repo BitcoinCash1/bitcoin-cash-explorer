@@ -48,7 +48,6 @@ class MempoolBlocks {
     return this.mempoolBlocks.map((block) => {
       return {
         blockSize: block.blockSize,
-        blockVSize: block.blockVSize,
         nTx: block.nTx,
         totalFees: block.totalFees,
         medianFee: block.medianFee,
@@ -156,13 +155,13 @@ class MempoolBlocks {
         const stripped = {
           uid: entry.uid,
           fee: entry.fee,
-          weight: entry.adjustedVsize * 4,
+          size: entry.adjustedSize,
           sigops: entry.sigops,
-          feePerVsize: entry.adjustedFeePerVsize || entry.feePerVsize,
-          effectiveFeePerVsize:
-            entry.effectiveFeePerVsize ||
-            entry.adjustedFeePerVsize ||
-            entry.feePerVsize,
+          feePerSize: entry.adjustedFeePerSize || entry.feePerSize,
+          effectiveFeePerSize:
+            entry.effectiveFeePerSize ||
+            entry.adjustedFeePerSize ||
+            entry.feePerSize,
           inputs: entry.vin
             .map((v) => this.getUid(newMempool[v.txid]))
             .filter((uid) => uid !== null && uid !== undefined) as number[],
@@ -271,13 +270,13 @@ class MempoolBlocks {
         return {
           uid: entry.uid || 0,
           fee: entry.fee,
-          weight: entry.adjustedVsize * 4,
+          size: entry.adjustedSize,
           sigops: entry.sigops,
-          feePerVsize: entry.adjustedFeePerVsize || entry.feePerVsize,
-          effectiveFeePerVsize:
-            entry.effectiveFeePerVsize ||
-            entry.adjustedFeePerVsize ||
-            entry.feePerVsize,
+          feePerSize: entry.adjustedFeePerSize || entry.feePerSize,
+          effectiveFeePerSize:
+            entry.effectiveFeePerSize ||
+            entry.adjustedFeePerSize ||
+            entry.feePerSize,
           inputs: entry.vin
             .map((v) => this.getUid(newMempool[v.txid]))
             .filter((uid) => uid !== null && uid !== undefined) as number[],
@@ -542,7 +541,7 @@ class MempoolBlocks {
     }
     for (const [txid, rate] of rates) {
       if (txid in mempool) {
-        mempool[txid].effectiveFeePerVsize = rate;
+        mempool[txid].effectiveFeePerSize = rate;
       }
     }
 
@@ -555,7 +554,7 @@ class MempoolBlocks {
         stackWeight = blockWeights[7];
       } else {
         stackWeight = blocks[lastBlockIndex].reduce(
-          (total, tx) => total + (mempool[tx]?.weight || 0),
+          (total, tx) => total + (mempool[tx]?.size || 0),
           0
         );
       }
@@ -594,7 +593,7 @@ class MempoolBlocks {
               const relative = {
                 txid: txid,
                 fee: ancestor.fee,
-                weight: ancestor.adjustedVsize * 4,
+                size: ancestor.adjustedSize,
               };
               if (matched) {
                 descendants.push(relative);
@@ -634,8 +633,6 @@ class MempoolBlocks {
     for (let blockIndex = 0; blockIndex < blocks.length; blockIndex++) {
       const block = blocks[blockIndex];
       let totalSize = 0;
-      let totalVsize = 0;
-      let totalWeight = 0;
       let totalFees = 0;
       const transactions: MempoolTransactionExtended[] = [];
 
@@ -655,7 +652,7 @@ class MempoolBlocks {
           // save position in projected blocks
           mempoolTx.position = {
             block: blockIndex,
-            vsize: totalVsize + mempoolTx.vsize / 2,
+            size: totalSize + mempoolTx.size / 2,
           };
 
           // online calculation of stack-of-blocks fee stats
@@ -668,11 +665,9 @@ class MempoolBlocks {
           }
 
           totalSize += mempoolTx.size;
-          totalVsize += mempoolTx.vsize;
-          totalWeight += mempoolTx.weight;
           totalFees += mempoolTx.fee;
 
-          if (totalVsize <= sizeLimit) {
+          if (totalSize <= sizeLimit) {
             transactions.push(mempoolTx);
           }
         }
@@ -681,7 +676,6 @@ class MempoolBlocks {
         block,
         transactions,
         totalSize,
-        totalWeight,
         totalFees,
         hasBlockStack && blockIndex === lastBlockIndex && feeStatsCalculator
           ? feeStatsCalculator.getRawFeeStats()
@@ -705,7 +699,6 @@ class MempoolBlocks {
     transactionIds: string[],
     transactions: MempoolTransactionExtended[],
     totalSize: number,
-    totalWeight: number,
     totalFees: number,
     feeStats?: EffectiveFeeStats
   ): MempoolBlockWithTransactions {
@@ -714,7 +707,6 @@ class MempoolBlocks {
     }
     return {
       blockSize: totalSize,
-      blockVSize: totalWeight / 4, // fractional vsize to avoid rounding errors
       nTx: transactionIds.length,
       totalFees: totalFees,
       medianFee: feeStats.medianFee, // Common.percentile(transactions.map((tx) => tx.effectiveFeePerVsize), config.MEMPOOL.RECOMMENDED_FEE_PERCENTILE),
@@ -866,9 +858,9 @@ class MempoolBlocks {
     return [
       tx.txid,
       tx.fee,
-      tx.vsize,
+      tx.size,
       tx.value,
-      Math.round((tx.rate || tx.fee / tx.vsize) * 100) / 100,
+      Math.round((tx.rate || tx.fee / tx.size) * 100) / 100,
       tx.flags,
       tx.time || 0,
     ];
@@ -877,7 +869,7 @@ class MempoolBlocks {
   public compressDeltaChange(tx: TransactionClassified): MempoolDeltaChange {
     return [
       tx.txid,
-      Math.round((tx.rate || tx.fee / tx.vsize) * 100) / 100,
+      Math.round((tx.rate || tx.fee / tx.size) * 100) / 100,
       tx.flags,
       0, // never accelerated (its BCH)
     ];

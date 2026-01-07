@@ -51,16 +51,16 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
     auditPool.set(tx.uid, {
       uid: tx.uid,
       fee: tx.fee,
-      weight: tx.weight,
-      feePerVsize: tx.feePerVsize,
-      effectiveFeePerVsize: tx.feePerVsize,
+      size: tx.size,
+      feePerSize: tx.feePerSize,
+      effectiveFeePerSize: tx.feePerSize,
       sigops: tx.sigops,
       inputs: tx.inputs || [],
       relativesSet: false,
       ancestorMap: new Map<number, AuditTransaction>(),
       children: new Set<AuditTransaction>(),
       ancestorFee: 0,
-      ancestorWeight: 0,
+      ancestorSize: 0,
       ancestorSigops: 0,
       score: 0,
       used: false,
@@ -90,7 +90,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
   // Build blocks by greedily choosing the highest feerate package
   // (i.e. the package rooted in the transaction with the best ancestor score)
   const blocks: number[][] = [];
-  let blockWeight = 4000;
+  let blockSize = 4000;
   const blockSigops = 0;
   let transactions: AuditTransaction[] = [];
   const modified: PairingHeap<AuditTransaction> = new PairingHeap(
@@ -137,8 +137,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
       // Check if the package fits into this block
       if (
         blocks.length >= 7 ||
-        (blockWeight + nextTx.ancestorWeight <
-          config.MEMPOOL.BLOCK_WEIGHT_UNITS &&
+        (blockSize + nextTx.ancestorSize < config.MEMPOOL.BLOCK_WEIGHT_UNITS &&
           blockSigops + nextTx.ancestorSigops <= 80000)
       ) {
         const ancestors: AuditTransaction[] = Array.from(
@@ -165,12 +164,12 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
           ancestor.used = true;
           ancestor.usedBy = nextTx.uid;
           // update original copy of this tx with effective fee rate & relatives data
-          if (mempoolTx.effectiveFeePerVsize !== effectiveFeeRate) {
-            mempoolTx.effectiveFeePerVsize = effectiveFeeRate;
+          if (mempoolTx.effectiveFeePerSize !== effectiveFeeRate) {
+            mempoolTx.effectiveFeePerSize = effectiveFeeRate;
             mempoolTx.dirty = true;
           }
           transactions.push(ancestor);
-          blockWeight += ancestor.weight;
+          blockSize += ancestor.weight;
           used.push(ancestor);
         }
 
@@ -191,7 +190,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
 
     // this block is full
     const exceededPackageTries =
-      failures > 1000 && blockWeight > config.MEMPOOL.BLOCK_WEIGHT_UNITS - 4000;
+      failures > 1000 && blockSize > config.MEMPOOL.BLOCK_WEIGHT_UNITS - 4000;
     const queueEmpty = top >= mempoolArray.length && modified.isEmpty();
 
     if ((exceededPackageTries || queueEmpty) && blocks.length < 7) {
@@ -203,7 +202,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
       }
       // reset for the next block
       transactions = [];
-      blockWeight = 4000;
+      blockSize = 4000;
 
       // 'overflow' packages didn't fit in this block, but are valid candidates for the next
       for (const overflowTx of overflow.reverse()) {
@@ -232,7 +231,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
   const rates = new Map<number, number>();
   for (const tx of mempool.values()) {
     if (tx?.dirty) {
-      rates.set(tx.uid, tx.effectiveFeePerVsize || tx.feePerVsize);
+      rates.set(tx.uid, tx.effectiveFeePerSize || tx.feePerSize);
     }
   }
 
@@ -264,14 +263,14 @@ function setRelatives(
     }
   }
   tx.ancestorFee = tx.fee || 0;
-  tx.ancestorWeight = tx.weight || 0;
+  tx.ancestorSize = tx.size || 0;
   tx.ancestorSigops = tx.sigops || 0;
   tx.ancestorMap.forEach((ancestor) => {
     tx.ancestorFee += ancestor.fee;
-    tx.ancestorWeight += ancestor.weight;
+    tx.ancestorSize += ancestor.size;
     tx.ancestorSigops += ancestor.sigops;
   });
-  tx.score = tx.ancestorFee / (tx.ancestorWeight / 4 || 1);
+  tx.score = tx.ancestorFee / (tx.ancestorSize || 1);
   tx.relativesSet = true;
 }
 
@@ -304,11 +303,11 @@ function updateDescendants(
       // remove tx as ancestor
       descendantTx.ancestorMap.delete(rootTx.uid);
       descendantTx.ancestorFee -= rootTx.fee;
-      descendantTx.ancestorWeight -= rootTx.weight;
+      descendantTx.ancestorSize -= rootTx.size;
       descendantTx.ancestorSigops -= rootTx.sigops;
       tmpScore = descendantTx.score;
       descendantTx.score =
-        descendantTx.ancestorFee / (descendantTx.ancestorWeight / 4);
+        descendantTx.ancestorFee / (descendantTx.ancestorSize || 1);
       descendantTx.dependencyRate = descendantTx.dependencyRate
         ? Math.min(descendantTx.dependencyRate, clusterRate)
         : clusterRate;

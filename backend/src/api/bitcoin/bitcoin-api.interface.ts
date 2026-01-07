@@ -35,12 +35,16 @@ export namespace IBitcoinApi {
     'bip125-replaceable': boolean; //  (boolean) Whether this transaction could be replaced due to BIP125 (replace-by-fee)
   }
 
+  export interface Ablastate {
+    blocksize: number;
+    blocksizelimit: number;
+    nextblocksizelimit: number;
+  }
+
   export interface Block {
     hash: string; //  (string) the block hash (same as provided)
     confirmations: number; //  (numeric) The number of confirmations, or -1 if the block is not on the main chain
     size: number; //  (numeric) The block size
-    strippedsize: number; //  (numeric) The block size excluding witness data
-    weight: number; //  (numeric) The block weight as defined in BIP 141
     height: number; //  (numeric) The block height or index
     version: number; //  (numeric) The block version
     versionHex: string; //  (string) The block version formatted in hexadecimal
@@ -55,16 +59,15 @@ export namespace IBitcoinApi {
     nTx: number; //  (numeric) The number of transactions in the block
     previousblockhash: string; //  (string) The hash of the previous block
     nextblockhash: string; //  (string) The hash of the next block
+    ablastate: Ablastate; //  (object) Adaptive Blocksize Limit Algorithm state
   }
 
   export interface Transaction {
     in_active_chain: boolean; //  (boolean) Whether specified block is in the active chain or not
     hex: string; //  (string) The serialized, hex-encoded data for 'txid'
     txid: string; //  (string) The transaction id (same as provided)
-    hash: string; //  (string) The transaction hash (differs from txid for witness transactions)
+    hash: string; //  (string) The transaction hash
     size: number; //  (numeric) The serialized transaction size
-    vsize: number; //  (numeric) The virtual transaction size (differs from size for witness transactions)
-    weight: number; //  (numeric) The transaction's weight (between vsize*4-3 and vsize*4)
     version: number; //  (numeric) The version
     locktime: number; //  (numeric) The lock time
     vin: Vin[];
@@ -92,7 +95,6 @@ export namespace IBitcoinApi {
       hex: string; //  (string) hex
     };
     sequence: number; //  (numeric) The script sequence number
-    txinwitness?: string[]; //  (string) hex-encoded witness data
     coinbase?: string;
     is_pegin?: boolean; //  (boolean) Elements peg-in
   }
@@ -203,17 +205,16 @@ export namespace IBitcoinApi {
     mintxsize: number;
     outs: number;
     subsidy: number;
-    swtotal_size: number;
-    swtotal_weight: number;
-    swtxs: number;
     time: number;
     total_out: number;
     total_size: number;
-    total_weight: number;
     totalfee: number;
     txs: number;
     utxo_increase: number;
     utxo_size_inc: number;
+    blocksize: number;
+    blocksizelimit: number;
+    nextblocksizelimit: number;
   }
 }
 

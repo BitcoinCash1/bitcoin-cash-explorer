@@ -38,7 +38,6 @@ import chainTips from './chain-tips';
 import websocketHandler from './websocket-handler';
 import redisCache from './redis-cache';
 import { calcBitsDifference } from './difficulty-adjustment';
-import mempool from './mempool';
 import { parseDATUMTemplateCreator } from '../utils/bitcoin-script';
 import database from '../database';
 
@@ -271,7 +270,7 @@ class Blocks {
     const stripped = block.tx.map((tx: IBitcoinApi.VerboseTransaction) => {
       return {
         txid: tx.txid,
-        vsize: tx.weight / 4,
+        size: tx.size,
         fee: tx.fee ? Math.round(tx.fee * 100000000) : 0,
         value: Math.round(
           tx.vout.reduce(
@@ -298,20 +297,6 @@ class Blocks {
       id: hash,
       transactions: Common.classifyTransactions(transactions, height),
     };
-  }
-
-  private convertLiquidFees(
-    block: IBitcoinApi.VerboseBlock
-  ): IBitcoinApi.VerboseBlock {
-    block.tx.forEach((tx) => {
-      if (!isFinite(Number(tx.fee))) {
-        tx.fee = Object.values(tx.fee || {}).reduce(
-          (total, output) => total + output,
-          0
-        );
-      }
-    });
-    return block;
   }
 
   /**
@@ -349,9 +334,6 @@ class Blocks {
       extras.totalInputs = 0;
       extras.totalOutputs = 1;
       extras.totalOutputAmt = 0;
-      extras.segwitTotalTxs = 0;
-      extras.segwitTotalSize = 0;
-      extras.segwitTotalWeight = 0;
     } else {
       const stats: IBitcoinApi.BlockStats = await this.$getBlockStats(
         block,
@@ -379,9 +361,6 @@ class Blocks {
       extras.totalInputs = stats.ins;
       extras.totalOutputs = stats.outs;
       extras.totalOutputAmt = stats.total_out;
-      extras.segwitTotalTxs = stats.swtxs;
-      extras.segwitTotalSize = stats.swtotal_size;
-      extras.segwitTotalWeight = stats.swtotal_weight;
     }
 
     if (Common.blocksSummariesIndexingEnabled()) {
@@ -392,7 +371,7 @@ class Blocks {
       }
     }
 
-    extras.virtualSize = block.weight / 4.0;
+    extras.size = block.size;
     if (coinbaseTx?.vout.length > 0) {
       extras.coinbaseAddress = coinbaseTx.vout[0].scriptpubkey_address ?? null;
       extras.coinbaseAddresses = [
@@ -472,7 +451,7 @@ class Blocks {
 
       extras.matchRate = null;
       extras.expectedFees = null;
-      extras.expectedWeight = null;
+      extras.expectedSize = null;
       if (config.MEMPOOL.AUDIT) {
         const auditScore = await BlocksAuditsRepository.$getBlockAuditScore(
           block.id
@@ -480,7 +459,7 @@ class Blocks {
         if (auditScore != null) {
           extras.matchRate = auditScore.matchRate;
           extras.expectedFees = auditScore.expectedFees;
-          extras.expectedWeight = auditScore.expectedWeight;
+          extras.expectedSize = auditScore.expectedSize;
         }
       }
     }
@@ -498,46 +477,40 @@ class Blocks {
     }
 
     // TODO: make these match the definitions used by the RPC response
+    // TODO: Fix this whole algorithm for BCH
     const totalFee = transactions.reduce((acc, tx) => acc + tx.fee, 0);
-    const totalVsize = transactions.reduce((acc, tx) => acc + tx.vsize, 0);
+    const totalSize = transactions.reduce((acc, tx) => acc + tx.size, 0);
     const totalReward = transactions[0].vout.reduce(
       (acc, vout) => acc + vout.value,
       0
     );
     const sortedByFee = transactions.sort((a, b) => a.fee - b.fee);
-    const sortedByVsize = transactions.sort((a, b) => a.vsize - b.vsize);
+    const sortedBySize = transactions.sort((a, b) => a.size - b.size);
     const sortedByFeerate = transactions.sort(
-      (a, b) => a.fee / a.weight - b.fee / b.weight
+      (a, b) => a.fee / a.size - b.fee / b.size
     );
-    const sortedFeerates = sortedByFeerate.map(
-      (tx) => tx.fee / (tx.weight / 4)
-    );
+    const sortedFeerates = sortedByFeerate.map((tx) => tx.fee / tx.size);
     const avgfee = totalFee / transactions.length;
-    const avgfeerate = totalFee / (block.weight / 4);
-    const avgtxsize = totalVsize / transactions.length;
+    const avgfeerate = totalFee / block.size;
+    const avgtxsize = totalSize / transactions.length;
     const medianfee = sortedByFee[Math.floor(transactions.length / 2)].fee;
     const mediantime = block.timestamp;
-    const mediantxsize =
-      sortedByVsize[Math.floor(transactions.length / 2)].vsize;
+    const mediantxsize = sortedBySize[Math.floor(transactions.length / 2)].size;
     const minfee = sortedByFee[0].fee;
     const maxfee = sortedByFee[sortedByFee.length - 1].fee;
     const minfeerate = sortedFeerates[0];
     const maxfeerate = sortedFeerates[sortedFeerates.length - 1];
-    const mintxsize = sortedByVsize[0].vsize;
-    const maxtxsize = sortedByVsize[sortedByVsize.length - 1].vsize;
+    const mintxsize = sortedBySize[0].size;
+    const maxtxsize = sortedBySize[sortedBySize.length - 1].size;
     const ins = transactions.reduce((acc, tx) => acc + tx.vin.length, 0);
     const outs = transactions.reduce((acc, tx) => acc + tx.vout.length, 0);
     const subsidy = totalReward - totalFee;
-    const swtotal_size = 0;
-    const swtotal_weight = 0;
-    const swtxs = 0;
     const time = block.timestamp;
     const total_out = transactions.reduce(
       (acc, tx) => acc + tx.vout.reduce((acc, vout) => acc + vout.value, 0),
       0
     );
     const total_size = block.size;
-    const total_weight = block.weight;
     const totalfee = totalFee;
     const txs = transactions.length;
     const utxo_increase = 0;
@@ -568,17 +541,16 @@ class Blocks {
       mintxsize,
       outs,
       subsidy,
-      swtotal_size,
-      swtotal_weight,
-      swtxs,
       time,
       total_out,
       total_size,
-      total_weight,
       totalfee,
       txs,
       utxo_increase,
       utxo_size_inc,
+      blocksize: block.size,
+      blocksizelimit: block.size,
+      nextblocksizelimit: block.size,
     };
   }
 
@@ -745,16 +717,16 @@ class Blocks {
     for (const hash of blockIds) {
       const summary = await BlocksSummariesRepository.$getTemplate(hash);
       let totalFees = 0;
-      let totalWeight = 0;
+      let totalSize = 0;
       for (const tx of summary?.transactions || []) {
         totalFees += tx.fee;
-        totalWeight += tx.vsize * 4;
+        totalSize += tx.size;
       }
-      await BlocksAuditsRepository.$setSummary(hash, totalFees, totalWeight);
+      await BlocksAuditsRepository.$setSummary(hash, totalFees, totalSize);
       const cachedBlock = this.blocks.find((block) => block.id === hash);
       if (cachedBlock) {
         cachedBlock.extras.expectedFees = totalFees;
-        cachedBlock.extras.expectedWeight = totalWeight;
+        cachedBlock.extras.expectedSize = totalSize;
       }
 
       indexedThisRun++;
@@ -1065,14 +1037,10 @@ class Blocks {
             timer,
             'got previous block for initial difficulty adjustment'
           );
-          if (['liquid', 'liquidtestnet'].includes(config.MEMPOOL.NETWORK)) {
-            this.previousDifficultyRetarget = NaN;
-          } else {
-            this.previousDifficultyRetarget = calcBitsDifference(
-              previousPeriodBlock.bits,
-              block.bits
-            );
-          }
+          this.previousDifficultyRetarget = calcBitsDifference(
+            previousPeriodBlock.bits,
+            block.bits
+          );
           logger.debug(`Initial difficulty adjustment data set.`);
         }
       } else {
@@ -1109,7 +1077,18 @@ class Blocks {
         this.currentBlockHeight
       );
       const verboseBlock = await bitcoinClient.getBlock(blockHash, 2);
+
       const block = BitcoinApi.convertBlock(verboseBlock);
+
+      // Log block info
+      logger.debug(
+        `Block ${this.currentBlockHeight} info: ${JSON.stringify(
+          block,
+          null,
+          2
+        )}`
+      );
+
       const txIds: string[] = verboseBlock.tx.map((tx) => tx.txid);
       const transactions = (await this.$getTransactionsExtended(
         blockHash,
@@ -1218,17 +1197,12 @@ class Blocks {
 
       if (block.height % 2016 === 0) {
         if (Common.indexingEnabled()) {
-          let adjustment;
-          if (['liquid', 'liquidtestnet'].includes(config.MEMPOOL.NETWORK)) {
-            adjustment = NaN;
-          } else {
-            adjustment =
-              Math.round(
-                // calcBitsDifference returns +- percentage, +100 returns to positive, /100 returns to ratio.
-                // Instead of actually doing /100, just reduce the multiplier.
-                (calcBitsDifference(this.currentBits, block.bits) + 100) * 10000
-              ) / 1000000; // Remove float point noise
-          }
+          const adjustment =
+            Math.round(
+              // calcBitsDifference returns +- percentage, +100 returns to positive, /100 returns to ratio.
+              // Instead of actually doing /100, just reduce the multiplier.
+              (calcBitsDifference(this.currentBits, block.bits) + 100) * 10000
+            ) / 1000000; // Remove float point noise
 
           await DifficultyAdjustmentsRepository.$saveAdjustments({
             time: block.timestamp,
@@ -1242,14 +1216,10 @@ class Blocks {
           );
         }
 
-        if (['liquid', 'liquidtestnet'].includes(config.MEMPOOL.NETWORK)) {
-          this.previousDifficultyRetarget = NaN;
-        } else {
-          this.previousDifficultyRetarget = calcBitsDifference(
-            this.currentBits,
-            block.bits
-          );
-        }
+        this.previousDifficultyRetarget = calcBitsDifference(
+          this.currentBits,
+          block.bits
+        );
         this.lastDifficultyAdjustmentTime = block.timestamp;
         this.currentBits = block.bits;
       }
@@ -1718,7 +1688,6 @@ class Blocks {
         bits: block.bits ?? null,
         nonce: block.nonce ?? null,
         size: block.size ?? null,
-        weight: block.weight ?? null,
         tx_count: block.tx_count ?? null,
         merkle_root: block.merkle_root ?? null,
         reward: block.extras.reward ?? null,
@@ -1733,9 +1702,6 @@ class Blocks {
         total_input_amt: block.extras.totalInputAmt ?? null,
         total_outputs: block.extras.totalOutputs ?? null,
         total_output_amt: block.extras.totalOutputAmt ?? null,
-        segwit_total_txs: block.extras.segwitTotalTxs ?? null,
-        segwit_total_size: block.extras.segwitTotalSize ?? null,
-        segwit_total_weight: block.extras.segwitTotalWeight ?? null,
         avg_tx_size: block.extras.avgTxSize ?? null,
         utxoset_change: block.extras.utxoSetChange ?? null,
         utxoset_size: block.extras.utxoSetSize ?? null,
@@ -1746,6 +1712,9 @@ class Blocks {
         coinbase_signature_ascii: block.extras.coinbaseSignatureAscii ?? null,
         pool_slug: block.extras.pool.slug ?? null,
         pool_id: block.extras.pool.id ?? null,
+        blocksize: block.ablastate.block_size ?? null,
+        blocksizelimit: block.ablastate.block_size_limit ?? null,
+        nextblocksizelimit: block.ablastate.next_block_size_limit ?? null,
       };
 
       if (

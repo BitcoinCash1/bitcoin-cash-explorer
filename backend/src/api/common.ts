@@ -21,11 +21,10 @@ import {
 } from '../utils/bitcoin-script';
 import { IEsploraApi } from './bitcoin/esplora-api.interface';
 
-// Bitcoin Core default policy settings
-const MAX_STANDARD_TX_WEIGHT = 400_000;
+// Bitcoin Cash Node default policy settings
+const MAX_STANDARD_TX_SIZE = 32_000_000; // Min. tx size
 const MAX_BLOCK_SIGOPS_COST = 80_000;
 const MAX_STANDARD_TX_SIGOPS_COST = MAX_BLOCK_SIGOPS_COST / 5;
-const MIN_STANDARD_TX_NONWITNESS_SIZE = 65;
 const MAX_P2SH_SIGOPS = 15;
 const MAX_STANDARD_P2WSH_STACK_ITEMS = 100;
 const MAX_STANDARD_P2WSH_STACK_ITEM_SIZE = 80;
@@ -71,24 +70,24 @@ export class Common {
     let lastValidRate = Infinity;
     // filter out anomalous fee rates to ensure monotonic range
     for (const tx of transactions) {
-      if (tx.effectiveFeePerVsize <= lastValidRate) {
+      if (tx.effectiveFeePerSize <= lastValidRate) {
         filtered.push(tx);
-        lastValidRate = tx.effectiveFeePerVsize;
+        lastValidRate = tx.effectiveFeePerSize;
       }
     }
-    const arr = [filtered[filtered.length - 1].effectiveFeePerVsize];
+    const arr = [filtered[filtered.length - 1].effectiveFeePerSize];
     const chunk = 1 / (rangeLength - 1);
     let itemsToAdd = rangeLength - 2;
 
     while (itemsToAdd > 0) {
       arr.push(
         filtered[Math.floor(filtered.length * chunk * itemsToAdd)]
-          .effectiveFeePerVsize
+          .effectiveFeePerSize
       );
       itemsToAdd--;
     }
 
-    arr.push(filtered[0].effectiveFeePerVsize);
+    arr.push(filtered[0].effectiveFeePerSize);
     return arr;
   }
 
@@ -146,12 +145,7 @@ export class Common {
     }
 
     // tx-size
-    if (tx.weight > MAX_STANDARD_TX_WEIGHT) {
-      return true;
-    }
-
-    // tx-size-small
-    if (this.getNonWitnessSize(tx) < MIN_STANDARD_TX_NONWITNESS_SIZE) {
+    if (tx.size > MAX_STANDARD_TX_SIZE) {
       return true;
     }
 
@@ -204,39 +198,6 @@ export class Common {
       ) {
         return true;
       }
-      // bad-witness-nonstandard
-      if (vin.prevout?.scriptpubkey_type === 'v1_p2tr' && vin.witness?.length) {
-        const hasAnnex =
-          vin.witness.length > 1 &&
-          vin.witness[vin.witness.length - 1].startsWith('50');
-        // annex is non-standard
-        if (hasAnnex) {
-          return true;
-        }
-        if (vin.witness.length > (hasAnnex ? 2 : 1)) {
-          // script path spend
-          const controlBlock =
-            vin.witness[vin.witness.length - (hasAnnex ? 2 : 1)];
-          // control block is required
-          if (!controlBlock.length) {
-            return false;
-          } else {
-            // Leaf version must be 0xc0 (aka Tapscript, see BIP 342)
-            if ((parseInt(controlBlock.slice(0, 2), 16) & 0xfe) !== 0xc0) {
-              return false;
-            }
-          }
-          // remaining witness items (except for the script) must be within MAX_STANDARD_TAPSCRIPT_STACK_ITEM_SIZE limit
-          if (
-            vin.witness
-              .slice(0, vin.witness.length - (hasAnnex ? 3 : 2))
-              .some((v) => v.length > 160)
-          ) {
-            return false;
-          }
-        }
-      }
-      // TODO: other bad-witness-nonstandard cases
     }
 
     // output validation
@@ -466,36 +427,6 @@ export class Common {
     return false;
   }
 
-  static getNonWitnessSize(tx: TransactionExtended): number {
-    let weight = tx.weight;
-    let hasWitness = false;
-    for (const vin of tx.vin) {
-      if (vin.witness?.length) {
-        hasWitness = true;
-        // witness count
-        weight -= getVarIntLength(vin.witness.length);
-        for (const witness of vin.witness) {
-          // witness item size + content
-          weight -= getVarIntLength(witness.length / 2) + witness.length / 2;
-        }
-      }
-    }
-    if (hasWitness) {
-      // marker & segwit flag
-      weight -= 2;
-    }
-    return Math.ceil(weight / 4);
-  }
-
-  static setSegwitSighashFlags(flags: bigint, witness: string[]): bigint {
-    for (const w of witness) {
-      if (this.isDERSig(w)) {
-        flags |= this.setSighashFlags(flags, w);
-      }
-    }
-    return flags;
-  }
-
   static setLegacySighashFlags(flags: bigint, scriptsig_asm: string): bigint {
     for (const item of scriptsig_asm?.split(' ') ?? []) {
       // skip op_codes
@@ -565,46 +496,10 @@ export class Common {
 
   static inputIsMaybeInscription(vin: IEsploraApi.Vin): boolean {
     // check if this is actually a taproot input
-    let isTaproot = false;
-    let isNotTaproot = false;
+    const isTaproot = false;
+    const isNotTaproot = true;
 
-    // taproot inputs have no scriptsig (otherwise probably wrapped segwit)
-    if (vin.scriptsig?.length) {
-      isNotTaproot = true;
-    }
-
-    // p2wpkh consist of a DER-encoded signature followed by a compressed pubkey
-    if (
-      !isNotTaproot &&
-      this.isDERSig(vin.witness[0]) &&
-      (vin.witness[1].startsWith('02') || vin.witness[1].startsWith('03')) &&
-      vin.witness[1].length === 66
-    ) {
-      isNotTaproot = true;
-    }
-
-    // p2wsh could be almost anything, but ends with a script which
-    // probably doesn't match a valid taproot control block length (32 + 33m)
-    if (!isNotTaproot && vin.witness.length >= 2) {
-      const hasAnnex = vin.witness[vin.witness.length - 1].startsWith('50');
-      const controlBlock = vin.witness[vin.witness.length - (hasAnnex ? 2 : 1)];
-      if ((controlBlock.length - 66) % 64 === 0) {
-        isNotTaproot = true;
-      }
-    }
-
-    // signed taproot inscriptions should have 3 non-annex witness items:
-    //  1) schnorr signature
-    //  2) inscription script
-    //  3) control block (length 33 + 32m)
-    if (
-      (!isTaproot &&
-        vin.witness.length >= 3 &&
-        vin.witness[0].length === 128) ||
-      (vin.witness[0].length === 130 && (vin.witness[2].length - 66) % 64 === 0)
-    ) {
-      isTaproot = true;
-    }
+    // BCH does not have tap root implemented
 
     return isTaproot || !isNotTaproot;
   }
@@ -650,44 +545,7 @@ export class Common {
           case 'v0_p2wsh':
             flags |= TransactionFlags.p2wsh;
             break;
-          case 'v1_p2tr':
-            {
-              flags |= TransactionFlags.p2tr;
-              if (vin.witness?.length) {
-                flags = Common.isInscription(vin, flags);
-                const hasAnnex =
-                  vin.witness.length > 1 &&
-                  vin.witness[vin.witness.length - 1].startsWith('50');
-                if (hasAnnex) {
-                  flags |= TransactionFlags.annex;
-                }
-              }
-            }
-            break;
         }
-      } else {
-        // no prevouts, optimistically check witness-bearing inputs
-        if (vin.witness?.length >= 2 && Common.inputIsMaybeInscription(vin)) {
-          // try to parse the witness as a taproot inscription
-          try {
-            flags = Common.isInscription(vin, flags);
-          } catch {
-            // witness script parsing will fail if this isn't really a taproot output
-          }
-        }
-      }
-
-      // sighash flags
-      if (vin.prevout?.scriptpubkey_type === 'v1_p2tr') {
-        flags |= this.setSchnorrSighashFlags(flags, vin.witness);
-      } else if (vin.witness) {
-        flags |= this.setSegwitSighashFlags(flags, vin.witness);
-      } else if (vin.scriptsig?.length) {
-        flags |= this.setLegacySighashFlags(
-          flags,
-          vin.scriptsig_asm ||
-            transactionUtils.convertScriptSigAsm(vin.scriptsig)
-        );
       }
 
       if (vin.prevout?.scriptpubkey_address) {
@@ -700,9 +558,8 @@ export class Common {
     // BCH has never RBF
     flags |= TransactionFlags.no_rbf;
     let hasFakePubkey = false;
-    let P2WSHCount = 0;
-    let olgaSize = 0;
     for (const vout of tx.vout) {
+      // Only switch between BCH supported types
       switch (vout.scriptpubkey_type) {
         case 'p2pk':
           {
@@ -733,15 +590,6 @@ export class Common {
         case 'p2sh':
           flags |= TransactionFlags.p2sh;
           break;
-        case 'v0_p2wpkh':
-          flags |= TransactionFlags.p2wpkh;
-          break;
-        case 'v0_p2wsh':
-          flags |= TransactionFlags.p2wsh;
-          break;
-        case 'v1_p2tr':
-          flags |= TransactionFlags.p2tr;
-          break;
         case 'op_return':
           flags |= TransactionFlags.op_return;
           break;
@@ -749,20 +597,6 @@ export class Common {
       if (vout.scriptpubkey_address) {
         reusedOutputAddresses[vout.scriptpubkey_address] =
           (reusedOutputAddresses[vout.scriptpubkey_address] || 0) + 1;
-      }
-      if (vout.scriptpubkey_type === 'v0_p2wsh') {
-        if (!P2WSHCount) {
-          olgaSize = parseInt(vout.scriptpubkey.slice(4, 8), 16);
-        }
-        P2WSHCount++;
-        if (P2WSHCount === Math.ceil((olgaSize + 2) / 32)) {
-          const nullBytes = P2WSHCount * 32 - olgaSize - 2;
-          if (vout.scriptpubkey.endsWith(''.padEnd(nullBytes * 2, '0'))) {
-            flags |= TransactionFlags.fake_scripthash;
-          }
-        }
-      } else {
-        P2WSHCount = 0;
       }
       outValues[vout.value || Math.random()] =
         (outValues[vout.value || Math.random()] || 0) + 1;
@@ -838,12 +672,12 @@ export class Common {
     return {
       txid: tx.txid,
       fee: tx.fee || 0,
-      vsize: tx.weight / 4,
+      size: tx.size,
       value: tx.vout.reduce(
         (acc, vout) => acc + (vout.value ? vout.value : 0),
         0
       ),
-      rate: tx.effectiveFeePerVsize,
+      rate: tx.effectiveFeePerSize,
       time: tx.firstSeen || undefined,
     };
   }
@@ -867,13 +701,13 @@ export class Common {
     }
   }
 
-  // calculates the ratio of matched transactions to projected transactions by weight
+  // calculates the ratio of matched transactions to projected transactions by size
   static getSimilarity(
     projectedBlock: MempoolBlockWithTransactions,
     transactions: TransactionExtended[]
   ): number {
-    let matchedWeight = 0;
-    let projectedWeight = 0;
+    let matchedSize = 0;
+    let projectedSize = 0;
     const inBlock = {};
 
     for (const tx of transactions) {
@@ -883,15 +717,15 @@ export class Common {
     // look for transactions that were expected in the template, but missing from the mined block
     for (const tx of projectedBlock.transactions) {
       if (inBlock[tx.txid]) {
-        matchedWeight += tx.vsize * 4;
+        matchedSize += tx.size;
       }
-      projectedWeight += tx.vsize * 4;
+      projectedSize += tx.size;
     }
 
-    projectedWeight += transactions[0].weight;
-    matchedWeight += transactions[0].weight;
+    projectedSize += transactions[0].size;
+    matchedSize += transactions[0].size;
 
-    return projectedWeight ? matchedWeight / projectedWeight : 1;
+    return projectedSize ? matchedSize / projectedSize : 1;
   }
 
   static getSqlInterval(interval: string | null): string | null {
@@ -1071,9 +905,9 @@ export class Common {
 
   static calcEffectiveFeeStatistics(
     transactions: {
-      weight: number;
+      size: number;
       fee?: number;
-      effectiveFeePerVsize?: number;
+      effectiveFeePerSize?: number;
       txid: string;
     }[]
   ): EffectiveFeeStats {
@@ -1081,17 +915,17 @@ export class Common {
       .map((tx) => {
         return {
           txid: tx.txid,
-          weight: tx.weight,
-          rate: tx.effectiveFeePerVsize || (tx.fee || 0) / (tx.weight / 4),
+          size: tx.size,
+          rate: tx.effectiveFeePerSize || (tx.fee || 0) / tx.size,
         };
       })
       .sort((a, b) => a.rate - b.rate);
-    const totalWeight = transactions.reduce((acc, tx) => acc + tx.weight, 0);
+    const totalSize = transactions.reduce((acc, tx) => acc + tx.size, 0);
 
     // include any unused space
-    let weightCount = config.MEMPOOL.BLOCK_WEIGHT_UNITS - totalWeight;
+    let sizeCount = config.MEMPOOL.BLOCK_WEIGHT_UNITS - totalSize;
     let medianFee = 0;
-    let medianWeight = 0;
+    let medianSize = 0;
 
     // calculate the "medianFee" as the average fee rate of the middle 0.25% weight units of the conceptual block
     const halfWidth = config.MEMPOOL.BLOCK_WEIGHT_UNITS / 800;
@@ -1101,17 +935,17 @@ export class Common {
     const rightBound = Math.ceil(
       config.MEMPOOL.BLOCK_WEIGHT_UNITS / 2 + halfWidth
     );
-    for (let i = 0; i < sortedTxs.length && weightCount < rightBound; i++) {
-      const left = weightCount;
-      const right = weightCount + sortedTxs[i].weight;
+    for (let i = 0; i < sortedTxs.length && sizeCount < rightBound; i++) {
+      const left = sizeCount;
+      const right = sizeCount + sortedTxs[i].size;
       if (right > leftBound) {
         const weight = Math.min(right, rightBound) - Math.max(left, leftBound);
         medianFee += sortedTxs[i].rate * (weight / 4);
-        medianWeight += weight;
+        medianSize += weight;
       }
-      weightCount += sortedTxs[i].weight;
+      sizeCount += sortedTxs[i].size;
     }
-    const medianFeeRate = medianWeight ? medianFee / (medianWeight / 4) : 0;
+    const medianFeeRate = medianSize ? medianFee / (medianSize / 4) : 0;
 
     // minimum effective fee heuristic:
     // lowest of
@@ -1120,10 +954,7 @@ export class Common {
     const minFee = Math.min(
       Common.getNthPercentile(1, sortedTxs).rate,
       transactions.slice(-transactions.length / 50).reduce((min, tx) => {
-        return Math.min(
-          min,
-          tx.effectiveFeePerVsize || (tx.fee || 0) / (tx.weight / 4)
-        );
+        return Math.min(min, tx.effectiveFeePerSize || (tx.fee || 0) / tx.size);
       }, Infinity)
     );
 
@@ -1134,10 +965,7 @@ export class Common {
     const maxFee = Math.max(
       Common.getNthPercentile(99, sortedTxs).rate,
       transactions.slice(0, transactions.length / 50).reduce((max, tx) => {
-        return Math.max(
-          max,
-          tx.effectiveFeePerVsize || (tx.fee || 0) / (tx.weight / 4)
-        );
+        return Math.max(max, tx.effectiveFeePerSize || (tx.fee || 0) / tx.size);
       }, 0)
     );
 
@@ -1363,7 +1191,7 @@ export class OnlineFeeStatsCalculator {
   private maxBandRate = 0;
 
   private feeRange: { avg: number; min: number; max: number }[] = [];
-  private totalWeight: number = 0;
+  private totalSize: number = 0;
 
   constructor(
     maxWeight: number,
@@ -1385,25 +1213,24 @@ export class OnlineFeeStatsCalculator {
   }
 
   processNext(tx: {
-    weight: number;
+    size: number;
     fee: number;
-    effectiveFeePerVsize?: number;
+    effectiveFeePerSize?: number;
     feePerVsize?: number;
     rate?: number;
     txid: string;
   }): void {
-    let left = this.totalWeight;
-    const right = this.totalWeight + tx.weight;
+    let left = this.totalSize;
+    const right = this.totalSize + tx.size;
     if (!this.inBand && right <= this.leftBound) {
-      this.totalWeight += tx.weight;
+      this.totalSize += tx.size;
       return;
     }
 
     while (left < right) {
       if (right > this.leftBound) {
         this.inBand = true;
-        const txRate =
-          tx.rate || tx.effectiveFeePerVsize || tx.feePerVsize || 0;
+        const txRate = tx.rate || tx.effectiveFeePerSize || tx.feePerVsize || 0;
         const weight =
           Math.min(right, this.rightBound) - Math.max(left, this.leftBound);
         this.totalBandFee += txRate * weight;
@@ -1431,7 +1258,7 @@ export class OnlineFeeStatsCalculator {
         this.maxBandRate = 0;
       }
     }
-    this.totalWeight += tx.weight;
+    this.totalSize += tx.size;
   }
 
   private setNextBounds(): void {

@@ -123,6 +123,7 @@ class FeeApi {
     };
   }
 
+  // TODO: Update calculation for BCH
   private optimizeMedianFee(
     pBlock: MempoolBlock,
     nextBlock: MempoolBlock | undefined,
@@ -133,11 +134,11 @@ class FeeApi {
     const useFee = previousFee
       ? (pBlock.medianFee + previousFee) / 2
       : pBlock.medianFee;
-    if (pBlock.blockVSize <= 500000 || pBlock.medianFee < minFee) {
+    if (pBlock.blockSize <= 500000 || pBlock.medianFee < minFee) {
       return minFee;
     }
-    if (pBlock.blockVSize <= 950000 && !nextBlock) {
-      const multiplier = (pBlock.blockVSize - 500000) / 500000;
+    if (pBlock.blockSize <= 950000 && !nextBlock) {
+      const multiplier = (pBlock.blockSize - 500000) / 500000;
       return Math.max(
         this.roundToNearest(useFee * multiplier, minIncrement),
         minFee

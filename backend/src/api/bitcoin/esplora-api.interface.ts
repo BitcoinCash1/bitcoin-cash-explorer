@@ -4,7 +4,6 @@ export namespace IEsploraApi {
     version: number;
     locktime: number;
     size: number;
-    weight: number;
     fee: number;
     sigops?: number;
     vin: Vin[];
@@ -27,9 +26,7 @@ export namespace IEsploraApi {
     scriptsig: string;
     scriptsig_asm: string;
     inner_redeemscript_asm: string;
-    inner_witnessscript_asm: string;
     sequence: any;
-    witness: string[];
     prevout: Vout | null;
     // Elements
     is_pegin?: boolean;
@@ -76,6 +73,12 @@ export namespace IEsploraApi {
     block_time?: number;
   }
 
+  export interface Ablastate {
+    block_size: number;
+    block_size_limit: number;
+    next_block_size_limit: number;
+  }
+
   export interface Block {
     id: string;
     height: number;
@@ -87,9 +90,9 @@ export namespace IEsploraApi {
     merkle_root: string;
     tx_count: number;
     size: number;
-    weight: number;
     previousblockhash: string;
     mediantime: number;
+    ablastate: Ablastate;
     stale: boolean;
   }
 

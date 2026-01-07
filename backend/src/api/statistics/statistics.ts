@@ -58,7 +58,7 @@ class Statistics {
     this.lastRun = new Date().getTime() / 1000;
     const currentMempool = memPool.getMempool();
     const txPerSecond = memPool.getTxPerSecond();
-    const vBytesPerSecond = memPool.getVBytesPerSecond();
+    const bytesPerSecond = memPool.getVBytesPerSecond();
 
     logger.debug('Running statistics');
 
@@ -69,7 +69,7 @@ class Statistics {
       }
     }
     // Remove 0 and undefined
-    memPoolArray = memPoolArray.filter((tx) => tx.effectiveFeePerVsize);
+    memPoolArray = memPoolArray.filter((tx) => tx.effectiveFeePerSize);
 
     if (!memPoolArray.length) {
       try {
@@ -86,11 +86,10 @@ class Statistics {
       return;
     }
 
-    memPoolArray.sort(
-      (a, b) => a.effectiveFeePerVsize - b.effectiveFeePerVsize
-    );
-    const totalWeight =
-      memPoolArray.map((tx) => tx.vsize).reduce((acc, curr) => acc + curr) * 4;
+    memPoolArray.sort((a, b) => a.effectiveFeePerSize - b.effectiveFeePerSize);
+    const totalSize = memPoolArray
+      .map((tx) => tx.size)
+      .reduce((acc, curr) => acc + curr);
     const totalFee = memPoolArray
       .map((tx) => tx.fee)
       .reduce((acc, curr) => acc + curr);
@@ -101,19 +100,19 @@ class Statistics {
       1200, 1400, 1600, 1800, 2000,
     ];
 
-    const weightVsizeFees: { [feePerWU: number]: number } = {};
+    const sizeFees: { [feePerWU: number]: number } = {};
     const lastItem = logFees.length - 1;
 
     memPoolArray.forEach((transaction) => {
       for (let i = 0; i < logFees.length; i++) {
         if (
           i === lastItem ||
-          transaction.effectiveFeePerVsize < logFees[i + 1]
+          transaction.effectiveFeePerSize < logFees[i + 1]
         ) {
-          if (weightVsizeFees[logFees[i]]) {
-            weightVsizeFees[logFees[i]] += transaction.vsize;
+          if (sizeFees[logFees[i]]) {
+            sizeFees[logFees[i]] += transaction.size;
           } else {
-            weightVsizeFees[logFees[i]] = transaction.vsize;
+            sizeFees[logFees[i]] = transaction.size;
           }
           break;
         }
@@ -128,50 +127,50 @@ class Statistics {
         added: 'NOW()',
         unconfirmed_transactions: memPoolArray.length,
         tx_per_second: txPerSecond,
-        vbytes_per_second: Math.round(vBytesPerSecond),
-        mempool_byte_weight: totalWeight,
+        bytes_per_second: Math.round(bytesPerSecond),
+        mempool_byte_size: totalSize,
         total_fee: totalFee,
         fee_data: '',
         min_fee: minFee,
-        vsize_0: weightVsizeFees['0'] || 0,
-        vsize_1: weightVsizeFees['1'] || 0,
-        vsize_2: weightVsizeFees['2'] || 0,
-        vsize_3: weightVsizeFees['3'] || 0,
-        vsize_4: weightVsizeFees['4'] || 0,
-        vsize_5: weightVsizeFees['5'] || 0,
-        vsize_6: weightVsizeFees['6'] || 0,
-        vsize_8: weightVsizeFees['8'] || 0,
-        vsize_10: weightVsizeFees['10'] || 0,
-        vsize_12: weightVsizeFees['12'] || 0,
-        vsize_15: weightVsizeFees['15'] || 0,
-        vsize_20: weightVsizeFees['20'] || 0,
-        vsize_30: weightVsizeFees['30'] || 0,
-        vsize_40: weightVsizeFees['40'] || 0,
-        vsize_50: weightVsizeFees['50'] || 0,
-        vsize_60: weightVsizeFees['60'] || 0,
-        vsize_70: weightVsizeFees['70'] || 0,
-        vsize_80: weightVsizeFees['80'] || 0,
-        vsize_90: weightVsizeFees['90'] || 0,
-        vsize_100: weightVsizeFees['100'] || 0,
-        vsize_125: weightVsizeFees['125'] || 0,
-        vsize_150: weightVsizeFees['150'] || 0,
-        vsize_175: weightVsizeFees['175'] || 0,
-        vsize_200: weightVsizeFees['200'] || 0,
-        vsize_250: weightVsizeFees['250'] || 0,
-        vsize_300: weightVsizeFees['300'] || 0,
-        vsize_350: weightVsizeFees['350'] || 0,
-        vsize_400: weightVsizeFees['400'] || 0,
-        vsize_500: weightVsizeFees['500'] || 0,
-        vsize_600: weightVsizeFees['600'] || 0,
-        vsize_700: weightVsizeFees['700'] || 0,
-        vsize_800: weightVsizeFees['800'] || 0,
-        vsize_900: weightVsizeFees['900'] || 0,
-        vsize_1000: weightVsizeFees['1000'] || 0,
-        vsize_1200: weightVsizeFees['1200'] || 0,
-        vsize_1400: weightVsizeFees['1400'] || 0,
-        vsize_1600: weightVsizeFees['1600'] || 0,
-        vsize_1800: weightVsizeFees['1800'] || 0,
-        vsize_2000: weightVsizeFees['2000'] || 0,
+        size_0: sizeFees['0'] || 0,
+        size_1: sizeFees['1'] || 0,
+        size_2: sizeFees['2'] || 0,
+        size_3: sizeFees['3'] || 0,
+        size_4: sizeFees['4'] || 0,
+        size_5: sizeFees['5'] || 0,
+        size_6: sizeFees['6'] || 0,
+        size_8: sizeFees['8'] || 0,
+        size_10: sizeFees['10'] || 0,
+        size_12: sizeFees['12'] || 0,
+        size_15: sizeFees['15'] || 0,
+        size_20: sizeFees['20'] || 0,
+        size_30: sizeFees['30'] || 0,
+        size_40: sizeFees['40'] || 0,
+        size_50: sizeFees['50'] || 0,
+        size_60: sizeFees['60'] || 0,
+        size_70: sizeFees['70'] || 0,
+        size_80: sizeFees['80'] || 0,
+        size_90: sizeFees['90'] || 0,
+        size_100: sizeFees['100'] || 0,
+        size_125: sizeFees['125'] || 0,
+        size_150: sizeFees['150'] || 0,
+        size_175: sizeFees['175'] || 0,
+        size_200: sizeFees['200'] || 0,
+        size_250: sizeFees['250'] || 0,
+        size_300: sizeFees['300'] || 0,
+        size_350: sizeFees['350'] || 0,
+        size_400: sizeFees['400'] || 0,
+        size_500: sizeFees['500'] || 0,
+        size_600: sizeFees['600'] || 0,
+        size_700: sizeFees['700'] || 0,
+        size_800: sizeFees['800'] || 0,
+        size_900: sizeFees['900'] || 0,
+        size_1000: sizeFees['1000'] || 0,
+        size_1200: sizeFees['1200'] || 0,
+        size_1400: sizeFees['1400'] || 0,
+        size_1600: sizeFees['1600'] || 0,
+        size_1800: sizeFees['1800'] || 0,
+        size_2000: sizeFees['2000'] || 0,
       });
 
       if (this.newStatisticsEntryCallback && insertId) {

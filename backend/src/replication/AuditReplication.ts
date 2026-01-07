@@ -148,7 +148,7 @@ class AuditReplication {
       sigopTxs: auditSummary.sigopTxs || [],
       matchRate: auditSummary.matchRate,
       expectedFees: auditSummary.expectedFees,
-      expectedWeight: auditSummary.expectedWeight,
+      expectedSize: auditSummary.expectedSize,
     });
     // add missing data to cached blocks
     const cachedBlock = blocks
@@ -157,7 +157,7 @@ class AuditReplication {
     if (cachedBlock) {
       cachedBlock.extras.matchRate = auditSummary.matchRate;
       cachedBlock.extras.expectedFees = auditSummary.expectedFees || null;
-      cachedBlock.extras.expectedWeight = auditSummary.expectedWeight || null;
+      cachedBlock.extras.expectedSize = auditSummary.expectedSize || null;
     }
   }
 }

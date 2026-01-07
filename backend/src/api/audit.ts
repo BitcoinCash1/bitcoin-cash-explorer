@@ -45,9 +45,9 @@ class Audit {
     const fresh: string[] = []; // missing, but firstSeen or lastBoosted within PROPAGATION_MARGIN
     const isCensored = {}; // missing, without excuse
     const isDisplaced = {};
-    let displacedWeight = 0;
-    let matchedWeight = 0;
-    let projectedWeight = 0;
+    let displacedSize = 0;
+    let matchedSize = 0;
+    let projectedSize = 0;
 
     const inBlock = {};
     const inTemplate = {};
@@ -76,27 +76,27 @@ class Audit {
         ) {
           // tx was recently cpfp'd, miner may not have the latest effective rate
           fresh.push(txid);
-        } else if (mempool[txid].effectiveFeePerVsize >= 1) {
+        } else if (mempool[txid].effectiveFeePerSize >= 1) {
           // transactions paying < 1 sat/vbyte are never considered censored
           isCensored[txid] = true;
         }
-        displacedWeight += mempool[txid]?.weight || 0;
+        displacedSize += mempool[txid]?.size || 0;
       } else {
-        matchedWeight += mempool[txid]?.weight || 0;
+        matchedSize += mempool[txid]?.size || 0;
       }
-      projectedWeight += mempool[txid]?.weight || 0;
+      projectedSize += mempool[txid]?.size || 0;
       inTemplate[txid] = true;
     }
 
     if (transactions[0]) {
-      displacedWeight += 4000 - transactions[0].weight;
-      projectedWeight += transactions[0].weight;
-      matchedWeight += transactions[0].weight;
+      displacedSize += 4000 - transactions[0].size;
+      projectedSize += transactions[0].size;
+      matchedSize += transactions[0].size;
     }
 
     // we can expect an honest miner to include 'displaced' transactions in place of recent arrivals and censored txs
     // these displaced transactions should occupy the first N weight units of the next projected block
-    let displacedWeightRemaining = displacedWeight + 4000;
+    let displacedSizeRemaining = displacedSize + 4000;
     let index = 0;
     let lastFeeRate = Infinity;
     let failures = 0;
@@ -105,23 +105,23 @@ class Audit {
       const txid = projectedBlocks[blockIndex].transactionIds[index];
       const tx = mempool[txid];
       if (tx) {
-        const fits = tx.weight - displacedWeightRemaining < 4000;
+        const fits = tx.size - displacedSizeRemaining < 4000;
         // 0.005 margin of error for any remaining vsize rounding issues
-        const feeMatches = tx.effectiveFeePerVsize >= lastFeeRate - 0.005;
+        const feeMatches = tx.effectiveFeePerSize >= lastFeeRate - 0.005;
         if (fits || feeMatches) {
           isDisplaced[txid] = true;
           if (fits) {
-            // (tx.effectiveFeePerVsize * tx.vsize) / Math.ceil(tx.vsize) attempts to correct for vsize rounding in the simple non-CPFP case
+            // (tx.effectiveFeePerSize * tx.size) / Math.ceil(tx.size) attempts to correct for size rounding in the simple non-CPFP case
             lastFeeRate = Math.min(
               lastFeeRate,
-              (tx.effectiveFeePerVsize * tx.vsize) / Math.ceil(tx.vsize)
+              (tx.effectiveFeePerSize * tx.size) / Math.ceil(tx.size)
             );
           }
           if (
             tx.firstSeen == null ||
             now - (tx?.firstSeen || 0) > PROPAGATION_MARGIN
           ) {
-            displacedWeightRemaining -= tx.weight;
+            displacedSizeRemaining -= tx.size;
           }
           failures = 0;
         } else {
@@ -138,8 +138,8 @@ class Audit {
     }
 
     // mark unexpected transactions in the mined block as 'added'
-    let overflowWeight = 0;
-    let totalWeight = 0;
+    let overflowSize = 0;
+    let totalSize = 0;
     for (const tx of transactions) {
       if (inTemplate[tx.txid]) {
         matches.push(tx.txid);
@@ -151,20 +151,20 @@ class Audit {
         } else {
           unseen.push(tx.txid);
         }
-        overflowWeight += tx.weight;
+        overflowSize += tx.size;
       }
-      totalWeight += tx.weight;
+      totalSize += tx.size;
     }
 
     ({ prioritized, deprioritized } =
       transactionUtils.identifyPrioritizedTransactions(
         transactions,
-        'effectiveFeePerVsize'
+        'effectiveFeePerSize'
       ));
 
     // transactions missing from near the end of our template are probably not being censored
-    let overflowWeightRemaining =
-      overflowWeight - (config.MEMPOOL.BLOCK_WEIGHT_UNITS - totalWeight);
+    let overflowSizeRemaining =
+      overflowSize - (config.MEMPOOL.BLOCK_WEIGHT_UNITS - totalSize);
     let maxOverflowRate = 0;
     let rateThreshold = 0;
     index = projectedBlocks[0].transactionIds.length - 1;
@@ -172,21 +172,21 @@ class Audit {
       const txid = projectedBlocks[0].transactionIds[index];
       const tx = mempool[txid];
       if (tx) {
-        if (overflowWeightRemaining > 0) {
+        if (overflowSizeRemaining > 0) {
           if (isCensored[txid]) {
             delete isCensored[txid];
           }
-          if (tx.effectiveFeePerVsize > maxOverflowRate) {
-            maxOverflowRate = tx.effectiveFeePerVsize;
+          if (tx.effectiveFeePerSize > maxOverflowRate) {
+            maxOverflowRate = tx.effectiveFeePerSize;
             rateThreshold = Math.ceil(maxOverflowRate * 100) / 100 + 0.005;
           }
-        } else if (tx.effectiveFeePerVsize <= rateThreshold) {
+        } else if (tx.effectiveFeePerSize <= rateThreshold) {
           // tolerance of 0.01 sat/vb + rounding
           if (isCensored[txid]) {
             delete isCensored[txid];
           }
         }
-        overflowWeightRemaining -= mempool[txid]?.weight || 0;
+        overflowSizeRemaining -= mempool[txid]?.size || 0;
       } else {
         logger.warn('projected transaction missing from mempool cache');
       }
@@ -201,7 +201,7 @@ class Audit {
     } else if (numMatches > 0) {
       score = numMatches / (numMatches + numCensored);
     }
-    const similarity = projectedWeight ? matchedWeight / projectedWeight : 1;
+    const similarity = projectedSize ? matchedSize / projectedSize : 1;
 
     return {
       unseen,

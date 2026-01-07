@@ -18,7 +18,6 @@ import config from '../config';
 import chainTips from '../api/chain-tips';
 import blocks from '../api/blocks';
 import BlocksAuditsRepository from './BlocksAuditsRepository';
-import transactionUtils from '../api/transaction-utils';
 import { parseDATUMTemplateCreator } from '../utils/bitcoin-script';
 import poolsUpdater from '../tasks/pools-updater';
 
@@ -57,15 +56,15 @@ interface DatabaseBlock {
   totalOutputAmt: number;
   medianFeeAmt: number;
   feePercentiles: string;
-  segwitTotalTxs: number;
-  segwitTotalSize: number;
-  segwitTotalWeight: number;
   header: string;
   utxoSetChange: number;
   utxoSetSize: number;
   totalInputAmt: number;
   firstSeen: number;
   stale: boolean;
+  blockSize: number;
+  blockSizeLimit: number;
+  nextBlockSizeLimit: number;
 }
 
 const BLOCK_DB_FIELDS = `
@@ -129,26 +128,26 @@ class BlocksRepository {
     try {
       const query = `INSERT INTO blocks(
         height,             hash,                     blockTimestamp,    size,
-        weight,             tx_count,                 coinbase_raw,      difficulty,
+        tx_count,           coinbase_raw,             difficulty,
         pool_id,            fees,                     fee_span,          median_fee,
         reward,             version,                  bits,              nonce,
         merkle_root,        previous_block_hash,      avg_fee,           avg_fee_rate,
         median_timestamp,   header,                   coinbase_address,  coinbase_addresses,
         coinbase_signature, utxoset_size,             utxoset_change,    avg_tx_size,
         total_inputs,       total_outputs,            total_input_amt,   total_output_amt,
-        fee_percentiles,    segwit_total_txs,         segwit_total_size, segwit_total_weight,
+        fee_percentiles,
         median_fee_amt,     coinbase_signature_ascii, definition_hash,   index_version,
         stale
       ) VALUE (
         ?, ?, FROM_UNIXTIME(?), ?,
-        ?, ?, ?, ?,
+        ?, ?, ?,
         ?, ?, ?, ?,
         ?, ?, ?, ?,
         ?, ?, ?, ?,
         FROM_UNIXTIME(?), ?, ?, ?,
         ?, ?, ?, ?,
         ?, ?, ?, ?,
-        ?, ?, ?, ?,
+        ?,
         ?, ?, ?, ?,
         ?
       )`;
@@ -167,7 +166,6 @@ class BlocksRepository {
         block.id,
         block.timestamp,
         block.size,
-        block.weight,
         block.tx_count,
         block.extras.coinbaseRaw,
         block.difficulty,
@@ -200,9 +198,6 @@ class BlocksRepository {
         block.extras.feePercentiles
           ? JSON.stringify(block.extras.feePercentiles)
           : null,
-        block.extras.segwitTotalTxs,
-        block.extras.segwitTotalSize,
-        block.extras.segwitTotalWeight,
         block.extras.medianFeeAmt,
         truncatedCoinbaseSignatureAscii,
         poolsUpdater.currentSha,
@@ -1388,10 +1383,15 @@ class BlocksRepository {
     blk.merkle_root = dbBlk.merkle_root;
     blk.tx_count = dbBlk.tx_count;
     blk.size = dbBlk.size;
-    blk.weight = dbBlk.weight;
     blk.previousblockhash = dbBlk.previousblockhash;
     blk.mediantime = dbBlk.mediantime;
     blk.indexVersion = dbBlk.index_version;
+    // Add abla state
+    blk.ablastate = {
+      block_size: dbBlk.blockSize,
+      block_size_limit: dbBlk.blockSizeLimit,
+      next_block_size_limit: dbBlk.nextBlockSizeLimit,
+    };
     // BlockExtension
     extras.totalFees = dbBlk.totalFees;
     extras.medianFee = dbBlk.medianFee;
@@ -1418,14 +1418,10 @@ class BlocksRepository {
     extras.totalOutputAmt = dbBlk.totalOutputAmt;
     extras.medianFeeAmt = dbBlk.medianFeeAmt;
     extras.feePercentiles = JSON.parse(dbBlk.feePercentiles);
-    extras.segwitTotalTxs = dbBlk.segwitTotalTxs;
-    extras.segwitTotalSize = dbBlk.segwitTotalSize;
-    extras.segwitTotalWeight = dbBlk.segwitTotalWeight;
     (extras.header = dbBlk.header),
       (extras.utxoSetChange = dbBlk.utxoSetChange);
     extras.utxoSetSize = dbBlk.utxoSetSize;
     extras.totalInputAmt = dbBlk.totalInputAmt;
-    extras.virtualSize = dbBlk.weight / 4.0;
     extras.firstSeen = dbBlk.firstSeen;
 
     // Re-org can happen after indexing so we need to always get the
@@ -1435,7 +1431,7 @@ class BlocksRepository {
     // Match rate is not part of the blocks table, but it is part of APIs so we must include it
     extras.matchRate = null;
     extras.expectedFees = null;
-    extras.expectedWeight = null;
+    extras.expectedSize = null;
     if (config.MEMPOOL.AUDIT) {
       const auditScore = await BlocksAuditsRepository.$getBlockAuditScore(
         dbBlk.id
@@ -1443,7 +1439,7 @@ class BlocksRepository {
       if (auditScore != null) {
         extras.matchRate = auditScore.matchRate;
         extras.expectedFees = auditScore.expectedFees;
-        extras.expectedWeight = auditScore.expectedWeight;
+        extras.expectedSize = auditScore.expectedSize;
       }
     }
 
@@ -1535,7 +1531,7 @@ class BlocksRepository {
         // recalculate effective fee statistics using latest methodology
         const feeStats = Common.calcEffectiveFeeStatistics(
           transactions.map((tx) => ({
-            weight: tx.vsize * 4,
+            size: tx.size,
             effectiveFeePerVsize: tx.rate,
             txid: tx.txid,
           }))

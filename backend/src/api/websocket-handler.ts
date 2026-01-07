@@ -228,7 +228,7 @@ class WebsocketHandler {
                 if (tx && tx.position) {
                   const position: {
                     block: number;
-                    vsize: number;
+                    size: number;
                   } = {
                     ...tx.position,
                   };
@@ -1048,10 +1048,10 @@ class WebsocketHandler {
           : [];
 
         let totalFees = 0;
-        let totalWeight = 0;
+        let totalSize = 0;
         for (const tx of stripped) {
           totalFees += tx.fee;
-          totalWeight += tx.vsize * 4;
+          totalSize += tx.size;
         }
 
         BlocksSummariesRepository.$saveTemplate({
@@ -1076,13 +1076,13 @@ class WebsocketHandler {
           sigopTxs: sigop,
           matchRate: matchRate,
           expectedFees: totalFees,
-          expectedWeight: totalWeight,
+          expectedSize: totalSize,
         });
 
         if (block.extras) {
           block.extras.matchRate = matchRate;
           block.extras.expectedFees = totalFees;
-          block.extras.expectedWeight = totalWeight;
+          block.extras.expectedSize = totalSize;
           block.extras.similarity = similarity;
         }
       }

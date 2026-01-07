@@ -3,7 +3,7 @@ import bitcoinApi from './bitcoin/bitcoin-api-factory';
 import {
   MempoolTransactionExtended,
   TransactionExtended,
-  VbytesPerSecond,
+  BytesPerSecond,
   GbtCandidates,
 } from '../mempool.interfaces';
 import logger from '../logger';
@@ -44,8 +44,8 @@ class Mempool {
   private txPerSecondArray: number[] = [];
   private txPerSecond: number = 0;
 
-  private vBytesPerSecondArray: VbytesPerSecond[] = [];
-  private vBytesPerSecond: number = 0;
+  private bytesPerSecondArray: BytesPerSecond[] = [];
+  private vytesPerSecond: number = 0;
   private mempoolProtection = 0;
   private latestTransactions: any[] = [];
 
@@ -163,9 +163,9 @@ class Mempool {
     }
     for (const txid of Object.keys(this.mempoolCache)) {
       if (
-        !this.mempoolCache[txid].adjustedVsize ||
+        !this.mempoolCache[txid].adjustedSize ||
         this.mempoolCache[txid].sigops == null ||
-        this.mempoolCache[txid].effectiveFeePerVsize == null
+        this.mempoolCache[txid].effectiveFeePerSize == null
       ) {
         this.mempoolCache[txid] = transactionUtils.extendMempoolTransaction(
           this.mempoolCache[txid]
@@ -276,7 +276,7 @@ class Mempool {
   }
 
   public getVBytesPerSecond(): number {
-    return this.vBytesPerSecond;
+    return this.vytesPerSecond;
   }
 
   public getFirstSeenForTransactions(txIds: string[]): number[] {
@@ -358,9 +358,9 @@ class Mempool {
           this.mempoolCache[transaction.txid] = transaction;
           if (this.inSync) {
             this.txPerSecondArray.push(new Date().getTime());
-            this.vBytesPerSecondArray.push({
+            this.bytesPerSecondArray.push({
               unixTime: new Date().getTime(),
-              vSize: transaction.vsize,
+              size: transaction.size,
             });
           }
           hasChange = true;
@@ -562,8 +562,8 @@ class Mempool {
           if (!newCandidateTxMap[txid]) {
             if (this.mempoolCache[txid]) {
               removed.push(this.mempoolCache[txid]);
-              this.mempoolCache[txid].effectiveFeePerVsize =
-                this.mempoolCache[txid].adjustedFeePerVsize;
+              this.mempoolCache[txid].effectiveFeePerSize =
+                this.mempoolCache[txid].adjustedFeePerSize;
               this.mempoolCache[txid].ancestors = [];
               this.mempoolCache[txid].descendants = [];
               this.mempoolCache[txid].bestDescendant = null;
@@ -641,13 +641,13 @@ class Mempool {
       this.txPerSecondArray.length /
         config.STATISTICS.TX_PER_SECOND_SAMPLE_PERIOD || 0;
 
-    this.vBytesPerSecondArray = this.vBytesPerSecondArray.filter(
+    this.bytesPerSecondArray = this.bytesPerSecondArray.filter(
       (data) => data.unixTime > nowMinusTimeSpan
     );
-    if (this.vBytesPerSecondArray.length) {
-      this.vBytesPerSecond = Math.round(
-        this.vBytesPerSecondArray
-          .map((data) => data.vSize)
+    if (this.bytesPerSecondArray.length) {
+      this.vytesPerSecond = Math.round(
+        this.bytesPerSecondArray
+          .map((data) => data.size)
           .reduce((a, b) => a + b) /
           config.STATISTICS.TX_PER_SECOND_SAMPLE_PERIOD
       );

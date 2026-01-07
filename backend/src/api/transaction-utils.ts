@@ -159,12 +159,12 @@ class TransactionUtils {
       // @ts-ignore
       return transaction;
     }
-    const feePerVbytes = (transaction.fee || 0) / (transaction.weight / 4);
+    const feePerBytes = (transaction.fee || 0) / transaction.size;
     const transactionExtended: TransactionExtended = Object.assign(
       {
-        vsize: transaction.weight / 4,
-        feePerVsize: feePerVbytes,
-        effectiveFeePerVsize: feePerVbytes,
+        size: transaction.size,
+        feePerSize: feePerBytes,
+        effectiveFeePerSize: feePerBytes,
       },
       transaction
     );
@@ -177,30 +177,27 @@ class TransactionUtils {
   public extendMempoolTransaction(
     transaction: IEsploraApi.Transaction
   ): MempoolTransactionExtended {
-    const vsize = Math.ceil(transaction.weight / 4);
-    const fractionalVsize = transaction.weight / 4;
+    const size = Math.ceil(transaction.size);
     const sigops =
       transaction.sigops != null
         ? transaction.sigops
         : this.countSigops(transaction);
     // https://github.com/bitcoin/bitcoin/blob/e9262ea32a6e1d364fb7974844fadc36f931f8c6/src/policy/policy.cpp#L295-L298
-    const adjustedVsize = Math.max(fractionalVsize, sigops * 5); // adjusted vsize = Max(weight, sigops * bytes_per_sigop) / witness_scale_factor
-    const feePerVbytes = (transaction.fee || 0) / fractionalVsize;
-    const adjustedFeePerVsize = (transaction.fee || 0) / adjustedVsize;
-    const effectiveFeePerVsize =
-      transaction['effectiveFeePerVsize'] ||
-      adjustedFeePerVsize ||
-      feePerVbytes;
+    const adjustedSize = Math.max(transaction.size, sigops * 5); // adjusted vsize = Max(weight, sigops * bytes_per_sigop) / witness_scale_factor, this need to be changed for BCH
+    const feePerBytes = (transaction.fee || 0) / transaction.size;
+    const adjustedFeePerSize = (transaction.fee || 0) / adjustedSize;
+    const effectiveFeePerSize =
+      transaction['effectiveFeePerSize'] || adjustedFeePerSize || feePerBytes;
     const transactionExtended: MempoolTransactionExtended = Object.assign(
       transaction,
       {
         order: this.txidToOrdering(transaction.txid),
-        vsize,
-        adjustedVsize,
+        size: size,
+        adjustedSize: adjustedSize,
         sigops,
-        feePerVsize: feePerVbytes,
-        adjustedFeePerVsize: adjustedFeePerVsize,
-        effectiveFeePerVsize: effectiveFeePerVsize,
+        feePerSize: feePerBytes,
+        adjustedFeePerSize: adjustedFeePerSize,
+        effectiveFeePerSize: effectiveFeePerSize,
       }
     );
     if (
@@ -266,31 +263,14 @@ class TransactionUtils {
         sigops += this.countScriptSigops(input.scriptsig_asm, true);
       }
       if (input.prevout) {
+        // BCH  does not have v0_p2wpkh, v0_p2wsh or v1_p2tr
         switch (true) {
           case input.prevout.scriptpubkey_type === 'p2sh' &&
-            input.witness?.length === 2 &&
             input.scriptsig &&
             input.scriptsig.startsWith('160014'):
-          case input.prevout.scriptpubkey_type === 'v0_p2wpkh':
-            sigops += 1;
-            break;
-
           case input.prevout?.scriptpubkey_type === 'p2sh' &&
-            input.witness?.length &&
             input.scriptsig &&
             input.scriptsig.startsWith('220020'):
-          case input.prevout.scriptpubkey_type === 'v0_p2wsh':
-            if (input.witness?.length) {
-              sigops += this.countScriptSigops(
-                bitcoinjs.script.toASM(
-                  Buffer.from(input.witness[input.witness.length - 1], 'hex')
-                ),
-                false,
-                true
-              );
-            }
-            break;
-
           case input.prevout.scriptpubkey_type === 'p2sh':
             if (input.inner_redeemscript_asm) {
               sigops += this.countScriptSigops(input.inner_redeemscript_asm);
@@ -366,23 +346,9 @@ class TransactionUtils {
     if (vin.prevout.scriptpubkey_type === 'p2sh' && vin.scriptsig_asm?.length) {
       const redeemScript = vin.scriptsig_asm.split(' ').reverse()[0];
       vin.inner_redeemscript_asm = this.convertScriptSigAsm(redeemScript);
-      if (vin.witness && vin.witness.length > 2) {
-        const witnessScript = vin.witness[vin.witness.length - 1];
-        vin.inner_witnessscript_asm = this.convertScriptSigAsm(witnessScript);
-      }
     }
 
-    if (vin.prevout.scriptpubkey_type === 'v0_p2wsh' && vin.witness) {
-      const witnessScript = vin.witness[vin.witness.length - 1];
-      vin.inner_witnessscript_asm = this.convertScriptSigAsm(witnessScript);
-    }
-
-    if (vin.prevout.scriptpubkey_type === 'v1_p2tr' && vin.witness) {
-      const witnessScript = this.witnessToP2TRScript(vin.witness);
-      if (witnessScript !== null) {
-        vin.inner_witnessscript_asm = this.convertScriptSigAsm(witnessScript);
-      }
-    }
+    // No checks of witness, that is not supported by BCH
   }
 
   public convertScriptSigAsm(hex: string): string {
@@ -574,9 +540,9 @@ class TransactionUtils {
       pubkey: 'p2pk',
       pubkeyhash: 'p2pkh',
       scripthash: 'p2sh',
-      witness_v0_keyhash: 'v0_p2wpkh',
-      witness_v0_scripthash: 'v0_p2wsh',
-      witness_v1_taproot: 'v1_p2tr',
+      witness_v0_keyhash: 'v0_p2wpkh', // Not used by BCH
+      witness_v0_scripthash: 'v0_p2wsh', // Not used by BCH
+      witness_v1_taproot: 'v1_p2tr', // Not used by BCH
       nonstandard: 'nonstandard',
       multisig: 'multisig',
       anchor: 'anchor',

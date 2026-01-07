@@ -1,14 +1,13 @@
 import { MempoolTransactionExtended } from '../mempool.interfaces';
 import logger from '../logger';
 
-const BLOCK_WEIGHT_UNITS = 4_000_000;
+const BLOCK_SIZE_UNITS = 32_000_000;
 const BLOCK_SIGOPS = 80_000;
 const MAX_RELATIVE_GRAPH_SIZE = 100;
 
 export interface GraphTx {
   txid: string;
-  vsize: number;
-  weight: number;
+  size: number;
   depends: string[];
   spentby: string[];
 
@@ -29,24 +28,24 @@ export interface GraphTx {
 interface TemplateTransaction {
   txid: string;
   order: number;
-  weight: number;
-  adjustedVsize: number; // sigop-adjusted vsize, rounded up to the nearest integer
+  size: number;
+  adjustedSize: number; // sigop-adjusted vsize, rounded up to the nearest integer
   sigops: number;
   fee: number;
   feeDelta: number;
   ancestors: string[];
   cluster: string[];
-  effectiveFeePerVsize: number;
+  effectiveFeePerSize: number;
 }
 
 interface MinerTransaction extends TemplateTransaction {
   inputs: string[];
-  feePerVsize: number;
+  feePerSize: number;
   relativesSet: boolean;
   ancestorMap: Map<string, MinerTransaction>;
   children: Set<MinerTransaction>;
   ancestorFee: number;
-  ancestorVsize: number;
+  ancestorSize: number;
   ancestorSigops: number;
   score: number;
   used: boolean;
@@ -110,8 +109,7 @@ export function convertToGraphTx(
 ): GraphTx {
   return {
     txid: tx.txid,
-    vsize: Math.max(tx.sigops * 5, Math.ceil(tx.weight / 4)),
-    weight: tx.weight,
+    size: Math.max(tx.sigops * 5, Math.ceil(tx.size)),
     fees: {
       base: tx.fee || 0,
       ancestor: tx.fee || 0,
@@ -129,7 +127,7 @@ export function convertToGraphTx(
       : [],
 
     ancestorcount: 1,
-    ancestorsize: Math.max(tx.sigops * 5, Math.ceil(tx.weight / 4)),
+    ancestorsize: Math.max(tx.sigops * 5, Math.ceil(tx.size)),
     ancestors: new Map<string, GraphTx>(),
     ancestorRate: 0,
     individualRate: 0,
@@ -242,7 +240,7 @@ export function initializeRelatives(
   mempoolTxs.forEach((entry) => {
     entry.ancestors?.forEach((ancestor) => {
       entry.ancestorcount++;
-      entry.ancestorsize += ancestor.vsize;
+      entry.ancestorsize += ancestor.size;
       entry.fees.ancestor += ancestor.fees.base;
     });
     setAncestorScores(entry);
@@ -274,7 +272,7 @@ export function removeAncestors(
         tx.ancestors.delete(remove.txid);
         tx.depends = tx.depends.filter((parent) => parent !== remove.txid);
         // update ancestor sizes and fees
-        tx.ancestorsize -= remove.vsize;
+        tx.ancestorsize -= remove.size;
         tx.fees.ancestor -= remove.fees.base;
       }
     });
@@ -289,7 +287,7 @@ export function removeAncestors(
  * @param tx
  */
 export function setAncestorScores(tx: GraphTx): void {
-  tx.individualRate = tx.fees.base / tx.vsize;
+  tx.individualRate = tx.fees.base / tx.size;
   tx.ancestorRate = tx.fees.ancestor / tx.ancestorsize;
   tx.score = Math.min(tx.individualRate, tx.ancestorRate);
 }
@@ -306,7 +304,7 @@ export function mempoolComparator(a: GraphTx, b: GraphTx): number {
 export function makeBlockTemplate(
   candidates: MempoolTransactionExtended[],
   maxBlocks: number = 8,
-  weightLimit: number = BLOCK_WEIGHT_UNITS,
+  sizeLimit: number = BLOCK_SIZE_UNITS,
   sigopLimit: number = BLOCK_SIGOPS
 ): TemplateTransaction[] {
   const auditPool: Map<string, MinerTransaction> = new Map();
@@ -314,20 +312,18 @@ export function makeBlockTemplate(
 
   candidates.forEach((tx) => {
     // initializing everything up front helps V8 optimize property access later
-    const adjustedVsize = Math.ceil(
-      Math.max(tx.weight / 4, 5 * (tx.sigops || 0))
-    );
-    const feePerVsize = tx.fee / adjustedVsize;
+    const adjustedSize = Math.ceil(Math.max(tx.size, 5 * (tx.sigops || 0)));
+    const feePerSize = tx.fee / adjustedSize;
     auditPool.set(tx.txid, {
       txid: tx.txid,
       order: txidToOrdering(tx.txid),
       fee: tx.fee,
       feeDelta: 0,
-      weight: tx.weight,
-      adjustedVsize,
-      feePerVsize: feePerVsize,
-      effectiveFeePerVsize: feePerVsize,
-      dependencyRate: feePerVsize,
+      size: tx.size,
+      adjustedSize: adjustedSize,
+      feePerSize: feePerSize,
+      effectiveFeePerSize: feePerSize,
+      dependencyRate: feePerSize,
       sigops: tx.sigops || 0,
       inputs: (tx.vin?.map((vin) => vin.txid) || []) as string[],
       relativesSet: false,
@@ -336,7 +332,7 @@ export function makeBlockTemplate(
       ancestorMap: new Map<string, MinerTransaction>(),
       children: new Set<MinerTransaction>(),
       ancestorFee: 0,
-      ancestorVsize: 0,
+      ancestorSize: 0,
       ancestorSigops: 0,
       score: 0,
       used: false,
@@ -358,7 +354,7 @@ export function makeBlockTemplate(
   // Build blocks by greedily choosing the highest feerate package
   // (i.e. the package rooted in the transaction with the best ancestor score)
   const blocks: number[][] = [];
-  let blockWeight = 0;
+  let blockSize = 0;
   let blockSigops = 0;
   const transactions: MinerTransaction[] = [];
   let modified: MinerTransaction[] = [];
@@ -389,9 +385,10 @@ export function makeBlockTemplate(
 
     if (nextTx && !nextTx?.used) {
       // Check if the package fits into this block
+      // TODO: Update for BCH. It used to be: blockWeight + 4 * nextTx.ancestorWeight
       if (
         blocks.length >= maxBlocks - 1 ||
-        (blockWeight + 4 * nextTx.ancestorVsize < weightLimit &&
+        (blockSize + nextTx.ancestorSize < sizeLimit &&
           blockSigops + nextTx.ancestorSigops <= sigopLimit)
       ) {
         const ancestors: MinerTransaction[] = Array.from(
@@ -407,7 +404,7 @@ export function makeBlockTemplate(
         const clusterTxids = sortedTxSet.map((tx) => tx.txid);
         const effectiveFeeRate = Math.min(
           nextTx.dependencyRate || Infinity,
-          nextTx.ancestorFee / nextTx.ancestorVsize
+          nextTx.ancestorFee / nextTx.ancestorSize
         );
         const used: MinerTransaction[] = [];
         while (sortedTxSet.length) {
@@ -418,12 +415,12 @@ export function makeBlockTemplate(
           ancestor.used = true;
           ancestor.usedBy = nextTx.txid;
           // update this tx with effective fee rate & relatives data
-          if (ancestor.effectiveFeePerVsize !== effectiveFeeRate) {
-            ancestor.effectiveFeePerVsize = effectiveFeeRate;
+          if (ancestor.effectiveFeePerSize !== effectiveFeeRate) {
+            ancestor.effectiveFeePerSize = effectiveFeeRate;
           }
           ancestor.cluster = clusterTxids;
           transactions.push(ancestor);
-          blockWeight += ancestor.weight;
+          blockSize += ancestor.weight;
           blockSigops += ancestor.sigops;
           used.push(ancestor);
         }
@@ -450,7 +447,7 @@ export function makeBlockTemplate(
 
     // this block is full
     const exceededPackageTries =
-      failures > 1000 && blockWeight > weightLimit - 4000;
+      failures > 1000 && blockSize > sizeLimit - 4000;
     const queueEmpty = !mempoolArray.length && !modified.length;
 
     if (exceededPackageTries || queueEmpty) {
@@ -486,14 +483,14 @@ function setRelatives(
     }
   }
   tx.ancestorFee = tx.fee + tx.feeDelta;
-  tx.ancestorVsize = tx.adjustedVsize || 0;
+  tx.ancestorSize = tx.adjustedSize || 0;
   tx.ancestorSigops = tx.sigops || 0;
   tx.ancestorMap.forEach((ancestor) => {
     tx.ancestorFee += ancestor.fee + ancestor.feeDelta;
-    tx.ancestorVsize += ancestor.adjustedVsize;
+    tx.ancestorSize += ancestor.adjustedSize;
     tx.ancestorSigops += ancestor.sigops;
   });
-  tx.score = tx.ancestorFee / tx.ancestorVsize;
+  tx.score = tx.ancestorFee / tx.ancestorSize;
   tx.relativesSet = true;
 }
 
@@ -525,10 +522,9 @@ function updateDescendants(
       // remove tx as ancestor
       descendantTx.ancestorMap.delete(rootTx.txid);
       descendantTx.ancestorFee -= rootTx.fee + rootTx.feeDelta;
-      descendantTx.ancestorVsize -= rootTx.adjustedVsize;
+      descendantTx.ancestorSize -= rootTx.adjustedSize;
       descendantTx.ancestorSigops -= rootTx.sigops;
-      descendantTx.score =
-        descendantTx.ancestorFee / descendantTx.ancestorVsize;
+      descendantTx.score = descendantTx.ancestorFee / descendantTx.ancestorSize;
       descendantTx.dependencyRate = descendantTx.dependencyRate
         ? Math.min(descendantTx.dependencyRate, clusterRate)
         : clusterRate;

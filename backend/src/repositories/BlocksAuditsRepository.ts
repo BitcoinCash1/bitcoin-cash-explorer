@@ -37,7 +37,7 @@ class BlocksAuditRepositories {
           JSON.stringify(audit.sigopTxs),
           audit.matchRate,
           audit.expectedFees,
-          audit.expectedWeight,
+          audit.expectedSize,
         ]
       );
     } catch (e: any) {
@@ -58,7 +58,7 @@ class BlocksAuditRepositories {
   public async $setSummary(
     hash: string,
     expectedFees: number,
-    expectedWeight: number
+    expectedSize: number
   ) {
     try {
       await DB.query(
@@ -68,7 +68,7 @@ class BlocksAuditRepositories {
         expected_weight = ?
         WHERE hash = ?
       `,
-        [expectedFees, expectedWeight, hash]
+        [expectedFees, expectedSize, hash]
       );
     } catch (e: any) {
       logger.err(

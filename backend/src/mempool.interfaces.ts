@@ -41,7 +41,7 @@ export interface BlockAudit {
   prioritizedTxs: string[];
   matchRate: number;
   expectedFees?: number;
-  expectedWeight?: number;
+  expectedSize?: number;
   template?: any[];
 }
 
@@ -59,12 +59,11 @@ export interface AuditScore {
   hash: string;
   matchRate?: number;
   expectedFees?: number;
-  expectedWeight?: number;
+  expectedSize?: number;
 }
 
 export interface MempoolBlock {
   blockSize: number;
-  blockVSize: number;
   nTx: number;
   medianFee: number;
   totalFees: number;
@@ -109,16 +108,15 @@ interface VoutStrippedToScriptPubkey {
 }
 
 export interface TransactionExtended extends IEsploraApi.Transaction {
-  vsize: number;
-  feePerVsize: number;
+  feePerSize: number; // Fee per size is differently calculated in BCH
   firstSeen?: number;
-  effectiveFeePerVsize: number;
+  effectiveFeePerSize: number; // We might not have this in BCH
   ancestors?: Ancestor[];
   descendants?: Ancestor[];
   bestDescendant?: BestDescendant | null;
   position?: {
     block: number;
-    vsize: number;
+    size: number;
   };
   feeDelta?: number; // Does BCH has fee delta? I suspect this was part of CPFP
   replacement?: boolean; // Does BCH has replacement? This is part of RBF
@@ -129,8 +127,8 @@ export interface TransactionExtended extends IEsploraApi.Transaction {
 export interface MempoolTransactionExtended extends TransactionExtended {
   order: number;
   sigops: number;
-  adjustedVsize: number;
-  adjustedFeePerVsize: number;
+  adjustedSize: number; // We might not have this in BCH
+  adjustedFeePerSize: number; // We might not have this in BCH
   inputs?: number[];
   lastBoosted?: number;
 }
@@ -138,16 +136,16 @@ export interface MempoolTransactionExtended extends TransactionExtended {
 export interface AuditTransaction {
   uid: number;
   fee: number;
-  weight: number;
-  feePerVsize: number;
-  effectiveFeePerVsize: number;
+  size: number;
+  feePerSize: number; // We might not have this in BCH
+  effectiveFeePerSize: number; // We might not have this in BCH
   sigops: number;
   inputs: number[];
   relativesSet: boolean;
   ancestorMap: Map<number, AuditTransaction>;
   children: Set<AuditTransaction>;
   ancestorFee: number;
-  ancestorWeight: number;
+  ancestorSize: number;
   ancestorSigops: number;
   score: number;
   used: boolean;
@@ -159,10 +157,10 @@ export interface AuditTransaction {
 export interface CompactThreadTransaction {
   uid: number;
   fee: number;
-  weight: number;
+  size: number;
   sigops: number;
-  feePerVsize: number;
-  effectiveFeePerVsize: number;
+  feePerSize: number; // We might not have this in BCH
+  effectiveFeePerSize: number; // We might not have this in BCH
   inputs: number[];
   dirty?: boolean;
 }
@@ -176,21 +174,21 @@ export interface GbtCandidates {
 export interface ThreadTransaction {
   txid: string;
   fee: number;
-  weight: number;
-  feePerVsize: number;
-  effectiveFeePerVsize?: number;
+  size: number;
+  feePerSize: number; // We might not have this in BCH
+  effectiveFeePerSize?: number; // We might not have this in BCH
   inputs: number[];
 }
 
 export interface Ancestor {
   txid: string;
-  weight: number;
+  size: number;
   fee: number;
 }
 
 export interface TransactionSet {
   fee: number;
-  weight: number;
+  size: number;
   score: number;
   children?: Set<string>;
   available?: boolean;
@@ -200,14 +198,15 @@ export interface TransactionSet {
 
 interface BestDescendant {
   txid: string;
-  weight: number;
+  size: number;
   fee: number;
 }
 
+// Is stripped transaction used for witness data? BCH doesn't have witness after all.
 export interface TransactionStripped {
   txid: string;
   fee: number;
-  vsize: number;
+  size: number;
   value: number;
   rate?: number; // effective fee rate
   time?: number;
@@ -217,7 +216,7 @@ export interface TransactionClassified extends TransactionStripped {
   flags: number;
 }
 
-// [txid, fee, vsize, value, rate, flags, acceleration?]
+// [txid, fee, size, value, rate, flags, acceleration?]
 export type TransactionCompressed = [
   string,
   number,
@@ -245,9 +244,9 @@ export const TransactionFlags = {
   p2ms: 0b00000010_00000000n,
   p2pkh: 0b00000100_00000000n,
   p2sh: 0b00001000_00000000n,
-  p2wpkh: 0b00010000_00000000n,
-  p2wsh: 0b00100000_00000000n,
-  p2tr: 0b01000000_00000000n,
+  p2wpkh: 0b00010000_00000000n, // pay to witness (keyhash), not used by BCH
+  p2wsh: 0b00100000_00000000n, // pay to witness (scripthash), not used by BCH
+  p2tr: 0b01000000_00000000n, // pay to witness (taproot), BCH doesn't have tap root
   // behavior
   cpfp_parent: 0b00000001_00000000_00000000n, // Not used by BCH
   cpfp_child: 0b00000010_00000000_00000000n, // Not used by BCH
@@ -257,7 +256,7 @@ export const TransactionFlags = {
   fake_pubkey: 0b00000010_00000000_00000000_00000000n,
   inscription: 0b00000100_00000000_00000000_00000000n,
   fake_scripthash: 0b00001000_00000000_00000000_00000000n,
-  annex: 0b00010000_00000000_00000000_00000000n,
+  annex: 0b00010000_00000000_00000000_00000000n, // related to witness, not used by BCH
   // heuristics
   coinjoin: 0b00000001_00000000_00000000_00000000_00000000n,
   consolidation: 0b00000010_00000000_00000000_00000000_00000000n,
@@ -277,7 +276,7 @@ export interface BlockExtension {
   reward: number;
   matchRate: number | null;
   expectedFees: number | null;
-  expectedWeight: number | null;
+  expectedSize: number | null;
   similarity?: number;
   pool: {
     id: number; // Note - This is the `unique_id`, not to mix with the auto increment `id`
@@ -293,16 +292,13 @@ export interface BlockExtension {
   coinbaseAddresses: string[] | null;
   coinbaseSignature: string | null;
   coinbaseSignatureAscii: string | null;
-  virtualSize: number;
+  size: number;
   avgTxSize: number;
   totalInputs: number;
   totalOutputs: number;
   totalOutputAmt: number;
   medianFeeAmt: number | null; // median fee in sats
   feePercentiles: number[] | null; // fee percentiles in sats
-  segwitTotalTxs: number;
-  segwitTotalSize: number;
-  segwitTotalWeight: number;
   header: string;
   firstSeen: number | null;
   utxoSetChange: number;
@@ -332,7 +328,6 @@ export interface BlockSummary {
 export interface AuditSummary extends BlockAudit {
   timestamp?: number;
   size?: number;
-  weight?: number;
   tx_count?: number;
   transactions: TransactionClassified[];
   template?: TransactionClassified[];
@@ -371,67 +366,67 @@ export interface Statistic {
   added: string;
   unconfirmed_transactions: number;
   tx_per_second: number;
-  vbytes_per_second: number;
+  bytes_per_second: number;
   total_fee: number;
-  mempool_byte_weight: number;
+  mempool_byte_size: number;
   fee_data: string;
   min_fee: number;
 
-  vsize_0: number;
-  vsize_1: number;
-  vsize_2: number;
-  vsize_3: number;
-  vsize_4: number;
-  vsize_5: number;
-  vsize_6: number;
-  vsize_8: number;
-  vsize_10: number;
-  vsize_12: number;
-  vsize_15: number;
-  vsize_20: number;
-  vsize_30: number;
-  vsize_40: number;
-  vsize_50: number;
-  vsize_60: number;
-  vsize_70: number;
-  vsize_80: number;
-  vsize_90: number;
-  vsize_100: number;
-  vsize_125: number;
-  vsize_150: number;
-  vsize_175: number;
-  vsize_200: number;
-  vsize_250: number;
-  vsize_300: number;
-  vsize_350: number;
-  vsize_400: number;
-  vsize_500: number;
-  vsize_600: number;
-  vsize_700: number;
-  vsize_800: number;
-  vsize_900: number;
-  vsize_1000: number;
-  vsize_1200: number;
-  vsize_1400: number;
-  vsize_1600: number;
-  vsize_1800: number;
-  vsize_2000: number;
+  size_0: number;
+  size_1: number;
+  size_2: number;
+  size_3: number;
+  size_4: number;
+  size_5: number;
+  size_6: number;
+  size_8: number;
+  size_10: number;
+  size_12: number;
+  size_15: number;
+  size_20: number;
+  size_30: number;
+  size_40: number;
+  size_50: number;
+  size_60: number;
+  size_70: number;
+  size_80: number;
+  size_90: number;
+  size_100: number;
+  size_125: number;
+  size_150: number;
+  size_175: number;
+  size_200: number;
+  size_250: number;
+  size_300: number;
+  size_350: number;
+  size_400: number;
+  size_500: number;
+  size_600: number;
+  size_700: number;
+  size_800: number;
+  size_900: number;
+  size_1000: number;
+  size_1200: number;
+  size_1400: number;
+  size_1600: number;
+  size_1800: number;
+  size_2000: number;
 }
 
 export interface OptimizedStatistic {
   added: string;
   count: number;
-  vbytes_per_second: number;
+  bytes_per_second: number;
   total_fee: number;
-  mempool_byte_weight: number;
+  mempool_byte_size: number;
   min_fee: number;
-  vsizes: number[];
+  sizes: number[];
 }
 
 export interface TxTrackingInfo {
   position?: {
     block: number;
-    vsize: number;
+    size: number;
     feeDelta?: number;
   };
   utxoSpent?: { [vout: number]: { vin: number; txid: string } };
@@ -447,9 +442,9 @@ export interface WebsocketResponse {
   'watch-mempool': boolean;
 }
 
-export interface VbytesPerSecond {
+export interface BytesPerSecond {
   unixTime: number;
-  vSize: number;
+  size: number;
 }
 
 export interface RequiredSpec {

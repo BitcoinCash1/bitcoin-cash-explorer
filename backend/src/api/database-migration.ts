@@ -4,7 +4,7 @@ import logger from '../logger';
 import { Common } from './common';
 
 class DatabaseMigration {
-  private static currentVersion = 105;
+  private static currentVersion = 106;
   private queryTimeout = 3600_000;
   private statisticsAddedIndexed = false;
   private uniqueLogs: string[] = [];
@@ -1770,6 +1770,25 @@ class DatabaseMigration {
       await this.$executeQuery('DROP TABLE IF EXISTS nodes;');
 
       await this.updateToSchemaVersion(105);
+    }
+
+    if (databaseSchemaVersion < 106) {
+      // Remove BTC columns from blocks table (eg. weight and segwit_*)
+      await this.$executeQuery('ALTER TABLE `blocks` DROP COLUMN `weight`');
+      await this.$executeQuery('ALTER TABLE `blocks` DROP COLUMN `segwit_total_size`');
+      await this.$executeQuery('ALTER TABLE `blocks` DROP COLUMN `segwit_total_weight`');
+      await this.$executeQuery('ALTER TABLE `blocks` DROP COLUMN `segwit_txs_count`');
+
+      // Rename BTC columns in statistics table (eg. vbytes_per_second, mempool_byte_weight, and vsize_*)
+
+
+      // Same renaming in blocks_audits table (eg. expected_weight). And removal of fullrbf_txs, accelerated_txs and prioritized_txs
+
+      // Add new columns to blocks table
+      await this.$executeQuery('ALTER TABLE `blocks` ADD COLUMN `blockSize` bigint(20) DEFAULT NULL');
+      await this.$executeQuery('ALTER TABLE `blocks` ADD COLUMN `blockSizeLimit` bigint(20) DEFAULT NULL');
+      await this.$executeQuery('ALTER TABLE `blocks` ADD COLUMN `nextBlockSizeLimit` bigint(20) DEFAULT NULL');
+      await this.updateToSchemaVersion(106);
     }
   }
 
