@@ -72,7 +72,7 @@ class StatisticsApi {
               unconfirmed_transactions,
               tx_per_second,
               bytes_per_second,
-              mempool_byte_weight,
+              mempool_byte_size,
               fee_data,
               total_fee,
               min_fee,

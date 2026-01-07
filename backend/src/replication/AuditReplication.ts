@@ -122,7 +122,6 @@ class AuditReplication {
       unseenTxs: auditSummary.unseenTxs || [],
       missingTxs: auditSummary.missingTxs || [],
       addedTxs: auditSummary.addedTxs || [],
-      prioritizedTxs: auditSummary.prioritizedTxs || [],
       freshTxs: auditSummary.freshTxs || [],
       sigopTxs: auditSummary.sigopTxs || [],
       matchRate: auditSummary.matchRate,

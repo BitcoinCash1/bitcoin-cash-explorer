@@ -15,7 +15,7 @@ class BlocksAuditRepositories {
   public async $saveAudit(audit: BlockAudit): Promise<void> {
     try {
       await DB.query(
-        `INSERT INTO blocks_audits(version, time, height, hash, unseen_txs, missing_txs, added_txs, fresh_txs, sigop_txs, match_rate, expected_fees, expected_weight)
+        `INSERT INTO blocks_audits(version, time, height, hash, unseen_txs, missing_txs, added_txs, fresh_txs, sigop_txs, match_rate, expected_fees, expected_size)
         VALUE (?, FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           audit.version,
@@ -48,7 +48,7 @@ class BlocksAuditRepositories {
         `
         UPDATE blocks_audits SET
         expected_fees = ?,
-        expected_weight = ?
+        expected_size = ?
         WHERE hash = ?
       `,
         [expectedFees, expectedSize, hash]
@@ -98,12 +98,11 @@ class BlocksAuditRepositories {
           unseen_txs as unseenTxs,
           missing_txs as missingTxs,
           added_txs as addedTxs,
-          prioritized_txs as prioritizedTxs,
           fresh_txs as freshTxs,
           sigop_txs as sigopTxs,
           match_rate as matchRate,
           expected_fees as expectedFees,
-          expected_weight as expectedWeight
+          expected_size as expectedSize
         FROM blocks_audits
         JOIN blocks_templates ON blocks_templates.id = blocks_audits.hash
         WHERE blocks_audits.hash = ?
@@ -115,7 +114,6 @@ class BlocksAuditRepositories {
         rows[0].unseenTxs = JSON.parse(rows[0].unseenTxs);
         rows[0].missingTxs = JSON.parse(rows[0].missingTxs);
         rows[0].addedTxs = JSON.parse(rows[0].addedTxs);
-        rows[0].prioritizedTxs = JSON.parse(rows[0].prioritizedTxs);
         rows[0].freshTxs = JSON.parse(rows[0].freshTxs);
         rows[0].sigopTxs = JSON.parse(rows[0].sigopTxs);
         rows[0].template = JSON.parse(rows[0].template);
@@ -135,7 +133,6 @@ class BlocksAuditRepositories {
 
       if (blockAudit) {
         const isAdded = blockAudit.addedTxs.includes(txid);
-        const isPrioritized = blockAudit.prioritizedTxs.includes(txid);
         let isExpected = false;
         let firstSeen = undefined;
         blockAudit.template?.forEach((tx) => {
@@ -144,13 +141,12 @@ class BlocksAuditRepositories {
             firstSeen = tx.time;
           }
         });
-        const wasSeen = blockAudit.version === 1 ? !blockAudit.unseenTxs.includes(txid) : isExpected || isPrioritized;
+        const wasSeen = blockAudit.version === 1 ? !blockAudit.unseenTxs.includes(txid) : isExpected;
 
         return {
           seen: wasSeen,
           expected: isExpected,
           added: isAdded && (blockAudit.version === 0 || !wasSeen),
-          prioritized: isPrioritized,
           firstSeen,
         };
       }
@@ -164,7 +160,7 @@ class BlocksAuditRepositories {
   public async $getBlockAuditScore(hash: string): Promise<AuditScore> {
     try {
       const [rows]: any[] = await DB.query(
-        `SELECT hash, match_rate as matchRate, expected_fees as expectedFees, expected_weight as expectedWeight
+        `SELECT hash, match_rate as matchRate, expected_fees as expectedFees, expected_size as expectedSize
         FROM blocks_audits
         WHERE blocks_audits.hash = ?
       `,
@@ -180,7 +176,7 @@ class BlocksAuditRepositories {
   public async $getBlockAuditScores(maxHeight: number, minHeight: number): Promise<AuditScore[]> {
     try {
       const [rows]: any[] = await DB.query(
-        `SELECT hash, match_rate as matchRate, expected_fees as expectedFees, expected_weight as expectedWeight
+        `SELECT hash, match_rate as matchRate, expected_fees as expectedFees, expected_size as expectedSize
         FROM blocks_audits
         WHERE blocks_audits.height BETWEEN ? AND ?
       `,
@@ -237,9 +233,7 @@ class BlocksAuditRepositories {
             blocks_audits.hash as id,
             UNIX_TIMESTAMP(blocks_audits.time) as timestamp,
             blocks_summaries.transactions as transactions,
-            blocks_templates.template as template,
-            blocks_audits.prioritized_txs as prioritizedTxs,
-            blocks_audits.accelerated_txs as acceleratedTxs
+            blocks_templates.template as template
           FROM blocks_audits
           JOIN blocks_summaries ON blocks_summaries.id = blocks_audits.hash
           JOIN blocks_templates ON blocks_templates.id = blocks_audits.hash
@@ -273,21 +267,12 @@ class BlocksAuditRepositories {
             .map((tx) => tx.txid)
             .filter((txid) => !isSeen.has(txid));
 
-          // identify "prioritized" transactions
-          const prioritizedTxs: string[] = [];
           let lastEffectiveRate = 0;
           // Iterate over the mined template from bottom to top (excluding the coinbase)
-          // Transactions should appear in ascending order of mining priority.
+          // BCH doesn't have transaction priority, so no special sauce needed
           for (let i = audit.transactions.length - 1; i > 0; i--) {
             const blockTx = audit.transactions[i];
-            // If a tx has a lower in-band effective fee rate than the previous tx,
-            // it must have been prioritized out-of-band (in order to have a higher mining priority)
-            // so exclude from the analysis.
-            if ((blockTx.rate || 0) < lastEffectiveRate) {
-              prioritizedTxs.push(blockTx.txid);
-            } else {
-              lastEffectiveRate = blockTx.rate || 0;
-            }
+            lastEffectiveRate = blockTx.rate || 0;
           }
 
           // Update audit in the database
@@ -296,10 +281,9 @@ class BlocksAuditRepositories {
             UPDATE blocks_audits SET
               version = ?,
               unseen_txs = ?,
-              prioritized_txs = ?
             WHERE hash = ?
           `,
-            [1, JSON.stringify(unseenTxs), JSON.stringify(prioritizedTxs), audit.id]
+            [1, JSON.stringify(unseenTxs), audit.id]
           );
         }
 

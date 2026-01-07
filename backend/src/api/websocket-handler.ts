@@ -910,7 +910,6 @@ class WebsocketHandler {
           hash: block.id,
           unseenTxs: unseen,
           addedTxs: added,
-          prioritizedTxs: prioritized,
           missingTxs: censored,
           freshTxs: fresh,
           sigopTxs: sigop,

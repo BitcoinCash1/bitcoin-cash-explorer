@@ -30,7 +30,7 @@ class BitcoinApi implements AbstractBitcoinApi {
       size: block.size,
       previousblockhash: block.previousblockhash,
       mediantime: block.mediantime,
-      stale: block.confirmations === -1
+      stale: block.confirmations === -1,
     };
     // ABLA state is optional
     const ablaState = block.ablastate;

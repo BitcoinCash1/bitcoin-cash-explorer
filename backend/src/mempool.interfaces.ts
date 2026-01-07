@@ -38,7 +38,6 @@ export interface BlockAudit {
   freshTxs: string[];
   sigopTxs: string[];
   addedTxs: string[];
-  prioritizedTxs: string[];
   matchRate: number;
   expectedFees?: number;
   expectedSize?: number;
@@ -49,7 +48,6 @@ export interface TransactionAudit {
   seen?: boolean;
   expected?: boolean;
   added?: boolean;
-  prioritized?: boolean;
   delayed?: number;
   coinbase?: boolean;
   firstSeen?: number;
