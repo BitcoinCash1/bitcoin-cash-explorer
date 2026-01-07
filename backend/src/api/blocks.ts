@@ -122,7 +122,6 @@ class Blocks {
     addMempoolData: boolean = false,
     stale: boolean = false
   ): Promise<TransactionExtended[]> {
-    const isEsplora = false; // We only support electrumZ
     const transactionMap: { [txid: string]: TransactionExtended } = {};
 
     if (!txIds) {
@@ -132,7 +131,6 @@ class Blocks {
     const mempool = memPool.getMempool();
     let foundInMempool = 0;
     let totalFound = 0;
-    const missing = 0;
 
     // Copy existing transactions from the mempool
     if (!onlyCoinbase) {
@@ -179,8 +177,8 @@ class Blocks {
       }
     }
 
-    // Fetch remaining txs in bulk
-    if ((isEsplora && txIds.length - totalFound > 500) || stale) {
+    // Fetch remaining txs in bulk if stale
+    if (stale) {
       try {
         const rawTransactions = await bitcoinApi.$getTxsForBlock(
           blockHash,
