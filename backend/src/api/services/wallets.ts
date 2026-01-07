@@ -175,7 +175,113 @@ class WalletApi {
     }
 
     this.syncing = false; // We are not supporting wallet syncs
+
+    // if (config.WALLETS.AUTO && (Date.now() - this.lastSync) > POLL_FREQUENCY) {
+    //   try {
+    //     // update list of active wallets
+    //     this.lastSync = Date.now();
+    //     const response = await axios.get(config.MEMPOOL_SERVICES.API + `/wallets`);
+    //     const walletList: string[] = response.data;
+    //     if (walletList) {
+    //       // create a quick lookup dictionary of active wallets
+    //       const newWallets: Record<string, boolean> = Object.fromEntries(
+    //         walletList.map(wallet => [wallet, true])
+    //       );
+    //       for (const wallet of walletList) {
+    //         // don't overwrite existing wallets
+    //         if (!this.wallets[wallet]) {
+    //           this.wallets[wallet] = { name: wallet, addresses: {}, lastPoll: 0 };
+    //         }
+    //       }
+    //       // remove wallets that are no longer active
+    //       for (const wallet of Object.keys(this.wallets)) {
+    //         if (!newWallets[wallet]) {
+    //           delete this.wallets[wallet];
+    //         }
+    //       }
+    //     }
+
+    //     // update list of treasuries
+    //     const treasuriesResponse = await axios.get(config.MEMPOOL_SERVICES.API + `/treasuries`);
+    //     this.treasuries = treasuriesResponse.data || [];
+    //   } catch (e) {
+    //     logger.err(`Error updating active wallets: ${(e instanceof Error ? e.message : e)}`);
+    //   }
+
+    //   try {
+    //     // update list of active treasuries
+    //     this.lastSync = Date.now();
+    //     const response = await axios.get(config.MEMPOOL_SERVICES.API + `/treasuries`);
+    //     const treasuries: Treasury[] = response.data;
+    //     if (treasuries) {
+    //       this.treasuries = treasuries;
+    //     }
+    //   } catch (e) {
+    //     logger.err(`Error updating active treasuries: ${(e instanceof Error ? e.message : e)}`);
+    //   }
+
+    //   // insert dummy address data to represent off-chain balance history
+    //   for (const treasury of this.treasuries) {
+    //     if (treasury.balances?.length) {
+    //       if (this.wallets[treasury.wallet]) {
+    //         this.wallets[treasury.wallet].addresses['private'] = convertBalancesToWalletAddress(treasury.wallet, treasury.balances);
+    //       }
+    //     }
+    //   }
+    // }
+
+    // for (const walletKey of Object.keys(this.wallets)) {
+    //   const wallet = this.wallets[walletKey];
+    //   if (wallet.lastPoll < (Date.now() - POLL_FREQUENCY)) {
+    //     try {
+    //       const response = await axios.get(config.MEMPOOL_SERVICES.API + `/wallets/${wallet.name}`);
+    //       const addresses: Record<string, WalletAddress> = response.data;
+    //       const addressList: WalletAddress[] = Object.values(addresses);
+    //       // sync all current addresses
+    //       for (const address of addressList) {
+    //         await this.$syncWalletAddress(wallet, address);
+    //       }
+    //       // remove old addresses
+    //       for (const address of Object.keys(wallet.addresses)) {
+    //         if (address !== 'private' && !addresses[address]) {
+    //           delete wallet.addresses[address];
+    //         }
+    //       }
+    //       wallet.lastPoll = Date.now();
+    //       logger.debug(`Synced ${Object.keys(wallet.addresses).length} addresses for wallet ${wallet.name}`);
+
+    //       // Update cache
+    //       await this.$saveCache();
+    //     } catch (e) {
+    //       logger.err(`Error syncing wallet ${wallet.name}: ${(e instanceof Error ? e.message : e)}`);
+    //     }
+    //   }
+    // }
+
+    // this.syncing = false;
   }
+
+  // resync address transactions from esplora
+  // async $syncWalletAddress(wallet: Wallet, address: WalletAddress): Promise<void> {
+  //   // fetch full transaction data if the address is new or still active and hasn't been synced in the last hour
+  //   const refreshTransactions = !wallet.addresses[address.address] || (address.active && (Date.now() - wallet.addresses[address.address].lastSync) > 60 * 60 * 1000);
+  //   if (refreshTransactions) {
+  //     try {
+  //       const summary = await bitcoinApi.$getAddressTransactionSummary(address.address);
+  //       const addressInfo = await bitcoinApi.$getAddress(address.address);
+  //       const walletAddress: WalletAddress = {
+  //         address: address.address,
+  //         active: address.active,
+  //         transactions: summary,
+  //         stats: addressInfo.chain_stats,
+  //         lastSync: Date.now(),
+  //       };
+  //       wallet.addresses[address.address] = walletAddress;
+  //     } catch (e) {
+  //       logger.err(`Error syncing wallet address ${address.address}: ${(e instanceof Error ? e.message : e)}`);
+  //     }
+  //   }
+  // }
 
   // check a new block for transactions that affect wallet address balances, and add relevant transactions to wallets
   processBlock(
