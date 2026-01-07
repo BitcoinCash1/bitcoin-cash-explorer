@@ -54,7 +54,7 @@ export function getRecentFirstSeen(hash: string): number | undefined {
 
       return bestMatch;
     } catch (e) {
-      logger.err(`Cannot parse block first seen time from Core logs. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(`Cannot parse block first seen time from BCHN logs. Reason: ` + (e instanceof Error ? e.message : e));
     }
   }
 

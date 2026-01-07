@@ -30,7 +30,7 @@ class BitcoinApi implements AbstractBitcoinApi {
       size: block.size,
       previousblockhash: block.previousblockhash,
       mediantime: block.mediantime,
-      ablastate: {
+      abla_state: {
         block_size: block.ablastate.blocksize,
         block_size_limit: block.ablastate.blocksizelimit,
         next_block_size_limit: block.ablastate.nextblocksizelimit,

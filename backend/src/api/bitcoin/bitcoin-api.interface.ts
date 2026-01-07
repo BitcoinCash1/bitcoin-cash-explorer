@@ -35,7 +35,7 @@ export namespace IBitcoinApi {
     'bip125-replaceable': boolean; //  (boolean) Whether this transaction could be replaced due to BIP125 (replace-by-fee)
   }
 
-  export interface Ablastate {
+  export interface AblaState {
     blocksize: number;
     blocksizelimit: number;
     nextblocksizelimit: number;
@@ -59,7 +59,7 @@ export namespace IBitcoinApi {
     nTx: number; //  (numeric) The number of transactions in the block
     previousblockhash: string; //  (string) The hash of the previous block
     nextblockhash: string; //  (string) The hash of the next block
-    ablastate: Ablastate; //  (object) Adaptive Blocksize Limit Algorithm state
+    ablastate: AblaState; //  (object) Adaptive Blocksize Limit Algorithm state in BCH
   }
 
   export interface Transaction {

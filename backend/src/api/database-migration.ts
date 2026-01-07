@@ -1202,7 +1202,9 @@ class DatabaseMigration {
       await this.$executeQuery('ALTER TABLE `blocks` DROP COLUMN `weight`');
       await this.$executeQuery('ALTER TABLE `blocks` DROP COLUMN `segwit_total_size`');
       await this.$executeQuery('ALTER TABLE `blocks` DROP COLUMN `segwit_total_weight`');
-      await this.$executeQuery('ALTER TABLE `blocks` DROP COLUMN `segwit_txs_count`');
+      await this.$executeQuery('ALTER TABLE `blocks` DROP COLUMN `segwit_total_txs`');
+      // And increase size from int(10) to bigint(20)
+      await this.$executeQuery('ALTER TABLE `blocks` MODIFY COLUMN `size` bigint(20) UNSIGNED NOT NULL');
 
       // Rename BTC columns in statistics table (eg. vbytes_per_second, mempool_byte_weight, and vsize_*)
       // Change mempool_byte_size to bigint as well.
@@ -1261,9 +1263,9 @@ class DatabaseMigration {
       await this.$executeQuery('ALTER TABLE `blocks_audits` DROP COLUMN `prioritized_txs`');
 
       // Add new columns to blocks table
-      await this.$executeQuery('ALTER TABLE `blocks` ADD COLUMN `blockSize` bigint(20) DEFAULT NULL');
-      await this.$executeQuery('ALTER TABLE `blocks` ADD COLUMN `blockSizeLimit` bigint(20) DEFAULT NULL');
-      await this.$executeQuery('ALTER TABLE `blocks` ADD COLUMN `nextBlockSizeLimit` bigint(20) DEFAULT NULL');
+      await this.$executeQuery('ALTER TABLE `blocks` ADD COLUMN `abla_block_size` bigint(20) DEFAULT NULL');
+      await this.$executeQuery('ALTER TABLE `blocks` ADD COLUMN `abla_block_size_limit` bigint(20) DEFAULT NULL');
+      await this.$executeQuery('ALTER TABLE `blocks` ADD COLUMN `abla_next_block_size_limit` bigint(20) DEFAULT NULL');
       await this.updateToSchemaVersion(106);
     }
   }

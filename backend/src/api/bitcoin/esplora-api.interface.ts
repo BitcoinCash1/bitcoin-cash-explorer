@@ -73,7 +73,7 @@ export namespace IEsploraApi {
     block_time?: number;
   }
 
-  export interface Ablastate {
+  export interface AblaState {
     block_size: number;
     block_size_limit: number;
     next_block_size_limit: number;
@@ -92,7 +92,7 @@ export namespace IEsploraApi {
     size: number;
     previousblockhash: string;
     mediantime: number;
-    ablastate: Ablastate;
+    abla_state: AblaState;
     stale: boolean;
   }
 

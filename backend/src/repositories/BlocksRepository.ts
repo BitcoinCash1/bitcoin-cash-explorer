@@ -57,9 +57,9 @@ interface DatabaseBlock {
   totalInputAmt: number;
   firstSeen: number;
   stale: boolean;
-  blockSize: number;
-  blockSizeLimit: number;
-  nextBlockSizeLimit: number;
+  ablaBlockSize: number;
+  ablaBlockSizeLimit: number;
+  ablaNextBlockSizeLimit: number;
 }
 
 const BLOCK_DB_FIELDS = `
@@ -74,7 +74,6 @@ const BLOCK_DB_FIELDS = `
   blocks.merkle_root,
   blocks.tx_count,
   blocks.size,
-  blocks.weight,
   blocks.previous_block_hash AS previousblockhash,
   UNIX_TIMESTAMP(blocks.median_timestamp) AS mediantime,
   blocks.fees AS totalFees,
@@ -97,15 +96,15 @@ const BLOCK_DB_FIELDS = `
   blocks.total_output_amt AS totalOutputAmt,
   blocks.median_fee_amt AS medianFeeAmt,
   blocks.fee_percentiles AS feePercentiles,
-  blocks.segwit_total_txs AS segwitTotalTxs,
-  blocks.segwit_total_size AS segwitTotalSize,
-  blocks.segwit_total_weight AS segwitTotalWeight,
   blocks.header,
   blocks.utxoset_change AS utxoSetChange,
   blocks.utxoset_size AS utxoSetSize,
   blocks.total_input_amt AS totalInputAmt,
   UNIX_TIMESTAMP(blocks.first_seen) AS firstSeen,
-  blocks.stale
+  blocks.stale,
+  blocks.abla_block_size as ablaBlockSize,
+  blocks.abla_block_size_limit as ablaBlockSizeLimit,
+  blocks.abla_next_block_size_limit as ablaNextBlockSizeLimit
 `;
 
 class BlocksRepository {
@@ -1171,11 +1170,11 @@ class BlocksRepository {
     blk.previousblockhash = dbBlk.previousblockhash;
     blk.mediantime = dbBlk.mediantime;
     blk.indexVersion = dbBlk.index_version;
-    // Add abla state
-    blk.ablastate = {
-      block_size: dbBlk.blockSize,
-      block_size_limit: dbBlk.blockSizeLimit,
-      next_block_size_limit: dbBlk.nextBlockSizeLimit,
+    // Add abla state for BCH
+    blk.abla_state = {
+      block_size: dbBlk.ablaBlockSize,
+      block_size_limit: dbBlk.ablaBlockSizeLimit,
+      next_block_size_limit: dbBlk.ablaNextBlockSizeLimit,
     };
     // BlockExtension
     extras.totalFees = dbBlk.totalFees;

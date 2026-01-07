@@ -1346,9 +1346,9 @@ class Blocks {
         coinbase_signature_ascii: block.extras.coinbaseSignatureAscii ?? null,
         pool_slug: block.extras.pool.slug ?? null,
         pool_id: block.extras.pool.id ?? null,
-        blocksize: block.ablastate.block_size ?? null,
-        blocksizelimit: block.ablastate.block_size_limit ?? null,
-        nextblocksizelimit: block.ablastate.next_block_size_limit ?? null,
+        blocksize: block.abla_state.block_size ?? null,
+        blocksizelimit: block.abla_state.block_size_limit ?? null,
+        nextblocksizelimit: block.abla_state.next_block_size_limit ?? null,
       };
 
       if (Common.blocksSummariesIndexingEnabled() && cleanBlock.fee_amt_percentiles === null) {
