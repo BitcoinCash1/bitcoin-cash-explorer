@@ -164,8 +164,6 @@ export interface CompactThreadTransaction {
   feePerVsize: number;
   effectiveFeePerVsize: number;
   inputs: number[];
-  cpfpRoot?: number;
-  cpfpChecked?: boolean;
   dirty?: boolean;
 }
 
@@ -182,8 +180,6 @@ export interface ThreadTransaction {
   feePerVsize: number;
   effectiveFeePerVsize?: number;
   inputs: number[];
-  cpfpRoot?: string;
-  cpfpChecked?: boolean;
 }
 
 export interface Ancestor {

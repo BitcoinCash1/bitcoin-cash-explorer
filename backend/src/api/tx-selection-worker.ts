@@ -151,14 +151,6 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
           }),
           nextTx,
         ];
-        let isCluster = false;
-        if (sortedTxSet.length > 1) {
-          cpfpClusters.set(
-            nextTx.uid,
-            sortedTxSet.map((tx) => tx.uid)
-          );
-          isCluster = true;
-        }
         const effectiveFeeRate = Math.min(
           nextTx.dependencyRate || Infinity,
           nextTx.ancestorFee / (nextTx.ancestorWeight / 4)
@@ -177,11 +169,6 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
             mempoolTx.effectiveFeePerVsize = effectiveFeeRate;
             mempoolTx.dirty = true;
           }
-          if (mempoolTx.cpfpRoot !== nextTx.uid) {
-            mempoolTx.cpfpRoot = isCluster ? nextTx.uid : null;
-            mempoolTx.dirty;
-          }
-          mempoolTx.cpfpChecked = true;
           transactions.push(ancestor);
           blockWeight += ancestor.weight;
           used.push(ancestor);
