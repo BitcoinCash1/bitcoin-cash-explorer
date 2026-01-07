@@ -93,7 +93,7 @@ export namespace IEsploraApi {
     previousblockhash: string;
     mediantime: number;
     stale: boolean;
-    abla_state: AblaState;
+    abla_state?: AblaState;
   }
 
   export interface Address {

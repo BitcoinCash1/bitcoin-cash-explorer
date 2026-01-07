@@ -17,7 +17,7 @@ class BitcoinApi implements AbstractBitcoinApi {
   }
 
   static convertBlock(block: IBitcoinApi.Block): IEsploraApi.Block {
-    return {
+    const returnBlock = {
       id: block.hash,
       height: block.height,
       version: block.version,
@@ -30,13 +30,19 @@ class BitcoinApi implements AbstractBitcoinApi {
       size: block.size,
       previousblockhash: block.previousblockhash,
       mediantime: block.mediantime,
-      abla_state: {
-        block_size: block.ablastate.blocksize,
-        block_size_limit: block.ablastate.blocksizelimit,
-        next_block_size_limit: block.ablastate.nextblocksizelimit,
-      },
-      stale: block.confirmations === -1,
+      stale: block.confirmations === -1
     };
+    // ABLA state is optional
+    const ablaState = block.ablastate;
+    if (ablaState) {
+      returnBlock['abla_state'] = {
+        block_size: ablaState.blocksize,
+        block_size_limit: ablaState.blocksizelimit,
+        next_block_size_limit: ablaState.nextblocksizelimit,
+      };
+    }
+
+    return returnBlock;
   }
 
   $getRawTransaction(

@@ -10,9 +10,8 @@ import config from './config';
 import auditReplicator from './replication/AuditReplication';
 import statisticsReplicator from './replication/StatisticsReplication';
 import BlocksAuditsRepository from './repositories/BlocksAuditsRepository';
-import BlocksRepository from './repositories/BlocksRepository';
 
-export interface CoreIndex {
+export interface BCHNIndex {
   name: string;
   synced: boolean;
   best_block_height: number;
@@ -26,17 +25,17 @@ class Indexer {
   private tasksRunning: { [key in TaskName]?: boolean } = {};
   private tasksScheduled: { [key in TaskName]?: NodeJS.Timeout } = {};
   private reindexTimeout: NodeJS.Timeout | undefined;
-  private coreIndexes: CoreIndex[] = [];
+  private bchnIndexes: BCHNIndex[] = [];
 
   public indexerIsRunning(): boolean {
     return this.indexerRunning;
   }
 
   /**
-   * Check which core index is available for indexing
+   * Check which BCHN index is available for indexing
    */
-  public async checkAvailableCoreIndexes(): Promise<void> {
-    const updatedCoreIndexes: CoreIndex[] = [];
+  public async checkAvailableBCHNIndexes(): Promise<void> {
+    const updatedBCHNIndexes: BCHNIndex[] = [];
 
     const indexes: any = await bitcoinClient.getIndexInfo();
     for (const indexName in indexes) {
@@ -46,31 +45,31 @@ class Indexer {
         best_block_height: indexes[indexName].best_block_height,
       };
       logger.info(
-        `Core index '${indexName}' is ${indexes[indexName].synced ? 'synced' : 'not synced'}. Best block height is ${
+        `BCHN index '${indexName}' is ${indexes[indexName].synced ? 'synced' : 'not synced'}. Best block height is ${
           indexes[indexName].best_block_height
         }`
       );
-      updatedCoreIndexes.push(newState);
+      updatedBCHNIndexes.push(newState);
 
       if (indexName === 'coinstatsindex' && newState.synced === true) {
-        const previousState = this.isCoreIndexReady('coinstatsindex');
+        const previousState = this.isBCHNIndexReady('coinstatsindex');
         // if (!previousState || previousState.synced === false) {
         this.runSingleTask('coinStatsIndex');
         // }
       }
     }
 
-    this.coreIndexes = updatedCoreIndexes;
+    this.bchnIndexes = updatedBCHNIndexes;
   }
 
   /**
-   * Return the best block height if a core index is available, or 0 if not
+   * Return the best block height if a BCHN index is available, or 0 if not
    *
    * @param name
    * @returns
    */
-  public isCoreIndexReady(name: string): CoreIndex | null {
-    for (const index of this.coreIndexes) {
+  public isBCHNIndexReady(name: string): BCHNIndex | null {
+    for (const index of this.bchnIndexes) {
       if (index.name === name && index.synced === true) {
         return index;
       }
@@ -201,17 +200,17 @@ class Indexer {
         }
       }
 
-      // Do not attempt to index anything unless Bitcoin Core is fully synced
+      // Do not attempt to index anything unless BCHN is fully synced
       const blockchainInfo = await bitcoinClient.getBlockchainInfo();
       if (blockchainInfo.blocks !== blockchainInfo.headers) {
-        logger.debug(`Bitcoin Core not fully synced, retrying index run in 10 seconds.`);
+        logger.debug(`BCHN not fully synced, retrying index run in 10 seconds.`);
         nextRunDelay = retryDelay;
         return;
       }
 
       logger.debug(`Running mining indexer`);
 
-      await this.checkAvailableCoreIndexes();
+      await this.checkAvailableBCHNIndexes();
 
       const chainValid = await blocks.$generateBlockDatabase();
       if (chainValid === false) {

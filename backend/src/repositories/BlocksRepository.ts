@@ -151,6 +151,15 @@ class BlocksRepository {
         );
       }
 
+      let block_size: number | null = null;
+      let block_size_limit: number | null = null;
+      let next_block_size_limit: number | null = null;
+      if (block.abla_state) {
+        block_size = block.abla_state.block_size;
+        block_size_limit = block.abla_state.block_size_limit;
+        next_block_size_limit = block.abla_state.next_block_size_limit;
+      }
+
       const params: any[] = [
         block.height,
         block.id,
@@ -189,9 +198,9 @@ class BlocksRepository {
         poolsUpdater.currentSha,
         BlocksRepository.version,
         block.stale ? 1 : 0,
-        block.abla_state.block_size,
-        block.abla_state.block_size_limit,
-        block.abla_state.next_block_size_limit,
+        block_size,
+        block_size_limit,
+        next_block_size_limit,
       ];
 
       await DB.query(query, params);
@@ -227,7 +236,7 @@ class BlocksRepository {
   }
 
   /**
-   * Save newly indexed data from core coinstatsindex
+   * Save newly indexed data from BCHN coinstatsindex
    *
    * @param utxoSetSize
    * @param totalInputAmt
@@ -1232,7 +1241,7 @@ class BlocksRepository {
       if (extras.feePercentiles === null) {
         let summary;
         const summaryVersion = 0;
-        // Call Core RPC
+        // Call BHCN RPC
         const block = await bitcoinClient.getBlock(dbBlk.id, 2);
         summary = blocks.summarizeBlock(block);
 

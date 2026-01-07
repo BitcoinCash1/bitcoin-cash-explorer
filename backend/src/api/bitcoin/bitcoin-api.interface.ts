@@ -59,7 +59,7 @@ export namespace IBitcoinApi {
     nTx: number; //  (numeric) The number of transactions in the block
     previousblockhash: string; //  (string) The hash of the previous block
     nextblockhash: string; //  (string) The hash of the next block
-    ablastate: AblaState; //  (object) Adaptive Blocksize Limit Algorithm state in BCH
+    ablastate?: AblaState; //  (object, optional) Adaptive Blocksize Limit Algorithm state in BCH
   }
 
   export interface Transaction {
@@ -207,9 +207,9 @@ export namespace IBitcoinApi {
     txs: number;
     utxo_increase: number;
     utxo_size_inc: number;
-    blocksize: number;
-    blocksizelimit: number;
-    nextblocksizelimit: number;
+    block_size?: number; // ALBA is optional
+    block_size_limit?: number; // ALBA is optional
+    next_block_size_limit?: number; // ALBA is optional
   }
 }
 

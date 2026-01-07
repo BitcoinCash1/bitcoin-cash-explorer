@@ -327,7 +327,7 @@ class Blocks {
     const header = await bitcoinClient.getBlockHeader(block.id, false);
     extras.header = header;
 
-    const coinStatsIndex = indexer.isCoreIndexReady('coinstatsindex');
+    const coinStatsIndex = indexer.isBCHNIndexReady('coinstatsindex');
     if (coinStatsIndex !== null && coinStatsIndex.best_block_height >= block.height) {
       const txoutset = await bitcoinClient.getTxoutSetinfo('none', block.height);
       (extras.utxoSetSize = txoutset.txouts),
@@ -424,6 +424,9 @@ class Blocks {
     const txs = transactions.length;
     const utxo_increase = 0;
     const utxo_size_inc = 0;
+    const block_size = block.abla_state?.block_size;
+    const block_size_limit = block.abla_state?.block_size_limit;
+    const next_block_size_limit = block.abla_state?.next_block_size_limit;
 
     return {
       avgfee,
@@ -457,9 +460,9 @@ class Blocks {
       txs,
       utxo_increase,
       utxo_size_inc,
-      blocksize: block.size,
-      blocksizelimit: block.size,
-      nextblocksizelimit: block.size,
+      block_size,
+      block_size_limit,
+      next_block_size_limit,
     };
   }
 
@@ -1343,9 +1346,9 @@ class Blocks {
         coinbase_signature_ascii: block.extras.coinbaseSignatureAscii ?? null,
         pool_slug: block.extras.pool.slug ?? null,
         pool_id: block.extras.pool.id ?? null,
-        blocksize: block.abla_state.block_size ?? null,
-        blocksizelimit: block.abla_state.block_size_limit ?? null,
-        nextblocksizelimit: block.abla_state.next_block_size_limit ?? null,
+        block_size: block.abla_state?.block_size ?? null,
+        block_size_limit: block.abla_state?.block_size_limit ?? null,
+        next_block_size_limit: block.abla_state?.next_block_size_limit ?? null,
       };
 
       if (Common.blocksSummariesIndexingEnabled() && cleanBlock.fee_amt_percentiles === null) {
