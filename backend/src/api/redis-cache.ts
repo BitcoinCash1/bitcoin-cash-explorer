@@ -10,8 +10,6 @@ enum NetworkDB {
   mainnet = 0,
   testnet,
   signet,
-  liquid,
-  liquidtestnet,
 }
 
 class RedisCache {

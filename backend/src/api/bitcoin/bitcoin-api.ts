@@ -318,8 +318,8 @@ class BitcoinApi implements AbstractBitcoinApi {
           vout.scriptPubKey && vout.scriptPubKey.address
             ? vout.scriptPubKey.address
             : vout.scriptPubKey.addresses
-            ? vout.scriptPubKey.addresses[0]
-            : '',
+              ? vout.scriptPubKey.addresses[0]
+              : '',
         scriptpubkey_asm: vout.scriptPubKey.asm ? transactionUtils.convertScriptSigAsm(vout.scriptPubKey.hex) : '',
         scriptpubkey_type: this.translateScriptPubKeyType(vout.scriptPubKey.type),
       };
@@ -333,8 +333,8 @@ class BitcoinApi implements AbstractBitcoinApi {
         scriptsig_asm: vin.scriptSig
           ? transactionUtils.convertScriptSigAsm(vin.scriptSig.hex)
           : vin.coinbase
-          ? transactionUtils.convertScriptSigAsm(vin.coinbase)
-          : '',
+            ? transactionUtils.convertScriptSigAsm(vin.coinbase)
+            : '',
         sequence: vin.sequence,
         txid: vin.txid || '',
         vout: vin.vout || 0,

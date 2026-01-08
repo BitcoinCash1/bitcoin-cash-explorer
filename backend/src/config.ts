@@ -1,6 +1,6 @@
-const configFromFile = require(process.env.EXPLORER_CONFIG_FILE
-  ? process.env.EXPLORER_CONFIG_FILE
-  : '../explorer-config.json');
+const configFromFile = require(
+  process.env.EXPLORER_CONFIG_FILE ? process.env.EXPLORER_CONFIG_FILE : '../explorer-config.json'
+);
 
 interface IConfig {
   MEMPOOL: {

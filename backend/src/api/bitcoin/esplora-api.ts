@@ -222,16 +222,16 @@ class FailoverRouter {
     const heightStatus = !host.checked
       ? '⏳'
       : host.outOfSync
-      ? '🚫'
-      : host.latestHeight && host.latestHeight < maxHeight
-      ? '🟧'
-      : '✅';
+        ? '🚫'
+        : host.latestHeight && host.latestHeight < maxHeight
+          ? '🟧'
+          : '✅';
     return `${host === active ? '⭐️' : '  '} ${
       host.rtt < Infinity
         ? Math.round(host.rtt).toString().padStart(5, ' ') + 'ms'
         : host.timedOut
-        ? '  ⌛️💥 '
-        : '    -  '
+          ? '  ⌛️💥 '
+          : '    -  '
     } ${!host.checked ? '⏳' : host.unreachable ? '🔥' : '✅'} | block: ${
       host.latestHeight || '??????'
     } ${heightStatus} | ${host.host} ${host === active ? '⭐️' : '  '}`;

@@ -1212,7 +1212,7 @@ class BlocksRepository {
     extras.totalOutputAmt = dbBlk.totalOutputAmt;
     extras.medianFeeAmt = dbBlk.medianFeeAmt;
     extras.feePercentiles = JSON.parse(dbBlk.feePercentiles);
-    (extras.header = dbBlk.header), (extras.utxoSetChange = dbBlk.utxoSetChange);
+    ((extras.header = dbBlk.header), (extras.utxoSetChange = dbBlk.utxoSetChange));
     extras.utxoSetSize = dbBlk.utxoSetSize;
     extras.totalInputAmt = dbBlk.totalInputAmt;
     extras.firstSeen = dbBlk.firstSeen;

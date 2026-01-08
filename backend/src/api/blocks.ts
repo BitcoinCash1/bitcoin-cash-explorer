@@ -330,8 +330,8 @@ class Blocks {
     const coinStatsIndex = indexer.isBCHNIndexReady('coinstatsindex');
     if (coinStatsIndex !== null && coinStatsIndex.best_block_height >= block.height) {
       const txoutset = await bitcoinClient.getTxoutSetinfo('none', block.height);
-      (extras.utxoSetSize = txoutset.txouts),
-        (extras.totalInputAmt = Math.round(txoutset.block_info.prevout_spent * 100000000));
+      ((extras.utxoSetSize = txoutset.txouts),
+        (extras.totalInputAmt = Math.round(txoutset.block_info.prevout_spent * 100000000)));
     } else {
       extras.utxoSetSize = null;
       extras.totalInputAmt = null;
