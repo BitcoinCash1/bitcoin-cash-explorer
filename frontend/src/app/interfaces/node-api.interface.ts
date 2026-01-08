@@ -3,48 +3,10 @@ import { AddressTxSummary, Block, ChainStats } from './electrs.interface';
 export interface OptimizedMempoolStats {
   added: number;
   count: number;
-  vbytes_per_second: number;
+  bytes_per_second: number;
   total_fee: number;
-  mempool_byte_weight: number;
-  vsizes: number[];
-}
-
-interface Ancestor {
-  txid: string;
-  weight: number;
-  fee: number;
-}
-
-interface BestDescendant {
-  txid: string;
-  weight: number;
-  fee: number;
-}
-
-export interface CpfpInfo {
-  ancestors: Ancestor[];
-  descendants?: Ancestor[];
-  bestDescendant?: BestDescendant | null;
-  effectiveFeePerVsize?: number;
-  sigops?: number;
-  adjustedVsize?: number;
-  acceleration?: boolean;
-  acceleratedBy?: number[];
-  acceleratedAt?: number;
-  feeDelta?: number;
-}
-
-export interface RbfInfo {
-  tx: RbfTransaction;
-  time: number;
-  interval?: number;
-}
-
-export interface RbfTree extends RbfInfo {
-  mined?: boolean;
-  fullRbf: boolean;
-  replaces: RbfTree[];
-  replacedBy?: RbfTransaction;
+  mempool_byte_size: number;
+  sizes: number[];
 }
 
 export interface DifficultyAdjustment {
@@ -73,52 +35,6 @@ export interface AddressInformation {
   witness_program: string; //  (string, optional) The hex value of the witness program
   confidential_key?: string; //  (string) Elements only
   unconfidential?: string; //  (string) Elements only
-}
-
-export interface LiquidPegs {
-  amount: string;
-  date: string;
-}
-
-export interface CurrentPegs {
-  amount: string;
-  lastBlockUpdate: number;
-  hash: string;
-}
-
-export interface PegsVolume {
-  volume: string;
-  number: number;
-}
-
-export interface FederationAddress {
-  bitcoinaddress: string;
-  balance: string;
-}
-
-export interface FederationUtxo {
-  txid: string;
-  txindex: number;
-  bitcoinaddress: string;
-  amount: number;
-  blocknumber: number;
-  blocktime: number;
-  pegtxid: string;
-  pegindex: number;
-  pegblocktime: number;
-  timelock: number;
-  expiredAt: number;
-  isDust?: boolean;
-}
-
-export interface RecentPeg {
-  txid: string;
-  txindex: number;
-  amount: number;
-  bitcoinaddress: string;
-  bitcointxid: string;
-  bitcoinindex: number;
-  blocktime: number;
 }
 
 export interface AuditStatus {
@@ -233,16 +149,13 @@ export interface BlockAudit extends BlockExtended {
   unseenTxs?: string[];
   missingTxs: string[];
   addedTxs: string[];
-  prioritizedTxs: string[];
   freshTxs: string[];
   sigopTxs: string[];
-  fullrbfTxs: string[];
-  acceleratedTxs: string[];
   matchRate: number;
   expectedFees: number;
-  expectedWeight: number;
+  expectedSize: number;
   feeDelta?: number;
-  weightDelta?: number;
+  sizeDelta?: number;
   txDelta?: number;
   template: TransactionStripped[];
   transactions: TransactionStripped[];
@@ -251,10 +164,9 @@ export interface BlockAudit extends BlockExtended {
 export interface TransactionStripped {
   txid: string;
   fee: number;
-  vsize: number;
+  size: number;
   value: number;
   rate?: number; // effective fee rate
-  acc?: boolean;
   flags?: number | null;
   time?: number;
   status?:
@@ -264,36 +176,21 @@ export interface TransactionStripped {
     | 'fresh'
     | 'freshcpfp'
     | 'added'
-    | 'added_prioritized'
-    | 'prioritized'
-    | 'added_deprioritized'
-    | 'deprioritized'
     | 'censored'
     | 'selected'
-    | 'rbf'
-    | 'accelerated'
     | 'matched'
     | 'unmatched';
   context?: 'projected' | 'actual' | 'stale' | 'canonical';
 }
 
+// TODO: Should the mined boolean be moved to TransactionStripped?
 export interface RbfTransaction extends TransactionStripped {
-  rbf?: boolean;
   mined?: boolean;
-  fullRbf?: boolean;
 }
 export interface MempoolPosition {
   block: number;
-  vsize: number;
-  accelerated?: boolean;
-  acceleratedBy?: number[];
-  acceleratedAt?: number;
+  size: number;
   feeDelta?: number;
-}
-
-export interface AccelerationPosition extends MempoolPosition {
-  poolId: number;
-  offset?: number;
 }
 
 export interface RewardStats {
@@ -426,64 +323,55 @@ export interface INode {
   closing_balance?: number;
 }
 
-export interface Acceleration {
-  txid: string;
-  status:
-    | 'requested'
-    | 'accelerating'
-    | 'completed_provisional'
-    | 'completed'
-    | 'failed'
-    | 'failed_provisional';
-  pools: number[];
-  feePaid: number;
-  added: number; // timestamp
-  lastUpdated: number; // timestamp
-  baseFee: number;
-  vsizeFee: number;
-  effectiveFee: number;
-  effectiveVsize: number;
-  feeDelta: number;
-  blockHash: string;
-  blockHeight: number;
-  acceleratedFeeRate?: number;
-  boost?: number;
-  bidBoost?: number;
-  boostCost?: number;
-  boostRate?: number;
-  minedByPoolUniqueId?: number;
-  canceled?: number;
-}
+// export interface Acceleration {
+//   txid: string;
+//   status:
+//     | 'requested'
+//     | 'accelerating'
+//     | 'completed_provisional'
+//     | 'completed'
+//     | 'failed'
+//     | 'failed_provisional';
+//   pools: number[];
+//   feePaid: number;
+//   added: number; // timestamp
+//   lastUpdated: number; // timestamp
+//   baseFee: number;
+//   vsizeFee: number;
+//   effectiveFee: number;
+//   effectiveVsize: number;
+//   feeDelta: number;
+//   blockHash: string;
+//   blockHeight: number;
+//   acceleratedFeeRate?: number;
+//   boost?: number;
+//   bidBoost?: number;
+//   boostCost?: number;
+//   boostRate?: number;
+//   minedByPoolUniqueId?: number;
+//   canceled?: number;
+// }
 
-export interface AccelerationHistoryParams {
-  status?: string; // Single status or comma separated list of status
-  timeframe?: string;
-  poolUniqueId?: number;
-  blockHash?: string;
-  blockHeight?: number;
-  page?: number;
-  pageLength?: number;
-}
 
-export interface AccelerationInfo {
-  txid: string;
-  height: number;
-  pool: {
-    id: number;
-    slug: string;
-    name: string;
-  };
-  effective_vsize: number;
-  effective_fee: number;
-  boost_rate: number;
-  boost_cost: number;
-}
+// export interface AccelerationInfo {
+//   txid: string;
+//   height: number;
+//   pool: {
+//     id: number;
+//     slug: string;
+//     name: string;
+//   };
+//   effective_vsize: number;
+//   effective_fee: number;
+//   boost_rate: number;
+//   boost_cost: number;
+// }
 
 export interface TestMempoolAcceptResult {
   txid: string;
   wtxid: string;
   allowed?: boolean;
-  vsize?: number;
+  size?: number;
   fees?: {
     base: number;
     'effective-feerate': number;
@@ -501,7 +389,7 @@ export interface SubmitPackageResult {
 export interface TxResult {
   txid: string;
   'other-wtxid'?: string;
-  vsize?: number;
+  size?: number;
   fees?: {
     base: number;
     'effective-feerate'?: number;

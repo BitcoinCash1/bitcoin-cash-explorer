@@ -315,57 +315,6 @@
                   </table>
                 </td>
               </tr>
-
-              <!-- Bid Boost -->
-              <tr
-                [class.taller-row]="!isMobile()"
-                *ngIf="oobFees$ | async as oob"
-              >
-                <td
-                  [class.data]="!isMobile()"
-                  [attr.colspan]="isMobile() ? 2 : 1"
-                >
-                  <table class="table table-xs table-data">
-                    <thead>
-                      <tr>
-                        <th
-                          scope="col"
-                          class="data-title clip text-center"
-                          style="width: 33%"
-                          i18n="1w"
-                        >
-                          Out-of-band Fees (1w)
-                        </th>
-                        <th
-                          scope="col"
-                          class="data-title clip text-center"
-                          style="width: 33%"
-                          i18n="1m"
-                        >
-                          1m
-                        </th>
-                        <th
-                          scope="col"
-                          class="data-title clip text-center"
-                          style="width: 33%"
-                          i18n="all"
-                        >
-                          All
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <td *ngFor="let total of oob" class="text-center clip">
-                        <app-amount
-                          [satoshis]="total.cost"
-                          [digitsInfo]="isMobile() ? '1.2-4' : '1.8-8'"
-                          [ignoreViewMode]="true"
-                        ></app-amount>
-                      </td>
-                    </tbody>
-                  </table>
-                </td>
-              </tr>
             </tbody>
           </table>
         </div>
@@ -756,7 +705,7 @@
                 role="progressbar"
                 [ngStyle]="{
                   width:
-                    (block.weight / stateService.env.BLOCK_WEIGHT_UNITS) * 100 +
+                    (block.size / stateService.env.MIN_BLOCK_SIZE_UNITS) * 100 +
                     '%'
                 }"
               ></div>

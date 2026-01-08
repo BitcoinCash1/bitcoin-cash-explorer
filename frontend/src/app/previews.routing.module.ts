@@ -35,14 +35,6 @@ const routes: Routes = [
         path: 'mining/pool/:slug',
         component: PoolPreviewComponent,
       },
-      {
-        path: 'lightning',
-        loadChildren: () =>
-          import('@app/lightning/lightning-previews.module').then(
-            (m) => m.LightningPreviewsModule
-          ),
-        data: { preload: true },
-      },
     ],
   },
 ];

@@ -2,10 +2,8 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 import { ILoadingIndicators } from '@app/services/state.service';
 import { Transaction } from '@interfaces/electrs.interface';
 import {
-  Acceleration,
   BlockExtended,
   DifficultyAdjustment,
-  RbfTree,
   TransactionStripped,
 } from '@interfaces/node-api.interface';
 
@@ -17,16 +15,11 @@ export interface WebsocketResponse {
   txConfirmed?: string;
   historicalDate?: string;
   mempoolInfo?: MempoolInfo;
-  vBytesPerSecond?: number;
+  bytesPerSecond?: number;
   previousRetarget?: number;
   action?: string;
   data?: string[];
   tx?: Transaction;
-  rbfTransaction?: ReplacedTransaction;
-  txReplaced?: ReplacedTransaction;
-  rbfInfo?: RbfTree;
-  rbfLatest?: RbfTree[];
-  rbfLatestSummary?: ReplacementInfo[];
   stratumJob?: StratumJob;
   stratumJobs?: Record<number, StratumJob>;
   utxoSpent?: object;
@@ -41,33 +34,16 @@ export interface WebsocketResponse {
   'track-scriptpubkeys'?: string[];
   'track-asset'?: string;
   'track-mempool-block'?: number;
-  'track-rbf'?: string;
-  'track-rbf-summary'?: boolean;
-  'track-accelerations'?: boolean;
   'track-wallet'?: string;
   'track-stratum'?: string | number;
   'watch-mempool'?: boolean;
   'refresh-blocks'?: boolean;
 }
 
-export interface ReplacedTransaction extends Transaction {
-  txid: string;
-}
-
-export interface ReplacementInfo {
-  mined: boolean;
-  fullRbf: boolean;
-  txid: string;
-  oldFee: number;
-  oldVsize: number;
-  newFee: number;
-  newVsize: number;
-}
 export interface MempoolBlock {
   blink?: boolean;
   height?: number;
   blockSize: number;
-  blockVSize: number;
   nTx: number;
   medianFee: number;
   totalFees: number;
@@ -85,7 +61,7 @@ export interface MempoolBlockDelta {
   block: number;
   added: TransactionStripped[];
   removed: string[];
-  changed: { txid: string; rate: number; flags: number; acc: boolean }[];
+  changed: { txid: string; rate: number; flags: number; }[];
 }
 export interface MempoolBlockState {
   block: number;
@@ -109,8 +85,8 @@ export interface MempoolBlockDeltaCompressed {
   changed: MempoolDeltaChange[];
 }
 
+// Should be removed in BCH.. Since we do not have accelerations
 export interface AccelerationDelta {
-  added: Acceleration[];
   removed: string[];
   reset?: boolean;
 }
@@ -125,7 +101,7 @@ export interface MempoolInfo {
   minrelaytxfee: number; //  (numeric) Current minimum relay fee for transactions
 }
 
-// [txid, fee, vsize, value, rate, flags, acceleration?]
+// [txid, fee, size, value, rate, flags, time]
 export type TransactionCompressed = [
   string,
   number,
@@ -134,10 +110,9 @@ export type TransactionCompressed = [
   number,
   number,
   number,
-  1?,
 ];
-// [txid, rate, flags, acceleration?]
-export type MempoolDeltaChange = [string, number, number, 1 | 0];
+// [txid, rate, flags]
+export type MempoolDeltaChange = [string, number, number];
 
 export interface IBackendInfo {
   hostname?: string;

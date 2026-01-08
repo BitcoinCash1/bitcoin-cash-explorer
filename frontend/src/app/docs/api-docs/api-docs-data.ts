@@ -57,7 +57,6 @@ export const wsApiDocsData = [
   "mempool-blocks": [
     {
       "blockSize": 1801614,
-      "blockVSize": 997936.5,
       "nTx": 3391,
       "totalFees": 8170664,
       "medianFee": 6.011217160720601,
@@ -74,7 +73,6 @@ export const wsApiDocsData = [
     ...
     {
       "blockSize": 198543075,
-      "blockVSize": 101691348,
       "nTx": 249402,
       "totalFees": 135312667,
       "medianFee": 1.2559438783834156,
@@ -104,7 +102,6 @@ export const wsApiDocsData = [
     "minrelaytxfee": 0.00001,
     "incrementalrelayfee": 0.00001,
     "unbroadcastcount": 0,
-    "fullrbf": true
   },
   "vBytesPerSecond": 1651,
   "fees": {
@@ -138,7 +135,6 @@ export const wsApiDocsData = [
   "mempool-blocks": [
     {
       "blockSize": 1009960,
-      "blockVSize": 997827.25,
       "nTx": 3545,
       "totalFees": 2844117938,
       "medianFee": 2524.178404298769,
@@ -165,7 +161,6 @@ export const wsApiDocsData = [
     "minrelaytxfee": 0.00001,
     "incrementalrelayfee": 0.00001,
     "unbroadcastcount": 0,
-    "fullrbf": true
   },
   "vBytesPerSecond": 358,
   "fees": {
@@ -198,7 +193,6 @@ export const wsApiDocsData = [
           response: `{"mempool-blocks": [
     {
       "blockSize": 1009960,
-      "blockVSize": 997827.25,
       "nTx": 3545,
       "totalFees": 2844117938,
       "medianFee": 2524.178404298769,
@@ -225,7 +219,6 @@ export const wsApiDocsData = [
     "minrelaytxfee": 0.00001,
     "incrementalrelayfee": 0.00001,
     "unbroadcastcount": 0,
-    "fullrbf": true
   },
   "vBytesPerSecond": 28,
   "da": {
@@ -259,7 +252,6 @@ export const wsApiDocsData = [
   "mempool-blocks": [
     {
       "blockSize": 27409,
-      "blockVSize": 7675,
       "nTx": 2,
       "totalFees": 769,
       "medianFee": 0,
@@ -410,9 +402,9 @@ export const wsApiDocsData = [
       "order": 864069877,
       "vsize": 5514,
       "adjustedVsize": 5514,
-      "feePerVsize": 7.979688066739209,
-      "adjustedFeePerVsize": 7.979688066739209,
-      "effectiveFeePerVsize": 7.979688066739209,
+      "feePerSize": 7.979688066739209,
+      "adjustedfeePerSize": 7.979688066739209,
+      "effectiveFeePerSize": 7.979688066739209,
       "firstSeen": 1734704590,
       "inputs": [],
       "cpfpDirty": false,
@@ -503,9 +495,9 @@ export const wsApiDocsData = [
       "order": 864069877,
       "vsize": 5514,
       "adjustedVsize": 5514,
-      "feePerVsize": 7.979688066739209,
-      "adjustedFeePerVsize": 7.979688066739209,
-      "effectiveFeePerVsize": 7.979688066739209,
+      "feePerSize": 7.979688066739209,
+      "adjustedfeePerSize": 7.979688066739209,
+      "effectiveFeePerSize": 7.979688066739209,
       "firstSeen": 1734704590,
       "inputs": [],
       "cpfpDirty": false,
@@ -596,9 +588,9 @@ export const wsApiDocsData = [
       "order": 864069877,
       "vsize": 5514,
       "adjustedVsize": 5514,
-      "feePerVsize": 7.979688066739209,
-      "adjustedFeePerVsize": 7.979688066739209,
-      "effectiveFeePerVsize": 7.979688066739209,
+      "feePerSize": 7.979688066739209,
+      "adjustedfeePerSize": 7.979688066739209,
+      "effectiveFeePerSize": 7.979688066739209,
       "firstSeen": 1734704590,
       "inputs": [],
       "cpfpDirty": false,
@@ -689,9 +681,9 @@ export const wsApiDocsData = [
       "order": 864069877,
       "vsize": 5514,
       "adjustedVsize": 5514,
-      "feePerVsize": 7.979688066739209,
-      "adjustedFeePerVsize": 7.979688066739209,
-      "effectiveFeePerVsize": 7.979688066739209,
+      "feePerSize": 7.979688066739209,
+      "adjustedfeePerSize": 7.979688066739209,
+      "effectiveFeePerSize": 7.979688066739209,
       "firstSeen": 1734704590,
       "inputs": [],
       "cpfpDirty": false,
@@ -787,9 +779,9 @@ export const wsApiDocsData = [
           "order": 81067521,
           "vsize": 189,
           "adjustedVsize": 189,
-          "feePerVsize": 22.253968253968253,
-          "adjustedFeePerVsize": 22.253968253968253,
-          "effectiveFeePerVsize": 22.253968253968253,
+          "feePerSize": 22.253968253968253,
+          "adjustedfeePerSize": 22.253968253968253,
+          "effectiveFeePerSize": 22.253968253968253,
           "firstSeen": 1734719830,
           "inputs": [],
           "cpfpDirty": false,
@@ -865,9 +857,9 @@ export const wsApiDocsData = [
           "order": 81067521,
           "vsize": 189,
           "adjustedVsize": 189,
-          "feePerVsize": 22.253968253968253,
-          "adjustedFeePerVsize": 22.253968253968253,
-          "effectiveFeePerVsize": 22.253968253968253,
+          "feePerSize": 22.253968253968253,
+          "adjustedfeePerSize": 22.253968253968253,
+          "effectiveFeePerSize": 22.253968253968253,
           "firstSeen": 1734719830,
           "inputs": [],
           "cpfpDirty": false,
@@ -943,9 +935,9 @@ export const wsApiDocsData = [
           "order": 81067521,
           "vsize": 189,
           "adjustedVsize": 189,
-          "feePerVsize": 22.253968253968253,
-          "adjustedFeePerVsize": 22.253968253968253,
-          "effectiveFeePerVsize": 22.253968253968253,
+          "feePerSize": 22.253968253968253,
+          "adjustedfeePerSize": 22.253968253968253,
+          "effectiveFeePerSize": 22.253968253968253,
           "firstSeen": 1734719830,
           "inputs": [],
           "cpfpDirty": false,
@@ -1109,9 +1101,9 @@ export const wsApiDocsData = [
           "order": 743132236,
           "vsize": 3929,
           "adjustedVsize": 3928.25,
-          "feePerVsize": 0.10029911538216763,
-          "adjustedFeePerVsize": 0.10029911538216763,
-          "effectiveFeePerVsize": 0.10027996945787732,
+          "feePerSize": 0.10029911538216763,
+          "adjustedfeePerSize": 0.10029911538216763,
+          "effectiveFeePerSize": 0.10027996945787732,
           "firstSeen": 1734720314,
           "inputs": [],
           "cpfpDirty": false,
@@ -1187,7 +1179,7 @@ export const wsApiDocsData = [
           "weight": 816
         }
       ],
-      "effectiveFeePerVsize": 5.12063778580024,
+      "effectiveFeePerSize": 5.12063778580024,
       "sigops": 0,
       "adjustedVsize": 130
     }
@@ -1223,7 +1215,7 @@ export const wsApiDocsData = [
           "weight": 816
         }
       ],
-      "effectiveFeePerVsize": 5.12063778580024,
+      "effectiveFeePerSize": 5.12063778580024,
       "sigops": 0,
       "adjustedVsize": 130
     }
@@ -1259,7 +1251,7 @@ export const wsApiDocsData = [
           "weight": 816
         }
       ],
-      "effectiveFeePerVsize": 5.12063778580024,
+      "effectiveFeePerSize": 5.12063778580024,
       "sigops": 0,
       "adjustedVsize": 130
     }
@@ -1295,7 +1287,7 @@ export const wsApiDocsData = [
           "weight": 816
         }
       ],
-      "effectiveFeePerVsize": 5.12063778580024,
+      "effectiveFeePerSize": 5.12063778580024,
       "sigops": 0,
       "adjustedVsize": 130
     }
@@ -1352,7 +1344,7 @@ export const wsApiDocsData = [
           "weight": 816
           }
         ],
-        "effectiveFeePerVsize": 5.12063778580024,
+        "effectiveFeePerSize": 5.12063778580024,
         "sigops": 0,
         "adjustedVsize": 130
       }
@@ -1393,7 +1385,7 @@ export const wsApiDocsData = [
           "weight": 816
           }
         ],
-        "effectiveFeePerVsize": 5.12063778580024,
+        "effectiveFeePerSize": 5.12063778580024,
         "sigops": 0,
         "adjustedVsize": 130
       }
@@ -1434,7 +1426,7 @@ export const wsApiDocsData = [
           "weight": 816
           }
         ],
-        "effectiveFeePerVsize": 5.12063778580024,
+        "effectiveFeePerSize": 5.12063778580024,
         "sigops": 0,
         "adjustedVsize": 130
       }
@@ -1475,7 +1467,7 @@ export const wsApiDocsData = [
           "weight": 816
           }
         ],
-        "effectiveFeePerVsize": 5.12063778580024,
+        "effectiveFeePerSize": 5.12063778580024,
         "sigops": 0,
         "adjustedVsize": 130
       }
@@ -1506,7 +1498,7 @@ export const wsApiDocsData = [
     title: 'Track Mempool',
     description: {
       default:
-        "Subscribe to new mempool events, such as new transactions entering the mempool. Available fields: <code>added</code>, <code>removed</code>, <code>mined</code>, <code>replaced</code>. <br> Because this is potentially a lot of data, consider using the <code>track-mempool-txids</code> endpoint described below instead, or upgrade to an <a href='https://mempool.space/enterprise'>enterprise sponsorship</a>.",
+        "Subscribe to new mempool events, such as new transactions entering the mempool. Available fields: <code>added</code>, <code>removed</code>, <code>mined</code>. <br> Because this is potentially a lot of data, consider using the <code>track-mempool-txids</code> endpoint described below instead.",
     },
     payload: '{ "track-mempool": true }',
     showConditions: bitcoinNetworks.concat(liquidNetworks),
@@ -1569,9 +1561,9 @@ export const wsApiDocsData = [
         "order": 701659019,
         "vsize": 226,
         "adjustedVsize": 226,
-        "feePerVsize": 5.243362831858407,
-        "adjustedFeePerVsize": 5.243362831858407,
-        "effectiveFeePerVsize": 5.243362831858407,
+        "feePerSize": 5.243362831858407,
+        "adjustedfeePerSize": 5.243362831858407,
+        "effectiveFeePerSize": 5.243362831858407,
         "firstSeen": 1734893382,
         "uid": 429139,
         "inputs": [],
@@ -1588,8 +1580,7 @@ export const wsApiDocsData = [
       ...
     ],
     "removed": [],
-    "mined": [],
-    "replaced": []
+    "mined": []
   }
 }`,
         },
@@ -1648,9 +1639,9 @@ export const wsApiDocsData = [
         "order": 701659019,
         "vsize": 226,
         "adjustedVsize": 226,
-        "feePerVsize": 5.243362831858407,
-        "adjustedFeePerVsize": 5.243362831858407,
-        "effectiveFeePerVsize": 5.243362831858407,
+        "feePerSize": 5.243362831858407,
+        "adjustedfeePerSize": 5.243362831858407,
+        "effectiveFeePerSize": 5.243362831858407,
         "firstSeen": 1734893382,
         "uid": 429139,
         "inputs": [],
@@ -1667,8 +1658,7 @@ export const wsApiDocsData = [
       ...
     ],
     "removed": [],
-    "mined": [],
-    "replaced": []
+    "mined": []
   }
 }`,
         },
@@ -1727,9 +1717,9 @@ export const wsApiDocsData = [
         "order": 701659019,
         "vsize": 226,
         "adjustedVsize": 226,
-        "feePerVsize": 5.243362831858407,
-        "adjustedFeePerVsize": 5.243362831858407,
-        "effectiveFeePerVsize": 5.243362831858407,
+        "feePerSize": 5.243362831858407,
+        "adjustedfeePerSize": 5.243362831858407,
+        "effectiveFeePerSize": 5.243362831858407,
         "firstSeen": 1734893382,
         "uid": 429139,
         "inputs": [],
@@ -1746,8 +1736,7 @@ export const wsApiDocsData = [
       ...
     ],
     "removed": [],
-    "mined": [],
-    "replaced": []
+    "mined": []
   }
 }`,
         },
@@ -1806,9 +1795,9 @@ export const wsApiDocsData = [
         "order": 701659019,
         "vsize": 226,
         "adjustedVsize": 226,
-        "feePerVsize": 5.243362831858407,
-        "adjustedFeePerVsize": 5.243362831858407,
-        "effectiveFeePerVsize": 5.243362831858407,
+        "feePerSize": 5.243362831858407,
+        "adjustedfeePerSize": 5.243362831858407,
+        "effectiveFeePerSize": 5.243362831858407,
         "firstSeen": 1734893382,
         "uid": 429139,
         "inputs": [],
@@ -1825,8 +1814,7 @@ export const wsApiDocsData = [
       ...
     ],
     "removed": [],
-    "mined": [],
-    "replaced": []
+    "mined": []
   }
 }`,
         },
@@ -1865,8 +1853,7 @@ export const wsApiDocsData = [
       "47ed060004fab3fb5fa4885008aa2cadbe3335655f1303231abfe89b4b0c9bd9"
     ],
     "removed": [],
-    "mined": [],
-    "replaced": []
+    "mined": []
   }
 }`,
         },
@@ -1887,8 +1874,7 @@ export const wsApiDocsData = [
       "47ed060004fab3fb5fa4885008aa2cadbe3335655f1303231abfe89b4b0c9bd9"
     ],
     "removed": [],
-    "mined": [],
-    "replaced": []
+    "mined": []
   }
 }`,
         },
@@ -1909,8 +1895,7 @@ export const wsApiDocsData = [
       "47ed060004fab3fb5fa4885008aa2cadbe3335655f1303231abfe89b4b0c9bd9"
     ],
     "removed": [],
-    "mined": [],
-    "replaced": []
+    "mined": []
   }
 }`,
         },
@@ -1931,8 +1916,7 @@ export const wsApiDocsData = [
       "47ed060004fab3fb5fa4885008aa2cadbe3335655f1303231abfe89b4b0c9bd9"
     ],
     "removed": [],
-    "mined": [],
-    "replaced": []
+    "mined": []
   }
 }`,
         },
@@ -2074,390 +2058,6 @@ export const wsApiDocsData = [
   }
 }`,
         },
-      },
-    },
-  },
-  {
-    type: 'endpoint',
-    category: 'mempool',
-    fragment: 'track-rbf',
-    title: 'Track Mempool RBF Transactions',
-    description: {
-      default: 'Subscribe to new RBF events.',
-    },
-    payload: '{ "track-rbf": "all" }',
-    showConditions: bitcoinNetworks,
-    showJsExamples: false,
-    codeExample: {
-      default: {
-        codeTemplate: {},
-        codeSampleMainnet: {
-          esModule: [],
-          commonJS: [],
-          curl: [],
-          response: `{
-  "rbfLatest": [
-    {
-      "tx": {
-        "txid": "cc6cb210f7ec32660fe4d46984ef64b64143fb02dc7ed70578c32b5f338ef6d6",
-        "fee": 8280,
-        "vsize": 204,
-        "value": 156397,
-        "rate": 10,
-        "time": 1734876576,
-        "rbf": true,
-        "fullRbf": false
-      },
-      "time": 1734876576,
-      "fullRbf": false,
-      "replaces": [
-        {
-          "tx": {
-            "txid": "4e94c23e075cf9c2b4ccaf32e3652b8b1bfecca6726390ccab821417f23b0876",
-            "fee": 4956,
-            "vsize": 204,
-            "value": 159721,
-            "rate": 9,
-            "time": 1734876204,
-            "rbf": true,
-            "fullRbf": false
-          },
-          "time": 1734876204,
-          "fullRbf": false,
-          "replaces": [
-            {
-              "tx": {
-                "txid": "9624fe4f9a183dcea2e8c6b640394eecaec37363aec883a64358f6953fba3145",
-                "fee": 1632,
-                "vsize": 204,
-                "value": 163045,
-                "rate": 8,
-                "time": 1734876081,
-                "rbf": true
-              },
-              "time": 1734876081,
-              "interval": 123,
-              "fullRbf": false,
-              "replaces": []
-            }
-          ],
-          "interval": 372
-        }
-      ]
-    },
-    ...
-  ]
-}`,
-        },
-        codeSampleTestnet: {
-          esModule: [],
-          commonJS: [],
-          curl: [],
-          response: `{
-  "rbfLatest": [
-    {
-      "tx": {
-        "txid": "cc6cb210f7ec32660fe4d46984ef64b64143fb02dc7ed70578c32b5f338ef6d6",
-        "fee": 8280,
-        "vsize": 204,
-        "value": 156397,
-        "rate": 10,
-        "time": 1734876576,
-        "rbf": true,
-        "fullRbf": false
-      },
-      "time": 1734876576,
-      "fullRbf": false,
-      "replaces": [
-        {
-          "tx": {
-            "txid": "4e94c23e075cf9c2b4ccaf32e3652b8b1bfecca6726390ccab821417f23b0876",
-            "fee": 4956,
-            "vsize": 204,
-            "value": 159721,
-            "rate": 9,
-            "time": 1734876204,
-            "rbf": true,
-            "fullRbf": false
-          },
-          "time": 1734876204,
-          "fullRbf": false,
-          "replaces": [
-            {
-              "tx": {
-                "txid": "9624fe4f9a183dcea2e8c6b640394eecaec37363aec883a64358f6953fba3145",
-                "fee": 1632,
-                "vsize": 204,
-                "value": 163045,
-                "rate": 8,
-                "time": 1734876081,
-                "rbf": true
-              },
-              "time": 1734876081,
-              "interval": 123,
-              "fullRbf": false,
-              "replaces": []
-            }
-          ],
-          "interval": 372
-        }
-      ]
-    },
-    ...
-  ]
-}`,
-        },
-        codeSampleSignet: {
-          esModule: [],
-          commonJS: [],
-          curl: [],
-          response: `{
-  "rbfLatest": [
-    {
-      "tx": {
-        "txid": "cc6cb210f7ec32660fe4d46984ef64b64143fb02dc7ed70578c32b5f338ef6d6",
-        "fee": 8280,
-        "vsize": 204,
-        "value": 156397,
-        "rate": 10,
-        "time": 1734876576,
-        "rbf": true,
-        "fullRbf": false
-      },
-      "time": 1734876576,
-      "fullRbf": false,
-      "replaces": [
-        {
-          "tx": {
-            "txid": "4e94c23e075cf9c2b4ccaf32e3652b8b1bfecca6726390ccab821417f23b0876",
-            "fee": 4956,
-            "vsize": 204,
-            "value": 159721,
-            "rate": 9,
-            "time": 1734876204,
-            "rbf": true,
-            "fullRbf": false
-          },
-          "time": 1734876204,
-          "fullRbf": false,
-          "replaces": [
-            {
-              "tx": {
-                "txid": "9624fe4f9a183dcea2e8c6b640394eecaec37363aec883a64358f6953fba3145",
-                "fee": 1632,
-                "vsize": 204,
-                "value": 163045,
-                "rate": 8,
-                "time": 1734876081,
-                "rbf": true
-              },
-              "time": 1734876081,
-              "interval": 123,
-              "fullRbf": false,
-              "replaces": []
-            }
-          ],
-          "interval": 372
-        }
-      ]
-    },
-    ...
-  ]
-}`,
-        },
-        codeSampleLiquid: emptyCodeSample,
-      },
-    },
-  },
-  {
-    type: 'endpoint',
-    category: 'mempool',
-    fragment: 'track-full-rbf',
-    title: 'Track Mempool Full RBF Transactions',
-    description: {
-      default: 'Subscribe to new Full RBF events.',
-    },
-    payload: '{ "track-rbf": "fullRbf" }',
-    showConditions: bitcoinNetworks,
-    showJsExamples: false,
-    codeExample: {
-      default: {
-        codeTemplate: {},
-        codeSampleMainnet: {
-          esModule: [],
-          commonJS: [],
-          curl: [],
-          response: `{
-  "rbfLatest": [
-    {
-      "tx": {
-        "txid": "ed9e1ec0e1635d465ee95c8872efff367d420fc2c4e624bada2c6e6e6c8e0629",
-        "fee": 4123,
-        "vsize": 587.75,
-        "value": 25545,
-        "rate": 7.014887282007656,
-        "time": 1734876941,
-        "rbf": false,
-        "fullRbf": true
-      },
-      "time": 1734876941,
-      "fullRbf": true,
-      "replaces": [
-        {
-          "tx": {
-            "txid": "495ad5d39d44286e99bc45d104605407325cd4790f842dc3287fbfdda8ee5795",
-            "fee": 1178,
-            "vsize": 587.25,
-            "value": 28490,
-            "rate": 2.0059599829714774,
-            "time": 1734853572,
-            "rbf": false,
-            "fullRbf": true
-          },
-          "time": 1734853572,
-          "fullRbf": true,
-          "replaces": [
-            {
-              "tx": {
-                "txid": "189751a7560a6c39deb9a93db2a27374842c646268d0007ba52aefa189833afa",
-                "fee": 589,
-                "vsize": 587.25,
-                "value": 29079,
-                "rate": 1.0029799914857387,
-                "time": 1734781955,
-                "rbf": false
-              },
-              "time": 1734781955,
-              "interval": 71617,
-              "fullRbf": true,
-              "replaces": []
-            }
-          ],
-          "interval": 23369
-        }
-      ]
-    },
-    ...
-  ]
-}`,
-        },
-        codeSampleTestnet: {
-          esModule: [],
-          commonJS: [],
-          curl: [],
-          response: `{
-  "rbfLatest": [
-    {
-      "tx": {
-        "txid": "ed9e1ec0e1635d465ee95c8872efff367d420fc2c4e624bada2c6e6e6c8e0629",
-        "fee": 4123,
-        "vsize": 587.75,
-        "value": 25545,
-        "rate": 7.014887282007656,
-        "time": 1734876941,
-        "rbf": false,
-        "fullRbf": true
-      },
-      "time": 1734876941,
-      "fullRbf": true,
-      "replaces": [
-        {
-          "tx": {
-            "txid": "495ad5d39d44286e99bc45d104605407325cd4790f842dc3287fbfdda8ee5795",
-            "fee": 1178,
-            "vsize": 587.25,
-            "value": 28490,
-            "rate": 2.0059599829714774,
-            "time": 1734853572,
-            "rbf": false,
-            "fullRbf": true
-          },
-          "time": 1734853572,
-          "fullRbf": true,
-          "replaces": [
-            {
-              "tx": {
-                "txid": "189751a7560a6c39deb9a93db2a27374842c646268d0007ba52aefa189833afa",
-                "fee": 589,
-                "vsize": 587.25,
-                "value": 29079,
-                "rate": 1.0029799914857387,
-                "time": 1734781955,
-                "rbf": false
-              },
-              "time": 1734781955,
-              "interval": 71617,
-              "fullRbf": true,
-              "replaces": []
-            }
-          ],
-          "interval": 23369
-        }
-      ]
-    },
-    ...
-  ]
-}`,
-        },
-        codeSampleSignet: {
-          esModule: [],
-          commonJS: [],
-          curl: [],
-          response: `{
-  "rbfLatest": [
-    {
-      "tx": {
-        "txid": "ed9e1ec0e1635d465ee95c8872efff367d420fc2c4e624bada2c6e6e6c8e0629",
-        "fee": 4123,
-        "vsize": 587.75,
-        "value": 25545,
-        "rate": 7.014887282007656,
-        "time": 1734876941,
-        "rbf": false,
-        "fullRbf": true
-      },
-      "time": 1734876941,
-      "fullRbf": true,
-      "replaces": [
-        {
-          "tx": {
-            "txid": "495ad5d39d44286e99bc45d104605407325cd4790f842dc3287fbfdda8ee5795",
-            "fee": 1178,
-            "vsize": 587.25,
-            "value": 28490,
-            "rate": 2.0059599829714774,
-            "time": 1734853572,
-            "rbf": false,
-            "fullRbf": true
-          },
-          "time": 1734853572,
-          "fullRbf": true,
-          "replaces": [
-            {
-              "tx": {
-                "txid": "189751a7560a6c39deb9a93db2a27374842c646268d0007ba52aefa189833afa",
-                "fee": 589,
-                "vsize": 587.25,
-                "value": 29079,
-                "rate": 1.0029799914857387,
-                "time": 1734781955,
-                "rbf": false
-              },
-              "time": 1734781955,
-              "interval": 71617,
-              "fullRbf": true,
-              "replaces": []
-            }
-          ],
-          "interval": 23369
-        }
-      ]
-    },
-    ...
-  ]
-}`,
-        },
-        codeSampleLiquid: emptyCodeSample,
       },
     },
   },
@@ -7763,7 +7363,7 @@ export const restApiDocsData = [
     title: 'GET Block Audit Summary',
     description: {
       default:
-        'Returns the block audit summary for the specified <code>:blockHash</code>. Available fields: <code>height</code>, <code>id</code>, <code>timestamp</code>, <code>template</code>, <code>missingTxs</code>, <code>addedTxs</code>, <code>freshTxs</code>, <code>sigopTxs</code>, <code>fullrbfTxs</code>, <code>acceleratedTxs</code>, <code>matchRate</code>, <code>expectedFees</code>, and <code>expectedWeight</code>.',
+        'Returns the block audit summary for the specified <code>:blockHash</code>. Available fields: <code>height</code>, <code>id</code>, <code>timestamp</code>, <code>template</code>, <code>missingTxs</code>, <code>addedTxs</code>, <code>freshTxs</code>, <code>sigopTxs</code>, <code>matchRate</code>, <code>expectedFees</code>, and <code>expectedWeight</code>.',
     },
     urlString: ['/v1/block/:blockHash/audit-summary'],
     showConditions: bitcoinNetworks,
@@ -7806,12 +7406,6 @@ export const restApiDocsData = [
     "8ede292d8f0319cbe79fff9fd47564cd7f78fad74d7c506d2b157399ff41d904"
   ],
   sigopTxs: [],
-  fullrbfTxs: [
-    "271e7792910a4ea134c02c03c9d7477b32a8531a5dd92fbc4dbf3ca70614fcce",
-    "634a5b2de393f0f5b4eeb335bee75c1779b1f2308a07e86cafb95894aa4734d0",
-    ...
-  ],
-  acceleratedTxs: [],
   matchRate: 100,
   expectedFees: 169464627,
   expectedWeight: 3991702
@@ -7858,8 +7452,6 @@ export const restApiDocsData = [
     ...
   ],
   sigopTxs: [],
-  fullrbfTxs: [],
-  acceleratedTxs: [],
   matchRate: 86.96,
   expectedFees: 1541639,
   expectedWeight: 26425
@@ -7898,8 +7490,6 @@ export const restApiDocsData = [
   addedTxs: [],
   freshTxs: [],
   sigopTxs: [],
-  fullrbfTxs: [],
-  acceleratedTxs: [],
   matchRate: 100,
   expectedFees: 10494,
   expectedWeight: 6582
@@ -7954,7 +7544,6 @@ export const restApiDocsData = [
           response: `[
   {
     blockSize: 873046,
-    blockVSize: 746096.5,
     nTx: 863,
     totalFees: 8875608,
     medianFee: 10.79646017699115,
@@ -7978,7 +7567,6 @@ export const restApiDocsData = [
           response: `[
   {
     blockSize: 2871,
-    blockVSize: 2377.5,
     nTx: 11,
     totalFees: 3499,
     medianFee: 1.1799410029498525,
@@ -8002,7 +7590,6 @@ export const restApiDocsData = [
           response: `[
   {
     blockSize: 16157,
-    blockVSize: 10338.5,
     nTx: 75,
     totalFees: 13493,
     medianFee: 1.304812834224599,
@@ -8026,7 +7613,6 @@ export const restApiDocsData = [
           response: `[
   {
     blockSize: 5011,
-    blockVSize: 1530.25,
     nTx: 1,
     totalFees: 288,
     medianFee: 0.1882045417415455,
@@ -8050,7 +7636,6 @@ export const restApiDocsData = [
           response: `[
   {
     blockSize: 23782,
-    blockVSize: 20457.25,
     nTx: 3,
     totalFees: 2089,
     medianFee: 0.10163043478260869,
@@ -8551,338 +8136,11 @@ export const restApiDocsData = [
     },
   },
   {
-    type: 'endpoint',
-    category: 'mempool',
-    httpRequestMethod: 'GET',
-    fragment: 'get-mempool-rbf',
-    title: 'GET Mempool RBF Transactions',
-    description: {
-      default:
-        'Returns the list of mempool transactions that are part of a RBF chain.',
-    },
-    urlString: '/v1/replacements',
-    showConditions: bitcoinNetworks,
-    showJsExamples: showJsExamplesDefaultFalse,
-    codeExample: {
-      default: {
-        codeTemplate: {
-          curl: `/api/v1/replacements`,
-          commonJS: ``,
-          esModule: ``,
-        },
-        codeSampleMainnet: {
-          curl: [],
-          response: `[
-  {
-    tx: {
-      txid: "1ca4b22006e57b1b13f5cc89a41cf7c9e99fe225aabf407251e4fe0268f22d93",
-      fee: 14983,
-      vsize: 141.5,
-      value: 343934,
-      rate: 105.886925795053,
-      rbf: true,
-      fullRbf: false
-    },
-    time: 1703331467,
-    fullRbf: false,
-    replaces: [
-      {
-        tx: {
-          txid: "9f8e30674af641bb153a35254d539468e1d847b16bbdc13ce23b5a970b0b11cf",
-          fee: 13664,
-          vsize: 141.25,
-          value: 345253,
-          rate: 96.7362831858407,
-          rbf: true
-        },
-        time: 1703331398,
-        interval: 69,
-        fullRbf: false,
-        replaces: []
-      }
-    ]
-  },
-  ...
-]`,
-        },
-        codeSampleTestnet: {
-          curl: [],
-          response: `[
-  {
-    tx: {
-      txid: "7766e3f008011b776905f96fcad9d4a7b75d1b368d1e77db2901254f1fa8357d",
-      fee: 9101,
-      vsize: 317,
-      value: 147706698,
-      rate: 28.709779179810724,
-      rbf: true,
-      fullRbf: false
-    },
-    time: 1703331325,
-    fullRbf: false,
-    replaces: [
-      {
-        tx: {
-          txid: "43055f6e5750c6aa0c2214e59e99f367398d96bde935e7666c3e648d249a4e40",
-          fee: 7000,
-          vsize: 317,
-          value: 147708799,
-          rate: 22.082018927444796,
-          rbf: true
-        },
-        time: 1703331154,
-        interval: 171,
-        fullRbf: false,
-        replaces: []
-      }
-    ]
-  },
-  ...
-]`,
-        },
-        codeSampleSignet: {
-          curl: [],
-          response: `[
-  {
-    tx: {
-      txid: "13985a5717a1ea54ce720cd6b70421b1667061be491a6799acf6dea01c551248",
-      fee: 5040,
-      vsize: 215.5,
-      value: 762745,
-      rate: 23.387470997679813,
-      rbf: true,
-      fullRbf: false,
-      mined: true
-    },
-    time: 1703316271,
-    fullRbf: false,
-    replaces: [
-      {
-        tx: {
-          txid: "eac5ec8487414c955f4a5d3b2e516c351aec5299f1335f9019a00907962386ce",
-          fee: 4560,
-          vsize: 215.25,
-          value: 763225,
-          rate: 21.18466898954704,
-          rbf: true
-        },
-        time: 1703316270,
-        interval: 1,
-        fullRbf: false,
-        replaces: []
-      }
-    ],
-    mined: true
-  }
-]`,
-        },
-        codeSampleLiquid: emptyCodeSample,
-        codeSampleLiquidTestnet: emptyCodeSample,
-      },
-    },
-  },
-  {
-    type: 'endpoint',
-    category: 'mempool',
-    httpRequestMethod: 'GET',
-    fragment: 'get-mempool-fullrbf',
-    title: 'GET Mempool Full RBF Transactions',
-    description: {
-      default:
-        'Returns the list of mempool transactions that are part of a Full-RBF chain.',
-    },
-    urlString: '/v1/fullrbf/replacements',
-    showConditions: bitcoinNetworks,
-    showJsExamples: showJsExamplesDefaultFalse,
-    codeExample: {
-      default: {
-        codeTemplate: {
-          curl: `/api/v1/fullrbf/replacements`,
-          commonJS: ``,
-          esModule: ``,
-        },
-        codeSampleMainnet: {
-          curl: [],
-          response: `[
-  {
-    tx: {
-      txid: "25e2bfaf0e0821e5cb71f11e460b2f71e1d5a3755015de42544afa5fbad6d443",
-      fee: 24436,
-      vsize: 297.75,
-      value: 273418,
-      rate: 82.0688497061293,
-      rbf: false,
-      fullRbf: true
-    },
-    time: 1703409882,
-    fullRbf: true,
-    replaces: [
-      {
-        tx: {
-          txid: "07d501e8ad4a25f07f3ced0a6102741720f710765e6fdb2eb966ba0df657997a",
-          fee: 24138,
-          vsize: 297.75,
-          value: 273716,
-          rate: 81.06801007556675,
-          rbf: false
-        },
-        time: 1703409853,
-        interval: 29,
-        fullRbf: true,
-        replaces: []
-      }
-    ]
-  },
-  ...
-]`,
-        },
-        codeSampleTestnet: {
-          curl: [],
-          response: `[
-  {
-    tx: {
-      txid: "25e2bfaf0e0821e5cb71f11e460b2f71e1d5a3755015de42544afa5fbad6d443",
-      fee: 24436,
-      vsize: 297.75,
-      value: 273418,
-      rate: 82.0688497061293,
-      rbf: false,
-      fullRbf: true
-    },
-    time: 1703409882,
-    fullRbf: true,
-    replaces: [
-      {
-        tx: {
-          txid: "07d501e8ad4a25f07f3ced0a6102741720f710765e6fdb2eb966ba0df657997a",
-          fee: 24138,
-          vsize: 297.75,
-          value: 273716,
-          rate: 81.06801007556675,
-          rbf: false
-        },
-        time: 1703409853,
-        interval: 29,
-        fullRbf: true,
-        replaces: []
-      }
-    ]
-  },
-  ...
-]`,
-        },
-        codeSampleSignet: {
-          curl: [],
-          response: `[
-  {
-    tx: {
-      txid: "25e2bfaf0e0821e5cb71f11e460b2f71e1d5a3755015de42544afa5fbad6d443",
-      fee: 24436,
-      vsize: 297.75,
-      value: 273418,
-      rate: 82.0688497061293,
-      rbf: false,
-      fullRbf: true
-    },
-    time: 1703409882,
-    fullRbf: true,
-    replaces: [
-      {
-        tx: {
-          txid: "07d501e8ad4a25f07f3ced0a6102741720f710765e6fdb2eb966ba0df657997a",
-          fee: 24138,
-          vsize: 297.75,
-          value: 273716,
-          rate: 81.06801007556675,
-          rbf: false
-        },
-        time: 1703409853,
-        interval: 29,
-        fullRbf: true,
-        replaces: []
-      }
-    ]
-  },
-  ...
-]`,
-        },
-        codeSampleLiquid: emptyCodeSample,
-        codeSampleLiquidTestnet: emptyCodeSample,
-      },
-    },
-  },
-  {
     type: 'category',
     category: 'transactions',
     fragment: 'transactions',
     title: 'Transactions',
     showConditions: bitcoinNetworks.concat(liquidNetworks),
-  },
-  {
-    type: 'endpoint',
-    category: 'transactions',
-    httpRequestMethod: 'GET',
-    fragment: 'get-cpfp',
-    title: 'GET Children Pay for Parent',
-    description: {
-      default:
-        'Returns the ancestors and the best descendant fees for a transaction.',
-    },
-    urlString: '/v1/cpfp',
-    showConditions: bitcoinNetworks.concat(liquidNetworks),
-    showJsExamples: showJsExamplesDefault,
-    codeExample: {
-      default: {
-        codeTemplate: {
-          curl: `/api/v1/cpfp/%{1}`,
-          commonJS: `
-        const { %{0}: { fees } } = mempoolJS();
-
-        const txid = 'txid';
-        const feesCPFP = await fees.getCPFP({ txid });
-
-        document.getElementById("result").textContent = JSON.stringify(feesCPFP, undefined, 2);
-        `,
-          esModule: `
-  const { %{0}: { fees } } = mempoolJS();
-
-  const txid = 'txid';
-  const feesCPFP = await fees.getCPFP({ txid });
-  console.log(feesCPFP);
-          `,
-        },
-        codeSampleMainnet: {
-          esModule: ['txid'],
-          commonJS: ['txid'],
-          curl: ['txid'],
-          response: ``,
-        },
-        codeSampleTestnet: {
-          esModule: ['txid'],
-          commonJS: ['txid'],
-          curl: ['txid'],
-          response: ``,
-        },
-        codeSampleSignet: {
-          esModule: ['txid'],
-          commonJS: ['txid'],
-          curl: ['txid'],
-          response: ``,
-        },
-        codeSampleLiquid: {
-          esModule: ['txid'],
-          commonJS: ['txid'],
-          curl: ['txid'],
-          response: ``,
-        },
-        codeSampleLiquidTestnet: {
-          esModule: ['txid'],
-          commonJS: ['txid'],
-          curl: ['txid'],
-          response: ``,
-        },
-      },
-    },
   },
   {
     type: 'endpoint',
@@ -9797,153 +9055,6 @@ export const restApiDocsData = [
           ],
           response: ``,
         },
-      },
-    },
-  },
-  {
-    type: 'endpoint',
-    category: 'transactions',
-    httpRequestMethod: 'GET',
-    fragment: 'get-transaction-rbf-timeline',
-    title: 'GET Transaction RBF Timeline',
-    description: {
-      default: 'Returns the RBF tree timeline of a transaction.',
-    },
-    urlString: 'v1/tx/:txId/rbf',
-    showConditions: bitcoinNetworks,
-    showJsExamples: showJsExamplesDefaultFalse,
-    codeExample: {
-      default: {
-        codeTemplate: {
-          curl: `/api/v1/tx/%{1}/rbf`,
-          commonJS: ``,
-          esModule: ``,
-        },
-        codeSampleMainnet: {
-          curl: [
-            `2e95ff9094df9f3650e3f2abc189250760162be89a88f9f2f23301c7cb14b8b4`,
-          ],
-          response: `{
-  replacements: {
-    tx: {
-      txid: "2e95ff9094df9f3650e3f2abc189250760162be89a88f9f2f23301c7cb14b8b4",
-      fee: 1668,
-      vsize: 276.75,
-      value: 14849,
-      rate: 4.824207492795389,
-      rbf: false,
-      fullRbf: true
-    },
-    time: 1703240261,
-    fullRbf: true,
-    replaces: [
-      {
-        tx: {
-          txid: "3f4670463daadffed07d7a1060071b07f7e81a2566eca21d78bb513cbf21c82a",
-          fee: 420,
-          vsize: 208.25,
-          value: 4856,
-          rate: 2.0168067226890756,
-          rbf: false
-        },
-        time: 1702870898,
-        interval: 369363,
-        fullRbf: true,
-        replaces: []
-      }
-      ...
-    ]
-  },
-  replaces: [
-    "3f4670463daadffed07d7a1060071b07f7e81a2566eca21d78bb513cbf21c82a",
-    "92f9b4f719d0ffc9035d3a9767d80c940cecbc656df2243bafd33f52b583ee92"
-  ]
-}`,
-        },
-        codeSampleTestnet: {
-          curl: [
-            `5faaa30530bee55de8cc896bdf48f803c2274a94bffc2842386bec2a8bf7a813`,
-          ],
-          response: `{
-  replacements: {
-    tx: {
-      txid: "5faaa30530bee55de8cc896bdf48f803c2274a94bffc2842386bec2a8bf7a813",
-      fee: 9101,
-      vsize: 318,
-      value: 148022607,
-      rate: 28.61949685534591,
-      rbf: true,
-      fullRbf: false,
-      mined: true
-    },
-    time: 1703322610,
-    fullRbf: false,
-    replaces: [
-      {
-        tx: {
-          txid: "06e69641fa889fe9148669ac2904929004e7140087bedaec8c8e4e05aabded52",
-          fee: 7000,
-          vsize: 318,
-          value: 148024708,
-          rate: 22.0125786163522,
-          rbf: true
-        },
-        time: 1703322602,
-        interval: 8,
-        fullRbf: false,
-        replaces: []
-      }
-    ],
-    mined: true
-  },
-  replaces: [
-    "06e69641fa889fe9148669ac2904929004e7140087bedaec8c8e4e05aabded52"
-  ]
-}`,
-        },
-        codeSampleSignet: {
-          curl: [
-            `13985a5717a1ea54ce720cd6b70421b1667061be491a6799acf6dea01c551248`,
-          ],
-          response: `{
-  replacements: {
-    tx: {
-      txid: "13985a5717a1ea54ce720cd6b70421b1667061be491a6799acf6dea01c551248",
-      fee: 5040,
-      vsize: 215.5,
-      value: 762745,
-      rate: 23.387470997679813,
-      rbf: true,
-      fullRbf: false,
-      mined: true
-    },
-    time: 1703316272,
-    fullRbf: false,
-    replaces: [
-      {
-        tx: {
-          txid: "eac5ec8487414c955f4a5d3b2e516c351aec5299f1335f9019a00907962386ce",
-          fee: 4560,
-          vsize: 215.25,
-          value: 763225,
-          rate: 21.18466898954704,
-          rbf: true
-        },
-        time: 1703316270,
-        interval: 2,
-        fullRbf: false,
-        replaces: []
-      }
-    ],
-    mined: true
-  },
-  replaces: [
-    "eac5ec8487414c955f4a5d3b2e516c351aec5299f1335f9019a00907962386ce"
-  ]
-}`,
-        },
-        codeSampleLiquid: emptyCodeSample,
-        codeSampleLiquidTestnet: emptyCodeSample,
       },
     },
   },

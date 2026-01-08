@@ -33,8 +33,8 @@
             </td>
           </tr>
           <tr>
-            <td i18n="block.weight">Weight</td>
-            <td [innerHTML]="'&lrm;' + (block?.weight | wuBytes: 2)"></td>
+            <td i18n="block.weight">Size</td>
+            <td [innerHTML]="'&lrm;' + (block?.size | bytes: 2)"></td>
           </tr>
           <tr *ngIf="block?.extras?.medianFee != undefined">
             <td class="td-width" i18n="block.median-fee">Median fee</td>
@@ -154,7 +154,7 @@
         [autofit]="true"
         [isLoading]="false"
         [resolution]="86"
-        [blockLimit]="stateService.blockVSize"
+        [blockLimit]="stateService.blockSize"
         [orientation]="'top'"
         [flip]="false"
         [disableSpinner]="true"

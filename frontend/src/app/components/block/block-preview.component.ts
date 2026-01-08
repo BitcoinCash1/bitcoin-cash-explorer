@@ -173,8 +173,7 @@ export class BlockPreviewComponent implements OnInit, OnDestroy {
         startWith(null),
         pairwise(),
         switchMap(([prevBlock, block]) => {
-          return forkJoin([
-            this.apiService.getStrippedBlockTransactions$(block.id).pipe(
+          return this.apiService.getStrippedBlockTransactions$(block.id).pipe(
               catchError((err) => {
                 this.overviewError = err;
                 this.openGraphService.fail({
@@ -186,35 +185,12 @@ export class BlockPreviewComponent implements OnInit, OnDestroy {
               switchMap((transactions) => {
                 return of(transactions);
               })
-            ),
-            this.stateService.env.ACCELERATOR === true &&
-            block.height > 819500 &&
-            this.stateService.network === ''
-              ? this.servicesApiService
-                  .getAllAccelerationHistory$({ blockHeight: block.height })
-                  .pipe(
-                    catchError(() => {
-                      return of([]);
-                    })
-                  )
-              : of([]),
-          ]);
+            )
         })
       )
       .subscribe(
-        ([transactions, accelerations]) => {
+        (transactions) => {
           this.strippedTransactions = transactions;
-
-          const acceleratedInBlock = {};
-          for (const acc of accelerations) {
-            acceleratedInBlock[acc.txid] = acc;
-          }
-          for (const tx of transactions) {
-            if (acceleratedInBlock[tx.txid]) {
-              tx.acc = true;
-            }
-          }
-
           this.isLoadingOverview = false;
           if (this.blockGraph) {
             this.blockGraph.destroy();

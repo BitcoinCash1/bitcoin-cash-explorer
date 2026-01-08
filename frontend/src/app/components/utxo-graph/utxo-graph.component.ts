@@ -22,8 +22,6 @@ import {
 } from '@components/block-overview-graph/utils';
 import { TimeService } from '@app/services/time.service';
 import { WebsocketService } from '@app/services/websocket.service';
-import { Acceleration } from '@interfaces/node-api.interface';
-import { defaultAuditColors } from '@components/block-overview-graph/utils';
 
 const newColorHex = '1BF4AF';
 const oldColorHex = '3C39F4';
@@ -83,10 +81,8 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
   @Input() widget: boolean = false;
 
   subscription: Subscription;
-  accelerationsSubscription: Subscription;
   lastUpdate: number = 0;
   updateInterval;
-  accelerationMap: Record<string, Acceleration> = {};
 
   chartOptions: EChartsOption = {};
   chartInitOptions = {
@@ -112,18 +108,6 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
         this.prepareChartOptions(this.utxos);
       }
     }, 10000);
-
-    this.websocketService.startTrackAccelerations();
-    this.accelerationsSubscription =
-      this.stateService.liveAccelerations$.subscribe((accelerations) => {
-        this.accelerationMap = accelerations.reduce((acc, acceleration) => {
-          acc[acceleration.txid] = acceleration;
-          return acc;
-        }, {});
-
-        this.applyAccelerations();
-        this.prepareChartOptions(this.utxos);
-      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -132,17 +116,7 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
       return;
     }
     if (changes.utxos) {
-      this.applyAccelerations();
       this.prepareChartOptions(this.utxos);
-    }
-  }
-
-  applyAccelerations(): void {
-    for (const utxo of this.utxos) {
-      delete utxo.status['accelerated'];
-      if (this.accelerationMap[utxo.txid]) {
-        utxo.status['accelerated'] = true;
-      }
     }
   }
 
@@ -424,9 +398,7 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
   }
 
   getColor(utxo: Utxo): string {
-    if (utxo.status['accelerated']) {
-      return colorToHex(defaultAuditColors.accelerated);
-    } else if (utxo.status.confirmed) {
+    if (utxo.status.confirmed) {
       const age = Date.now() / 1000 - utxo.status.block_time;
       const oneHour = 60 * 60;
       const fourYears = 4 * 365 * 24 * 60 * 60;
@@ -474,8 +446,6 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
       this.subscription.unsubscribe();
     }
     clearInterval(this.updateInterval);
-    this.websocketService.stopTrackAccelerations();
-    this.accelerationsSubscription.unsubscribe();
   }
 
   isMobile(): boolean {

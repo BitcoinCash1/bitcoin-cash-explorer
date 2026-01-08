@@ -35,11 +35,6 @@ import { StratumJob } from '@interfaces/websocket.interface';
 import { WebsocketService } from '@app/services/websocket.service';
 import { MiningService } from '@app/services/mining.service';
 
-interface AccelerationTotal {
-  cost: number;
-  count: number;
-}
-
 @Component({
   selector: 'app-pool',
   templateUrl: './pool.component.html',
@@ -59,7 +54,6 @@ export class PoolComponent implements OnInit {
   slugSubscription: Subscription;
   poolStats$: Observable<PoolStat>;
   blocks$: Observable<BlockExtended[]>;
-  oobFees$: Observable<AccelerationTotal[]>;
   job$: Observable<StratumJob | null>;
   expectedBlockTime$: Observable<number>;
   isLoading = true;
@@ -164,22 +158,6 @@ export class PoolComponent implements OnInit {
       }),
       map(() => this.blocks),
       share()
-    );
-
-    this.oobFees$ = this.route.params.pipe(map((params) => params.slug)).pipe(
-      filter(
-        () =>
-          this.stateService.env.PUBLIC_ACCELERATIONS === true &&
-          this.stateService.network === ''
-      ),
-      switchMap((slug) => {
-        return combineLatest([
-          this.apiService.getAccelerationTotals$(this.slug, '1w'),
-          this.apiService.getAccelerationTotals$(this.slug, '1m'),
-          this.apiService.getAccelerationTotals$(this.slug),
-        ]);
-      }),
-      filter((oob) => oob.length === 3 && oob[2].count > 0)
     );
 
     if (this.stratumEnabled) {

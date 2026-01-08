@@ -8,27 +8,20 @@ import {
 } from 'rxjs';
 import { Transaction } from '@interfaces/electrs.interface';
 import {
-  AccelerationDelta,
   HealthCheckHost,
   IBackendInfo,
   MempoolBlock,
   MempoolBlockUpdate,
   MempoolInfo,
   Recommendedfees,
-  ReplacedTransaction,
-  ReplacementInfo,
   StratumJob,
   isMempoolState,
 } from '@interfaces/websocket.interface';
 import {
-  Acceleration,
-  AccelerationPosition,
   BlockExtended,
-  CpfpInfo,
   DifficultyAdjustment,
   MempoolPosition,
   OptimizedMempoolStats,
-  RbfTree,
   TransactionStripped,
 } from '@interfaces/node-api.interface';
 import { Router, NavigationStart } from '@angular/router';
@@ -42,9 +35,8 @@ export interface MarkBlockState {
   blockHeight?: number;
   txid?: string;
   mempoolBlockIndex?: number;
-  txFeePerVSize?: number;
+  txFeePerSize?: number;
   mempoolPosition?: MempoolPosition;
-  accelerationPositions?: AccelerationPosition[];
 }
 
 export interface ILoadingIndicators {
@@ -90,7 +82,7 @@ export interface Env {
   NGINX_PROTOCOL?: string;
   NGINX_HOSTNAME?: string;
   NGINX_PORT?: string;
-  BLOCK_WEIGHT_UNITS: number;
+  MIN_BLOCK_SIZE_UNITS: number;
   MEMPOOL_BLOCKS_AMOUNT: number;
   GIT_COMMIT_HASH: string;
   PACKAGE_JSON_VERSION: string;
@@ -135,11 +127,11 @@ const defaultEnv: Env = {
   NGINX_PROTOCOL: 'http',
   NGINX_HOSTNAME: '127.0.0.1',
   NGINX_PORT: '80',
-  BLOCK_WEIGHT_UNITS: 4000000,
+  MIN_BLOCK_SIZE_UNITS: 32000000,
   MEMPOOL_BLOCKS_AMOUNT: 8,
   GIT_COMMIT_HASH: '',
   PACKAGE_JSON_VERSION: '',
-  MEMPOOL_WEBSITE_URL: 'https://mempool.space',
+  MEMPOOL_WEBSITE_URL: 'https://explorer.melroy.org',
   LIQUID_WEBSITE_URL: 'https://liquid.network',
   MINING_DASHBOARD: true,
   LIGHTNING: false,
@@ -158,7 +150,7 @@ const defaultEnv: Env = {
   PUBLIC_ACCELERATIONS: false,
   ADDITIONAL_CURRENCIES: false,
   STRATUM_ENABLED: false,
-  SERVICES_API: 'https://mempool.space/api/v1/services',
+  SERVICES_API: 'https://explorer.melroy.org/api/v1/services',
   PROD_DOMAINS: [],
 };
 
@@ -174,7 +166,7 @@ export class StateService {
   network = '';
   lightningNetworks = ['', 'mainnet', 'bitcoin', 'testnet', 'signet'];
   lightning = false;
-  blockVSize: number;
+  blockSize: number;
   env: Env;
   latestBlockHeight = -1;
   blocks: BlockExtended[] = [];
@@ -200,25 +192,17 @@ export class StateService {
     block: number;
     transactions: { [txid: string]: TransactionStripped };
   }>;
-  accelerations$ = new Subject<AccelerationDelta>();
-  liveAccelerations$: Observable<Acceleration[]>;
   stratumJobUpdate$ = new Subject<
     { state: Record<string, StratumJob> } | { job: StratumJob }
   >();
   stratumJobs$ = new BehaviorSubject<Record<string, StratumJob>>({});
   txConfirmed$ = new Subject<[string, BlockExtended]>();
-  txReplaced$ = new Subject<ReplacedTransaction>();
-  txRbfInfo$ = new Subject<RbfTree>();
-  rbfLatest$ = new Subject<RbfTree[]>();
-  rbfLatestSummary$ = new Subject<ReplacementInfo[]>();
   utxoSpent$ = new Subject<object>();
   difficultyAdjustment$ = new ReplaySubject<DifficultyAdjustment>(1);
   mempoolTransactions$ = new Subject<Transaction>();
   mempoolTxPosition$ = new BehaviorSubject<{
     txid: string;
     position: MempoolPosition;
-    cpfp: CpfpInfo | null;
-    accelerationPositions?: AccelerationPosition[];
   }>(null);
   mempoolRemovedTransactions$ = new Subject<Transaction>();
   multiAddressTransactions$ = new Subject<{
@@ -232,7 +216,7 @@ export class StateService {
   walletTransactions$ = new Subject<Transaction[]>();
   isLoadingWebSocket$ = new ReplaySubject<boolean>(1);
   isLoadingMempool$ = new BehaviorSubject<boolean>(true);
-  vbytesPerSecond$ = new ReplaySubject<number>(1);
+  bytesPerSecond$ = new ReplaySubject<number>(1);
   previousRetarget$ = new ReplaySubject<number>(1);
   backendInfo$ = new ReplaySubject<IBackendInfo>(1);
   servicesBackendInfo$ = new ReplaySubject<IBackendInfo>(1);
@@ -301,14 +285,12 @@ export class StateService {
 
     if (this.isBrowser) {
       this.setNetworkBasedonUrl(window.location.pathname);
-      this.setLightningBasedonUrl(window.location.pathname);
       this.isTabHidden$ = fromEvent(document, 'visibilitychange').pipe(
         map(() => this.isHidden()),
         shareReplay()
       );
     } else {
       this.setNetworkBasedonUrl('/');
-      this.setLightningBasedonUrl('/');
       this.isTabHidden$ = new BehaviorSubject(false);
     }
 
@@ -317,7 +299,6 @@ export class StateService {
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationStart) {
         this.setNetworkBasedonUrl(event.url);
-        this.setLightningBasedonUrl(event.url);
       }
     });
 
@@ -353,7 +334,6 @@ export class StateService {
             change.changed.forEach((tx) => {
               if (acc.transactions[tx.txid]) {
                 acc.transactions[tx.txid].rate = tx.rate;
-                acc.transactions[tx.txid].acc = tx.acc;
               }
             });
             this.mempoolBlockState = {
@@ -368,30 +348,6 @@ export class StateService {
       share()
     );
     this.liveMempoolBlockTransactions$.subscribe();
-
-    // Emits the full list of pending accelerations each time it changes
-    this.liveAccelerations$ = this.accelerations$.pipe(
-      scan(
-        (
-          accelerations: { [txid: string]: Acceleration },
-          delta: AccelerationDelta
-        ) => {
-          if (delta.reset) {
-            accelerations = {};
-          } else {
-            for (const txid of delta.removed) {
-              delete accelerations[txid];
-            }
-          }
-          for (const acc of delta.added) {
-            accelerations[acc.txid] = acc;
-          }
-          return accelerations;
-        },
-        {}
-      ),
-      map((accMap) => Object.values(accMap).sort((a, b) => b.added - a.added))
-    );
 
     this.stratumJobUpdate$
       .pipe(
@@ -431,7 +387,7 @@ export class StateService {
         null
     );
 
-    this.blockVSize = this.env.BLOCK_WEIGHT_UNITS / 4;
+    this.blockSize = this.env.MIN_BLOCK_SIZE_UNITS;
 
     this.blocks$ = this.blocksSubject$.pipe(
       filter((blocks) => blocks != null && blocks.length > 0)
@@ -565,19 +521,6 @@ export class StateService {
           this.networkChanged$.next('');
         }
     }
-  }
-
-  setLightningBasedonUrl(url: string) {
-    if (this.env.BASE_MODULE !== 'mempool') {
-      return;
-    }
-    const networkMatches = url.match(/\/lightning\//);
-    this.lightning = !!networkMatches;
-    this.lightningChanged$.next(this.lightning);
-  }
-
-  networkSupportsLightning() {
-    return this.env.LIGHTNING && this.lightningNetworks.includes(this.network);
   }
 
   getHiddenProp() {

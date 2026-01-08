@@ -1,7 +1,3 @@
-import { Vin } from '../interfaces/electrs.interface';
-import { AddressType, detectAddressType } from './address-utils';
-import { ParsedTaproot } from './transaction.utils';
-
 const opcodes = {
   OP_FALSE: 0,
   OP_0: 0,
@@ -202,7 +198,6 @@ export const ScriptTemplates: {
 
 export class ScriptInfo {
   type: ScriptType;
-  taprootInfo?: ParsedTaproot;
   hex?: string;
   asm?: string;
   vinId?: string;
@@ -212,21 +207,16 @@ export class ScriptInfo {
     type: ScriptType,
     hex?: string,
     asm?: string,
-    witness?: string[],
-    taprootInfo?: ParsedTaproot,
     vinId?: string
   ) {
     this.type = type;
     this.hex = hex;
     this.asm = asm;
-    if (taprootInfo) {
-      this.taprootInfo = taprootInfo;
-    }
     if (vinId) {
       this.vinId = vinId;
     }
     if (this.asm) {
-      this.template = detectScriptTemplate(this.type, this.asm, witness);
+      this.template = detectScriptTemplate(this.asm);
     }
   }
 
@@ -235,8 +225,6 @@ export class ScriptInfo {
       this.type,
       this.hex,
       this.asm,
-      undefined,
-      this.taprootInfo,
       this.vinId
     );
     if (this.template) {
@@ -246,101 +234,16 @@ export class ScriptInfo {
   }
 
   get key(): string {
-    return this.type + (this.taprootInfo?.controlBlock || '');
+    return this.type;
   }
 }
 
-/** parses an inner_witnessscript + witness stack, and detects named script types */
-export function detectScriptTemplate(
-  type: ScriptType,
-  script_asm: string,
-  witness?: string[]
-): ScriptTemplate | undefined {
-  if (type === 'inner_witnessscript' && witness?.length) {
-    if (
-      script_asm.indexOf(
-        'OP_DEPTH OP_PUSHNUM_12 OP_EQUAL OP_IF OP_PUSHNUM_11'
-      ) === 0 ||
-      script_asm.indexOf(
-        'OP_PUSHNUM_15 OP_CHECKMULTISIG OP_IFDUP OP_NOTIF OP_PUSHBYTES_2'
-      ) === 1259
-    ) {
-      if (witness.length > 11) {
-        return ScriptTemplates.liquid_peg_out();
-      } else {
-        return ScriptTemplates.liquid_peg_out_emergency();
-      }
-    }
-
-    const topElement = witness[witness.length - 2];
-    if (
-      /^OP_IF OP_PUSHBYTES_33 \w{66} OP_ELSE OP_PUSH(NUM_\d+|BYTES_(1 \w{2}|2 \w{4})) OP_CSV OP_DROP OP_PUSHBYTES_33 \w{66} OP_ENDIF OP_CHECKSIG$/.test(
-        script_asm
-      )
-    ) {
-      // https://github.com/lightning/bolts/blob/master/03-transactions.md#commitment-transaction-outputs
-      if (topElement === '01') {
-        // top element is '01' to get in the revocation path
-        return ScriptTemplates.ln_force_close_revoked();
-      } else {
-        // top element is '', this is a delayed to_local output
-        return ScriptTemplates.ln_force_close();
-      }
-    } else if (
-      /^OP_DUP OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUAL OP_IF OP_CHECKSIG OP_ELSE OP_PUSHBYTES_33 \w{66} OP_SWAP OP_SIZE OP_PUSHBYTES_1 20 OP_EQUAL OP_NOTIF OP_DROP OP_PUSHNUM_2 OP_SWAP OP_PUSHBYTES_33 \w{66} OP_PUSHNUM_2 OP_CHECKMULTISIG OP_ELSE OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUALVERIFY OP_CHECKSIG OP_ENDIF (OP_PUSHNUM_1 OP_CSV OP_DROP |)OP_ENDIF$/.test(
-        script_asm
-      ) ||
-      /^OP_DUP OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUAL OP_IF OP_CHECKSIG OP_ELSE OP_PUSHBYTES_33 \w{66} OP_SWAP OP_SIZE OP_PUSHBYTES_1 20 OP_EQUAL OP_IF OP_HASH160 OP_PUSHBYTES_20 \w{40} OP_EQUALVERIFY OP_PUSHNUM_2 OP_SWAP OP_PUSHBYTES_33 \w{66} OP_PUSHNUM_2 OP_CHECKMULTISIG OP_ELSE OP_DROP OP_PUSHBYTES_3 \w{6} OP_CLTV OP_DROP OP_CHECKSIG OP_ENDIF (OP_PUSHNUM_1 OP_CSV OP_DROP |)OP_ENDIF$/.test(
-        script_asm
-      )
-    ) {
-      // https://github.com/lightning/bolts/blob/master/03-transactions.md#offered-htlc-outputs
-      // https://github.com/lightning/bolts/blob/master/03-transactions.md#received-htlc-outputs
-      if (topElement.length === 66) {
-        // top element is a public key
-        return ScriptTemplates.ln_htlc_revoked();
-      } else if (topElement) {
-        // top element is a preimage
-        return ScriptTemplates.ln_htlc();
-      } else {
-        // top element is '' to get in the expiry of the script
-        return ScriptTemplates.ln_htlc_expired();
-      }
-    } else if (
-      /^OP_PUSHBYTES_33 \w{66} OP_CHECKSIG OP_IFDUP OP_NOTIF OP_PUSHNUM_16 OP_CSV OP_ENDIF$/.test(
-        script_asm
-      )
-    ) {
-      // https://github.com/lightning/bolts/blob/master/03-transactions.md#to_local_anchor-and-to_remote_anchor-output-option_anchors
-      if (topElement) {
-        // top element is a signature
-        return ScriptTemplates.ln_anchor();
-      } else {
-        // top element is '', it has been swept after 16 blocks
-        return ScriptTemplates.ln_anchor_swept();
-      }
-    }
-  }
-
+/** parses a script and detects named script types */
+export function detectScriptTemplate(script_asm: string): ScriptTemplate | undefined {
   const multisig = parseMultisigScript(script_asm);
   if (multisig) {
     return ScriptTemplates.multisig(multisig.m, multisig.n);
   }
-
-  const tapscriptMultisig = parseTapscriptMultisig(script_asm);
-  if (tapscriptMultisig) {
-    return ScriptTemplates.multisig(tapscriptMultisig.m, tapscriptMultisig.n);
-  }
-
-  const tapscriptUnanimousMultisig =
-    parseTapscriptUnanimousMultisig(script_asm);
-  if (tapscriptUnanimousMultisig) {
-    return ScriptTemplates.multisig(
-      tapscriptUnanimousMultisig,
-      tapscriptUnanimousMultisig
-    );
-  }
-
   return;
 }
 

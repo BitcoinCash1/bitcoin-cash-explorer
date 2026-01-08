@@ -16,8 +16,6 @@ import { OpenGraphService } from '@app/services/opengraph.service';
 import { ApiService } from '@app/services/api.service';
 import { SeoService } from '@app/services/seo.service';
 import { seoDescriptionNetwork } from '@app/shared/common.utils';
-import { CpfpInfo } from '@interfaces/node-api.interface';
-import { LiquidUnblinding } from '@components/transaction/liquid-ublinding';
 
 @Component({
   selector: 'app-transaction-preview',
@@ -34,12 +32,6 @@ export class TransactionPreviewComponent implements OnInit, OnDestroy {
   errorUnblinded: any = undefined;
   transactionTime = -1;
   subscription: Subscription;
-  fetchCpfpSubscription: Subscription;
-  cpfpInfo: CpfpInfo | null;
-  showCpfpDetails = false;
-  fetchCpfp$ = new Subject<string>();
-  liquidUnblinding = new LiquidUnblinding();
-  isLiquid = false;
   totalValue: number;
   opReturns: Vout[];
   extraData: 'none' | 'coinbase' | 'opreturn';
@@ -59,28 +51,7 @@ export class TransactionPreviewComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.stateService.networkChanged$.subscribe((network) => {
       this.network = network;
-      if (this.network === 'liquid' || this.network == 'liquidtestnet') {
-        this.isLiquid = true;
-      }
     });
-
-    this.fetchCpfpSubscription = this.fetchCpfp$
-      .pipe(
-        switchMap((txId) =>
-          this.apiService.getCpfpinfo$(txId).pipe(
-            catchError((err) => {
-              return of(null);
-            })
-          )
-        )
-      )
-      .subscribe((cpfpInfo) => {
-        this.cpfpInfo = cpfpInfo;
-        this.openGraphService.waitOver({
-          event: 'cpfp-data-' + this.txId,
-          sessionId: this.ogSession,
-        });
-      });
 
     this.subscription = this.route.paramMap
       .pipe(
@@ -96,11 +67,7 @@ export class TransactionPreviewComponent implements OnInit, OnDestroy {
           this.seoService.setTitle(
             $localize`:@@bisq.transaction.browser-title:Transaction: ${this.txId}:INTERPOLATION:`
           );
-          const network =
-            this.stateService.network === 'liquid' ||
-            this.stateService.network === 'liquidtestnet'
-              ? 'Liquid'
-              : 'Bitcoin';
+          const network = 'Bitcoin';
           const seoDescription = seoDescriptionNetwork(
             this.stateService.network
           );
@@ -139,14 +106,6 @@ export class TransactionPreviewComponent implements OnInit, OnDestroy {
           );
         }),
         switchMap((tx) => {
-          if (this.network === 'liquid' || this.network === 'liquidtestnet') {
-            return from(this.liquidUnblinding.checkUnblindedTx(tx)).pipe(
-              catchError((error) => {
-                this.errorUnblinded = error;
-                return of(tx);
-              })
-            );
-          }
           return of(tx);
         })
       )
@@ -165,7 +124,7 @@ export class TransactionPreviewComponent implements OnInit, OnDestroy {
           if (tx.fee === undefined) {
             this.tx.fee = 0;
           }
-          this.tx.feePerVsize = tx.fee / (tx.weight / 4);
+          this.tx.feePerSize = tx.fee / tx.size;
           this.isLoadingTx = false;
           this.error = undefined;
           this.totalValue = this.tx.vout.reduce((acc, v) => v.value + acc, 0);
@@ -192,21 +151,6 @@ export class TransactionPreviewComponent implements OnInit, OnDestroy {
             this.stateService.markBlock$.next({
               blockHeight: tx.status.block_height,
             });
-            this.openGraphService.waitFor('cpfp-data-' + this.txId);
-            this.fetchCpfp$.next(this.tx.txid);
-          } else {
-            if (tx.cpfpChecked) {
-              this.stateService.markBlock$.next({
-                txFeePerVSize: tx.effectiveFeePerVsize,
-              });
-              this.cpfpInfo = {
-                ancestors: tx.ancestors,
-                bestDescendant: tx.bestDescendant,
-              };
-            } else {
-              this.openGraphService.waitFor('cpfp-data-' + this.txId);
-              this.fetchCpfp$.next(this.tx.txid);
-            }
           }
 
           this.openGraphService.waitOver({
@@ -248,8 +192,6 @@ export class TransactionPreviewComponent implements OnInit, OnDestroy {
     this.tx = null;
     this.isLoadingTx = true;
     this.transactionTime = -1;
-    this.cpfpInfo = null;
-    this.showCpfpDetails = false;
   }
 
   isCoinbase(tx: Transaction): boolean {
@@ -286,6 +228,5 @@ export class TransactionPreviewComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.subscription.unsubscribe();
-    this.fetchCpfpSubscription.unsubscribe();
   }
 }

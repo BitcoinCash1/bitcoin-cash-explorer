@@ -36,11 +36,8 @@ export class WebsocketService {
   private isTrackingTx = false;
   private trackingTxId: string;
   private isTrackingMempoolBlock = false;
-  private isTrackingRbf: 'all' | 'fullRbf' | false = false;
-  private isTrackingRbfSummary = false;
   private isTrackingAddress: string | false = false;
   private isTrackingAddresses: string[] | false = false;
-  private isTrackingAccelerations: boolean = false;
   private isTrackingWallet: boolean = false;
   private trackingWalletName: string;
   private isTrackingStratum: string | number | false = false;
@@ -151,20 +148,11 @@ export class WebsocketService {
           if (this.isTrackingMempoolBlock) {
             this.startTrackMempoolBlock(this.trackingMempoolBlock, true);
           }
-          if (this.isTrackingRbf) {
-            this.startTrackRbf(this.isTrackingRbf);
-          }
-          if (this.isTrackingRbfSummary) {
-            this.startTrackRbfSummary();
-          }
           if (this.isTrackingAddress) {
             this.startTrackAddress(this.isTrackingAddress);
           }
           if (this.isTrackingAddresses) {
             this.startTrackAddresses(this.isTrackingAddresses);
-          }
-          if (this.isTrackingAccelerations) {
-            this.startTrackAccelerations();
           }
           if (this.isTrackingWallet) {
             this.startTrackingWallet(this.trackingWalletName);
@@ -284,45 +272,6 @@ export class WebsocketService {
     }, 2000);
   }
 
-  startTrackRbf(mode: 'all' | 'fullRbf') {
-    this.websocketSubject.next({ 'track-rbf': mode });
-    this.isTrackingRbf = mode;
-  }
-
-  stopTrackRbf() {
-    this.websocketSubject.next({ 'track-rbf': 'stop' });
-    this.isTrackingRbf = false;
-  }
-
-  startTrackRbfSummary() {
-    this.initRbfSummary();
-    this.websocketSubject.next({ 'track-rbf-summary': true });
-    this.isTrackingRbfSummary = true;
-  }
-
-  stopTrackRbfSummary() {
-    this.websocketSubject.next({ 'track-rbf-summary': false });
-    this.isTrackingRbfSummary = false;
-  }
-
-  startTrackAccelerations() {
-    this.websocketSubject.next({ 'track-accelerations': true });
-    this.isTrackingAccelerations = true;
-  }
-
-  stopTrackAccelerations() {
-    if (this.isTrackingAccelerations) {
-      this.websocketSubject.next({ 'track-accelerations': false });
-      this.isTrackingAccelerations = false;
-    }
-  }
-
-  ensureTrackAccelerations() {
-    if (!this.isTrackingAccelerations) {
-      this.startTrackAccelerations();
-    }
-  }
-
   startTrackStratum(pool: number | string) {
     this.websocketSubject.next({ 'track-stratum': pool });
     this.isTrackingStratum = pool;
@@ -425,26 +374,6 @@ export class WebsocketService {
 
     if (response.conversions) {
       this.stateService.conversions$.next(response.conversions);
-    }
-
-    if (response.rbfTransaction) {
-      this.stateService.txReplaced$.next(response.rbfTransaction);
-    }
-
-    if (response.rbfInfo) {
-      this.stateService.txRbfInfo$.next(response.rbfInfo);
-    }
-
-    if (response.rbfLatest) {
-      this.stateService.rbfLatest$.next(response.rbfLatest);
-    }
-
-    if (response.rbfLatestSummary !== undefined) {
-      this.stateService.rbfLatestSummary$.next(response.rbfLatestSummary || []);
-    }
-
-    if (response.txReplaced) {
-      this.stateService.txReplaced$.next(response.txReplaced);
     }
 
     if (response['mempool-blocks']) {
@@ -565,18 +494,6 @@ export class WebsocketService {
       );
     }
 
-    if (response['accelerations']) {
-      if (response['accelerations'].accelerations) {
-        this.stateService.accelerations$.next({
-          added: response['accelerations'].accelerations,
-          removed: [],
-          reset: true,
-        });
-      } else {
-        this.stateService.accelerations$.next(response['accelerations']);
-      }
-    }
-
     if (response['live-2h-chart']) {
       this.stateService.live2Chart$.next(response['live-2h-chart']);
     }
@@ -597,8 +514,8 @@ export class WebsocketService {
       this.stateService.mempoolInfo$.next(response.mempoolInfo);
     }
 
-    if (response.vBytesPerSecond !== undefined) {
-      this.stateService.vbytesPerSecond$.next(response.vBytesPerSecond);
+    if (response.bytesPerSecond !== undefined) {
+      this.stateService.bytesPerSecond$.next(response.bytesPerSecond);
     }
 
     if (response.previousRetarget !== undefined) {
@@ -623,32 +540,6 @@ export class WebsocketService {
 
     if (reinitBlocks) {
       this.websocketSubject.next({ 'refresh-blocks': true });
-    }
-  }
-
-  async initRbfSummary(): Promise<void> {
-    if (!this.stateService.isBrowser) {
-      const rbfList = await firstValueFrom(this.apiService.getRbfList$(false));
-      if (rbfList) {
-        const rbfSummary = rbfList.slice(0, 6).map((rbfTree) => {
-          let oldFee = 0;
-          let oldVsize = 0;
-          for (const replaced of rbfTree.replaces) {
-            oldFee += replaced.tx.fee;
-            oldVsize += replaced.tx.vsize;
-          }
-          return {
-            txid: rbfTree.tx.txid,
-            mined: !!rbfTree.tx.mined,
-            fullRbf: !!rbfTree.tx.fullRbf,
-            oldFee,
-            oldVsize,
-            newFee: rbfTree.tx.fee,
-            newVsize: rbfTree.tx.vsize,
-          };
-        });
-        this.stateService.rbfLatestSummary$.next(rbfSummary);
-      }
     }
   }
 }

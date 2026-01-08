@@ -124,10 +124,6 @@
                 <td i18n="block.size">Size</td>
                 <td [innerHTML]="'&lrm;' + (block.size | bytes: 2)"></td>
               </tr>
-              <tr>
-                <td i18n="block.weight">Weight</td>
-                <td [innerHTML]="'&lrm;' + (block.weight | wuBytes: 2)"></td>
-              </tr>
               <tr *ngIf="auditAvailable">
                 <td>
                   <ng-container i18n="latest-blocks.health">Health</ng-container
@@ -224,7 +220,7 @@
             #blockGraphActual
             [isLoading]="!stateService.isBrowser || isLoadingOverview"
             [resolution]="86"
-            [blockLimit]="stateService.blockVSize"
+            [blockLimit]="stateService.blockSize"
             [orientation]="'top'"
             [flip]="false"
             [blockConversion]="blockConversion"
@@ -496,7 +492,7 @@
             #blockGraphProjected
             [isLoading]="!stateService.isBrowser || isLoadingOverview"
             [resolution]="86"
-            [blockLimit]="stateService.blockVSize"
+            [blockLimit]="stateService.blockSize"
             [orientation]="'top'"
             [flip]="false"
             [mirrorTxid]="hoverTx"
@@ -581,7 +577,7 @@
             #blockGraphActual
             [isLoading]="!stateService.isBrowser || isLoadingOverview"
             [resolution]="86"
-            [blockLimit]="stateService.blockVSize"
+            [blockLimit]="stateService.blockSize"
             [orientation]="'top'"
             [flip]="false"
             [mirrorTxid]="hoverTx"
@@ -630,14 +626,6 @@
                   <td class="td-width" i18n="transaction.version">Version</td>
                   <td>
                     {{ block.version | decimal2hex }}
-                    <span
-                      *ngIf="
-                        displayTaprootStatus() && hasTaproot(block.version)
-                      "
-                      class="badge badge-success ml-1"
-                      i18n="tx-features.tag.taproot|Taproot"
-                      >Taproot</span
-                    >
                   </td>
                 </tr>
                 <tr *ngIf="network !== 'liquid' && network !== 'liquidtestnet'">
@@ -849,9 +837,9 @@
         </td>
       </tr>
       <tr>
-        <td i18n="block.weight">Weight</td>
+        <td i18n="block.size">Size</td>
         <td
-          [innerHTML]="'&lrm;' + (blockAudit.expectedWeight | wuBytes: 2)"
+          [innerHTML]="'&lrm;' + (blockAudit.expectedSize | bytes: 2)"
         ></td>
       </tr>
       <tr>
@@ -901,17 +889,17 @@
         </td>
       </tr>
       <tr>
-        <td i18n="block.weight">Weight</td>
+        <td i18n="block.size">Size</td>
         <td [innerHTML]>
-          <span [innerHTML]="'&lrm;' + (block.weight | wuBytes: 2)"></span>
+          <span [innerHTML]="'&lrm;' + (block.size | bytes: 2)"></span>
           <span
-            *ngIf="blockAudit.weightDelta"
+            *ngIf="blockAudit.sizeDelta"
             class="difference"
-            [class.positive]="blockAudit.weightDelta <= 0"
-            [class.negative]="blockAudit.weightDelta > 0"
+            [class.positive]="blockAudit.sizeDelta <= 0"
+            [class.negative]="blockAudit.sizeDelta > 0"
           >
-            {{ blockAudit.weightDelta < 0 ? "+" : ""
-            }}{{ -blockAudit.weightDelta * 100 | amountShortener: 2 }}%
+            {{ blockAudit.sizeDelta < 0 ? "+" : ""
+            }}{{ -blockAudit.sizeDelta * 100 | amountShortener: 2 }}%
           </span>
         </td>
       </tr>
@@ -962,20 +950,20 @@
         </td>
       </tr>
       <tr>
-        <td i18n="block.weight">Weight</td>
+        <td i18n="block.size">Size</td>
         <td>
           <span
-            [innerHTML]="'&lrm;' + (staleStats.totalWeight | wuBytes: 2)"
+            [innerHTML]="'&lrm;' + (staleStats.totalSize | bytes: 2)"
           ></span>
-          @if (staleStats.weightDelta && (canonicalStats.weightDelta >= 100 ||
-          canonicalStats.weightDelta <= -100)) {
+          @if (staleStats.sizeDelta && (canonicalStats.sizeDelta >= 100 ||
+          canonicalStats.sizeDelta <= -100)) {
           <span
             class="difference"
-            [class.positive]="staleStats.weightDelta > 0"
-            [class.negative]="staleStats.weightDelta <= 0"
+            [class.positive]="staleStats.sizeDelta > 0"
+            [class.negative]="staleStats.sizeDelta <= 0"
           >
-            {{ staleStats.weightDelta > 0 ? "+" : ""
-            }}{{ staleStats.weightDelta * 100 | amountShortener: 2 }}%
+            {{ staleStats.sizeDelta > 0 ? "+" : ""
+            }}{{ staleStats.sizeDelta * 100 | amountShortener: 2 }}%
           </span>
           }
         </td>
@@ -1029,20 +1017,20 @@
         </td>
       </tr>
       <tr>
-        <td i18n="block.weight">Weight</td>
+        <td i18n="block.size">Size</td>
         <td>
           <span
-            [innerHTML]="'&lrm;' + (canonicalStats.totalWeight | wuBytes: 2)"
+            [innerHTML]="'&lrm;' + (canonicalStats.totalSize | bytes: 2)"
           ></span>
-          @if (canonicalStats.weightDelta && canonicalStats.weightDelta < 100 &&
-          canonicalStats.weightDelta > -100) {
+          @if (canonicalStats.sizeDelta && canonicalStats.sizeDelta < 100 &&
+          canonicalStats.sizeDelta > -100) {
           <span
             class="difference"
-            [class.positive]="canonicalStats.weightDelta > 0"
-            [class.negative]="canonicalStats.weightDelta <= 0"
+            [class.positive]="canonicalStats.sizeDelta > 0"
+            [class.negative]="canonicalStats.sizeDelta <= 0"
           >
-            {{ canonicalStats.weightDelta > 0 ? "+" : ""
-            }}{{ canonicalStats.weightDelta * 100 | amountShortener: 2 }}%
+            {{ canonicalStats.sizeDelta > 0 ? "+" : ""
+            }}{{ canonicalStats.sizeDelta * 100 | amountShortener: 2 }}%
           </span>
           }
         </td>
@@ -1078,7 +1066,7 @@
         <td><span class="skeleton-loader"></span></td>
       </tr>
       <tr>
-        <td i18n="block.weight">Weight</td>
+        <td i18n="block.size">Size</td>
         <td><span class="skeleton-loader"></span></td>
       </tr>
       <tr>

@@ -75,12 +75,12 @@ export class StaleList implements OnInit {
   }
 
   getBlockGradient(block: BlockExtended): string {
-    if (!block || !block.weight) {
+    if (!block || !block.size) {
       return 'var(--secondary)';
     }
 
     const backgroundHeight =
-      100 - (block.weight / this.stateService.env.BLOCK_WEIGHT_UNITS) * 100;
+      100 - (block.size / this.stateService.env.MIN_BLOCK_SIZE_UNITS) * 100;
     const network = this.stateService.network || '';
 
     return `repeating-linear-gradient(

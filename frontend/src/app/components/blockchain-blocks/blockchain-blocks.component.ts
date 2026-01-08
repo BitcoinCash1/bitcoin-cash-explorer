@@ -418,7 +418,7 @@ export class BlockchainBlocksComponent implements OnInit, OnChanges, OnDestroy {
       return this.getStyleForLoadingBlock(index, animateEnterFrom);
     }
     const greenBackgroundHeight =
-      100 - (block.weight / this.stateService.env.BLOCK_WEIGHT_UNITS) * 100;
+      100 - (block.size / this.stateService.env.MIN_BLOCK_SIZE_UNITS) * 100;
     let addLeft = 0;
 
     if (animateEnterFrom) {

@@ -93,7 +93,6 @@ export class MempoolBlockOverviewComponent
               txid: string;
               rate: number | undefined;
               flags: number;
-              acc: boolean | undefined;
             }[] = [];
             const removed: string[] = [];
             for (const tx of transactionsStripped) {
@@ -112,8 +111,7 @@ export class MempoolBlockOverviewComponent
                 changed.push({
                   txid: tx.txid,
                   rate: tx.rate,
-                  flags: tx.flags,
-                  acc: tx.acc,
+                  flags: tx.flags
                 });
               }
             }

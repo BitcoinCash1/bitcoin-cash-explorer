@@ -6,7 +6,6 @@ import {
   BASE58_CHARS,
   HEX_CHARS,
 } from '@app/shared/regex.utils';
-import { parseTaproot } from './transaction.utils';
 
 export type AddressType =
   | 'fee'
@@ -183,80 +182,19 @@ export class AddressTypeInfo {
   }
 
   public processInputs(vin: Vin[] = [], vinIds: string[] = []): void {
-    // taproot can have multiple script paths
-    if (this.type === 'v1_p2tr') {
-      for (let i = 0; i < vin.length; i++) {
-        const v = vin[i];
-        if (!v.taprootInfo) {
-          v.taprootInfo = parseTaproot(v.witness);
-        }
-        const taprootInfo = v.taprootInfo;
-        if (taprootInfo.scriptPath) {
-          if (
-            taprootInfo.scriptPath.leafVersion === 0xc0 &&
-            v.inner_witnessscript_asm
-          ) {
-            this.tapscript = true;
-            this.processScript(
-              new ScriptInfo(
-                'inner_witnessscript',
-                taprootInfo.scriptPath.script,
-                v.inner_witnessscript_asm,
-                v.witness,
-                taprootInfo,
-                vinIds?.[i]
-              )
-            );
-          } else if (
-            this.network === 'liquid' ||
-            (this.network === 'liquidtestnet' &&
-              taprootInfo.scriptPath.leafVersion === 0xbe)
-          ) {
-            this.simplicity = true;
-            v.inner_simplicityscript = v.witness[1];
-            this.processScript(
-              new ScriptInfo(
-                'inner_simplicityscript',
-                taprootInfo.scriptPath.simplicityScript,
-                null,
-                v.witness,
-                taprootInfo,
-                vinIds?.[i]
-              )
-            );
-          }
-        }
-      }
       // for single-script types, if we've seen one input we've seen them all
-    } else if (['p2sh', 'v0_p2wsh'].includes(this.type)) {
+    if (['p2sh', 'v0_p2wsh'].includes(this.type)) {
       if (!this.scripts.size && vin.length) {
         const v = vin[0];
-        // wrapped segwit
-        if (this.type === 'p2sh' && v.witness?.length) {
-          if (v.scriptsig.startsWith('160014')) {
-            this.type = 'p2sh-p2wpkh';
-          } else if (v.scriptsig.startsWith('220020')) {
-            this.type = 'p2sh-p2wsh';
-          }
-        }
-        // real script
+
+        // real script, always true (BCH doesn't have P2SH-P2WPKH)
         if (this.type !== 'p2sh-p2wpkh') {
-          if (v.inner_witnessscript_asm) {
-            this.processScript(
-              new ScriptInfo(
-                'inner_witnessscript',
-                undefined,
-                v.inner_witnessscript_asm,
-                v.witness
-              )
-            );
-          } else if (v.inner_redeemscript_asm) {
+         if (v.inner_redeemscript_asm) {
             this.processScript(
               new ScriptInfo(
                 'inner_redeemscript',
                 undefined,
-                v.inner_redeemscript_asm,
-                v.witness
+                v.inner_redeemscript_asm
               )
             );
           } else if (v.scriptsig || v.scriptsig_asm) {
@@ -264,8 +202,7 @@ export class AddressTypeInfo {
               new ScriptInfo(
                 'scriptsig',
                 v.scriptsig,
-                v.scriptsig_asm,
-                v.witness
+                v.scriptsig_asm
               )
             );
           }

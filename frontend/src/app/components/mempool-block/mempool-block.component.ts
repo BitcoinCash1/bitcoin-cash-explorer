@@ -56,7 +56,6 @@ export class MempoolBlockComponent implements OnInit, OnDestroy {
                 {
                   index: 0,
                   blockSize: 0,
-                  blockVSize: 0,
                   feeRange: [0, 0],
                   medianFee: 0,
                   nTx: 0,
@@ -86,9 +85,6 @@ export class MempoolBlockComponent implements OnInit, OnDestroy {
                 this.stateService.network
               )} transactions in the mempool: fee range, aggregate size, and more. Mempool blocks are updated in real-time as the network receives new transactions.`
             );
-            mempoolBlocks[this.mempoolBlockIndex].isStack =
-              mempoolBlocks[this.mempoolBlockIndex].blockVSize >
-              this.stateService.blockVSize;
             return mempoolBlocks[this.mempoolBlockIndex];
           })
         );
@@ -116,7 +112,7 @@ export class MempoolBlockComponent implements OnInit, OnDestroy {
 
   getOrdinal(mempoolBlock: MempoolBlock): string {
     const blocksInBlock = Math.ceil(
-      mempoolBlock.blockVSize / this.stateService.blockVSize
+      mempoolBlock.blockSize / this.stateService.blockSize
     );
     if (this.mempoolBlockIndex === 0) {
       return $localize`:@@bdf0e930eb22431140a2eaeacd809cc5f8ebd38c:Next Block`;

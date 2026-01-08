@@ -23,13 +23,11 @@ import {
 import {
   Outspend,
   Transaction,
-  Vin,
   Vout,
 } from '@interfaces/electrs.interface';
 import { ElectrsApiService } from '@app/services/electrs-api.service';
 import { environment } from '@environments/environment';
-import { AssetsService } from '@app/services/assets.service';
-import { filter, map, tap, switchMap, catchError } from 'rxjs/operators';
+import { map, tap, switchMap } from 'rxjs/operators';
 import { BlockExtended } from '@interfaces/node-api.interface';
 import { ApiService } from '@app/services/api.service';
 import { PriceService } from '@app/services/price.service';
@@ -40,18 +38,14 @@ import { Etching, Runestone } from '@app/shared/ord/rune.utils';
 import {
   ADDRESS_SIMILARITY_THRESHOLD,
   AddressMatch,
-  AddressSimilarity,
   AddressType,
-  AddressTypeInfo,
   checkedCompareAddressStrings,
-  detectAddressType,
 } from '@app/shared/address-utils';
 import {
   processInputSignatures,
   Sighash,
   SigInfo,
   SighashLabels,
-  parseTaproot,
 } from '@app/shared/transaction.utils';
 import { ActivatedRoute } from '@angular/router';
 import { SighashFlag } from '@app/shared/transaction.utils';
@@ -65,13 +59,7 @@ import { SighashFlag } from '@app/shared/transaction.utils';
 })
 export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   network = '';
-  nativeAssetId =
-    this.stateService.network === 'liquidtestnet'
-      ? environment.nativeTestAssetId
-      : environment.nativeAssetId;
-  isLiquid =
-    this.stateService.network === 'liquid' ||
-    this.stateService.network === 'liquidtestnet';
+  nativeAssetId = environment.nativeAssetId;
   showMoreIncrement = 1000;
 
   @Input() transactions: Transaction[];
@@ -99,15 +87,11 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   queryParamsSubscription: Subscription;
   currency: string;
   refreshOutspends$: ReplaySubject<string[]> = new ReplaySubject();
-  refreshChannels$: ReplaySubject<string[]> = new ReplaySubject();
   showDetails$ = new BehaviorSubject<boolean>(false);
-  assetsMinimal: any;
   transactionsLength: number = 0;
   inputRowLimit: number = 12;
   outputRowLimit: number = 12;
   showFullScript: { [vinIndex: number]: boolean } = {};
-  showFullWitness: { [vinIndex: number]: { [witnessIndex: number]: boolean } } =
-    {};
   showFullScriptPubkeyAsm: { [voutIndex: number]: boolean } = {};
   showFullScriptPubkeyHex: { [voutIndex: number]: boolean } = {};
   showFullOpReturnData: { [voutIndex: number]: boolean } = {};
@@ -116,7 +100,7 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   showOrdData: {
     [key: string]: {
       show: boolean;
-      inscriptions?: Inscription[];
+      inscriptions?: Inscription[]; // BCH doesn't have inscriptions, which is used for taproot
       runestone?: Runestone;
       runeInfo?: { [id: string]: { etching: Etching; txid: string } };
     };
@@ -138,9 +122,7 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     public stateService: StateService,
     private cacheService: CacheService,
     private electrsApiService: ElectrsApiService,
-    private apiService: ApiService,
     private ordApiService: OrdApiService,
-    private assetsService: AssetsService,
     private ref: ChangeDetectorRef,
     private priceService: PriceService,
     private storageService: StorageService,
@@ -157,7 +139,6 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     this.networkSubscription = this.stateService.networkChanged$.subscribe(
       (network) => {
         this.network = network;
-        this.isLiquid = network === 'liquid' || network === 'liquidtestnet';
       }
     );
 
@@ -182,12 +163,6 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
         }
       }
     );
-
-    if (this.network === 'liquid' || this.network === 'liquidtestnet') {
-      this.assetsService.getAssetsMinimalJson$.subscribe((assets) => {
-        this.assetsMinimal = assets;
-      });
-    }
 
     this.outspendsSubscription = merge(
       this.refreshOutspends$.pipe(
@@ -233,25 +208,6 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
               vin: utxoSpent[i].vin,
             };
           }
-        })
-      ),
-      this.refreshChannels$.pipe(
-        filter(
-          () => this.stateService.networkSupportsLightning() && !this.txPreview
-        ),
-        switchMap((txIds) => this.apiService.getChannelByTxIds$(txIds)),
-        catchError((error) => {
-          // handle 404
-          return of([]);
-        }),
-        tap((channels) => {
-          if (!this.transactions) {
-            return;
-          }
-          const transactions = this.transactions.filter((tx) => !tx._channels);
-          channels.forEach((channel, i) => {
-            transactions[i]._channels = channel;
-          });
         })
       )
     ).subscribe(() => this.ref.markForCheck());
@@ -308,14 +264,6 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
         this.rowLimit,
         (this.outputIndex || 0) + 3
       );
-      if ((this.inputIndex || this.outputIndex) && !changes.transactions) {
-        setTimeout(() => {
-          const assetBoxElements = document.getElementsByClassName('assetBox');
-          if (assetBoxElements && assetBoxElements[0]) {
-            assetBoxElements[0].scrollIntoView({ block: 'center' });
-          }
-        }, 10);
-      }
     }
     if (changes.transactions || changes.addresses) {
       this.similarityMatches.clear();
@@ -446,28 +394,6 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
           }
           tx['_showSignatures'] = this.shouldShowSignatures(tx);
         }
-        // parse taproot spends
-        for (const vin of tx.vin) {
-          if (vin.prevout?.scriptpubkey_type === 'v1_p2tr') {
-            vin.taprootInfo = parseTaproot(vin.witness);
-            if (
-              this.stateService.network !== 'liquid' &&
-              this.stateService.network !== 'liquidtestnet'
-            ) {
-              if (
-                vin.taprootInfo?.scriptPath?.script.includes('0063036f7264')
-              ) {
-                vin.isInscription = true;
-                tx.largeInput = true;
-              }
-            } else {
-              if (vin.taprootInfo?.scriptPath?.leafVersion === 0xbe) {
-                vin.inner_simplicityscript = vin.witness[1]; // simplicity program is the second witness element
-              }
-            }
-          }
-        }
-
         tx.largeInput =
           tx.largeInput ||
           tx.vin.some((vin) => vin?.prevout?.value > 1000000000);
@@ -491,14 +417,6 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
       if (txIds.length && !this.cached) {
         this.refreshOutspends$.next(txIds);
       }
-      if (this.stateService.networkSupportsLightning()) {
-        const txIds = this.transactions
-          .filter((tx) => !tx._channels)
-          .map((tx) => tx.txid);
-        if (txIds.length) {
-          this.refreshChannels$.next(txIds);
-        }
-      }
     }
   }
 
@@ -520,7 +438,7 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
         .slice(0, 20)
         .filter(
           (v) =>
-            ['p2pkh', 'p2sh', 'v0_p2wpkh', 'v0_p2wsh', 'v1_p2tr'].includes(
+            ['p2pkh', 'p2sh'].includes(
               v.scriptpubkey_type
             ) && !this.isFakeScripthash(v)
         );
@@ -529,7 +447,7 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
         .map((v) => v.prevout)
         .filter(
           (v) =>
-            ['p2pkh', 'p2sh', 'v0_p2wpkh', 'v0_p2wsh', 'v1_p2tr'].includes(
+            ['p2pkh', 'p2sh'].includes(
               v?.scriptpubkey_type
             ) && !this.isFakeScripthash(v)
         );
@@ -713,24 +631,12 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     if (this.showDetails$.value === true) {
       this.showDetails$.next(false);
       this.showFullScript = {};
-      this.showFullWitness = {};
     } else {
       this.showFullScript = this.transactions[0]
         ? this.transactions[0].vin.reduce(
             (acc, _, i) => ({ ...acc, [i]: false }),
             {}
           )
-        : {};
-      this.showFullWitness = this.transactions[0]
-        ? this.transactions[0].vin.reduce((acc, vin, vinIndex) => {
-            acc[vinIndex] = vin.witness
-              ? vin.witness.reduce((witnessAcc, _, witnessIndex) => {
-                  witnessAcc[witnessIndex] = false;
-                  return witnessAcc;
-                }, {})
-              : {};
-            return acc;
-          }, {})
         : {};
       this.showDetails$.next(true);
     }
@@ -802,11 +708,6 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     this.showFullScript[vinIndex] = !this.showFullScript[vinIndex];
   }
 
-  toggleShowFullWitness(vinIndex: number, witnessIndex: number): void {
-    this.showFullWitness[vinIndex][witnessIndex] =
-      !this.showFullWitness[vinIndex][witnessIndex];
-  }
-
   toggleShowFullScriptPubkeyAsm(voutIndex: number): void {
     this.showFullScriptPubkeyAsm[voutIndex] =
       !this.showFullScriptPubkeyAsm[voutIndex];
@@ -842,11 +743,6 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     this.showOrdData[key] = this.showOrdData[key] || { show: false };
 
     if (type === 'vin') {
-      if (!this.showOrdData[key].inscriptions) {
-        const tapscript = tx.vin[index].taprootInfo?.scriptPath?.script;
-        this.showOrdData[key].inscriptions =
-          this.ordApiService.decodeInscriptions(tapscript);
-      }
       this.showOrdData[key].show = !this.showOrdData[key].show;
     } else if (type === 'vout') {
       if (!this.showOrdData[key].runestone) {

@@ -17,9 +17,7 @@ import {
 import { Router } from '@angular/router';
 import { ReplaySubject, merge, Subscription, of } from 'rxjs';
 import { tap, switchMap } from 'rxjs/operators';
-import { ApiService } from '@app/services/api.service';
 import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pipe';
-import { AssetsService } from '@app/services/assets.service';
 import { environment } from '@environments/environment';
 import { ElectrsApiService } from '@app/services/electrs-api.service';
 
@@ -91,7 +89,6 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
   zeroValueWidth = 60;
   zeroValueThickness = 20;
   hasLine: boolean;
-  assetsMinimal: any;
   nativeAssetId =
     this.stateService.network === 'liquidtestnet'
       ? environment.nativeTestAssetId
@@ -124,7 +121,6 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
     private relativeUrlPipe: RelativeUrlPipe,
     public stateService: StateService,
     private electrsApiService: ElectrsApiService,
-    private assetsService: AssetsService,
     @Inject(LOCALE_ID) private locale: string
   ) {
     if (
@@ -138,12 +134,6 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.initGraph();
-
-    if (this.network === 'liquid' || this.network === 'liquidtestnet') {
-      this.assetsService.getAssetsMinimalJson$.subscribe((assets) => {
-        this.assetsMinimal = assets;
-      });
-    }
 
     this.outspendsSubscription = merge(
       this.refreshOutspends$.pipe(

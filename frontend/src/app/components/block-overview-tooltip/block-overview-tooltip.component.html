@@ -111,36 +111,20 @@
       </tr>
       <tr *ngIf="hasEffectiveRate && effectiveRate != null">
         <td
-          *ngIf="!this.acceleration"
           class="label"
           i18n="transaction.effective-fee-rate|Effective transaction fee rate"
         >
           Effective fee rate
         </td>
-        <td
-          *ngIf="this.acceleration"
-          class="label"
-          i18n="
-            transaction.accelerated-fee-rate|Accelerated transaction fee rate
-          "
-        >
-          Accelerated fee rate
-        </td>
-        <td class="value" [class.oobFees]="this.acceleration">
+        <td class="value">
           <app-fee-rate [fee]="effectiveRate"></app-fee-rate>
         </td>
       </tr>
-      <tr *only-vsize>
-        <td class="label" i18n="transaction.vsize|Transaction Virtual Size">
-          Virtual size
+      <tr *only-size>
+        <td class="label" i18n="transaction.size|Transaction Size">
+          Size
         </td>
-        <td class="value" [innerHTML]="'&lrm;' + (vsize | vbytes: 2)"></td>
-      </tr>
-      <tr *only-weight>
-        <td class="label" i18n="transaction.weight|Transaction Weight">
-          Weight
-        </td>
-        <td class="value" [innerHTML]="'&lrm;' + (vsize * 4 | wuBytes: 2)"></td>
+        <td class="value" [innerHTML]="'&lrm;' + (size | bytes: 2)"></td>
       </tr>
       <tr *ngIf="auditEnabled && tx && tx.status && tx.status.length">
         <td class="label" i18n="transaction.audit-status">Audit status</td>
@@ -177,70 +161,16 @@
               >Recently broadcasted</span
             >
             <span
-              *ngSwitchCase="'freshcpfp'"
-              class="badge badge-warning"
-              i18n="transaction.audit.recently-cpfped"
-              >Recently CPFP'd</span
-            >
-            <span
               *ngSwitchCase="'added'"
               class="badge badge-warning"
               i18n="tx-features.tag.added|Added"
               >Added</span
             >
             <span
-              *ngSwitchCase="'prioritized'"
-              class="badge badge-warning"
-              i18n="tx-features.tag.prioritized|Prioritized"
-              >Prioritized</span
-            >
-            <ng-container *ngSwitchCase="'added_prioritized'">
-              <span
-                class="badge badge-warning"
-                i18n="tx-features.tag.added|Added"
-                >Added</span
-              >
-              <span
-                class="badge badge-warning ml-1"
-                i18n="tx-features.tag.prioritized|Prioritized"
-                >Prioritized</span
-              >
-            </ng-container>
-            <span
-              *ngSwitchCase="'deprioritized'"
-              class="badge badge-warning"
-              i18n="tx-features.tag.prioritized|Deprioritized"
-              >Deprioritized</span
-            >
-            <ng-container *ngSwitchCase="'added_deprioritized'">
-              <span
-                class="badge badge-warning"
-                i18n="tx-features.tag.added|Added"
-                >Added</span
-              >
-              <span
-                class="badge badge-warning ml-1"
-                i18n="tx-features.tag.prioritized|Deprioritized"
-                >Deprioritized</span
-              >
-            </ng-container>
-            <span
               *ngSwitchCase="'selected'"
               class="badge badge-warning"
               i18n="transaction.audit.marginal"
               >Marginal fee rate</span
-            >
-            <span
-              *ngSwitchCase="'rbf'"
-              class="badge badge-warning"
-              i18n="tx-features.tag.conflict|Conflict"
-              >Conflict</span
-            >
-            <span
-              *ngSwitchCase="'accelerated'"
-              class="badge badge-accelerated"
-              i18n="transaction.audit.accelerated"
-              >Accelerated</span
             >
             <span
               *ngSwitchCase="'matched'"
@@ -255,39 +185,6 @@
               >No Match</span
             >
           </ng-container>
-        </td>
-      </tr>
-      {{
-        activeFilters.rbf
-      }}
-      <tr
-        *ngIf="
-          (!auditEnabled &&
-            tx &&
-            (tx.status === 'accelerated' || tx.acc || acceleration)) ||
-          filters.length
-        "
-      >
-        <td colspan="2">
-          <div class="tags mt-2" [class.any-mode]="filterMode === 'or'">
-            <span
-              *ngIf="
-                !auditEnabled &&
-                tx &&
-                (tx.status === 'accelerated' || tx.acc || acceleration)
-              "
-              class="badge badge-accelerated"
-              i18n="transaction.audit.accelerated"
-              >Accelerated</span
-            >
-            <ng-container *ngFor="let filter of filters">
-              <span
-                class="btn badge filter-tag"
-                [class.matching]="activeFilters[filter.key]"
-                >{{ filter.label }}</span
-              >
-            </ng-container>
-          </div>
         </td>
       </tr>
     </tbody>

@@ -182,7 +182,7 @@ export class StatisticsComponent implements OnInit {
     let maxTier = 0;
     for (let index = 38; index > -1; index--) {
       mempoolStats.forEach((stats) => {
-        if (stats.vsizes[index] >= this.filterSize) {
+        if (stats.sizes[index] >= this.filterSize) {
           maxTier = Math.max(maxTier, index);
         }
       });
@@ -194,7 +194,7 @@ export class StatisticsComponent implements OnInit {
       series: [
         mempoolStats.map((stats) => [
           stats.added * 1000,
-          stats.vbytes_per_second,
+          stats.bytes_per_second,
         ]),
       ],
     };

@@ -60,7 +60,7 @@ export class IncomingTransactionsGraphComponent
   MA: number[][] = [];
   weightMode: boolean = false;
   rateUnitSub: Subscription;
-  medianVbytesPerSecond: number | undefined;
+  medianBytesPerSecond: number | undefined;
 
   constructor(
     @Inject(LOCALE_ID) private locale: string,
@@ -88,7 +88,7 @@ export class IncomingTransactionsGraphComponent
     const windowSize = Math.max(10, Math.floor(this.data.series[0].length / 8));
     this.MA = this.calculateMA(this.data.series[0], windowSize);
     if (this.outlierCappingEnabled === true) {
-      this.computeMedianVbytesPerSecond(this.data.series[0]);
+      this.computeMedianBytesPerSecond(this.data.series[0]);
     }
     this.mountChart();
   }
@@ -100,18 +100,18 @@ export class IncomingTransactionsGraphComponent
   }
 
   /**
-   * Calculate the median value of the vbytes per second chart to hide outliers
+   * Calculate the median value of the bytes per second chart to hide outliers
    */
-  computeMedianVbytesPerSecond(data: number[][]): void {
-    const vBytes: number[] = [];
+  computeMedianBytesPerSecond(data: number[][]): void {
+    const bytes: number[] = [];
     for (const value of data) {
-      vBytes.push(value[1]);
+      bytes.push(value[1]);
     }
-    const sorted = vBytes.slice().sort((a, b) => a - b);
+    const sorted = bytes.slice().sort((a, b) => a - b);
     const middle = Math.floor(sorted.length / 2);
-    this.medianVbytesPerSecond = sorted[middle];
+    this.medianBytesPerSecond = sorted[middle];
     if (sorted.length % 2 === 0) {
-      this.medianVbytesPerSecond = (sorted[middle - 1] + sorted[middle]) / 2;
+      this.medianBytesPerSecond = (sorted[middle - 1] + sorted[middle]) / 2;
     }
   }
 
@@ -267,7 +267,7 @@ export class IncomingTransactionsGraphComponent
                     bestItem.value[1],
                     this.locale,
                     '1.0-0'
-                  )} <span class="symbol">vB/s</span></div>
+                  )} <span class="symbol">B/s</span></div>
                 </div>`;
           }
           return `<div class="tx-wrapper-tooltip-chart ${
@@ -308,10 +308,10 @@ export class IncomingTransactionsGraphComponent
           let cappedMax = value.max;
           if (
             this.outlierCappingEnabled &&
-            value.max >= this.medianVbytesPerSecond * OUTLIERS_MEDIAN_MULTIPLIER
+            value.max >= this.medianBytesPerSecond * OUTLIERS_MEDIAN_MULTIPLIER
           ) {
             cappedMax = Math.round(
-              this.medianVbytesPerSecond * OUTLIERS_MEDIAN_MULTIPLIER
+              this.medianBytesPerSecond * OUTLIERS_MEDIAN_MULTIPLIER
             );
           }
           // always show the clearing rate line, plus a small margin
@@ -396,7 +396,7 @@ export class IncomingTransactionsGraphComponent
         pixelRatio: 2,
         excludeComponents: ['dataZoom'],
       }),
-      `incoming-vbytes-${timespan}-${Math.round(now.getTime() / 1000)}.svg`
+      `incoming-bytes-${timespan}-${Math.round(now.getTime() / 1000)}.svg`
     );
     // @ts-ignore
     this.mempoolStatsChartOption.grid.height = prevHeight;

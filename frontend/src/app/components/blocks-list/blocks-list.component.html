@@ -281,7 +281,7 @@
                 role="progressbar"
                 [ngStyle]="{
                   width:
-                    (block.weight / stateService.env.BLOCK_WEIGHT_UNITS) * 100 +
+                    (block.size / stateService.env.MIN_BLOCK_SIZE_UNITS) * 100 +
                     '%'
                 }"
               ></div>

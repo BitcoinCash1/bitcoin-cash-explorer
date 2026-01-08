@@ -39,23 +39,11 @@ const unmatchedAuditColors = {
   censored: setOpacity(defaultAuditColors.censored, unmatchedOpacity),
   missing: setOpacity(defaultAuditColors.missing, unmatchedOpacity),
   added: setOpacity(defaultAuditColors.added, unmatchedOpacity),
-  added_prioritized: setOpacity(
-    defaultAuditColors.added_prioritized,
-    unmatchedOpacity
-  ),
-  prioritized: setOpacity(defaultAuditColors.prioritized, unmatchedOpacity),
-  accelerated: setOpacity(defaultAuditColors.accelerated, unmatchedOpacity),
 };
 const unmatchedContrastAuditColors = {
   censored: setOpacity(contrastAuditColors.censored, unmatchedOpacity),
   missing: setOpacity(contrastAuditColors.missing, unmatchedOpacity),
   added: setOpacity(contrastAuditColors.added, unmatchedOpacity),
-  added_prioritized: setOpacity(
-    contrastAuditColors.added_prioritized,
-    unmatchedOpacity
-  ),
-  prioritized: setOpacity(contrastAuditColors.prioritized, unmatchedOpacity),
-  accelerated: setOpacity(contrastAuditColors.accelerated, unmatchedOpacity),
 };
 
 @Component({
@@ -125,7 +113,6 @@ export class BlockOverviewGraphComponent
       [txid: string]: {
         txid: string;
         rate: number | undefined;
-        acc: boolean | undefined;
       };
     };
     direction?: string;
@@ -330,7 +317,6 @@ export class BlockOverviewGraphComponent
     change: {
       txid: string;
       rate: number | undefined;
-      acc: boolean | undefined;
     }[],
     direction: string = 'left'
   ): void {
@@ -347,7 +333,6 @@ export class BlockOverviewGraphComponent
     for (const tx of change) {
       if (this.pendingUpdate.add[tx.txid]) {
         this.pendingUpdate.add[tx.txid].rate = tx.rate;
-        this.pendingUpdate.add[tx.txid].acc = tx.acc;
       } else {
         this.pendingUpdate.change[tx.txid] = tx;
       }
@@ -362,7 +347,6 @@ export class BlockOverviewGraphComponent
     change: {
       txid: string;
       rate: number | undefined;
-      acc: boolean | undefined;
     }[],
     direction: string = 'left'
   ): void {
@@ -401,7 +385,6 @@ export class BlockOverviewGraphComponent
     change: {
       txid: string;
       rate: number | undefined;
-      acc: boolean | undefined;
     }[],
     direction: string = 'left',
     resetLayout: boolean = false
@@ -424,7 +407,6 @@ export class BlockOverviewGraphComponent
     change: {
       txid: string;
       rate: number | undefined;
-      acc: boolean | undefined;
     }[],
     direction: string = 'left',
     resetLayout: boolean = false

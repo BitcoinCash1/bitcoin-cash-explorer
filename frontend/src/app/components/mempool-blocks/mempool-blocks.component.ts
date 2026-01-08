@@ -99,11 +99,10 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
   transition = 'background 2s, right 2s, transform 1s';
   @ViewChild('arrowUp')
   arrowElement: ElementRef<HTMLDivElement>;
-  acceleratingArrow: boolean = false;
 
   markIndex: number;
   txPosition: MempoolPosition;
-  txFeePerVSize: number;
+  txFeePerSize: number;
 
   resetTransitionTimeout: number;
 
@@ -194,7 +193,6 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
               {
                 index: 0,
                 blockSize: 0,
-                blockVSize: 0,
                 feeRange: [0, 0],
                 medianFee: 0,
                 nTx: 0,
@@ -250,24 +248,17 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
 
     this.markBlocksSubscription = this.stateService.markBlock$.subscribe(
       (state) => {
-        const oldTxPosition = this.txPosition;
         this.markIndex = undefined;
         this.txPosition = undefined;
-        this.txFeePerVSize = undefined;
+        this.txFeePerSize = undefined;
         if (state.mempoolBlockIndex !== undefined) {
           this.markIndex = state.mempoolBlockIndex;
         }
         if (state.mempoolPosition) {
           this.txPosition = state.mempoolPosition;
-          if (this.txPosition.accelerated && !oldTxPosition?.accelerated) {
-            this.acceleratingArrow = true;
-            setTimeout(() => {
-              this.acceleratingArrow = false;
-            }, 2000);
-          }
         }
-        if (state.txFeePerVSize) {
-          this.txFeePerVSize = state.txFeePerVSize;
+        if (state.txFeePerSize) {
+          this.txFeePerSize = state.txFeePerSize;
         }
         this.calculateTransactionPosition();
         this.cd.markForCheck();
@@ -401,7 +392,6 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
     while (blocks.length < blocksAmount) {
       blocks.push({
         blockSize: 0,
-        blockVSize: 0,
         feeRange: [],
         index: blocks.length,
         medianFee: 0,
@@ -436,7 +426,6 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
       if (!this.count) {
         const lastBlock = blocks[blocks.length - 1];
         lastBlock.blockSize += block.blockSize;
-        lastBlock.blockVSize += block.blockVSize;
         lastBlock.nTx += block.nTx;
         lastBlock.feeRange = lastBlock.feeRange.concat(block.feeRange);
         lastBlock.feeRange.sort((a, b) => a - b);
@@ -446,7 +435,7 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
     }
     if (blocks.length) {
       blocks[blocks.length - 1].isStack =
-        blocks[blocks.length - 1].blockVSize > this.stateService.blockVSize;
+        blocks[blocks.length - 1].blockSize > this.stateService.blockSize;
     }
     if (this.count) {
       this.maxArrowPosition =
@@ -482,7 +471,7 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
 
   getStyleForMempoolBlock(mempoolBlock: MempoolBlock, index: number) {
     const emptyBackgroundSpacePercentage = Math.max(
-      100 - (mempoolBlock.blockVSize / this.stateService.blockVSize) * 100,
+      100 - (mempoolBlock.blockSize / this.stateService.blockSize) * 100,
       0
     );
     const usedBlockSpace = 100 - emptyBackgroundSpacePercentage;
@@ -542,7 +531,7 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
   calculateTransactionPosition() {
     if (
       (!this.txPosition &&
-        !this.txFeePerVSize &&
+        !this.txFeePerSize &&
         (this.markIndex === undefined || this.markIndex === -1)) ||
       !this.mempoolBlocks?.length
     ) {
@@ -575,7 +564,7 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
           this.blockWidth;
       } else {
         const positionInBlock =
-          Math.min(1, this.txPosition.vsize / this.stateService.blockVSize) *
+          Math.min(1, this.txPosition.size / this.stateService.blockSize) *
           this.blockWidth;
         const positionOfBlock =
           this.txPosition.block * (this.blockWidth + this.blockPadding);
@@ -583,12 +572,12 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
       }
     } else {
       const estimatedPosition = this.etaService.mempoolPositionFromFees(
-        this.txFeePerVSize,
+        this.txFeePerSize,
         this.mempoolBlocks
       );
       this.rightPosition =
         estimatedPosition.block * (this.blockWidth + this.blockPadding) +
-        (estimatedPosition.vsize / this.stateService.blockVSize) *
+        (estimatedPosition.size / this.stateService.blockSize) *
           this.blockWidth;
     }
     this.rightPosition = Math.min(this.maxArrowPosition, this.rightPosition);
@@ -600,7 +589,6 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
     for (let i = 0; i < numberOfBlocks; i++) {
       emptyBlocks.push({
         blockSize: 0,
-        blockVSize: 0,
         feeRange: [],
         index: i,
         medianFee: 0,

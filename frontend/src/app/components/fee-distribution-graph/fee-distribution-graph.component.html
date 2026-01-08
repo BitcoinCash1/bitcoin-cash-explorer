@@ -1,12 +1,12 @@
 <div
   class="fee-distribution-chart"
-  *ngIf="mempoolVsizeFeesOptions && stateService.isBrowser; else loadingFees"
+  *ngIf="mempoolSizeFeesOptions && stateService.isBrowser; else loadingFees"
 >
   <div
     *browserOnly
     echarts
-    [initOpts]="mempoolVsizeFeesInitOptions"
-    [options]="mempoolVsizeFeesOptions"
+    [initOpts]="mempoolSizeFeesInitOptions"
+    [options]="mempoolSizeFeesOptions"
   ></div>
 </div>
 

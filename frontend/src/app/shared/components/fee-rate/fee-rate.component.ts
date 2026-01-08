@@ -11,7 +11,7 @@ import { FeeRoundingPipe } from '@app/shared/pipes/fee-rounding/fee-rounding.pip
 })
 export class FeeRateComponent implements OnInit {
   @Input() fee: number | undefined;
-  @Input() weight: number = 4;
+  @Input() size: number = 1;
   @Input() rounding: string = null;
   @Input() dp: number = null;
   @Input() softDecimals: boolean = false;

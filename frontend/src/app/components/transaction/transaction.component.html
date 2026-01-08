@@ -1,21 +1,6 @@
 <div class="container-xl">
   <div class="title-block">
-    <div
-      *ngIf="rbfTransaction && !tx?.status?.confirmed"
-      class="alert alert-mempool"
-      role="alert"
-    >
-      <span i18n="transaction.rbf.replacement|RBF replacement"
-        >This transaction has been replaced by:</span
-      >
-      <app-truncate
-        [text]="rbfTransaction.txid"
-        [lastChars]="12"
-        [link]="['/tx/' | relativeUrl, rbfTransaction.txid]"
-      ></app-truncate>
-    </div>
-
-    <ng-container *ngIf="!rbfTransaction || rbfTransaction?.size || tx">
+    <ng-container *ngIf="tx">
       <h1 i18n="shared.transaction">Transaction</h1>
 
       <span class="tx-link">
@@ -35,8 +20,7 @@
           *ngIf="tx"
           [chainTip]="latestBlock?.height"
           [height]="tx?.status?.block_height"
-          [replaced]="replaced"
-          [removed]="this.rbfInfo?.mined && !this.tx?.status?.confirmed"
+          [removed]="!this.tx?.status?.confirmed"
           [cached]="isCached"
         ></app-confirmations>
       </div>
@@ -89,142 +73,17 @@
     [isMobile]="isMobile"
     [transactionTime]="transactionTime"
     [isLoadingFirstSeen]="isLoadingFirstSeen"
-    [featuresEnabled]="featuresEnabled"
     [auditStatus]="auditStatus"
     [filters]="filters"
     [miningStats]="miningStats"
     [pool]="pool"
-    [isAcceleration]="isAcceleration"
-    [acceleratorAvailable]="acceleratorAvailable"
-    [accelerateCtaType]="accelerateCtaType"
-    [notAcceleratedOnLoad]="notAcceleratedOnLoad"
-    [showAccelerationSummary]="showAccelerationSummary"
-    [eligibleForAcceleration]="eligibleForAcceleration"
     [hasEffectiveFeeRate]="hasEffectiveFeeRate"
-    [cpfpInfo]="cpfpInfo"
-    [hasCpfp]="hasCpfp"
-    [accelerationInfo]="accelerationInfo"
-    [replaced]="replaced"
     [isCached]="isCached"
     [ETA$]="ETA$"
-    (accelerateClicked)="onAccelerateClicked()"
-    (toggleCpfp$)="this.showCpfpDetails = !this.showCpfpDetails"
   ></app-transaction-details>
   }
 
   <ng-template [ngIf]="!isLoadingTx && !error">
-    <!-- CPFP Details -->
-    <app-cpfp-info
-      *ngIf="showCpfpDetails"
-      [cpfpInfo]="cpfpInfo"
-      [tx]="tx"
-    ></app-cpfp-info>
-
-    <!-- Accelerator -->
-    <ng-container
-      *ngIf="
-        !tx?.status?.confirmed &&
-        showAccelerationSummary &&
-        (ETA$ | async) as eta
-      "
-    >
-      <span id="accelerate" #accelerate class="anchor"></span>
-      <br />
-      <div class="title float-left mb-1">
-        <h2>
-          <a
-            [href]="[
-              isMempoolSpaceBuild
-                ? '/accelerator'
-                : 'https://mempool.space/accelerator'
-            ]"
-            [target]="isMempoolSpaceBuild ? '' : 'blank'"
-            ><app-svg-images
-              name="accelerator"
-              [height]="isMobile ? '35px' : '45px'"
-            ></app-svg-images
-          ></a>
-        </h2>
-      </div>
-      <button
-        type="button"
-        class="btn btn-outline-info accelerator-toggle btn-sm float-right"
-        [class.hide-on-mobile]="hasAccelerationDetails"
-        (click)="closeAccelerator()"
-        i18n="accelerator.hide"
-      >
-        Hide accelerator
-      </button>
-      <button
-        *ngIf="hasAccelerationDetails"
-        class="btn btn-sm btn-outline-info details-button float-right ml-2"
-        (click)="showAccelerationDetails = !showAccelerationDetails"
-        i18n="transaction.details|Transaction Details"
-      >
-        Details
-      </button>
-
-      <div class="clearfix"></div>
-
-      <app-accelerate-checkout
-        *ngIf="da$ | async as da"
-        [advancedEnabled]="true"
-        [tx]="tx"
-        [accelerating]="isAcceleration"
-        [eta]="eta"
-        [miningStats]="miningStats"
-        [showDetails]="showAccelerationDetails"
-        [noCTA]="true"
-        (hasDetails)="setHasAccelerationDetails($event)"
-        (completed)="onAccelerationCompleted()"
-        (unavailable)="eligibleForAcceleration = false"
-        class="h-100 w-100"
-      ></app-accelerate-checkout>
-    </ng-container>
-
-    <br />
-
-    <ng-container *ngIf="rbfInfo">
-      <div class="title float-left">
-        <h2 id="rbf" i18n="transaction.rbf-history|RBF Timeline">
-          RBF Timeline
-        </h2>
-      </div>
-      <div class="clearfix"></div>
-      <app-rbf-timeline
-        [txid]="txId"
-        [replacements]="rbfInfo"
-      ></app-rbf-timeline>
-      <br />
-    </ng-container>
-
-    <ng-container
-      *ngIf="
-        transactionTime > 0 &&
-        tx.acceleratedAt > 0 &&
-        (isAcceleration || accelerationCanceled)
-      "
-    >
-      <div class="title float-left">
-        <h2
-          id="acceleration-timeline"
-          i18n="transaction.acceleration-timeline|Acceleration Timeline"
-        >
-          Acceleration Timeline
-        </h2>
-      </div>
-      <div class="clearfix"></div>
-      <app-acceleration-timeline
-        [transactionTime]="transactionTime"
-        [acceleratedAt]="tx.acceleratedAt"
-        [tx]="tx"
-        [accelerationInfo]="accelerationInfo"
-        [eta]="ETA$ | async"
-        [canceled]="accelerationCanceled"
-      ></app-acceleration-timeline>
-      <br />
-    </ng-container>
-
     <ng-container *ngIf="flowEnabled; else flowPlaceholder">
       <div class="title float-left">
         <h2
@@ -341,25 +200,21 @@
           <table class="table table-borderless table-striped">
             <tbody>
               <tr>
-                <td i18n="block.size">Size</td>
+                <td i18n="transaction.size|Transaction Size">
+                  Size
+                </td>
                 <td [innerHTML]="'&lrm;' + (tx.size | bytes: 2)"></td>
               </tr>
-              <tr>
-                <td i18n="transaction.vsize|Transaction Virtual Size">
-                  Virtual size
-                </td>
-                <td [innerHTML]="'&lrm;' + (tx.weight / 4 | vbytes: 2)"></td>
-              </tr>
-              <tr *ngIf="adjustedVsize != null">
+              <tr *ngIf="adjustedSize != null">
                 <td>
                   <ng-container
-                    i18n="transaction.adjusted-vsize|Transaction Adjusted VSize"
-                    >Adjusted vsize</ng-container
+                    i18n="transaction.adjusted-size|Transaction Adjusted Size"
+                    >Adjusted size</ng-container
                   >
                   <a
                     class="info-link"
                     [routerLink]="['/docs/faq/' | relativeUrl]"
-                    fragment="what-is-adjusted-vsize"
+                    fragment="what-is-adjusted-size"
                   >
                     <fa-icon
                       [icon]="['fas', 'info-circle']"
@@ -367,11 +222,11 @@
                     ></fa-icon>
                   </a>
                 </td>
-                <td [innerHTML]="'&lrm;' + (adjustedVsize | vbytes: 2)"></td>
+                <td [innerHTML]="'&lrm;' + (adjustedSize | bytes: 2)"></td>
               </tr>
               <tr>
-                <td i18n="block.weight">Weight</td>
-                <td [innerHTML]="'&lrm;' + (tx.weight | wuBytes: 2)"></td>
+                <td i18n="transaction.size">Size</td>
+                <td [innerHTML]="'&lrm;' + (tx.size | bytes: 2)"></td>
               </tr>
             </tbody>
           </table>

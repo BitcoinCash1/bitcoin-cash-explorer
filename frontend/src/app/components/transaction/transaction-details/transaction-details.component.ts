@@ -7,7 +7,6 @@ import {
   EventEmitter,
 } from '@angular/core';
 import { Transaction } from '@interfaces/electrs.interface';
-import { Acceleration, CpfpInfo } from '@interfaces/node-api.interface';
 import {
   Pool,
   TxAuditStatus,
@@ -36,33 +35,12 @@ export class TransactionDetailsComponent implements OnInit {
   @Input() filters: Filter[];
   @Input() miningStats: MiningStats;
   @Input() pool: Pool | null;
-  @Input() isAcceleration: boolean;
   @Input() hasEffectiveFeeRate: boolean;
-  @Input() cpfpInfo: CpfpInfo;
-  @Input() hasCpfp: boolean;
-  @Input() accelerationInfo: Acceleration;
-  @Input() acceleratorAvailable: boolean;
-  @Input() accelerateCtaType: string;
-  @Input() notAcceleratedOnLoad: boolean;
-  @Input() showAccelerationSummary: boolean;
-  @Input() eligibleForAcceleration: boolean;
-  @Input() replaced: boolean;
   @Input() isCached: boolean;
   @Input() ETA$: Observable<ETA>;
   @Input() unbroadcasted: boolean;
 
-  @Output() accelerateClicked = new EventEmitter<boolean>();
-  @Output() toggleCpfp$ = new EventEmitter<void>();
-
   constructor() {}
 
   ngOnInit(): void {}
-
-  onAccelerateClicked(): void {
-    this.accelerateClicked.emit(true);
-  }
-
-  toggleCpfp(): void {
-    this.toggleCpfp$.emit();
-  }
 }

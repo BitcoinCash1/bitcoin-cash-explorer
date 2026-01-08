@@ -31,7 +31,7 @@ export default class BlockScene {
   gridWidth: number;
   gridHeight: number;
   gridSize: number;
-  vbytesPerUnit: number;
+  bytesPerUnit: number;
   unitPadding: number;
   unitWidth: number;
   initialised: boolean;
@@ -256,7 +256,6 @@ export default class BlockScene {
     change: {
       txid: string;
       rate: number | undefined;
-      acc: boolean | undefined;
     }[],
     direction: string = 'left',
     resetLayout: boolean = false
@@ -293,9 +292,8 @@ export default class BlockScene {
       // update effective rates
       change.forEach((tx) => {
         if (this.txs[tx.txid]) {
-          this.txs[tx.txid].acc = tx.acc;
           this.txs[tx.txid].feerate =
-            tx.rate || this.txs[tx.txid].fee / this.txs[tx.txid].vsize;
+            tx.rate || this.txs[tx.txid].fee / this.txs[tx.txid].size;
           this.txs[tx.txid].rate = tx.rate;
           this.txs[tx.txid].dirty = true;
           this.updateColor(this.txs[tx.txid], startTime, 50, true);
@@ -389,7 +387,7 @@ export default class BlockScene {
     };
 
     // Set the scale of the visualization (with a 5% margin)
-    this.vbytesPerUnit = blockLimit / Math.pow(resolution / 1.02, 2);
+    this.bytesPerUnit = blockLimit / Math.pow(resolution / 1.02, 2);
     this.gridWidth = resolution;
     this.gridHeight = resolution;
     this.resize({ width, height, animate: true });
@@ -684,7 +682,7 @@ export default class BlockScene {
   private txSize(tx: TxView): number {
     const scale = Math.max(
       1,
-      Math.round(Math.sqrt((1.1 * tx.vsize) / this.vbytesPerUnit))
+      Math.round(Math.sqrt((1.1 * tx.size) / this.bytesPerUnit))
     );
     return Math.min(this.gridWidth, Math.max(1, scale)); // bound between 1 and the max displayable size (just in case!)
   }

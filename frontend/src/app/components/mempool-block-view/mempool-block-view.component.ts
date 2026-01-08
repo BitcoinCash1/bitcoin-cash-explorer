@@ -59,7 +59,6 @@ export class MempoolBlockViewComponent implements OnInit, OnDestroy {
                   {
                     index: 0,
                     blockSize: 0,
-                    blockVSize: 0,
                     feeRange: [0, 0],
                     medianFee: 0,
                     nTx: 0,

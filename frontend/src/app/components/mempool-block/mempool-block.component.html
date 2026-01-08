@@ -77,7 +77,7 @@
                     role="progressbar"
                     [ngStyle]="{
                       width:
-                        (mempoolBlock.blockVSize / stateService.blockVSize) *
+                        (mempoolBlock.blockSize / stateService.blockSize) *
                           100 +
                         '%'
                     }"
@@ -95,7 +95,7 @@
           *ngIf="webGlEnabled"
           [transactions]="mempoolBlockTransactions$ | async"
           [feeRange]="mempoolBlock.isStack ? mempoolBlock.feeRange : []"
-          [vsize]="mempoolBlock.blockVSize"
+          [size]="mempoolBlock.blockSize"
         ></app-fee-distribution-graph>
       </div>
       <div class="col-md chart-container">
@@ -110,7 +110,7 @@
           *ngIf="!webGlEnabled"
           [transactions]="mempoolBlockTransactions$ | async"
           [feeRange]="mempoolBlock.isStack ? mempoolBlock.feeRange : []"
-          [vsize]="mempoolBlock.blockVSize"
+          [size]="mempoolBlock.blockSize"
         ></app-fee-distribution-graph>
       </div>
     </div>

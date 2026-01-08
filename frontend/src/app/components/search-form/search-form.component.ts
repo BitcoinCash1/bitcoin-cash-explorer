@@ -15,7 +15,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { EventType, NavigationStart, Router } from '@angular/router';
-import { AssetsService } from '@app/services/assets.service';
 import { Env, StateService } from '@app/services/state.service';
 import {
   Observable,
@@ -57,7 +56,6 @@ export class SearchFormComponent implements OnInit {
   @Input() hamburgerOpen = false;
   env: Env;
   network = '';
-  assets: object = {};
   pools: object[] = [];
   isSearching = false;
   isTypeaheading$ = new BehaviorSubject<boolean>(false);
@@ -95,7 +93,6 @@ export class SearchFormComponent implements OnInit {
   constructor(
     private formBuilder: UntypedFormBuilder,
     private router: Router,
-    private assetsService: AssetsService,
     private stateService: StateService,
     private electrsApiService: ElectrsApiService,
     private apiService: ApiService,
@@ -135,12 +132,6 @@ export class SearchFormComponent implements OnInit {
       searchText: ['', Validators.required],
     });
 
-    if (this.network === 'liquid' || this.network === 'liquidtestnet') {
-      this.assetsService.getAssetsMinimalJson$.subscribe((assets) => {
-        this.assets = assets;
-      });
-    }
-
     const searchText$ = this.searchForm.get('searchText').valueChanges.pipe(
       map((text) => {
         return text.trim();
@@ -158,27 +149,12 @@ export class SearchFormComponent implements OnInit {
           return of([[], { nodes: [], channels: [] }, this.pools]);
         }
         this.isTypeaheading$.next(true);
-        if (!this.stateService.networkSupportsLightning()) {
-          return zip(
-            this.electrsApiService
-              .getAddressesByPrefix$(text)
-              .pipe(catchError(() => of([]))),
-            [{ nodes: [], channels: [] }],
-            this.getMiningPools()
-          );
-        }
+
         return zip(
           this.electrsApiService
             .getAddressesByPrefix$(text)
             .pipe(catchError(() => of([]))),
-          this.apiService.lightningSearch$(text).pipe(
-            catchError(() =>
-              of({
-                nodes: [],
-                channels: [],
-              })
-            )
-          ),
+          [{ nodes: [], channels: [] }],
           this.getMiningPools()
         );
       }),
@@ -258,7 +234,6 @@ export class SearchFormComponent implements OnInit {
           (this.network as any) || 'mainnet',
           this.env
         );
-        const liquidAsset = this.assets ? this.assets[searchText] || [] : [];
         const pools = this.pools
           .filter((pool) =>
             pool['name'].toLowerCase().includes(searchText.toLowerCase())
@@ -299,7 +274,6 @@ export class SearchFormComponent implements OnInit {
           otherNetworks: otherNetworks,
           nodes: lightningResults.nodes,
           channels: lightningResults.channels,
-          liquidAsset: liquidAsset,
           pools: pools,
         };
       })
@@ -358,30 +332,7 @@ export class SearchFormComponent implements OnInit {
           : (this.isSearching = false);
       } else if (this.regexTransaction.test(searchText)) {
         const matches = this.regexTransaction.exec(searchText);
-        if (this.network === 'liquid' || this.network === 'liquidtestnet') {
-          if (this.assets[matches[0]]) {
-            this.navigate('/assets/asset/', matches[0]);
-          }
-          this.electrsApiService.getAsset$(matches[0]).subscribe(
-            () => {
-              this.navigate('/assets/asset/', matches[0]);
-            },
-            () => {
-              this.electrsApiService.getBlock$(matches[0]).subscribe(
-                (block) => {
-                  this.navigate('/block/', matches[0], {
-                    state: { data: { block } },
-                  });
-                },
-                () => {
-                  this.navigate('/tx/', matches[0]);
-                }
-              );
-            }
-          );
-        } else {
-          this.navigate('/tx/', matches[0]);
-        }
+        this.navigate('/tx/', matches[0]);
       } else if (
         this.regexDate.test(searchText) ||
         this.regexUnixTimestamp.test(searchText)

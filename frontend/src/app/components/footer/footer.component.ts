@@ -49,29 +49,29 @@ export class FooterComponent implements OnInit {
 
     this.mempoolInfoData$ = combineLatest([
       this.stateService.mempoolInfo$,
-      this.stateService.vbytesPerSecond$,
+      this.stateService.bytesPerSecond$,
     ]).pipe(
-      map(([mempoolInfo, vbytesPerSecond]) => {
+      map(([mempoolInfo, bytesPerSecond]) => {
         const percent = Math.round(
-          (Math.min(vbytesPerSecond, this.vBytesPerSecondLimit) /
+          (Math.min(bytesPerSecond, this.vBytesPerSecondLimit) /
             this.vBytesPerSecondLimit) *
             100
         );
 
         let progressColor = '#7CB342';
-        if (vbytesPerSecond > 1667) {
+        if (bytesPerSecond > 1667) {
           progressColor = '#FDD835';
         }
-        if (vbytesPerSecond > 2000) {
+        if (bytesPerSecond > 2000) {
           progressColor = '#FFB300';
         }
-        if (vbytesPerSecond > 2500) {
+        if (bytesPerSecond > 2500) {
           progressColor = '#FB8C00';
         }
-        if (vbytesPerSecond > 3000) {
+        if (bytesPerSecond > 3000) {
           progressColor = '#F4511E';
         }
-        if (vbytesPerSecond > 3500) {
+        if (bytesPerSecond > 3500) {
           progressColor = '#D81B60';
         }
 
@@ -86,7 +86,7 @@ export class FooterComponent implements OnInit {
 
         return {
           memPoolInfo: mempoolInfo,
-          vBytesPerSecond: vbytesPerSecond,
+          vBytesPerSecond: bytesPerSecond,
           progressWidth: percent + '%',
           progressColor: progressColor,
           mempoolSizeProgress: mempoolSizeProgress,
@@ -99,13 +99,10 @@ export class FooterComponent implements OnInit {
         const size = mempoolBlocks
           .map((m) => m.blockSize)
           .reduce((a, b) => a + b, 0);
-        const vsize = mempoolBlocks
-          .map((m) => m.blockVSize)
-          .reduce((a, b) => a + b, 0);
 
         return {
           size: size,
-          blocks: Math.ceil(vsize / this.stateService.blockVSize),
+          blocks: Math.ceil(size / this.stateService.blockSize),
         };
       })
     );

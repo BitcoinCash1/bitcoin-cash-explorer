@@ -12,7 +12,6 @@ import { HashrateChartComponent } from '@components/hashrate-chart/hashrate-char
 import { HashrateChartPoolsComponent } from '@components/hashrates-chart-pools/hashrate-chart-pools.component';
 import { MempoolBlockComponent } from '@components/mempool-block/mempool-block.component';
 import { MiningDashboardComponent } from '@components/mining-dashboard/mining-dashboard.component';
-import { AcceleratorDashboardComponent } from '@components/acceleration/accelerator-dashboard/accelerator-dashboard.component';
 import { PoolRankingComponent } from '@components/pool-ranking/pool-ranking.component';
 import { PoolComponent } from '@components/pool/pool.component';
 import { StartComponent } from '@components/start/start.component';
@@ -20,8 +19,6 @@ import { StatisticsComponent } from '@components/statistics/statistics.component
 import { DashboardComponent } from '@app/dashboard/dashboard.component';
 import { CustomDashboardComponent } from '@components/custom-dashboard/custom-dashboard.component';
 import { TreasuriesComponent } from '@components/treasuries/treasuries.component';
-import { AccelerationFeesGraphComponent } from '@components/acceleration/acceleration-fees-graph/acceleration-fees-graph.component';
-import { AccelerationsListComponent } from '@components/acceleration/accelerations-list/accelerations-list.component';
 import { AddressComponent } from '@components/address/address.component';
 import { WalletComponent } from '@components/wallet/wallet.component';
 
@@ -49,34 +46,6 @@ const routes: Routes = [
             component: MiningDashboardComponent,
           },
         ],
-      },
-      {
-        path: 'acceleration',
-        data: {
-          networks: ['bitcoin'],
-          networkSpecific: true,
-          onlySubnet: [''],
-        },
-        component: StartComponent,
-        children: [
-          {
-            path: '',
-            component: AcceleratorDashboardComponent,
-          },
-        ],
-      },
-      {
-        path: 'acceleration/list/:page',
-        data: {
-          networks: ['bitcoin'],
-          networkSpecific: true,
-          onlySubnet: [''],
-        },
-        component: AccelerationsListComponent,
-      },
-      {
-        path: 'acceleration/list',
-        redirectTo: 'acceleration/list/1',
       },
       {
         path: 'mempool-block/:id',
@@ -156,23 +125,6 @@ const routes: Routes = [
             path: 'mining/block-sizes-weights',
             data: { networks: ['bitcoin'] },
             component: BlockSizesWeightsGraphComponent,
-          },
-          {
-            path: 'acceleration/fees',
-            data: {
-              networks: ['bitcoin'],
-              networkSpecific: true,
-              onlySubnet: [''],
-            },
-            component: AccelerationFeesGraphComponent,
-          },
-          {
-            path: 'lightning',
-            data: { preload: true, networks: ['bitcoin'] },
-            loadChildren: () =>
-              import('@app/graphs/lightning-graphs.module').then(
-                (m) => m.LightningGraphsModule
-              ),
           },
           {
             path: '',

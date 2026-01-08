@@ -134,14 +134,6 @@
         </p>
         <p>
           <a
-            *ngIf="stateService.networkSupportsLightning()"
-            [routerLink]="['/lightning' | relativeUrl]"
-            i18n="master-page.lightning"
-            >Lightning Explorer</a
-          >
-        </p>
-        <p>
-          <a
             [routerLink]="['/blocks' | relativeUrl]"
             i18n="dashboard.recent-blocks"
             >Recent Blocks</a
@@ -166,15 +158,6 @@
             [routerLink]="['/tx/preview' | relativeUrl]"
             i18n="shared.preview-transaction|Preview Transaction"
             >Preview Transaction</a
-          >
-        </p>
-        <p *ngIf="officialMempoolSpace">
-          <a
-            [routerLink]="[
-              '/lightning/group/the-mempool-open-source-project' | relativeUrl
-            ]"
-            i18n="footer.connect-to-our-nodes"
-            >Connect to our Nodes</a
           >
         </p>
         <p>

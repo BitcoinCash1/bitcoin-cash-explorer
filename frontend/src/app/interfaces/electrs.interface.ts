@@ -1,13 +1,11 @@
 import { Price } from '@app/services/price.service';
 import { IChannel } from '@interfaces/node-api.interface';
-import { ParsedTaproot } from '../shared/transaction.utils';
 
 export interface Transaction {
   txid: string;
   version: number;
   locktime: number;
   size: number;
-  weight: number;
   fee: number;
   vin: Vin[];
   vout: Vout[];
@@ -15,15 +13,11 @@ export interface Transaction {
 
   // Custom properties
   firstSeen?: number;
-  feePerVsize?: number;
-  effectiveFeePerVsize?: number;
+  feePerSize?: number;
+  effectiveFeePerSize?: number;
   ancestors?: Ancestor[];
   descendants?: Ancestor[];
   bestDescendant?: BestDescendant | null;
-  cpfpChecked?: boolean;
-  acceleration?: boolean;
-  acceleratedBy?: number[];
-  acceleratedAt?: number;
   feeDelta?: number;
   deleteAfter?: number;
   _unblinded?: any;
@@ -44,20 +38,20 @@ export interface TransactionChannels {
 
 interface Ancestor {
   txid: string;
-  weight: number;
+  size: number;
   fee: number;
 }
 
 interface BestDescendant {
   txid: string;
-  weight: number;
+  size: number;
   fee: number;
 }
 
 export interface Recent {
   txid: string;
   fee: number;
-  vsize: number;
+  size: number;
   value: number;
 }
 
@@ -70,9 +64,9 @@ export interface Vin {
   inner_redeemscript_asm?: string;
   inner_witnessscript_asm?: string;
   sequence: any;
-  witness?: string[];
   prevout: Vout;
   // Elements
+  // TODO: clean up mode ,like is_pegin?
   is_pegin?: boolean;
   issuance?: Issuance;
   // Custom
@@ -81,8 +75,6 @@ export interface Vin {
   isInscription?: boolean;
   // temporary field for extracted raw simplicity scripts
   inner_simplicityscript?: string;
-  // parsed taproot info
-  taprootInfo?: ParsedTaproot;
 }
 
 interface Issuance {
@@ -104,6 +96,7 @@ export interface Vout {
   scriptpubkey_address?: string;
   value: number;
   // Elements
+  // TODO: clean up mode ,like pegout?
   valuecommitment?: number;
   asset?: string;
   pegout?: Pegout;
@@ -136,10 +129,10 @@ export interface Block {
   merkle_root: string;
   tx_count: number;
   size: number;
-  weight: number;
   previousblockhash: string;
   stale?: boolean;
   canonical?: string;
+  // TODO: Add optional ALBA fields
 }
 
 export interface Address {

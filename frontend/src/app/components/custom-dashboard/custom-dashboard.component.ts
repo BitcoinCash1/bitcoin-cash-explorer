@@ -33,7 +33,7 @@ import {
   OptimizedMempoolStats,
   TransactionStripped,
 } from '@interfaces/node-api.interface';
-import { MempoolInfo, ReplacementInfo } from '@interfaces/websocket.interface';
+import { MempoolInfo } from '@interfaces/websocket.interface';
 import { ApiService } from '@app/services/api.service';
 import { StateService } from '@app/services/state.service';
 import { WebsocketService } from '@app/services/websocket.service';
@@ -62,7 +62,7 @@ interface MempoolInfoData {
 
 interface MempoolStatsData {
   mempool: OptimizedMempoolStats[];
-  weightPerSecond: any;
+  bytesPerSecond: any;
 }
 
 @Component({
@@ -82,7 +82,6 @@ export class CustomDashboardComponent
   vBytesPerSecondLimit = 1667;
   transactions$: Observable<TransactionStripped[]>;
   blocks$: Observable<BlockExtended[]>;
-  replacements$: Observable<ReplacementInfo[]>;
   latestBlockHeight: number;
   mempoolTransactionsWeightPerSecondData: any;
   mempoolStats$: Observable<MempoolStatsData>;
@@ -171,7 +170,6 @@ export class CustomDashboardComponent
     this.filterSubscription.unsubscribe();
     this.mempoolInfoSubscription.unsubscribe();
     this.currencySubscription.unsubscribe();
-    this.websocketService.stopTrackRbfSummary();
     if (this.addressSubscription) {
       this.addressSubscription.unsubscribe();
       this.websocketService.stopTrackingAddress();
@@ -196,7 +194,6 @@ export class CustomDashboardComponent
       'mempool-blocks',
       'live-2h-chart',
     ]);
-    this.websocketService.startTrackRbfSummary();
     this.network$ = merge(of(''), this.stateService.networkChanged$);
     this.mempoolLoadingStatus$ = this.stateService.loadingIndicators$.pipe(
       map((indicators) =>
@@ -234,20 +231,20 @@ export class CustomDashboardComponent
 
     this.mempoolInfoData$ = combineLatest([
       this.stateService.mempoolInfo$,
-      this.stateService.vbytesPerSecond$,
+      this.stateService.bytesPerSecond$,
     ]).pipe(
-      map(([mempoolInfo, vbytesPerSecond]) => {
+      map(([mempoolInfo, bytesPerSecond]) => {
         const percent = Math.round(
-          (Math.min(vbytesPerSecond, this.vBytesPerSecondLimit) /
+          (Math.min(bytesPerSecond, this.vBytesPerSecondLimit) /
             this.vBytesPerSecondLimit) *
             100
         );
 
         let progressColor = 'bg-success';
-        if (vbytesPerSecond > 1667) {
+        if (bytesPerSecond > 1667) {
           progressColor = 'bg-warning';
         }
-        if (vbytesPerSecond > 3000) {
+        if (bytesPerSecond > 3000) {
           progressColor = 'bg-danger';
         }
 
@@ -262,7 +259,7 @@ export class CustomDashboardComponent
 
         return {
           memPoolInfo: mempoolInfo,
-          vBytesPerSecond: vbytesPerSecond,
+          vBytesPerSecond: bytesPerSecond,
           progressWidth: percent + '%',
           progressColor: progressColor,
           mempoolSizeProgress: mempoolSizeProgress,
@@ -276,14 +273,11 @@ export class CustomDashboardComponent
       map((mempoolBlocks) => {
         const size = mempoolBlocks
           .map((m) => m.blockSize)
-          .reduce((a, b) => a + b, 0);
-        const vsize = mempoolBlocks
-          .map((m) => m.blockVSize)
-          .reduce((a, b) => a + b, 0);
+          .reduce((a, b) => a + b, 0);;
 
         return {
           size: size,
-          blocks: Math.ceil(vsize / this.stateService.blockVSize),
+          blocks: Math.ceil(size / this.stateService.blockSize),
         };
       })
     );
@@ -305,8 +299,6 @@ export class CustomDashboardComponent
         return of(blocks.slice(0, 6));
       })
     );
-
-    this.replacements$ = this.stateService.rbfLatestSummary$;
 
     this.mempoolStats$ = this.stateService.connectionState$.pipe(
       filter((state) => state === 2),
@@ -335,7 +327,7 @@ export class CustomDashboardComponent
         if (mempoolStats) {
           return {
             mempool: mempoolStats,
-            weightPerSecond: this.handleNewMempoolData(mempoolStats.concat([])),
+            bytesPerSecond: this.handleNewMempoolData(mempoolStats.concat([])),
           };
         } else {
           return null;
@@ -363,7 +355,7 @@ export class CustomDashboardComponent
       series: [
         mempoolStats.map((stats) => [
           stats.added * 1000,
-          stats.vbytes_per_second,
+          stats.bytes_per_second,
         ]),
       ],
     };

@@ -97,9 +97,6 @@ export const defaultAuditColors = {
   censored: hexToColor('f344df'),
   missing: darken(desaturate(hexToColor('f344df'), 0.3), 0.7),
   added: hexToColor('0099ff'),
-  added_prioritized: darken(desaturate(hexToColor('0099ff'), 0.15), 0.85),
-  prioritized: darken(desaturate(hexToColor('0099ff'), 0.3), 0.7),
-  accelerated: hexToColor('8f5ff6'),
 };
 
 const contrastColors: { [key: string]: ColorPalette } = {
@@ -133,9 +130,6 @@ export const contrastAuditColors = {
   censored: hexToColor('ffa8ff'),
   missing: darken(desaturate(hexToColor('ffa8ff'), 0.3), 0.7),
   added: hexToColor('00bb98'),
-  added_prioritized: darken(desaturate(hexToColor('00bb98'), 0.15), 0.85),
-  prioritized: darken(desaturate(hexToColor('00bb98'), 0.3), 0.7),
-  accelerated: hexToColor('8f5ff6'),
 };
 
 export function defaultColorFunction(
@@ -149,7 +143,7 @@ export function defaultColorFunction(
   auditColors: { [status: string]: Color } = defaultAuditColors,
   relativeTime?: number
 ): Color {
-  const rate = tx.fee / tx.vsize; // color by simple single-tx fee rate
+  const rate = tx.fee / tx.size; // color by simple single-tx fee rate
   const levelIndex = colors.baseLevel(
     tx,
     rate,
@@ -159,11 +153,6 @@ export function defaultColorFunction(
     colors.base[levelIndex] || colors.base[defaultMempoolFeeColors.length - 1];
   // Normal mode
   if (!tx.scene?.highlightingEnabled) {
-    if (tx.acc) {
-      return auditColors.accelerated;
-    } else {
-      return levelColor;
-    }
     return levelColor;
   }
   // Block audit
@@ -172,31 +161,16 @@ export function defaultColorFunction(
       return auditColors.censored;
     case 'missing':
     case 'sigop':
-    case 'rbf':
-      return (
-        colors.marginal[levelIndex] ||
-        colors.marginal[defaultMempoolFeeColors.length - 1]
-      );
     case 'fresh':
     case 'freshcpfp':
       return auditColors.missing;
     case 'added':
       return auditColors.added;
-    case 'added_prioritized':
-      return auditColors.added_prioritized;
-    case 'prioritized':
-      return auditColors.prioritized;
-    case 'added_deprioritized':
-      return auditColors.added_prioritized;
-    case 'deprioritized':
-      return auditColors.prioritized;
     case 'selected':
       return (
         colors.marginal[levelIndex] ||
         colors.marginal[defaultMempoolFeeColors.length - 1]
       );
-    case 'accelerated':
-      return auditColors.accelerated;
     case 'found':
       if (tx.context === 'projected') {
         return (
@@ -213,11 +187,7 @@ export function defaultColorFunction(
         return auditColors.added;
       }
     default:
-      if (tx.acc) {
-        return auditColors.accelerated;
-      } else {
-        return levelColor;
-      }
+       return levelColor;
   }
 }
 
@@ -247,10 +217,6 @@ export function ageColorFunction(
   relativeTime?: number,
   theme?: string
 ): Color {
-  if (tx.acc || tx.status === 'accelerated') {
-    return auditColors.accelerated;
-  }
-
   const color =
     theme !== 'contrast' && theme !== 'bukele'
       ? defaultColorFunction(tx, colors, auditColors, relativeTime)

@@ -22,7 +22,7 @@ export class FeeDistributionGraphComponent
   implements OnInit, OnChanges, OnDestroy
 {
   @Input() feeRange: number[];
-  @Input() vsize: number;
+  @Input() size: number;
   @Input() transactions: TransactionStripped[];
   @Input() height: number | string = 210;
   @Input() top: number | string = 20;
@@ -40,8 +40,8 @@ export class FeeDistributionGraphComponent
 
   rateUnitSub: Subscription;
   weightMode: boolean = false;
-  mempoolVsizeFeesOptions: any;
-  mempoolVsizeFeesInitOptions = {
+  mempoolSizeFeesOptions: any;
+  mempoolSizeFeesInitOptions = {
     renderer: 'svg',
   };
 
@@ -84,7 +84,7 @@ export class FeeDistributionGraphComponent
     const samples = [];
     const txs = this.transactions
       .map((tx) => {
-        return { vsize: tx.vsize, rate: tx.rate ?? tx.fee / tx.vsize };
+        return { size: tx.size, rate: tx.rate ?? tx.fee / tx.size };
       })
       .sort((a, b) => {
         return b.rate - a.rate;
@@ -95,14 +95,14 @@ export class FeeDistributionGraphComponent
     this.minValue = txs.length
       ? txs.reduce((min, tx) => Math.min(min, tx.rate), Infinity)
       : 0;
-    const maxBlockVSize = this.stateService.env.BLOCK_WEIGHT_UNITS / 4;
-    const sampleInterval = maxBlockVSize / this.numSamples;
-    let cumVSize = 0;
+    const maxBlockSize = this.stateService.env.MIN_BLOCK_SIZE_UNITS;
+    const sampleInterval = maxBlockSize / this.numSamples;
+    let cumSize = 0;
     let sampleIndex = 0;
     let nextSample = 0;
     let txIndex = 0;
     this.labelInterval = this.numSamples / this.numLabels;
-    while (nextSample <= maxBlockVSize) {
+    while (nextSample <= maxBlockSize) {
       if (txIndex >= txs.length) {
         samples.push([(1 - sampleIndex / this.numSamples) * 100, 0.000001]);
         nextSample += sampleInterval;
@@ -110,7 +110,7 @@ export class FeeDistributionGraphComponent
         continue;
       }
 
-      while (txs[txIndex] && nextSample < cumVSize + txs[txIndex].vsize) {
+      while (txs[txIndex] && nextSample < cumSize + txs[txIndex].size) {
         samples.push([
           (1 - sampleIndex / this.numSamples) * 100,
           txs[txIndex].rate ?? 0.000001,
@@ -118,14 +118,14 @@ export class FeeDistributionGraphComponent
         nextSample += sampleInterval;
         sampleIndex++;
       }
-      cumVSize += txs[txIndex].vsize;
+      cumSize += txs[txIndex].size;
       txIndex++;
     }
     this.data = samples.reverse();
   }
 
   mountChart(): void {
-    this.mempoolVsizeFeesOptions = {
+    this.mempoolSizeFeesOptions = {
       grid: {
         height: '210',
         right: this.smallScreen ? '10' : '20',

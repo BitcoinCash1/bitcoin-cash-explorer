@@ -7,8 +7,7 @@ import {
   ChangeDetectionStrategy,
   OnChanges,
 } from '@angular/core';
-import { VbytesPipe } from '@app/shared/pipes/bytes-pipe/vbytes.pipe';
-import { WuBytesPipe } from '@app/shared/pipes/bytes-pipe/wubytes.pipe';
+import { BytesPipe } from '@app/shared/pipes/bytes-pipe/bytes.pipe';
 import { AmountShortenerPipe } from '@app/shared/pipes/amount-shortener.pipe';
 import { formatNumber } from '@angular/common';
 import { OptimizedMempoolStats } from '@interfaces/node-api.interface';
@@ -52,9 +51,9 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
   @Input() windowPreferenceOverride: string;
   @Input() isLoading: boolean;
 
-  mempoolVsizeFeesData: any;
-  mempoolVsizeFeesOptions: EChartsOption;
-  mempoolVsizeFeesInitOptions = {
+  mempoolSizeFeesData: any;
+  mempoolSizeFeesOptions: EChartsOption;
+  mempoolSizeFeesInitOptions = {
     renderer: 'svg',
   };
   windowPreference: string;
@@ -71,8 +70,7 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
   showCount: boolean = false;
 
   constructor(
-    private vbytesPipe: VbytesPipe,
-    private wubytesPipe: WuBytesPipe,
+    private bytesPipe: BytesPipe,
     private amountShortenerPipe: AmountShortenerPipe,
     public stateService: StateService,
     private storageService: StorageService,
@@ -95,7 +93,7 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
       (this.windowPreferenceOverride
         ? this.windowPreferenceOverride
         : this.storageService.getValue('graphWindowPreference')) || '2h';
-    this.mempoolVsizeFeesData = this.handleNewMempoolData(this.data.concat([]));
+    this.mempoolSizeFeesData = this.handleNewMempoolData(this.data.concat([]));
     this.mountFeeChart();
   }
 
@@ -140,12 +138,12 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
     for (let index = 38; index > -1; index--) {
       feesArray = [];
       mempoolStats.forEach((stats) => {
-        if (stats.vsizes[index] >= this.filterSize) {
+        if (stats.sizes[index] >= this.filterSize) {
           maxTier = Math.max(maxTier, index);
         }
         feesArray.push([
           stats.added * 1000,
-          stats.vsizes[index] ? stats.vsizes[index] : 0,
+          stats.sizes[index] ? stats.sizes[index] : 0,
         ]);
       });
       finalArray.push(feesArray);
@@ -164,7 +162,7 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
 
   mountFeeChart() {
     this.orderLevels();
-    const { series, countSeries } = this.mempoolVsizeFeesData;
+    const { series, countSeries } = this.mempoolSizeFeesData;
 
     const seriesGraph = [];
     const newColors = [];
@@ -242,7 +240,7 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
       });
     }
 
-    this.mempoolVsizeFeesOptions = {
+    this.mempoolSizeFeesOptions = {
       series: this.inverted ? [...seriesGraph].reverse() : seriesGraph,
       hover: true,
       color: this.inverted ? [...newColors].reverse() : newColors,
@@ -267,11 +265,11 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
             formatter: (params: any) => {
               if (params.axisDimension === 'y') {
                 if (params.axisIndex === 0) {
-                  return this.vbytesPipe.transform(
+                  return this.bytesPipe.transform(
                     params.value,
                     2,
-                    'vB',
-                    'MvB',
+                    'B',
+                    'MB',
                     true
                   );
                 } else {
@@ -339,8 +337,8 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
                   ${formatNumber(progressPercentage, this.locale, '1.2-2')}
                   <span class="symbol">%</span>
                 </span>
-                <span class="total-parcial-vbytes">
-                  ${this.vbytesPipe.transform(sum, 2, 'vB', 'MvB', false)}
+                <span class="total-parcial-bytes">
+                  ${this.bytesPipe.transform(sum, 2, 'B', 'MB', false)}
                 </span>
                 <div class="total-percentage-bar">
                   <span class="total-percentage-bar-background">
@@ -399,7 +397,7 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
             <div class="title">
               ${axisValueLabel}
               <span class="total-value">
-                ${this.vbytesPipe.transform(totalValue, 2, 'vB', 'MvB', false)}
+                ${this.bytesPipe.transform(totalValue, 2, 'B', 'MB', false)}
               </span>
             </div>
             ` +
@@ -519,7 +517,7 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
           axisLabel: {
             fontSize: 11,
             formatter: (value: number) =>
-              `${this.vbytesPipe.transform(value, 2, 'vB', 'MvB', true)}`,
+              `${this.bytesPipe.transform(value, 2, 'B', 'MB', true)}`,
           },
           splitLine: {
             lineStyle: {
@@ -608,12 +606,12 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
 
   onSaveChart(timespan) {
     // @ts-ignore
-    const prevHeight = this.mempoolVsizeFeesOptions.grid.height;
+    const prevHeight = this.mempoolSizeFeesOptions.grid.height;
     const now = new Date();
     // @ts-ignore
-    this.mempoolVsizeFeesOptions.grid.height = prevHeight + 20;
-    this.mempoolVsizeFeesOptions.backgroundColor = 'var(--active-bg)';
-    this.chartInstance.setOption(this.mempoolVsizeFeesOptions);
+    this.mempoolSizeFeesOptions.grid.height = prevHeight + 20;
+    this.mempoolSizeFeesOptions.backgroundColor = 'var(--active-bg)';
+    this.chartInstance.setOption(this.mempoolSizeFeesOptions);
     download(
       this.chartInstance.getDataURL({
         pixelRatio: 2,
@@ -622,8 +620,8 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
       `mempool-graph-${timespan}-${Math.round(now.getTime() / 1000)}.svg`
     );
     // @ts-ignore
-    this.mempoolVsizeFeesOptions.grid.height = prevHeight;
-    this.mempoolVsizeFeesOptions.backgroundColor = 'none';
-    this.chartInstance.setOption(this.mempoolVsizeFeesOptions);
+    this.mempoolSizeFeesOptions.grid.height = prevHeight;
+    this.mempoolSizeFeesOptions.backgroundColor = 'none';
+    this.chartInstance.setOption(this.mempoolSizeFeesOptions);
   }
 }

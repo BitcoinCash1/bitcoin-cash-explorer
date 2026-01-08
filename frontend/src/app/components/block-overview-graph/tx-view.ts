@@ -30,10 +30,9 @@ function toSpriteUpdate(params: ViewUpdateParams): SpriteUpdateParams {
 export default class TxView implements TransactionStripped {
   txid: string;
   fee: number;
-  vsize: number;
+  size: number;
   value: number;
   feerate: number;
-  acc?: boolean;
   rate?: number;
   flags: number;
   bigintFlags?: bigint | null = 0b00000100_00000000_00000000_00000000n;
@@ -45,14 +44,8 @@ export default class TxView implements TransactionStripped {
     | 'fresh'
     | 'freshcpfp'
     | 'added'
-    | 'added_prioritized'
-    | 'prioritized'
-    | 'added_deprioritized'
-    | 'deprioritized'
     | 'censored'
     | 'selected'
-    | 'rbf'
-    | 'accelerated'
     | 'matched'
     | 'unmatched';
   context?: 'projected' | 'actual' | 'stale' | 'canonical';
@@ -77,15 +70,14 @@ export default class TxView implements TransactionStripped {
     this.txid = tx.txid;
     this.time = tx.time || 0;
     this.fee = tx.fee;
-    this.vsize = tx.vsize;
+    this.size = tx.size;
     this.value = tx.value;
-    this.feerate = tx.rate || tx.fee / tx.vsize; // sort by effective fee rate where available
-    this.acc = tx.acc;
+    this.feerate = tx.rate || tx.fee / tx.size; // sort by effective fee rate where available
     this.rate = tx.rate;
     this.status = tx.status;
     this.flags = tx.flags || 0;
     this.bigintFlags = tx.flags
-      ? BigInt(tx.flags) | (this.acc ? TransactionFlags.acceleration : 0n)
+      ? BigInt(tx.flags)
       : 0n;
     this.initialised = false;
     this.vertexArray = scene.vertexArray;

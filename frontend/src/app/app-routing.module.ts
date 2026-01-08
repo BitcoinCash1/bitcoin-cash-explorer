@@ -9,10 +9,6 @@ import { StatusViewComponent } from '@components/status-view/status-view.compone
 import { AddressGroupComponent } from '@components/address-group/address-group.component';
 import { TrackerGuard } from '@app/route-guards';
 
-const browserWindow = window || {};
-// @ts-ignore
-const browserWindowEnv = browserWindow.__env || {};
-
 let routes: Routes = [
   {
     path: 'testnet',
@@ -42,7 +38,7 @@ let routes: Routes = [
       },
       {
         path: 'status',
-        data: { networks: ['bitcoin', 'liquid'] },
+        data: { networks: ['bitcoin'] },
         component: StatusViewComponent,
       },
       {
@@ -87,7 +83,7 @@ let routes: Routes = [
       },
       {
         path: 'status',
-        data: { networks: ['bitcoin', 'liquid'] },
+        data: { networks: ['bitcoin'] },
         component: StatusViewComponent,
       },
       {
@@ -137,7 +133,7 @@ let routes: Routes = [
       },
       {
         path: 'status',
-        data: { networks: ['bitcoin', 'liquid'] },
+        data: { networks: ['bitcoin'] },
         component: StatusViewComponent,
       },
       {
@@ -233,7 +229,7 @@ let routes: Routes = [
   },
   {
     path: 'status',
-    data: { networks: ['bitcoin', 'liquid'] },
+    data: { networks: ['bitcoin'] },
     component: StatusViewComponent,
   },
   {
@@ -243,111 +239,6 @@ let routes: Routes = [
     data: { preload: true },
   },
 ];
-
-if (browserWindowEnv && browserWindowEnv.BASE_MODULE === 'liquid') {
-  routes = [
-    {
-      path: 'testnet',
-      children: [
-        {
-          path: '',
-          pathMatch: 'full',
-          loadChildren: () =>
-            import('@app/liquid/liquid-graphs.module').then(
-              (m) => m.LiquidGraphsModule
-            ),
-          data: { preload: true },
-        },
-        {
-          path: '',
-          loadChildren: () =>
-            import('@app/liquid/liquid-master-page.module').then(
-              (m) => m.LiquidMasterPageModule
-            ),
-          data: { preload: true },
-        },
-        {
-          path: 'widget/wallet',
-          children: [],
-          component: AddressGroupComponent,
-          data: {
-            networkSpecific: true,
-          },
-        },
-        {
-          path: 'status',
-          data: { networks: ['bitcoin', 'liquid'] },
-          component: StatusViewComponent,
-        },
-        {
-          path: '',
-          loadChildren: () =>
-            import('@app/liquid/liquid-graphs.module').then(
-              (m) => m.LiquidGraphsModule
-            ),
-          data: { preload: true },
-        },
-        {
-          path: '**',
-          redirectTo: '/signet',
-        },
-      ],
-    },
-    {
-      path: '',
-      pathMatch: 'full',
-      loadChildren: () =>
-        import('@app/liquid/liquid-graphs.module').then(
-          (m) => m.LiquidGraphsModule
-        ),
-      data: { preload: true },
-    },
-    {
-      path: '',
-      loadChildren: () =>
-        import('@app/liquid/liquid-master-page.module').then(
-          (m) => m.LiquidMasterPageModule
-        ),
-      data: { preload: true },
-    },
-    {
-      path: 'widget/wallet',
-      children: [],
-      component: AddressGroupComponent,
-      data: {
-        networkSpecific: true,
-      },
-    },
-    {
-      path: 'preview',
-      children: [
-        {
-          path: '',
-          loadChildren: () =>
-            import('@app/previews.module').then((m) => m.PreviewsModule),
-        },
-        {
-          path: 'testnet',
-          loadChildren: () =>
-            import('@app/previews.module').then((m) => m.PreviewsModule),
-        },
-      ],
-    },
-    {
-      path: 'status',
-      data: { networks: ['bitcoin', 'liquid'] },
-      component: StatusViewComponent,
-    },
-    {
-      path: '',
-      loadChildren: () =>
-        import('@app/liquid/liquid-graphs.module').then(
-          (m) => m.LiquidGraphsModule
-        ),
-      data: { preload: true },
-    },
-  ];
-}
 
 if (!window['isMempoolSpaceBuild']) {
   routes.push({

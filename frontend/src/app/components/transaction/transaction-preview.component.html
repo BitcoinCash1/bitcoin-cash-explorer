@@ -8,35 +8,17 @@
         <app-truncate [text]="txId"></app-truncate>
       </h1>
     </div>
-    <div
-      *ngIf="network !== 'liquid' && network !== 'liquidtestnet'"
-      class="features"
+    <app-tx-features [tx]="tx"></app-tx-features>
+    <!-- <span
+      *ngIf="myspecialcheck"
+      class="badge badge-primary ml-1 mr-1"
     >
-      <app-tx-features [tx]="tx"></app-tx-features>
-      <span
-        *ngIf="
-          cpfpInfo &&
-          (cpfpInfo?.bestDescendant ||
-            cpfpInfo?.descendants?.length ||
-            cpfpInfo?.ancestors?.length)
-        "
-        class="badge badge-primary ml-1 mr-1"
-      >
-        CPFP
-      </span>
-    </div>
-  </div>
+      my bagde
+    </span>-->
+</div>
   <div class="top-data row">
     <span class="field col-sm-4 text-left">
-      <ng-template
-        [ngIf]="isLiquid && haveBlindedOutputValues(tx)"
-        [ngIfElse]="defaultAmount"
-        i18n="shared.confidential"
-        >Confidential</ng-template
-      >
-      <ng-template #defaultAmount>
-        <app-amount [satoshis]="totalValue"></app-amount>
-      </ng-template>
+      <app-amount [satoshis]="totalValue"></app-amount>
     </span>
     <span class="field col-sm-4 text-center"
       ><ng-container *ngIf="transactionTime > 0"
@@ -62,10 +44,9 @@
     <div class="above-bow">
       <p class="field pair">
         <span [innerHTML]="'&lrm;' + (tx.size | bytes: 2)"></span>
-        <span [innerHTML]="'&lrm;' + (tx.weight | wuBytes: 2)"></span>
       </p>
       <p class="field" *ngIf="!isCoinbase(tx)">
-        <app-fee-rate [fee]="tx.feePerVsize"></app-fee-rate>
+        <app-fee-rate [fee]="tx.feePerSize"></app-fee-rate>
       </p>
     </div>
     <div class="overlaid">

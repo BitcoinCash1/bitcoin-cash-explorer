@@ -61,14 +61,6 @@
               >
                 <tr
                   [ngClass]="{
-                    assetBox:
-                      (assetsMinimal &&
-                        vin.prevout &&
-                        assetsMinimal[vin.prevout.asset] &&
-                        !vin.is_coinbase &&
-                        vin.prevout.scriptpubkey_address &&
-                        tx._unblinded) ||
-                      inputIndex === vindex,
                     highlight:
                       this.addresses.length &&
                       ((vin.prevout?.scriptpubkey_type !== 'p2pk' &&
@@ -288,39 +280,7 @@
                     >
                       Inscription
                     </button>
-                    <ng-template
-                      [ngIf]="
-                        vin.prevout &&
-                        vin.prevout.asset &&
-                        vin.prevout.asset !== nativeAssetId
-                      "
-                      [ngIfElse]="defaultOutput"
-                    >
-                      <div
-                        *ngIf="
-                          assetsMinimal && assetsMinimal[vin.prevout.asset];
-                          else assetVinNotFound
-                        "
-                      >
-                        <ng-container
-                          *ngTemplateOutlet="
-                            assetBox;
-                            context: { $implicit: vin.prevout }
-                          "
-                        ></ng-container>
-                      </div>
-                      <ng-template #assetVinNotFound>
-                        {{ vin.prevout.value }}
-                        <a
-                          [routerLink]="[
-                            '/assets/asset/' | relativeUrl,
-                            vin.prevout.asset
-                          ]"
-                          >{{ vin.prevout.asset | slice: 0 : 7 }}</a
-                        >
-                      </ng-template>
-                    </ng-template>
-                    <ng-template #defaultOutput>
+                    <ng-template>
                       <span *ngIf="vin.lazy" class="skeleton-loader"></span>
                       <app-amount
                         [blockConversion]="tx.price"
@@ -333,14 +293,6 @@
                 <tr
                   *ngIf="showOrdData[tx.txid + '-vin-' + vindex]?.show"
                   [ngClass]="{
-                    assetBox:
-                      (assetsMinimal &&
-                        vin.prevout &&
-                        assetsMinimal[vin.prevout.asset] &&
-                        !vin.is_coinbase &&
-                        vin.prevout.scriptpubkey_address &&
-                        tx._unblinded) ||
-                      inputIndex === vindex,
                     highlight:
                       addresses?.length &&
                       (addresses.includes(vin.prevout?.scriptpubkey_address) ||
@@ -396,8 +348,7 @@
                                       ? selectedSig.sig
                                       : null,
                                   p2sh:
-                                    vin.prevout?.scriptpubkey_type === 'p2sh' &&
-                                    !vin.witness
+                                    vin.prevout?.scriptpubkey_type === 'p2sh'
                                 }"
                                 (showSigInfo)="showSigInfo(i, vindex, $event)"
                                 (hideSigInfo)="hideSigInfo()"
@@ -417,151 +368,6 @@
                             </td>
                           </tr>
                         </ng-template>
-                        <tr *ngIf="vin.witness" class="vin-witness">
-                          <td i18n="transactions-list.witness">Witness</td>
-                          <td style="text-align: left">
-                            <ng-container
-                              *ngFor="
-                                let witness of vin.witness;
-                                index as windex
-                              "
-                            >
-                              <p class="witness-item">
-                                <ng-container
-                                  *ngIf="tx['_sigmap']?.[witness] as sigInfo"
-                                >
-                                  <span
-                                    class="sig sig-key sig-inline sighash-{{
-                                      sigInfo.sig.sighash
-                                    }}"
-                                    [class.hovered]="
-                                      selectedSig &&
-                                      selectedSig.txIndex === i &&
-                                      selectedSig.vindex === vindex &&
-                                      selectedSig.sig === sigInfo.sig
-                                    "
-                                    (mouseenter)="
-                                      showSigInfo(i, vindex, sigInfo.sig)
-                                    "
-                                    (mouseleave)="hideSigInfo()"
-                                    [ngbTooltip]="
-                                      sighashLabels[sigInfo.sig.sighash]
-                                    "
-                                  >
-                                    <fa-icon
-                                      [icon]="['fas', 'key']"
-                                      [fixedWidth]="true"
-                                    ></fa-icon>
-                                  </span>
-                                </ng-container>
-                                @if (windex ===
-                                vin.taprootInfo?.controlBlockIndex) {
-                                <span
-                                  class="control-block"
-                                  ngbTooltip="taproot control block"
-                                  (click)="toggleTaprootControlBlock(vindex)"
-                                >
-                                  <fa-icon
-                                    [icon]="['fas', 'code-fork']"
-                                    [fixedWidth]="true"
-                                    [rotate]="180"
-                                  ></fa-icon>
-                                </span>
-                                <ng-container
-                                  *ngTemplateOutlet="
-                                    taprootControlBlock;
-                                    context: {
-                                      $implicit: vin.taprootInfo?.scriptPath,
-                                      controlBlock: witness,
-                                      truncate: !showFullWitness[vindex][windex]
-                                    }
-                                  "
-                                ></ng-container>
-                                } @else if (windex ===
-                                vin.taprootInfo?.scriptIndex || (windex ===
-                                vin.witness.length - 1 && ['p2sh',
-                                'v0_p2wsh'].includes(vin.prevout?.scriptpubkey_type)
-                                && vin.scriptsig.length !== 46)) {
-                                <span class="script" ngbTooltip="script">
-                                  <fa-icon
-                                    [icon]="['fas', 'code']"
-                                    [fixedWidth]="true"
-                                  ></fa-icon>
-                                </span>
-                                } @else if (windex ===
-                                vin.taprootInfo?.annexIndex) {
-                                <span class="annex" ngbTooltip="annex">
-                                  <fa-icon
-                                    [icon]="['fas', 'paperclip']"
-                                    [fixedWidth]="true"
-                                  ></fa-icon>
-                                </span>
-                                } @if (windex !==
-                                vin.taprootInfo?.controlBlockIndex) { @if
-                                (witness.length > 1000) { @if
-                                (!showFullWitness[vindex][windex]) {
-                                {{ witness | slice: 0 : 1000 }}
-                                } @else {
-                                {{ witness }}
-                                } } @else if (witness) {
-                                <ng-container
-                                  *ngIf="
-                                    tx['_sigmap']?.[witness]?.sig.sighash !==
-                                      0 && tx['_sigmap']?.[witness] as sigInfo;
-                                    else plainSig
-                                  "
-                                >
-                                  <span class="witness">
-                                    {{ witness.slice(0, -2)
-                                    }}<span
-                                      class="sig sighash-{{
-                                        sigInfo.sig.sighash
-                                      }}"
-                                      [class.hovered]="
-                                        selectedSig &&
-                                        selectedSig.txIndex === i &&
-                                        selectedSig.vindex === vindex &&
-                                        selectedSig.sig === sigInfo.sig
-                                      "
-                                      (mouseenter)="
-                                        showSigInfo(i, vindex, sigInfo.sig)
-                                      "
-                                      (mouseleave)="hideSigInfo()"
-                                      [ngbTooltip]="
-                                        sighashLabels[sigInfo.sig.sighash]
-                                      "
-                                      >{{ witness.slice(-2) }}</span
-                                    >
-                                  </span>
-                                </ng-container>
-                                <ng-template #plainSig>
-                                  {{ witness }}
-                                </ng-template>
-                                } @else { &lt;empty&gt; } }
-                              </p>
-                              @if (witness.length > 1000) {
-                              <div style="display: flex">
-                                @if (!showFullWitness[vindex][windex]) {
-                                <span>...</span>
-                                }
-                                <label
-                                  class="btn btn-sm btn-primary mt-2"
-                                  (click)="
-                                    toggleShowFullWitness(vindex, windex)
-                                  "
-                                  style="margin-left: auto"
-                                >
-                                  @if (!showFullWitness[vindex][windex]) {
-                                  <span i18n="show-all">Show all</span>
-                                  } @else {
-                                  <span i18n="show-less">Show less</span>
-                                  }
-                                </label>
-                              </div>
-                              }
-                            </ng-container>
-                          </td>
-                        </tr>
                         <tr *ngIf="vin.inner_redeemscript_asm">
                           <td i18n="transactions-list.p2sh-redeem-script">
                             P2SH redeem script
@@ -570,109 +376,6 @@
                             style="text-align: left"
                             [innerHTML]="vin.inner_redeemscript_asm | asmStyler"
                           ></td>
-                        </tr>
-                        @if (vin.taprootInfo?.scriptPath &&
-                        showTaprootControlBlock[vindex]) {
-                        <tr>
-                          <td i18n="transactions-list.p2tr-control-block">
-                            P2TR control block
-                          </td>
-                          <td style="text-align: left; padding: 0px">
-                            <ng-container
-                              *ngTemplateOutlet="
-                                controlBlockInfo;
-                                context: {
-                                  $implicit: vin.taprootInfo?.scriptPath
-                                }
-                              "
-                            ></ng-container>
-                          </td>
-                        </tr>
-                        }
-                        <tr *ngIf="vin.inner_witnessscript_asm">
-                          @if (isLiquid && vin.inner_simplicityscript) {
-                          <td i18n="transactions-list.p2tr-simplicity-script">
-                            P2TR Simplicity script
-                          </td>
-                          <td style="text-align: left">
-                            <div
-                              [innerHTML]="
-                                showFullScript[vindex]
-                                  ? vin.inner_simplicityscript
-                                  : vin.inner_simplicityscript.slice(0, 1000)
-                              "
-                            ></div>
-                            <div
-                              *ngIf="vin.inner_simplicityscript.length > 1000"
-                              style="display: flex"
-                            >
-                              <span *ngIf="!showFullScript[vindex]">...</span>
-                              <label
-                                class="btn btn-sm btn-primary mt-2"
-                                (click)="toggleShowFullScript(vindex)"
-                                style="margin-left: auto"
-                              >
-                                <span
-                                  *ngIf="!showFullScript[vindex]"
-                                  i18n="show-all"
-                                  >Show all</span
-                                >
-                                <span
-                                  *ngIf="showFullScript[vindex]"
-                                  i18n="show-less"
-                                  >Show less</span
-                                >
-                              </label>
-                            </div>
-                          </td>
-                          } @else {
-                          <td
-                            *ngIf="
-                              vin.prevout &&
-                                vin.prevout.scriptpubkey_type == 'v1_p2tr';
-                              else p2wsh
-                            "
-                            i18n="transactions-list.p2tr-tapscript"
-                          >
-                            P2TR tapscript
-                          </td>
-                          <ng-template #p2wsh>
-                            <td i18n="transactions-list.p2wsh-witness-script">
-                              P2WSH witness script
-                            </td>
-                          </ng-template>
-                          <td style="text-align: left">
-                            <div
-                              [innerHTML]="
-                                vin.inner_witnessscript_asm
-                                  | asmStyler
-                                    : (showFullScript[vindex] ? 0 : 1000)
-                              "
-                            ></div>
-                            <div
-                              *ngIf="vin.inner_witnessscript_asm.length > 1000"
-                              style="display: flex"
-                            >
-                              <span *ngIf="!showFullScript[vindex]">...</span>
-                              <label
-                                class="btn btn-sm btn-primary mt-2"
-                                (click)="toggleShowFullScript(vindex)"
-                                style="margin-left: auto"
-                              >
-                                <span
-                                  *ngIf="!showFullScript[vindex]"
-                                  i18n="show-all"
-                                  >Show all</span
-                                >
-                                <span
-                                  *ngIf="showFullScript[vindex]"
-                                  i18n="show-less"
-                                  >Show less</span
-                                >
-                              </label>
-                            </div>
-                          </td>
-                          }
                         </tr>
                         <tr>
                           <td i18n="transactions-list.nsequence">nSequence</td>
@@ -754,14 +457,6 @@
               >
                 <tr
                   [ngClass]="{
-                    assetBox:
-                      (assetsMinimal &&
-                        assetsMinimal[vout.asset] &&
-                        vout.scriptpubkey_address &&
-                        tx.vin &&
-                        !tx.vin[0].is_coinbase &&
-                        tx._unblinded) ||
-                      outputIndex === vindex,
                     highlight:
                       this.addresses.length &&
                       ((vout.scriptpubkey_type !== 'p2pk' &&
@@ -928,35 +623,7 @@
                     class="text-right nowrap amount"
                     [class]="{ large: tx.largeOutput }"
                   >
-                    <ng-template
-                      [ngIf]="vout.asset && vout.asset !== nativeAssetId"
-                      [ngIfElse]="defaultOutput"
-                    >
-                      <div
-                        *ngIf="
-                          assetsMinimal && assetsMinimal[vout.asset];
-                          else assetNotFound
-                        "
-                      >
-                        <ng-container
-                          *ngTemplateOutlet="
-                            assetBox;
-                            context: { $implicit: vout }
-                          "
-                        ></ng-container>
-                      </div>
-                      <ng-template #assetNotFound>
-                        {{ vout.value }}
-                        <a
-                          [routerLink]="[
-                            '/assets/asset/' | relativeUrl,
-                            vout.asset
-                          ]"
-                          >{{ vout.asset | slice: 0 : 7 }}</a
-                        >
-                      </ng-template>
-                    </ng-template>
-                    <ng-template #defaultOutput>
+                    <ng-template>
                       <app-amount
                         [blockConversion]="tx.price"
                         [satoshis]="vout.value"
@@ -1023,14 +690,6 @@
                 <tr
                   *ngIf="showOrdData[tx.txid + '-vout-' + vindex]?.show"
                   [ngClass]="{
-                    assetBox:
-                      (assetsMinimal &&
-                        assetsMinimal[vout.asset] &&
-                        vout.scriptpubkey_address &&
-                        tx.vin &&
-                        !tx.vin[0].is_coinbase &&
-                        tx._unblinded) ||
-                      outputIndex === vindex,
                     highlight:
                       addresses?.length &&
                       (addresses.includes(vout.scriptpubkey_address) ||
@@ -1060,14 +719,6 @@
                     showFullOpReturnPreview[vindex]
                   "
                   [ngClass]="{
-                    assetBox:
-                      (assetsMinimal &&
-                        assetsMinimal[vout.asset] &&
-                        vout.scriptpubkey_address &&
-                        tx.vin &&
-                        !tx.vin[0].is_coinbase &&
-                        tx._unblinded) ||
-                      outputIndex === vindex,
                     highlight:
                       addresses?.length &&
                       addresses.includes(vout.scriptpubkey_address),
@@ -1269,7 +920,7 @@
           class="float-left mt-2-5"
           *ngIf="!transactionPage && !tx.vin[0].is_coinbase && tx.fee !== -1"
         >
-          <app-fee-rate [fee]="tx.fee" [weight]="tx.weight"></app-fee-rate>
+          <app-fee-rate [fee]="tx.fee" [size]="tx.size"></app-fee-rate>
           <span class="d-none d-sm-inline-block"
             >&nbsp;&ndash; {{ tx.fee | number }}
             <span class="symbol" i18n="shared.sats">sats</span>
@@ -1374,24 +1025,6 @@
     <br />
   </ng-container>
 </div>
-
-<ng-template #assetBox let-item>
-  {{
-    item.value / pow(10, assetsMinimal[item.asset][3])
-      | number
-        : "1." +
-            assetsMinimal[item.asset][3] +
-            "-" +
-            assetsMinimal[item.asset][3]
-  }}
-  {{ assetsMinimal[item.asset][1] }}
-  <br />
-  {{ assetsMinimal[item.asset][0] }}
-  <br />
-  <a [routerLink]="['/assets/asset/' | relativeUrl, item.asset]">{{
-    item.asset | shortenString: 13
-  }}</a>
-</ng-template>
 
 <ng-template #xRemaining let-x i18n="x-remaining"
   >{{ x }} remaining</ng-template
