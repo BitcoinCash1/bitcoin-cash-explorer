@@ -738,8 +738,7 @@ class MempoolBlocks {
     return [
       tx.txid,
       Math.round((tx.rate || tx.fee / tx.size) * 100) / 100,
-      tx.flags,
-      0, // never accelerated (its BCH)
+      tx.flags
     ];
   }
 }

@@ -213,10 +213,10 @@ export interface TransactionClassified extends TransactionStripped {
   flags: number;
 }
 
-// [txid, fee, size, value, rate, flags, acceleration?]
-export type TransactionCompressed = [string, number, number, number, number, number, number, 1?];
-// [txid, rate, flags, acceleration?]
-export type MempoolDeltaChange = [string, number, number, 1 | 0];
+// [txid, fee, size, value, rate, flags, time]
+export type TransactionCompressed = [string, number, number, number, number, number, number];
+// [txid, rate, flags]
+export type MempoolDeltaChange = [string, number, number];
 
 // binary flags for transaction classification
 export const TransactionFlags = {
