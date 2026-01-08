@@ -90,7 +90,7 @@ class WebsocketHandler {
     this.updateSocketDataFields({
       backend: config.MEMPOOL.BACKEND,
       mempoolInfo: memPool.getMempoolInfo(),
-      vBytesPerSecond: memPool.getVBytesPerSecond(),
+      bytesPerSecond: memPool.getBytesPerSecond(),
       blocks: _blocks,
       conversions: priceUpdater.getLatestPrices(),
       'mempool-blocks': mempoolBlocks.getMempoolBlocks(),
@@ -551,7 +551,7 @@ class WebsocketHandler {
     const mBlocks = mempoolBlocks.getMempoolBlocks();
     const mBlockDeltas = mempoolBlocks.getMempoolBlockDeltas();
     const mempoolInfo = memPool.getMempoolInfo();
-    const vBytesPerSecond = memPool.getVBytesPerSecond();
+    const bytesPerSecond = memPool.getBytesPerSecond();
     const da = difficultyAdjustment.getDifficultyAdjustment();
     memPool.removeFromSpendMap(deletedTransactions);
     memPool.addToSpendMap(newTransactions);
@@ -578,7 +578,7 @@ class WebsocketHandler {
     // update init data
     const socketDataFields = {
       mempoolInfo: mempoolInfo,
-      vBytesPerSecond: vBytesPerSecond,
+      bytesPerSecond: bytesPerSecond,
       'mempool-blocks': mBlocks,
       transactions: latestTransactions,
       loadingIndicators: loadingIndicators.getLoadingIndicators(),
@@ -646,7 +646,7 @@ class WebsocketHandler {
 
         if (client['want-stats']) {
           response['mempoolInfo'] = getCachedResponse('mempoolInfo', mempoolInfo);
-          response['vBytesPerSecond'] = getCachedResponse('vBytesPerSecond', vBytesPerSecond);
+          response['bytesPerSecond'] = getCachedResponse('bytesPerSecond', bytesPerSecond);
           response['transactions'] = getCachedResponse('transactions', latestTransactions);
           if (da?.previousTime) {
             response['da'] = getCachedResponse('da', da);
@@ -1030,7 +1030,7 @@ class WebsocketHandler {
 
         if (client['want-stats']) {
           response['mempoolInfo'] = getCachedResponse('mempoolInfo', mempoolInfo);
-          response['vBytesPerSecond'] = getCachedResponse('vBytesPerSecond', memPool.getVBytesPerSecond());
+          response['bytesPerSecond'] = getCachedResponse('bytesPerSecond', memPool.getBytesPerSecond());
           response['fees'] = getCachedResponse('fees', fees);
 
           if (da?.previousTime) {

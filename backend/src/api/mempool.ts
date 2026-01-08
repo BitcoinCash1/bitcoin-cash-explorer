@@ -40,7 +40,7 @@ class Mempool {
   private txPerSecond: number = 0;
 
   private bytesPerSecondArray: BytesPerSecond[] = [];
-  private vytesPerSecond: number = 0;
+  private bytesPerSecond: number = 0;
   private mempoolProtection = 0;
   private latestTransactions: any[] = [];
 
@@ -240,8 +240,8 @@ class Mempool {
     return this.txPerSecond;
   }
 
-  public getVBytesPerSecond(): number {
-    return this.vytesPerSecond;
+  public getBytesPerSecond(): number {
+    return this.bytesPerSecond;
   }
 
   public getFirstSeenForTransactions(txIds: string[]): number[] {
@@ -547,7 +547,7 @@ class Mempool {
 
     this.bytesPerSecondArray = this.bytesPerSecondArray.filter((data) => data.unixTime > nowMinusTimeSpan);
     if (this.bytesPerSecondArray.length) {
-      this.vytesPerSecond = Math.round(
+      this.bytesPerSecond = Math.round(
         this.bytesPerSecondArray.map((data) => data.size).reduce((a, b) => a + b) /
           config.STATISTICS.TX_PER_SECOND_SAMPLE_PERIOD
       );

@@ -51,7 +51,7 @@ class Statistics {
     this.lastRun = new Date().getTime() / 1000;
     const currentMempool = memPool.getMempool();
     const txPerSecond = memPool.getTxPerSecond();
-    const bytesPerSecond = memPool.getVBytesPerSecond();
+    const bytesPerSecond = memPool.getBytesPerSecond();
 
     logger.debug('Running statistics');
 
