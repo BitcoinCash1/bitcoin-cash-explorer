@@ -53,7 +53,7 @@
     "mysql2": "~3.16.0",
     "rust-gbt": "file:./rust-gbt",
     "redis": "^5.10.0",
-    "socks-proxy-agent": "~7.0.0",
+    "socks-proxy-agent": "~8.0.5",
     "typescript": "~5.9.3",
     "ws": "~8.19.0"
   },
