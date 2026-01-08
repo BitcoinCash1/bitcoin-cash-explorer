@@ -46,6 +46,7 @@ export class TransactionRoutingModule {}
   declarations: [
     TransactionComponent,
     TransactionDetailsComponent,
+    TransactionRawComponent,
   ],
   exports: [
     TransactionComponent,
