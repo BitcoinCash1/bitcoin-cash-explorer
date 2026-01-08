@@ -36,30 +36,32 @@
           *ngIf="{ val: connectionState$ | async } as connectionState"
         >
           @if (enterpriseInfo) {
-          <div class="subdomain_container">
-            <img
-              [src]="enterpriseInfo.logoUrl"
-              [alt]="enterpriseInfo.title"
-              class="subdomain_logo"
-              [class.custom_logo]="!enterpriseInfo?.dualLogo"
-              [class.rounded]="enterpriseInfo.rounded_corner"
-            />
-          </div>
-          @if (enterpriseInfo.dualLogo) {
-          <div class="vertical-line"></div>
-          } } @if (!enterpriseInfo || enterpriseInfo.dualLogo) {
-          <app-svg-images
-            *ngIf="!officialMempoolSpace"
-            name="mempoolSpace"
-            viewBox="0 0 500 126"
-            class="mempool-logo"
-            [ngStyle]="{ opacity: connectionState.val === 2 ? 1 : 0.5 }"
-          ></app-svg-images>
-          <app-svg-images
-            *ngIf="officialMempoolSpace"
-            name="officialMempoolSpace"
-            viewBox="0 0 500 126"
-          ></app-svg-images>
+            <div class="subdomain_container">
+              <img
+                [src]="enterpriseInfo.logoUrl"
+                [alt]="enterpriseInfo.title"
+                class="subdomain_logo"
+                [class.custom_logo]="!enterpriseInfo?.dualLogo"
+                [class.rounded]="enterpriseInfo.rounded_corner"
+              />
+            </div>
+            @if (enterpriseInfo.dualLogo) {
+              <div class="vertical-line"></div>
+            }
+          }
+          @if (!enterpriseInfo || enterpriseInfo.dualLogo) {
+            <app-svg-images
+              *ngIf="!officialMempoolSpace"
+              name="mempoolSpace"
+              viewBox="0 0 500 126"
+              class="mempool-logo"
+              [ngStyle]="{ opacity: connectionState.val === 2 ? 1 : 0.5 }"
+            ></app-svg-images>
+            <app-svg-images
+              *ngIf="officialMempoolSpace"
+              name="officialMempoolSpace"
+              viewBox="0 0 500 126"
+            ></app-svg-images>
           }
           <div class="connection-badge">
             <div
@@ -84,7 +86,7 @@
         class="navbar-brand d-flex d-md-none justify-content-center"
         [ngClass]="{
           'dual-logos': enterpriseInfo?.dualLogo,
-          'mr-0': enterpriseInfo?.dualLogo
+          'mr-0': enterpriseInfo?.dualLogo,
         }"
         [routerLink]="['/' | relativeUrl]"
         (click)="brandClick($event)"
@@ -93,30 +95,32 @@
           *ngIf="{ val: connectionState$ | async } as connectionState"
         >
           @if (enterpriseInfo) {
-          <div class="subdomain_container">
-            <img
-              [src]="enterpriseInfo.logoUrl"
-              [alt]="enterpriseInfo.title"
-              class="subdomain_logo mobile_logo"
-              [class.custom_logo]="!enterpriseInfo?.dualLogo"
-              [class.rounded]="enterpriseInfo.rounded_corner"
-            />
-          </div>
-          @if (enterpriseInfo.dualLogo) {
-          <div class="vertical-line"></div>
-          } } @if (!enterpriseInfo || enterpriseInfo.dualLogo) {
-          <app-svg-images
-            *ngIf="!officialMempoolSpace"
-            name="mempoolSpace"
-            viewBox="0 0 500 126"
-            class="mempool-logo"
-            [ngStyle]="{ opacity: connectionState.val === 2 ? 1 : 0.5 }"
-          ></app-svg-images>
-          <app-svg-images
-            *ngIf="officialMempoolSpace"
-            name="officialMempoolSpace"
-            viewBox="0 0 500 126"
-          ></app-svg-images>
+            <div class="subdomain_container">
+              <img
+                [src]="enterpriseInfo.logoUrl"
+                [alt]="enterpriseInfo.title"
+                class="subdomain_logo mobile_logo"
+                [class.custom_logo]="!enterpriseInfo?.dualLogo"
+                [class.rounded]="enterpriseInfo.rounded_corner"
+              />
+            </div>
+            @if (enterpriseInfo.dualLogo) {
+              <div class="vertical-line"></div>
+            }
+          }
+          @if (!enterpriseInfo || enterpriseInfo.dualLogo) {
+            <app-svg-images
+              *ngIf="!officialMempoolSpace"
+              name="mempoolSpace"
+              viewBox="0 0 500 126"
+              class="mempool-logo"
+              [ngStyle]="{ opacity: connectionState.val === 2 ? 1 : 0.5 }"
+            ></app-svg-images>
+            <app-svg-images
+              *ngIf="officialMempoolSpace"
+              name="officialMempoolSpace"
+              viewBox="0 0 500 126"
+            ></app-svg-images>
           }
           <div class="connection-badge">
             <div

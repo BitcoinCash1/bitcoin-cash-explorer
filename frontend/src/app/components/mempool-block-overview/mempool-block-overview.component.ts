@@ -111,7 +111,7 @@ export class MempoolBlockOverviewComponent
                 changed.push({
                   txid: tx.txid,
                   rate: tx.rate,
-                  flags: tx.flags
+                  flags: tx.flags,
                 });
               }
             }

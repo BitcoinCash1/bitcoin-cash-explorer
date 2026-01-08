@@ -203,12 +203,7 @@ export class ScriptInfo {
   vinId?: string;
   template: ScriptTemplate;
 
-  constructor(
-    type: ScriptType,
-    hex?: string,
-    asm?: string,
-    vinId?: string
-  ) {
+  constructor(type: ScriptType, hex?: string, asm?: string, vinId?: string) {
     this.type = type;
     this.hex = hex;
     this.asm = asm;
@@ -221,12 +216,7 @@ export class ScriptInfo {
   }
 
   public clone(): ScriptInfo {
-    const cloned = new ScriptInfo(
-      this.type,
-      this.hex,
-      this.asm,
-      this.vinId
-    );
+    const cloned = new ScriptInfo(this.type, this.hex, this.asm, this.vinId);
     if (this.template) {
       cloned.template = this.template;
     }
@@ -239,7 +229,9 @@ export class ScriptInfo {
 }
 
 /** parses a script and detects named script types */
-export function detectScriptTemplate(script_asm: string): ScriptTemplate | undefined {
+export function detectScriptTemplate(
+  script_asm: string
+): ScriptTemplate | undefined {
   const multisig = parseMultisigScript(script_asm);
   if (multisig) {
     return ScriptTemplates.multisig(multisig.m, multisig.n);

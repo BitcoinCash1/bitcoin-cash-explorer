@@ -235,7 +235,6 @@ export class ApiService {
     );
   }
 
-
   getChainTips$(): Observable<ChainTip[]> {
     return this.httpClient.get<ChainTip[]>(
       this.apiBaseUrl + this.apiBasePath + '/api/v1/chain-tips'
@@ -247,7 +246,6 @@ export class ApiService {
       this.apiBaseUrl + this.apiBasePath + '/api/v1/stale-tips'
     );
   }
-
 
   getAssetGroup$(id: string): Observable<any> {
     return this.httpClient.get<any[]>(

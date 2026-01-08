@@ -3,106 +3,109 @@
     <div class="panel">
       <div class="nav-header">
         @if (enterpriseInfo) {
-        <a [routerLink]="['/' | relativeUrl]">
-          <img
-            [src]="enterpriseInfo.logoUrl"
-            [alt]="enterpriseInfo.title"
-            class="subdomain_logo"
-            [class.custom_logo]="!enterpriseInfo?.dualLogo"
-            [class.rounded]="enterpriseInfo.rounded_corner"
-          />
-        </a>
-        @if (enterpriseInfo.dualLogo) {
-        <div class="vertical-line"></div>
-        } } @if (!enterpriseInfo || enterpriseInfo.dualLogo) {
-        <a [routerLink]="['/' | relativeUrl]">
-          <app-svg-images
-            *ngIf="!officialMempoolSpace"
-            name="mempoolSpace"
-            style="width: 144px; height: 36px"
-            viewBox="0 0 500 126"
-            width="500"
-            height="126"
-            class="mempool-logo"
-          ></app-svg-images>
-          <app-svg-images
-            *ngIf="officialMempoolSpace"
-            name="officialMempoolSpace"
-            style="width: 144px; height: 36px"
-            width="500"
-            height="126"
-            viewBox="0 0 500 126"
-          ></app-svg-images>
-        </a>
-        } @if (!enterpriseInfo || !enterpriseInfo.dualLogo) {
-        <div [ngSwitch]="network" class="network-label">
-          <span *ngSwitchCase="'signet'" class="network signet"
-            ><span class="name">Bitcoin Signet</span
-            ><app-svg-images
-              name="signet"
-              width="35"
-              height="35"
-              viewBox="0 0 65 65"
-              style="display: inline-block"
-              class="mainnet ml-2"
-            ></app-svg-images
-          ></span>
-          <span *ngSwitchCase="'testnet'" class="network testnet"
-            ><span class="name">Bitcoin Testnet3</span
-            ><app-svg-images
-              name="testnet"
-              width="35"
-              height="35"
-              viewBox="0 0 65 65"
-              style="display: inline-block"
-              class="mainnet ml-2"
-            ></app-svg-images
-          ></span>
-          <span *ngSwitchCase="'testnet4'" class="network testnet"
-            ><span class="name">Bitcoin Testnet4</span
-            ><app-svg-images
-              name="testnet4"
-              width="35"
-              height="35"
-              viewBox="0 0 65 65"
-              style="display: inline-block"
-              class="mainnet ml-2"
-            ></app-svg-images
-          ></span>
-          <span *ngSwitchCase="'liquid'" class="network liquid"
-            ><span class="name">Liquid</span
-            ><app-svg-images
-              name="liquid"
-              width="35"
-              height="35"
-              viewBox="0 0 125 125"
-              style="display: inline-block"
-              class="mainnet ml-2"
-            ></app-svg-images
-          ></span>
-          <span *ngSwitchCase="'liquidtestnet'" class="network liquidtestnet"
-            ><span class="name">Liquid Testnet</span
-            ><app-svg-images
-              name="liquidtestnet"
-              width="35"
-              height="35"
-              viewBox="0 0 125 125"
-              style="display: inline-block"
-              class="mainnet ml-2"
-            ></app-svg-images
-          ></span>
-          <span *ngSwitchDefault class="network mainnet"
-            ><span class="name">Bitcoin</span
-            ><app-svg-images
-              name="bitcoin"
-              width="35"
-              height="35"
-              viewBox="0 0 65 65"
-              style="display: inline-block"
-              class="mainnet ml-2"
-            ></app-svg-images
-          ></span>
-        </div>
+          <a [routerLink]="['/' | relativeUrl]">
+            <img
+              [src]="enterpriseInfo.logoUrl"
+              [alt]="enterpriseInfo.title"
+              class="subdomain_logo"
+              [class.custom_logo]="!enterpriseInfo?.dualLogo"
+              [class.rounded]="enterpriseInfo.rounded_corner"
+            />
+          </a>
+          @if (enterpriseInfo.dualLogo) {
+            <div class="vertical-line"></div>
+          }
+        }
+        @if (!enterpriseInfo || enterpriseInfo.dualLogo) {
+          <a [routerLink]="['/' | relativeUrl]">
+            <app-svg-images
+              *ngIf="!officialMempoolSpace"
+              name="mempoolSpace"
+              style="width: 144px; height: 36px"
+              viewBox="0 0 500 126"
+              width="500"
+              height="126"
+              class="mempool-logo"
+            ></app-svg-images>
+            <app-svg-images
+              *ngIf="officialMempoolSpace"
+              name="officialMempoolSpace"
+              style="width: 144px; height: 36px"
+              width="500"
+              height="126"
+              viewBox="0 0 500 126"
+            ></app-svg-images>
+          </a>
+        }
+        @if (!enterpriseInfo || !enterpriseInfo.dualLogo) {
+          <div [ngSwitch]="network" class="network-label">
+            <span *ngSwitchCase="'signet'" class="network signet"
+              ><span class="name">Bitcoin Signet</span
+              ><app-svg-images
+                name="signet"
+                width="35"
+                height="35"
+                viewBox="0 0 65 65"
+                style="display: inline-block"
+                class="mainnet ml-2"
+              ></app-svg-images
+            ></span>
+            <span *ngSwitchCase="'testnet'" class="network testnet"
+              ><span class="name">Bitcoin Testnet3</span
+              ><app-svg-images
+                name="testnet"
+                width="35"
+                height="35"
+                viewBox="0 0 65 65"
+                style="display: inline-block"
+                class="mainnet ml-2"
+              ></app-svg-images
+            ></span>
+            <span *ngSwitchCase="'testnet4'" class="network testnet"
+              ><span class="name">Bitcoin Testnet4</span
+              ><app-svg-images
+                name="testnet4"
+                width="35"
+                height="35"
+                viewBox="0 0 65 65"
+                style="display: inline-block"
+                class="mainnet ml-2"
+              ></app-svg-images
+            ></span>
+            <span *ngSwitchCase="'liquid'" class="network liquid"
+              ><span class="name">Liquid</span
+              ><app-svg-images
+                name="liquid"
+                width="35"
+                height="35"
+                viewBox="0 0 125 125"
+                style="display: inline-block"
+                class="mainnet ml-2"
+              ></app-svg-images
+            ></span>
+            <span *ngSwitchCase="'liquidtestnet'" class="network liquidtestnet"
+              ><span class="name">Liquid Testnet</span
+              ><app-svg-images
+                name="liquidtestnet"
+                width="35"
+                height="35"
+                viewBox="0 0 125 125"
+                style="display: inline-block"
+                class="mainnet ml-2"
+              ></app-svg-images
+            ></span>
+            <span *ngSwitchDefault class="network mainnet"
+              ><span class="name">Bitcoin</span
+              ><app-svg-images
+                name="bitcoin"
+                width="35"
+                height="35"
+                viewBox="0 0 65 65"
+                style="display: inline-block"
+                class="mainnet ml-2"
+              ></app-svg-images
+            ></span>
+          </div>
         }
       </div>
       <div class="field">
@@ -134,114 +137,118 @@
       </div>
       <div class="data">
         @if (tx && !tx.status?.confirmed) {
-        <div class="field narrower mt-2">
-          <div
-            class="label"
-            i18n="transaction.first-seen|Transaction first seen"
-          >
-            First seen
-          </div>
-          <div class="value">
-            @if (transactionTime > 0) {
-            <i
-              ><app-time
-                kind="since"
-                [time]="transactionTime"
-                [fastRender]="true"
-                [showTooltip]="true"
-              ></app-time
-            ></i>
-            } @else {
-            <span class="skeleton-loader" style="max-width: 200px"></span>
-            }
-          </div>
-        </div>
-        <div class="field narrower">
-          <div class="label" i18n="transaction.eta|Transaction ETA">ETA</div>
-          <div class="value">
-            <ng-container *ngIf="ETA$ | async as eta; else etaSkeleton">
-              <span class="justify-content-end d-flex align-items-center">
-                @if (eta.blocks >= 7) {
-                <span
-                  i18n="
-                    transaction.eta.not-any-time-soon|Transaction ETA mot any
-                    time soon
-                  "
-                  >Not any time soon</span
-                >
-                } @else {
-                <app-time
-                  kind="until"
-                  [time]="eta.time"
-                  [fastRender]="false"
-                  [fixedRender]="true"
-                ></app-time>
-                }
-              </span>
-            </ng-container>
-            <ng-template #etaSkeleton>
-              <span class="skeleton-loader" style="max-width: 200px"></span>
-            </ng-template>
-          </div>
-        </div>
-        } @else if (tx && tx.status?.confirmed) {
-        <div class="field narrower mt-2">
-          <div class="label" i18n="transaction.confirmed-at">Confirmed at</div>
-          <div class="value">
-            <app-timestamp
-              [customFormat]="'yyyy-MM-dd HH:mm'"
-              [unixTime]="tx.status.block_time"
-              [hideTimeSince]="true"
-            ></app-timestamp>
-            <div class="lg-inline">
-              <i class="symbol"
-                >(<app-time
-                  kind="since"
-                  [time]="tx.status.block_time"
-                  [fastRender]="true"
-                  [showTooltip]="true"
-                ></app-time
-                >)</i
-              >
+          <div class="field narrower mt-2">
+            <div
+              class="label"
+              i18n="transaction.first-seen|Transaction first seen"
+            >
+              First seen
+            </div>
+            <div class="value">
+              @if (transactionTime > 0) {
+                <i
+                  ><app-time
+                    kind="since"
+                    [time]="transactionTime"
+                    [fastRender]="true"
+                    [showTooltip]="true"
+                  ></app-time
+                ></i>
+              } @else {
+                <span class="skeleton-loader" style="max-width: 200px"></span>
+              }
             </div>
           </div>
-        </div>
-        <div class="field narrower">
-          <div class="label" i18n="transaction.block-height">Block height</div>
-          <div class="value">
-            <span class="justify-content-end d-flex align-items-center">
-              <a
-                [routerLink]="[
-                  '/block/' | relativeUrl,
-                  tx.status?.block_height
-                ]"
-                class="block-link"
-                >{{ tx.status?.block_height }}</a
-              >
-              <div class="confirmations">
-                <app-confirmations
-                  *ngIf="tx"
-                  [chainTip]="latestBlock?.height"
-                  [height]="tx?.status?.block_height"
-                ></app-confirmations>
-              </div>
-            </span>
+          <div class="field narrower">
+            <div class="label" i18n="transaction.eta|Transaction ETA">ETA</div>
+            <div class="value">
+              <ng-container *ngIf="ETA$ | async as eta; else etaSkeleton">
+                <span class="justify-content-end d-flex align-items-center">
+                  @if (eta.blocks >= 7) {
+                    <span
+                      i18n="
+                        transaction.eta.not-any-time-soon|Transaction ETA mot
+                        any time soon
+                      "
+                      >Not any time soon</span
+                    >
+                  } @else {
+                    <app-time
+                      kind="until"
+                      [time]="eta.time"
+                      [fastRender]="false"
+                      [fixedRender]="true"
+                    ></app-time>
+                  }
+                </span>
+              </ng-container>
+              <ng-template #etaSkeleton>
+                <span class="skeleton-loader" style="max-width: 200px"></span>
+              </ng-template>
+            </div>
           </div>
-        </div>
-      }
+        } @else if (tx && tx.status?.confirmed) {
+          <div class="field narrower mt-2">
+            <div class="label" i18n="transaction.confirmed-at">
+              Confirmed at
+            </div>
+            <div class="value">
+              <app-timestamp
+                [customFormat]="'yyyy-MM-dd HH:mm'"
+                [unixTime]="tx.status.block_time"
+                [hideTimeSince]="true"
+              ></app-timestamp>
+              <div class="lg-inline">
+                <i class="symbol"
+                  >(<app-time
+                    kind="since"
+                    [time]="tx.status.block_time"
+                    [fastRender]="true"
+                    [showTooltip]="true"
+                  ></app-time
+                  >)</i
+                >
+              </div>
+            </div>
+          </div>
+          <div class="field narrower">
+            <div class="label" i18n="transaction.block-height">
+              Block height
+            </div>
+            <div class="value">
+              <span class="justify-content-end d-flex align-items-center">
+                <a
+                  [routerLink]="[
+                    '/block/' | relativeUrl,
+                    tx.status?.block_height,
+                  ]"
+                  class="block-link"
+                  >{{ tx.status?.block_height }}</a
+                >
+                <div class="confirmations">
+                  <app-confirmations
+                    *ngIf="tx"
+                    [chainTip]="latestBlock?.height"
+                    [height]="tx?.status?.block_height"
+                  ></app-confirmations>
+                </div>
+              </span>
+            </div>
+          </div>
+        }
       </div>
     </div>
 
     <!-- this used to show information about acceleration-->
     <div class="bottom-panel" *ngIf="!error || waitingForTransaction">
       @if (isLoading) {
-      <div class="progress-icon">
-        <div
-          class="spinner-border text-light"
-          style="width: 1em; height: 1em"
-        ></div>
-      </div>
-      <span class="explainer">&nbsp;</span>
+        <div class="progress-icon">
+          <div
+            class="spinner-border text-light"
+            style="width: 1em; height: 1em"
+          ></div>
+        </div>
+        <span class="explainer">&nbsp;</span>
       }
     </div>
 

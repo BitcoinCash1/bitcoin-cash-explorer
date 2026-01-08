@@ -59,7 +59,7 @@
                     class="addresses-data"
                     [routerLink]="[
                       '/address' | relativeUrl,
-                      poolStats.pool.addresses[0]
+                      poolStats.pool.addresses[0],
                     ]"
                   >
                     {{ poolStats.pool.addresses[0] }}
@@ -116,7 +116,7 @@
                       class="addresses-data"
                       [routerLink]="[
                         '/address' | relativeUrl,
-                        poolStats.pool.addresses[0]
+                        poolStats.pool.addresses[0],
                       ]"
                     >
                       {{ poolStats.pool.addresses[0] | shortenString: 30 }}
@@ -478,22 +478,22 @@
                         </td>
                         <td class="text-center clean">
                           @if (job.cleanJobs) {
-                          <fa-icon
-                            [icon]="['fas', 'check-circle']"
-                            [fixedWidth]="true"
-                          ></fa-icon>
+                            <fa-icon
+                              [icon]="['fas', 'check-circle']"
+                              [fixedWidth]="true"
+                            ></fa-icon>
                           } @else {
-                          <fa-icon
-                            [icon]="['fas', 'times-circle']"
-                            [fixedWidth]="true"
-                          ></fa-icon>
+                            <fa-icon
+                              [icon]="['fas', 'times-circle']"
+                              [fixedWidth]="true"
+                            ></fa-icon>
                           }
                         </td>
                         <td class="text-center prevhash">
                           <a
                             [routerLink]="[
                               '/block' | relativeUrl,
-                              job.prevHash
+                              job.prevHash,
                             ]"
                           >
                             <app-truncate
@@ -550,35 +550,40 @@
                     <tbody>
                       <tr>
                         @for (branch of job.merkleBranches; track $index) {
-                        <td
-                          class="merkle"
-                          [style.background-color]="
-                            branch ? '#' + branch.slice(0, 6) : ''
-                          "
-                        >
-                          @if ($index === 0 && branch) {
-                          <a
-                            [routerLink]="[
-                              '/tx' | relativeUrl,
-                              reverseHash(branch)
-                            ]"
-                            class="cell-link"
+                          <td
+                            class="merkle"
+                            [style.background-color]="
+                              branch ? '#' + branch.slice(0, 6) : ''
+                            "
                           >
-                            <fa-icon
-                              [icon]="['fas', 'external-link-alt']"
-                              [fixedWidth]="true"
-                              style="
-                                vertical-align: text-top;
-                                font-size: 14px;
-                                color: white;
-                              "
-                            ></fa-icon>
-                          </a>
-                          }
-                        </td>
-                        } @for (_ of [].constructor(Math.max(0, 12 -
-                        job.merkleBranches.length)); track $index) {
-                        <td class="merkle empty-branch"></td>
+                            @if ($index === 0 && branch) {
+                              <a
+                                [routerLink]="[
+                                  '/tx' | relativeUrl,
+                                  reverseHash(branch),
+                                ]"
+                                class="cell-link"
+                              >
+                                <fa-icon
+                                  [icon]="['fas', 'external-link-alt']"
+                                  [fixedWidth]="true"
+                                  style="
+                                    vertical-align: text-top;
+                                    font-size: 14px;
+                                    color: white;
+                                  "
+                                ></fa-icon>
+                              </a>
+                            }
+                          </td>
+                        }
+                        @for (
+                          _ of [].constructor(
+                            Math.max(0, 12 - job.merkleBranches.length)
+                          );
+                          track $index
+                        ) {
+                          <td class="merkle empty-branch"></td>
                         }
                       </tr>
                     </tbody>
@@ -706,7 +711,7 @@
                 [ngStyle]="{
                   width:
                     (block.size / stateService.env.MIN_BLOCK_SIZE_UNITS) * 100 +
-                    '%'
+                    '%',
                 }"
               ></div>
               <div

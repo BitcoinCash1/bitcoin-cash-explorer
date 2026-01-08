@@ -4,41 +4,43 @@
       <div class="col-md-12 branding mt-2">
         <div class="main-logo" [class]="{ services: isServicesPage }">
           @if (enterpriseInfo?.footer_img) {
-          <img
-            [src]="enterpriseInfo?.footer_img"
-            [alt]="enterpriseInfo.title"
-            height="60px"
-            class="enterprise-logo"
-          />
+            <img
+              [src]="enterpriseInfo?.footer_img"
+              [alt]="enterpriseInfo.title"
+              height="60px"
+              class="enterprise-logo"
+            />
           } @else {
-          <app-svg-images
-            *ngIf="officialMempoolSpace"
-            name="officialMempoolSpace"
-            viewBox="0 0 500 126"
-          ></app-svg-images>
-          <app-svg-images
-            *ngIf="!officialMempoolSpace"
-            name="mempoolSpace"
-            viewBox="0 0 500 126"
-          ></app-svg-images>
+            <app-svg-images
+              *ngIf="officialMempoolSpace"
+              name="officialMempoolSpace"
+              viewBox="0 0 500 126"
+            ></app-svg-images>
+            <app-svg-images
+              *ngIf="!officialMempoolSpace"
+              name="mempoolSpace"
+              viewBox="0 0 500 126"
+            ></app-svg-images>
           }
         </div>
         @if (!enterpriseInfo?.footer_img) {
-        <p class="explore-tagline-mobile">
-          @if (officialMempoolSpace) {
-          <ng-container i18n="@@7deec1c1520f06170e1f8e8ddfbe4532312f638f"
-            >Explore the full Bitcoin ecosystem</ng-container
-          >
-          <ng-template [ngIf]="locale.substr(0, 2) === 'en'">&reg;</ng-template>
-          } @else {
-          <ng-container i18n="shared.be-your-own-explorer"
-            >Be your own explorer</ng-container
-          >
-          <ng-template [ngIf]="locale.substr(0, 2) === 'en'"
-            >&trade;</ng-template
-          >
-          }
-        </p>
+          <p class="explore-tagline-mobile">
+            @if (officialMempoolSpace) {
+              <ng-container i18n="@@7deec1c1520f06170e1f8e8ddfbe4532312f638f"
+                >Explore the full Bitcoin ecosystem</ng-container
+              >
+              <ng-template [ngIf]="locale.substr(0, 2) === 'en'"
+                >&reg;</ng-template
+              >
+            } @else {
+              <ng-container i18n="shared.be-your-own-explorer"
+                >Be your own explorer</ng-container
+              >
+              <ng-template [ngIf]="locale.substr(0, 2) === 'en'"
+                >&trade;</ng-template
+              >
+            }
+          </p>
         }
         <div
           class="site-options language-selector d-flex justify-content-center align-items-center"
@@ -60,12 +62,12 @@
             <app-amount-selector></app-amount-selector>
           </div>
           @if (!env.customize?.theme) {
-          <div
-            class="selector d-none"
-            [ngClass]="isServicesPage ? 'd-lg-flex' : 'd-md-flex'"
-          >
-            <app-theme-selector></app-theme-selector>
-          </div>
+            <div
+              class="selector d-none"
+              [ngClass]="isServicesPage ? 'd-lg-flex' : 'd-md-flex'"
+            >
+              <app-theme-selector></app-theme-selector>
+            </div>
           }
           <a
             *ngIf="stateService.isMempoolSpaceBuild"
@@ -82,42 +84,45 @@
           </a>
         </div>
         @if (!env.customize?.theme) {
-        <div
-          class="selector d-flex justify-content-center ml-auto mr-auto mt-0"
-          [ngClass]="isServicesPage ? 'd-lg-none' : 'd-md-none'"
-        >
-          <app-amount-selector class="add-margin"></app-amount-selector>
-          <app-theme-selector class="add-margin"></app-theme-selector>
-        </div>
-        } @if (!enterpriseInfo?.footer_img) {
-        <a
-          *ngIf="stateService.isMempoolSpaceBuild"
-          class="btn btn-purple sponsor d-flex justify-content-center ml-auto mr-auto mt-0 mb-2"
-          [ngClass]="isServicesPage ? 'd-lg-none' : 'd-md-none'"
-          [routerLink]="['/login']"
-        >
-          <span *ngIf="user" i18n="shared.my-account" class="nowrap"
-            >My Account</span
+          <div
+            class="selector d-flex justify-content-center ml-auto mr-auto mt-0"
+            [ngClass]="isServicesPage ? 'd-lg-none' : 'd-md-none'"
           >
-          <span *ngIf="!user" i18n="shared.sign-in" class="nowrap"
-            >Sign In</span
+            <app-amount-selector class="add-margin"></app-amount-selector>
+            <app-theme-selector class="add-margin"></app-theme-selector>
+          </div>
+        }
+        @if (!enterpriseInfo?.footer_img) {
+          <a
+            *ngIf="stateService.isMempoolSpaceBuild"
+            class="btn btn-purple sponsor d-flex justify-content-center ml-auto mr-auto mt-0 mb-2"
+            [ngClass]="isServicesPage ? 'd-lg-none' : 'd-md-none'"
+            [routerLink]="['/login']"
           >
-        </a>
-        <p class="explore-tagline-desktop">
-          @if (officialMempoolSpace) {
-          <ng-container i18n="@@7deec1c1520f06170e1f8e8ddfbe4532312f638f"
-            >Explore the full Bitcoin ecosystem</ng-container
-          >
-          <ng-template [ngIf]="locale.substr(0, 2) === 'en'">&reg;</ng-template>
-          } @else {
-          <ng-container i18n="shared.be-your-own-explorer"
-            >Be your own explorer</ng-container
-          >
-          <ng-template [ngIf]="locale.substr(0, 2) === 'en'"
-            >&trade;</ng-template
-          >
-          }
-        </p>
+            <span *ngIf="user" i18n="shared.my-account" class="nowrap"
+              >My Account</span
+            >
+            <span *ngIf="!user" i18n="shared.sign-in" class="nowrap"
+              >Sign In</span
+            >
+          </a>
+          <p class="explore-tagline-desktop">
+            @if (officialMempoolSpace) {
+              <ng-container i18n="@@7deec1c1520f06170e1f8e8ddfbe4532312f638f"
+                >Explore the full Bitcoin ecosystem</ng-container
+              >
+              <ng-template [ngIf]="locale.substr(0, 2) === 'en'"
+                >&reg;</ng-template
+              >
+            } @else {
+              <ng-container i18n="shared.be-your-own-explorer"
+                >Be your own explorer</ng-container
+              >
+              <ng-template [ngIf]="locale.substr(0, 2) === 'en'"
+                >&trade;</ng-template
+              >
+            }
+          </p>
         }
       </div>
     </div>

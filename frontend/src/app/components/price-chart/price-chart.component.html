@@ -20,7 +20,7 @@
           class="card-text"
           [ngClass]="{
             'text-success': stats.percentChange > 0,
-            'text-danger': stats.percentChange < 0
+            'text-danger': stats.percentChange < 0,
           }"
         >
           {{ stats.percentChange > 0 ? "+" : ""
@@ -154,7 +154,7 @@
     *browserOnly
     [style]="{
       height: widget ? height + 20 + 'px' : null,
-      opacity: isLoading ? 0.5 : 1
+      opacity: isLoading ? 0.5 : 1,
     }"
     echarts
     [initOpts]="chartInitOptions"

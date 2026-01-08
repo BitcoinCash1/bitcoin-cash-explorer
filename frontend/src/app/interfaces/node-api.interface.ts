@@ -352,7 +352,6 @@ export interface INode {
 //   canceled?: number;
 // }
 
-
 // export interface AccelerationInfo {
 //   txid: string;
 //   height: number;

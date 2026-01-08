@@ -463,7 +463,6 @@ export class BlockComponent implements OnInit, OnDestroy {
         }
       );
 
-   
     // Should we call setupBlockAudit() here?
     // this.setupBlockAudit();
 
@@ -597,7 +596,6 @@ export class BlockComponent implements OnInit, OnDestroy {
       });
     }
   }
-
 
   navigateToPreviousBlock(): void {
     if (!this.block) {
@@ -765,10 +763,7 @@ export class BlockComponent implements OnInit, OnDestroy {
     }
 
     // if vsize was rounded, the total weight we calculated isn't exact and can exceed the 4MB limit
-    this.staleStats.totalSize = Math.min(
-      this.staleStats.totalSize,
-      4_000_000
-    );
+    this.staleStats.totalSize = Math.min(this.staleStats.totalSize, 4_000_000);
     this.canonicalStats.totalSize = Math.min(
       this.canonicalStats.totalSize,
       4_000_000
@@ -779,44 +774,44 @@ export class BlockComponent implements OnInit, OnDestroy {
         ? (this.staleStats.totalFees - this.canonicalStats.totalFees) /
           this.canonicalStats.totalFees
         : this.canonicalStats.totalFees > 0
-        ? Infinity
-        : -Infinity;
+          ? Infinity
+          : -Infinity;
     this.staleStats.sizeDelta =
       this.canonicalStats.totalSize > 0
         ? (this.staleStats.totalSize - this.canonicalStats.totalSize) /
           this.canonicalStats.totalSize
         : this.canonicalStats.totalSize > 0
-        ? Infinity
-        : -Infinity;
+          ? Infinity
+          : -Infinity;
     this.staleStats.txDelta =
       this.canonicalStats.txCount > 0
         ? (this.staleStats.txCount - this.canonicalStats.txCount) /
           this.canonicalStats.txCount
         : this.canonicalStats.txCount > 0
-        ? Infinity
-        : -Infinity;
+          ? Infinity
+          : -Infinity;
 
     this.canonicalStats.feeDelta =
       this.staleStats.totalFees > 0
         ? (this.canonicalStats.totalFees - this.staleStats.totalFees) /
           this.staleStats.totalFees
         : this.staleStats.totalFees > 0
-        ? Infinity
-        : -Infinity;
+          ? Infinity
+          : -Infinity;
     this.canonicalStats.sizeDelta =
       this.staleStats.totalSize > 0
         ? (this.canonicalStats.totalSize - this.staleStats.totalSize) /
           this.staleStats.totalSize
         : this.staleStats.totalSize > 0
-        ? Infinity
-        : -Infinity;
+          ? Infinity
+          : -Infinity;
     this.canonicalStats.txDelta =
       this.staleStats.txCount > 0
         ? (this.canonicalStats.txCount - this.staleStats.txCount) /
           this.staleStats.txCount
         : this.staleStats.txCount > 0
-        ? Infinity
-        : -Infinity;
+          ? Infinity
+          : -Infinity;
   }
 
   setupBlockAudit(): void {

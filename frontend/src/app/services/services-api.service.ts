@@ -12,7 +12,7 @@ import {
   catchError,
   share,
   filter,
-  switchMap
+  switchMap,
 } from 'rxjs';
 import { IBackendInfo } from '@interfaces/websocket.interface';
 import { SimpleProof } from '@components/simpleproof-widget/simpleproof-widget.component';

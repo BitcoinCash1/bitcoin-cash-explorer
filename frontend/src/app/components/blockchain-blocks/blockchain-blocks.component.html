@@ -55,24 +55,27 @@
           >
         </div>
         @if (!minimal && block?.extras?.orphans?.length > 0) {
-        <ng-container
-          *ngFor="let orphan of block.extras.orphans.slice(0, 3); let j = index"
-        >
-          <div
-            class="stale-ghost"
-            [style.--stale-index]="j"
-            [routerLink]="['/block' | relativeUrl, orphan.hash]"
-            [ngbTooltip]="
-              'stale block ' +
-              orphan.hash.slice(0, 4) +
-              '...' +
-              orphan.hash.slice(-4)
+          <ng-container
+            *ngFor="
+              let orphan of block.extras.orphans.slice(0, 3);
+              let j = index
             "
-            [placement]="'top'"
-            [container]="'body'"
-            [autoClose]="'outside'"
-          ></div>
-        </ng-container>
+          >
+            <div
+              class="stale-ghost"
+              [style.--stale-index]="j"
+              [routerLink]="['/block' | relativeUrl, orphan.hash]"
+              [ngbTooltip]="
+                'stale block ' +
+                orphan.hash.slice(0, 4) +
+                '...' +
+                orphan.hash.slice(-4)
+              "
+              [placement]="'top'"
+              [container]="'body'"
+              [autoClose]="'outside'"
+            ></div>
+          </ng-container>
         }
         <div class="block-body">
           <ng-container *ngIf="!minimal">
@@ -216,7 +219,7 @@
               block.extras.pool.minerNames[1] != ''
             "
             [routerLink]="[
-              '/mining/pool/' + block.extras.pool.slug | relativeUrl
+              '/mining/pool/' + block.extras.pool.slug | relativeUrl,
             ]"
           >
             <ng-container

@@ -8,11 +8,11 @@
       <span i18n="warning-testnet"
         >This is a test network. Coins have no value.</span
       >
-      @if (stateService.network === 'testnet') {
-      <span i18n="testnet3-deprecated"
-        >Testnet3 is deprecated, and will soon be replaced by
-        <a href="/testnet4">Testnet4</a></span
-      >
+      @if (stateService.network === "testnet") {
+        <span i18n="testnet3-deprecated"
+          >Testnet3 is deprecated, and will soon be replaced by
+          <a href="/testnet4">Testnet4</a></span
+        >
       }
     </div>
     <button type="button" class="close" (click)="dismissWarning()">

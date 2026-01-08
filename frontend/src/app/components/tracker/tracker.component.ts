@@ -243,9 +243,7 @@ export class TrackerComponent implements OnInit, OnDestroy {
           this.loadingPosition = false;
           this.mempoolPosition = txPosition.position;
           if (this.tx && !this.tx.status.confirmed) {
-            const txFeePerSize = getUnacceleratedFeeRate(
-              this.tx
-            );
+            const txFeePerSize = getUnacceleratedFeeRate(this.tx);
             this.stateService.markBlock$.next({
               txid: txPosition.txid,
               txFeePerSize,
@@ -464,7 +462,7 @@ export class TrackerComponent implements OnInit, OnDestroy {
           mempoolBlocks,
           position,
           da,
-          this.miningStats,
+          this.miningStats
         );
       }),
       tap((eta) => {

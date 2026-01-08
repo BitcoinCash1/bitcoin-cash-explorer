@@ -37,7 +37,7 @@
             [routerLink]="[getHref(i) | relativeUrl]"
             class="blockLink"
             [ngClass]="{
-              disabled: (this.stateService.blockScrolling$ | async)
+              disabled: (this.stateService.blockScrolling$ | async),
             }"
             >&nbsp;</a
           >
@@ -138,7 +138,7 @@
                         context: {
                           $implicit:
                             projectedBlock.blockSize / stateService.blockSize
-                            | ceil
+                            | ceil,
                         }
                       "
                     ></ng-container
@@ -162,7 +162,7 @@
       id="arrow-up"
       [ngStyle]="{
         right: rightPosition + blockWidth * 0.3 + containerOffset + 'px',
-        transition: transition
+        transition: transition,
       }"
       [class.blink]="false"
     ></div>

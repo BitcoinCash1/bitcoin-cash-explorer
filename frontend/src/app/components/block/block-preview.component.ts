@@ -174,18 +174,18 @@ export class BlockPreviewComponent implements OnInit, OnDestroy {
         pairwise(),
         switchMap(([prevBlock, block]) => {
           return this.apiService.getStrippedBlockTransactions$(block.id).pipe(
-              catchError((err) => {
-                this.overviewError = err;
-                this.openGraphService.fail({
-                  event: 'block-viz-' + this.rawId,
-                  sessionId: this.ogSession,
-                });
-                return of([]);
-              }),
-              switchMap((transactions) => {
-                return of(transactions);
-              })
-            )
+            catchError((err) => {
+              this.overviewError = err;
+              this.openGraphService.fail({
+                event: 'block-viz-' + this.rawId,
+                sessionId: this.ogSession,
+              });
+              return of([]);
+            }),
+            switchMap((transactions) => {
+              return of(transactions);
+            })
+          );
         })
       )
       .subscribe(

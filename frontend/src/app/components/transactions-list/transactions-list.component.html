@@ -39,12 +39,12 @@
         {{ errorUnblinded }}
       </div>
       @if (similarityMatches.get(tx.txid)?.size) {
-      <div class="alert alert-mempool" role="alert">
-        <span i18n="transaction.poison.warning"
-          >Warning! This transaction involves deceptively similar addresses. It
-          may be an address poisoning attack.</span
-        >
-      </div>
+        <div class="alert alert-mempool" role="alert">
+          <span i18n="transaction.poison.warning"
+            >Warning! This transaction involves deceptively similar addresses.
+            It may be an address poisoning attack.</span
+          >
+        </div>
       }
       <div class="row">
         <div class="col">
@@ -73,7 +73,7 @@
                     sigged:
                       selectedSig &&
                       selectedSig.txIndex === i &&
-                      sigHighlights.vin[vindex]
+                      sigHighlights.vin[vindex],
                   }"
                 >
                   <td class="arrow-td">
@@ -135,45 +135,53 @@
                       </ng-template>
                     </ng-template>
                   </td>
-                  @if (tx['_showSignatures']) {
-                  <td class="sig-td">
-                    <div class="sig-stack">
-                      @if (!tx['_sigs']?.[vindex]?.length) {
-                      <span
-                        class="sig sig-key sig-no-lock"
-                        ngbTooltip="unsigned"
-                      >
-                        <fa-icon
-                          [icon]="['fas', 'lock-open']"
-                          [fixedWidth]="true"
-                        ></fa-icon>
-                      </span>
-                      } @else { @for (sig of tx['_sigs'][vindex].slice(0, 7);
-                      track sig.signature; let idx = $index) { @if (idx < 7) {
-                      <span
-                        class="sig sig-key sighash-{{ sig.sighash }}"
-                        (mouseenter)="showSigInfo(i, vindex, sig)"
-                        (mouseleave)="hideSigInfo()"
-                        [ngbTooltip]="sighashLabels[sig.sighash]"
-                        [class.hovered]="
-                          selectedSig &&
-                          selectedSig.txIndex === i &&
-                          selectedSig.vindex === vindex &&
-                          selectedSig.sig === sig
-                        "
-                      >
-                        <fa-icon
-                          [icon]="['fas', 'key']"
-                          [fixedWidth]="true"
-                        ></fa-icon>
-                      </span>
-                      } } @if (tx['_sigs'][vindex].length > 7) {
-                      <span class="sig sig-overflow">
-                        +{{ tx["_sigs"][vindex].length - 7 }}
-                      </span>
-                      } }
-                    </div>
-                  </td>
+                  @if (tx["_showSignatures"]) {
+                    <td class="sig-td">
+                      <div class="sig-stack">
+                        @if (!tx["_sigs"]?.[vindex]?.length) {
+                          <span
+                            class="sig sig-key sig-no-lock"
+                            ngbTooltip="unsigned"
+                          >
+                            <fa-icon
+                              [icon]="['fas', 'lock-open']"
+                              [fixedWidth]="true"
+                            ></fa-icon>
+                          </span>
+                        } @else {
+                          @for (
+                            sig of tx["_sigs"][vindex].slice(0, 7);
+                            track sig.signature;
+                            let idx = $index
+                          ) {
+                            @if (idx < 7) {
+                              <span
+                                class="sig sig-key sighash-{{ sig.sighash }}"
+                                (mouseenter)="showSigInfo(i, vindex, sig)"
+                                (mouseleave)="hideSigInfo()"
+                                [ngbTooltip]="sighashLabels[sig.sighash]"
+                                [class.hovered]="
+                                  selectedSig &&
+                                  selectedSig.txIndex === i &&
+                                  selectedSig.vindex === vindex &&
+                                  selectedSig.sig === sig
+                                "
+                              >
+                                <fa-icon
+                                  [icon]="['fas', 'key']"
+                                  [fixedWidth]="true"
+                                ></fa-icon>
+                              </span>
+                            }
+                          }
+                          @if (tx["_sigs"][vindex].length > 7) {
+                            <span class="sig sig-overflow">
+                              +{{ tx["_sigs"][vindex].length - 7 }}
+                            </span>
+                          }
+                        }
+                      </div>
+                    </td>
                   }
                   <td class="address-cell">
                     <div [ngSwitch]="true">
@@ -211,7 +219,7 @@
                             class="address p2pk-address"
                             [routerLink]="[
                               '/address/' | relativeUrl,
-                              vin.prevout.scriptpubkey.slice(2, -2)
+                              vin.prevout.scriptpubkey.slice(2, -2),
                             ]"
                             title="{{ vin.prevout.scriptpubkey.slice(2, -2) }}"
                           >
@@ -303,12 +311,12 @@
                     sigged:
                       selectedSig &&
                       selectedSig.txIndex === i &&
-                      sigHighlights.vin[vindex]
+                      sigHighlights.vin[vindex],
                   }"
                 >
                   <td></td>
-                  @if (tx['_showSignatures']) {
-                  <td></td>
+                  @if (tx["_showSignatures"]) {
+                    <td></td>
                   }
                   <td colspan="2">
                     <app-ord-data
@@ -348,7 +356,7 @@
                                       ? selectedSig.sig
                                       : null,
                                   p2sh:
-                                    vin.prevout?.scriptpubkey_type === 'p2sh'
+                                    vin.prevout?.scriptpubkey_type === 'p2sh',
                                 }"
                                 (showSigInfo)="showSigInfo(i, vindex, $event)"
                                 (hideSigInfo)="hideSigInfo()"
@@ -467,7 +475,7 @@
                     sigged:
                       selectedSig &&
                       selectedSig.txIndex === i &&
-                      sigHighlights.vout[vindex]
+                      sigHighlights.vout[vindex],
                   }"
                 >
                   <td class="address-cell">
@@ -492,7 +500,7 @@
                           class="address p2pk-address"
                           [routerLink]="[
                             '/address/' | relativeUrl,
-                            vout.scriptpubkey.slice(2, -2)
+                            vout.scriptpubkey.slice(2, -2),
                           ]"
                           title="{{ vout.scriptpubkey.slice(2, -2) }}"
                         >
@@ -546,7 +554,7 @@
                             <a
                               [routerLink]="[
                                 '/address/',
-                                vout.pegout.scriptpubkey_address
+                                vout.pegout.scriptpubkey_address,
                               ]"
                               title="{{ vout.pegout.scriptpubkey_address }}"
                             >
@@ -562,55 +570,69 @@
                           [ngIf]="vout.scriptpubkey_type === 'op_return'"
                           [ngIfElse]="otherPubkeyType"
                         >
-                          OP_RETURN&nbsp; @if (vout.isRunestone) {
-                          <button
-                            (click)="toggleOrdData(tx.txid, 'vout', vindex)"
-                            type="button"
-                            class="btn btn-sm badge badge-ord"
-                          >
-                            Runestone
-                          </button>
+                          OP_RETURN&nbsp;
+                          @if (vout.isRunestone) {
+                            <button
+                              (click)="toggleOrdData(tx.txid, 'vout', vindex)"
+                              type="button"
+                              class="btn btn-sm badge badge-ord"
+                            >
+                              Runestone
+                            </button>
                           } @else {
-                          <a placement="bottom" style="cursor: pointer">
-                            @if ((vout.scriptpubkey_asm | hex2ascii).length >
-                            200) {
-                            <span
-                              *ngIf="vout.scriptpubkey_asm !== 'OP_RETURN'"
-                              class="badge badge-secondary scriptmessage opreturn-msg"
-                              (click)="toggleShowFullOpReturnPreview(vindex)"
-                              >{{
-                                vout.scriptpubkey_asm
-                                  | hex2ascii
-                                  | slice: 0 : 200
-                              }}</span
-                            >
-                            <ng-container
-                              *ngIf="(showDetails$ | async) === false"
-                            >
-                              @if ((vout.scriptpubkey_asm | hex2ascii).length >
-                              200) { @if (!showFullOpReturnPreview[vindex]) {
-                              <span
-                                class="badge badge-primary"
-                                (click)="toggleShowFullOpReturnPreview(vindex)"
-                                >Show more</span
-                              >
+                            <a placement="bottom" style="cursor: pointer">
+                              @if (
+                                (vout.scriptpubkey_asm | hex2ascii).length > 200
+                              ) {
+                                <span
+                                  *ngIf="vout.scriptpubkey_asm !== 'OP_RETURN'"
+                                  class="badge badge-secondary scriptmessage opreturn-msg"
+                                  (click)="
+                                    toggleShowFullOpReturnPreview(vindex)
+                                  "
+                                  >{{
+                                    vout.scriptpubkey_asm
+                                      | hex2ascii
+                                      | slice: 0 : 200
+                                  }}</span
+                                >
+                                <ng-container
+                                  *ngIf="(showDetails$ | async) === false"
+                                >
+                                  @if (
+                                    (vout.scriptpubkey_asm | hex2ascii).length >
+                                    200
+                                  ) {
+                                    @if (!showFullOpReturnPreview[vindex]) {
+                                      <span
+                                        class="badge badge-primary"
+                                        (click)="
+                                          toggleShowFullOpReturnPreview(vindex)
+                                        "
+                                        >Show more</span
+                                      >
+                                    } @else {
+                                      <span
+                                        class="badge badge-primary"
+                                        (click)="
+                                          toggleShowFullOpReturnPreview(vindex)
+                                        "
+                                        >Show less</span
+                                      >
+                                    }
+                                  }
+                                </ng-container>
                               } @else {
-                              <span
-                                class="badge badge-primary"
-                                (click)="toggleShowFullOpReturnPreview(vindex)"
-                                >Show less</span
-                              >
-                              } }
-                            </ng-container>
-                            } @else {
-                            <span
-                              *ngIf="vout.scriptpubkey_asm !== 'OP_RETURN'"
-                              [ngbTooltip]="vout.scriptpubkey_asm | hex2ascii"
-                              class="badge badge-secondary scriptmessage"
-                              >{{ vout.scriptpubkey_asm | hex2ascii }}</span
-                            >
-                            }
-                          </a>
+                                <span
+                                  *ngIf="vout.scriptpubkey_asm !== 'OP_RETURN'"
+                                  [ngbTooltip]="
+                                    vout.scriptpubkey_asm | hex2ascii
+                                  "
+                                  class="badge badge-secondary scriptmessage"
+                                  >{{ vout.scriptpubkey_asm | hex2ascii }}</span
+                                >
+                              }
+                            </a>
                           }
                         </ng-template>
                         <ng-template #otherPubkeyType>{{
@@ -664,7 +686,7 @@
                           *ngIf="tx._outspends[vindex].txid; else outputNoTxId"
                           [routerLink]="[
                             '/tx/' | relativeUrl,
-                            tx._outspends[vindex].txid
+                            tx._outspends[vindex].txid,
                           ]"
                           [fragment]="'vin=' + tx._outspends[vindex].vin"
                           class="red"
@@ -698,7 +720,7 @@
                     sigged:
                       selectedSig &&
                       selectedSig.txIndex === i &&
-                      sigHighlights.vout[vindex]
+                      sigHighlights.vout[vindex],
                   }"
                 >
                   <td colspan="3">
@@ -725,7 +747,7 @@
                     sigged:
                       selectedSig &&
                       selectedSig.txIndex === i &&
-                      sigHighlights.vout[vindex]
+                      sigHighlights.vout[vindex],
                   }"
                 >
                   <td colspan="3" style="white-space: pre-line">
@@ -791,9 +813,9 @@
                           </td>
                           <td style="text-align: left">
                             @if (!showFullScriptPubkeyHex[vindex]) {
-                            {{ vout.scriptpubkey | slice: 0 : 1000 }}
+                              {{ vout.scriptpubkey | slice: 0 : 1000 }}
                             } @else {
-                            {{ vout.scriptpubkey }}
+                              {{ vout.scriptpubkey }}
                             }
                             <div
                               *ngIf="vout.scriptpubkey.length > 1000"
@@ -831,13 +853,13 @@
                             "
                           >
                             @if (!showFullOpReturnData[vindex]) {
-                            {{
-                              vout.scriptpubkey_asm
-                                | hex2ascii
-                                | slice: 0 : 1000
-                            }}
+                              {{
+                                vout.scriptpubkey_asm
+                                  | hex2ascii
+                                  | slice: 0 : 1000
+                              }}
                             } @else {
-                            {{ vout.scriptpubkey_asm | hex2ascii }}
+                              {{ vout.scriptpubkey_asm | hex2ascii }}
                             }
                             <div
                               *ngIf="
@@ -902,7 +924,7 @@
                       *ngTemplateOutlet="
                         xRemaining;
                         context: {
-                          $implicit: tx.vout.length - getVoutLimit(tx)
+                          $implicit: tx.vout.length - getVoutLimit(tx),
                         }
                       "
                     ></ng-container
@@ -944,26 +966,26 @@
           [class.has-accelerate]="!tx.status?.confirmed && acceleratedTxids"
         >
           @if (!tx.status?.confirmed && acceleratedTxids) {
-          <button
-            type="button"
-            class="btn btn-sm accelerate mt-2 mr-2"
-            [class.blink]="acceleratedTxids.has(tx.txid)"
-            [routerLink]="['/tx/' | relativeUrl, tx.txid]"
-            [fragment]="'accelerate'"
-          >
-            <img
-              src="/resources/mempool-accelerator-sparkles-light.svg"
-              height="15"
-              class="mr-2"
-            />
-            @if (acceleratedTxids.has(tx.txid)) {
-            <span i18n="transaction.audit.accelerated">Accelerated</span>
-            } @else {
-            <span i18n="transaction.accelerate|Accelerate button label"
-              >Accelerate</span
+            <button
+              type="button"
+              class="btn btn-sm accelerate mt-2 mr-2"
+              [class.blink]="acceleratedTxids.has(tx.txid)"
+              [routerLink]="['/tx/' | relativeUrl, tx.txid]"
+              [fragment]="'accelerate'"
             >
-            }
-          </button>
+              <img
+                src="/resources/mempool-accelerator-sparkles-light.svg"
+                height="15"
+                class="mr-2"
+              />
+              @if (acceleratedTxids.has(tx.txid)) {
+                <span i18n="transaction.audit.accelerated">Accelerated</span>
+              } @else {
+                <span i18n="transaction.accelerate|Accelerate button label"
+                  >Accelerate</span
+                >
+              }
+            </button>
           }
           <ng-container
             *ngIf="showConfirmations && latestBlock$ | async as latestBlock"
@@ -1007,7 +1029,7 @@
               (click)="switchCurrency()"
               [ngClass]="{
                 'btn-success': tx['addressValue'] >= 0,
-                'btn-danger': tx['addressValue'] < 0
+                'btn-danger': tx['addressValue'] < 0,
               }"
             >
               <app-amount
@@ -1040,13 +1062,13 @@
     {{ controlBlock.slice(0, 2) }}</span
   >
   @if (scriptPath.isNUMS) {
-  <span class="internal-key nums" ngbTooltip="internal key (NUMS point)">{{
-    scriptPath.internalKey
-  }}</span>
+    <span class="internal-key nums" ngbTooltip="internal key (NUMS point)">{{
+      scriptPath.internalKey
+    }}</span>
   } @else {
-  <span class="internal-key" ngbTooltip="internal key">{{
-    scriptPath.internalKey
-  }}</span>
+    <span class="internal-key" ngbTooltip="internal key">{{
+      scriptPath.internalKey
+    }}</span>
   }
   <span
     *ngFor="
@@ -1074,10 +1096,10 @@
       <td>{{ scriptPath.parity ? "0x01" : "0x00" }}</td>
     </tr>
     @if (scriptPath.isNUMS) {
-    <tr>
-      <td i18n="transactions-list.taproot.keypath">key path</td>
-      <td>disabled</td>
-    </tr>
+      <tr>
+        <td i18n="transactions-list.taproot.keypath">key path</td>
+        <td>disabled</td>
+      </tr>
     }
     <tr>
       <td i18n="transactions-list.taproot.script-depth">script depth</td>

@@ -43,7 +43,7 @@ function parseTag(scriptSig: string): string {
   for (let i = 0; i < hex.length; i += 2) {
     bytes.push(parseInt(hex.substr(i, 2), 16));
   }
-  // eslint-disable-next-line no-control-regex
+
   const ascii = new TextDecoder('utf8')
     .decode(Uint8Array.from(bytes))
     .replace(/\uFFFD/g, '')

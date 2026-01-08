@@ -162,7 +162,7 @@ export class StateService {
   isBrowser: boolean = isPlatformBrowser(this.platformId);
   isMempoolSpaceBuild = window['isMempoolSpaceBuild'] ?? false;
   isProdDomain: boolean;
-  backend:  'electrum' | 'none' = 'electrum';
+  backend: 'electrum' | 'none' = 'electrum';
   network = '';
   lightningNetworks = ['', 'mainnet', 'bitcoin', 'testnet', 'signet'];
   lightning = false;

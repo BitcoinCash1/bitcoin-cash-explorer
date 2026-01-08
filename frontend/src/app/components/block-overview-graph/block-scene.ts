@@ -476,15 +476,15 @@ export default class BlockScene {
               (direction === 'right'
                 ? -this.width - this.animationOffset
                 : direction === 'left'
-                ? this.width + this.animationOffset
-                : 0),
+                  ? this.width + this.animationOffset
+                  : 0),
             y:
               tx.screenPosition.y +
               (direction === 'up'
                 ? -this.height - this.animationOffset
                 : direction === 'down'
-                ? this.height + this.animationOffset
-                : 0),
+                  ? this.height + this.animationOffset
+                  : 0),
             s: tx.screenPosition.s,
           },
           color: txColor,
@@ -572,15 +572,15 @@ export default class BlockScene {
               (direction === 'right'
                 ? this.width + this.animationOffset
                 : direction === 'left'
-                ? -this.width - this.animationOffset
-                : 0),
+                  ? -this.width - this.animationOffset
+                  : 0),
             y:
               tx.screenPosition.y +
               (direction === 'up'
                 ? this.height + this.animationOffset
                 : direction === 'down'
-                ? -this.height - this.animationOffset
-                : 0),
+                  ? -this.height - this.animationOffset
+                  : 0),
           },
         },
         duration: this.animationDuration,

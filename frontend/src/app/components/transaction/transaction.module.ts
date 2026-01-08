@@ -48,9 +48,6 @@ export class TransactionRoutingModule {}
     TransactionDetailsComponent,
     TransactionRawComponent,
   ],
-  exports: [
-    TransactionComponent,
-    TransactionDetailsComponent,
-  ],
+  exports: [TransactionComponent, TransactionDetailsComponent],
 })
 export class TransactionModule {}

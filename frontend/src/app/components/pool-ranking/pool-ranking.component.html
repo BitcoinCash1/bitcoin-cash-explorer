@@ -247,7 +247,7 @@
       *browserOnly
       [style]="{
         height: widget ? height + 'px' : null,
-        opacity: isLoading ? 0.5 : 1
+        opacity: isLoading ? 0.5 : 1,
       }"
       echarts
       [initOpts]="chartInitOptions"
@@ -286,7 +286,7 @@
             [ngClass]="{
               'health-column': ['24h', '3d', '1w'].includes(
                 this.miningWindowPreference
-              )
+              ),
             }"
             i18n="latest-blocks.avg_health"
             i18n-ngbTooltip="latest-blocks.avg_health"
@@ -355,7 +355,7 @@
               legacy: !indexingAvailable,
               'health-column': ['24h', '3d', '1w'].includes(
                 this.miningWindowPreference
-              )
+              ),
             }"
           >
             <a

@@ -9,7 +9,7 @@ import { StatusViewComponent } from '@components/status-view/status-view.compone
 import { AddressGroupComponent } from '@components/address-group/address-group.component';
 import { TrackerGuard } from '@app/route-guards';
 
-let routes: Routes = [
+const routes: Routes = [
   {
     path: 'testnet',
     children: [

@@ -39,73 +39,78 @@
     <div class="box">
       <div class="row">
         @if (isMobile) {
-        <div class="col-sm">
-          <table class="table table-borderless table-striped address-table">
-            <tbody>
-              <tr>
-                <ng-container *ngTemplateOutlet="balanceRow"></ng-container>
-              </tr>
-              <tr>
-                <ng-container
-                  *ngTemplateOutlet="pendingBalanceRow"
-                ></ng-container>
-              </tr>
-              @if (!address.electrum) {
-              <tr>
-                <ng-container *ngTemplateOutlet="utxoRow"></ng-container>
-              </tr>
-              <tr>
-                <ng-container *ngTemplateOutlet="pendingUtxoRow"></ng-container>
-              </tr>
-              } @if (network === 'liquid' || network === 'liquidtestnet') {
-              <tr>
-                <ng-container *ngTemplateOutlet="liquidRow"></ng-container>
-              </tr>
-              } @else if (!address.electrum) {
-              <tr>
-                <ng-container *ngTemplateOutlet="volumeRow"></ng-container>
-              </tr>
-              }
-              <tr>
-                <ng-container *ngTemplateOutlet="typeRow"></ng-container>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-        } @else {
-        <div class="col-sm">
-          <table
-            class="table table-borderless dual-col-striped table-fixed address-table"
-          >
-            <tbody>
-              <tr>
-                <ng-container *ngTemplateOutlet="balanceRow"></ng-container>
-                <ng-container *ngTemplateOutlet="spacerCell"></ng-container>
-                <ng-container
-                  *ngTemplateOutlet="pendingBalanceRow"
-                ></ng-container>
-              </tr>
-              @if (!address.electrum) {
-              <tr>
-                <ng-container *ngTemplateOutlet="utxoRow"></ng-container>
-                <ng-container *ngTemplateOutlet="spacerCell"></ng-container>
-                <ng-container *ngTemplateOutlet="pendingUtxoRow"></ng-container>
-              </tr>
-              }
-              <tr>
-                @if (network === 'liquid' || network === 'liquidtestnet') {
-                <ng-container *ngTemplateOutlet="liquidRow"></ng-container>
-                } @else if (!address.electrum) {
-                <ng-container *ngTemplateOutlet="volumeRow"></ng-container>
-                } @else {
-                <ng-container *ngTemplateOutlet="emptyTd"></ng-container>
+          <div class="col-sm">
+            <table class="table table-borderless table-striped address-table">
+              <tbody>
+                <tr>
+                  <ng-container *ngTemplateOutlet="balanceRow"></ng-container>
+                </tr>
+                <tr>
+                  <ng-container
+                    *ngTemplateOutlet="pendingBalanceRow"
+                  ></ng-container>
+                </tr>
+                @if (!address.electrum) {
+                  <tr>
+                    <ng-container *ngTemplateOutlet="utxoRow"></ng-container>
+                  </tr>
+                  <tr>
+                    <ng-container
+                      *ngTemplateOutlet="pendingUtxoRow"
+                    ></ng-container>
+                  </tr>
                 }
-                <ng-container *ngTemplateOutlet="spacerCell"></ng-container>
-                <ng-container *ngTemplateOutlet="typeRow"></ng-container>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+                @if (network === "liquid" || network === "liquidtestnet") {
+                  <tr>
+                    <ng-container *ngTemplateOutlet="liquidRow"></ng-container>
+                  </tr>
+                } @else if (!address.electrum) {
+                  <tr>
+                    <ng-container *ngTemplateOutlet="volumeRow"></ng-container>
+                  </tr>
+                }
+                <tr>
+                  <ng-container *ngTemplateOutlet="typeRow"></ng-container>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <div class="col-sm">
+            <table
+              class="table table-borderless dual-col-striped table-fixed address-table"
+            >
+              <tbody>
+                <tr>
+                  <ng-container *ngTemplateOutlet="balanceRow"></ng-container>
+                  <ng-container *ngTemplateOutlet="spacerCell"></ng-container>
+                  <ng-container
+                    *ngTemplateOutlet="pendingBalanceRow"
+                  ></ng-container>
+                </tr>
+                @if (!address.electrum) {
+                  <tr>
+                    <ng-container *ngTemplateOutlet="utxoRow"></ng-container>
+                    <ng-container *ngTemplateOutlet="spacerCell"></ng-container>
+                    <ng-container
+                      *ngTemplateOutlet="pendingUtxoRow"
+                    ></ng-container>
+                  </tr>
+                }
+                <tr>
+                  @if (network === "liquid" || network === "liquidtestnet") {
+                    <ng-container *ngTemplateOutlet="liquidRow"></ng-container>
+                  } @else if (!address.electrum) {
+                    <ng-container *ngTemplateOutlet="volumeRow"></ng-container>
+                  } @else {
+                    <ng-container *ngTemplateOutlet="emptyTd"></ng-container>
+                  }
+                  <ng-container *ngTemplateOutlet="spacerCell"></ng-container>
+                  <ng-container *ngTemplateOutlet="typeRow"></ng-container>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         }
       </div>
     </div>
@@ -118,18 +123,14 @@
           i18n="X of X Address Transaction"
           [ngIf]="transactions?.length === 1"
           >{{ (transactions?.length | number) || "?" }} of
-          {{
-            mempoolStats.tx_count + chainStats.tx_count | number
-          }}
+          {{ mempoolStats.tx_count + chainStats.tx_count | number }}
           transaction</ng-template
         >
         <ng-template
           i18n="X of X Address Transactions (Plural)"
           [ngIf]="transactions?.length > 1"
           >{{ (transactions?.length | number) || "?" }} of
-          {{
-            mempoolStats.tx_count + chainStats.tx_count | number
-          }}
+          {{ mempoolStats.tx_count + chainStats.tx_count | number }}
           transactions</ng-template
         >
       </h2>
@@ -185,52 +186,52 @@
     <div class="box">
       <div class="row">
         @if (isMobile) {
-        <div class="col-sm">
-          <table class="table table-borderless table-striped">
-            <tbody>
-              <tr>
-                <td colspan="2"><span class="skeleton-loader"></span></td>
-              </tr>
-              <tr>
-                <td colspan="2"><span class="skeleton-loader"></span></td>
-              </tr>
-              <tr>
-                <td colspan="2"><span class="skeleton-loader"></span></td>
-              </tr>
-              <tr>
-                <td colspan="2"><span class="skeleton-loader"></span></td>
-              </tr>
-              <tr>
-                <td colspan="2"><span class="skeleton-loader"></span></td>
-              </tr>
-              <tr>
-                <td colspan="2"><span class="skeleton-loader"></span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+          <div class="col-sm">
+            <table class="table table-borderless table-striped">
+              <tbody>
+                <tr>
+                  <td colspan="2"><span class="skeleton-loader"></span></td>
+                </tr>
+                <tr>
+                  <td colspan="2"><span class="skeleton-loader"></span></td>
+                </tr>
+                <tr>
+                  <td colspan="2"><span class="skeleton-loader"></span></td>
+                </tr>
+                <tr>
+                  <td colspan="2"><span class="skeleton-loader"></span></td>
+                </tr>
+                <tr>
+                  <td colspan="2"><span class="skeleton-loader"></span></td>
+                </tr>
+                <tr>
+                  <td colspan="2"><span class="skeleton-loader"></span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         } @else {
-        <div class="col-sm">
-          <table class="table table-borderless dual-col-striped table-fixed">
-            <tbody>
-              <tr>
-                <td colspan="2"><span class="skeleton-loader"></span></td>
-                <ng-container *ngTemplateOutlet="spacerCell"></ng-container>
-                <td colspan="2"><span class="skeleton-loader"></span></td>
-              </tr>
-              <tr>
-                <td colspan="2"><span class="skeleton-loader"></span></td>
-                <ng-container *ngTemplateOutlet="spacerCell"></ng-container>
-                <td colspan="2"><span class="skeleton-loader"></span></td>
-              </tr>
-              <tr>
-                <td colspan="2"><span class="skeleton-loader"></span></td>
-                <ng-container *ngTemplateOutlet="spacerCell"></ng-container>
-                <td colspan="2"><span class="skeleton-loader"></span></td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+          <div class="col-sm">
+            <table class="table table-borderless dual-col-striped table-fixed">
+              <tbody>
+                <tr>
+                  <td colspan="2"><span class="skeleton-loader"></span></td>
+                  <ng-container *ngTemplateOutlet="spacerCell"></ng-container>
+                  <td colspan="2"><span class="skeleton-loader"></span></td>
+                </tr>
+                <tr>
+                  <td colspan="2"><span class="skeleton-loader"></span></td>
+                  <ng-container *ngTemplateOutlet="spacerCell"></ng-container>
+                  <td colspan="2"><span class="skeleton-loader"></span></td>
+                </tr>
+                <tr>
+                  <td colspan="2"><span class="skeleton-loader"></span></td>
+                  <ng-container *ngTemplateOutlet="spacerCell"></ng-container>
+                  <td colspan="2"><span class="skeleton-loader"></span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         }
       </div>
     </div>

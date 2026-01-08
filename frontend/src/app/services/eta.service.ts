@@ -8,13 +8,7 @@ import { StateService } from '@app/services/state.service';
 import { MempoolBlock } from '@interfaces/websocket.interface';
 import { Transaction } from '@interfaces/electrs.interface';
 import { MiningService, MiningStats } from '@app/services/mining.service';
-import {
-  Observable,
-  combineLatest,
-  map,
-  of,
-  shareReplay,
-} from 'rxjs';
+import { Observable, combineLatest, map, of, shareReplay } from 'rxjs';
 
 export interface ETA {
   now: number; // time at which calculation performed

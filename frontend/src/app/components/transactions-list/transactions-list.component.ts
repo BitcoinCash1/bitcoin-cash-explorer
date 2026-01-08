@@ -20,11 +20,7 @@ import {
   of,
   forkJoin,
 } from 'rxjs';
-import {
-  Outspend,
-  Transaction,
-  Vout,
-} from '@interfaces/electrs.interface';
+import { Outspend, Transaction, Vout } from '@interfaces/electrs.interface';
 import { ElectrsApiService } from '@app/services/electrs-api.service';
 import { environment } from '@environments/environment';
 import { map, tap, switchMap } from 'rxjs/operators';
@@ -249,8 +245,8 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
       this.priceService
         .getBlockPrice$(this.blockTime, true, this.currency)
         .pipe(
-          tap(
-            (price) => this.transactions?.forEach((tx) => (tx['price'] = price))
+          tap((price) =>
+            this.transactions?.forEach((tx) => (tx['price'] = price))
           )
         )
         .subscribe();
@@ -404,9 +400,8 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
         this.priceService
           .getBlockPrice$(this.blockTime, true, this.currency)
           .pipe(
-            tap(
-              (price) =>
-                this.transactions?.forEach((tx) => (tx['price'] = price))
+            tap((price) =>
+              this.transactions?.forEach((tx) => (tx['price'] = price))
             )
           )
           .subscribe();
@@ -438,18 +433,16 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
         .slice(0, 20)
         .filter(
           (v) =>
-            ['p2pkh', 'p2sh'].includes(
-              v.scriptpubkey_type
-            ) && !this.isFakeScripthash(v)
+            ['p2pkh', 'p2sh'].includes(v.scriptpubkey_type) &&
+            !this.isFakeScripthash(v)
         );
       const comparableVins = tx.vin
         .slice(0, 20)
         .map((v) => v.prevout)
         .filter(
           (v) =>
-            ['p2pkh', 'p2sh'].includes(
-              v?.scriptpubkey_type
-            ) && !this.isFakeScripthash(v)
+            ['p2pkh', 'p2sh'].includes(v?.scriptpubkey_type) &&
+            !this.isFakeScripthash(v)
         );
 
       // Count unique addresses per type & position
@@ -550,13 +543,11 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
 
             const bestVout = this.similarityMatches.get(tx.txid)?.get(address);
             if (!bestVout || bestVout.score < similarity.score) {
-              this.similarityMatches
-                .get(tx.txid)
-                ?.set(address, {
-                  score: similarity.score,
-                  match: similarity.left,
-                  group,
-                });
+              this.similarityMatches.get(tx.txid)?.set(address, {
+                score: similarity.score,
+                match: similarity.left,
+                group,
+              });
             }
             // opportunistically update the entry for the compared address
             const bestCompare = this.similarityMatches

@@ -18,7 +18,7 @@
             ><a
               [routerLink]="[
                 '/block/' + (chainTip.canonical?.id || chainTip.height)
-                  | relativeUrl
+                  | relativeUrl,
               ]"
               >{{ chainTip.height }}</a
             ></span
@@ -119,9 +119,7 @@
                     class="transaction-count"
                     *ngIf="chainTip.stale?.tx_count"
                   >
-                    {{
-                      chainTip.stale.tx_count | number
-                    }}
+                    {{ chainTip.stale.tx_count | number }}
                     transaction<ng-container
                       *ngIf="chainTip.stale.tx_count !== 1"
                       >s</ng-container
@@ -153,7 +151,7 @@
                   "
                   [routerLink]="[
                     '/mining/pool/' + chainTip.stale.extras.pool.slug
-                      | relativeUrl
+                      | relativeUrl,
                   ]"
                 >
                   <ng-container
@@ -264,9 +262,7 @@
                     class="transaction-count"
                     *ngIf="chainTip.canonical?.tx_count"
                   >
-                    {{
-                      chainTip.canonical.tx_count | number
-                    }}
+                    {{ chainTip.canonical.tx_count | number }}
                     transaction<ng-container
                       *ngIf="chainTip.canonical.tx_count !== 1"
                       >s</ng-container
@@ -298,7 +294,7 @@
                   "
                   [routerLink]="[
                     '/mining/pool/' + chainTip.canonical.extras.pool.slug
-                      | relativeUrl
+                      | relativeUrl,
                   ]"
                 >
                   <ng-container

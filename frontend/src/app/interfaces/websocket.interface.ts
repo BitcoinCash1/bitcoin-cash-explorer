@@ -61,7 +61,7 @@ export interface MempoolBlockDelta {
   block: number;
   added: TransactionStripped[];
   removed: string[];
-  changed: { txid: string; rate: number; flags: number; }[];
+  changed: { txid: string; rate: number; flags: number }[];
 }
 export interface MempoolBlockState {
   block: number;

@@ -187,7 +187,7 @@ export function defaultColorFunction(
         return auditColors.added;
       }
     default:
-       return levelColor;
+      return levelColor;
   }
 }
 

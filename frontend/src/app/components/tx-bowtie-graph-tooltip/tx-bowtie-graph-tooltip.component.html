@@ -61,7 +61,7 @@
                   nBlocksEarlier;
                   context: {
                     n: line.blockHeight - line?.status?.block_height,
-                    connector: false
+                    connector: false,
                   }
                 "
               ></ng-container>
@@ -72,7 +72,7 @@
                   nBlocksEarlier;
                   context: {
                     n: chainTip + 1 - line?.status?.block_height,
-                    connector: false
+                    connector: false,
                   }
                 "
               ></ng-container>
@@ -96,7 +96,7 @@
                   nBlocksEarlier;
                   context: {
                     n: line.blockHeight - line?.status?.block_height,
-                    connector: true
+                    connector: true,
                   }
                 "
               ></ng-container>
@@ -107,7 +107,7 @@
                   nBlocksEarlier;
                   context: {
                     n: chainTip + 1 - line?.status?.block_height,
-                    connector: true
+                    connector: true,
                   }
                 "
               ></ng-container>
@@ -125,7 +125,7 @@
                   nBlocksLater;
                   context: {
                     n: line?.status?.block_height - line.blockHeight,
-                    connector: true
+                    connector: true,
                   }
                 "
               ></ng-container>
@@ -136,7 +136,7 @@
                   nBlocksLater;
                   context: {
                     n: chainTip + 1 - line.blockHeight,
-                    connector: true
+                    connector: true,
                   }
                 "
               ></ng-container>

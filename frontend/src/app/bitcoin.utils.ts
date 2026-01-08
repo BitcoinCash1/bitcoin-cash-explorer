@@ -47,7 +47,7 @@ export function moveDec(num: number, n: number) {
   if (n === 0) {
     return num.toString();
   }
-  (ref = ('' + num).split('.')), (int = ref[0]), (frac = ref[1]);
+  ((ref = ('' + num).split('.')), (int = ref[0]), (frac = ref[1]));
   int || (int = '0');
   frac || (frac = '0');
   neg = int[0] === '-' ? '-' : '';

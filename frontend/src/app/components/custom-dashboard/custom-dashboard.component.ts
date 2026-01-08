@@ -273,7 +273,7 @@ export class CustomDashboardComponent
       map((mempoolBlocks) => {
         const size = mempoolBlocks
           .map((m) => m.blockSize)
-          .reduce((a, b) => a + b, 0);;
+          .reduce((a, b) => a + b, 0);
 
         return {
           size: size,

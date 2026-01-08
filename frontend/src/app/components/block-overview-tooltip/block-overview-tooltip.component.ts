@@ -84,7 +84,7 @@ export class BlockOverviewTooltipComponent implements OnChanges {
         !(
           Math.abs(this.fee / this.size - this.effectiveRate) <= 0.1 &&
           Math.abs(this.fee / Math.ceil(this.size) - this.effectiveRate) <= 0.1
-        ) || (txFlags > 0n);
+        ) || txFlags > 0n;
       this.filters = this.tx.flags
         ? toFilters(txFlags).filter((f) => f.tooltip)
         : [];

@@ -1,7 +1,7 @@
 @if (!textOnly) {
-<div class="alert" [class]="alertClass" [innerHTML]="errorContent"></div>
+  <div class="alert" [class]="alertClass" [innerHTML]="errorContent"></div>
 } @else {
-<span [class]="alertClass" [innerHTML]="errorContent"> </span>
+  <span [class]="alertClass" [innerHTML]="errorContent"> </span>
 }
 
 <ng-template #lowBalance i18n="accelerator.low-balance"

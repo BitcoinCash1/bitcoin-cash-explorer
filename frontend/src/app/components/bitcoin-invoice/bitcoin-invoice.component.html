@@ -1,16 +1,16 @@
 <div class="wrapper">
   @if (!minimal) {
-  <span *ngIf="paymentStatus === 3" class="valid-feedback d-block mt-5">
-    Payment successful. You can close this page.
-  </span>
+    <span *ngIf="paymentStatus === 3" class="valid-feedback d-block mt-5">
+      Payment successful. You can close this page.
+    </span>
 
-  <span *ngIf="paymentStatus === 4" class="valid-feedback d-block mt-5">
-    A transaction
-    <a [href]="'/tx/' + invoice.cryptoInfo[0].payments[0].id.split('-')[0]"
-      >has been detected in the mempool</a
-    >
-    fully paying for this invoice. Waiting for on-chain confirmation.
-  </span>
+    <span *ngIf="paymentStatus === 4" class="valid-feedback d-block mt-5">
+      A transaction
+      <a [href]="'/tx/' + invoice.cryptoInfo[0].payments[0].id.split('-')[0]"
+        >has been detected in the mempool</a
+      >
+      fully paying for this invoice. Waiting for on-chain confirmation.
+    </span>
   }
 
   <div class="d-flex justify-content-center">
@@ -31,7 +31,7 @@
             *ngIf="invoice.addresses.BTC_LightningLike"
             class="btn btn-primary"
             [ngClass]="{
-              active: paymentForm.get('method')?.value === 'lightning'
+              active: paymentForm.get('method')?.value === 'lightning',
             }"
           >
             <input type="radio" value="lightning" formControlName="method" />
@@ -84,9 +84,9 @@
         </div>
       </div>
       @if (!minimal) {
-      <p>
-        {{ invoice.btcDue | number: "1.0-8" }} <span class="symbol">BTC</span>
-      </p>
+        <p>
+          {{ invoice.btcDue | number: "1.0-8" }} <span class="symbol">BTC</span>
+        </p>
       }
     </ng-template>
 
@@ -131,10 +131,10 @@
       </div>
 
       @if (!minimal) {
-      <p>
-        {{ invoice.btcDue * 100_000_000 | number: "1.0-0" }}
-        <span class="symbol">sats</span>
-      </p>
+        <p>
+          {{ invoice.btcDue * 100_000_000 | number: "1.0-0" }}
+          <span class="symbol">sats</span>
+        </p>
       }
     </ng-template>
 
@@ -186,15 +186,15 @@
         </div>
       </div>
       @if (!minimal) {
-      <p>
-        {{ invoice.btcDue | number: "1.0-8" }} <span class="symbol">BTC</span>
-      </p>
+        <p>
+          {{ invoice.btcDue | number: "1.0-8" }} <span class="symbol">BTC</span>
+        </p>
       }
     </ng-template>
 
     @if (!minimal) {
-    <p>Waiting for transaction...</p>
-    <div class="spinner-border text-light"></div>
+      <p>Waiting for transaction...</p>
+      <div class="spinner-border text-light"></div>
     }
   </div>
 </div>

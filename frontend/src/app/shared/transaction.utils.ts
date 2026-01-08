@@ -2,7 +2,7 @@ import { TransactionFlags } from '@app/shared/filters.utils';
 import {
   getVarIntLength,
   parseMultisigScript,
-  isPoint
+  isPoint,
 } from '@app/shared/script.utils';
 import { Transaction, Vin } from '@interfaces/electrs.interface';
 import { hash, Hash } from '@app/shared/sha256';
@@ -275,7 +275,7 @@ export function fillUnsignedInput(vin: Vin): {
 } {
   let missingSigs = 0;
   let bytes = 0;
-  let addToWitness = false;
+  const addToWitness = false;
 
   const addressType = vin.prevout?.scriptpubkey_type as AddressType;
   let signatures: SigInfo[] = [];
@@ -750,7 +750,7 @@ export function getTransactionFlags(
   flags |= TransactionFlags.no_rbf;
   let hasFakePubkey = false;
   let P2WSHCount = 0;
-  let olgaSize = 0;
+  const olgaSize = 0;
   for (const vout of tx.vout) {
     switch (vout.scriptpubkey_type) {
       case 'p2pk':
@@ -831,9 +831,7 @@ export function getTransactionFlags(
   return flags;
 }
 
-export function getUnacceleratedFeeRate(
-  tx: Transaction
-): number {
+export function getUnacceleratedFeeRate(tx: Transaction): number {
   return tx.effectiveFeePerSize;
 }
 
@@ -1310,9 +1308,7 @@ export function decodeRawTransaction(
   return fromBuffer(buffer, network);
 }
 
-function serializeTransaction(
-  tx: Transaction
-): Uint8Array {
+function serializeTransaction(tx: Transaction): Uint8Array {
   const result: number[] = [];
 
   // Add version
@@ -1351,7 +1347,7 @@ function txid(tx: Transaction): string {
   return uint8ArrayToHexString(hash2.reverse());
 }
 
-// Copied from mempool backend https://github.com/mempool/mempool/blob/14e49126c3ca8416a8d7ad134a95c5e090324d69/backend/src/api/transaction-utils.ts#L177
+// Copied from explorer backend https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/-/blob/main/backend/src/api/transaction-utils.ts?ref_type=heads#L196
 export function countSigops(transaction: Transaction): number {
   let sigops = 0;
 
@@ -1364,7 +1360,6 @@ export function countSigops(transaction: Transaction): number {
         case input.prevout.scriptpubkey_type === 'p2sh' &&
           input.scriptsig &&
           input.scriptsig.startsWith('160014'):
-
         case input.prevout?.scriptpubkey_type === 'p2sh' &&
           input.scriptsig &&
           input.scriptsig.startsWith('220020'):

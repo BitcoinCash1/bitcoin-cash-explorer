@@ -121,9 +121,7 @@
         </td>
       </tr>
       <tr *only-size>
-        <td class="label" i18n="transaction.size|Transaction Size">
-          Size
-        </td>
+        <td class="label" i18n="transaction.size|Transaction Size">Size</td>
         <td class="value" [innerHTML]="'&lrm;' + (size | bytes: 2)"></td>
       </tr>
       <tr *ngIf="auditEnabled && tx && tx.status && tx.status.length">

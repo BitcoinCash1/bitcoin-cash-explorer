@@ -47,10 +47,10 @@
                 !host.checked
                   ? "⏳"
                   : host.outOfSync
-                  ? "🚫"
-                  : host.latestHeight && host.latestHeight < maxHeight
-                  ? "🟧"
-                  : "✅"
+                    ? "🚫"
+                    : host.latestHeight && host.latestHeight < maxHeight
+                      ? "🟧"
+                      : "✅"
               }}
             </td>
             <ng-container
@@ -61,7 +61,7 @@
                   'backend',
                   'electrs',
                   'ssr',
-                  'core'
+                  'core',
                 ]
               "
             >
@@ -73,21 +73,21 @@
                     : ''
                 "
               >
-                @if (type !== 'core' && host.hashes?.[type]) {
-                <a
-                  [style.color]="'white'"
-                  href="https://github.com/mempool/{{ repoMap[type] }}/commit/{{
-                    host.hashes[type]
-                  }}"
-                  target="_blank"
-                  >{{ host.hashes[type].slice(0, 8) || "?" }}</a
-                >
+                @if (type !== "core" && host.hashes?.[type]) {
+                  <a
+                    [style.color]="'white'"
+                    href="https://github.com/mempool/{{
+                      repoMap[type]
+                    }}/commit/{{ host.hashes[type] }}"
+                    target="_blank"
+                    >{{ host.hashes[type].slice(0, 8) || "?" }}</a
+                  >
                 } @else if (host.hashes?.[type]) {
-                <span [style.color]="'white'" style="font-size: 10px">{{
-                  host.hashes[type] || "?"
-                }}</span>
+                  <span [style.color]="'white'" style="font-size: 10px">{{
+                    host.hashes[type] || "?"
+                  }}</span>
                 } @else {
-                <span>?</span>
+                  <span>?</span>
                 }
               </td>
             </ng-container>

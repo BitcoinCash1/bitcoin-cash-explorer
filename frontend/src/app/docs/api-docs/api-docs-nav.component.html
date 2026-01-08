@@ -3,7 +3,7 @@
   <a
     class="btn btn-small btn-purple"
     [href]="[
-      isMempoolSpaceBuild ? '/enterprise' : 'https://mempool.space/enterprise'
+      isMempoolSpaceBuild ? '/enterprise' : 'https://mempool.space/enterprise',
     ]"
     [target]="isMempoolSpaceBuild ? '' : 'blank'"
     >More Info <fa-icon [icon]="['fas', 'angle-right']"></fa-icon
@@ -37,10 +37,10 @@
           item.options.auditOnly &&
           auditEnabled) ||
         !item.hasOwnProperty('options') ||
-          (item.hasOwnProperty('options') &&
-            item.options.hasOwnProperty('electrsOnly') &&
-            item.options.electrsOnly &&
-            runningElectrs))
+        (item.hasOwnProperty('options') &&
+          item.options.hasOwnProperty('electrsOnly') &&
+          item.options.electrsOnly &&
+          runningElectrs))
     "
     (click)="navLinkClick($event, item.fragment)"
     >{{ item.title }}</a

@@ -306,10 +306,9 @@ export class PriceService {
         })
       );
     } else {
-
-    /**
-     * Query all price history only once. The observable is invalidated after 1 hour
-     */
+      /**
+       * Query all price history only once. The observable is invalidated after 1 hour
+       */
       if (
         !this.priceObservable$ ||
         (this.priceObservable$ &&

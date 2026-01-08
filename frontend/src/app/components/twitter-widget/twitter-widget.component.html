@@ -1,14 +1,14 @@
 @if (loading) {
-<div class="spinner-wrapper">
-  <div
-    class="ml-2 spinner-border text-light"
-    style="width: 25px; height: 25px"
-  ></div>
-</div>
+  <div class="spinner-wrapper">
+    <div
+      class="ml-2 spinner-border text-light"
+      style="width: 25px; height: 25px"
+    ></div>
+  </div>
 } @else if (error) {
-<div class="error-wrapper">
-  <span>failed to load X timeline</span>
-</div>
+  <div class="error-wrapper">
+    <span>failed to load X timeline</span>
+  </div>
 }
 <iframe
   id="twitter-widget-0"

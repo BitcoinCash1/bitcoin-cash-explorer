@@ -29,9 +29,7 @@ import { ElectrsApiService } from '@app/services/electrs-api.service';
 export class OrdApiService {
   constructor(private electrsApiService: ElectrsApiService) {}
 
-  decodeRunestone$(
-    tx: Transaction
-  ): Observable<{
+  decodeRunestone$(tx: Transaction): Observable<{
     runestone: Runestone;
     runeInfo: { [id: string]: { etching: Etching; txid: string } };
   }> {

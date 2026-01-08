@@ -432,9 +432,7 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
         ) {
           this.mempoolPosition = txPosition.position;
           if (this.tx && !this.tx.status.confirmed) {
-            const txFeePerSize = getUnacceleratedFeeRate(
-              this.tx
-            );
+            const txFeePerSize = getUnacceleratedFeeRate(this.tx);
             this.stateService.markBlock$.next({
               txid: txPosition.txid,
               txFeePerSize: txFeePerSize,
@@ -673,7 +671,8 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
           return;
         }
 
-        const txfeePerSize = this.tx.effectiveFeePerSize || this.tx.fee / this.tx.size;
+        const txfeePerSize =
+          this.tx.effectiveFeePerSize || this.tx.fee / this.tx.size;
         let found = false;
         this.txInBlockIndex = 0;
         for (const block of mempoolBlocks) {
@@ -710,7 +709,7 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
           mempoolBlocks,
           position,
           da,
-          this.miningStats,
+          this.miningStats
         );
       })
     );
@@ -719,7 +718,6 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit(): void {
     this.setGraphSize();
   }
-
 
   handleLoadElectrsTransactionError(error: any): Observable<any> {
     if (error.status === 404 && /^[a-fA-F0-9]{64}$/.test(this.txId)) {

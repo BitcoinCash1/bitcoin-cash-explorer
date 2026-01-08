@@ -6,7 +6,7 @@
   [ngClass]="{
     widget: widget,
     'full-height': !widget,
-    legacy: !isMempoolModule
+    legacy: !isMempoolModule,
   }"
 >
   <div
@@ -152,7 +152,7 @@
                 class="clear-link"
                 [routerLink]="[
                   '/mining/pool' | relativeUrl,
-                  block.extras.pool.slug
+                  block.extras.pool.slug,
                 ]"
               >
                 <img
@@ -282,7 +282,7 @@
                 [ngStyle]="{
                   width:
                     (block.size / stateService.env.MIN_BLOCK_SIZE_UNITS) * 100 +
-                    '%'
+                    '%',
                 }"
               ></div>
               <div

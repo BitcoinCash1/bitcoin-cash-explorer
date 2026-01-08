@@ -84,7 +84,7 @@
                 placement="bottom"
                 [routerLink]="[
                   '/mining/pool' | relativeUrl,
-                  block.extras.pool.slug
+                  block.extras.pool.slug,
                 ]"
                 class="badge"
                 style="color: #fff; padding: 0"
@@ -97,8 +97,9 @@
                   "
                 >
                   @if (block.extras.pool.minerNames[1].length > 16) {
-                  {{ block.extras.pool.minerNames[1].slice(0, 15) }}… } @else {
-                  {{ block.extras.pool.minerNames[1] }}
+                    {{ block.extras.pool.minerNames[1].slice(0, 15) }}…
+                  } @else {
+                    {{ block.extras.pool.minerNames[1] }}
                   }
                 </span>
                 <img
@@ -137,8 +138,9 @@
                   "
                 >
                   @if (block.extras.pool.minerNames[1].length > 16) {
-                  {{ block.extras.pool.minerNames[1].slice(0, 15) }}… } @else {
-                  {{ block.extras.pool.minerNames[1] }}
+                    {{ block.extras.pool.minerNames[1].slice(0, 15) }}…
+                  } @else {
+                    {{ block.extras.pool.minerNames[1] }}
                   }
                 </span>
                 {{ block.extras.pool.name }}

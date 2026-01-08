@@ -14,14 +14,14 @@
     </div>
     <h1>
       @if (!block?.stale) {
-      <ng-container
-        *ngIf="blockHeight == null || blockHeight > 0; else genesis"
-        i18n="shared.block-title"
-        >Block</ng-container
-      >
-      <ng-template #genesis i18n="@@2303359202781425764">Genesis</ng-template>
+        <ng-container
+          *ngIf="blockHeight == null || blockHeight > 0; else genesis"
+          i18n="shared.block-title"
+          >Block</ng-container
+        >
+        <ng-template #genesis i18n="@@2303359202781425764">Genesis</ng-template>
       } @else {
-      <ng-container i18n="shared.stale-block-title">Stale Block</ng-container>
+        <ng-container i18n="shared.stale-block-title">Stale Block</ng-container>
       }
       <span class="next-previous-blocks">
         <a
@@ -229,13 +229,13 @@
             [relativeTime]="block?.timestamp"
             (txClickEvent)="onTxClick($event)"
           ></app-block-overview-graph>
-          @if (!isMobile || mode === 'actual') {
-          <ng-container
-            *ngTemplateOutlet="
-              emptyBlockInfo;
-              context: { $implicit: block?.stale ? canonicalBlock : block }
-            "
-          ></ng-container>
+          @if (!isMobile || mode === "actual") {
+            <ng-container
+              *ngTemplateOutlet="
+                emptyBlockInfo;
+                context: { $implicit: block?.stale ? canonicalBlock : block }
+              "
+            ></ng-container>
           }
         </div>
       </div>
@@ -350,7 +350,7 @@
             placement="bottom"
             [routerLink]="[
               '/mining/pool' | relativeUrl,
-              block.extras.pool.slug
+              block.extras.pool.slug,
             ]"
             class="badge"
             style="color: #fff; padding: 0"
@@ -363,8 +363,9 @@
               "
             >
               @if (block.extras.pool.minerNames[1].length > 16) {
-              {{ block.extras.pool.minerNames[1].slice(0, 15) }}… } @else {
-              {{ block.extras.pool.minerNames[1] }}
+                {{ block.extras.pool.minerNames[1].slice(0, 15) }}…
+              } @else {
+                {{ block.extras.pool.minerNames[1] }}
               }
             </span>
             <img
@@ -427,65 +428,65 @@
   <!-- VISUALIZATIONS -->
   <div class="box" *ngIf="!error && webGlEnabled && showComparison">
     @if (block?.stale) {
-    <div class="nav nav-tabs" *ngIf="isMobile">
-      <a
-        class="nav-link"
-        [class.active]="mode === 'stale'"
-        fragment="stale"
-        (click)="changeMode('stale')"
-        ><ng-container i18n="block.stale">Stale</ng-container></a
-      >
-      <a
-        class="nav-link"
-        [class.active]="mode === 'actual'"
-        i18n="block.actual"
-        fragment="actual"
-        (click)="changeMode('actual')"
-        >Winning</a
-      >
-    </div>
+      <div class="nav nav-tabs" *ngIf="isMobile">
+        <a
+          class="nav-link"
+          [class.active]="mode === 'stale'"
+          fragment="stale"
+          (click)="changeMode('stale')"
+          ><ng-container i18n="block.stale">Stale</ng-container></a
+        >
+        <a
+          class="nav-link"
+          [class.active]="mode === 'actual'"
+          i18n="block.actual"
+          fragment="actual"
+          (click)="changeMode('actual')"
+          >Winning</a
+        >
+      </div>
     } @else {
-    <div class="nav nav-tabs" *ngIf="isMobile && showAudit">
-      <a
-        class="nav-link"
-        [class.active]="mode === 'projected'"
-        fragment="projected"
-        (click)="changeMode('projected')"
-        ><ng-container i18n="block.expected">Expected</ng-container></a
-      >
-      <a
-        class="nav-link"
-        [class.active]="mode === 'actual'"
-        i18n="block.actual"
-        fragment="actual"
-        (click)="changeMode('actual')"
-        >Actual</a
-      >
-    </div>
+      <div class="nav nav-tabs" *ngIf="isMobile && showAudit">
+        <a
+          class="nav-link"
+          [class.active]="mode === 'projected'"
+          fragment="projected"
+          (click)="changeMode('projected')"
+          ><ng-container i18n="block.expected">Expected</ng-container></a
+        >
+        <a
+          class="nav-link"
+          [class.active]="mode === 'actual'"
+          i18n="block.actual"
+          fragment="actual"
+          (click)="changeMode('actual')"
+          >Actual</a
+        >
+      </div>
     }
     <div class="row">
       <div class="col-sm audit-col" [class.mobile]="isMobile">
         @if (block?.stale && !showAudit) {
-        <h3 class="block-subtitle" *ngIf="!isMobile">
-          <ng-container i18n="block.stale-block">Stale Block</ng-container>
-          @if (block?.extras?.pool) {
-          <img
-            class="pool-logo large"
-            [src]="
-              '/resources/mining-pools/' + block?.extras?.pool.slug + '.svg'
-            "
-            onError="this.src = '/resources/mining-pools/default.svg'"
-            [alt]="'Logo of ' + block?.extras?.pool.name + ' mining pool'"
-          />
-          <span class="pool-name">{{ block?.extras?.pool.name }}</span>
-          }
-        </h3>
+          <h3 class="block-subtitle" *ngIf="!isMobile">
+            <ng-container i18n="block.stale-block">Stale Block</ng-container>
+            @if (block?.extras?.pool) {
+              <img
+                class="pool-logo large"
+                [src]="
+                  '/resources/mining-pools/' + block?.extras?.pool.slug + '.svg'
+                "
+                onError="this.src = '/resources/mining-pools/default.svg'"
+                [alt]="'Logo of ' + block?.extras?.pool.name + ' mining pool'"
+              />
+              <span class="pool-name">{{ block?.extras?.pool.name }}</span>
+            }
+          </h3>
         } @else {
-        <h3 class="block-subtitle" *ngIf="!isMobile">
-          <ng-container i18n="block.expected-block"
-            >Expected Block</ng-container
-          >
-        </h3>
+          <h3 class="block-subtitle" *ngIf="!isMobile">
+            <ng-container i18n="block.expected-block"
+              >Expected Block</ng-container
+            >
+          </h3>
         }
         <div class="block-graph-wrapper">
           <app-block-overview-graph
@@ -504,18 +505,18 @@
             [excludeFilters]="['replacement']"
             [relativeTime]="block?.timestamp"
           ></app-block-overview-graph>
-          @if (isMobile && mode === 'actual' || block?.stale) {
-          <ng-container
-            *ngTemplateOutlet="
-              emptyBlockInfo;
-              context: {
-                $implicit:
-                  isMobile && mode === 'actual' && block?.stale
-                    ? canonicalBlock
-                    : block
-              }
-            "
-          ></ng-container>
+          @if ((isMobile && mode === "actual") || block?.stale) {
+            <ng-container
+              *ngTemplateOutlet="
+                emptyBlockInfo;
+                context: {
+                  $implicit:
+                    isMobile && mode === 'actual' && block?.stale
+                      ? canonicalBlock
+                      : block,
+                }
+              "
+            ></ng-container>
           }
         </div>
         <ng-container *ngIf="network !== 'liquid'">
@@ -524,52 +525,67 @@
             [ngIfElse]="loadingDetailsSkeletons"
           >
             @if (block?.stale && !showAudit) {
-            <ng-container
-              *ngTemplateOutlet="
-                isMobile && mode === 'actual' ? canonicalDetails : staleDetails
-              "
-            ></ng-container>
+              <ng-container
+                *ngTemplateOutlet="
+                  isMobile && mode === 'actual'
+                    ? canonicalDetails
+                    : staleDetails
+                "
+              ></ng-container>
             } @else {
-            <ng-container
-              *ngTemplateOutlet="
-                isMobile && mode === 'actual' ? actualDetails : expectedDetails
-              "
-            ></ng-container>
+              <ng-container
+                *ngTemplateOutlet="
+                  isMobile && mode === 'actual'
+                    ? actualDetails
+                    : expectedDetails
+                "
+              ></ng-container>
             }
           </ng-template>
         </ng-container>
       </div>
       <div class="col-sm audit-col" *ngIf="!isMobile">
         <h3 class="block-subtitle actual" *ngIf="!isMobile">
-          @if (block?.stale) { @if (showAudit) {
-          <ng-container i18n="block.winning-block">Stale Block</ng-container>
+          @if (block?.stale) {
+            @if (showAudit) {
+              <ng-container i18n="block.winning-block"
+                >Stale Block</ng-container
+              >
+            } @else {
+              <ng-container i18n="block.stale-block"
+                >Winning Block</ng-container
+              >
+              @if (canonicalBlock?.extras?.pool) {
+                <img
+                  class="pool-logo large"
+                  [src]="
+                    '/resources/mining-pools/' +
+                    canonicalBlock?.extras?.pool.slug +
+                    '.svg'
+                  "
+                  onError="this.src = '/resources/mining-pools/default.svg'"
+                  [alt]="
+                    'Logo of ' +
+                    canonicalBlock?.extras?.pool.name +
+                    ' mining pool'
+                  "
+                />
+                <span class="pool-name">{{
+                  canonicalBlock?.extras?.pool.name
+                }}</span>
+              }
+            }
           } @else {
-          <ng-container i18n="block.stale-block">Winning Block</ng-container>
-          @if (canonicalBlock?.extras?.pool) {
-          <img
-            class="pool-logo large"
-            [src]="
-              '/resources/mining-pools/' +
-              canonicalBlock?.extras?.pool.slug +
-              '.svg'
-            "
-            onError="this.src = '/resources/mining-pools/default.svg'"
-            [alt]="
-              'Logo of ' + canonicalBlock?.extras?.pool.name + ' mining pool'
-            "
-          />
-          <span class="pool-name">{{ canonicalBlock?.extras?.pool.name }}</span>
-          } } } @else {
-          <ng-container i18n="block.actual-block">Actual Block</ng-container>
-          <a
-            class="info-link"
-            [routerLink]="['/docs/faq' | relativeUrl]"
-            fragment="how-do-block-audits-work"
-            ><fa-icon
-              [icon]="['fas', 'info-circle']"
-              [fixedWidth]="true"
-            ></fa-icon
-          ></a>
+            <ng-container i18n="block.actual-block">Actual Block</ng-container>
+            <a
+              class="info-link"
+              [routerLink]="['/docs/faq' | relativeUrl]"
+              fragment="how-do-block-audits-work"
+              ><fa-icon
+                [icon]="['fas', 'info-circle']"
+                [fixedWidth]="true"
+              ></fa-icon
+            ></a>
           }
         </h3>
         <div class="block-graph-wrapper">
@@ -603,9 +619,9 @@
             [ngIfElse]="loadingDetailsSkeletons"
           >
             @if (block?.stale && !showAudit) {
-            <ng-container *ngTemplateOutlet="canonicalDetails"></ng-container>
+              <ng-container *ngTemplateOutlet="canonicalDetails"></ng-container>
             } @else {
-            <ng-container *ngTemplateOutlet="actualDetails"></ng-container>
+              <ng-container *ngTemplateOutlet="actualDetails"></ng-container>
             }
           </ng-template>
         </ng-container>
@@ -679,32 +695,32 @@
     </div>
 
     @if (!block?.stale && block?.extras?.orphans?.length > 0) {
-    <br />
-    <div class="header-bg box stale-block-alert">
-      <span class="stale-msg mr-1">
-        @if (block.extras.orphans.length === 1) {
-        <span i18n="block.stale-block-singular"
-          >There is a stale block at this height</span
-        >
-        } @else {
-        <span i18n="block.stale-block-plural"
-          >There are {{ block.extras.orphans.length }} stale blocks at this
-          height</span
-        >
-        }
-      </span>
-      <ul class="stale-list mb-0 list-unstyled">
-        @for (orphan of block.extras.orphans; track orphan.height) {
-        <li>
-          <app-truncate
-            [text]="orphan.hash"
-            [lastChars]="8"
-            [link]="['/block' | relativeUrl, orphan.hash]"
-          ></app-truncate>
-        </li>
-        }
-      </ul>
-    </div>
+      <br />
+      <div class="header-bg box stale-block-alert">
+        <span class="stale-msg mr-1">
+          @if (block.extras.orphans.length === 1) {
+            <span i18n="block.stale-block-singular"
+              >There is a stale block at this height</span
+            >
+          } @else {
+            <span i18n="block.stale-block-plural"
+              >There are {{ block.extras.orphans.length }} stale blocks at this
+              height</span
+            >
+          }
+        </span>
+        <ul class="stale-list mb-0 list-unstyled">
+          @for (orphan of block.extras.orphans; track orphan.height) {
+            <li>
+              <app-truncate
+                [text]="orphan.hash"
+                [lastChars]="8"
+                [link]="['/block' | relativeUrl, orphan.hash]"
+              ></app-truncate>
+            </li>
+          }
+        </ul>
+      </div>
     }
 
     <div class="text-right mt-3 toggle-btns">
@@ -729,69 +745,73 @@
       </button>
     </div>
 
-    @defer (on viewport) { @if (!block?.stale) {
-    <app-block-transactions
-      [paginationMaxSize]="paginationMaxSize"
-      [block$]="block$"
-      [txCount]="block.tx_count"
-      [timestamp]="block.timestamp"
-      [blockHash]="blockHash"
-      [previousBlockHash]="block.previousblockhash"
-      (blockReward)="updateBlockReward($event)"
-    ></app-block-transactions>
-    } } @placeholder {
-    <div>
-      <div class="block-tx-title">
-        <h2 class="text-left">
-          <ng-container
-            *ngTemplateOutlet="
-              block.tx_count === 1 ? transactionsSingular : transactionsPlural;
-              context: { $implicit: block.tx_count | number }
-            "
-          ></ng-container>
-          <ng-template
-            #transactionsSingular
-            let-i
-            i18n="shared.transaction-count.singular"
-            >{{ i }} transaction</ng-template
-          >
-          <ng-template
-            #transactionsPlural
-            let-i
-            i18n="shared.transaction-count.plural"
-            >{{ i }} transactions</ng-template
-          >
-        </h2>
-        <ngb-pagination
-          class="pagination-container float-right"
-          [disabled]="true"
-          [collectionSize]="block.tx_count"
-          [rotate]="true"
-          [pageSize]="stateService.env.ITEMS_PER_PAGE"
-          [maxSize]="paginationMaxSize"
-          [boundaryLinks]="true"
-          [ellipses]="false"
-        ></ngb-pagination>
-      </div>
-      <div class="clearfix"></div>
-      <div class="tx-skeleton">
-        <div class="header-bg box">
-          <span class="skeleton-loader"></span>
+    @defer (on viewport) {
+      @if (!block?.stale) {
+        <app-block-transactions
+          [paginationMaxSize]="paginationMaxSize"
+          [block$]="block$"
+          [txCount]="block.tx_count"
+          [timestamp]="block.timestamp"
+          [blockHash]="blockHash"
+          [previousBlockHash]="block.previousblockhash"
+          (blockReward)="updateBlockReward($event)"
+        ></app-block-transactions>
+      }
+    } @placeholder {
+      <div>
+        <div class="block-tx-title">
+          <h2 class="text-left">
+            <ng-container
+              *ngTemplateOutlet="
+                block.tx_count === 1
+                  ? transactionsSingular
+                  : transactionsPlural;
+                context: { $implicit: block.tx_count | number }
+              "
+            ></ng-container>
+            <ng-template
+              #transactionsSingular
+              let-i
+              i18n="shared.transaction-count.singular"
+              >{{ i }} transaction</ng-template
+            >
+            <ng-template
+              #transactionsPlural
+              let-i
+              i18n="shared.transaction-count.plural"
+              >{{ i }} transactions</ng-template
+            >
+          </h2>
+          <ngb-pagination
+            class="pagination-container float-right"
+            [disabled]="true"
+            [collectionSize]="block.tx_count"
+            [rotate]="true"
+            [pageSize]="stateService.env.ITEMS_PER_PAGE"
+            [maxSize]="paginationMaxSize"
+            [boundaryLinks]="true"
+            [ellipses]="false"
+          ></ngb-pagination>
         </div>
-        <div class="header-bg box">
-          <div class="row">
-            <div class="col-sm">
-              <span class="skeleton-loader"></span>
-            </div>
-            <div class="col-sm">
-              <span class="skeleton-loader"></span>
-              <span class="skeleton-loader"></span>
-              <span class="skeleton-loader"></span>
+        <div class="clearfix"></div>
+        <div class="tx-skeleton">
+          <div class="header-bg box">
+            <span class="skeleton-loader"></span>
+          </div>
+          <div class="header-bg box">
+            <div class="row">
+              <div class="col-sm">
+                <span class="skeleton-loader"></span>
+              </div>
+              <div class="col-sm">
+                <span class="skeleton-loader"></span>
+                <span class="skeleton-loader"></span>
+                <span class="skeleton-loader"></span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
     }
 
     <div class="clearfix"></div>
@@ -807,16 +827,20 @@
 </div>
 
 <ng-template #emptyBlockInfo let-emptyBlock>
-  @if (network === '' && emptyBlock && emptyBlock.height > 100000 &&
-  emptyBlock.tx_count <= 1) {
-  <a
-    class="info-bubble-link badge badge-primary"
-    [routerLink]="['/docs/faq/' | relativeUrl]"
-    fragment="why-empty-blocks"
-  >
-    <fa-icon [icon]="['fas', 'info-circle']" [fixedWidth]="true"></fa-icon>
-    <span i18n="block.empty-block-explanation">Why is this block empty?</span>
-  </a>
+  @if (
+    network === "" &&
+    emptyBlock &&
+    emptyBlock.height > 100000 &&
+    emptyBlock.tx_count <= 1
+  ) {
+    <a
+      class="info-bubble-link badge badge-primary"
+      [routerLink]="['/docs/faq/' | relativeUrl]"
+      fragment="why-empty-blocks"
+    >
+      <fa-icon [icon]="['fas', 'info-circle']" [fixedWidth]="true"></fa-icon>
+      <span i18n="block.empty-block-explanation">Why is this block empty?</span>
+    </a>
   }
 </ng-template>
 
@@ -838,9 +862,7 @@
       </tr>
       <tr>
         <td i18n="block.size">Size</td>
-        <td
-          [innerHTML]="'&lrm;' + (blockAudit.expectedSize | bytes: 2)"
-        ></td>
+        <td [innerHTML]="'&lrm;' + (blockAudit.expectedSize | bytes: 2)"></td>
       </tr>
       <tr>
         <td i18n="mempool-block.transactions">Transactions</td>
@@ -936,16 +958,18 @@
             digitsInfo="1.2-3"
             [noFiat]="true"
           ></app-amount>
-          @if (staleStats.feeDelta && (canonicalStats.feeDelta >= 100 ||
-          canonicalStats.feeDelta <= -100)) {
-          <span
-            class="difference"
-            [class.positive]="staleStats.feeDelta > 0"
-            [class.negative]="staleStats.feeDelta <= 0"
-          >
-            {{ staleStats.feeDelta > 0 ? "+" : ""
-            }}{{ staleStats.feeDelta * 100 | amountShortener: 2 }}%
-          </span>
+          @if (
+            staleStats.feeDelta &&
+            (canonicalStats.feeDelta >= 100 || canonicalStats.feeDelta <= -100)
+          ) {
+            <span
+              class="difference"
+              [class.positive]="staleStats.feeDelta > 0"
+              [class.negative]="staleStats.feeDelta <= 0"
+            >
+              {{ staleStats.feeDelta > 0 ? "+" : ""
+              }}{{ staleStats.feeDelta * 100 | amountShortener: 2 }}%
+            </span>
           }
         </td>
       </tr>
@@ -955,16 +979,19 @@
           <span
             [innerHTML]="'&lrm;' + (staleStats.totalSize | bytes: 2)"
           ></span>
-          @if (staleStats.sizeDelta && (canonicalStats.sizeDelta >= 100 ||
-          canonicalStats.sizeDelta <= -100)) {
-          <span
-            class="difference"
-            [class.positive]="staleStats.sizeDelta > 0"
-            [class.negative]="staleStats.sizeDelta <= 0"
-          >
-            {{ staleStats.sizeDelta > 0 ? "+" : ""
-            }}{{ staleStats.sizeDelta * 100 | amountShortener: 2 }}%
-          </span>
+          @if (
+            staleStats.sizeDelta &&
+            (canonicalStats.sizeDelta >= 100 ||
+              canonicalStats.sizeDelta <= -100)
+          ) {
+            <span
+              class="difference"
+              [class.positive]="staleStats.sizeDelta > 0"
+              [class.negative]="staleStats.sizeDelta <= 0"
+            >
+              {{ staleStats.sizeDelta > 0 ? "+" : ""
+              }}{{ staleStats.sizeDelta * 100 | amountShortener: 2 }}%
+            </span>
           }
         </td>
       </tr>
@@ -972,16 +999,18 @@
         <td i18n="mempool-block.transactions">Transactions</td>
         <td>
           {{ staleStats.txCount || 0 }}
-          @if (staleStats.txDelta && (canonicalStats.txDelta >= 100 ||
-          canonicalStats.txDelta <= -100)) {
-          <span
-            class="difference"
-            [class.positive]="staleStats.txDelta > 0"
-            [class.negative]="staleStats.txDelta <= 0"
-          >
-            {{ staleStats.txDelta > 0 ? "+" : ""
-            }}{{ staleStats.txDelta * 100 | amountShortener: 2 }}%
-          </span>
+          @if (
+            staleStats.txDelta &&
+            (canonicalStats.txDelta >= 100 || canonicalStats.txDelta <= -100)
+          ) {
+            <span
+              class="difference"
+              [class.positive]="staleStats.txDelta > 0"
+              [class.negative]="staleStats.txDelta <= 0"
+            >
+              {{ staleStats.txDelta > 0 ? "+" : ""
+              }}{{ staleStats.txDelta * 100 | amountShortener: 2 }}%
+            </span>
           }
         </td>
       </tr>
@@ -1003,16 +1032,19 @@
             digitsInfo="1.2-3"
             [noFiat]="true"
           ></app-amount>
-          @if (canonicalStats.feeDelta && canonicalStats.feeDelta < 100 &&
-          canonicalStats.feeDelta > -100) {
-          <span
-            class="difference"
-            [class.positive]="canonicalStats.feeDelta > 0"
-            [class.negative]="canonicalStats.feeDelta <= 0"
-          >
-            {{ canonicalStats.feeDelta > 0 ? "+" : ""
-            }}{{ canonicalStats.feeDelta * 100 | amountShortener: 2 }}%
-          </span>
+          @if (
+            canonicalStats.feeDelta &&
+            canonicalStats.feeDelta < 100 &&
+            canonicalStats.feeDelta > -100
+          ) {
+            <span
+              class="difference"
+              [class.positive]="canonicalStats.feeDelta > 0"
+              [class.negative]="canonicalStats.feeDelta <= 0"
+            >
+              {{ canonicalStats.feeDelta > 0 ? "+" : ""
+              }}{{ canonicalStats.feeDelta * 100 | amountShortener: 2 }}%
+            </span>
           }
         </td>
       </tr>
@@ -1022,16 +1054,19 @@
           <span
             [innerHTML]="'&lrm;' + (canonicalStats.totalSize | bytes: 2)"
           ></span>
-          @if (canonicalStats.sizeDelta && canonicalStats.sizeDelta < 100 &&
-          canonicalStats.sizeDelta > -100) {
-          <span
-            class="difference"
-            [class.positive]="canonicalStats.sizeDelta > 0"
-            [class.negative]="canonicalStats.sizeDelta <= 0"
-          >
-            {{ canonicalStats.sizeDelta > 0 ? "+" : ""
-            }}{{ canonicalStats.sizeDelta * 100 | amountShortener: 2 }}%
-          </span>
+          @if (
+            canonicalStats.sizeDelta &&
+            canonicalStats.sizeDelta < 100 &&
+            canonicalStats.sizeDelta > -100
+          ) {
+            <span
+              class="difference"
+              [class.positive]="canonicalStats.sizeDelta > 0"
+              [class.negative]="canonicalStats.sizeDelta <= 0"
+            >
+              {{ canonicalStats.sizeDelta > 0 ? "+" : ""
+              }}{{ canonicalStats.sizeDelta * 100 | amountShortener: 2 }}%
+            </span>
           }
         </td>
       </tr>
@@ -1039,16 +1074,19 @@
         <td i18n="mempool-block.transactions">Transactions</td>
         <td>
           {{ canonicalStats.txCount || 0 }}
-          @if (canonicalStats.txDelta && canonicalStats.txDelta < 100 &&
-          canonicalStats.txDelta > -100) {
-          <span
-            class="difference"
-            [class.positive]="canonicalStats.txDelta > 0"
-            [class.negative]="canonicalStats.txDelta <= 0"
-          >
-            {{ canonicalStats.txDelta > 0 ? "+" : ""
-            }}{{ canonicalStats.txDelta * 100 | amountShortener: 2 }}%
-          </span>
+          @if (
+            canonicalStats.txDelta &&
+            canonicalStats.txDelta < 100 &&
+            canonicalStats.txDelta > -100
+          ) {
+            <span
+              class="difference"
+              [class.positive]="canonicalStats.txDelta > 0"
+              [class.negative]="canonicalStats.txDelta <= 0"
+            >
+              {{ canonicalStats.txDelta > 0 ? "+" : ""
+              }}{{ canonicalStats.txDelta * 100 | amountShortener: 2 }}%
+            </span>
           }
         </td>
       </tr>

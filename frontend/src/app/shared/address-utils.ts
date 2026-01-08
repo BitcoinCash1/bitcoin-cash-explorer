@@ -182,14 +182,14 @@ export class AddressTypeInfo {
   }
 
   public processInputs(vin: Vin[] = [], vinIds: string[] = []): void {
-      // for single-script types, if we've seen one input we've seen them all
+    // for single-script types, if we've seen one input we've seen them all
     if (['p2sh', 'v0_p2wsh'].includes(this.type)) {
       if (!this.scripts.size && vin.length) {
         const v = vin[0];
 
         // real script, always true (BCH doesn't have P2SH-P2WPKH)
         if (this.type !== 'p2sh-p2wpkh') {
-         if (v.inner_redeemscript_asm) {
+          if (v.inner_redeemscript_asm) {
             this.processScript(
               new ScriptInfo(
                 'inner_redeemscript',
@@ -199,11 +199,7 @@ export class AddressTypeInfo {
             );
           } else if (v.scriptsig || v.scriptsig_asm) {
             this.processScript(
-              new ScriptInfo(
-                'scriptsig',
-                v.scriptsig,
-                v.scriptsig_asm
-              )
+              new ScriptInfo('scriptsig', v.scriptsig, v.scriptsig_asm)
             );
           }
         }

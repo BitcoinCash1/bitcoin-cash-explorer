@@ -338,8 +338,8 @@ export class TreasuriesGraphComponent implements OnInit, OnChanges, OnDestroy {
               const pointTime = Array.isArray(point)
                 ? point[0]
                 : point && typeof point === 'object' && 'value' in point
-                ? point.value[0]
-                : null;
+                  ? point.value[0]
+                  : null;
 
               if (pointTime && pointTime <= tooltipTime) {
                 mostRecentPoint = point;
@@ -356,10 +356,10 @@ export class TreasuriesGraphComponent implements OnInit, OnChanges, OnDestroy {
               const balance = Array.isArray(mostRecentPoint)
                 ? mostRecentPoint[1]
                 : mostRecentPoint &&
-                  typeof mostRecentPoint === 'object' &&
-                  'value' in mostRecentPoint
-                ? mostRecentPoint.value[1]
-                : null;
+                    typeof mostRecentPoint === 'object' &&
+                    'value' in mostRecentPoint
+                  ? mostRecentPoint.value[1]
+                  : null;
 
               if (balance !== null && !isNaN(balance)) {
                 const markerColor = chartColors[index % chartColors.length];

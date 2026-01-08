@@ -91,7 +91,7 @@
         *ngTemplateOutlet="
           goTo;
           context: {
-            $implicit: results.searchText | shortenString: (isMobile ? 17 : 30)
+            $implicit: results.searchText | shortenString: (isMobile ? 17 : 30),
           }
         "
       ></ng-container>
@@ -274,7 +274,7 @@
             goTo;
             context: {
               $implicit:
-                otherNetwork.address | shortenString: (isMobile ? 12 : 20)
+                otherNetwork.address | shortenString: (isMobile ? 12 : 20),
             }
           "
         ></ng-container
@@ -302,7 +302,7 @@
         *ngTemplateOutlet="
           goTo;
           context: {
-            $implicit: results.searchText | shortenString: (isMobile ? 17 : 30)
+            $implicit: results.searchText | shortenString: (isMobile ? 17 : 30),
           }
         "
       ></ng-container>

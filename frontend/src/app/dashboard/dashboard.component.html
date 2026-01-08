@@ -105,7 +105,8 @@
     <div class="col" style="max-height: 410px">
       <div
         class="card"
-        *ngIf="(network$ | async) !== 'liquidtestnet'; else latestBlocks">
+        *ngIf="(network$ | async) !== 'liquidtestnet'; else latestBlocks"
+      >
         <div class="card-body">
           <!--
           <a class="title-link" href="" [routerLink]="['/rbf' | relativeUrl]">
@@ -289,7 +290,7 @@
                             (block.size /
                               stateService.env.MIN_BLOCK_SIZE_UNITS) *
                               100 +
-                            '%'
+                            '%',
                         }"
                       >
                         &nbsp;
@@ -638,7 +639,7 @@
                 (mempoolInfoData.value.memPoolInfo.usage /
                   mempoolInfoData.value.memPoolInfo.maxmempool) *
                   100 +
-                '%'
+                '%',
             }"
           >
             &nbsp;
@@ -741,9 +742,7 @@
   <ng-container *ngIf="auditStatus$ | async as auditStatus">
     <div
       class="in-progress-message"
-      *ngIf="
-        auditStatus.lastBlockAudit && auditStatus.bitcoinHeaders
-      "
+      *ngIf="auditStatus.lastBlockAudit && auditStatus.bitcoinHeaders"
     >
       <div i18n="lightning.indexing-in-progress">Indexing in progress</div>
       <div>
