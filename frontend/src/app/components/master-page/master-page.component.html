@@ -225,46 +225,6 @@
             ></app-svg-images>
             Testnet4</a
           >
-          <a
-            [href]="
-              env.LIQUID_WEBSITE_URL +
-              urlLanguage +
-              (networkPaths['liquid'] || '')
-            "
-            ngbDropdownItem
-            *ngIf="env.LIQUID_ENABLED"
-            class="liquid"
-            [class.active]="network.val === 'liquid'"
-            ><app-svg-images
-              name="liquid"
-              width="22"
-              height="22"
-              viewBox="0 0 125 125"
-              style="width: 25px; height: 25px"
-              class="mainnet mr-1"
-            ></app-svg-images>
-            Liquid</a
-          >
-          <a
-            [href]="
-              env.LIQUID_WEBSITE_URL +
-              urlLanguage +
-              (networkPaths['liquidtestnet'] || '/testnet')
-            "
-            ngbDropdownItem
-            *ngIf="env.LIQUID_TESTNET_ENABLED"
-            class="liquidtestnet"
-            [class.active]="network.val === 'liquid'"
-            ><app-svg-images
-              name="liquidtestnet"
-              width="22"
-              height="22"
-              viewBox="0 0 125 125"
-              style="width: 25px; height: 25px"
-              class="mainnet mr-1"
-            ></app-svg-images>
-            Liquid Testnet</a
-          >
         </div>
       </div>
 
@@ -332,13 +292,7 @@
               </div>
             </a>
           </li>
-          <!-- todo add blocks link -->
-          <li
-            class="nav-item"
-            routerLinkActive="active"
-            id="btn-blocks"
-            *ngIf="!stateService.env.MINING_DASHBOARD"
-          >
+          <li class="nav-item" routerLinkActive="active" id="btn-blocks">
             <a
               class="nav-link"
               [routerLink]="['/blocks' | relativeUrl]"
@@ -406,26 +360,6 @@
               <div class="svg-wrapper">
                 <app-svg-images
                   name="nav-book"
-                  width="21.59"
-                  height="100%"
-                ></app-svg-images>
-              </div>
-            </a>
-          </li>
-          <li
-            class="nav-item"
-            routerLinkActive="active"
-            id="btn-enterprise"
-            *ngIf="officialMempoolSpaceBuild"
-          >
-            <a
-              class="nav-link"
-              [routerLink]="['/enterprise' | relativeUrl]"
-              (click)="collapse()"
-            >
-              <div class="svg-wrapper">
-                <app-svg-images
-                  name="nav-enterprise"
                   width="21.59"
                   height="100%"
                 ></app-svg-images>
