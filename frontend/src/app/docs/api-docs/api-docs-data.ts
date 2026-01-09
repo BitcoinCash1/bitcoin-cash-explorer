@@ -103,7 +103,7 @@ export const wsApiDocsData = [
     "incrementalrelayfee": 0.00001,
     "unbroadcastcount": 0,
   },
-  "vBytesPerSecond": 1651,
+  "BytesPerSecond": 1651,
   "fees": {
     "fastestFee": 7,
     "halfHourFee": 6,
@@ -162,7 +162,7 @@ export const wsApiDocsData = [
     "incrementalrelayfee": 0.00001,
     "unbroadcastcount": 0,
   },
-  "vBytesPerSecond": 358,
+  "BytesPerSecond": 358,
   "fees": {
     "fastestFee": 2525,
     "halfHourFee": 2268,
@@ -220,7 +220,7 @@ export const wsApiDocsData = [
     "incrementalrelayfee": 0.00001,
     "unbroadcastcount": 0,
   },
-  "vBytesPerSecond": 28,
+  "BytesPerSecond": 28,
   "da": {
     "progressPercent": 68.60119047619048,
     "difficultyChange": -2.913529439274176,
@@ -277,7 +277,7 @@ export const wsApiDocsData = [
     "minrelaytxfee": 0.000001,
     "unbroadcastcount": 0
   },
-  "vBytesPerSecond": 60,
+  "BytesPerSecond": 60,
   "fees": {
     "fastestFee": 0.1,
     "halfHourFee": 0.1,
@@ -390,7 +390,6 @@ export const wsApiDocsData = [
         }
       ],
       "size": 5514,
-      "weight": 22056,
       "sigops": 208,
       "fee": 44000,
       "status": {
@@ -401,9 +400,9 @@ export const wsApiDocsData = [
       },
       "order": 864069877,
       "vsize": 5514,
-      "adjustedVsize": 5514,
+      "adjustedSize": 5514,
       "feePerSize": 7.979688066739209,
-      "adjustedfeePerSize": 7.979688066739209,
+      "adjustedFeePerSize": 7.979688066739209,
       "effectiveFeePerSize": 7.979688066739209,
       "firstSeen": 1734704590,
       "inputs": [],
@@ -483,7 +482,6 @@ export const wsApiDocsData = [
         }
       ],
       "size": 5514,
-      "weight": 22056,
       "sigops": 208,
       "fee": 44000,
       "status": {
@@ -494,9 +492,9 @@ export const wsApiDocsData = [
       },
       "order": 864069877,
       "vsize": 5514,
-      "adjustedVsize": 5514,
+      "adjustedSize": 5514,
       "feePerSize": 7.979688066739209,
-      "adjustedfeePerSize": 7.979688066739209,
+      "adjustedFeePerSize": 7.979688066739209,
       "effectiveFeePerSize": 7.979688066739209,
       "firstSeen": 1734704590,
       "inputs": [],
@@ -576,7 +574,6 @@ export const wsApiDocsData = [
         }
       ],
       "size": 5514,
-      "weight": 22056,
       "sigops": 208,
       "fee": 44000,
       "status": {
@@ -587,9 +584,9 @@ export const wsApiDocsData = [
       },
       "order": 864069877,
       "vsize": 5514,
-      "adjustedVsize": 5514,
+      "adjustedSize": 5514,
       "feePerSize": 7.979688066739209,
-      "adjustedfeePerSize": 7.979688066739209,
+      "adjustedFeePerSize": 7.979688066739209,
       "effectiveFeePerSize": 7.979688066739209,
       "firstSeen": 1734704590,
       "inputs": [],
@@ -669,7 +666,6 @@ export const wsApiDocsData = [
         }
       ],
       "size": 5514,
-      "weight": 22056,
       "sigops": 208,
       "fee": 44000,
       "status": {
@@ -680,9 +676,9 @@ export const wsApiDocsData = [
       },
       "order": 864069877,
       "vsize": 5514,
-      "adjustedVsize": 5514,
+      "adjustedSize": 5514,
       "feePerSize": 7.979688066739209,
-      "adjustedfeePerSize": 7.979688066739209,
+      "adjustedFeePerSize": 7.979688066739209,
       "effectiveFeePerSize": 7.979688066739209,
       "firstSeen": 1734704590,
       "inputs": [],
@@ -767,7 +763,6 @@ export const wsApiDocsData = [
             }
           ],
           "size": 351,
-          "weight": 756,
           "sigops": 2,
           "fee": 4206,
           "status": {
@@ -778,9 +773,9 @@ export const wsApiDocsData = [
           },
           "order": 81067521,
           "vsize": 189,
-          "adjustedVsize": 189,
+          "adjustedSize": 189,
           "feePerSize": 22.253968253968253,
-          "adjustedfeePerSize": 22.253968253968253,
+          "adjustedFeePerSize": 22.253968253968253,
           "effectiveFeePerSize": 22.253968253968253,
           "firstSeen": 1734719830,
           "inputs": [],
@@ -845,7 +840,6 @@ export const wsApiDocsData = [
             }
           ],
           "size": 351,
-          "weight": 756,
           "sigops": 2,
           "fee": 4206,
           "status": {
@@ -856,9 +850,9 @@ export const wsApiDocsData = [
           },
           "order": 81067521,
           "vsize": 189,
-          "adjustedVsize": 189,
+          "adjustedSize": 189,
           "feePerSize": 22.253968253968253,
-          "adjustedfeePerSize": 22.253968253968253,
+          "adjustedFeePerSize": 22.253968253968253,
           "effectiveFeePerSize": 22.253968253968253,
           "firstSeen": 1734719830,
           "inputs": [],
@@ -923,7 +917,6 @@ export const wsApiDocsData = [
             }
           ],
           "size": 351,
-          "weight": 756,
           "sigops": 2,
           "fee": 4206,
           "status": {
@@ -934,19 +927,18 @@ export const wsApiDocsData = [
           },
           "order": 81067521,
           "vsize": 189,
-          "adjustedVsize": 189,
+          "adjustedSize": 189,
           "feePerSize": 22.253968253968253,
-          "adjustedfeePerSize": 22.253968253968253,
+          "adjustedFeePerSize": 22.253968253968253,
           "effectiveFeePerSize": 22.253968253968253,
           "firstSeen": 1734719830,
           "inputs": [],
-          "cpfpDirty": false,
           "ancestors": [],
           "descendants": [],
           "bestDescendant": null,
           "position": {
             "block": 0,
-            "vsize": 134866.5
+            "size": 134866.5
           },
           "flags": 1099511640074
         }
@@ -1089,7 +1081,6 @@ export const wsApiDocsData = [
             }
           ],
           "size": 13955,
-          "weight": 15713,
           "sigops": 0,
           "fee": 394,
           "status": {
@@ -1099,14 +1090,12 @@ export const wsApiDocsData = [
             "block_time": 1734720368
           },
           "order": 743132236,
-          "vsize": 3929,
-          "adjustedVsize": 3928.25,
+          "adjustedSize": 3928.25,
           "feePerSize": 0.10029911538216763,
-          "adjustedfeePerSize": 0.10029911538216763,
+          "adjustedFeePerSize": 0.10029911538216763,
           "effectiveFeePerSize": 0.10027996945787732,
           "firstSeen": 1734720314,
           "inputs": [],
-          "cpfpDirty": false,
           "ancestors": [],
           "descendants": [],
           "bestDescendant": null,
@@ -1114,9 +1103,7 @@ export const wsApiDocsData = [
             "block": 0,
             "vsize": 6972.5
           },
-          "flags": 1099511633962,
-          "cpfpChecked": true,
-          "cpfpUpdated": 1734720355424
+          "flags": 1099511633962
         }
       ],
       "removed": []
@@ -1161,27 +1148,7 @@ export const wsApiDocsData = [
     ],
     "position": {
       "block": 0,
-      "vsize": 726868
-    },
-    "cpfp": {
-      "ancestors": [
-        {
-          "txid": "d509a6b8f36149588f9f48dc25fa5e37fc00dee781aed6da1113066c56f04879",
-          "fee": 605,
-          "weight": 520
-        }
-      ],
-      "bestDescendant": null,
-      "descendants": [
-        {
-          "txid": "28d3c592a9a8103d53c784aa539908f4dc5f9c463e179f0eae5dc5f349bdb00f",
-          "fee": 2501,
-          "weight": 816
-        }
-      ],
-      "effectiveFeePerSize": 5.12063778580024,
-      "sigops": 0,
-      "adjustedVsize": 130
+      "size": 726868
     }
   }
 }`,
@@ -1197,27 +1164,7 @@ export const wsApiDocsData = [
     ],
     "position": {
       "block": 0,
-      "vsize": 726868
-    },
-    "cpfp": {
-      "ancestors": [
-        {
-          "txid": "d509a6b8f36149588f9f48dc25fa5e37fc00dee781aed6da1113066c56f04879",
-          "fee": 605,
-          "weight": 520
-        }
-      ],
-      "bestDescendant": null,
-      "descendants": [
-        {
-          "txid": "28d3c592a9a8103d53c784aa539908f4dc5f9c463e179f0eae5dc5f349bdb00f",
-          "fee": 2501,
-          "weight": 816
-        }
-      ],
-      "effectiveFeePerSize": 5.12063778580024,
-      "sigops": 0,
-      "adjustedVsize": 130
+      "size": 726868
     }
   }
 }`,
@@ -1234,26 +1181,6 @@ export const wsApiDocsData = [
     "position": {
       "block": 0,
       "vsize": 726868
-    },
-    "cpfp": {
-      "ancestors": [
-        {
-          "txid": "d509a6b8f36149588f9f48dc25fa5e37fc00dee781aed6da1113066c56f04879",
-          "fee": 605,
-          "weight": 520
-        }
-      ],
-      "bestDescendant": null,
-      "descendants": [
-        {
-          "txid": "28d3c592a9a8103d53c784aa539908f4dc5f9c463e179f0eae5dc5f349bdb00f",
-          "fee": 2501,
-          "weight": 816
-        }
-      ],
-      "effectiveFeePerSize": 5.12063778580024,
-      "sigops": 0,
-      "adjustedVsize": 130
     }
   }
 }`,
@@ -1270,26 +1197,6 @@ export const wsApiDocsData = [
     "position": {
       "block": 0,
       "vsize": 726868
-    },
-    "cpfp": {
-      "ancestors": [
-        {
-          "txid": "d509a6b8f36149588f9f48dc25fa5e37fc00dee781aed6da1113066c56f04879",
-          "fee": 605,
-          "weight": 520
-        }
-      ],
-      "bestDescendant": null,
-      "descendants": [
-        {
-          "txid": "28d3c592a9a8103d53c784aa539908f4dc5f9c463e179f0eae5dc5f349bdb00f",
-          "fee": 2501,
-          "weight": 816
-        }
-      ],
-      "effectiveFeePerSize": 5.12063778580024,
-      "sigops": 0,
-      "adjustedVsize": 130
     }
   }
 }`,
@@ -1327,26 +1234,6 @@ export const wsApiDocsData = [
       "position": {
         "block": 0,
         "vsize": 434494
-      },
-      "cpfp": {
-        "ancestors": [
-          {
-            "txid": "d509a6b8f36149588f9f48dc25fa5e37fc00dee781aed6da1113066c56f04879",
-            "fee": 605,
-            "weight": 520
-          }
-        ],
-        "bestDescendant": null,
-        "descendants": [
-          {
-          "txid": "28d3c592a9a8103d53c784aa539908f4dc5f9c463e179f0eae5dc5f349bdb00f",
-          "fee": 2501,
-          "weight": 816
-          }
-        ],
-        "effectiveFeePerSize": 5.12063778580024,
-        "sigops": 0,
-        "adjustedVsize": 130
       }
     },
     "941df06064c290b4627e92bdbf3bff7c0e97aab33e273c2a20404f9cfd21b607": {
@@ -1368,26 +1255,6 @@ export const wsApiDocsData = [
       "position": {
         "block": 0,
         "vsize": 434494
-      },
-      "cpfp": {
-        "ancestors": [
-          {
-            "txid": "d509a6b8f36149588f9f48dc25fa5e37fc00dee781aed6da1113066c56f04879",
-            "fee": 605,
-            "weight": 520
-          }
-        ],
-        "bestDescendant": null,
-        "descendants": [
-          {
-          "txid": "28d3c592a9a8103d53c784aa539908f4dc5f9c463e179f0eae5dc5f349bdb00f",
-          "fee": 2501,
-          "weight": 816
-          }
-        ],
-        "effectiveFeePerSize": 5.12063778580024,
-        "sigops": 0,
-        "adjustedVsize": 130
       }
     },
     "941df06064c290b4627e92bdbf3bff7c0e97aab33e273c2a20404f9cfd21b607": {
@@ -1409,26 +1276,6 @@ export const wsApiDocsData = [
       "position": {
         "block": 0,
         "vsize": 434494
-      },
-      "cpfp": {
-        "ancestors": [
-          {
-            "txid": "d509a6b8f36149588f9f48dc25fa5e37fc00dee781aed6da1113066c56f04879",
-            "fee": 605,
-            "weight": 520
-          }
-        ],
-        "bestDescendant": null,
-        "descendants": [
-          {
-          "txid": "28d3c592a9a8103d53c784aa539908f4dc5f9c463e179f0eae5dc5f349bdb00f",
-          "fee": 2501,
-          "weight": 816
-          }
-        ],
-        "effectiveFeePerSize": 5.12063778580024,
-        "sigops": 0,
-        "adjustedVsize": 130
       }
     },
     "941df06064c290b4627e92bdbf3bff7c0e97aab33e273c2a20404f9cfd21b607": {
@@ -1450,32 +1297,12 @@ export const wsApiDocsData = [
       "position": {
         "block": 0,
         "vsize": 434494
-      },
-      "cpfp": {
-        "ancestors": [
-          {
-            "txid": "d509a6b8f36149588f9f48dc25fa5e37fc00dee781aed6da1113066c56f04879",
-            "fee": 605,
-            "weight": 520
-          }
-        ],
-        "bestDescendant": null,
-        "descendants": [
-          {
-          "txid": "28d3c592a9a8103d53c784aa539908f4dc5f9c463e179f0eae5dc5f349bdb00f",
-          "fee": 2501,
-          "weight": 816
-          }
-        ],
-        "effectiveFeePerSize": 5.12063778580024,
-        "sigops": 0,
-        "adjustedVsize": 130
       }
     },
     "941df06064c290b4627e92bdbf3bff7c0e97aab33e273c2a20404f9cfd21b607": {
       "position": {
         "block": 2,
-        "vsize": 932479.5
+        "size": 932479.5
       }
     }
   }
@@ -1552,28 +1379,25 @@ export const wsApiDocsData = [
           }
         ],
         "size": 226,
-        "weight": 904,
         "sigops": 8,
         "fee": 1185,
         "status": {
           "confirmed": false
         },
         "order": 701659019,
-        "vsize": 226,
-        "adjustedVsize": 226,
+        "adjustedSize": 226,
         "feePerSize": 5.243362831858407,
-        "adjustedfeePerSize": 5.243362831858407,
+        "adjustedFeePerSize": 5.243362831858407,
         "effectiveFeePerSize": 5.243362831858407,
         "firstSeen": 1734893382,
         "uid": 429139,
         "inputs": [],
-        "cpfpDirty": false,
         "ancestors": [],
         "descendants": [],
         "bestDescendant": null,
         "position": {
           "block": 0,
-          "vsize": 125270
+          "size": 125270
         },
         "flags": 1099511628809
       },
@@ -1630,17 +1454,15 @@ export const wsApiDocsData = [
           }
         ],
         "size": 226,
-        "weight": 904,
         "sigops": 8,
         "fee": 1185,
         "status": {
           "confirmed": false
         },
         "order": 701659019,
-        "vsize": 226,
-        "adjustedVsize": 226,
+        "adjustedSize": 226,
         "feePerSize": 5.243362831858407,
-        "adjustedfeePerSize": 5.243362831858407,
+        "adjustedFeePerSize": 5.243362831858407,
         "effectiveFeePerSize": 5.243362831858407,
         "firstSeen": 1734893382,
         "uid": 429139,
@@ -1651,7 +1473,7 @@ export const wsApiDocsData = [
         "bestDescendant": null,
         "position": {
           "block": 0,
-          "vsize": 125270
+          "size": 125270
         },
         "flags": 1099511628809
       },
@@ -1708,17 +1530,15 @@ export const wsApiDocsData = [
           }
         ],
         "size": 226,
-        "weight": 904,
         "sigops": 8,
         "fee": 1185,
         "status": {
           "confirmed": false
         },
         "order": 701659019,
-        "vsize": 226,
-        "adjustedVsize": 226,
+        "adjustedSize": 226,
         "feePerSize": 5.243362831858407,
-        "adjustedfeePerSize": 5.243362831858407,
+        "adjustedFeePerSize": 5.243362831858407,
         "effectiveFeePerSize": 5.243362831858407,
         "firstSeen": 1734893382,
         "uid": 429139,
@@ -1729,7 +1549,7 @@ export const wsApiDocsData = [
         "bestDescendant": null,
         "position": {
           "block": 0,
-          "vsize": 125270
+          "size": 125270
         },
         "flags": 1099511628809
       },
@@ -1786,17 +1606,15 @@ export const wsApiDocsData = [
           }
         ],
         "size": 226,
-        "weight": 904,
         "sigops": 8,
         "fee": 1185,
         "status": {
           "confirmed": false
         },
         "order": 701659019,
-        "vsize": 226,
-        "adjustedVsize": 226,
+        "adjustedSize": 226,
         "feePerSize": 5.243362831858407,
-        "adjustedfeePerSize": 5.243362831858407,
+        "adjustedFeePerSize": 5.243362831858407,
         "effectiveFeePerSize": 5.243362831858407,
         "firstSeen": 1734893382,
         "uid": 429139,
@@ -1807,7 +1625,7 @@ export const wsApiDocsData = [
         "bestDescendant": null,
         "position": {
           "block": 0,
-          "vsize": 125270
+          "size": 125270
         },
         "flags": 1099511628809
       },
@@ -3492,7 +3310,6 @@ export const restApiDocsData = [
   "timestamp": 1435766771,
   "tx_count": 494,
   "size": 286494,
-  "weight": 1145976,
   "merkle_root": "9d3cb87bf05ebae366b4262ed5f768ce8c62fc385c3886c9cb097647b04b686c",
   "previousblockhash": "000000000000000010c545b6fa3ef1f7cf45a2a8760b1ee9f2e89673218207ce",
   "mediantime": 1435763435,
@@ -3660,7 +3477,6 @@ export const restApiDocsData = [
   "merkle_root": "9d3cb87bf05ebae366b4262ed5f768ce8c62fc385c3886c9cb097647b04b686c",
   "tx_count": 494,
   "size": 286494,
-  "weight": 1145976,
   "previousblockhash": "000000000000000010c545b6fa3ef1f7cf45a2a8760b1ee9f2e89673218207ce",
   "mediantime": 1435763435,
   "extras": {
@@ -3742,7 +3558,6 @@ export const restApiDocsData = [
   "merkle_root": "5d10d8d158bb8eb217d01fecc435bd10eda028043a913dc2bfe0ccf536a51cc9",
   "tx_count": 2,
   "size": 575,
-  "weight": 1865,
   "previousblockhash": "0000000000000073f95d1fc0a93d449f82a754410c635e46264ec6c7c4d5741e",
   "mediantime": 1630621997,
   "extras": {
@@ -3816,7 +3631,6 @@ export const restApiDocsData = [
   "merkle_root": "2c1984132841b9f98270274012b22beb7d4ade778cf058e9a44d38de5a111362",
   "tx_count": 1,
   "size": 343,
-  "weight": 1264,
   "previousblockhash": "000001497bffdc2347656847647f343afc0eee441a849259335b8a1d79b6aa4a",
   "mediantime": 1630621400,
   "extras": {
@@ -3888,7 +3702,6 @@ export const restApiDocsData = [
   "merkle_root": "7e40735e103d6015c90d285d09b535498c0a26df9ca8118b1b4d68aaf80ccf48",
   "tx_count": 2,
   "size": 10841,
-  "weight": 16913,
   "previousblockhash": "944fa8ffd906b3531af95f3d9b052dfdef0b60657c3c8def2c3591384f083424",
   "mediantime": 1630625218,
   "stale": false
@@ -3913,7 +3726,6 @@ export const restApiDocsData = [
   "merkle_root": "e7cc1145b3b074be73a84119485a504de77967aabe415240caca0e2c41a8b9b4",
   "tx_count": 2,
   "size": 5137,
-  "weight": 7012,
   "previousblockhash": "2745fd72a5bd2b256c9d2044631032d2cd872f1f0001c3db52e26604a6423526",
   "mediantime": 1641153964,
   "stale": false
@@ -4958,7 +4770,6 @@ export const restApiDocsData = [
     "timestamp": 1648829449,
     "tx_count": 1627,
     "size": 1210916,
-    "weight": 3993515,
     "merkle_root": "efa344bcd6c0607f93b709515dd6dc5496178112d680338ebea459e3de7b4fbc",
     "previousblockhash": "00000000000000000008b6f6fb83f8d74512ef1e0af29e642dd20daddd7d318f",
     "mediantime": 1648827418,
@@ -4973,7 +4784,6 @@ export const restApiDocsData = [
     "timestamp": 1648828946,
     "tx_count": 2574,
     "size": 1481957,
-    "weight": 3993485,
     "merkle_root": "d84f9cc1823bd069c505061b1f6faabd809d67ab5354e9f6234312dc4bdb1ecf",
     "previousblockhash": "000000000000000000071e6c86c2175aa86817cae2a77acd95372b55c1103d89",
     "mediantime": 1648827210,
@@ -4996,7 +4806,6 @@ export const restApiDocsData = [
     "timestamp": 1630641890,
     "tx_count": 26,
     "size": 8390,
-    "weight": 22985,
     "merkle_root": "4d6df12a4af11bb928c7b2930e0a4d2c3e268c6dc6a07462943ad1c4b6b96468",
     "previousblockhash": "0000000000000079103da7d296e1480295df795b7379e7dffd27743e214b0b32",
     "mediantime": 1630639627,
@@ -5011,7 +4820,6 @@ export const restApiDocsData = [
     "timestamp": 1630641655,
     "tx_count": 43,
     "size": 11427,
-    "weight": 32472,
     "merkle_root": "c70fa944f2863dc0828ee93ec0407bb8473e3b9bb94854ffd3fa1ccb9855d76a",
     "previousblockhash": "00000000000000f015cb6ce3c007b56a053c4b3c3c86a36130e63310da787a30",
     "mediantime": 1630639598,
@@ -5034,7 +4842,6 @@ export const restApiDocsData = [
     "timestamp": 1630641504,
     "tx_count": 1,
     "size": 343,
-    "weight": 1264,
     "merkle_root": "3063ff3802c920eea68bdc9303957f3e7bfd0a03c93547fd7dad14b77a07d4e8",
     "previousblockhash": "00000109a7ea774fcc2d173f9a1da9595a47ff401dac67ca9edea149954210fa",
     "mediantime": 1630638966,
@@ -5049,7 +4856,6 @@ export const restApiDocsData = [
     "timestamp": 1630640959,
     "tx_count": 10,
     "size": 1837,
-    "weight": 5545,
     "merkle_root": "888cf13ad83ba4c9d44dee7984a1dafee6c78d329178c51bf0ffe61d98df40f3",
     "previousblockhash": "000001508377eba43e83abb169ee1454daed14697267b9baf970b3fd556191e3",
     "mediantime": 1630638721,
@@ -5112,7 +4918,6 @@ export const restApiDocsData = [
     "merkle_root": "efa344bcd6c0607f93b709515dd6dc5496178112d680338ebea459e3de7b4fbc",
     "tx_count": 1627,
     "size": 1210916,
-    "weight": 3993515,
     "previousblockhash": "00000000000000000008b6f6fb83f8d74512ef1e0af29e642dd20daddd7d318f",
     "mediantime": 1648827418,
     "extras": {
@@ -5175,7 +4980,6 @@ export const restApiDocsData = [
     "merkle_root": "4d6df12a4af11bb928c7b2930e0a4d2c3e268c6dc6a07462943ad1c4b6b96468",
     "tx_count": 26,
     "size": 8390,
-    "weight": 22985,
     "previousblockhash": "0000000000000079103da7d296e1480295df795b7379e7dffd27743e214b0b32",
     "mediantime": 1630639627,
     "extras": {
@@ -5238,7 +5042,6 @@ export const restApiDocsData = [
     "merkle_root": "3063ff3802c920eea68bdc9303957f3e7bfd0a03c93547fd7dad14b77a07d4e8",
     "tx_count": 1,
     "size": 343,
-    "weight": 1264,
     "previousblockhash": "00000109a7ea774fcc2d173f9a1da9595a47ff401dac67ca9edea149954210fa",
     "mediantime": 1630638966,
     "extras": {
@@ -5326,7 +5129,6 @@ export const restApiDocsData = [
     "bits": 453281356,
     "nonce": 274148111,
     "size": 957,
-    "weight": 3828,
     "tx_count": 4,
     "merkle_root": "f3e94742aca4b5ef85488dc37c06c3282295ffec960994b2c0d5ac2a25a95766",
     "reward": 5000000000,
@@ -5389,7 +5191,6 @@ export const restApiDocsData = [
     "bits": 469823783,
     "nonce": 1005240617,
     "size": 221,
-    "weight": 884,
     "tx_count": 1,
     "merkle_root": "d574f343976d8e70d91cb278d21044dd8a396019e6db70755a0a50e4783dba38",
     "reward": 5000000000,
@@ -5452,7 +5253,6 @@ export const restApiDocsData = [
     "bits": 503408517,
     "nonce": 2975303,
     "size": 343,
-    "weight": 1264,
     "tx_count": 1,
     "merkle_root": "efd01629212d73bca40061ada4a82c696b86388f9f58fd3219bb0e3215fb6713",
     "reward": 5000000000,
@@ -5549,7 +5349,6 @@ export const restApiDocsData = [
     "timestamp": 1630642018,
     "tx_count": 2,
     "size": 10838,
-    "weight": 16901,
     "merkle_root": "a8cdc1ba96d1f862ca7c9aec4133a6efd14138f54c17efdbc968632a6b9cb8c8",
     "previousblockhash": "a06c327cdd76301de57ba0cf86c5ae8b1fd8a785945065ac9e2128322bd01f31",
     "mediantime": 1630641718
@@ -5561,7 +5360,6 @@ export const restApiDocsData = [
     "timestamp": 1630641958,
     "tx_count": 2,
     "size": 10838,
-    "weight": 16901,
     "merkle_root": "d3c370aabe96147b59f2e40511b0d8b7ee56eeb08d45816af6c4cae710643ce7",
     "previousblockhash": "2ec34bb6f0730aa19d7c72346d6e3382620509de048a3b03658af7db19355240",
     "mediantime": 1630641658
@@ -5581,7 +5379,6 @@ export const restApiDocsData = [
     "timestamp": 1640871913,
     "tx_count": 2,
     "size": 3527,
-    "weight": 7430,
     "merkle_root": "40538ff1fcac07c65e36fcc230fc60f58e3a885ce9898e41bc27bcf28227e5ff",
     "previousblockhash": "2d8c28042b03219e7e9bc6853cc3ae536e36be5639869c545a0f3dbd1309e2a5",
     "mediantime": 1640871614
@@ -5593,7 +5390,6 @@ export const restApiDocsData = [
     "timestamp": 1640871853,
     "tx_count": 3,
     "size": 4380,
-    "weight": 8097,
     "merkle_root": "38495212acd5e3ad4fdce7cce29c8c892b20c3ffacbcd73ecb2b234c6aca67c2",
     "previousblockhash": "7bd9ed9ff823d4605a476a12554c75087ab7f55fa6273a1b4b1115b09bb9586e",
     "mediantime": 1640871554
@@ -5650,7 +5446,6 @@ export const restApiDocsData = [
     "timestamp": 1630642018,
     "tx_count": 2,
     "size": 10838,
-    "weight": 16901,
     "merkle_root": "a8cdc1ba96d1f862ca7c9aec4133a6efd14138f54c17efdbc968632a6b9cb8c8",
     "previousblockhash": "a06c327cdd76301de57ba0cf86c5ae8b1fd8a785945065ac9e2128322bd01f31",
     "mediantime": 1630641718,
@@ -5674,7 +5469,6 @@ export const restApiDocsData = [
     "timestamp": 1640871913,
     "tx_count": 2,
     "size": 3527,
-    "weight": 7430,
     "merkle_root": "40538ff1fcac07c65e36fcc230fc60f58e3a885ce9898e41bc27bcf28227e5ff",
     "previousblockhash": "2d8c28042b03219e7e9bc6853cc3ae536e36be5639869c545a0f3dbd1309e2a5",
     "mediantime": 1640871614,
@@ -6171,7 +5965,6 @@ export const restApiDocsData = [
     "merkle_root": "729be37fb4b1bff0ca2e4b572e5dc3fb57e5aa57a8a400f8c89d4993d05c204f",
     "tx_count": 1808,
     "size": 1595444,
-    "weight": 3992846,
     "previousblockhash": "00000000000000000000034e117bb9922da36adc6393fabfe9ed97c7bb38998c",
     "extras": {
       "coinbaseRaw": "0336230b315c20506f7765726564206279204c75786f722054656368205c000000002103a960b06341e200000e744596150000000000",
@@ -6194,7 +5987,6 @@ export const restApiDocsData = [
     "merkle_root": "4f67e65e8e5e554cd4a8d0f91aa63b5e8686817984eb8188af5fb39958263f5d",
     "tx_count": 1425,
     "size": 729585,
-    "weight": 1954155,
     "previousblockhash": "000000000000000000006441657fa1eea37d68784ebd86dc1cd7f89251130f56",
     "extras": {
       "coinbaseRaw": "03dc220b315c20506f7765726564206279204c75786f722054656368205c00000000e5ae4908ac1f20df00000410c830000000000000",
@@ -6217,7 +6009,6 @@ export const restApiDocsData = [
     "merkle_root": "45593907e5fa0dee743d2f9194b0923a800cb6313e66221a86bf51df388e012c",
     "tx_count": 1709,
     "size": 1434271,
-    "weight": 3993013,
     "previousblockhash": "000000000000000000000fbfac1a91cdeaf64d689f7673d02613da9d10bfb284",
     "extras": {
       "coinbaseRaw": "0372220b315c20506f7765726564206279204c75786f722054656368205c0000000063349a9b3d185fed000007e7092a000000000000",
@@ -6248,7 +6039,6 @@ export const restApiDocsData = [
     "merkle_root": "541456efe41e5730a563475e0c5e2007ee660f1d86d9778bfc164d73c59fd605",
     "tx_count": 382,
     "size": 126201,
-    "weight": 331851,
     "previousblockhash": "00000000005a0843cc88b09cf6def15e4dc8fe38ab5cf3ad890f34a2df497004",
     "extras": {
       "coinbaseRaw": "03666c19706f6f6c2e626974636f696e2e636f6d010000022583010000000000",
@@ -6271,7 +6061,6 @@ export const restApiDocsData = [
     "merkle_root": "02d02afea666f08bab5851de541d0570c71a6cd8be358c28952c52d57b7afad4",
     "tx_count": 24,
     "size": 9562,
-    "weight": 23848,
     "previousblockhash": "000000000000013bbdbc0fef53a5b4b2af02880a6f56f7945de071b71d51123a",
     "extras": {
       "coinbaseRaw": "03846219706f6f6c2e626974636f696e2e636f6d01000065f224020000000000",
@@ -6302,7 +6091,6 @@ export const restApiDocsData = [
     "merkle_root": "3324dc134dec1b57cfea574ce2db6e40e51469417b6381a1389e7969386ab42e",
     "tx_count": 14,
     "size": 2971,
-    "weight": 8149,
     "previousblockhash": "000000d7998f5cf0fb144a400566221574f5f35ebd5d7d9fa803460b6942e237",
     "extras": {
       "coinbaseRaw": "03c7af00",
@@ -6325,7 +6113,6 @@ export const restApiDocsData = [
     "merkle_root": "55869f5a52d7709fb2c6df91d64841f4551d659948b7537b6cd8f19c68d27115",
     "tx_count": 32,
     "size": 6967,
-    "weight": 18247,
     "previousblockhash": "000000d6de5b925642a7afed41994947db8612955fbdfd9d1b48f99fc0187385",
     "extras": {
       "coinbaseRaw": "03c6af00",
@@ -7389,7 +7176,7 @@ export const restApiDocsData = [
     {
       txid: "1de119e4fe0fb92378de74a59fec337c39d505bbc0d04d20d151cc3fb7a91bf0",
       fee: 92000,
-      vsize: 140.25,
+      size: 140.25,
       value: 354245800,
       rate: 655.9714795008913,
       flags: 1099511631881

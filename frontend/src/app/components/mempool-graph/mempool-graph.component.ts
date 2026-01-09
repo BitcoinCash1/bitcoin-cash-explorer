@@ -364,14 +364,14 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
                 <span>
                   ${(item.value[1] / 1_000_000).toFixed(
                     2
-                  )} <span class="symbol">MvB</span>
+                  )} <span class="symbol">MB</span>
                 </span>
               </td>
               <td class="total-progress-sum">
                 <span>
                   ${(totalValueArray[index] / 1_000_000).toFixed(
                     2
-                  )} <span class="symbol">MvB</span>
+                  )} <span class="symbol">MB</span>
                 </span>
               </td>
               <td class="total-progress-sum-bar">

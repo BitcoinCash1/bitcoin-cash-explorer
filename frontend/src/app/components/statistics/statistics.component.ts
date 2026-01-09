@@ -74,7 +74,7 @@ export class StatisticsComponent implements OnInit {
       $localize`:@@5d4f792f048fcaa6df5948575d7cb325c9393383:Graphs`
     );
     this.seoService.setDescription(
-      $localize`:@@meta.description.bitcoin.graphs.mempool:See mempool size (in MvB) and transactions per second (in vB/s) visualized over time.`
+      $localize`:@@meta.description.bitcoin.graphs.mempool:See mempool size (in MB) and transactions per second (in vB/s) visualized over time.`
     );
     this.stateService.networkChanged$.subscribe(
       (network) => (this.network = network)
