@@ -37,44 +37,33 @@
 </ng-container>
 
 <ng-template #viewFiatVin>
-  <ng-template
-    [ngIf]="
-      (network === 'liquid' || network === 'liquidtestnet') &&
-      (satoshis === undefined || satoshis === null)
-    "
-    [ngIfElse]="default"
-  >
-    <span i18n="shared.confidential">Confidential</span>
-  </ng-template>
-  <ng-template #default>
-    @if (
-      (viewAmountMode$ | async) === "bch" ||
-      (viewAmountMode$ | async) === "fiat" ||
-      ignoreViewMode === true
-    ) {
-      &lrm;{{ addPlus && satoshis >= 0 ? "+" : ""
-      }}{{ satoshis / 100000000 | number: digitsInfo }}
-      <span class="symbol">
-        <ng-container *ngTemplateOutlet="prefix"></ng-container>BCH
-      </span>
+  @if (
+    (viewAmountMode$ | async) === "bch" ||
+    (viewAmountMode$ | async) === "fiat" ||
+    ignoreViewMode === true
+  ) {
+    &lrm;{{ addPlus && satoshis >= 0 ? "+" : ""
+    }}{{ satoshis / 100000000 | number: digitsInfo }}
+    <span class="symbol">
+      <ng-container *ngTemplateOutlet="prefix"></ng-container>BCH
+    </span>
+  } @else {
+    @if (digitsInfo === "1.8-8") {
+      &lrm;{{ addPlus && satoshis >= 0 ? "+" : "" }}{{ satoshis | number }}
     } @else {
-      @if (digitsInfo === "1.8-8") {
-        &lrm;{{ addPlus && satoshis >= 0 ? "+" : "" }}{{ satoshis | number }}
-      } @else {
-        &lrm;{{ addPlus && satoshis >= 0 ? "+" : ""
-        }}{{
-          satoshis
-            | amountShortener
-              : (satoshis < 1000 && satoshis > -1000 ? 0 : 1)
-              : undefined
-              : true
-        }}
-      }
-      <span class="symbol">
-        <ng-container *ngTemplateOutlet="prefix"></ng-container>sats
-      </span>
+      &lrm;{{ addPlus && satoshis >= 0 ? "+" : ""
+      }}{{
+        satoshis
+          | amountShortener
+            : (satoshis < 1000 && satoshis > -1000 ? 0 : 1)
+            : undefined
+            : true
+      }}
     }
-  </ng-template>
+    <span class="symbol">
+      <ng-container *ngTemplateOutlet="prefix"></ng-container>sats
+    </span>
+  }
 </ng-template>
 
 <ng-template #prefix>

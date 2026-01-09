@@ -80,12 +80,10 @@ export class BlockComponent implements OnInit, OnDestroy {
   isLoadingBlock = true;
   latestBlock: BlockExtended;
   latestBlocks: BlockExtended[] = [];
-  oobFees: number = 0;
   strippedTransactions: TransactionStripped[];
   overviewTransitionDirection: string;
   isLoadingOverview = true;
   error: any;
-  blockSubsidy: number;
   fees: number;
   block$: Observable<any>;
   showDetails = false;
@@ -204,7 +202,7 @@ export class BlockComponent implements OnInit, OnDestroy {
             block.extras.minFee = this.getMinBlockFee(block);
             block.extras.maxFee = this.getMaxBlockFee(block);
             if (block?.extras?.reward != undefined) {
-              this.fees = block.extras.reward / 100000000 - this.blockSubsidy;
+              this.fees = block.extras.reward / 100000000;
             }
           }
         } else if (block.height === this.block?.height) {
@@ -221,7 +219,6 @@ export class BlockComponent implements OnInit, OnDestroy {
         this.block = undefined;
         this.error = undefined;
         this.fees = undefined;
-        this.oobFees = 0;
 
         if (history.state.data && history.state.data.blockHeight) {
           this.blockHeight = history.state.data.blockHeight;
@@ -337,9 +334,8 @@ export class BlockComponent implements OnInit, OnDestroy {
           )} block ${block.height}:BLOCK_HEIGHT: (${block.id}:BLOCK_ID:).`
         );
         this.isLoadingBlock = false;
-        this.setBlockSubsidy();
         if (block?.extras?.reward !== undefined) {
-          this.fees = block.extras.reward / 100000000 - this.blockSubsidy;
+          this.fees = block.extras.reward / 100000000;
         }
         this.isLoadingOverview = true;
         this.overviewError = null;
@@ -555,12 +551,6 @@ export class BlockComponent implements OnInit, OnDestroy {
     this.blockGraphActual.forEach((graph) => {
       graph.destroy();
     });
-  }
-
-  // TODO - Refactor this.fees/this.reward for liquid because it is not
-  // used anymore on Bitcoin networks (we use block.extras directly)
-  setBlockSubsidy(): void {
-    this.blockSubsidy = 0;
   }
 
   toggleShowDetails(): void {
@@ -890,8 +880,7 @@ export class BlockComponent implements OnInit, OnDestroy {
 
         blockAudit.feeDelta =
           blockAudit.expectedFees > 0
-            ? (blockAudit.expectedFees -
-                (this.block?.extras.totalFees + this.oobFees)) /
+            ? (blockAudit.expectedFees - this.block?.extras.totalFees) /
               blockAudit.expectedFees
             : 0;
         blockAudit.sizeDelta =
