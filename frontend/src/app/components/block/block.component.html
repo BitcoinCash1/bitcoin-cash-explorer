@@ -244,7 +244,7 @@
 
   <ng-template #restOfTable>
     <ng-container *ngIf="block && !isLoadingBlock; else loadingRest">
-      <tr *ngIf="network !== 'liquid' && network !== 'liquidtestnet'">
+      <tr>
         <td i18n="mempool-block.fee-span">Fee span</td>
         <td>
           <app-fee-rate
@@ -291,7 +291,7 @@
             </span>
           </td>
         </tr>
-        <tr *ngIf="network !== 'liquid' && network !== 'liquidtestnet'">
+        <tr>
           <td i18n="block.subsidy-and-fees|Total subsidy and fees in a block">
             Subsidy + fees
           </td>
@@ -316,14 +316,14 @@
           <td i18n="block.total-fees|Total fees in a block">Total fees</td>
           <td style="width: 75%"><span class="skeleton-loader"></span></td>
         </tr>
-        <tr *ngIf="network !== 'liquid' && network !== 'liquidtestnet'">
+        <tr>
           <td i18n="block.subsidy-and-fees|Total subsidy and fees in a block">
             Subsidy + fees
           </td>
           <td><span class="skeleton-loader"></span></td>
         </tr>
       </ng-template>
-      <tr *ngIf="network !== 'liquid' && network !== 'liquidtestnet'">
+      <tr>
         <td i18n="block.miner">Miner</td>
         <td *ngIf="stateService.env.MINING_DASHBOARD">
           <a
@@ -394,7 +394,7 @@
       <tr>
         <td colspan="2"><span class="skeleton-loader"></span></td>
       </tr>
-      <tr *ngIf="network !== 'liquid' && network !== 'liquidtestnet'">
+      <tr>
         <td colspan="2"><span class="skeleton-loader"></span></td>
       </tr>
     </ng-template>
@@ -499,7 +499,7 @@
             ></ng-container>
           }
         </div>
-        <ng-container *ngIf="network !== 'liquid'">
+        <ng-container>
           <ng-template
             [ngIf]="!isLoadingOverview"
             [ngIfElse]="loadingDetailsSkeletons"
@@ -593,18 +593,16 @@
             "
           ></ng-container>
         </div>
-        <ng-container *ngIf="network !== 'liquid'">
-          <ng-template
-            [ngIf]="!isLoadingOverview"
-            [ngIfElse]="loadingDetailsSkeletons"
-          >
-            @if (block?.stale && !showAudit) {
-              <ng-container *ngTemplateOutlet="canonicalDetails"></ng-container>
-            } @else {
-              <ng-container *ngTemplateOutlet="actualDetails"></ng-container>
-            }
-          </ng-template>
-        </ng-container>
+        <ng-template
+          [ngIf]="!isLoadingOverview"
+          [ngIfElse]="loadingDetailsSkeletons"
+        >
+          @if (block?.stale && !showAudit) {
+            <ng-container *ngTemplateOutlet="canonicalDetails"></ng-container>
+          } @else {
+            <ng-container *ngTemplateOutlet="actualDetails"></ng-container>
+          }
+        </ng-template>
       </div>
     </div>
   </div>
@@ -624,7 +622,7 @@
                     {{ block.version | decimal2hex }}
                   </td>
                 </tr>
-                <tr *ngIf="network !== 'liquid' && network !== 'liquidtestnet'">
+                <tr>
                   <td i18n="block.bits">Bits</td>
                   <td>{{ block.bits | decimal2hex }}</td>
                 </tr>
@@ -637,10 +635,7 @@
               </tbody>
             </table>
           </div>
-          <div
-            class="col-sm"
-            *ngIf="network !== 'liquid' && network !== 'liquidtestnet'"
-          >
+          <div class="col-sm">
             <table class="table table-borderless table-striped">
               <tbody>
                 <tr *ngIf="isMobile"></tr>

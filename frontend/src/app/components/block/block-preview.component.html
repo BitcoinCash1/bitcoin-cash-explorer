@@ -57,13 +57,7 @@
               </td>
             </tr>
           </ng-template>
-          <tr
-            *ngIf="
-              network !== 'liquid' &&
-              network !== 'liquidtestnet' &&
-              block?.extras?.pool
-            "
-          >
+          <tr *ngIf="block?.extras?.pool">
             <td i18n="block.miner">Miner</td>
             <td *ngIf="stateService.env.MINING_DASHBOARD">
               <a
