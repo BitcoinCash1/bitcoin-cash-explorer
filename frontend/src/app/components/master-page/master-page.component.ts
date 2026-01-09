@@ -31,7 +31,6 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   networkPaths$: Observable<Record<string, string>>;
   footerVisible = true;
   user: any = undefined;
-  servicesEnabled = false;
   menuOpen = false;
   isDropdownVisible: boolean;
 
@@ -72,11 +71,7 @@ export class MasterPageComponent implements OnInit, OnDestroy {
       this.enterpriseInfo = info;
     });
 
-    this.servicesEnabled =
-      this.officialMempoolSpace &&
-      this.stateService.env.ACCELERATOR === true &&
-      this.stateService.network === '';
-    this.refreshAuth();
+    // this.refreshAuth();
 
     const isServicesPage = this.router.url.includes('/services/');
     this.menuOpen = isServicesPage && !this.isSmallScreen();
@@ -114,13 +109,13 @@ export class MasterPageComponent implements OnInit, OnDestroy {
     this.stateService.resetScroll$.next(true);
   }
 
-  onLoggedOut(): void {
-    this.refreshAuth();
-  }
+  // onLoggedOut(): void {
+  //   this.refreshAuth();
+  // }
 
-  refreshAuth(): void {
-    this.user = this.storageService.getAuth()?.user ?? null;
-  }
+  // refreshAuth(): void {
+  //   this.user = this.storageService.getAuth()?.user ?? null;
+  // }
 
   hamburgerClick(event): void {
     if (this.menuComponent) {

@@ -2,7 +2,7 @@
   <header *ngIf="headerVisible" class="sticky-header">
     <nav class="navbar navbar-expand-md navbar-dark">
       <!-- Hamburger -->
-      <ng-container *ngIf="servicesEnabled">
+      <!-- <ng-container *ngIf="servicesEnabled">
         <div
           *ngIf="user"
           class="profile_image_container"
@@ -21,9 +21,8 @@
         >
           <app-svg-images name="hamburger" height="40"></app-svg-images>
         </div>
-        <!-- Empty placeholder -->
         <div *ngIf="user === undefined" class="profile_image_container"></div>
-      </ng-container>
+      </ng-container> -->
 
       <!-- Large screen -->
       <a
@@ -386,12 +385,12 @@
         ></app-search-form>
       </div>
     </nav>
-    <app-menu
+    <!-- <app-menu
       *ngIf="servicesEnabled"
       [navOpen]="menuOpen"
       (loggedOut)="onLoggedOut()"
       (menuToggled)="menuToggled($event)"
-    ></app-menu>
+    ></app-menu> -->
   </header>
 
   <div class="d-flex" style="overflow: clip">
