@@ -3,7 +3,6 @@ import {
   Component,
   EventEmitter,
   Input,
-  OnDestroy,
   OnInit,
   Output,
 } from '@angular/core';
@@ -22,7 +21,6 @@ import {
 } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ElectrsApiService } from '@app/services/electrs-api.service';
-import { PreloadService } from '@app/services/preload.service';
 
 @Component({
   selector: 'app-block-transactions',

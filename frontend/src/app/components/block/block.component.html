@@ -276,12 +276,7 @@
       <ng-template [ngIf]="fees !== undefined" [ngIfElse]="loadingFees">
         <tr>
           <td i18n="block.total-fees|Total fees in a block">Total fees</td>
-          <td
-            *ngIf="
-              network !== 'liquid' && network !== 'liquidtestnet';
-              else liquidTotalFees
-            "
-          >
+          <td>
             <app-amount
               [satoshis]="block.extras.totalFees"
               digitsInfo="1.2-3"
@@ -295,21 +290,6 @@
               ></app-fiat>
             </span>
           </td>
-          <ng-template #liquidTotalFees>
-            <td>
-              <app-amount
-                [satoshis]="fees * 100000000"
-                digitsInfo="1.2-2"
-                [noFiat]="true"
-              ></app-amount
-              >&nbsp;
-              <app-fiat
-                [blockConversion]="blockConversion"
-                [value]="fees * 100000000"
-                digitsInfo="1.2-2"
-              ></app-fiat>
-            </td>
-          </ng-template>
         </tr>
         <tr *ngIf="network !== 'liquid' && network !== 'liquidtestnet'">
           <td i18n="block.subsidy-and-fees|Total subsidy and fees in a block">

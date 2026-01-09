@@ -17,8 +17,6 @@ import {
   map,
   shareReplay,
   startWith,
-  filter,
-  take,
 } from 'rxjs/operators';
 import {
   Observable,
@@ -44,7 +42,6 @@ import { detectWebGL } from '@app/shared/graphs.utils';
 import { seoDescriptionNetwork } from '@app/shared/common.utils';
 import { PriceService, Price } from '@app/services/price.service';
 import { CacheService } from '@app/services/cache.service';
-import { ServicesApiServices } from '@app/services/services-api.service';
 import { PreloadService } from '@app/services/preload.service';
 
 interface ComparisonStats {
@@ -150,7 +147,6 @@ export class BlockComponent implements OnInit, OnDestroy {
     private apiService: ApiService,
     private priceService: PriceService,
     private cacheService: CacheService,
-    private servicesApiService: ServicesApiServices,
     private cd: ChangeDetectorRef,
     private preloadService: PreloadService
   ) {
@@ -334,22 +330,12 @@ export class BlockComponent implements OnInit, OnDestroy {
         this.seoService.setTitle(
           $localize`:@@block.component.browser-title:Block ${block.height}:BLOCK_HEIGHT:: ${block.id}:BLOCK_ID:`
         );
-        if (
-          this.stateService.network === 'liquid' ||
-          this.stateService.network === 'liquidtestnet'
-        ) {
-          this.seoService.setDescription(
-            $localize`:@@meta.description.liquid.block:See size, weight, fee range, included transactions, and more for Liquid${seoDescriptionNetwork(
-              this.stateService.network
-            )} block ${block.height}:BLOCK_HEIGHT: (${block.id}:BLOCK_ID:).`
-          );
-        } else {
-          this.seoService.setDescription(
-            $localize`:@@meta.description.bitcoin.block:See size, weight, fee range, included transactions, audit (expected v actual), and more for Bitcoin${seoDescriptionNetwork(
-              this.stateService.network
-            )} block ${block.height}:BLOCK_HEIGHT: (${block.id}:BLOCK_ID:).`
-          );
-        }
+
+        this.seoService.setDescription(
+          $localize`:@@meta.description.bitcoin.block:See size, weight, fee range, included transactions, audit (expected v actual), and more for Bitcoin${seoDescriptionNetwork(
+            this.stateService.network
+          )} block ${block.height}:BLOCK_HEIGHT: (${block.id}:BLOCK_ID:).`
+        );
         this.isLoadingBlock = false;
         this.setBlockSubsidy();
         if (block?.extras?.reward !== undefined) {
