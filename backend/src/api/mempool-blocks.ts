@@ -735,11 +735,7 @@ class MempoolBlocks {
   }
 
   public compressDeltaChange(tx: TransactionClassified): MempoolDeltaChange {
-    return [
-      tx.txid,
-      Math.round((tx.rate || tx.fee / tx.size) * 100) / 100,
-      tx.flags
-    ];
+    return [tx.txid, Math.round((tx.rate || tx.fee / tx.size) * 100) / 100, tx.flags];
   }
 }
 

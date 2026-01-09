@@ -426,9 +426,6 @@ class BitcoinRoutes {
         const height = req.params.height === undefined ? undefined : parseInt(req.params.height, 10);
         res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
         res.json(await blocks.$getBlocks(height, 15));
-      } else {
-        // Liquid
-        return await this.getLegacyBlocks(req, res);
       }
     } catch (e) {
       handleError(req, res, 500, 'Failed to get blocks');
@@ -437,11 +434,6 @@ class BitcoinRoutes {
 
   private async getBlocksByBulk(req: Request, res: Response) {
     try {
-      if (['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK) === false) {
-        // Liquid - Not implemented
-        handleError(req, res, 404, `This API is only available for Bitcoin networks`);
-        return;
-      }
       if (config.MEMPOOL.MAX_BLOCKS_BULK_QUERY <= 0) {
         handleError(
           req,
@@ -494,10 +486,6 @@ class BitcoinRoutes {
           handleError(req, res, 503, `Temporarily unavailable`);
           return;
         }
-      } else {
-        // Liquid
-        handleError(req, res, 404, `This API is only available for Bitcoin networks`);
-        return;
       }
     } catch (e) {
       handleError(req, res, 500, 'Failed to get chain tips');
@@ -516,10 +504,6 @@ class BitcoinRoutes {
           handleError(req, res, 503, `Temporarily unavailable`);
           return;
         }
-      } else {
-        // Liquid
-        handleError(req, res, 404, `This API is only available for Bitcoin networks`);
-        return;
       }
     } catch (e) {
       handleError(req, res, 500, 'Failed to get stale tips');
