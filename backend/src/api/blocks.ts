@@ -283,18 +283,20 @@ class Blocks {
       extras.totalOutputAmt = 0;
     } else {
       const stats: IBitcoinApi.BlockStats = await this.$getBlockStats(block, transactions);
+      // Important note: In BCH the fee rates are returned in BCH/B, so we need to convert them to sat/B by multiplying by 100000000
+      const multiplier = 1E8;
       let feeStats = {
         medianFee: stats.feerate_percentiles[2], // 50th percentiles
-        feeRange: [stats.minfeerate, stats.feerate_percentiles, stats.maxfeerate].flat(),
+        feeRange: [stats.minfeerate * multiplier, stats.feerate_percentiles, stats.maxfeerate * multiplier].flat(),
       };
       if (transactions?.length > 1) {
         feeStats = Common.calcEffectiveFeeStatistics(transactions);
       }
       extras.medianFee = feeStats.medianFee;
       extras.feeRange = feeStats.feeRange;
-      extras.totalFees = stats.totalfee;
-      extras.avgFee = stats.avgfee;
-      extras.avgFeeRate = stats.avgfeerate;
+      extras.totalFees = stats.totalfee * multiplier;
+      extras.avgFee = stats.avgfee * multiplier;
+      extras.avgFeeRate = stats.avgfeerate * multiplier;
       extras.utxoSetChange = stats.utxo_increase;
       extras.avgTxSize = Math.round((stats.total_size / stats.txs) * 100) * 0.01;
       extras.totalInputs = stats.ins;
