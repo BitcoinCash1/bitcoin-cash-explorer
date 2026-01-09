@@ -1117,26 +1117,22 @@
   </p>
 </ng-template>
 
-<ng-template type="how-do-mempool-goggles-work">
+<ng-template type="how-do-explorer-goggles-work">
   <p>
-    Mempool Goggles&trade; are a set of filters that can be applied to the
+    Explorer Goggles are a set of filters that can be applied to the
     <a [routerLink]="['/mempool-block/0' | relativeUrl]"
       >mempool block visualizations</a
     >
     to highlight different types of transactions.
   </p>
   <p>
-    There are currently 25 different Mempool Goggles&trade; filters, grouped
-    into six categories:
+    There are currently 25 different Explorer Goggles filters, grouped into six
+    categories:
   </p>
   <dl>
     <dt>Features</dt>
     <dd>
       <dl>
-        <dt>RBF enabled</dt>
-        <dd>The transaction opts-in to BIP-125 replaceability.</dd>
-        <dt>RBF disabled</dt>
-        <dd>The transaction does not opt-in to BIP-125 replaceability.</dd>
         <dt>Version 1</dt>
         <dd>The default version for most transactions.</dd>
         <dt>Version 2</dt>
@@ -1162,21 +1158,13 @@
         </dd>
         <dt>P2PKH</dt>
         <dd>
-          Pay-to-public-key-hash. A legacy address type that locks outputs to a
+          Pay-to-public-key-hash. A address type that locks outputs to a
           public key.
         </dd>
         <dt>P2SH</dt>
         <dd>
-          Pay-to-script-hash. A legacy address type that locks outputs to a
+          Pay-to-script-hash. A address type that locks outputs to a
           <em>redeem script</em>.
-        </dd>
-        <dt>P2WPKH</dt>
-        <dd>Pay-to-witness-public-key-hash. The SegWit version of P2PKH.</dd>
-        <dt>P2WSH</dt>
-        <dd>Pay-to-witness-script-hash. The SegWit version of P2SH.</dd>
-        <dt>Taproot</dt>
-        <dd>
-          Addresses using the SegWit V1 format added in the Taproot upgrade.
         </dd>
       </dl>
     </dd>

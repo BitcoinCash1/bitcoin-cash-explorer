@@ -80,25 +80,7 @@ export function toFilters(flags: bigint): Filter[] {
 }
 
 export const TransactionFilters: { [key: string]: Filter } = {
-  /* features */
-  rbf: {
-    key: 'rbf',
-    label: 'RBF enabled',
-    flag: TransactionFlags.rbf,
-    toggle: 'rbf',
-    important: true,
-    tooltip: true,
-    txPage: false,
-  },
-  no_rbf: {
-    key: 'no_rbf',
-    label: 'RBF disabled',
-    flag: TransactionFlags.no_rbf,
-    toggle: 'rbf',
-    important: true,
-    tooltip: true,
-    txPage: false,
-  },
+  /* features, BCH by default has no RBF, so no need to have an option to switch between rbf/no_rbf */
   v1: {
     key: 'v1',
     label: 'Version 1',
@@ -115,14 +97,14 @@ export const TransactionFilters: { [key: string]: Filter } = {
     tooltip: true,
     txPage: false,
   },
-  v3: {
+  /*v3: {
     key: 'v3',
     label: 'Version 3',
     flag: TransactionFlags.v3,
     toggle: 'version',
     tooltip: true,
     txPage: false,
-  },
+  },*/
   nonstandard: {
     key: 'nonstandard',
     label: 'Non-Standard',
@@ -162,60 +144,8 @@ export const TransactionFilters: { [key: string]: Filter } = {
     important: true,
     tooltip: false,
   },
-  p2wpkh: {
-    key: 'p2wpkh',
-    label: 'P2WPKH',
-    flag: TransactionFlags.p2wpkh,
-    important: true,
-    tooltip: false,
-  },
-  p2wsh: {
-    key: 'p2wsh',
-    label: 'P2WSH',
-    flag: TransactionFlags.p2wsh,
-    important: true,
-    tooltip: false,
-  },
-  p2tr: {
-    key: 'p2tr',
-    label: 'Taproot',
-    flag: TransactionFlags.p2tr,
-    important: true,
-    tooltip: false,
-  },
-  /* behavior */
-  cpfp_parent: {
-    key: 'cpfp_parent',
-    label: 'Paid for by child',
-    flag: TransactionFlags.cpfp_parent,
-    important: true,
-    tooltip: true,
-    txPage: false,
-  },
-  cpfp_child: {
-    key: 'cpfp_child',
-    label: 'Pays for parent',
-    flag: TransactionFlags.cpfp_child,
-    important: true,
-    tooltip: true,
-    txPage: false,
-  },
-  replacement: {
-    key: 'replacement',
-    label: 'Replacement',
-    flag: TransactionFlags.replacement,
-    important: true,
-    tooltip: true,
-    txPage: false,
-  },
-  acceleration: window?.['__env']?.ACCELERATOR
-    ? {
-        key: 'acceleration',
-        label: $localize`:@@b484583f0ce10f3341ab36750d05271d9d22c9a1:Accelerated`,
-        flag: TransactionFlags.acceleration,
-        important: false,
-      }
-    : undefined,
+  /* behavior (in BTC this would be cpfp, cpfp_hold, replacement, acceleration, with their appropriate flags) */
+  /* BCH doesn't have all of these */
   /* data */
   op_return: {
     key: 'op_return',
@@ -244,14 +174,6 @@ export const TransactionFilters: { [key: string]: Filter } = {
     key: 'fake_scripthash',
     label: 'Fake scripthash',
     flag: TransactionFlags.fake_scripthash,
-    tooltip: true,
-    txPage: true,
-  },
-  annex: {
-    key: 'annex',
-    label: 'Annex',
-    flag: TransactionFlags.annex,
-    important: false,
     tooltip: true,
     txPage: true,
   },
