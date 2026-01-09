@@ -705,7 +705,7 @@ export const wsApiDocsData = [
     title: 'Track Addresses',
     description: {
       default:
-        "Subscribe to multiple addresses to receive live updates on new transactions having these addresses in input or output. Limits on the maximum number of tracked addresses apply. For higher tracking limits, consider upgrading to an <a href='https://mempool.space/enterprise'>enterprise sponsorship</a>.",
+        'Subscribe to multiple addresses to receive live updates on new transactions having these addresses in input or output. Limits on the maximum number of tracked addresses apply. For higher tracking limits, consider upgrading to an <a href=\'https://mempool.space/enterprise\'>enterprise sponsorship</a>.',
     },
     payload: `{
   "track-addresses": [
@@ -1211,7 +1211,7 @@ export const wsApiDocsData = [
     title: 'Track Transactions',
     description: {
       default:
-        "Subscribe to multiple transactions to receive live updates on their status and position in the mempool. Limits on the maximum number of tracked addresses apply. For higher tracking limits, consider upgrading to an <a href='https://mempool.space/enterprise'>enterprise sponsorship</a>.",
+        'Subscribe to multiple transactions to receive live updates on their status and position in the mempool. Limits on the maximum number of tracked addresses apply. For higher tracking limits, consider upgrading to an <a href=\'https://mempool.space/enterprise\'>enterprise sponsorship</a>.',
     },
     payload: `{
       "track-txs": [
@@ -3006,7 +3006,7 @@ export const restApiDocsData = [
     title: 'GET Asset Transactions',
     description: {
       default:
-        "Returns transactions associated with the specified Liquid asset. For the network's native asset, returns a list of peg in, peg out, and burn transactions. For user-issued assets, returns a list of issuance, reissuance, and burn transactions. Does not include regular transactions transferring this asset.",
+        'Returns transactions associated with the specified Liquid asset. For the network\'s native asset, returns a list of peg in, peg out, and burn transactions. For user-issued assets, returns a list of issuance, reissuance, and burn transactions. Does not include regular transactions transferring this asset.',
     },
     urlString: '/asset/:asset_id/txs[/mempool|/chain]',
     showConditions: liquidNetworks,
@@ -3105,7 +3105,7 @@ export const restApiDocsData = [
     title: 'GET Asset Supply',
     description: {
       default:
-        "Get the current total supply of the specified asset. For the native asset (LBTC), this is calculated as [chain,mempool]_stats.peg_in_amount - [chain,mempool]_stats.peg_out_amount - [chain,mempool]_stats.burned_amount. For issued assets, this is calculated as [chain,mempool]_stats.issued_amount - [chain,mempool]_stats.burned_amount. Not available for assets with blinded issuances. If /decimal is specified, returns the supply as a decimal according to the asset's divisibility. Otherwise, returned in base units.",
+        'Get the current total supply of the specified asset. For the native asset (LBTC), this is calculated as [chain,mempool]_stats.peg_in_amount - [chain,mempool]_stats.peg_out_amount - [chain,mempool]_stats.burned_amount. For issued assets, this is calculated as [chain,mempool]_stats.issued_amount - [chain,mempool]_stats.burned_amount. Not available for assets with blinded issuances. If /decimal is specified, returns the supply as a decimal according to the asset\'s divisibility. Otherwise, returned in base units.',
     },
     urlString: '/asset/:asset_id/supply[/decimal]',
     showConditions: liquidNetworks,
@@ -3431,7 +3431,7 @@ export const restApiDocsData = [
     fragment: 'get-block-v1',
     title: 'GET Block (v1)',
     description: {
-      default: "Returns details about a block using Mempool's Node.js backend.",
+      default: 'Returns details about a block using Mempool\'s Node.js backend.',
     },
     urlString: '/v1/block/:hash',
     showConditions: bitcoinNetworks.concat(liquidNetworks),
@@ -4879,7 +4879,7 @@ export const restApiDocsData = [
     title: 'GET Blocks (v1)',
     description: {
       default:
-        "Returns details on the past 15 blocks from Mempool's Node.js backend. Includes fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 15 blocks before (and including) <code>:startHeight</code> are returned.",
+        'Returns details on the past 15 blocks from Mempool\'s Node.js backend. Includes fee and mining details in an <code>extras</code> field. If <code>:startHeight</code> is specified, the past 15 blocks before (and including) <code>:startHeight</code> are returned.',
     },
     urlString: '/v1/blocks[/:startHeight]',
     showConditions: bitcoinNetworks,
@@ -5101,7 +5101,7 @@ export const restApiDocsData = [
     title: 'GET Blocks (Bulk)',
     description: {
       default:
-        "<p>Returns details on the range of blocks between <code>:minHeight</code> and <code>:maxHeight</code>, inclusive, up to 10 blocks. If <code>:maxHeight</code> is not specified, it defaults to the current tip.</p><p>To return data for more than 10 blocks, consider becoming an <a href='https://mempool.space/enterprise'>enterprise sponsor</a>.</p>",
+        '<p>Returns details on the range of blocks between <code>:minHeight</code> and <code>:maxHeight</code>, inclusive, up to 10 blocks. If <code>:maxHeight</code> is not specified, it defaults to the current tip.</p><p>To return data for more than 10 blocks, consider becoming an <a href=\'https://mempool.space/enterprise\'>enterprise sponsor</a>.</p>',
     },
     urlString: '/v1/blocks-bulk/:minHeight[/:maxHeight]',
     showConditions: bitcoinNetworks,
@@ -5408,7 +5408,7 @@ export const restApiDocsData = [
     title: 'GET Blocks (v1)',
     description: {
       default:
-        "Returns details on the past 15 blocks from Mempool's Node.js backend. If <code>:startHeight</code> is specified, the past 15 blocks before (and including) <code>:startHeight</code> are returned.",
+        'Returns details on the past 15 blocks from Mempool\'s Node.js backend. If <code>:startHeight</code> is specified, the past 15 blocks before (and including) <code>:startHeight</code> are returned.',
     },
     urlString: '/v1/blocks[/:startHeight]',
     showConditions: liquidNetworks,
@@ -5937,7 +5937,7 @@ export const restApiDocsData = [
     title: 'GET Mining Pool Blocks',
     description: {
       default:
-        "Returns past 10 blocks mined by the specified mining pool (<code>:slug</code>) before the specified <code>:blockHeight</code>. If no <code>:blockHeight</code> is specified, the mining pool's 10 most recent blocks are returned.",
+        'Returns past 10 blocks mined by the specified mining pool (<code>:slug</code>) before the specified <code>:blockHeight</code>. If no <code>:blockHeight</code> is specified, the mining pool\'s 10 most recent blocks are returned.',
     },
     urlString: '/v1/mining/pool/:slug/blocks/[:blockHeight]',
     showConditions: bitcoinNetworks,
@@ -8203,7 +8203,7 @@ export const restApiDocsData = [
     title: 'GET Transaction Merkleblock Proof',
     description: {
       default:
-        "Returns a merkle inclusion proof for the transaction using <a href='https://bitcoin.org/en/glossary/merkle-block'>bitcoind's merkleblock</a> format.",
+        'Returns a merkle inclusion proof for the transaction using <a href=\'https://bitcoin.org/en/glossary/merkle-block\'>bitcoind\'s merkleblock</a> format.',
     },
     urlString: '/tx/:txid/merkleblock-proof',
     showConditions: bitcoinNetworks,
@@ -8277,7 +8277,7 @@ export const restApiDocsData = [
     title: 'GET Transaction Merkle Proof',
     description: {
       default:
-        "Returns a merkle inclusion proof for the transaction using <a href='https://electrumx.readthedocs.io/en/latest/protocol-methods.html#blockchain-transaction-get-merkle'>Electrum's blockchain.transaction.get_merkle format.",
+        'Returns a merkle inclusion proof for the transaction using <a href=\'https://electrumx.readthedocs.io/en/latest/protocol-methods.html#blockchain-transaction-get-merkle\'>Electrum\'s blockchain.transaction.get_merkle format.',
     },
     urlString: '/tx/:txid/merkle-proof',
     showConditions: bitcoinNetworks.concat(liquidNetworks),
@@ -9685,7 +9685,7 @@ export const restApiDocsData = [
     title: 'GET ISP Nodes',
     description: {
       default:
-        "<p>Returns a list of nodes hosted by a specified <code>:isp</code>, where <code>:isp</code> is an ISP's ASN.</p>",
+        '<p>Returns a list of nodes hosted by a specified <code>:isp</code>, where <code>:isp</code> is an ISP\'s ASN.</p>',
     },
     urlString: '/v1/lightning/nodes/isp/:isp',
     showConditions: lightningNetworks,
@@ -11275,7 +11275,7 @@ export const restApiDocsData = [
     title: 'GET Channels from Node Pubkey',
     description: {
       default:
-        "<p>Returns a list of a node's channels given its <code>:pubKey</code>. Ten channels are returned at a time. Use <code>:index</code> for paging. <code>:channelStatus</code> can be <code>open</code>, <code>active</code>, or <code>closed</code>.</p>",
+        '<p>Returns a list of a node\'s channels given its <code>:pubKey</code>. Ten channels are returned at a time. Use <code>:index</code> for paging. <code>:channelStatus</code> can be <code>open</code>, <code>active</code>, or <code>closed</code>.</p>',
     },
     urlString:
       '/v1/lightning/channels?public_key=:pubKey&status=:channelStatus',
@@ -11943,7 +11943,7 @@ export const restApiDocsData = [
     title: 'GET Available Balance',
     description: {
       default:
-        "<p>Returns the user's currently available balance, currently locked funds, and total fees paid so far.</p>",
+        '<p>Returns the user\'s currently available balance, currently locked funds, and total fees paid so far.</p>',
     },
     urlString: '/v1/services/accelerator/balance',
     showConditions: [''],
@@ -12010,7 +12010,7 @@ export const restApiDocsData = [
     title: 'GET Acceleration History',
     description: {
       default:
-        "<p>Returns the user's past acceleration requests.</p><p>Pass one of the following for <code>:status</code> (required): <code>all</code>, <code>requested</code>, <code>accelerating</code>, <code>mined</code>, <code>completed</code>, <code>failed</code>.<br>Pass <code>true</code> in <code>:details</code> to get a detailed <code>history</code> of the acceleration request.</p>",
+        '<p>Returns the user\'s past acceleration requests.</p><p>Pass one of the following for <code>:status</code> (required): <code>all</code>, <code>requested</code>, <code>accelerating</code>, <code>mined</code>, <code>completed</code>, <code>failed</code>.<br>Pass <code>true</code> in <code>:details</code> to get a detailed <code>history</code> of the acceleration request.</p>',
     },
     urlString:
       '/v1/services/accelerator/history?status=:status&details=:details',
@@ -12230,7 +12230,7 @@ export const faqData = [
     category: 'help',
     showConditions: bitcoinNetworks,
     fragment: 'why-is-transaction-stuck-in-mempool',
-    title: "Why isn't my transaction confirming?",
+    title: 'Why isn\'t my transaction confirming?',
   },
   {
     type: 'endpoint',
@@ -12329,7 +12329,7 @@ export const faqData = [
     category: 'advanced',
     showConditions: bitcoinNetworks,
     fragment: 'why-block-timestamps-dont-always-increase',
-    title: "Why don't block timestamps always increase?",
+    title: 'Why don\'t block timestamps always increase?',
   },
   {
     type: 'endpoint',
@@ -12337,7 +12337,7 @@ export const faqData = [
     showConditions: bitcoinNetworks,
     fragment: 'why-dont-fee-ranges-match',
     title:
-      "Why doesn't the fee range shown for a block match the feerates of transactions within the block?",
+      'Why doesn\'t the fee range shown for a block match the feerates of transactions within the block?',
   },
   {
     type: 'endpoint',

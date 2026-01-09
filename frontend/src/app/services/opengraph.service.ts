@@ -25,7 +25,7 @@ export class OpenGraphService {
     private activatedRoute: ActivatedRoute
   ) {
     // save og:image tag from original template
-    const initialOgImageTag = metaService.getTag("property='og:image'");
+    const initialOgImageTag = metaService.getTag('property=\'og:image\'');
     this.defaultImageUrl =
       initialOgImageTag?.content ||
       'https://mempool.space/resources/previews/mempool-space-preview.jpg';
@@ -146,10 +146,10 @@ export class OpenGraphService {
     this.previewLoadingEvents = {};
     this.previewLoadingCount = 0;
     this.sessionId++;
-    this.metaService.removeTag("property='og:preview:loading'");
-    this.metaService.removeTag("property='og:preview:ready'");
-    this.metaService.removeTag("property='og:preview:fail'");
-    this.metaService.removeTag("property='og:meta:ready'");
+    this.metaService.removeTag('property=\'og:preview:loading\'');
+    this.metaService.removeTag('property=\'og:preview:ready\'');
+    this.metaService.removeTag('property=\'og:preview:fail\'');
+    this.metaService.removeTag('property=\'og:meta:ready\'');
   }
 
   loadPage(path) {

@@ -184,7 +184,7 @@ export class Hash {
   // instance must be reset to use it again.
   update(data: Uint8Array, dataLength: number = data.length): this {
     if (this.finished) {
-      throw new Error("SHA256: can't update because hash was finished.");
+      throw new Error('SHA256: can\'t update because hash was finished.');
     }
     let dataPos = 0;
     this.bytesHashed += dataLength;

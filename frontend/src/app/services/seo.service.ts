@@ -9,10 +9,10 @@ import { StateService } from '@app/services/state.service';
 })
 export class SeoService {
   network = '';
-  baseTitle = 'mempool';
+  baseTitle = 'explorer';
   baseDescription =
-    'Explore the full Bitcoin ecosystem&reg; with The Mempool Open Source Project&reg;.';
-  baseDomain = 'mempool.space';
+    'Explore the full  Cash ecosystem&reg; with the BCH Explorer&reg;.';
+  baseDomain = 'explorer.melroy.org';
 
   canonicalLink: HTMLLinkElement = document.getElementById(
     'canonical'
@@ -27,7 +27,7 @@ export class SeoService {
   ) {
     // save original meta tags
     this.baseDescription =
-      metaService.getTag("name='description'")?.content || this.baseDescription;
+      metaService.getTag('name=\'description\'')?.content || this.baseDescription;
     this.baseTitle =
       titleService.getTitle()?.split(' - ')?.[0] || this.baseTitle;
     try {
@@ -126,24 +126,18 @@ export class SeoService {
 
   getTitle(): string {
     if (this.network === 'testnet') {
-      return this.baseTitle + ' - Bitcoin Testnet3';
+      return this.baseTitle + ' - Bitcoin Cash Testnet3';
     }
     if (this.network === 'testnet4') {
-      return this.baseTitle + ' - Bitcoin Testnet4';
+      return this.baseTitle + ' - Bitcoin Cash Testnet4';
     }
     if (this.network === 'signet') {
-      return this.baseTitle + ' - Bitcoin Signet';
-    }
-    if (this.network === 'liquid') {
-      return this.baseTitle + ' - Liquid Network';
-    }
-    if (this.network === 'liquidtestnet') {
-      return this.baseTitle + ' - Liquid Testnet';
+      return this.baseTitle + ' - Bitcoin Cash Signet';
     }
     return (
       this.baseTitle +
       ' - ' +
-      (this.network ? this.ucfirst(this.network) : 'Bitcoin') +
+      (this.network ? this.ucfirst(this.network) : 'Bitcoin Cash') +
       ' Explorer'
     );
   }
