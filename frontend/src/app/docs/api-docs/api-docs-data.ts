@@ -12359,8 +12359,8 @@ export const faqData = [
     type: 'endpoint',
     category: 'advanced',
     showConditions: bitcoinNetworks,
-    fragment: 'how-do-mempool-goggles-work',
-    title: 'How do Mempool Goggles™ work?',
+    fragment: 'how-do-explorer-goggles-work',
+    title: 'How do Explorer Goggles work?',
   },
   {
     type: 'endpoint',
@@ -12373,8 +12373,8 @@ export const faqData = [
     type: 'endpoint',
     category: 'advanced',
     showConditions: bitcoinNetworks,
-    fragment: 'what-is-adjusted-vsize',
-    title: 'What is adjusted vsize?',
+    fragment: 'what-is-adjusted-size',
+    title: 'What is adjusted size?',
   },
   {
     type: 'endpoint',
@@ -12409,14 +12409,14 @@ export const faqData = [
     category: 'self-hosting',
     showConditions: bitcoinNetworks,
     fragment: 'host-my-own-instance-server',
-    title: 'How can I host a Mempool instance on my own server?',
+    title: 'How can I host a BCH Explorerinstance on my own server?',
   },
   {
     type: 'endpoint',
     category: 'self-hosting',
     showConditions: bitcoinNetworks,
     fragment: 'install-mempool-with-docker',
-    title: 'Can I install Mempool using Docker?',
+    title: 'Can I install BCH Explorerusing Docker?',
   },
   {
     type: 'endpoint',
@@ -12424,6 +12424,6 @@ export const faqData = [
     showConditions: bitcoinNetworks,
     fragment: 'address-lookup-issues',
     title:
-      'Why do I get an error for certain address lookups on my Mempool instance?',
+      'Why do I get an error for certain address lookups on my BCH Explorerinstance?',
   },
 ];

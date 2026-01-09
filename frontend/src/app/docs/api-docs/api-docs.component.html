@@ -46,7 +46,7 @@
           <ng-template #faqDisclaimer i18n="faq.big-disclaimer"
             ><p>
               <b
-                >mempool.space merely provides data about the Bitcoin
+                >mempool.space merely provides data about the Bitcoin Cash
                 network.</b
               >
               It cannot help you with retrieving funds, wallet issues, etc.
@@ -151,7 +151,7 @@
           Below is a reference for the
           {{
             network.val === ""
-              ? "Bitcoin"
+              ? "Bitcoin Cash"
               : network.val.charAt(0).toUpperCase() + network.val.slice(1)
           }}
           <ng-container i18n="api-docs.title">REST API service</ng-container>.
@@ -394,7 +394,7 @@
           Below is a reference for the
           {{
             network.val === ""
-              ? "Bitcoin"
+              ? "Bitcoin Cash"
               : network.val.charAt(0).toUpperCase() + network.val.slice(1)
           }}
           Websocket service running at {{ websocketUrl(network.val) }}.
@@ -477,8 +477,8 @@
             *ngIf="network.val !== 'signet' && network.val !== 'testnet4'"
           >
             Electrum RPC interface for
-            <a href="/signet/docs/api/electrs">Bitcoin Signet</a> and
-            <a href="/testnet4/docs/api/electrs">Bitcoin Testnet4</a> is
+            <a href="/signet/docs/api/electrs">Bitcoin Cash Signet</a> and
+            <a href="/testnet4/docs/api/electrs">Bitcoin Cash Testnet4</a> is
             publicly available. Electrum RPC interface for all other networks is
             available to
             <a href="https://mempool.space/enterprise">sponsors</a>
@@ -506,7 +506,7 @@
     and search and view those transactions.
   </p>
   <p>
-    The mempool.space website invented the concept of visualizing a Bitcoin
+    The mempool.space website invented the concept of visualizing a Bitcoin Cash
     node's mempool as <b>projected blocks</b>. These blocks are the inspiration
     for our half-filled block logo.
   </p>
@@ -568,26 +568,27 @@
 
 <ng-template type="what-are-vb-wu">
   <p>
-    Virtual bytes (vB) and weight units (WU) are used to measure the size of
-    transactions and blocks on the Bitcoin network.
+    Bytes (B) are used to measure the size of transactions and blocks on the
+    Bitcoin Cash network.
   </p>
   <p>
-    A Bitcoin transaction's size in the blockchain is <i>not</i> determined how
-    much bitcoin it transfers—instead, a transaction's size is determined by
-    technical factors such as how many inputs and outputs it has, how many
-    signatures it has, and the format it uses (legacy, SegWit, etc). Since space
-    in the Bitcoin blockchain is limited, bigger transactions pay more in mining
-    fees than smaller transactions.
+    A Bitcoin Cash transaction's size in the blockchain is <i>not</i> determined
+    how much Bitcoin Cash it transfers—instead, a transaction's size is
+    determined by technical factors such as how many inputs and outputs it has,
+    how many signatures it has, and the format it uses (normal, etc). Since
+    space in the Bitcoin Cash blockchain is limited, bigger transactions pay
+    more in mining fees than smaller transactions.
   </p>
   <p>
-    Block sizes are limited to 4,000,000 WU (or 1,000,000 vB since 1 vB = 4 WU).
+    Block sizes are in theory unlimited in BCH, and dynamically calculated by
+    ALBA (Adaptive Block Size Algorithm). Minimum size is 32 MB.
   </p>
   <p>
     Transaction sizes and block sizes used to be measured in plain bytes, but
     virtual bytes and weight units were devised to maintain backward
     compatibility after the SegWit upgrade in 2017. See
     <a
-      href="https://programmingbitcoin.com/understanding-segwit-block-size"
+      href="https://programmingBitcoin Cash.com/understanding-segwit-block-size"
       target="_blank"
       >this post</a
     >
@@ -597,11 +598,11 @@
 
 <ng-template type="what-is-svb">
   <p>
-    The priority of a pending Bitcoin transaction is determined by its feerate.
-    Feerates are measured in sat/vB.
+    The priority of a pending Bitcoin Cash transaction is determined by its
+    feerate. Feerates are measured in sat/vB.
   </p>
   <p>
-    Using a higher sat/vB feerate for a Bitcoin transaction will generally
+    Using a higher sat/vB feerate for a Bitcoin Cash transaction will generally
     result in quicker confirmation than using a lower feerate. But feerates
     change all the time, so it's important to check suggested feerates right
     before making a transaction to
@@ -636,14 +637,14 @@
     >.
   </p>
   <p>
-    There's no need to panic—a Bitcoin transaction will always either confirm
-    completely (or not at all) at some point. As long as you have your
+    There's no need to panic—a Bitcoin Cash transaction will always either
+    confirm completely (or not at all) at some point. As long as you have your
     transaction's ID, you can always see where your funds are.
   </p>
   <p>
-    This site only provides data about the Bitcoin network. To get help with a
-    transaction, get in touch with the entity that helped make the transaction
-    (wallet software, exchange company, etc).
+    This site only provides data about the Bitcoin Cash network. To get help
+    with a transaction, get in touch with the entity that helped make the
+    transaction (wallet software, exchange company, etc).
   </p>
 </ng-template>
 
@@ -756,7 +757,7 @@
     block, etc.
   </p>
   <p>
-    Ultimately, the Bitcoin network is not perfectly predictable, so fee
+    Ultimately, the Bitcoin Cash network is not perfectly predictable, so fee
     estimation cannot be perfectly precise.
   </p>
   <p>
@@ -775,14 +776,15 @@
 
 <ng-template type="what-is-full-mempool">
   <p>
-    When a Bitcoin transaction is made, it is stored in a Bitcoin node's mempool
-    before it is confirmed into a block. When the rate of incoming transactions
-    exceeds the rate transactions are confirmed, the mempool grows in size.
+    When a Bitcoin Cash transaction is made, it is stored in a Bitcoin Cash
+    node's mempool before it is confirmed into a block. When the rate of
+    incoming transactions exceeds the rate transactions are confirmed, the
+    mempool grows in size.
   </p>
   <p>
-    By default, Bitcoin Core allocates 300MB of memory for its mempool, so when
-    a node's mempool grows big enough to use all 300MB of allocated memory, we
-    say it's "full".
+    By default, Bitcoin Cash Core allocates 300MB of memory for its mempool, so
+    when a node's mempool grows big enough to use all 300MB of allocated memory,
+    we say it's "full".
   </p>
   <p>
     Once a node's mempool is using all of its allocated memory, it will start
@@ -795,18 +797,18 @@
 
 <ng-template type="how-big-is-mempool-used-by-mempool-space">
   <p>
-    mempool.space uses multiple Bitcoin nodes to obtain data: some with the
+    mempool.space uses multiple Bitcoin Cash nodes to obtain data: some with the
     default 300MB mempool memory limit (call these Small Nodes) and others with
     a much larger mempool memory limit (call these Big Nodes).
   </p>
   <p>
-    Many nodes on the Bitcoin network are configured to run with the default
-    300MB mempool memory setting. When all 300MB of memory are used up, such
-    nodes will reject transactions below a certain threshold feerate. Running
-    Small Nodes allows mempool.space to tell you what this threshold feerate
-    is—this is the "Purging" feerate that shows on the front page when mempools
-    are full, which you can use to be reasonably sure that your transaction will
-    be widely propagated.
+    Many nodes on the Bitcoin Cash network are configured to run with the
+    default 300MB mempool memory setting. When all 300MB of memory are used up,
+    such nodes will reject transactions below a certain threshold feerate.
+    Running Small Nodes allows mempool.space to tell you what this threshold
+    feerate is—this is the "Purging" feerate that shows on the front page when
+    mempools are full, which you can use to be reasonably sure that your
+    transaction will be widely propagated.
   </p>
   <p>
     Big Node mempools are so big that they don't need to reject (or purge)
@@ -820,23 +822,23 @@
 <ng-template type="what-is-memory-usage">
   <p>
     Memory usage on the front page refers to the real-time amount of system
-    memory used by a Bitcoin node's mempool. This memory usage number is always
-    higher than the total size of all pending transactions in the mempool due to
-    indexes, pointers, and other overhead used by Bitcoin Core for storage and
-    processing.
+    memory used by a Bitcoin Cash node's mempool. This memory usage number is
+    always higher than the total size of all pending transactions in the mempool
+    due to indexes, pointers, and other overhead used by Bitcoin Cash Core for
+    storage and processing.
   </p>
   <p>
-    mempool.space shows the memory usage of a Bitcoin node that has a very high
-    mempool memory limit. As a result, when mempools fill up, you may notice
-    memory usage on mempool.space go beyond 300MB. This is not a mistake—this
-    memory usage figure is high because it's for a Bitcoin node that isn't
-    rejecting (or evicting) transactions. Consider it to be another data point
-    to give you an idea of how congested the mempool is relative to the default
-    memory limit of 300MB.
+    mempool.space shows the memory usage of a Bitcoin Cash node that has a very
+    high mempool memory limit. As a result, when mempools fill up, you may
+    notice memory usage on mempool.space go beyond 300MB. This is not a
+    mistake—this memory usage figure is high because it's for a Bitcoin Cash
+    node that isn't rejecting (or evicting) transactions. Consider it to be
+    another data point to give you an idea of how congested the mempool is
+    relative to the default memory limit of 300MB.
   </p>
   <p>
-    A Bitcoin node running the default 300MB mempool memory limit, like most
-    Raspberry Pi nodes, will never go past 300MB of memory usage.
+    A Bitcoin Cash node running the default 300MB mempool memory limit, like
+    most Raspberry Pi nodes, will never go past 300MB of memory usage.
   </p>
 </ng-template>
 
@@ -860,11 +862,12 @@
     Block validation rules do not strictly require that a block's timestamp be
     more recent than the timestamp of the block preceding it. Without a central
     authority, it's impossible to know what the exact correct time is. Instead,
-    the Bitcoin protocol requires that a block's timestamp meet certain
+    the Bitcoin Cash protocol requires that a block's timestamp meet certain
     requirements. One of those requirements is that a block's timestamp cannot
     be older than the median timestamp of the 12 blocks that came before it. See
     more details
-    <a href="https://en.bitcoin.it/wiki/Block_timestamp" target="_blank">here</a
+    <a href="https://en.Bitcoin Cash.it/wiki/Block_timestamp" target="_blank"
+      >here</a
     >.
   </p>
   <p>
@@ -904,9 +907,9 @@
   </p>
   <p>
     How is the expected block determined? Mempool monitors its view of the
-    mempool and runs a re-implementation of Bitcoin Core's transaction selection
-    algorithm to determine the transactions it expects to see in upcoming blocks
-    (<a
+    mempool and runs a re-implementation of Bitcoin Cash Core's transaction
+    selection algorithm to determine the transactions it expects to see in
+    upcoming blocks (<a
       href="https://github.com/mempool/mempool/blob/master/backend/src/api/mempool-blocks.ts"
       target="_blank"
       >source code here</a
@@ -967,12 +970,12 @@
       <p>
         A transaction is highlighted dark pink if it is present in the expected
         block, not present in the actual block, and was first seen by Mempool's
-        Bitcoin node within 3 minutes of the block being mined.
+        Bitcoin Cash node within 3 minutes of the block being mined.
       </p>
       <p>
         Due to network latency and other factors, it can take time for a miner's
-        Bitcoin nodes to receive a transaction, so we do not assume a miner has
-        intentionally excluded such a transaction from a block.
+        Bitcoin Cash nodes to receive a transaction, so we do not assume a miner
+        has intentionally excluded such a transaction from a block.
       </p>
       <p>
         Recently-broadcasted transactions do not negatively affect
@@ -1198,7 +1201,8 @@
 
     <dt>Data</dt>
     <dd>
-      Different methods of embedding arbitrary data in a Bitcoin transaction.
+      Different methods of embedding arbitrary data in a Bitcoin Cash
+      transaction.
       <dl>
         <dt>OP_RETURN</dt>
         <dt>Fake pubkey</dt>
@@ -1228,7 +1232,7 @@
 
     <dt>Sighash Flags</dt>
     <dd>
-      Different ways of signing inputs to Bitcoin transactions. Note that
+      Different ways of signing inputs to Bitcoin Cash transactions. Note that
       selecting multiple sighash filters will highlight transactions in which
       each sighash flag is used, but not necessarily in the same input.
       <dl>
@@ -1245,25 +1249,25 @@
 <ng-template type="what-are-sigops">
   <p>
     A "sigop" is a way of accounting for the cost of "signature operations" in
-    Bitcoin script, like <code>OP_CHECKSIG</code>,
+    Bitcoin Cash script, like <code>OP_CHECKSIG</code>,
     <code>OP_CHECKSIGVERIFY</code>, <code>OP_CHECKMULTISIG</code> and
     <code>OP_CHECKMULTISIGVERIFY</code>
   </p>
   <p>
     These signature operations incur different costs depending on whether they
     are single or multi-sig operations, and on where they appear in a Bitcoin
-    transaction.
+    Cash transaction.
   </p>
   <p>
-    By consensus, each Bitcoin block is permitted to include a maximum of 80,000
-    sigops.
+    By consensus, each Bitcoin Cash block is permitted to include a maximum of
+    80,000 sigops.
   </p>
 </ng-template>
 
 <ng-template type="what-is-adjusted-vsize">
   <p>
-    Bitcoin blocks have two independent consensus-enforced resource constraints
-    - a 4MWU weight limit, and the 80,000 sigop limit.
+    Bitcoin Cash blocks have two independent consensus-enforced resource
+    constraints - a 4MWU weight limit, and the 80,000 sigop limit.
   </p>
   <p>
     Most transactions use more of the weight limit than the sigop limit.
@@ -1271,13 +1275,13 @@
     to their weight.
   </p>
   <p>
-    To account for this, Bitcoin Core calculates and uses an "adjusted vsize"
-    equal 5 times the number of sigops, or the unadjusted vsize, whichever is
-    larger.
+    To account for this, Bitcoin Cash Core calculates and uses an "adjusted
+    vsize" equal 5 times the number of sigops, or the unadjusted vsize,
+    whichever is larger.
   </p>
   <p>
-    Then, during block template construction, Bitcoin Core selects transactions
-    in descending order of fee rate measured in satoshis per
+    Then, during block template construction, Bitcoin Cash Core selects
+    transactions in descending order of fee rate measured in satoshis per
     <i>adjusted vsize</i>
   </p>
   <p>
@@ -1321,7 +1325,7 @@
   The official mempool.space website is operated by The Mempool Open Source
   Project. See more information on our
   <a [routerLink]="['/about']">About page</a>. There are also many unofficial
-  instances of this website operated by individual members of the Bitcoin
+  instances of this website operated by individual members of the Bitcoin Cash
   community.
 </ng-template>
 

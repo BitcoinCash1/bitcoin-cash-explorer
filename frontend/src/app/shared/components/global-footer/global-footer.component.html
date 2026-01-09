@@ -25,21 +25,12 @@
         </div>
         @if (!enterpriseInfo?.footer_img) {
           <p class="explore-tagline-mobile">
-            @if (officialMempoolSpace) {
-              <ng-container i18n="@@7deec1c1520f06170e1f8e8ddfbe4532312f638f"
-                >Explore the full Bitcoin ecosystem</ng-container
-              >
-              <ng-template [ngIf]="locale.substr(0, 2) === 'en'"
-                >&reg;</ng-template
-              >
-            } @else {
-              <ng-container i18n="shared.be-your-own-explorer"
-                >Be your own explorer</ng-container
-              >
-              <ng-template [ngIf]="locale.substr(0, 2) === 'en'"
-                >&trade;</ng-template
-              >
-            }
+            &copy; Created by:
+            <a
+              target="_blank"
+              href="https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer"
+              >Melroy van den Berg</a
+            >
           </p>
         }
         <div
@@ -107,21 +98,12 @@
             >
           </a>
           <p class="explore-tagline-desktop">
-            @if (officialMempoolSpace) {
-              <ng-container i18n="@@7deec1c1520f06170e1f8e8ddfbe4532312f638f"
-                >Explore the full Bitcoin ecosystem</ng-container
-              >
-              <ng-template [ngIf]="locale.substr(0, 2) === 'en'"
-                >&reg;</ng-template
-              >
-            } @else {
-              <ng-container i18n="shared.be-your-own-explorer"
-                >Be your own explorer</ng-container
-              >
-              <ng-template [ngIf]="locale.substr(0, 2) === 'en'"
-                >&trade;</ng-template
-              >
-            }
+            &copy; Created by:
+            <a
+              target="_blank"
+              href="https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer"
+              >Melroy van den Berg</a
+            >
           </p>
         }
       </div>
@@ -211,11 +193,7 @@
           <a
             [routerLink]="['/docs/faq']"
             fragment="host-my-own-instance-raspberry-pi"
-            ><ng-container i18n="shared.be-your-own-explorer"
-              >Be your own explorer</ng-container
-            ><ng-template [ngIf]="locale.substr(0, 2) === 'en'"
-              >&trade;</ng-template
-            ></a
+            >How to host my own instance?</a
           >
         </p>
         <p>

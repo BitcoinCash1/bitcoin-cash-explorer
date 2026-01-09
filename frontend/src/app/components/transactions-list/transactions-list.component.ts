@@ -215,7 +215,8 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
       }
     );
 
-    this.updateAddressSimilarities();
+    // Disable this check in BCH
+    // this.updateAddressSimilarities();
   }
 
   refreshPrice(): void {
@@ -262,8 +263,9 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
       );
     }
     if (changes.transactions || changes.addresses) {
-      this.similarityMatches.clear();
-      this.updateAddressSimilarities();
+      // this.similarityMatches.clear();
+      // Disable this check in BCH
+      // this.updateAddressSimilarities();
       if (!this.transactions || !this.transactions.length) {
         return;
       }

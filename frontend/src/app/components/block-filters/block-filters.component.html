@@ -11,9 +11,9 @@
   <a
     *ngIf="menuOpen"
     [routerLink]="['/docs/faq' | relativeUrl]"
-    fragment="how-do-mempool-goggles-work"
+    fragment="how-do-explorer-goggles-work"
     class="info-badges float-right"
-    i18n-ngbTooltip="Mempool Goggles&trade; tooltip"
+    i18n-ngbTooltip="Explorer Goggles tooltip"
     ngbTooltip="select filter categories to highlight matching transactions"
   >
     <fa-icon
@@ -26,7 +26,7 @@
     <button
       class="menu-toggle"
       (click)="menuOpen = !menuOpen"
-      title="Mempool Goggles&trade;"
+      title="Explorer Goggles"
     >
       <app-svg-images
         name="goggles"
