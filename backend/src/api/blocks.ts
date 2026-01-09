@@ -289,13 +289,12 @@ class Blocks {
       // Loop over stats.feerate_percentiles and multiply each value
       const feeRatePercentiles = stats.feerate_percentiles.map((fee) => fee * multiplier);
       let feeStats = {
-        medianFee: feeRatePercentiles[2], // 50th percentiles
         feeRange: [stats.minfeerate * multiplier, feeRatePercentiles, stats.maxfeerate * multiplier].flat(),
       };
       if (transactions?.length > 1) {
         feeStats = Common.calcEffectiveFeeStatistics(transactions);
       }
-      extras.medianFee = feeStats.medianFee;
+      extras.medianFee = stats.medianfee;
       extras.feeRange = feeStats.feeRange;
       extras.totalFees = stats.totalfee * multiplier;
       extras.avgFee = stats.avgfee * multiplier;
@@ -305,6 +304,8 @@ class Blocks {
       extras.totalInputs = stats.ins;
       extras.totalOutputs = stats.outs;
       extras.totalOutputAmt = stats.total_out;
+      // TODO: Extend with more info like ABLA, but also minfee, subsidy, ... for example (and store it in the DB)
+      // See also bitcoin-cli getblockstats
     }
 
     if (Common.blocksSummariesIndexingEnabled()) {
@@ -1359,7 +1360,7 @@ class Blocks {
         if (cleanBlock.fee_amt_percentiles === null) {
           let summary;
           const summaryVersion = 0;
-          // Call Core RPC
+          // Call BCHN RPC
           const block = await bitcoinClient.getBlock(cleanBlock.hash, 2);
           summary = this.summarizeBlock(block);
 
@@ -1401,7 +1402,7 @@ class Blocks {
       };
 
       // Re-org can happen after indexing so we need to always get the
-      // latest state from core
+      // latest state from BCHN
       cleanBlock.orphans = chainTips.getOrphanedBlocksAtHeight(cleanBlock.height);
 
       blocks.push(cleanBlock);
