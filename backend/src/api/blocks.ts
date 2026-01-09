@@ -284,10 +284,13 @@ class Blocks {
     } else {
       const stats: IBitcoinApi.BlockStats = await this.$getBlockStats(block, transactions);
       // Important note: In BCH the fee rates are returned in BCH/B, so we need to convert them to sat/B by multiplying by 100000000
-      const multiplier = 1E8;
+      const multiplier = 1e8;
+
+      // Loop over stats.feerate_percentiles and multiply each value
+      const feeRatePercentiles = stats.feerate_percentiles.map((fee) => fee * multiplier);
       let feeStats = {
-        medianFee: stats.feerate_percentiles[2], // 50th percentiles
-        feeRange: [stats.minfeerate * multiplier, stats.feerate_percentiles, stats.maxfeerate * multiplier].flat(),
+        medianFee: feeRatePercentiles[2], // 50th percentiles
+        feeRange: [stats.minfeerate * multiplier, feeRatePercentiles, stats.maxfeerate * multiplier].flat(),
       };
       if (transactions?.length > 1) {
         feeStats = Common.calcEffectiveFeeStatistics(transactions);
@@ -395,8 +398,6 @@ class Blocks {
       return bitcoinClient.getBlockStats(block.id);
     }
 
-    // TODO: make these match the definitions used by the RPC response
-    // TODO: Fix this whole algorithm for BCH
     const totalFee = transactions.reduce((acc, tx) => acc + tx.fee, 0);
     const totalSize = transactions.reduce((acc, tx) => acc + tx.size, 0);
     const totalReward = transactions[0].vout.reduce((acc, vout) => acc + vout.value, 0);
