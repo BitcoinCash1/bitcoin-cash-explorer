@@ -271,7 +271,7 @@ class Blocks {
     extras.orphans = chainTips.getOrphanedBlocksAtHeight(blk.height);
 
     if (block.height === 0) {
-      extras.medianFee = 0; // 50th percentiles
+      extras.medianFee = 0;
       extras.feeRange = [0, 0, 0, 0, 0, 0, 0];
       extras.totalFees = 0;
       extras.avgFee = 0;
@@ -294,7 +294,7 @@ class Blocks {
       if (transactions?.length > 1) {
         feeStats = Common.calcEffectiveFeeStatistics(transactions);
       }
-      extras.medianFee = stats.medianfee;
+      extras.medianFee = stats.medianfee * multiplier;
       extras.feeRange = feeStats.feeRange;
       extras.totalFees = stats.totalfee * multiplier;
       extras.avgFee = stats.avgfee * multiplier;
