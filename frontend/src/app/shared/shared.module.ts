@@ -193,7 +193,6 @@ import { SimpleProofWidgetComponent } from '@components/simpleproof-widget/simpl
 import { SimpleProofCuboWidgetComponent } from '@components/simpleproof-widget/simpleproof-cubo-widget.component';
 import { FaucetComponent } from '@components/faucet/faucet.component';
 import { TwitterLogin } from '@components/twitter-login/twitter-login.component';
-import { BitcoinInvoiceComponent } from '@components/bitcoin-invoice/bitcoin-invoice.component';
 
 import {
   OnlyVsizeDirective,
@@ -306,7 +305,6 @@ import { GithubLogin } from '@components/github-login.component/github-login.com
     FaucetComponent,
     TwitterLogin,
     GithubLogin,
-    BitcoinInvoiceComponent,
   ],
   imports: [
     CommonModule,
@@ -428,7 +426,6 @@ import { GithubLogin } from '@components/github-login.component/github-login.com
     SimpleProofCuboWidgetComponent,
     TwitterLogin,
     GithubLogin,
-    BitcoinInvoiceComponent,
     BitcoinsatoshisPipe,
 
     MempoolBlockOverviewComponent,

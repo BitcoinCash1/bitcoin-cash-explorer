@@ -220,12 +220,6 @@ export function renderSats(
 ): string {
   let prefix = '';
   switch (network) {
-    case 'liquid':
-      prefix = 'L';
-      break;
-    case 'liquidtestnet':
-      prefix = 'tL';
-      break;
     case 'testnet':
     case 'testnet4':
       prefix = 't';
@@ -258,7 +252,7 @@ export function sleep$(ms: number): Promise<void> {
 export function handleDemoRedirect(route: ActivatedRoute, router: Router) {
   route.queryParams.subscribe((params) => {
     if (params.next) {
-      const path = ['/', '/acceleration', '/mining', '/lightning'];
+      const path = ['/', '/mining'];
       const index = path.indexOf(params.next);
       if (index >= 0) {
         const nextPath = path[(index + 1) % path.length];
