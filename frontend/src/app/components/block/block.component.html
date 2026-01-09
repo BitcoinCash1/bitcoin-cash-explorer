@@ -259,7 +259,7 @@
         <td>
           ~<app-fee-rate
             [fee]="block.extras?.medianFee"
-            rounding="1.2-3"
+            rounding="1.0-0"
           ></app-fee-rate>
           <span class="fiat">
             <app-fiat
@@ -298,7 +298,7 @@
           <td>
             <app-amount
               [satoshis]="block.extras.reward"
-              digitsInfo="1.2-3"
+              digitsInfo="1.5-8"
               [noFiat]="true"
             ></app-amount>
             <span class="fiat">
