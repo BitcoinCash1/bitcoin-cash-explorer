@@ -12,7 +12,7 @@ import { StateService } from '@app/services/state.service';
 })
 export class AmountSelectorComponent implements OnInit {
   amountForm: UntypedFormGroup;
-  modes = ['btc', 'sats', 'fiat'];
+  modes = ['bch', 'sats', 'fiat'];
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -22,7 +22,7 @@ export class AmountSelectorComponent implements OnInit {
 
   ngOnInit() {
     this.amountForm = this.formBuilder.group({
-      mode: ['btc'],
+      mode: ['bch'],
     });
     this.stateService.viewAmountMode$.subscribe((mode) => {
       this.amountForm.get('mode')?.setValue(mode);

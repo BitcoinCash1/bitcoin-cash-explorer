@@ -48,14 +48,14 @@
   </ng-template>
   <ng-template #default>
     @if (
-      (viewAmountMode$ | async) === "btc" ||
+      (viewAmountMode$ | async) === "bch" ||
       (viewAmountMode$ | async) === "fiat" ||
       ignoreViewMode === true
     ) {
       &lrm;{{ addPlus && satoshis >= 0 ? "+" : ""
       }}{{ satoshis / 100000000 | number: digitsInfo }}
       <span class="symbol">
-        <ng-container *ngTemplateOutlet="prefix"></ng-container>BTC
+        <ng-container *ngTemplateOutlet="prefix"></ng-container>BCH
       </span>
     } @else {
       @if (digitsInfo === "1.8-8") {
@@ -78,8 +78,6 @@
 </ng-template>
 
 <ng-template #prefix>
-  <ng-template [ngIf]="network === 'liquid' && !forceBtc">L</ng-template>
-  <ng-template [ngIf]="network === 'liquidtestnet'">tL</ng-template>
   <ng-template [ngIf]="network === 'testnet'">t</ng-template>
   <ng-template [ngIf]="network === 'testnet4'">t</ng-template>
   <ng-template [ngIf]="network === 'signet'">s</ng-template>

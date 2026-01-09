@@ -216,7 +216,7 @@ export function uncompressDeltaChange(
 export function renderSats(
   value: number,
   network: string,
-  mode: 'sats' | 'btc' | 'auto' = 'auto'
+  mode: 'sats' | 'bch' | 'auto' = 'auto'
 ): string {
   let prefix = '';
   switch (network) {
@@ -234,11 +234,11 @@ export function renderSats(
       prefix = 's';
       break;
   }
-  if (mode === 'btc' || (mode === 'auto' && value >= 1000000)) {
+  if (mode === 'bch' || (mode === 'auto' && value >= 1000000)) {
     return `${amountShortenerPipe.transform(
       value / 100000000,
       2
-    )} ${prefix}BTC`;
+    )} ${prefix}BCH`;
   } else {
     if (prefix.length) {
       prefix += '-';

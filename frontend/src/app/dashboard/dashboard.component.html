@@ -421,15 +421,15 @@
           <h5
             class="card-title"
             style="padding-top: 20px"
-            i18n="dashboard.lbtc-supply-against-btc-holdings"
+            i18n="dashboard.lbch-supply-against-bch-holdings"
           >
             LBTC Supply Against BTC Holdings
           </h5>
           <div class="card-body pl-0" style="padding-top: 10px">
-            <app-lbtc-pegs-graph
+            <app-lbch-pegs-graph
               [data]="fullHistory$ | async"
-              [height]="lbtcPegGraphHeight"
-            ></app-lbtc-pegs-graph>
+              [height]="lbchPegGraphHeight"
+            ></app-lbch-pegs-graph>
           </div>
         </div>
       </div>

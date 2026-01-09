@@ -227,7 +227,7 @@ export class StateService {
 
   live2Chart$ = new Subject<OptimizedMempoolStats>();
 
-  viewAmountMode$: BehaviorSubject<'btc' | 'sats' | 'fiat'>;
+  viewAmountMode$: BehaviorSubject<'bch' | 'sats' | 'fiat'>;
   timezone$: BehaviorSubject<string>;
   connectionState$ = new BehaviorSubject<0 | 1 | 2>(2);
   isTabHidden$: Observable<boolean>;
@@ -450,9 +450,9 @@ export class StateService {
 
     const viewAmountModePreference = this.storageService.getValue(
       'view-amount-mode'
-    ) as 'btc' | 'sats' | 'fiat';
-    this.viewAmountMode$ = new BehaviorSubject<'btc' | 'sats' | 'fiat'>(
-      viewAmountModePreference || 'btc'
+    ) as 'bch' | 'sats' | 'fiat';
+    this.viewAmountMode$ = new BehaviorSubject<'bch' | 'sats' | 'fiat'>(
+      viewAmountModePreference || 'bch'
     );
 
     const timezonePreference = this.storageService.getValue(

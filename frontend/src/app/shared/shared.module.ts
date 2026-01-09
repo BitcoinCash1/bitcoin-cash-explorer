@@ -163,7 +163,7 @@ import { IndexingProgressComponent } from '@components/indexing-progress/indexin
 import { SvgImagesComponent } from '@components/svg-images/svg-images.component';
 import { ChangeComponent } from '@components/change/change.component';
 import { SatsComponent } from '@app/shared/components/sats/sats.component';
-import { BtcComponent } from '@app/shared/components/btc/btc.component';
+import { BchComponent } from '@app/shared/components/bch/bch.component';
 import { FeeRateComponent } from '@app/shared/components/fee-rate/fee-rate.component';
 import { AddressTypeComponent } from '@app/shared/components/address-type/address-type.component';
 import { AddressTextComponent } from '@app/shared/components/address-text/address-text.component';
@@ -274,7 +274,7 @@ import { GithubLogin } from '@components/github-login.component/github-login.com
     SvgImagesComponent,
     ChangeComponent,
     SatsComponent,
-    BtcComponent,
+    BchComponent,
     FeeRateComponent,
     AddressTypeComponent,
     AddressTextComponent,
@@ -407,7 +407,7 @@ import { GithubLogin } from '@components/github-login.component/github-login.com
     SvgImagesComponent,
     ChangeComponent,
     SatsComponent,
-    BtcComponent,
+    BchComponent,
     FeeRateComponent,
     AddressTypeComponent,
     AddressTextComponent,

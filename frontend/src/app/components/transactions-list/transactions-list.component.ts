@@ -592,11 +592,11 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     if (this.network === 'liquid' || this.network === 'liquidtestnet') {
       return;
     }
-    const modes = ['btc', 'sats', 'fiat'];
+    const modes = ['bch', 'sats', 'fiat'];
     const oldIndex = modes.indexOf(this.stateService.viewAmountMode$.value);
     const newIndex = (oldIndex + 1) % modes.length;
     this.stateService.viewAmountMode$.next(
-      modes[newIndex] as 'btc' | 'sats' | 'fiat'
+      modes[newIndex] as 'bch' | 'sats' | 'fiat'
     );
     this.storageService.setValue('view-amount-mode', modes[newIndex]);
   }
