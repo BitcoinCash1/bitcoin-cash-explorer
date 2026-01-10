@@ -146,7 +146,7 @@ export class SearchFormComponent implements OnInit {
       debounceTime(200),
       switchMap((text) => {
         if (!text.length) {
-          return of([[], { nodes: [], channels: [] }, this.pools]);
+          return of([[], this.pools]);
         }
         this.isTypeaheading$.next(true);
 
@@ -154,7 +154,6 @@ export class SearchFormComponent implements OnInit {
           this.electrsApiService
             .getAddressesByPrefix$(text)
             .pipe(catchError(() => of([]))),
-          [{ nodes: [], channels: [] }],
           this.getMiningPools()
         );
       }),
@@ -168,19 +167,10 @@ export class SearchFormComponent implements OnInit {
 
     this.typeAhead$ = combineLatest([
       searchText$,
-      searchResults$.pipe(
-        startWith([
-          [],
-          {
-            nodes: [],
-            channels: [],
-          },
-          this.pools,
-        ])
-      ),
+      searchResults$.pipe(startWith([[], this.pools])),
     ]).pipe(
       map((latestData) => {
-        this.pools = latestData[1][2] || [];
+        this.pools = latestData[1][1] || [];
 
         let searchText = latestData[0];
         if (!searchText.length) {
@@ -192,18 +182,13 @@ export class SearchFormComponent implements OnInit {
             address: false,
             otherNetworks: [],
             addresses: [],
-            nodes: [],
-            channels: [],
-            liquidAsset: [],
             pools: [],
           };
         }
 
         const result = latestData[1];
         const addressPrefixSearchResults = result[0];
-        const lightningResults = result[1];
 
-        // Do not show date and timestamp results for liquid
         const isNetworkBitcoin =
           this.network === '' ||
           this.network === 'testnet' ||
@@ -272,8 +257,6 @@ export class SearchFormComponent implements OnInit {
               ? []
               : addressPrefixSearchResults, // If there is only one address and it matches the search text, don't show it in the dropdown
           otherNetworks: otherNetworks,
-          nodes: lightningResults.nodes,
-          channels: lightningResults.channels,
           pools: pools,
         };
       })
@@ -369,7 +352,7 @@ export class SearchFormComponent implements OnInit {
   ) {
     if (
       needBaseModuleChange(
-        this.env.BASE_MODULE as 'liquid' | 'mempool',
+        this.env.BASE_MODULE as 'mempool',
         swapNetwork as Network
       )
     ) {

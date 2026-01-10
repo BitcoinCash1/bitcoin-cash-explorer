@@ -90,54 +90,6 @@ const ADDRESS_CHARS: {
         + `{6,100}`
       + `)`,
   },
-  liquid: {
-    base58: `[GHPQ]` // PQ is P2PKH, GH is P2SH
-        + BASE58_CHARS
-        + `{33}` // All min-max lengths are 34
-      + `|`
-        + `[V][TJ]` // Confidential P2PKH or P2SH starts with VT or VJ
-        + BASE58_CHARS
-        + `{78}`,
-    bech32: `(?:`
-        + `(?:` // bech32 liquid starts with ex1 (unconfidential) or lq1 (confidential)
-          + `ex1`
-          + `|`
-          + `lq1`
-        + `)`
-        + BECH32_CHARS_LW // blech32 and bech32 are the same alphabet and protocol, different checksums.
-        + `{6,100}`
-      + `|`
-        + `(?:` // Same as above but all upper case
-          + `EX1`
-          + `|`
-          + `LQ1`
-        + `)`
-        + BECH32_CHARS_UP
-        + `{6,100}`
-      + `)`,
-  },
-  liquidtestnet: {
-    base58: `[89]` // ???(TODO: find version) is P2PKH, 8|9 is P2SH
-      + BASE58_CHARS
-      + `{33}`, // P2PKH is ???(TODO: find size), P2SH is 34
-    bech32: `(?:`
-        + `(?:` // bech32 liquid testnet starts with tex or tlq
-          + `tex1` // TODO: Why does mempool use this and not ert|el like in the elements source?
-          + `|`
-          + `tlq1` // TODO: does this exist?
-        + `)`
-        + BECH32_CHARS_LW // blech32 and bech32 are the same alphabet and protocol, different checksums.
-        + `{6,100}`
-      + `|`
-        + `(?:` // Same as above but all upper case
-          + `TEX1`
-          + `|`
-          + `TLQ1`
-        + `)`
-        + BECH32_CHARS_UP
-        + `{6,100}`
-      + `)`,
-  },
 };
 type RegexTypeNoAddrNoBlockHash =
   | `transaction`
@@ -146,14 +98,7 @@ type RegexTypeNoAddrNoBlockHash =
   | `timestamp`;
 export type RegexType = `address` | `blockhash` | RegexTypeNoAddrNoBlockHash;
 
-export const NETWORKS = [
-  `mainnet`,
-  `testnet4`,
-  `testnet`,
-  `signet`,
-  `liquid`,
-  `liquidtestnet`,
-] as const;
+export const NETWORKS = [`mainnet`, `testnet4`, `testnet`, `signet`] as const;
 export type Network = (typeof NETWORKS)[number]; // Turn const array into union type
 
 export const ADDRESS_REGEXES: [RegExp, Network][] = NETWORKS.map((network) => [
@@ -183,10 +128,6 @@ function isNetworkAvailable(network: Network, env: Env): boolean {
       return env.TESTNET4_ENABLED === true;
     case 'signet':
       return env.SIGNET_ENABLED === true;
-    case 'liquid':
-      return env.LIQUID_ENABLED === true;
-    case 'liquidtestnet':
-      return env.LIQUID_TESTNET_ENABLED === true;
     case 'mainnet':
       return true; // There is no "MAINNET_ENABLED" flag
     default:
@@ -195,7 +136,7 @@ function isNetworkAvailable(network: Network, env: Env): boolean {
 }
 
 export function needBaseModuleChange(
-  fromBaseModule: 'mempool' | 'liquid',
+  fromBaseModule: 'mempool',
   toNetwork: Network
 ): boolean {
   if (!toNetwork) {
@@ -209,9 +150,6 @@ export function needBaseModuleChange(
       toNetwork !== 'signet'
     );
   }
-  if (fromBaseModule === 'liquid') {
-    return toNetwork !== 'liquid' && toNetwork !== 'liquidtestnet';
-  }
 }
 
 export function getTargetUrl(
@@ -220,12 +158,6 @@ export function getTargetUrl(
   env: Env
 ): string {
   let targetUrl = '';
-  if (toNetwork === 'liquid' || toNetwork === 'liquidtestnet') {
-    targetUrl = env.LIQUID_WEBSITE_URL;
-    targetUrl += toNetwork === 'liquidtestnet' ? '/testnet' : '';
-    targetUrl += '/address/';
-    targetUrl += address;
-  }
   if (
     toNetwork === 'mainnet' ||
     toNetwork === 'testnet' ||
@@ -270,12 +202,6 @@ export function getRegex(type: RegexType, network?: Network): RegExp {
           break;
         case `signet`:
           leadingZeroes = 5;
-          break;
-        case `liquid`:
-          leadingZeroes = 8; // We are not interested in Liquid block hashes
-          break;
-        case `liquidtestnet`:
-          leadingZeroes = 8; // We are not interested in Liquid block hashes
           break;
         default:
           throw new Error(
@@ -339,16 +265,6 @@ export function getRegex(type: RegexType, network?: Network): RegExp {
           regex += `04${HEX_CHARS}{128}`; // Uncompressed pubkey
           regex += `|`; // OR
           regex += `(?:02|03)${HEX_CHARS}{64}`; // Compressed pubkey
-          break;
-        case `liquid`:
-          regex += ADDRESS_CHARS.liquid.base58;
-          regex += `|`; // OR
-          regex += ADDRESS_CHARS.liquid.bech32;
-          break;
-        case `liquidtestnet`:
-          regex += ADDRESS_CHARS.liquidtestnet.base58;
-          regex += `|`; // OR
-          regex += ADDRESS_CHARS.liquidtestnet.bech32;
           break;
         default:
           throw new Error(
