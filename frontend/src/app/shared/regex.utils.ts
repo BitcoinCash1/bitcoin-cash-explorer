@@ -3,6 +3,10 @@ import { Env } from '@app/services/state.service';
 // all base58 characters
 export const BASE58_CHARS = `[a-km-zA-HJ-NP-Z1-9]`;
 
+// CashAddr character set (Bitcoin Cash address format)
+export const CASHADDR_CHARS = `[023456789acdefghjklmnpqrstuvwxyz]`;
+const CASHADDR_CHARS_UP = `[023456789ACDEFGHJKLMNPQRSTUVWXYZ]`;
+
 // all bech32 characters (after the separator)
 export const BECH32_CHARS_LW = `[ac-hj-np-z02-9]`;
 const BECH32_CHARS_UP = `[AC-HJ-NP-Z02-9]`;
@@ -30,6 +34,7 @@ const ADDRESS_CHARS: {
   [k in Network]: {
     base58: string;
     bech32: string;
+    bch: string;
   };
 } = {
   mainnet: {
@@ -47,6 +52,13 @@ const ADDRESS_CHARS: {
         + BECH32_CHARS_UP
         + `{6,100}`
       + `)`,
+    bch: `(?:`
+        + `bitcoincash:` + CASHADDR_CHARS + `{20,100}` // Mainnet CashAddr with prefix
+      + `|`
+        + CASHADDR_CHARS + `{20,100}` // Mainnet CashAddr without prefix (optional)
+      + `|`
+        + `[13]` + BASE58_CHARS + `{26,33}` // Legacy base58 addresses
+      + `)`,
   },
   testnet: {
     base58: `[mn2]` // Starts with a single m, n, or 2 (P2PKH is m or n, 2 is P2SH)
@@ -60,6 +72,13 @@ const ADDRESS_CHARS: {
         + `TB1` // All upper case version
         + BECH32_CHARS_UP
         + `{6,100}`
+      + `)`,
+    bch: `(?:`
+        + `bchtest:` + CASHADDR_CHARS + `{20,100}` // Testnet CashAddr with prefix
+      + `|`
+        + CASHADDR_CHARS + `{20,100}` // Testnet CashAddr without prefix (optional)
+      + `|`
+        + `[mn2]` + BASE58_CHARS + `{33,34}` // Legacy base58 addresses
       + `)`,
   },
   testnet4: {
@@ -75,6 +94,13 @@ const ADDRESS_CHARS: {
         + BECH32_CHARS_UP
         + `{6,100}`
       + `)`,
+    bch: `(?:`
+        + `bchtest:` + CASHADDR_CHARS + `{20,100}` // Testnet4 CashAddr with prefix
+      + `|`
+        + CASHADDR_CHARS + `{20,100}` // Testnet4 CashAddr without prefix (optional)
+      + `|`
+        + `[mn2]` + BASE58_CHARS + `{33,34}` // Legacy base58 addresses
+      + `)`,
   },
   signet: {
     base58: `[mn2]`
@@ -88,6 +114,13 @@ const ADDRESS_CHARS: {
         + `TB1` // All upper case version
         + BECH32_CHARS_UP
         + `{6,100}`
+      + `)`,
+    bch: `(?:`
+        + `bchreg:` + CASHADDR_CHARS + `{20,100}` // Regtest CashAddr with prefix
+      + `|`
+        + CASHADDR_CHARS + `{20,100}` // Regtest CashAddr without prefix (optional)
+      + `|`
+        + `[mn2]` + BASE58_CHARS + `{33,34}` // Legacy base58 addresses
       + `)`,
   },
 };
@@ -235,6 +268,8 @@ export function getRegex(type: RegexType, network?: Network): RegExp {
           regex += `|`; // OR
           regex += ADDRESS_CHARS.mainnet.bech32;
           regex += `|`; // OR
+          regex += ADDRESS_CHARS.mainnet.bch;
+          regex += `|`; // OR
           regex += `04${HEX_CHARS}{128}`; // Uncompressed pubkey
           regex += `|`; // OR
           regex += `(?:02|03)${HEX_CHARS}{64}`; // Compressed pubkey
@@ -244,14 +279,18 @@ export function getRegex(type: RegexType, network?: Network): RegExp {
           regex += `|`; // OR
           regex += ADDRESS_CHARS.testnet.bech32;
           regex += `|`; // OR
+          regex += ADDRESS_CHARS.testnet.bch;
+          regex += `|`; // OR
           regex += `04${HEX_CHARS}{128}`; // Uncompressed pubkey
           regex += `|`; // OR
           regex += `(?:02|03)${HEX_CHARS}{64}`; // Compressed pubkey
           break;
         case `testnet4`:
-          regex += ADDRESS_CHARS.testnet.base58;
+          regex += ADDRESS_CHARS.testnet4.base58;
           regex += `|`; // OR
-          regex += ADDRESS_CHARS.testnet.bech32;
+          regex += ADDRESS_CHARS.testnet4.bech32;
+          regex += `|`; // OR
+          regex += ADDRESS_CHARS.testnet4.bch;
           regex += `|`; // OR
           regex += `04${HEX_CHARS}{128}`; // Uncompressed pubkey
           regex += `|`; // OR
@@ -261,6 +300,8 @@ export function getRegex(type: RegexType, network?: Network): RegExp {
           regex += ADDRESS_CHARS.signet.base58;
           regex += `|`; // OR
           regex += ADDRESS_CHARS.signet.bech32;
+          regex += `|`; // OR
+          regex += ADDRESS_CHARS.signet.bch;
           regex += `|`; // OR
           regex += `04${HEX_CHARS}{128}`; // Uncompressed pubkey
           regex += `|`; // OR
