@@ -7,8 +7,6 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { BytesPipe } from '@app/shared/pipes/bytes-pipe/bytes.pipe';
-import { VbytesPipe } from '@app/shared/pipes/bytes-pipe/vbytes.pipe';
-import { WuBytesPipe } from '@app/shared/pipes/bytes-pipe/wubytes.pipe';
 import { Transaction, Vout } from '@interfaces/electrs.interface';
 import { StateService } from '@app/services/state.service';
 import { Filter, toFilters } from '@app/shared/filters.utils';
@@ -95,9 +93,7 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
     public seoService: SeoService,
     public apiService: ApiService,
     public relativeUrlPipe: RelativeUrlPipe,
-    public bytesPipe: BytesPipe,
-    public vbytesPipe: VbytesPipe,
-    public wuBytesPipe: WuBytesPipe
+    public bytesPipe: BytesPipe
   ) {}
 
   ngOnInit(): void {

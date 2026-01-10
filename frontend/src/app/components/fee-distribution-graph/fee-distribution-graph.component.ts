@@ -7,7 +7,6 @@ import {
 } from '@angular/core';
 import { TransactionStripped } from '@interfaces/node-api.interface';
 import { StateService } from '@app/services/state.service';
-import { VbytesPipe } from '@app/shared/pipes/bytes-pipe/vbytes.pipe';
 import { selectPowerOfTen } from '@app/bitcoin.utils';
 import { Subscription } from 'rxjs';
 
@@ -45,10 +44,7 @@ export class FeeDistributionGraphComponent
     renderer: 'svg',
   };
 
-  constructor(
-    public stateService: StateService,
-    private vbytesPipe: VbytesPipe
-  ) {}
+  constructor(public stateService: StateService) {}
 
   ngOnInit() {
     this.rateUnitSub = this.stateService.rateUnits$.subscribe((rateUnits) => {
