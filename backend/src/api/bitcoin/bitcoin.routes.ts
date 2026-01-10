@@ -22,7 +22,7 @@ import chainTips from '../chain-tips';
 
 const TXID_REGEX = /^[a-f0-9]{64}$/i;
 const BLOCK_HASH_REGEX = /^[a-f0-9]{64}$/i;
-const ADDRESS_REGEX = /^[a-z0-9]{2,120}$/i;
+const ADDRESS_REGEX = /^(?:bitcoincash:)?[a-z0-9]{2,120}$/i;
 const SCRIPT_HASH_REGEX = /^([a-f0-9]{2})+$/i;
 
 class BitcoinRoutes {
