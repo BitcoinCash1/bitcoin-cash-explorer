@@ -86,12 +86,7 @@ export class AddressPreviewComponent implements OnInit, OnDestroy {
             $localize`:@@address.component.browser-title:Address: ${this.addressString}:INTERPOLATION:`
           );
           this.seoService.setDescription(
-            $localize`:@@meta.description.bitcoin.address:See mempool transactions, confirmed transactions, balance, and more for ${
-              this.stateService.network === 'liquid' ||
-              this.stateService.network === 'liquidtestnet'
-                ? 'Liquid'
-                : 'Bitcoin'
-            }${seoDescriptionNetwork(this.stateService.network)} address ${
+            $localize`:@@meta.description.bitcoin.address:See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash${seoDescriptionNetwork(this.stateService.network)} address ${
               this.addressString
             }:INTERPOLATION:.`
           );
@@ -119,19 +114,6 @@ export class AddressPreviewComponent implements OnInit, OnDestroy {
       .pipe(
         filter((address) => !!address),
         tap((address: Address) => {
-          if (
-            (this.stateService.network === 'liquid' ||
-              this.stateService.network === 'liquidtestnet') &&
-            /^([m-zA-HJ-NP-Z1-9]{26,35}|[a-z]{2,5}1[ac-hj-np-z02-9]{8,100}|[a-km-zA-HJ-NP-Z1-9]{80})$/.test(
-              address.address
-            )
-          ) {
-            this.apiService
-              .validateAddress$(address.address)
-              .subscribe((addressInfo) => {
-                this.addressInfo = addressInfo;
-              });
-          }
           this.address = address;
           this.updateChainStats();
           this.isLoadingAddress = false;
