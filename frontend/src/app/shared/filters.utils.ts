@@ -162,14 +162,6 @@ export const TransactionFilters: { [key: string]: Filter } = {
     tooltip: true,
     txPage: true,
   },
-  inscription: {
-    key: 'inscription',
-    label: $localize`:@@99264845cdffed75db1a32df6e66febbdf1d99f1:Inscription`,
-    flag: TransactionFlags.inscription,
-    important: true,
-    tooltip: true,
-    txPage: true,
-  },
   fake_scripthash: {
     key: 'fake_scripthash',
     label: 'Fake scripthash',
