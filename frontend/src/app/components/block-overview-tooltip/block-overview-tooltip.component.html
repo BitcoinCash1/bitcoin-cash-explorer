@@ -185,6 +185,19 @@
           </ng-container>
         </td>
       </tr>
+      <tr *ngIf="(!auditEnabled && tx) || filters.length">
+        <td colspan="2">
+          <div class="tags mt-2" [class.any-mode]="filterMode === 'or'">
+            <ng-container *ngFor="let filter of filters">
+              <span
+                class="btn badge filter-tag"
+                [class.matching]="activeFilters[filter.key]"
+                >{{ filter.label }}</span
+              >
+            </ng-container>
+          </div>
+        </td>
+      </tr>
     </tbody>
   </table>
 </div>
