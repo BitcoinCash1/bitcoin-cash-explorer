@@ -362,36 +362,32 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
         }
 
         // Check for ord data fingerprints in inputs and outputs
-        if (
-          this.stateService.network !== 'liquid' &&
-          this.stateService.network !== 'liquidtestnet'
-        ) {
-          for (let i = 0; i < tx.vout.length; i++) {
-            if (tx.vout[i]?.scriptpubkey?.startsWith('6a5d')) {
-              tx.vout[i].isRunestone = true;
-              break;
-            }
+        for (let i = 0; i < tx.vout.length; i++) {
+          if (tx.vout[i]?.scriptpubkey?.startsWith('6a5d')) {
+            tx.vout[i].isRunestone = true;
+            break;
           }
-
-          // process signature data
-          if (tx.vin.length && !tx.vin[0].is_coinbase) {
-            tx['_sigs'] = tx.vin.map((vin) => processInputSignatures(vin));
-            tx['_sigmap'] = tx['_sigs'].reduce((map, sigs, vindex) => {
-              sigs.forEach((sig) => {
-                map[sig.signature] = { sig, vindex };
-              });
-              return map;
-            }, {});
-
-            if (!tx['_interestingSignatures']) {
-              tx['_interestingSignatures'] =
-                tx['_sigs'].some((sigs) =>
-                  sigs.some((sig) => this.sigIsInteresting(sig))
-                ) || tx['_sigs'].every((sigs) => !sigs?.length);
-            }
-          }
-          tx['_showSignatures'] = this.shouldShowSignatures(tx);
         }
+
+        // process signature data
+        if (tx.vin.length && !tx.vin[0].is_coinbase) {
+          tx['_sigs'] = tx.vin.map((vin) => processInputSignatures(vin));
+          tx['_sigmap'] = tx['_sigs'].reduce((map, sigs, vindex) => {
+            sigs.forEach((sig) => {
+              map[sig.signature] = { sig, vindex };
+            });
+            return map;
+          }, {});
+
+          if (!tx['_interestingSignatures']) {
+            tx['_interestingSignatures'] =
+              tx['_sigs'].some((sigs) =>
+                sigs.some((sig) => this.sigIsInteresting(sig))
+              ) || tx['_sigs'].every((sigs) => !sigs?.length);
+          }
+        }
+        tx['_showSignatures'] = this.shouldShowSignatures(tx);
+
         tx.largeInput =
           tx.largeInput ||
           tx.vin.some((vin) => vin?.prevout?.value > 1000000000);
@@ -591,9 +587,6 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   switchCurrency(): void {
-    if (this.network === 'liquid' || this.network === 'liquidtestnet') {
-      return;
-    }
     const modes = ['bch', 'sats', 'fiat'];
     const oldIndex = modes.indexOf(this.stateService.viewAmountMode$.value);
     const newIndex = (oldIndex + 1) % modes.length;
