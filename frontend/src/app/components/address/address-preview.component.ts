@@ -86,9 +86,9 @@ export class AddressPreviewComponent implements OnInit, OnDestroy {
             $localize`:@@address.component.browser-title:Address: ${this.addressString}:INTERPOLATION:`
           );
           this.seoService.setDescription(
-            $localize`:@@meta.description.bitcoin.address:See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash${seoDescriptionNetwork(this.stateService.network)} address ${
+            $localize`See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash${seoDescriptionNetwork(this.stateService.network)} address ${
               this.addressString
-            }:INTERPOLATION:.`
+            }.`
           );
 
           return (
