@@ -204,7 +204,7 @@
                 <td i18n="transaction.size|Transaction Size">Size</td>
                 <td [innerHTML]="'&lrm;' + (tx.size | bytes: 2)"></td>
               </tr>
-              <tr *ngIf="adjustedSize != null">
+              <!-- <tr *ngIf="adjustedSize != null">
                 <td>
                   <ng-container
                     i18n="transaction.adjusted-size|Transaction Adjusted Size"
@@ -222,11 +222,7 @@
                   </a>
                 </td>
                 <td [innerHTML]="'&lrm;' + (adjustedSize | bytes: 2)"></td>
-              </tr>
-              <tr>
-                <td i18n="transaction.size">Size</td>
-                <td [innerHTML]="'&lrm;' + (tx.size | bytes: 2)"></td>
-              </tr>
+              </tr> -->
             </tbody>
           </table>
         </div>
