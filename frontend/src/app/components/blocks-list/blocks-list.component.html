@@ -56,6 +56,14 @@
           Timestamp
         </th>
         <th
+          class="mined"
+          i18n="latest-blocks.mined"
+          *ngIf="!widget"
+          [class]="indexingAvailable ? '' : 'legacy'"
+        >
+          Mined
+        </th>
+        <th
           *ngIf="auditAvailable"
           class="health text-right"
           i18n="latest-blocks.health"
@@ -192,6 +200,18 @@
               [unixTime]="block.timestamp"
               [hideTimeSince]="true"
             ></app-timestamp>
+          </td>
+          <td
+            class="mined"
+            *ngIf="!widget"
+            [class]="indexingAvailable ? '' : 'legacy'"
+          >
+            <app-time
+              kind="since"
+              [time]="block.timestamp"
+              [fastRender]="true"
+              [showTooltip]="true"
+            ></app-time>
           </td>
           <td
             *ngIf="auditAvailable"
