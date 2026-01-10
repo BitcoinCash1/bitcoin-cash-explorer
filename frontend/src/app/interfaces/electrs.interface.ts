@@ -132,7 +132,7 @@ export interface Block {
   previousblockhash: string;
   stale?: boolean;
   canonical?: string;
-  // TODO: Add optional ALBA fields
+  // TODO: Add optional ABLA fields
 }
 
 export interface Address {
