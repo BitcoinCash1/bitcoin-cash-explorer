@@ -263,14 +263,12 @@
                     >
                       Inscription
                     </button>
-                    <ng-template>
-                      <span *ngIf="vin.lazy" class="skeleton-loader"></span>
-                      <app-amount
-                        [blockConversion]="tx.price"
-                        *ngIf="vin.prevout"
-                        [satoshis]="vin.prevout.value"
-                      ></app-amount>
-                    </ng-template>
+                    <span *ngIf="vin.lazy" class="skeleton-loader"></span>
+                    <app-amount
+                      [blockConversion]="tx.price"
+                      *ngIf="vin.prevout"
+                      [satoshis]="vin.prevout.value"
+                    ></app-amount>
                   </td>
                 </tr>
                 <tr
@@ -601,12 +599,10 @@
                     class="text-right nowrap amount"
                     [class]="{ large: tx.largeOutput }"
                   >
-                    <ng-template>
-                      <app-amount
-                        [blockConversion]="tx.price"
-                        [satoshis]="vout.value"
-                      ></app-amount>
-                    </ng-template>
+                    <app-amount
+                      [blockConversion]="tx.price"
+                      [satoshis]="vout.value"
+                    ></app-amount>
                   </td>
                   <td class="arrow-td">
                     <span
