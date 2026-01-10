@@ -1,5 +1,4 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
-import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { ElectrsApiService } from '@app/services/electrs-api.service';
 import { switchMap, filter, catchError, map, tap } from 'rxjs/operators';
@@ -19,10 +18,6 @@ import { SeoService } from '@app/services/seo.service';
 import { seoDescriptionNetwork } from '@app/shared/common.utils';
 import { AddressInformation } from '@interfaces/node-api.interface';
 import { AddressTypeInfo } from '@app/shared/address-utils';
-import {
-  convertTextToBuffer,
-  PsbtKeyValue,
-} from '@app/shared/transaction.utils';
 
 class AddressStats implements ChainStats {
   address: string;
@@ -161,8 +156,7 @@ export class AddressComponent implements OnInit, OnDestroy {
     public stateService: StateService,
     private audioService: AudioService,
     private apiService: ApiService,
-    private seoService: SeoService,
-    private formBuilder: UntypedFormBuilder
+    private seoService: SeoService
   ) {}
 
   ngOnInit(): void {
@@ -209,12 +203,7 @@ export class AddressComponent implements OnInit, OnDestroy {
             $localize`:@@address.component.browser-title:Address: ${this.addressString}:INTERPOLATION:`
           );
           this.seoService.setDescription(
-            $localize`:@@meta.description.bitcoin.address:See mempool transactions, confirmed transactions, balance, and more for ${
-              this.stateService.network === 'liquid' ||
-              this.stateService.network === 'liquidtestnet'
-                ? 'Liquid'
-                : 'Bitcoin'
-            }${seoDescriptionNetwork(this.stateService.network)} address ${
+            $localize`:@@meta.description.bitcoin.address:See mempool transactions, confirmed transactions, balance, and more for Bitcoin${seoDescriptionNetwork(this.stateService.network)} address ${
               this.addressString
             }:INTERPOLATION:.`
           );
@@ -257,24 +246,7 @@ export class AddressComponent implements OnInit, OnDestroy {
       .pipe(
         filter((address) => !!address),
         tap((address: Address) => {
-          if (
-            (this.stateService.network === 'liquid' ||
-              this.stateService.network === 'liquidtestnet') &&
-            /^([a-zA-HJ-NP-Z1-9]{26,35}|[a-z]{2,5}1[ac-hj-np-z02-9]{8,100}|[a-km-zA-HJ-NP-Z1-9]{80})$/.test(
-              address.address
-            )
-          ) {
-            this.apiService
-              .validateAddress$(address.address)
-              .subscribe((addressInfo) => {
-                this.addressInfo = addressInfo;
-                this.websocketService.startTrackAddress(
-                  addressInfo.unconfidential
-                );
-              });
-          } else {
-            this.websocketService.startTrackAddress(address.address);
-          }
+          this.websocketService.startTrackAddress(address.address);
         }),
         switchMap((address) => {
           this.address = address;

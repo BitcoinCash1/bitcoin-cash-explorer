@@ -435,9 +435,9 @@
     and search and view those transactions.
   </p>
   <p>
-    The explorer.melroy.org website invented the concept of visualizing a Bitcoin Cash
-    node's mempool as <b>projected blocks</b>. These blocks are the inspiration
-    for our half-filled block logo.
+    The explorer.melroy.org website invented the concept of visualizing a
+    Bitcoin Cash node's mempool as <b>projected blocks</b>. These blocks are the
+    inspiration for our half-filled block logo.
   </p>
   <p>
     Projected blocks are on the left of the dotted white line, and confirmed
@@ -512,9 +512,7 @@
     Block sizes are in theory unlimited in BCH, and dynamically calculated by
     ALBA (Adaptive Block Size Algorithm). Minimum size is 32 MB.
   </p>
-  <p>
-    Transaction sizes and block sizes are measured in plain bytes.
-  </p>
+  <p>Transaction sizes and block sizes are measured in plain bytes.</p>
 </ng-template>
 
 <ng-template type="what-is-svb">
@@ -714,18 +712,18 @@
 
 <ng-template type="how-big-is-mempool-used-by-mempool-space">
   <p>
-    explorer.melroy.org uses multiple Bitcoin Cash nodes to obtain data: some with the
-    default 320MB mempool memory limit (call these Small Nodes) and others with
-    a much larger mempool memory limit (call these Big Nodes).
+    explorer.melroy.org uses multiple Bitcoin Cash nodes to obtain data: some
+    with the default 320MB mempool memory limit (call these Small Nodes) and
+    others with a much larger mempool memory limit (call these Big Nodes).
   </p>
   <p>
     Many nodes on the Bitcoin Cash network are configured to run with the
     default 320MB mempool memory setting. When all 320MB of memory are used up,
     such nodes will reject transactions below a certain threshold feerate.
-    Running Small Nodes allows explorer.melroy.org to tell you what this threshold
-    feerate is—this is the "Purging" feerate that shows on the front page when
-    mempools are full, which you can use to be reasonably sure that your
-    transaction will be widely propagated.
+    Running Small Nodes allows explorer.melroy.org to tell you what this
+    threshold feerate is—this is the "Purging" feerate that shows on the front
+    page when mempools are full, which you can use to be reasonably sure that
+    your transaction will be widely propagated.
   </p>
   <p>
     Big Node mempools are so big that they don't need to reject (or purge)
@@ -745,8 +743,8 @@
     storage and processing.
   </p>
   <p>
-    explorer.melroy.org shows the memory usage of a Bitcoin Cash node that has a very
-    high mempool memory limit. As a result, when mempools fill up, you may
+    explorer.melroy.org shows the memory usage of a Bitcoin Cash node that has a
+    very high mempool memory limit. As a result, when mempools fill up, you may
     notice memory usage on explorer.melroy.org go beyond 320MB. This is not a
     mistake—this memory usage figure is high because it's for a Bitcoin Cash
     node that isn't rejecting (or evicting) transactions. Consider it to be
@@ -1075,8 +1073,8 @@
         </dd>
         <dt>P2PKH</dt>
         <dd>
-          Pay-to-public-key-hash. A address type that locks outputs to a
-          public key.
+          Pay-to-public-key-hash. A address type that locks outputs to a public
+          key.
         </dd>
         <dt>P2SH</dt>
         <dd>
@@ -1176,9 +1174,9 @@
     <i>adjusted vsize</i>
   </p>
   <p>
-    On explorer.melroy.org, effective fee rates for unconfirmed transactions are also
-    measured in terms of satoshis per adjusted vsize, after accounting for CPFP
-    relationships and other dependencies.
+    On explorer.melroy.org, effective fee rates for unconfirmed transactions are
+    also measured in terms of satoshis per adjusted vsize, after accounting for
+    CPFP relationships and other dependencies.
   </p>
 </ng-template>
 
@@ -1213,10 +1211,12 @@
 </ng-template>
 
 <ng-template type="who-runs-this-website">
-  The official explorer.melroy.org website is operated by <a href="https://melroy.org/donate.html" target="_blank">Melroy van den Berg</a>. See more information on our
-  <a [routerLink]="['/about']">About page</a>. There might be some unofficial
-  instances of this website operated by individual members of the Bitcoin Cash
-  community.
+  The official explorer.melroy.org website is operated by
+  <a href="https://melroy.org/donate.html" target="_blank"
+    >Melroy van den Berg</a
+  >. See more information on our <a [routerLink]="['/about']">About page</a>.
+  There might be some unofficial instances of this website operated by
+  individual members of the Bitcoin Cash community.
 </ng-template>
 
 <ng-template type="host-my-own-instance-raspberry-pi">
@@ -1236,7 +1236,8 @@
     >.
   </p>
   <p>
-    For casual users, we strongly suggest installing BCH Explorer using one of the
+    For casual users, we strongly suggest installing BCH Explorer using one of
+    the
     <a
       href="https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer#one-click-installation"
       target="_blank"
@@ -1262,8 +1263,8 @@
   </p>
   <p>
     BCH Explorer uses an Electrum server to do address lookups. Fulcrum is the
-    recommended backend for BCH Explorer and it handles heavy queries much
-    more efficiently.
+    recommended backend for BCH Explorer and it handles heavy queries much more
+    efficiently.
   </p>
   <ol>
     <li>

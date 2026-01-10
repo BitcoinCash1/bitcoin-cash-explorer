@@ -60,11 +60,7 @@
                     ></ng-container>
                   </tr>
                 }
-                @if (network === "liquid" || network === "liquidtestnet") {
-                  <tr>
-                    <ng-container *ngTemplateOutlet="liquidRow"></ng-container>
-                  </tr>
-                } @else if (!address.electrum) {
+                @if (!address.electrum) {
                   <tr>
                     <ng-container *ngTemplateOutlet="volumeRow"></ng-container>
                   </tr>
@@ -98,9 +94,7 @@
                   </tr>
                 }
                 <tr>
-                  @if (network === "liquid" || network === "liquidtestnet") {
-                    <ng-container *ngTemplateOutlet="liquidRow"></ng-container>
-                  } @else if (!address.electrum) {
+                  @if (!address.electrum) {
                     <ng-container *ngTemplateOutlet="volumeRow"></ng-container>
                   } @else {
                     <ng-container *ngTemplateOutlet="emptyTd"></ng-container>
@@ -372,20 +366,4 @@
       <app-address-type [address]="addressTypeInfo"></app-address-type>
     </span>
   </td>
-</ng-template>
-
-<ng-template #liquidRow>
-  <ng-container *ngIf="addressInfo && addressInfo.unconfidential">
-    <td i18n="address.unconfidential">Unconfidential</td>
-    <td>
-      <app-truncate
-        [text]="addressInfo.unconfidential"
-        [lastChars]="8"
-        [textAlign]="isMobile ? 'end' : 'start'"
-        [link]="['/address/' | relativeUrl, addressInfo.unconfidential]"
-      >
-        <app-clipboard [text]="addressInfo.unconfidential"></app-clipboard>
-      </app-truncate>
-    </td>
-  </ng-container>
 </ng-template>

@@ -27,7 +27,7 @@ export class SeoService {
   ) {
     // save original meta tags
     this.baseDescription =
-      metaService.getTag('name=\'description\'')?.content || this.baseDescription;
+      metaService.getTag("name='description'")?.content || this.baseDescription;
     this.baseTitle =
       titleService.getTitle()?.split(' - ')?.[0] || this.baseTitle;
     try {

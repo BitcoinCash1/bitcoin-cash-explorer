@@ -118,20 +118,18 @@
 <ng-template #featuresRow>
   @if (!isLoadingTx) {
     <tr>
-      <td
-        class="td-width"
-        i18n="transaction.features|Transaction features">
+      <td class="td-width" i18n="transaction.features|Transaction features">
         Features
       </td>
       <td>
         <span
-            class="badge badge-success mr-1"
-            i18n-ngbTooltip="Tooltip about Cheap"
-            ngbTooltip="This transaction has low transaction fees on L1, because of BCH"
-            placement="bottom"
-            i18n="tx-features.tag.cheap|Cheap"
-            >Cheap</span
-          >
+          class="badge badge-success mr-1"
+          i18n-ngbTooltip="Tooltip about Cheap"
+          ngbTooltip="This transaction has low transaction fees on L1, because of BCH"
+          placement="bottom"
+          i18n="tx-features.tag.cheap|Cheap"
+          >Cheap</span
+        >
       </td>
     </tr>
     @if (featuresEnabled) {
