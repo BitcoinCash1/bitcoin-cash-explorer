@@ -5,6 +5,7 @@ import {
   BECH32_CHARS_LW,
   BASE58_CHARS,
   HEX_CHARS,
+  CASHADDR_CHARS,
 } from '@app/shared/regex.utils';
 
 export type AddressType =
@@ -21,17 +22,26 @@ export type AddressType =
   | 'v0_p2wpkh'
   | 'v0_p2wsh'
   | 'v1_p2tr'
-  | 'confidential'
   | 'anchor'
   | 'unknown';
 
-const ADDRESS_PREFIXES = {
+type NetworkConfig = {
+  base58: {
+    pubkey: string[];
+    script: string | string[];
+  };
+  bech32: string;
+  bch: string;
+};
+
+const ADDRESS_PREFIXES: Record<string, NetworkConfig> = {
   mainnet: {
     base58: {
       pubkey: ['1'],
       script: ['3'],
     },
     bech32: 'bc1',
+    bch: 'bitcoincash:',
   },
   testnet: {
     base58: {
@@ -39,6 +49,7 @@ const ADDRESS_PREFIXES = {
       script: '2',
     },
     bech32: 'tb1',
+    bch: 'bchtest:',
   },
   testnet4: {
     base58: {
@@ -46,6 +57,7 @@ const ADDRESS_PREFIXES = {
       script: '2',
     },
     bech32: 'tb1',
+    bch: 'bchtest:',
   },
   signet: {
     base58: {
@@ -53,33 +65,16 @@ const ADDRESS_PREFIXES = {
       script: '2',
     },
     bech32: 'tb1',
-  },
-  liquid: {
-    base58: {
-      pubkey: ['P', 'Q'],
-      script: ['G', 'H'],
-      confidential: ['V'],
-    },
-    bech32: 'ex1',
-    confidential: 'lq1',
-  },
-  liquidtestnet: {
-    base58: {
-      pubkey: ['F'],
-      script: ['8', '9'],
-      confidential: ['V'], // TODO: check if this is actually correct
-    },
-    bech32: 'tex1',
-    confidential: 'tlq1',
+    bch: 'bchreg:',
   },
 };
 
 // precompiled regexes for common address types (excluding prefixes)
 const base58Regex = RegExp('^' + BASE58_CHARS + '{26,34}$');
-const confidentialb58Regex = RegExp('^[TJ]' + BASE58_CHARS + '{78}$');
 const p2wpkhRegex = RegExp('^q' + BECH32_CHARS_LW + '{38}$');
 const p2wshRegex = RegExp('^q' + BECH32_CHARS_LW + '{58}$');
 const p2trRegex = RegExp('^p' + BECH32_CHARS_LW + '{58}$');
+const cashaddrRegex = RegExp('^' + CASHADDR_CHARS + '{20,100}$');
 const pubkeyRegex = RegExp(
   '^' + `(04${HEX_CHARS}{128})|(0[23]${HEX_CHARS}{64})$`
 );
@@ -89,27 +84,51 @@ export function detectAddressType(
   network: string
 ): AddressType {
   network = network || 'mainnet';
+  const networkConfig = ADDRESS_PREFIXES[network];
+
+  if (!networkConfig) {
+    return 'unknown';
+  }
+
+  // Check for BCH addresses first (with prefix)
+  if (address.startsWith(networkConfig.bch)) {
+    const suffix = address.slice(networkConfig.bch.length);
+    if (cashaddrRegex.test(suffix)) {
+      // For BCH, we need to determine if it's P2PKH or P2SH based on the first character
+      // CashAddr format: first character indicates type
+      const firstChar = suffix.charAt(0);
+      if (['q', 'Q'].includes(firstChar)) {
+        return 'p2pkh';
+      } else if (['p', 'P'].includes(firstChar)) {
+        return 'p2sh';
+      }
+    }
+  }
+
+  // Check for BCH addresses without prefix
+  if (cashaddrRegex.test(address)) {
+    const firstChar = address.charAt(0);
+    if (['q', 'Q'].includes(firstChar)) {
+      return 'p2pkh';
+    } else if (['p', 'P'].includes(firstChar)) {
+      return 'p2sh';
+    }
+  }
+
   // normal address types
   const firstChar = address.substring(0, 1);
   if (
-    ADDRESS_PREFIXES[network].base58.pubkey.includes(firstChar) &&
+    networkConfig.base58.pubkey.includes(firstChar) &&
     base58Regex.test(address.slice(1))
   ) {
     return 'p2pkh';
   } else if (
-    ADDRESS_PREFIXES[network].base58.script.includes(firstChar) &&
+    (Array.isArray(networkConfig.base58.script)
+      ? networkConfig.base58.script.includes(firstChar)
+      : networkConfig.base58.script === firstChar) &&
     base58Regex.test(address.slice(1))
   ) {
     return 'p2sh';
-  } else if (address.startsWith(ADDRESS_PREFIXES[network].bech32)) {
-    const suffix = address.slice(ADDRESS_PREFIXES[network].bech32.length);
-    if (p2wpkhRegex.test(suffix)) {
-      return 'v0_p2wpkh';
-    } else if (p2wshRegex.test(suffix)) {
-      return 'v0_p2wsh';
-    } else if (p2trRegex.test(suffix)) {
-      return 'v1_p2tr';
-    }
   }
 
   // p2pk
@@ -117,15 +136,15 @@ export function detectAddressType(
     return 'p2pk';
   }
 
-  // liquid-specific types
-  if (network.startsWith('liquid')) {
-    if (
-      ADDRESS_PREFIXES[network].base58.confidential.includes(firstChar) &&
-      confidentialb58Regex.test(address.slice(1))
-    ) {
-      return 'confidential';
-    } else if (address.startsWith(ADDRESS_PREFIXES[network].confidential)) {
-      return 'confidential';
+  // BTC backwards compatibility lookup (just for people who like this), won't be used in BCH at all
+  if (address.startsWith(ADDRESS_PREFIXES[network].bech32)) {
+    const suffix = address.slice(ADDRESS_PREFIXES[network].bech32.length);
+    if (p2wpkhRegex.test(suffix)) {
+      return 'v0_p2wpkh';
+    } else if (p2wshRegex.test(suffix)) {
+      return 'v0_p2wsh';
+    } else if (p2trRegex.test(suffix)) {
+      return 'v1_p2tr';
     }
   }
 
@@ -380,19 +399,30 @@ export function compareAddressInfo(
     return { status: 'incomparable' };
   }
   const isBase58 = a.type === 'p2pkh' || a.type === 'p2sh';
+  const isCashAddr =
+    ['p2pkh', 'p2sh'].includes(a.type) && cashaddrRegex.test(a.address);
 
   const left = fuzzyPrefixMatch(a.address, b.address);
   const right = fuzzyPrefixMatch(a.address, b.address, true);
   // depending on address type, some number of matching prefix characters are guaranteed
-  const prefixScore = isBase58
-    ? 1
-    : ADDRESS_PREFIXES[a.network || 'mainnet'].bech32.length + 1;
+  let prefixScore: number;
+  if (isBase58) {
+    prefixScore = 1;
+  } else if (isCashAddr) {
+    // For CashAddr, check if there's a prefix
+    const bchPrefix = ADDRESS_PREFIXES[a.network || 'mainnet']?.bch;
+    prefixScore = (a.address.startsWith(bchPrefix) ? bchPrefix.length : 0) + 1;
+  } else {
+    prefixScore =
+      (ADDRESS_PREFIXES[a.network || 'mainnet']?.bech32?.length || 0) + 1;
+  }
 
   // add the two scores together
   const totalScore = left.score + right.score - prefixScore;
 
-  // adjust for the size of the alphabet (58 vs 32)
-  const normalizedScore = Math.pow(isBase58 ? 58 : 32, totalScore);
+  // adjust for the size of the alphabet (58 vs 32 vs 32 for CashAddr)
+  const alphabetSize = isBase58 ? 58 : isCashAddr ? 32 : 32;
+  const normalizedScore = Math.pow(alphabetSize, totalScore);
 
   return {
     status: 'comparable',
