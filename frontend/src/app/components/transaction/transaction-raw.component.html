@@ -20,7 +20,7 @@
       <button
         [disabled]="isLoading"
         type="submit"
-        class="btn btn-primary mr-2"
+        class="btn btn-success mr-2"
         i18n="shared.preview|Preview"
       >
         Preview
@@ -118,7 +118,7 @@
           placement="bottom"
           [disableTooltip]="!missingSignatures"
           type="button"
-          class="btn btn-sm btn-primary btn-broadcast"
+          class="btn btn-sm btn-success btn-broadcast"
           i18n="transaction.broadcast|Broadcast"
           (click)="postTx()"
         >
@@ -200,7 +200,7 @@
         </div>
         <div class="toggle-wrapper" *ngIf="maxInOut > 24">
           <button
-            class="btn btn-sm btn-primary graph-toggle"
+            class="btn btn-sm btn-success graph-toggle"
             (click)="expandGraph()"
             *ngIf="!graphExpanded; else collapseBtn"
           >
@@ -208,7 +208,7 @@
           </button>
           <ng-template #collapseBtn>
             <button
-              class="btn btn-sm btn-primary graph-toggle"
+              class="btn btn-sm btn-success graph-toggle"
               (click)="collapseGraph()"
             >
               <span i18n="show-less">Show less</span>

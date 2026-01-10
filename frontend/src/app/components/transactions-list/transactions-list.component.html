@@ -396,7 +396,7 @@
                   class="text-center"
                 >
                   <button
-                    class="btn btn-sm btn-primary mt-2"
+                    class="btn btn-sm btn-success mt-2"
                     (click)="showMoreInputs(tx)"
                   >
                     <span
@@ -736,7 +736,7 @@
                                 >...</span
                               >
                               <label
-                                class="btn btn-sm btn-primary mt-2"
+                                class="btn btn-sm btn-success mt-2"
                                 (click)="toggleShowFullScriptPubkeyAsm(vindex)"
                                 style="margin-left: auto"
                               >
@@ -777,7 +777,7 @@
                                 >...</span
                               >
                               <label
-                                class="btn btn-sm btn-primary mt-2"
+                                class="btn btn-sm btn-success mt-2"
                                 (click)="toggleShowFullScriptPubkeyHex(vindex)"
                                 style="margin-left: auto"
                               >
@@ -824,7 +824,7 @@
                                 >...</span
                               >
                               <label
-                                class="btn btn-sm btn-primary mt-2"
+                                class="btn btn-sm btn-success mt-2"
                                 (click)="toggleShowFullOpReturnData(vindex)"
                                 style="margin-left: auto"
                               >
@@ -858,7 +858,7 @@
               <tr *ngIf="tx.vout.length > getVoutLimit(tx)">
                 <td [attr.colspan]="3" class="text-center">
                   <button
-                    class="btn btn-sm btn-primary mt-2"
+                    class="btn btn-sm btn-success mt-2"
                     (click)="showMoreOutputs(tx)"
                   >
                     <span
@@ -955,7 +955,7 @@
           <button
             *ngIf="addresses.length === 0; else viewingAddress"
             type="button"
-            class="btn btn-sm btn-primary mt-2 ml-2"
+            class="btn btn-sm btn-success mt-2 ml-2"
             (click)="switchCurrency()"
           >
             <app-amount

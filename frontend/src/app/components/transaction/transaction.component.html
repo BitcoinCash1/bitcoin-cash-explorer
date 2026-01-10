@@ -127,7 +127,7 @@
         </div>
         <div class="toggle-wrapper" *ngIf="maxInOut > 24">
           <button
-            class="btn btn-sm btn-primary graph-toggle"
+            class="btn btn-sm btn-success graph-toggle"
             (click)="expandGraph()"
             *ngIf="!graphExpanded; else collapseBtn"
           >
@@ -135,7 +135,7 @@
           </button>
           <ng-template #collapseBtn>
             <button
-              class="btn btn-sm btn-primary graph-toggle"
+              class="btn btn-sm btn-success graph-toggle"
               (click)="collapseGraph()"
             >
               <span i18n="show-less">Show less</span>

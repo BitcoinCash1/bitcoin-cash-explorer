@@ -114,7 +114,7 @@ export class NgxDropdownMultiselectComponent
     searchMaxLimit: 0,
     searchMaxRenderedItems: 0,
     checkedStyle: 'checkboxes',
-    buttonClasses: 'btn btn-primary dropdown-toggle',
+    buttonClasses: 'btn btn-success dropdown-toggle',
     containerClasses: 'dropdown-inline',
     selectionLimit: 0,
     minSelectionLimit: 0,
