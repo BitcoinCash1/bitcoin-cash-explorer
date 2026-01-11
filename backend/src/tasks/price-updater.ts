@@ -216,7 +216,7 @@ class PriceUpdater {
         await this.$insertMissingAdditionalPrices();
       }
     } catch (e: any) {
-      logger.err(`Cannot save BTC prices in db. Reason: ${e instanceof Error ? e.message : e}`, logger.tags.mining);
+      logger.err(`Cannot save BCH prices in db. Reason: ${e instanceof Error ? e.message : e}`, logger.tags.mining);
     }
 
     this.running = false;
@@ -249,7 +249,7 @@ class PriceUpdater {
   }
 
   /**
-   * Fetch last BTC price from exchanges, average them, and save it in the database once every hour
+   * Fetch last BCH price from exchanges, average them, and save it in the database once every hour
    */
   private async $updatePrice(): Promise<void> {
     let forceUpdate = false;
@@ -287,17 +287,17 @@ class PriceUpdater {
             if (price > -1 && price < MAX_PRICES[currency]) {
               prices.push(price);
             }
-            logger.debug(`${feed.name} BTC/${currency} price: ${price}`, logger.tags.mining);
+            logger.debug(`${feed.name} BCH/${currency} price: ${price}`, logger.tags.mining);
           } catch (e) {
             logger.debug(
-              `Could not fetch BTC/${currency} price at ${feed.name}. Reason: ${e instanceof Error ? e.message : e}`,
+              `Could not fetch BCH/${currency} price at ${feed.name}. Reason: ${e instanceof Error ? e.message : e}`,
               logger.tags.mining
             );
           }
         }
       }
       if (prices.length === 1) {
-        logger.debug(`Only ${prices.length} feed available for BTC/${currency} price`, logger.tags.mining);
+        logger.debug(`Only ${prices.length} feed available for BCH/${currency} price`, logger.tags.mining);
       }
 
       // Compute average price, non weighted
@@ -349,10 +349,10 @@ class PriceUpdater {
 
     if (this.latestPrices.USD === -1) {
       logger.warn(
-        `No BTC price available, falling back to latest known price: ${JSON.stringify(this.latestGoodPrices)}`
+        `No BCH price available, falling back to latest known price: ${JSON.stringify(this.latestGoodPrices)}`
       );
     } else {
-      logger.info(`Latest BTC fiat averaged price: ${JSON.stringify(this.latestGoodPrices)}`);
+      logger.info(`Latest BCH fiat averaged price: ${JSON.stringify(this.latestGoodPrices)}`);
     }
 
     if (this.ratesChangedCallback && this.latestGoodPrices.USD > 0) {

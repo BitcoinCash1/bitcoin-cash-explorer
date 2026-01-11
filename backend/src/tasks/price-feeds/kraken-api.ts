@@ -7,17 +7,13 @@ class KrakenApi implements PriceFeed {
   public name: string = 'Kraken';
   public currencies: string[] = ['USD', 'EUR', 'GBP', 'CAD', 'CHF', 'AUD', 'JPY'];
 
-  public url: string = 'https://api.kraken.com/0/public/Ticker?pair=XBT';
-  public urlHist: string = 'https://api.kraken.com/0/public/OHLC?interval={GRANULARITY}&pair=XBT';
+  public url: string = 'https://api.kraken.com/0/public/Ticker?pair=BCH';
+  public urlHist: string = 'https://api.kraken.com/0/public/OHLC?interval={GRANULARITY}&pair=BCH';
 
   constructor() {}
 
   private getTicker(currency) {
-    let ticker = `XXBTZ${currency}`;
-    if (['CHF', 'AUD'].includes(currency)) {
-      ticker = `XBT${currency}`;
-    }
-    return ticker;
+    return `BCH${currency}`;
   }
 
   public async $fetchPrice(currency): Promise<number> {

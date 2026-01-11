@@ -176,7 +176,7 @@ class PricesRepository {
     for (const currency of Object.keys(prices)) {
       if (prices[currency] < -1 || prices[currency] > MAX_PRICES[currency]) {
         // We use -1 to mark a "missing data, so it's a valid entry"
-        logger.info(`Ignore BTC${currency} price of ${prices[currency]}`);
+        logger.info(`Ignore BCH${currency} price of ${prices[currency]}`);
         prices[currency] = 0;
       }
     }
