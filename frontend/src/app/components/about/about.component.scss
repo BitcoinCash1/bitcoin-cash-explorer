@@ -69,6 +69,7 @@
 
   .maintainers,
   .managers {
+    margin-top: 30px;
     margin-bottom: 50px;
   }
 
@@ -145,7 +146,8 @@
   .community-sponsor,
   .project-translators,
   .community-integrations-sponsor,
-  .maintainers {
+  .maintainers,
+  .managers {
     scroll-margin: 30px;
     .wrapper {
       display: inline-block;
@@ -166,7 +168,7 @@
         }
         img,
         svg {
-          margin: 40px 29px 10px;
+          margin: 30px 29px 10px;
           &.image.coldcard {
             border-radius: 0;
             height: auto;
@@ -193,7 +195,7 @@
   }
 
   #project-members a.project-member-avatar img {
-    margin: 40px 20px 10px;
+    margin: 30px 20px 10px;
   }
 
   .copyright {
@@ -273,7 +275,7 @@
   height: 64px;
 }
 
-.wiz-logo {
+.melroy-logo {
   width: 260px;
   max-width: 90vw;
   margin: auto;

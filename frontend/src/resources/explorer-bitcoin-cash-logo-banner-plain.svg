@@ -4,15 +4,16 @@
 <svg
    version="1.1"
    id="svg1"
-   width="128"
-   height="128"
-   viewBox="0 0 128 128"
+   width="580.40417"
+   height="110"
+   viewBox="0 0 580.40417 110"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <defs
      id="defs1" />
   <g
-     id="g1">
+     id="g1"
+     transform="translate(-10,-10)">
     <rect
        style="display:none;fill:#333333;fill-opacity:1;stroke-width:1.1"
        id="rect2-3"
@@ -37,5 +38,15 @@
        style="display:inline;fill:#4d4d4d;fill-opacity:1"
        d="M 120,60 C 120,60 95,91.924528 65,60 35,28.075472 10,60 10,60 V 20 c 0,0 0,-10 10,-10 10,0 90,0 90,0 0,0 10,0 10,10 0,10 0,40 0,40 z"
        id="path2" />
+    <text
+       xml:space="preserve"
+       style="font-size:74.6667px;font-family:Sans;-inkscape-font-specification:Sans;writing-mode:lr-tb;direction:ltr;fill:#ffffff;fill-opacity:1"
+       x="127.39623"
+       y="83.413292"
+       id="text2"><tspan
+         id="tspan2"
+         x="127.39623"
+         y="83.413292"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:74.6667px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans';fill:#ffffff">BCH Explorer</tspan></text>
   </g>
 </svg>

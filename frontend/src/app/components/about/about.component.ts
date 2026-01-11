@@ -64,46 +64,46 @@ export class AboutComponent implements OnInit {
     this.ogService.setManualOgImage('about.jpg');
     this.websocketService.want(['blocks']);
 
-    this.profiles$ = this.apiService.getAboutPageProfiles$().pipe(
-      tap((profiles: any) => {
-        const scrollToSponsors =
-          this.route.snapshot.fragment === 'community-sponsors';
-        if (
-          scrollToSponsors &&
-          !profiles?.whales?.length &&
-          !profiles?.chads?.length
-        ) {
-          return;
-        } else {
-          this.goToAnchor(scrollToSponsors);
-        }
-      }),
-      share()
-    );
+    // this.profiles$ = this.apiService.getAboutPageProfiles$().pipe(
+    //   tap((profiles: any) => {
+    //     const scrollToSponsors =
+    //       this.route.snapshot.fragment === 'community-sponsors';
+    //     if (
+    //       scrollToSponsors &&
+    //       !profiles?.whales?.length &&
+    //       !profiles?.chads?.length
+    //     ) {
+    //       return;
+    //     } else {
+    //       this.goToAnchor(scrollToSponsors);
+    //     }
+    //   }),
+    //   share()
+    // );
 
-    this.translators$ = this.apiService.getTranslators$().pipe(
-      map((translators) => {
-        for (const t in translators) {
-          if (translators[t] === '') {
-            delete translators[t];
-          }
-        }
-        return translators;
-      }),
-      tap(() => this.goToAnchor())
-    );
+    // this.translators$ = this.apiService.getTranslators$().pipe(
+    //   map((translators) => {
+    //     for (const t in translators) {
+    //       if (translators[t] === '') {
+    //         delete translators[t];
+    //       }
+    //     }
+    //     return translators;
+    //   }),
+    //   tap(() => this.goToAnchor())
+    // );
 
-    this.ogs$ = this.apiService.getOgs$();
+    // this.ogs$ = this.apiService.getOgs$();
 
-    this.allContributors$ = this.apiService.getContributor$().pipe(
-      map((contributors) => {
-        return {
-          regular: contributors.filter((user) => !user.core_constributor),
-          core: contributors.filter((user) => user.core_constributor),
-        };
-      }),
-      tap(() => this.goToAnchor())
-    );
+    // this.allContributors$ = this.apiService.getContributor$().pipe(
+    //   map((contributors) => {
+    //     return {
+    //       regular: contributors.filter((user) => !user.core_constributor),
+    //       core: contributors.filter((user) => user.core_constributor),
+    //     };
+    //   }),
+    //   tap(() => this.goToAnchor())
+    // );
   }
 
   ngAfterViewInit() {
