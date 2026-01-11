@@ -71,11 +71,10 @@
         <ng-container
           *ngIf="{ val: connectionState$ | async } as connectionState"
         >
+          <!-- TODO: Smaller logo for mobile -->
           <app-svg-images
             name="bchExplorer"
-            viewBox="0 0 200 26"
-            width="200"
-            height="26"
+            viewBox="0 0 680 180"
             class="bch-explorer-logo"
             [ngStyle]="{ opacity: connectionState.val === 2 ? 1 : 0.5 }"
           ></app-svg-images>
