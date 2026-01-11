@@ -154,9 +154,11 @@ class WalletApi {
       return;
     }
 
-    this.syncing = false; // We are not supporting wallet syncs
+    //this.syncing = true;
+    this.syncing = false; // Currently not supporting wallet sync (we are running BCHN, this needs changes)
+    return;
 
-    // if (config.WALLETS.AUTO && (Date.now() - this.lastSync) > POLL_FREQUENCY) {
+    // if (config.WALLETS.AUTO && Date.now() - this.lastSync > POLL_FREQUENCY) {
     //   try {
     //     // update list of active wallets
     //     this.lastSync = Date.now();
@@ -164,9 +166,7 @@ class WalletApi {
     //     const walletList: string[] = response.data;
     //     if (walletList) {
     //       // create a quick lookup dictionary of active wallets
-    //       const newWallets: Record<string, boolean> = Object.fromEntries(
-    //         walletList.map(wallet => [wallet, true])
-    //       );
+    //       const newWallets: Record<string, boolean> = Object.fromEntries(walletList.map((wallet) => [wallet, true]));
     //       for (const wallet of walletList) {
     //         // don't overwrite existing wallets
     //         if (!this.wallets[wallet]) {
@@ -185,7 +185,7 @@ class WalletApi {
     //     const treasuriesResponse = await axios.get(config.MEMPOOL_SERVICES.API + `/treasuries`);
     //     this.treasuries = treasuriesResponse.data || [];
     //   } catch (e) {
-    //     logger.err(`Error updating active wallets: ${(e instanceof Error ? e.message : e)}`);
+    //     logger.err(`Error updating active wallets: ${e instanceof Error ? e.message : e}`);
     //   }
 
     //   try {
@@ -197,14 +197,17 @@ class WalletApi {
     //       this.treasuries = treasuries;
     //     }
     //   } catch (e) {
-    //     logger.err(`Error updating active treasuries: ${(e instanceof Error ? e.message : e)}`);
+    //     logger.err(`Error updating active treasuries: ${e instanceof Error ? e.message : e}`);
     //   }
 
     //   // insert dummy address data to represent off-chain balance history
     //   for (const treasury of this.treasuries) {
     //     if (treasury.balances?.length) {
     //       if (this.wallets[treasury.wallet]) {
-    //         this.wallets[treasury.wallet].addresses['private'] = convertBalancesToWalletAddress(treasury.wallet, treasury.balances);
+    //         this.wallets[treasury.wallet].addresses['private'] = convertBalancesToWalletAddress(
+    //           treasury.wallet,
+    //           treasury.balances
+    //         );
     //       }
     //     }
     //   }
@@ -212,7 +215,7 @@ class WalletApi {
 
     // for (const walletKey of Object.keys(this.wallets)) {
     //   const wallet = this.wallets[walletKey];
-    //   if (wallet.lastPoll < (Date.now() - POLL_FREQUENCY)) {
+    //   if (wallet.lastPoll < Date.now() - POLL_FREQUENCY) {
     //     try {
     //       const response = await axios.get(config.MEMPOOL_SERVICES.API + `/wallets/${wallet.name}`);
     //       const addresses: Record<string, WalletAddress> = response.data;
@@ -233,7 +236,7 @@ class WalletApi {
     //       // Update cache
     //       await this.$saveCache();
     //     } catch (e) {
-    //       logger.err(`Error syncing wallet ${wallet.name}: ${(e instanceof Error ? e.message : e)}`);
+    //       logger.err(`Error syncing wallet ${wallet.name}: ${e instanceof Error ? e.message : e}`);
     //     }
     //   }
     // }
@@ -242,26 +245,28 @@ class WalletApi {
   }
 
   // resync address transactions from esplora
-  // async $syncWalletAddress(wallet: Wallet, address: WalletAddress): Promise<void> {
-  //   // fetch full transaction data if the address is new or still active and hasn't been synced in the last hour
-  //   const refreshTransactions = !wallet.addresses[address.address] || (address.active && (Date.now() - wallet.addresses[address.address].lastSync) > 60 * 60 * 1000);
-  //   if (refreshTransactions) {
-  //     try {
-  //       const summary = await bitcoinApi.$getAddressTransactionSummary(address.address);
-  //       const addressInfo = await bitcoinApi.$getAddress(address.address);
-  //       const walletAddress: WalletAddress = {
-  //         address: address.address,
-  //         active: address.active,
-  //         transactions: summary,
-  //         stats: addressInfo.chain_stats,
-  //         lastSync: Date.now(),
-  //       };
-  //       wallet.addresses[address.address] = walletAddress;
-  //     } catch (e) {
-  //       logger.err(`Error syncing wallet address ${address.address}: ${(e instanceof Error ? e.message : e)}`);
-  //     }
-  //   }
-  // }
+  async $syncWalletAddress(wallet: Wallet, address: WalletAddress): Promise<void> {
+    // fetch full transaction data if the address is new or still active and hasn't been synced in the last hour
+    const refreshTransactions =
+      !wallet.addresses[address.address] ||
+      (address.active && Date.now() - wallet.addresses[address.address].lastSync > 60 * 60 * 1000);
+    if (refreshTransactions) {
+      try {
+        const summary = await bitcoinApi.$getAddressTransactionSummary(address.address);
+        const addressInfo = await bitcoinApi.$getAddress(address.address);
+        const walletAddress: WalletAddress = {
+          address: address.address,
+          active: address.active,
+          transactions: summary,
+          stats: addressInfo.chain_stats,
+          lastSync: Date.now(),
+        };
+        wallet.addresses[address.address] = walletAddress;
+      } catch (e) {
+        logger.err(`Error syncing wallet address ${address.address}: ${e instanceof Error ? e.message : e}`);
+      }
+    }
+  }
 
   // check a new block for transactions that affect wallet address balances, and add relevant transactions to wallets
   processBlock(block: IEsploraApi.Block, blockTxs: TransactionExtended[]): Record<string, IEsploraApi.Transaction[]> {

@@ -107,6 +107,9 @@
     "STATISTICS_START_TIME": 1481932800,
     "SERVERS": []
   },
+  "MEMPOOL_SERVICES": {
+    "API": "__MEMPOOL_SERVICES_API__"
+  },
   "REDIS": {
     "ENABLED": false,
     "UNIX_SOCKET_PATH": "/tmp/redis.sock",

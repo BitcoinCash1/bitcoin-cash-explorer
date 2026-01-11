@@ -116,6 +116,9 @@ interface IConfig {
     STATISTICS_START_TIME: number | string;
     SERVERS: string[];
   };
+  MEMPOOL_SERVICES: {
+    API: string;
+  };
   REDIS: {
     ENABLED: boolean;
     UNIX_SOCKET_PATH: string;
@@ -251,6 +254,9 @@ const defaults: IConfig = {
     STATISTICS_START_TIME: 1481932800,
     SERVERS: [],
   },
+  MEMPOOL_SERVICES: {
+    API: '',
+  },
   REDIS: {
     ENABLED: false,
     UNIX_SOCKET_PATH: '',
@@ -284,6 +290,7 @@ class Config implements IConfig {
   EXTERNAL_DATA_SERVER: IConfig['EXTERNAL_DATA_SERVER'];
   MAXMIND: IConfig['MAXMIND'];
   REPLICATION: IConfig['REPLICATION'];
+  MEMPOOL_SERVICES: IConfig['MEMPOOL_SERVICES'];
   REDIS: IConfig['REDIS'];
   FIAT_PRICE: IConfig['FIAT_PRICE'];
   WALLETS: IConfig['WALLETS'];
@@ -292,6 +299,7 @@ class Config implements IConfig {
   constructor() {
     const configs = this.merge(configFromFile, defaults);
     this.MEMPOOL = configs.MEMPOOL;
+
     this.ELECTRUM = configs.ELECTRUM;
     this.CORE_RPC = configs.CORE_RPC;
     this.SECOND_CORE_RPC = configs.SECOND_CORE_RPC;
@@ -302,6 +310,7 @@ class Config implements IConfig {
     this.EXTERNAL_DATA_SERVER = configs.EXTERNAL_DATA_SERVER;
     this.MAXMIND = configs.MAXMIND;
     this.REPLICATION = configs.REPLICATION;
+    this.MEMPOOL_SERVICES = configs.MEMPOOL_SERVICES;
     this.REDIS = configs.REDIS;
     this.FIAT_PRICE = configs.FIAT_PRICE;
     this.WALLETS = configs.WALLETS;

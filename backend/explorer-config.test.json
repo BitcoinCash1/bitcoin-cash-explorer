@@ -115,6 +115,9 @@
     "STATISTICS_START_TIME": 1481932800,
     "SERVERS": []
   },
+  "MEMPOOL_SERVICES": {
+    "API": "http://explorer.melroy.org/api/v1/services"
+  },
   "STRATUM": {
     "ENABLED": false,
     "API": "http://localhost:1234"
