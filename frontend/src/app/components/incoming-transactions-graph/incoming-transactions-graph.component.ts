@@ -162,7 +162,7 @@ export class IncomingTransactionsGraphComponent
         },
         data: [
           {
-            yAxis: 1667,
+            yAxis: 1200,
             label: {
               show: false,
               color: '#ffffff',

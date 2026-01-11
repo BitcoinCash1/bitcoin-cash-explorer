@@ -237,7 +237,7 @@ export class BlockSizesGraphComponent implements OnInit {
                 axisLabel: {
                   color: 'rgb(110, 112, 121)',
                   formatter: (val) => {
-                    return `${Math.round(val * 100) / 100} MWU`;
+                    return `${Math.round(val * 100) / 100} MB`;
                   },
                 },
                 splitLine: {

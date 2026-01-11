@@ -15,6 +15,7 @@ import { ApiService } from '@app/services/api.service';
 import { SeoService } from '@app/services/seo.service';
 import { formatNumber } from '@angular/common';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
+import { HttpResponse } from '@angular/common/http';
 import {
   download,
   formatterXAxis,
@@ -123,21 +124,23 @@ export class BlockFeeRatesGraphComponent implements OnInit {
       });
     }
 
-    this.hrStatsObservable$ = combineLatest([
-      this.apiService.getHistoricalBlockFeeRates$('24h'),
-      this.stateService.rateUnits$,
-    ]).pipe(
-      map(([response, rateUnits]) => {
-        return {
-          blockCount: parseInt(response.headers.get('x-total-count'), 10),
-          avgMedianRate: response.body.length
-            ? response.body.reduce((acc, rate) => acc + rate.avgFee_50, 0) /
-              response.body.length
-            : 0,
-        };
-      }),
-      share()
-    );
+    this.hrStatsObservable$ = this.apiService
+      .getHistoricalBlockFeeRates$('24h')
+      .pipe(
+        map((response: HttpResponse<any[]>) => {
+          return {
+            blockCount: parseInt(
+              response.headers.get('x-total-count') || '0',
+              10
+            ),
+            avgMedianRate: response.body?.length
+              ? response.body.reduce((acc, rate) => acc + rate.avgFee_50, 0) /
+                response.body.length
+              : 0,
+          };
+        }),
+        share()
+      );
 
     this.statsObservable$ = combineLatest([
       this.widget
@@ -147,9 +150,8 @@ export class BlockFeeRatesGraphComponent implements OnInit {
             .valueChanges.pipe(
               startWith(this.radioGroupForm.controls.dateSpan.value)
             ),
-      this.stateService.rateUnits$,
     ]).pipe(
-      switchMap(([timespan, rateUnits]) => {
+      switchMap(([timespan]) => {
         if (!this.widget) {
           this.storageService.setValue('miningWindowPreference', timespan);
         }
@@ -274,13 +276,10 @@ export class BlockFeeRatesGraphComponent implements OnInit {
               });
             }
 
-            this.prepareChartOptions(
-              {
-                legends: legends,
-                series: series,
-              },
-              rateUnits === 'wu'
-            );
+            this.prepareChartOptions({
+              legends: legends,
+              series: series,
+            });
 
             this.isLoading = false;
             this.cd.markForCheck();
@@ -300,7 +299,7 @@ export class BlockFeeRatesGraphComponent implements OnInit {
     );
   }
 
-  prepareChartOptions(data, weightMode) {
+  prepareChartOptions(data) {
     this.chartOptions = {
       color: this.widget
         ? [
@@ -354,15 +353,9 @@ export class BlockFeeRatesGraphComponent implements OnInit {
           )}</b><br>`;
 
           for (const rate of data.reverse()) {
-            if (weightMode) {
-              tooltip += `${rate.marker} ${rate.seriesName}: ${(
-                rate.data[1] / 4
-              ).toFixed(2)} sats/WU<br>`;
-            } else {
-              tooltip += `${rate.marker} ${
-                rate.seriesName
-              }: ${rate.data[1].toFixed(2)} sats/vByte<br>`;
-            }
+            tooltip += `${rate.marker} ${
+              rate.seriesName
+            }: ${rate.data[1].toFixed(2)} sats/Byte<br>`;
           }
 
           if (['24h', '3d'].includes(this.timespan)) {
@@ -433,14 +426,9 @@ export class BlockFeeRatesGraphComponent implements OnInit {
               axisLabel: {
                 color: 'rgb(110, 112, 121)',
                 formatter: (val) => {
-                  if (weightMode) {
-                    val /= 4;
-                  }
                   const selectedPowerOfTen: any = selectPowerOfTen(val);
                   const newVal = Math.round(val / selectedPowerOfTen.divider);
-                  return `${newVal}${selectedPowerOfTen.unit} s/${
-                    weightMode ? 'WU' : 'vB'
-                  }`;
+                  return `${newVal}${selectedPowerOfTen.unit} s/B`;
                 },
               },
               splitLine: {
