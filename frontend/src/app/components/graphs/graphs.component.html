@@ -5,12 +5,12 @@
 >
   <a
     routerLinkActive="active"
-    class="btn btn-success w-33"
+    class="btn btn-success w-50"
     [routerLink]="['/graphs/mempool' | relativeUrl]"
     >Mempool</a
   >
 
-  <div ngbDropdown class="w-33" *ngIf="stateService.env.MINING_DASHBOARD">
+  <div ngbDropdown class="w-50" *ngIf="stateService.env.MINING_DASHBOARD">
     <button
       class="btn btn-success w-100"
       id="dropdownBasic1"
