@@ -769,8 +769,8 @@ class BlocksRepository {
         CAST(AVG(fees) as INT) as avgFees,
         prices.USD
         FROM blocks
-        JOIN blocks_prices on blocks_prices.height = blocks.height
-        JOIN prices on prices.id = blocks_prices.price_id
+        LEFT JOIN blocks_prices on blocks_prices.height = blocks.height
+        LEFT JOIN prices on prices.id = blocks_prices.price_id
         WHERE stale = 0
       `;
 
@@ -801,8 +801,8 @@ class BlocksRepository {
         CAST(AVG(reward) as INT) as avgRewards,
         prices.USD
         FROM blocks
-        JOIN blocks_prices on blocks_prices.height = blocks.height
-        JOIN prices on prices.id = blocks_prices.price_id
+        LEFT JOIN blocks_prices on blocks_prices.height = blocks.height
+        LEFT JOIN prices on prices.id = blocks_prices.price_id
         WHERE stale = 0
       `;
 
