@@ -109,17 +109,6 @@
           <app-fee-rate [fee]="feeRate"></app-fee-rate>
         </td>
       </tr>
-      <tr *ngIf="hasEffectiveRate && effectiveRate != null">
-        <td
-          class="label"
-          i18n="transaction.effective-fee-rate|Effective transaction fee rate"
-        >
-          Effective fee rate
-        </td>
-        <td class="value">
-          <app-fee-rate [fee]="effectiveRate"></app-fee-rate>
-        </td>
-      </tr>
       <tr *only-size>
         <td class="label" i18n="transaction.size|Transaction Size">Size</td>
         <td class="value" [innerHTML]="'&lrm;' + (size | bytes: 2)"></td>
