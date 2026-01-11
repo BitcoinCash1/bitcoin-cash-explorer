@@ -16,7 +16,7 @@ interface MempoolBlocksData {
 
 interface MempoolInfoData {
   memPoolInfo: MempoolInfo;
-  vBytesPerSecond: number;
+  bytesPerSecond: number;
   progressWidth: string;
   progressColor: string;
 }
@@ -33,7 +33,7 @@ export class FooterComponent implements OnInit {
 
   mempoolBlocksData$: Observable<MempoolBlocksData>;
   mempoolInfoData$: Observable<MempoolInfoData>;
-  vBytesPerSecondLimit = 1667;
+  bytesPerSecondLimit = 1200;
   isLoadingWebSocket$: Observable<boolean>;
   mempoolLoadingStatus$: Observable<number>;
 
@@ -53,8 +53,8 @@ export class FooterComponent implements OnInit {
     ]).pipe(
       map(([mempoolInfo, bytesPerSecond]) => {
         const percent = Math.round(
-          (Math.min(bytesPerSecond, this.vBytesPerSecondLimit) /
-            this.vBytesPerSecondLimit) *
+          (Math.min(bytesPerSecond, this.bytesPerSecondLimit) /
+            this.bytesPerSecondLimit) *
             100
         );
 
@@ -86,7 +86,7 @@ export class FooterComponent implements OnInit {
 
         return {
           memPoolInfo: mempoolInfo,
-          vBytesPerSecond: bytesPerSecond,
+          bytesPerSecond: bytesPerSecond,
           progressWidth: percent + '%',
           progressColor: progressColor,
           mempoolSizeProgress: mempoolSizeProgress,

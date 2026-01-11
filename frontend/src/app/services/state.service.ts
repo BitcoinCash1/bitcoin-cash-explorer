@@ -439,7 +439,7 @@ export class StateService {
     const rateUnitPreference = this.storageService.getValue(
       'rate-unit-preference'
     );
-    this.rateUnits$ = new BehaviorSubject<string>(rateUnitPreference || 'vb');
+    this.rateUnits$ = new BehaviorSubject<string>(rateUnitPreference || 'b');
 
     const blockDisplayModePreference = this.storageService.getValue(
       'block-display-mode-preference'

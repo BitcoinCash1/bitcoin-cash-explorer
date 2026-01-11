@@ -19,10 +19,7 @@ import { Subscription } from 'rxjs';
 export class RateUnitSelectorComponent implements OnInit, OnDestroy {
   rateUnitForm: UntypedFormGroup;
   rateUnitSub: Subscription;
-  units = [
-    { name: 'vb', label: 'sat/vB' },
-    { name: 'wu', label: 'sat/WU' },
-  ];
+  units = [{ name: 'b', label: 'sat/B' }];
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -32,7 +29,7 @@ export class RateUnitSelectorComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.rateUnitForm = this.formBuilder.group({
-      rateUnits: ['vb'],
+      rateUnits: ['b'],
     });
     this.rateUnitSub = this.stateService.rateUnits$.subscribe((units) => {
       this.rateUnitForm.get('rateUnits')?.setValue(units);

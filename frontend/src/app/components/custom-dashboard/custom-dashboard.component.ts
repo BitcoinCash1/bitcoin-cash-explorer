@@ -55,7 +55,7 @@ interface MempoolBlocksData {
 
 interface MempoolInfoData {
   memPoolInfo: MempoolInfo;
-  vBytesPerSecond: number;
+  bytesPerSecond: number;
   progressWidth: string;
   progressColor: string;
 }
@@ -79,7 +79,7 @@ export class CustomDashboardComponent
   mempoolBlocksData$: Observable<MempoolBlocksData>;
   mempoolInfoData$: Observable<MempoolInfoData>;
   mempoolLoadingStatus$: Observable<number>;
-  vBytesPerSecondLimit = 1667;
+  bytesPerSecondLimit = 1667;
   transactions$: Observable<TransactionStripped[]>;
   blocks$: Observable<BlockExtended[]>;
   latestBlockHeight: number;
@@ -235,8 +235,8 @@ export class CustomDashboardComponent
     ]).pipe(
       map(([mempoolInfo, bytesPerSecond]) => {
         const percent = Math.round(
-          (Math.min(bytesPerSecond, this.vBytesPerSecondLimit) /
-            this.vBytesPerSecondLimit) *
+          (Math.min(bytesPerSecond, this.bytesPerSecondLimit) /
+            this.bytesPerSecondLimit) *
             100
         );
 
@@ -259,7 +259,7 @@ export class CustomDashboardComponent
 
         return {
           memPoolInfo: mempoolInfo,
-          vBytesPerSecond: bytesPerSecond,
+          bytesPerSecond: bytesPerSecond,
           progressWidth: percent + '%',
           progressColor: progressColor,
           mempoolSizeProgress: mempoolSizeProgress,
