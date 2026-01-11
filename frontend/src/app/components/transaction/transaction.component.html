@@ -204,35 +204,16 @@
                 <td i18n="transaction.size|Transaction Size">Size</td>
                 <td [innerHTML]="'&lrm;' + (tx.size | bytes: 2)"></td>
               </tr>
-              <!-- <tr *ngIf="adjustedSize != null">
-                <td>
-                  <ng-container
-                    i18n="transaction.adjusted-size|Transaction Adjusted Size"
-                    >Adjusted size</ng-container
-                  >
-                  <a
-                    class="info-link"
-                    [routerLink]="['/docs/faq/' | relativeUrl]"
-                    fragment="what-is-adjusted-size"
-                  >
-                    <fa-icon
-                      [icon]="['fas', 'info-circle']"
-                      [fixedWidth]="true"
-                    ></fa-icon>
-                  </a>
-                </td>
-                <td [innerHTML]="'&lrm;' + (adjustedSize | bytes: 2)"></td>
-              </tr> -->
+              <tr>
+                <td i18n="transaction.version">Version</td>
+                <td [innerHTML]="'&lrm;' + (tx.version | number)"></td>
+              </tr>
             </tbody>
           </table>
         </div>
         <div class="col-sm">
           <table class="table table-borderless table-striped">
             <tbody>
-              <tr>
-                <td i18n="transaction.version">Version</td>
-                <td [innerHTML]="'&lrm;' + (tx.version | number)"></td>
-              </tr>
               <tr>
                 <td i18n="transaction.locktime">Locktime</td>
                 <td [innerHTML]="'&lrm;' + (tx.locktime | number)"></td>
