@@ -6,7 +6,7 @@ import { LanguageService } from '@app/services/language.service';
 import { EnterpriseService } from '@app/services/enterprise.service';
 import { NavigationService } from '@app/services/navigation.service';
 import { MenuComponent } from '@components/menu/menu.component';
-import { StorageService } from '@app/services/storage.service';
+// import { StorageService } from '@app/services/storage.service';
 
 @Component({
   selector: 'app-master-page',
@@ -45,7 +45,7 @@ export class MasterPageComponent implements OnInit, OnDestroy {
     private languageService: LanguageService,
     private enterpriseService: EnterpriseService,
     private navigationService: NavigationService,
-    private storageService: StorageService,
+    // private storageService: StorageService,
     private router: Router
   ) {}
 
@@ -83,8 +83,6 @@ export class MasterPageComponent implements OnInit, OnDestroy {
       this.env.TESTNET_ENABLED,
       this.env.TESTNET4_ENABLED,
       this.env.SIGNET_ENABLED,
-      this.env.LIQUID_ENABLED,
-      this.env.LIQUID_TESTNET_ENABLED,
       this.env.MAINNET_ENABLED,
     ];
     const enabledNetworksCount = networks.filter(

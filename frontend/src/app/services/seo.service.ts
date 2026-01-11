@@ -9,7 +9,7 @@ import { StateService } from '@app/services/state.service';
 })
 export class SeoService {
   network = '';
-  baseTitle = 'explorer';
+  baseTitle = '';
   baseDescription =
     'Explore the full  Cash ecosystem&reg; with the BCH Explorer&reg;.';
   baseDomain = 'explorer.melroy.org';
@@ -125,20 +125,19 @@ export class SeoService {
   }
 
   getTitle(): string {
+    // I do not want to return the this baseTitle + ' - ' +
     if (this.network === 'testnet') {
-      return this.baseTitle + ' - Bitcoin Cash Testnet3';
+      return 'Bitcoin Cash Testnet3';
     }
     if (this.network === 'testnet4') {
-      return this.baseTitle + ' - Bitcoin Cash Testnet4';
+      return 'Bitcoin Cash Testnet4';
     }
     if (this.network === 'signet') {
-      return this.baseTitle + ' - Bitcoin Cash Signet';
+      return 'Bitcoin Cash Signet';
     }
+    // I do not want to return the this baseTitle + ' - ' +
     return (
-      this.baseTitle +
-      ' - ' +
-      (this.network ? this.ucfirst(this.network) : 'Bitcoin Cash') +
-      ' Explorer'
+      (this.network ? this.ucfirst(this.network) : 'Bitcoin Cash') + ' Explorer'
     );
   }
 
