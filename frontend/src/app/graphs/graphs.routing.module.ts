@@ -49,7 +49,7 @@ const routes: Routes = [
       },
       {
         path: 'mempool-block/:id',
-        data: { networks: ['bitcoin', 'liquid'] },
+        data: { networks: ['bitcoin'] },
         component: StartComponent,
         children: [
           {
@@ -78,12 +78,12 @@ const routes: Routes = [
       },
       {
         path: 'graphs',
-        data: { networks: ['bitcoin', 'liquid'] },
+        data: { networks: ['bitcoin'] },
         component: GraphsComponent,
         children: [
           {
             path: 'mempool',
-            data: { networks: ['bitcoin', 'liquid'] },
+            data: { networks: ['bitcoin'] },
             component: StatisticsComponent,
           },
           {
