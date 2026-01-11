@@ -91,16 +91,6 @@ class Mining {
   }
 
   /**
-   * Get historical block weights
-   */
-  public async $getHistoricalBlockWeights(interval: string | null = null): Promise<any> {
-    return await BlocksRepository.$getHistoricalBlockWeights(
-      this.getTimeRange(interval),
-      Common.getSqlInterval(interval)
-    );
-  }
-
-  /**
    * Generate high level overview of the pool ranks and general stats
    */
   public async $getPoolsStats(interval: string | null): Promise<object> {

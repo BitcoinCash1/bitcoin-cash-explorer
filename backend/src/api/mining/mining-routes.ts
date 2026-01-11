@@ -27,10 +27,7 @@ class MiningRoutes {
       .get(config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/fees', this.$getBlockFeesTimespan)
       .get(config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/rewards/:interval', this.$getHistoricalBlockRewards)
       .get(config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/fee-rates/:interval', this.$getHistoricalBlockFeeRates)
-      .get(
-        config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/sizes-weights/:interval',
-        this.$getHistoricalBlockSizeAndWeight
-      )
+      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/sizes/:interval', this.$getHistoricalBlockSize)
       .get(config.MEMPOOL.API_URL_PREFIX + 'mining/difficulty-adjustments/:interval', this.$getDifficultyAdjustments)
       .get(config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/predictions/:interval', this.$getHistoricalBlocksHealth)
       .get(config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/audit/scores', this.$getBlockAuditScores)
@@ -265,10 +262,9 @@ class MiningRoutes {
     }
   }
 
-  private async $getHistoricalBlockSizeAndWeight(req: Request, res: Response) {
+  private async $getHistoricalBlockSize(req: Request, res: Response) {
     try {
       const blockSizes = await mining.$getHistoricalBlockSizes(req.params.interval);
-      const blockWeights = await mining.$getHistoricalBlockWeights(req.params.interval);
       const blockCount = await BlocksRepository.$blockCount(null, null);
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
@@ -276,10 +272,9 @@ class MiningRoutes {
       res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
       res.json({
         sizes: blockSizes,
-        weights: blockWeights,
       });
     } catch (e) {
-      handleError(req, res, 500, 'Failed to get historical block size and weight');
+      handleError(req, res, 500, 'Failed to get historical block size');
     }
   }
 

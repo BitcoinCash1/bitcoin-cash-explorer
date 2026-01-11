@@ -72,9 +72,9 @@
       <a
         class="dropdown-item"
         routerLinkActive="active"
-        [routerLink]="['/graphs/mining/block-sizes-weights' | relativeUrl]"
-        i18n="mining.block-sizes-weights"
-        >Block Sizes and Weights</a
+        [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
+        i18n="mining.block-sizes"
+        >Block Sizes</a
       >
       <a
         *ngIf="stateService.env.AUDIT"

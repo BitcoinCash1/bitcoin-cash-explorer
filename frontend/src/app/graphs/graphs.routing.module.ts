@@ -6,7 +6,7 @@ import { BlockFeesGraphComponent } from '@components/block-fees-graph/block-fees
 import { BlockFeesSubsidyGraphComponent } from '@components/block-fees-subsidy-graph/block-fees-subsidy-graph.component';
 import { BlockRewardsGraphComponent } from '@components/block-rewards-graph/block-rewards-graph.component';
 import { PriceChartComponent } from '@components/price-chart/price-chart.component';
-import { BlockSizesWeightsGraphComponent } from '@components/block-sizes-weights-graph/block-sizes-weights-graph.component';
+import { BlockSizesGraphComponent } from '@components/block-sizes-graph/block-sizes-graph.component';
 import { GraphsComponent } from '@components/graphs/graphs.component';
 import { HashrateChartComponent } from '@components/hashrate-chart/hashrate-chart.component';
 import { HashrateChartPoolsComponent } from '@components/hashrates-chart-pools/hashrate-chart-pools.component';
@@ -122,9 +122,9 @@ const routes: Routes = [
             component: BlockFeeRatesGraphComponent,
           },
           {
-            path: 'mining/block-sizes-weights',
+            path: 'mining/block-sizes',
             data: { networks: ['bitcoin'] },
-            component: BlockSizesWeightsGraphComponent,
+            component: BlockSizesGraphComponent,
           },
           {
             path: '',

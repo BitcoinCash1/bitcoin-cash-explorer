@@ -873,33 +873,7 @@ class BlocksRepository {
       const [rows]: any = await DB.query(query);
       return rows;
     } catch (e) {
-      logger.err('Cannot generate block size and weight history. Reason: ' + (e instanceof Error ? e.message : e));
-      throw e;
-    }
-  }
-
-  /**
-   * Get the historical averaged block weights
-   */
-  public async $getHistoricalBlockWeights(div: number, interval: string | null): Promise<any> {
-    try {
-      let query = `SELECT
-        CAST(AVG(height) as INT) as avgHeight,
-        CAST(AVG(UNIX_TIMESTAMP(blockTimestamp)) as INT) as timestamp,
-        CAST(AVG(weight) as INT) as avgWeight
-      FROM blocks
-      WHERE stale = 0`;
-
-      if (interval !== null) {
-        query += ` AND blockTimestamp BETWEEN DATE_SUB(NOW(), INTERVAL ${interval}) AND NOW()`;
-      }
-
-      query += ` GROUP BY UNIX_TIMESTAMP(blockTimestamp) DIV ${div}`;
-
-      const [rows]: any = await DB.query(query);
-      return rows;
-    } catch (e) {
-      logger.err('Cannot generate block size and weight history. Reason: ' + (e instanceof Error ? e.message : e));
+      logger.err('Cannot generate block size history. Reason: ' + (e instanceof Error ? e.message : e));
       throw e;
     }
   }
@@ -915,7 +889,7 @@ class BlocksRepository {
       )) as RowDataPacket[][];
       return rows as { height: number; hash: string; stale: boolean }[];
     } catch (e) {
-      logger.err('Cannot generate block size and weight history. Reason: ' + (e instanceof Error ? e.message : e));
+      logger.err('Cannot generate block size history. Reason: ' + (e instanceof Error ? e.message : e));
       throw e;
     }
   }
@@ -935,7 +909,7 @@ class BlocksRepository {
       }
       return rows[rows.length - 1];
     } catch (e) {
-      logger.err('Cannot generate block size and weight history. Reason: ' + (e instanceof Error ? e.message : e));
+      logger.err('Cannot generate block size history. Reason: ' + (e instanceof Error ? e.message : e));
       throw e;
     }
   }

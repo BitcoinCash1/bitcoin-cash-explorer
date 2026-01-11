@@ -5680,21 +5680,21 @@ export const restApiDocsData = [
     type: 'endpoint',
     category: 'mining',
     httpRequestMethod: 'GET',
-    fragment: 'get-sizes-weights',
-    title: 'GET Block Sizes and Weights',
+    fragment: 'get-sizes',
+    title: 'GET Block Sizes',
     description: {
       default:
-        '<p>Returns average size (bytes) and average weight (weight units) for blocks in the specified <code>:timePeriod</code>, ordered oldest to newest. <code>:timePeriod</code> can be any of the following: ' +
+        '<p>Returns average size (bytes) for blocks in the specified <code>:timePeriod</code>, ordered oldest to newest. <code>:timePeriod</code> can be any of the following: ' +
         miningTimeIntervals +
         '.</p><p>For <code>24h</code> and <code>3d</code> time periods, every block is included and figures are exact (not averages). For the <code>1w</code> time period, figures may be averages depending on how fast blocks were found around a particular timestamp. For other time periods, figures are averages.</p>',
     },
-    urlString: '/v1/mining/blocks/sizes-weights/:timePeriod',
+    urlString: '/v1/mining/blocks/sizes/:timePeriod',
     showConditions: bitcoinNetworks,
     showJsExamples: showJsExamplesDefaultFalse,
     codeExample: {
       default: {
         codeTemplate: {
-          curl: `/api/v1/mining/blocks/sizes-weights/%{1}`,
+          curl: `/api/v1/mining/blocks/sizes/%{1}`,
           commonJS: ``,
           esModule: ``,
         },
@@ -5725,29 +5725,6 @@ export const restApiDocsData = [
       "avgSize": 1108166
     },
     ...
-  ],
-  "weights": [
-    {
-      "avgHeight": 576650,
-      "timestamp": 1558212081,
-      "avgWeight": 3994002
-    },
-    {
-      "avgHeight": 576715,
-      "timestamp": 1558246272,
-      "avgWeight": 3756312
-    },
-    {
-      "avgHeight": 576797,
-      "timestamp": 1558289379,
-      "avgWeight": 3719625
-    },
-    {
-      "avgHeight": 576885,
-      "timestamp": 1558330184,
-      "avgWeight": 3631381
-    },
-    ...
   ]
 }`,
         },
@@ -5768,19 +5745,6 @@ export const restApiDocsData = [
       "avgSize": 21679
     },
     ...
-  ],
-  "weights": [
-    {
-      "avgHeight": 1517188,
-      "timestamp": 1558262730,
-      "avgWeight": 74921
-    },
-    {
-      "avgHeight": 1517275,
-      "timestamp": 1558290933,
-      "avgWeight": 65164
-    },
-    ...
   ]
 }`,
         },
@@ -5799,19 +5763,6 @@ export const restApiDocsData = [
       "avgHeight": 266,
       "timestamp": 1598982991,
       "avgSize": 330
-    },
-    ...
-  ],
-  "weights": [
-    {
-      "avgHeight": 83,
-      "timestamp": 1598937527,
-      "avgWeight": 1209
-    },
-    {
-      "avgHeight": 266,
-      "timestamp": 1598982991,
-      "avgWeight": 1212
     },
     ...
   ]

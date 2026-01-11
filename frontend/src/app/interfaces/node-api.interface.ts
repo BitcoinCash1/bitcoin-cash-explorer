@@ -201,16 +201,11 @@ export interface RewardStats {
   totalTx: number;
 }
 
-export interface BlockSizesAndWeights {
+export interface BlockSizes {
   sizes: {
     timestamp: number;
     avgHeight: number;
     avgSize: number;
-  }[];
-  weights: {
-    timestamp: number;
-    avgHeight: number;
-    avgWeight: number;
   }[];
 }
 

@@ -9,7 +9,7 @@ import {
   TransactionStripped,
   RewardStats,
   AuditScore,
-  BlockSizesAndWeights,
+  BlockSizes,
   BlockAudit,
   TestMempoolAcceptResult,
   WalletAddress,
@@ -482,13 +482,13 @@ export class ApiService {
     );
   }
 
-  getHistoricalBlockSizesAndWeights$(
+  getHistoricalBlockSizes$(
     interval: string | undefined
-  ): Observable<HttpResponse<BlockSizesAndWeights>> {
-    return this.httpClient.get<BlockSizesAndWeights>(
+  ): Observable<HttpResponse<BlockSizes>> {
+    return this.httpClient.get<BlockSizes>(
       this.apiBaseUrl +
         this.apiBasePath +
-        `/api/v1/mining/blocks/sizes-weights` +
+        `/api/v1/mining/blocks/sizes` +
         (interval !== undefined ? `/${interval}` : ''),
       { observe: 'response' }
     );

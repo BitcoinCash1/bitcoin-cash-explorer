@@ -1,7 +1,7 @@
 <div class="full-container">
   <div class="card-header mb-0 mb-md-4">
     <div class="d-flex d-md-block align-items-baseline">
-      <span i18n="mining.block-sizes-weights">Block Sizes and Weights</span>
+      <span i18n="mining.block-sizes">Block Sizes</span>
       <button
         class="btn p-0 pl-2"
         style="margin: 0 0 4px 0px"
@@ -14,7 +14,7 @@
     <form
       [formGroup]="radioGroupForm"
       class="formRadioGroup"
-      *ngIf="blockSizesWeightsObservable$ | async as stats"
+      *ngIf="blockSizesObservable$ | async as stats"
     >
       <div class="btn-group btn-group-toggle" name="radioBasic">
         <label
@@ -26,7 +26,7 @@
             type="radio"
             [value]="'24h'"
             fragment="24h"
-            [routerLink]="['/graphs/mining/block-sizes-weights' | relativeUrl]"
+            [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
           24h
@@ -40,7 +40,7 @@
             type="radio"
             [value]="'3d'"
             fragment="3d"
-            [routerLink]="['/graphs/mining/block-sizes-weights' | relativeUrl]"
+            [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
           3D
@@ -54,7 +54,7 @@
             type="radio"
             [value]="'1w'"
             fragment="1w"
-            [routerLink]="['/graphs/mining/block-sizes-weights' | relativeUrl]"
+            [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
           1W
@@ -68,7 +68,7 @@
             type="radio"
             [value]="'1m'"
             fragment="1m"
-            [routerLink]="['/graphs/mining/block-sizes-weights' | relativeUrl]"
+            [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
           1M
@@ -82,7 +82,7 @@
             type="radio"
             [value]="'3m'"
             fragment="3m"
-            [routerLink]="['/graphs/mining/block-sizes-weights' | relativeUrl]"
+            [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
           3M
@@ -96,7 +96,7 @@
             type="radio"
             [value]="'6m'"
             fragment="6m"
-            [routerLink]="['/graphs/mining/block-sizes-weights' | relativeUrl]"
+            [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
           6M
@@ -110,7 +110,7 @@
             type="radio"
             [value]="'1y'"
             fragment="1y"
-            [routerLink]="['/graphs/mining/block-sizes-weights' | relativeUrl]"
+            [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
           1Y
@@ -124,7 +124,7 @@
             type="radio"
             [value]="'2y'"
             fragment="2y"
-            [routerLink]="['/graphs/mining/block-sizes-weights' | relativeUrl]"
+            [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
           2Y
@@ -138,7 +138,7 @@
             type="radio"
             [value]="'3y'"
             fragment="3y"
-            [routerLink]="['/graphs/mining/block-sizes-weights' | relativeUrl]"
+            [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
           3Y
@@ -151,7 +151,7 @@
             type="radio"
             [value]="'all'"
             fragment="all"
-            [routerLink]="['/graphs/mining/block-sizes-weights' | relativeUrl]"
+            [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
           ALL
