@@ -5,7 +5,7 @@
         <h5 class="card-title" i18n="dashboard.bch-holdings">BCH Holdings</h5>
         <div class="card-text">
           {{ total / 100_000_000 | number: "1.2-2" }}
-          <span class="symbol" i18n="shared.bch|BTC">BCH</span>
+          <span class="symbol" i18n="shared.bch|BCH">BCH</span>
         </div>
         <div class="symbol">
           <app-fiat [value]="total"></app-fiat>
@@ -16,7 +16,7 @@
         <div class="card-text">
           {{ delta7d > 0 ? "+" : ""
           }}{{ delta7d / 100_000_000 | number: "1.2-2" }}
-          <span class="symbol" i18n="shared.bch|BTC">BTC</span>
+          <span class="symbol" i18n="shared.bch|BCH">BCH</span>
         </div>
         <div class="symbol">
           <app-fiat [value]="delta7d"></app-fiat>
@@ -27,7 +27,7 @@
         <div class="card-text">
           {{ delta30d > 0 ? "+" : ""
           }}{{ delta30d / 100_000_000 | number: "1.2-2" }}
-          <span class="symbol" i18n="shared.bch|BTC">BTC</span>
+          <span class="symbol" i18n="shared.bch|BCH">BCH</span>
         </div>
         <div class="symbol">
           <app-fiat [value]="delta30d"></app-fiat>

@@ -87,7 +87,7 @@ export class CalculatorComponent implements OnInit {
       this.form.get('bitcoin').setValue(bitcoinRate, { emitEvent: false });
     });
 
-    // Default form with 1 BTC
+    // Default form with 1 BCH
     this.form.get('bitcoin').setValue(1, { emitEvent: true });
   }
 

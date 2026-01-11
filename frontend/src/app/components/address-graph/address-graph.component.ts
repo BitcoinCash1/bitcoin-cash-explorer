@@ -234,7 +234,7 @@ export class AddressGraphComponent implements OnChanges, OnDestroy {
     if (this.period !== 'all') {
       const start = now - periodSeconds[this.period] * 1000;
       this.data = this.data.filter((d) => d[0] >= start);
-      const startFiat = this.data[0]?.[0] ?? start; // Make sure USD data starts at the same time as BTC data
+      const startFiat = this.data[0]?.[0] ?? start; // Make sure USD data starts at the same time as BCH data
       this.fiatData = this.fiatData.filter((d) => d[0] >= startFiat);
     }
     this.data.push({
@@ -302,7 +302,7 @@ export class AddressGraphComponent implements OnChanges, OnDestroy {
               ],
               selected: this.selected,
               formatter: function (name) {
-                return name === 'Fiat' ? 'USD' : 'BTC';
+                return name === 'Fiat' ? 'USD' : 'BCH';
               },
             }
           : undefined,
@@ -321,11 +321,11 @@ export class AddressGraphComponent implements OnChanges, OnDestroy {
         },
         borderColor: '#000',
         formatter: function (data) {
-          const btcData = data.filter((d) => d.seriesName !== 'Fiat');
+          const bchData = data.filter((d) => d.seriesName !== 'Fiat');
           const fiatData = data.filter((d) => d.seriesName === 'Fiat');
-          data = btcData.length ? btcData : fiatData;
+          data = bchData.length ? bchData : fiatData;
           if (
-            (!btcData.length || !btcData[0]?.data?.[2]?.txid) &&
+            (!bchData.length || !bchData[0]?.data?.[2]?.txid) &&
             !fiatData.length
           ) {
             return '';
@@ -353,12 +353,12 @@ export class AddressGraphComponent implements OnChanges, OnDestroy {
             tooltip += `<div><b>${header}</b></div>`;
           }
 
-          const formatBTC = (val, decimal) =>
+          const formatBCH = (val, decimal) =>
             (val / 100_000_000).toFixed(decimal);
           const formatFiat = (val) =>
             this.fiatCurrencyPipe.transform(val, null, 'USD');
 
-          const btcVal = btcData.reduce(
+          const bchVal = bchData.reduce(
             (total, d) => total + d.data[2].value,
             0
           );
@@ -367,38 +367,38 @@ export class AddressGraphComponent implements OnChanges, OnDestroy {
               total + (d.data[2].value * d.data[2].price) / 100_000_000,
             0
           );
-          const btcColor =
-            btcVal === 0 ? '' : btcVal > 0 ? 'var(--green)' : 'var(--red)';
+          const bchColor =
+            bchVal === 0 ? '' : bchVal > 0 ? 'var(--green)' : 'var(--red)';
           const fiatColor =
             fiatVal === 0 ? '' : fiatVal > 0 ? 'var(--green)' : 'var(--red)';
-          const btcSymbol = btcVal > 0 ? '+' : '';
+          const bchSymbol = bchVal > 0 ? '+' : '';
           const fiatSymbol = fiatVal > 0 ? '+' : '';
 
-          if (btcData.length && fiatData.length) {
-            tooltip += `<div style="display: flex; justify-content: space-between; color: ${btcColor}">
-              <span style="text-align: left; margin-right: 10px;">${btcSymbol} ${formatBTC(
-                btcVal,
+          if (bchData.length && fiatData.length) {
+            tooltip += `<div style="display: flex; justify-content: space-between; color: ${bchColor}">
+              <span style="text-align: left; margin-right: 10px;">${bchSymbol} ${formatBCH(
+                bchVal,
                 4
-              )} BTC</span>
+              )} BCH</span>
               <span style="text-align: right;">${fiatSymbol} ${formatFiat(
                 fiatVal
               )}</span>
             </div>
             <div style="display: flex; justify-content: space-between;">
-              <span style="text-align: left; margin-right: 10px;">${formatBTC(
-                btcData[0].data[1],
+              <span style="text-align: left; margin-right: 10px;">${formatBCH(
+                bchData[0].data[1],
                 4
-              )} BTC</span>
+              )} BCH</span>
               <span style="text-align: right;">${formatFiat(
                 fiatData[0].data[1]
               )}</span>
             </div>`;
-          } else if (btcData.length) {
-            tooltip += `<span style="color: ${btcColor}">${btcSymbol} ${formatBTC(
-              btcVal,
+          } else if (bchData.length) {
+            tooltip += `<span style="color: ${bchColor}">${bchSymbol} ${formatBCH(
+              bchVal,
               8
-            )} BTC</span><br>
-              <span>${formatBTC(data[0].data[1], 8)} BTC</span>`;
+            )} BCH</span><br>
+              <span>${formatBCH(data[0].data[1], 8)} BCH</span>`;
           } else {
             if (
               this.selected[
@@ -406,10 +406,10 @@ export class AddressGraphComponent implements OnChanges, OnDestroy {
               ]
             ) {
               tooltip += `<div style="display: flex; justify-content: space-between;">
-                <span style="text-align: left; margin-right: 10px;">${formatBTC(
+                <span style="text-align: left; margin-right: 10px;">${formatBCH(
                   data[0].data[3],
                   4
-                )} BTC</span>
+                )} BCH</span>
                 <span style="text-align: right;">${formatFiat(
                   data[0].data[1]
                 )}</span>
@@ -452,18 +452,18 @@ export class AddressGraphComponent implements OnChanges, OnDestroy {
                   0,
                   undefined,
                   true
-                )} BTC`;
+                )} BCH`;
               } else if (valSpan > 1_000_000_000) {
                 return `${this.amountShortenerPipe.transform(
                   Math.round(val / 100_000_000),
                   2,
                   undefined,
                   true
-                )} BTC`;
+                )} BCH`;
               } else if (valSpan > 100_000_000) {
-                return `${(val / 100_000_000).toFixed(1)} BTC`;
+                return `${(val / 100_000_000).toFixed(1)} BCH`;
               } else if (valSpan > 10_000_000) {
-                return `${(val / 100_000_000).toFixed(2)} BTC`;
+                return `${(val / 100_000_000).toFixed(2)} BCH`;
               } else if (valSpan > 1_000_000) {
                 if (maxValue > 100_000_000_000) {
                   return `${this.amountShortenerPipe.transform(
@@ -471,9 +471,9 @@ export class AddressGraphComponent implements OnChanges, OnDestroy {
                     3,
                     undefined,
                     true
-                  )} BTC`;
+                  )} BCH`;
                 }
-                return `${(val / 100_000_000).toFixed(3)} BTC`;
+                return `${(val / 100_000_000).toFixed(3)} BCH`;
               } else {
                 return `${this.amountShortenerPipe.transform(
                   val,

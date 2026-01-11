@@ -370,7 +370,7 @@ export class TreasuriesGraphComponent implements OnInit, OnChanges, OnDestroy {
                   <span style="text-align: left; margin-right: 10px;">${marker} ${
                     treasury.name || treasury.enterprise || treasury.wallet
                   }:</span>
-                  <span style="text-align: right;">${this.formatBTC(
+                  <span style="text-align: right;">${this.formatBCH(
                     balance
                   )}</span>
                 </div>`;
@@ -404,20 +404,20 @@ export class TreasuriesGraphComponent implements OnInit, OnChanges, OnDestroy {
                   0,
                   undefined,
                   true
-                )} BTC`;
+                )} BCH`;
               } else if (valSpan > 1_000_000_000) {
                 return `${this.amountShortenerPipe.transform(
                   Math.round(val / 100_000_000),
                   2,
                   undefined,
                   true
-                )} BTC`;
+                )} BCH`;
               } else if (valSpan > 100_000_000) {
-                return `${(val / 100_000_000).toFixed(1)} BTC`;
+                return `${(val / 100_000_000).toFixed(1)} BCH`;
               } else if (valSpan > 10_000_000) {
-                return `${(val / 100_000_000).toFixed(2)} BTC`;
+                return `${(val / 100_000_000).toFixed(2)} BCH`;
               } else if (valSpan > 1_000_000) {
-                return `${(val / 100_000_000).toFixed(3)} BTC`;
+                return `${(val / 100_000_000).toFixed(3)} BCH`;
               } else {
                 return `${this.amountShortenerPipe.transform(
                   val,
@@ -465,8 +465,8 @@ export class TreasuriesGraphComponent implements OnInit, OnChanges, OnDestroy {
     };
   }
 
-  formatBTC(val: number): string {
-    return `${(val / 100_000_000).toFixed(4)} BTC`;
+  formatBCH(val: number): string {
+    return `${(val / 100_000_000).toFixed(4)} BCH`;
   }
 
   onChartInit(ec) {

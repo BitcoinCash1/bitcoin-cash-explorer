@@ -99,7 +99,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
       $localize`:@@41545303ec98792b738d6237adbd1f3b54a22196:Block Fees Vs Subsidy`
     );
     this.seoService.setDescription(
-      $localize`:@@meta.description.bitcoin.graphs.block-fees-subsidy:See the mining fees earned per Bitcoin block compared to the Bitcoin block subsidy, visualized in BTC and USD over time.`
+      $localize`See the mining fees earned per Bitcoin block compared to the Bitcoin block subsidy, visualized in BCH and USD over time.`
     );
 
     this.miningWindowPreference = this.miningService.getDefaultTimespan('24h');
@@ -232,7 +232,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                 tick.data,
                 this.locale,
                 '1.0-3'
-              )} BTC<br>`;
+              )} BCH<br>`;
             } else if (this.displayMode === 'fiat') {
               tooltip += `${this.fiatCurrencyPipe.transform(
                 tick.data,
@@ -252,7 +252,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
               data.reduce((acc, val) => acc + val.data, 0),
               this.locale,
               '1.0-3'
-            )} BTC</div>`;
+            )} BCH</div>`;
           } else if (this.displayMode === 'fiat') {
             tooltip += `<div style="margin-left: 2px">${this.fiatCurrencyPipe.transform(
               data.reduce((acc, val) => acc + val.data, 0),
@@ -389,7 +389,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                   color: 'var(--grey)',
                   formatter: (val) => {
                     return `${val}${
-                      this.displayMode === 'percentage' ? '%' : ' BTC'
+                      this.displayMode === 'percentage' ? '%' : ' BCH'
                     }`;
                   },
                 },

@@ -235,7 +235,7 @@ export class PriceChartComponent implements OnInit {
       // legend: data.priceData.length === 0 ? undefined : {
       //   data: [
       //     {
-      //       name: 'BTC Price (' + this.currency + ')',
+      //       name: 'BCH Price (' + this.currency + ')',
       //       inactiveColor: 'rgb(110, 112, 121)',
       //       textStyle: {
       //         color: 'white',
@@ -278,7 +278,7 @@ export class PriceChartComponent implements OnInit {
                 // legendHoverLink: false,
                 zlevel: 0,
                 yAxisIndex: 0,
-                name: 'BTC Price (' + this.currency + ')',
+                name: 'BCH Price (' + this.currency + ')',
                 data: data.priceData,
                 type: 'line',
                 smooth: 0.25,
@@ -344,7 +344,7 @@ export class PriceChartComponent implements OnInit {
         pixelRatio: 2,
         excludeComponents: ['dataZoom'],
       }),
-      `btc-price-${this.currentTimespan}-${Math.round(
+      `bch-price-${this.currentTimespan}-${Math.round(
         now.getTime() / 1000
       )}.svg`
     );

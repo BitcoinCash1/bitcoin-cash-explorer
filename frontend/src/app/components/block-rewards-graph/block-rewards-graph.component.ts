@@ -78,7 +78,7 @@ export class BlockRewardsGraphComponent implements OnInit {
       $localize`:@@8ba8fe810458280a83df7fdf4c614dfc1a826445:Block Rewards`
     );
     this.seoService.setDescription(
-      $localize`:@@meta.description.bitcoin.graphs.block-rewards:See Bitcoin block rewards in BTC and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.`
+      $localize`See Bitcoin block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.`
     );
     this.miningWindowPreference = this.miningService.getDefaultTimespan('3m');
     this.radioGroupForm = this.formBuilder.group({
@@ -197,7 +197,7 @@ export class BlockRewardsGraphComponent implements OnInit {
                 tick.data[1],
                 this.locale,
                 '1.3-3'
-              )} BTC<br>`;
+              )} BCH<br>`;
             } else if (tick.seriesIndex === 1) {
               tooltip += `${tick.marker} ${
                 tick.seriesName
@@ -229,7 +229,7 @@ export class BlockRewardsGraphComponent implements OnInit {
           : {
               data: [
                 {
-                  name: 'Rewards BTC',
+                  name: 'Rewards BCH',
                   inactiveColor: 'rgb(110, 112, 121)',
                   textStyle: {
                     color: 'white',
@@ -255,7 +255,7 @@ export class BlockRewardsGraphComponent implements OnInit {
                 axisLabel: {
                   color: 'rgb(110, 112, 121)',
                   formatter: (val) => {
-                    return `${val} BTC`;
+                    return `${val} BCH`;
                   },
                 },
                 min: (value) => {
@@ -304,7 +304,7 @@ export class BlockRewardsGraphComponent implements OnInit {
                 legendHoverLink: false,
                 zlevel: 0,
                 yAxisIndex: 0,
-                name: 'Rewards BTC',
+                name: 'Rewards BCH',
                 data: data.blockRewards,
                 type: 'line',
                 smooth: 0.25,
