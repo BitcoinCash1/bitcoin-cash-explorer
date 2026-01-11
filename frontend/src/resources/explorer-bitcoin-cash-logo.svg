@@ -24,9 +24,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="3.3125"
-     inkscape:cx="47.849057"
-     inkscape:cy="86.339623"
+     inkscape:zoom="6.625"
+     inkscape:cx="44.226415"
+     inkscape:cy="56.45283"
      inkscape:window-width="1920"
      inkscape:window-height="1050"
      inkscape:window-x="0"
@@ -64,18 +64,18 @@
        rx="9"
        transform="scale(-1,1)" />
     <rect
-       style="fill:#19b78b;fill-opacity:1;stroke-width:1.1"
+       style="fill:#19b78b;fill-opacity:1;stroke-width:1.09546"
        id="rect2"
        width="110"
-       height="110"
+       height="109.09434"
        x="-120"
-       y="10"
-       ry="11"
+       y="10.905661"
+       ry="10.909434"
        rx="9"
        transform="scale(-1,1)" />
     <path
-       style="display:inline;fill:#4d4d4d;fill-opacity:1"
-       d="M 120,60 C 120,60 95,91.924528 65,60 35,28.075472 10,60 10,60 V 20 c 0,0 0,-10 10,-10 10,0 90,0 90,0 0,0 10,0 10,10 0,10 0,40 0,40 z"
+       style="display:inline;fill:#4d4d4d;fill-opacity:1;stroke-width:1.04147"
+       d="m 120,64.232804 c 0,0 -25,34.627134 -55,0 -30,-34.627133 -55,0 -55,0 V 20.846561 C 10,20.846561 10,10 20,10 c 10,0 90,0 90,0 0,0 10,0 10,10.846561 0,10.846561 0,43.386243 0,43.386243 z"
        id="path2" />
   </g>
 </svg>

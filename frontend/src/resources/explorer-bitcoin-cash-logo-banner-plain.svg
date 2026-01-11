@@ -4,16 +4,15 @@
 <svg
    version="1.1"
    id="svg1"
-   width="580.40417"
-   height="110"
-   viewBox="0 0 580.40417 110"
+   width="700"
+   height="128"
+   viewBox="0 0 700 128"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
   <defs
      id="defs1" />
   <g
-     id="g1"
-     transform="translate(-10,-10)">
+     id="g1">
     <rect
        style="display:none;fill:#333333;fill-opacity:1;stroke-width:1.1"
        id="rect2-3"
@@ -25,28 +24,28 @@
        rx="9"
        transform="scale(-1,1)" />
     <rect
-       style="fill:#19b78b;fill-opacity:1;stroke-width:1.1"
+       style="fill:#19b78b;fill-opacity:1;stroke-width:1.06289"
        id="rect2"
-       width="110"
-       height="110"
-       x="-120"
-       y="10"
-       ry="11"
-       rx="9"
+       width="109.94597"
+       height="102.75472"
+       x="-119.98502"
+       y="19.245283"
+       ry="10.275472"
+       rx="8.9955778"
        transform="scale(-1,1)" />
     <path
-       style="display:inline;fill:#4d4d4d;fill-opacity:1"
-       d="M 120,60 C 120,60 95,91.924528 65,60 35,28.075472 10,60 10,60 V 20 c 0,0 0,-10 10,-10 10,0 90,0 90,0 0,0 10,0 10,10 0,10 0,40 0,40 z"
+       style="display:inline;fill:#4d4d4d;fill-opacity:1;stroke-width:0.963971"
+       d="m 120,56.462279 c 0,0 -25,29.665728 -55,0 -30,-29.665727 -55,0 -55,0 V 19.292456 C 10,19.292456 10,10 20,10 c 10,0 90,0 90,0 0,0 10,0 10,9.292456 0,9.292456 0,37.169823 0,37.169823 z"
        id="path2" />
     <text
        xml:space="preserve"
-       style="font-size:74.6667px;font-family:Sans;-inkscape-font-specification:Sans;writing-mode:lr-tb;direction:ltr;fill:#ffffff;fill-opacity:1"
-       x="127.39623"
-       y="83.413292"
+       style="font-size:74.6667px;font-family:Sans;-inkscape-font-specification:Sans;writing-mode:lr-tb;direction:ltr;fill:#ffffff;fill-opacity:1;stroke-width:0.965323"
+       x="169.08083"
+       y="87.413292"
        id="text2"><tspan
          id="tspan2"
-         x="127.39623"
-         y="83.413292"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:74.6667px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans';fill:#ffffff">BCH Explorer</tspan></text>
+         x="169.08083"
+         y="87.413292"
+         style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:74.6667px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans Bold';fill:#ffffff;stroke-width:0.965323">BCH Explorer</tspan></text>
   </g>
 </svg>

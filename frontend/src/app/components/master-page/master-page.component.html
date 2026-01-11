@@ -35,16 +35,10 @@
           *ngIf="{ val: connectionState$ | async } as connectionState"
         >
           <app-svg-images
-            *ngIf="!officialMempoolSpace"
-            name="mempoolSpace"
-            viewBox="0 0 500 126"
+            name="bchExplorer"
+            viewBox="0 0 680 180"
             class="bch-explorer-logo"
             [ngStyle]="{ opacity: connectionState.val === 2 ? 1 : 0.5 }"
-          ></app-svg-images>
-          <app-svg-images
-            *ngIf="officialMempoolSpace"
-            name="officialMempoolSpace"
-            viewBox="0 0 500 126"
           ></app-svg-images>
           <div class="connection-badge">
             <div
@@ -78,16 +72,12 @@
           *ngIf="{ val: connectionState$ | async } as connectionState"
         >
           <app-svg-images
-            *ngIf="!officialMempoolSpace"
-            name="mempoolSpace"
-            viewBox="0 0 500 126"
+            name="bchExplorer"
+            viewBox="0 0 200 26"
+            width="200"
+            height="26"
             class="bch-explorer-logo"
             [ngStyle]="{ opacity: connectionState.val === 2 ? 1 : 0.5 }"
-          ></app-svg-images>
-          <app-svg-images
-            *ngIf="officialMempoolSpace"
-            name="officialMempoolSpace"
-            viewBox="0 0 500 126"
           ></app-svg-images>
           <div class="connection-badge">
             <div
