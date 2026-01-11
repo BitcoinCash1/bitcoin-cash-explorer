@@ -1024,27 +1024,3 @@
     >{{ branch }}</span
   >
 </ng-template>
-
-<ng-template #controlBlockInfo let-scriptPath>
-  <table class="table table-borderless control-block-info">
-    <tr></tr>
-    <tr>
-      <td i18n="transactions-list.taproot.leaf-version">leaf version</td>
-      <td>{{ scriptPath.leafVersion | decimal2hex: 1 }}</td>
-    </tr>
-    <tr>
-      <td i18n="transactions-list.taproot.parity">parity</td>
-      <td>{{ scriptPath.parity ? "0x01" : "0x00" }}</td>
-    </tr>
-    @if (scriptPath.isNUMS) {
-      <tr>
-        <td i18n="transactions-list.taproot.keypath">key path</td>
-        <td>disabled</td>
-      </tr>
-    }
-    <tr>
-      <td i18n="transactions-list.taproot.script-depth">script depth</td>
-      <td>{{ scriptPath.merkleBranches.length }}</td>
-    </tr>
-  </table>
-</ng-template>

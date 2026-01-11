@@ -141,31 +141,29 @@ export function selectPowerOfTen(
 
 const featureActivation = {
   mainnet: {
-    rbf: 399701,
-    segwit: 477120,
-    taproot: 709632,
+    bla: 32,
+    // rbf: 399701,
+    // segwit: 477120,
+    // taproot: 709632,
   },
   testnet: {
-    rbf: 720255,
-    segwit: 872730,
-    taproot: 2032291,
+    bla: 32,
+    // rbf: 720255,
+    // segwit: 872730,
+    // taproot: 2032291,
   },
   testnet4: {
-    rbf: 0,
-    segwit: 0,
-    taproot: 0,
+    bla: 0,
   },
   signet: {
-    rbf: 0,
-    segwit: 0,
-    taproot: 0,
+    bla: 0,
   },
 };
 
 export function isFeatureActive(
   network: string,
   height: number,
-  feature: 'rbf' | 'segwit' | 'taproot'
+  feature: 'bla' // BCH has no taproot, rbf or segwit, TODO: add BCH features instead
 ): boolean {
   const activationHeight = featureActivation[network || 'mainnet']?.[feature];
   if (activationHeight != null) {

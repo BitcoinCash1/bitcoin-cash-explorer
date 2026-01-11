@@ -1526,19 +1526,6 @@ function p2a(network: string): string {
   return bech32Address;
 }
 
-/* Convert a *valid* P2TR address to its x-only pubkey */
-export function taprootAddressToOutputKey(address: string): {
-  outputKey: string;
-  network: string;
-} {
-  const { prefix, words } = bech32Decode(address);
-  const programBytes = fromWords(words.slice(1));
-  return {
-    outputKey: uint8ArrayToHexString(programBytes),
-    network: prefix === 'tb' ? 'testnet' : 'mainnet',
-  };
-}
-
 // base58 encoding
 function base58Encode(data: Uint8Array): string {
   const BASE58_ALPHABET =
