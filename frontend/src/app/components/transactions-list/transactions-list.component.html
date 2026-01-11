@@ -78,7 +78,7 @@
                 >
                   <td class="arrow-td">
                     <ng-template
-                      [ngIf]="vin.prevout === null && !vin.is_pegin"
+                      [ngIf]="vin.prevout === null"
                       [ngIfElse]="hasPrevout"
                     >
                       <span class="grey">
@@ -89,29 +89,16 @@
                       </span>
                     </ng-template>
                     <ng-template #hasPrevout>
-                      <ng-template
-                        [ngIf]="vin.is_pegin"
-                        [ngIfElse]="defaultPrevout"
+                      <a
+                        [routerLink]="['/tx/' | relativeUrl, vin.txid]"
+                        [fragment]="'vout=' + vin.vout"
+                        class="red"
                       >
-                        <a [routerLink]="['/tx/', vin.txid]" class="red">
-                          <fa-icon
-                            [icon]="['fas', 'arrow-alt-circle-right']"
-                            [fixedWidth]="true"
-                          ></fa-icon>
-                        </a>
-                      </ng-template>
-                      <ng-template #defaultPrevout>
-                        <a
-                          [routerLink]="['/tx/' | relativeUrl, vin.txid]"
-                          [fragment]="'vout=' + vin.vout"
-                          class="red"
-                        >
-                          <fa-icon
-                            [icon]="['fas', 'arrow-alt-circle-right']"
-                            [fixedWidth]="true"
-                          ></fa-icon>
-                        </a>
-                      </ng-template>
+                        <fa-icon
+                          [icon]="['fas', 'arrow-alt-circle-right']"
+                          [fixedWidth]="true"
+                        ></fa-icon>
+                      </a>
                     </ng-template>
                   </td>
                   @if (tx["_showSignatures"]) {
@@ -179,9 +166,6 @@
                           ></a
                         ></ng-container
                       >
-                      <ng-container *ngSwitchCase="vin.is_pegin">
-                        <span i18n="transactions-list.peg-in">Peg-in</span>
-                      </ng-container>
                       <ng-container
                         *ngSwitchCase="
                           vin.prevout &&
@@ -496,103 +480,73 @@
                     </div>
                     <ng-template #scriptpubkey_type>
                       <ng-template
-                        [ngIf]="vout.pegout"
-                        [ngIfElse]="defaultscriptpubkey_type"
+                        [ngIf]="vout.scriptpubkey_type === 'op_return'"
+                        [ngIfElse]="otherPubkeyType"
                       >
-                        <ng-container i18n="transactions-list.peg-out-to"
-                          >Peg-out to
-                          <ng-container
-                            *ngTemplateOutlet="pegOutLink"
-                          ></ng-container
-                        ></ng-container>
-                        <ng-template #pegOutLink>
-                          <a
-                            [routerLink]="[
-                              '/address/',
-                              vout.pegout.scriptpubkey_address,
-                            ]"
-                            title="{{ vout.pegout.scriptpubkey_address }}"
+                        OP_RETURN&nbsp;
+                        @if (vout.isRunestone) {
+                          <button
+                            (click)="toggleOrdData(tx.txid, 'vout', vindex)"
+                            type="button"
+                            class="btn btn-sm badge badge-ord"
                           >
-                            <app-truncate
-                              [text]="vout.pegout.scriptpubkey_address"
-                            ></app-truncate>
-                          </a>
-                        </ng-template>
-                      </ng-template>
-                      <ng-template #defaultscriptpubkey_type>
-                        <ng-template
-                          [ngIf]="vout.scriptpubkey_type === 'op_return'"
-                          [ngIfElse]="otherPubkeyType"
-                        >
-                          OP_RETURN&nbsp;
-                          @if (vout.isRunestone) {
-                            <button
-                              (click)="toggleOrdData(tx.txid, 'vout', vindex)"
-                              type="button"
-                              class="btn btn-sm badge badge-ord"
-                            >
-                              Runestone
-                            </button>
-                          } @else {
-                            <a placement="bottom" style="cursor: pointer">
-                              @if (
-                                (vout.scriptpubkey_asm | hex2ascii).length > 200
-                              ) {
-                                <span
-                                  *ngIf="vout.scriptpubkey_asm !== 'OP_RETURN'"
-                                  class="badge badge-secondary scriptmessage opreturn-msg"
-                                  (click)="
-                                    toggleShowFullOpReturnPreview(vindex)
-                                  "
-                                  >{{
-                                    vout.scriptpubkey_asm
-                                      | hex2ascii
-                                      | slice: 0 : 200
-                                  }}</span
-                                >
-                                <ng-container
-                                  *ngIf="(showDetails$ | async) === false"
-                                >
-                                  @if (
-                                    (vout.scriptpubkey_asm | hex2ascii).length >
-                                    200
-                                  ) {
-                                    @if (!showFullOpReturnPreview[vindex]) {
-                                      <span
-                                        class="badge badge-primary"
-                                        (click)="
-                                          toggleShowFullOpReturnPreview(vindex)
-                                        "
-                                        >Show more</span
-                                      >
-                                    } @else {
-                                      <span
-                                        class="badge badge-primary"
-                                        (click)="
-                                          toggleShowFullOpReturnPreview(vindex)
-                                        "
-                                        >Show less</span
-                                      >
-                                    }
+                            Runestone
+                          </button>
+                        } @else {
+                          <a placement="bottom" style="cursor: pointer">
+                            @if (
+                              (vout.scriptpubkey_asm | hex2ascii).length > 200
+                            ) {
+                              <span
+                                *ngIf="vout.scriptpubkey_asm !== 'OP_RETURN'"
+                                class="badge badge-secondary scriptmessage opreturn-msg"
+                                (click)="toggleShowFullOpReturnPreview(vindex)"
+                                >{{
+                                  vout.scriptpubkey_asm
+                                    | hex2ascii
+                                    | slice: 0 : 200
+                                }}</span
+                              >
+                              <ng-container
+                                *ngIf="(showDetails$ | async) === false"
+                              >
+                                @if (
+                                  (vout.scriptpubkey_asm | hex2ascii).length >
+                                  200
+                                ) {
+                                  @if (!showFullOpReturnPreview[vindex]) {
+                                    <span
+                                      class="badge badge-primary"
+                                      (click)="
+                                        toggleShowFullOpReturnPreview(vindex)
+                                      "
+                                      >Show more</span
+                                    >
+                                  } @else {
+                                    <span
+                                      class="badge badge-primary"
+                                      (click)="
+                                        toggleShowFullOpReturnPreview(vindex)
+                                      "
+                                      >Show less</span
+                                    >
                                   }
-                                </ng-container>
-                              } @else {
-                                <span
-                                  *ngIf="vout.scriptpubkey_asm !== 'OP_RETURN'"
-                                  [ngbTooltip]="
-                                    vout.scriptpubkey_asm | hex2ascii
-                                  "
-                                  class="badge badge-secondary scriptmessage"
-                                  >{{ vout.scriptpubkey_asm | hex2ascii }}</span
-                                >
-                              }
-                            </a>
-                          }
-                        </ng-template>
-                        <ng-template #otherPubkeyType>{{
-                          vout.scriptpubkey_type | scriptpubkeyType
-                        }}</ng-template>
+                                }
+                              </ng-container>
+                            } @else {
+                              <span
+                                *ngIf="vout.scriptpubkey_asm !== 'OP_RETURN'"
+                                [ngbTooltip]="vout.scriptpubkey_asm | hex2ascii"
+                                class="badge badge-secondary scriptmessage"
+                                >{{ vout.scriptpubkey_asm | hex2ascii }}</span
+                              >
+                            }
+                          </a>
+                        }
                       </ng-template>
+                      <ng-template #otherPubkeyType>{{
+                        vout.scriptpubkey_type | scriptpubkeyType
+                      }}</ng-template>
                     </ng-template>
                   </td>
                   <td

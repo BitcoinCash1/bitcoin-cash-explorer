@@ -175,10 +175,6 @@ export namespace IEsploraApi {
     has_blinded_issuances: boolean;
     reissuance_tokens: number;
     burned_reissuance_tokens: number;
-    peg_in_count: number;
-    peg_in_amount: number;
-    peg_out_count: number;
-    peg_out_amount: number;
     burn_count: number;
   }
 

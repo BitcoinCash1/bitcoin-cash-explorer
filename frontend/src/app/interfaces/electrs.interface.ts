@@ -66,8 +66,6 @@ export interface Vin {
   sequence: any;
   prevout: Vout;
   // Elements
-  // TODO: clean up mode ,like is_pegin?
-  is_pegin?: boolean;
   issuance?: Issuance;
   // Custom
   lazy?: boolean;
@@ -96,19 +94,11 @@ export interface Vout {
   scriptpubkey_address?: string;
   value: number;
   // Elements
-  // TODO: clean up mode ,like pegout?
+  // TODO: Remove asset?
   valuecommitment?: number;
   asset?: string;
-  pegout?: Pegout;
   // Ord
   isRunestone?: boolean;
-}
-
-interface Pegout {
-  genesis_hash: string;
-  scriptpubkey: string;
-  scriptpubkey_asm: string;
-  scriptpubkey_address: string;
 }
 
 export interface Status {
@@ -232,10 +222,6 @@ interface AssetStats {
   has_blinded_issuances: boolean;
   reissuance_tokens: number;
   burned_reissuance_tokens: number;
-  peg_in_count: number;
-  peg_in_amount: number;
-  peg_out_count: number;
-  peg_out_amount: number;
   burn_count: number;
 }
 

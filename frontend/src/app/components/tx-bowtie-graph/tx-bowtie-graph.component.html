@@ -197,7 +197,7 @@
     />
     <ng-container *ngFor="let input of inputs; let i = index">
       <path
-        *ngIf="connectors && !inputData[i].coinbase && !inputData[i].pegin"
+        *ngIf="connectors && !inputData[i].coinbase"
         [attr.d]="input.connectorPath"
         class="input connector {{ input.class }}"
         [class.highlight]="inputData[i].index === inputIndex"

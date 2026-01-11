@@ -41,8 +41,6 @@ interface Xput {
   address?: string;
   rest?: number;
   coinbase?: boolean;
-  pegin?: boolean;
-  pegout?: string;
   confidential?: boolean;
   timestamp?: number;
   blockHeight?: number;
@@ -202,7 +200,6 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
         displayValue: v?.value,
         address: v?.scriptpubkey_address || v?.scriptpubkey_type?.toUpperCase(),
         index: i,
-        pegout: v?.pegout?.scriptpubkey_address,
         confidential: this.isLiquid && v?.value === undefined,
         timestamp: this.tx.status.block_time,
         blockHeight: this.tx.status.block_height,
@@ -227,7 +224,6 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
           v?.prevout?.scriptpubkey_type?.toUpperCase(),
         index: i,
         coinbase: v?.is_coinbase,
-        pegin: v?.is_pegin,
         confidential: this.isLiquid && v?.prevout?.value === undefined,
         timestamp: this.tx.status.block_time,
         blockHeight: this.tx.status.block_height,
@@ -702,7 +698,6 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
         side === 'input-connector' &&
         input &&
         !input.is_coinbase &&
-        !input.is_pegin &&
         input.txid &&
         input.vout != null
       ) {
