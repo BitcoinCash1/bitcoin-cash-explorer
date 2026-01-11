@@ -144,6 +144,20 @@ const routes: Routes = [
         ],
       },
       {
+        path: 'treasuries',
+        component: StartComponent,
+        children: [
+          {
+            path: '',
+            component: TreasuriesComponent,
+            data: {
+              networks: ['bitcoin'],
+              networkSpecific: true,
+            },
+          },
+        ],
+      },
+      {
         path: '',
         component: StartComponent,
         children: [
@@ -158,23 +172,6 @@ const routes: Routes = [
     ],
   },
 ];
-
-if (window['__env']?.OFFICIAL_MEMPOOL_SPACE) {
-  routes[0].children?.push({
-    path: 'treasuries',
-    component: StartComponent,
-    children: [
-      {
-        path: '',
-        component: TreasuriesComponent,
-        data: {
-          networks: ['bitcoin'],
-          networkSpecific: true,
-        },
-      },
-    ],
-  });
-}
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
