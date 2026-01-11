@@ -4,7 +4,7 @@ import config from '../config';
 import logger from '../logger';
 import PricesRepository, { ApiPrice, MAX_PRICES } from '../repositories/PricesRepository';
 import BitfinexApi from './price-feeds/bitfinex-api';
-import BitflyerApi from './price-feeds/bitflyer-api';
+// import BitflyerApi from './price-feeds/bitflyer-api';
 import CoinbaseApi from './price-feeds/coinbase-api';
 import GeminiApi from './price-feeds/gemini-api';
 import KrakenApi from './price-feeds/kraken-api';
@@ -92,7 +92,7 @@ class PriceUpdater {
     this.latestPrices = this.getEmptyPricesObj();
     this.latestGoodPrices = this.getEmptyPricesObj();
 
-    this.feeds.push(new BitflyerApi()); // Does not have historical endpoint
+    // this.feeds.push(new BitflyerApi()); // Does not have historical endpoint, bitflyer doesn't have BCH_USD etc. Only BCH_BTC.
     this.feeds.push(new KrakenApi());
     this.feeds.push(new CoinbaseApi());
     this.feeds.push(new BitfinexApi());
@@ -394,14 +394,17 @@ class PriceUpdater {
     }
 
     // Insert Kraken weekly prices
+    logger.debug('Insert kraken historical prices');
     await new KrakenApi().$insertHistoricalPrice();
 
     // Insert missing recent hourly prices
+    logger.debug('Insert missing recent hourly prices');
     await this.$insertMissingRecentPrices('day');
     await this.$insertMissingRecentPrices('hour');
 
     this.historyInserted = true;
     this.lastHistoricalRun = Math.round(new Date().getTime() / 1000);
+    logger.debug('Historical prices insertion completed');
   }
 
   /**

@@ -3,7 +3,7 @@ import priceUpdater, { PriceFeed, PriceHistory } from '../price-updater';
 
 class GeminiApi implements PriceFeed {
   public name: string = 'Gemini';
-  public currencies: string[] = ['USD', 'EUR', 'GBP', 'SGD'];
+  public currencies: string[] = ['USD']; // Also only USD supported for BCH
 
   public url: string = 'https://api.gemini.com/v1/pubticker/BCH';
   public urlHist: string = 'https://api.gemini.com/v2/candles/BCH{CURRENCY}/{GRANULARITY}';

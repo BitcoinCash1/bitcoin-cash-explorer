@@ -3,7 +3,7 @@ import { PriceFeed, PriceHistory } from '../price-updater';
 
 class BitflyerApi implements PriceFeed {
   public name: string = 'Bitflyer';
-  public currencies: string[] = ['USD', 'EUR', 'JPY'];
+  public currencies: string[] = ['BTC']; // I know right? this only supports BCH/BTC. Not BCH/USD.
 
   public url: string = 'https://api.bitflyer.com/v1/ticker?product_code=BCH_';
   public urlHist: string = '';

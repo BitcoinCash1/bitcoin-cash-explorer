@@ -5,12 +5,21 @@ import priceUpdater, { PriceFeed, PriceHistory } from '../price-updater';
 
 class KrakenApi implements PriceFeed {
   public name: string = 'Kraken';
-  public currencies: string[] = ['USD', 'EUR', 'GBP', 'CAD', 'CHF', 'AUD', 'JPY'];
+  public currencies: string[] = ['USD', 'EUR', 'GBP', 'AUD', 'JPY'];
 
   public url: string = 'https://api.kraken.com/0/public/Ticker?pair=BCH';
+  public urlHistBtc: string = 'https://api.kraken.com/0/public/OHLC?interval={GRANULARITY}&pair=XBT';
   public urlHist: string = 'https://api.kraken.com/0/public/OHLC?interval={GRANULARITY}&pair=BCH';
 
   constructor() {}
+
+  private getTickerBtc(currency) {
+    let ticker = `XXBTZ${currency}`;
+    if (['CHF', 'AUD'].includes(currency)) {
+      ticker = `XBT${currency}`;
+    }
+    return ticker;
+  }
 
   private getTicker(currency) {
     return `BCH${currency}`;
@@ -67,14 +76,37 @@ class KrakenApi implements PriceFeed {
     // CAD weekly price history goes back to timestamp 1436400000 (July 9, 2015)
     // CHF weekly price history goes back to timestamp 1575504000 (December 5, 2019)
     // AUD weekly price history goes back to timestamp 1591833600 (June 11, 2020)
-
+    // BCH Hard fork, block: 000000000000000000651ef99cb9fcbe0dadde1d424bd9f15ff20136191a5eec, timestamp 1501603920 (Augustus 1, 2017)
+    const hardforkTimestamp = 1501603920;
     const priceHistory: any = {}; // map: timestamp -> Prices
 
     for (const currency of this.currencies) {
-      const response = await query(this.urlHist.replace('{GRANULARITY}', '10080') + currency);
-      const priceHistoryRaw = response ? response['result'][this.getTicker(currency)] : [];
+      const responseBtc = await query(this.urlHistBtc.replace('{GRANULARITY}', '10080') + currency);
+      const priceHistoryRawBtc = responseBtc ? responseBtc['result'][this.getTickerBtc(currency)] : [];
 
-      for (const price of priceHistoryRaw) {
+      const responseBch = await query(this.urlHist.replace('{GRANULARITY}', '10080') + currency);
+      const priceHistoryRawBch = responseBch ? responseBch['result'][this.getTicker(currency)] : [];
+
+      for (const price of priceHistoryRawBtc) {
+        if (price[0] > hardforkTimestamp) {
+          break;
+        }
+        if (existingPriceTimes.includes(parseInt(price[0]))) {
+          continue;
+        }
+
+        // prices[0] = kraken price timestamp
+        // prices[4] = closing price
+        if (priceHistory[price[0]] === undefined) {
+          priceHistory[price[0]] = priceUpdater.getEmptyPricesObj();
+        }
+        priceHistory[price[0]][currency] = price[4];
+      }
+
+      for (const price of priceHistoryRawBch) {
+        if (price[0] <= hardforkTimestamp) {
+          continue;
+        }
         if (existingPriceTimes.includes(parseInt(price[0]))) {
           continue;
         }
