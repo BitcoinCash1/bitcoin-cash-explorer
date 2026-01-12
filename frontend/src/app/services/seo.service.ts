@@ -11,7 +11,7 @@ export class SeoService {
   network = '';
   baseTitle = '';
   baseDescription =
-    'Explore the full  Cash ecosystem&reg; with the BCH Explorer&reg;.';
+    'Explore the full Bitcoin Cash ecosystem by Melroy van den Berg.';
   baseDomain = 'explorer.melroy.org';
 
   canonicalLink: HTMLLinkElement = document.getElementById(
@@ -28,8 +28,7 @@ export class SeoService {
     // save original meta tags
     this.baseDescription =
       metaService.getTag("name='description'")?.content || this.baseDescription;
-    this.baseTitle =
-      titleService.getTitle()?.split(' - ')?.[0] || this.baseTitle;
+    this.baseTitle = titleService.getTitle()?.split(' - ')?.[0] || this.baseTitle;
     try {
       const canonicalUrl = new URL(this.canonicalLink?.href || '');
       this.baseDomain = canonicalUrl?.host;
@@ -127,16 +126,16 @@ export class SeoService {
   getTitle(): string {
     // I do not want to return the this baseTitle + ' - ' +
     if (this.network === 'testnet') {
-      return 'Bitcoin Cash Testnet3';
+      return this.baseTitle + ' - Bitcoin Cash Testnet3';
     }
     if (this.network === 'testnet4') {
-      return 'Bitcoin Cash Testnet4';
+      return this.baseTitle + ' - Bitcoin Cash Testnet4';
     }
     if (this.network === 'signet') {
-      return 'Bitcoin Cash Signet';
+      return this.baseTitle + ' - Bitcoin Cash Signet';
     }
     // I do not want to return the this baseTitle + ' - ' +
-    return (
+    return this.baseTitle + ' - ' + (
       (this.network ? this.ucfirst(this.network) : 'Bitcoin Cash') + ' Explorer'
     );
   }
