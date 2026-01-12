@@ -28,7 +28,8 @@ export class SeoService {
     // save original meta tags
     this.baseDescription =
       metaService.getTag("name='description'")?.content || this.baseDescription;
-    this.baseTitle = titleService.getTitle()?.split(' - ')?.[0] || this.baseTitle;
+    this.baseTitle =
+      titleService.getTitle()?.split(' - ')?.[0] || this.baseTitle;
     try {
       const canonicalUrl = new URL(this.canonicalLink?.href || '');
       this.baseDomain = canonicalUrl?.host;
@@ -135,8 +136,11 @@ export class SeoService {
       return this.baseTitle + ' - Bitcoin Cash Signet';
     }
     // I do not want to return the this baseTitle + ' - ' +
-    return this.baseTitle + ' - ' + (
-      (this.network ? this.ucfirst(this.network) : 'Bitcoin Cash') + ' Explorer'
+    return (
+      this.baseTitle +
+      ' - ' +
+      ((this.network ? this.ucfirst(this.network) : 'Bitcoin Cash') +
+        ' Explorer')
     );
   }
 
