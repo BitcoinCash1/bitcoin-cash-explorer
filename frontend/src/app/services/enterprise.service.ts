@@ -10,7 +10,7 @@ import { BehaviorSubject } from 'rxjs';
   providedIn: 'root',
 })
 export class EnterpriseService {
-  exclusiveHostName = '.mempool.space';
+  exclusiveHostName = '.explorer.melroy.org';
   subdomain: string | null = null;
   statsUrl: string;
   siteId: number;
@@ -66,7 +66,7 @@ export class EnterpriseService {
         (error) => {
           if (error.status === 404) {
             window.location.href =
-              'https://mempool.space' + window.location.pathname;
+              'https://explorer.melroy.org' + window.location.pathname;
           }
         }
       );
@@ -89,25 +89,13 @@ export class EnterpriseService {
   }
 
   insertMatomo(siteId?: number): void {
-    let statsUrl = '//stats.mempool.space/';
+    let statsUrl = '//stats.melroy.org/';
 
     if (!siteId) {
       switch (this.document.location.hostname) {
-        case 'mempool.space':
-          statsUrl = '//stats.mempool.space/';
+        case 'explorer.melroy.org':
+          statsUrl = '//stats.melroy.org/';
           siteId = 5;
-          break;
-        case 'mempool.ninja':
-          statsUrl = '//stats.mempool.space/';
-          siteId = 4;
-          break;
-        case 'liquid.network':
-          siteId = 8;
-          statsUrl = '//stats.liquid.network/';
-          break;
-        case 'liquid.place':
-          siteId = 10;
-          statsUrl = '//stats.liquid.network/';
           break;
         default:
           return;
