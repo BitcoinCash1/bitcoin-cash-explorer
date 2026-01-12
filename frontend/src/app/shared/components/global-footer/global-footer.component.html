@@ -3,36 +3,17 @@
     <div class="row main" [class]="{ services: isServicesPage }">
       <div class="col-md-12 branding mt-2">
         <div class="main-logo" [class]="{ services: isServicesPage }">
-          @if (enterpriseInfo?.footer_img) {
-            <img
-              [src]="enterpriseInfo?.footer_img"
-              [alt]="enterpriseInfo.title"
-              height="60px"
-              class="enterprise-logo"
-            />
-          } @else {
-            <app-svg-images
-              *ngIf="officialMempoolSpace"
-              name="officialMempoolSpace"
-              viewBox="0 0 500 126"
-            ></app-svg-images>
-            <app-svg-images
-              *ngIf="!officialMempoolSpace"
-              name="mempoolSpace"
-              viewBox="0 0 500 126"
-            ></app-svg-images>
-          }
+          <img
+            src="/resources/explorer_bitcoin_cash_logo_banner.png"
+            alt="Bitcoin Cash Explorer logo"
+            height="52px"
+            class="bch-explorer-logo"
+          />
         </div>
-        @if (!enterpriseInfo?.footer_img) {
-          <p class="explore-tagline-mobile">
-            &copy; Created by:
-            <a
-              target="_blank"
-              href="https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer"
-              >Melroy van den Berg</a
-            >
-          </p>
-        }
+        <p class="explore-tagline-mobile">
+          &copy; Created by:
+          <a target="_blank" href="https://melroy.org">Melroy van den Berg</a>
+        </p>
         <div
           class="site-options language-selector d-flex justify-content-center align-items-center"
           [class]="{ services: isServicesPage }"
@@ -83,29 +64,24 @@
             <app-theme-selector class="add-margin"></app-theme-selector>
           </div>
         }
-        @if (!enterpriseInfo?.footer_img) {
-          <a
-            *ngIf="stateService.isMempoolSpaceBuild"
-            class="btn btn-purple sponsor d-flex justify-content-center ml-auto mr-auto mt-0 mb-2"
-            [ngClass]="isServicesPage ? 'd-lg-none' : 'd-md-none'"
-            [routerLink]="['/login']"
+
+        <a
+          *ngIf="stateService.isMempoolSpaceBuild"
+          class="btn btn-purple sponsor d-flex justify-content-center ml-auto mr-auto mt-0 mb-2"
+          [ngClass]="isServicesPage ? 'd-lg-none' : 'd-md-none'"
+          [routerLink]="['/login']"
+        >
+          <span *ngIf="user" i18n="shared.my-account" class="nowrap"
+            >My Account</span
           >
-            <span *ngIf="user" i18n="shared.my-account" class="nowrap"
-              >My Account</span
-            >
-            <span *ngIf="!user" i18n="shared.sign-in" class="nowrap"
-              >Sign In</span
-            >
-          </a>
-          <p class="explore-tagline-desktop">
-            &copy; Created by:
-            <a
-              target="_blank"
-              href="https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer"
-              >Melroy van den Berg</a
-            >
-          </p>
-        }
+          <span *ngIf="!user" i18n="shared.sign-in" class="nowrap"
+            >Sign In</span
+          >
+        </a>
+        <p class="explore-tagline-desktop">
+          &copy; Created by:
+          <a target="_blank" href="https://melroy.org">Melroy van den Berg</a>
+        </p>
       </div>
     </div>
     <div class="row col-md-12 link-tree" [class]="{ services: isServicesPage }">
