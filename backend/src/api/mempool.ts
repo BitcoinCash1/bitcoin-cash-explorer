@@ -150,7 +150,7 @@ class Mempool {
       if (
         !this.mempoolCache[txid].adjustedSize ||
         this.mempoolCache[txid].sigops == null ||
-        this.mempoolCache[txid].effectiveFeePerSize == null
+        this.mempoolCache[txid].feePerSize == null
       ) {
         this.mempoolCache[txid] = transactionUtils.extendMempoolTransaction(this.mempoolCache[txid]);
       }
@@ -473,7 +473,7 @@ class Mempool {
           if (!newCandidateTxMap[txid]) {
             if (this.mempoolCache[txid]) {
               removed.push(this.mempoolCache[txid]);
-              this.mempoolCache[txid].effectiveFeePerSize = this.mempoolCache[txid].adjustedFeePerSize;
+              this.mempoolCache[txid].feePerSize = this.mempoolCache[txid].feePerSize;
               this.mempoolCache[txid].ancestors = [];
               this.mempoolCache[txid].descendants = [];
               this.mempoolCache[txid].bestDescendant = null;

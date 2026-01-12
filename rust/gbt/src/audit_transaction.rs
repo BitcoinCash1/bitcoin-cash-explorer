@@ -19,7 +19,7 @@ pub struct AuditTransaction {
     pub sigop_adjusted_size: u32,
     pub sigops: u32,
     adjusted_fee_per_size: f64,
-    pub effective_fee_per_size: f64,
+    pub fee_per_size: f64,
     pub dependency_rate: f64,
     pub inputs: Vec<u32>,
     pub relatives_set_flag: bool,
@@ -96,10 +96,10 @@ impl AuditTransaction {
         // rounded up to the nearest integer
         let is_adjusted = tx.size < (tx.sigops * 20);
         let sigop_adjusted_size = ((tx.size + 3) / 4).max(tx.sigops * 5);
-        let effective_fee_per_size = if is_adjusted || fee_delta > 0.0 {
+        let fee_per_size = if is_adjusted || fee_delta > 0.0 {
             calc_fee_rate(fee, f64::from(sigop_adjusted_size) / 4.0)
         } else {
-            tx.effective_fee_per_size
+            tx.fee_per_size
         };
         Self {
             uid: tx.uid,
@@ -109,7 +109,7 @@ impl AuditTransaction {
             sigop_adjusted_size: sigop_adjusted_size,
             sigops: tx.sigops,
             adjusted_fee_per_size: calc_fee_rate(fee, f64::from(sigop_adjusted_size)),
-            effective_fee_per_size,
+            fee_per_size,
             dependency_rate: f64::INFINITY,
             inputs: tx.inputs.clone(),
             relatives_set_flag: false,
@@ -121,7 +121,7 @@ impl AuditTransaction {
             score: 0.0,
             used: false,
             modified: false,
-            dirty: effective_fee_per_size != tx.effective_fee_per_size || fee_delta > 0.0,
+            dirty: fee_per_size != tx.fee_per_size || fee_delta > 0.0,
         }
     }
 
@@ -158,10 +158,10 @@ impl AuditTransaction {
     }
 
     pub fn set_dirty_if_different(&mut self, cluster_rate: f64) {
-        if self.effective_fee_per_size != cluster_rate {
-            self.effective_fee_per_size = cluster_rate;
-            self.dirty = true;
-        }
+        // if self.fee_per_size != cluster_rate {
+        //     self.fee_per_size = cluster_rate;
+        //     self.dirty = true;
+        // }
     }
 
     /// Safety: This function must NEVER set score to NaN.

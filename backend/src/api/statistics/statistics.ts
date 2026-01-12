@@ -62,7 +62,7 @@ class Statistics {
       }
     }
     // Remove 0 and undefined
-    memPoolArray = memPoolArray.filter((tx) => tx.effectiveFeePerSize);
+    memPoolArray = memPoolArray.filter((tx) => tx.feePerSize);
 
     if (!memPoolArray.length) {
       try {
@@ -79,7 +79,7 @@ class Statistics {
       return;
     }
 
-    memPoolArray.sort((a, b) => a.effectiveFeePerSize - b.effectiveFeePerSize);
+    memPoolArray.sort((a, b) => a.feePerSize - b.feePerSize);
     const totalSize = memPoolArray.map((tx) => tx.size).reduce((acc, curr) => acc + curr);
     const totalFee = memPoolArray.map((tx) => tx.fee).reduce((acc, curr) => acc + curr);
 
@@ -93,7 +93,7 @@ class Statistics {
 
     memPoolArray.forEach((transaction) => {
       for (let i = 0; i < logFees.length; i++) {
-        if (i === lastItem || transaction.effectiveFeePerSize < logFees[i + 1]) {
+        if (i === lastItem || transaction.feePerSize < logFees[i + 1]) {
           if (sizeFees[logFees[i]]) {
             sizeFees[logFees[i]] += transaction.size;
           } else {

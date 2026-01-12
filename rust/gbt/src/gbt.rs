@@ -248,8 +248,8 @@ pub fn gbt(
         if let Some(Some(audit_tx)) = audit_pool.get_mut(*uid as usize).map(Option::take) {
             trace!("txid: {}, is_dirty: {}", uid, audit_tx.dirty);
             if audit_tx.dirty {
-                rates.push(vec![f64::from(*uid), audit_tx.effective_fee_per_size]);
-                thread_tx.effective_fee_per_size = audit_tx.effective_fee_per_size;
+                rates.push(vec![f64::from(*uid), audit_tx.fee_per_size]);
+                thread_tx.fee_per_size = audit_tx.fee_per_size;
             }
             // Drops the AuditTransaction manually
             // There are no audit_txs that are not in the mempool HashMap

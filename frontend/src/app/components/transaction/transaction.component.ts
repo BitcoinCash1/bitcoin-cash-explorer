@@ -669,8 +669,7 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
           return;
         }
 
-        const txfeePerSize =
-          this.tx.effectiveFeePerSize || this.tx.fee / this.tx.size;
+        const txfeePerSize = this.tx.feePerSize || this.tx.fee / this.tx.size;
         let found = false;
         this.txInBlockIndex = 0;
         for (const block of mempoolBlocks) {

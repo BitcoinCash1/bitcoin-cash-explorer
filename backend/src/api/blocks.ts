@@ -288,14 +288,8 @@ class Blocks {
 
       // Loop over stats.feerate_percentiles and multiply each value
       const feeRatePercentiles = stats.feerate_percentiles.map((fee) => fee * multiplier);
-      let feeStats = {
-        feeRange: [stats.minfeerate * multiplier, feeRatePercentiles, stats.maxfeerate * multiplier].flat(),
-      };
-      if (transactions?.length > 1) {
-        feeStats = Common.calcEffectiveFeeStatistics(transactions);
-      }
       extras.medianFee = stats.medianfee * multiplier;
-      extras.feeRange = feeStats.feeRange;
+      extras.feeRange = [stats.minfeerate * multiplier, feeRatePercentiles, stats.maxfeerate * multiplier].flat();
       extras.totalFees = stats.totalfee * multiplier;
       extras.avgFee = stats.avgfee * multiplier;
       extras.avgFeeRate = stats.avgfeerate * multiplier;

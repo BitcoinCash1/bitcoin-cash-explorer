@@ -35,7 +35,6 @@ export class TransactionDetailsComponent implements OnInit {
   @Input() filters: Filter[];
   @Input() miningStats: MiningStats;
   @Input() pool: Pool | null;
-  @Input() hasEffectiveFeeRate: boolean;
   @Input() isCached: boolean;
   @Input() ETA$: Observable<ETA>;
   @Input() unbroadcasted: boolean;

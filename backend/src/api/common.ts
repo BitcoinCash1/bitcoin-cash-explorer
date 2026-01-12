@@ -1,11 +1,11 @@
 import * as bitcoinjs from 'bitcoinjs-lib';
 import { Request } from 'express';
 import {
-  EffectiveFeeStats,
+  FeeStats,
   MempoolBlockWithTransactions,
   TransactionExtended,
   TransactionStripped,
-  WorkingEffectiveFeeStats,
+  WorkingFeeStats,
   TransactionClassified,
   TransactionFlags,
 } from '../mempool.interfaces';
@@ -62,21 +62,21 @@ export class Common {
     let lastValidRate = Infinity;
     // filter out anomalous fee rates to ensure monotonic range
     for (const tx of transactions) {
-      if (tx.effectiveFeePerSize <= lastValidRate) {
+      if (tx.feePerSize <= lastValidRate) {
         filtered.push(tx);
-        lastValidRate = tx.effectiveFeePerSize;
+        lastValidRate = tx.feePerSize;
       }
     }
-    const arr = [filtered[filtered.length - 1].effectiveFeePerSize];
+    const arr = [filtered[filtered.length - 1].feePerSize];
     const chunk = 1 / (rangeLength - 1);
     let itemsToAdd = rangeLength - 2;
 
     while (itemsToAdd > 0) {
-      arr.push(filtered[Math.floor(filtered.length * chunk * itemsToAdd)].effectiveFeePerSize);
+      arr.push(filtered[Math.floor(filtered.length * chunk * itemsToAdd)].feePerSize);
       itemsToAdd--;
     }
 
-    arr.push(filtered[0].effectiveFeePerSize);
+    arr.push(filtered[0].feePerSize);
     return arr;
   }
 
@@ -551,7 +551,7 @@ export class Common {
       fee: tx.fee || 0,
       size: tx.size,
       value: tx.vout.reduce((acc, vout) => acc + (vout.value ? vout.value : 0), 0),
-      rate: tx.effectiveFeePerSize,
+      rate: tx.feePerSize,
       time: tx.firstSeen || undefined,
     };
   }
@@ -763,75 +763,6 @@ export class Common {
     return {
       network: network,
       url: url,
-    };
-  }
-
-  // TODO: Update calculation for BCH
-  static calcEffectiveFeeStatistics(
-    transactions: {
-      size: number;
-      fee?: number;
-      effectiveFeePerSize?: number;
-      txid: string;
-    }[]
-  ): EffectiveFeeStats {
-    const sortedTxs = transactions
-      .map((tx) => {
-        return {
-          txid: tx.txid,
-          size: tx.size,
-          rate: tx.effectiveFeePerSize || (tx.fee || 0) / tx.size,
-        };
-      })
-      .sort((a, b) => a.rate - b.rate);
-    const totalSize = transactions.reduce((acc, tx) => acc + tx.size, 0);
-
-    // include any unused space
-    let sizeCount = config.MEMPOOL.MIN_BLOCK_SIZE_UNITS - totalSize;
-    let medianFee = 0;
-    let medianSize = 0;
-
-    // calculate the "medianFee" as the average fee rate of the middle 0.25% weight units of the conceptual block
-    const halfWidth = config.MEMPOOL.MIN_BLOCK_SIZE_UNITS / 800;
-    const leftBound = Math.floor(config.MEMPOOL.MIN_BLOCK_SIZE_UNITS / 2 - halfWidth);
-    const rightBound = Math.ceil(config.MEMPOOL.MIN_BLOCK_SIZE_UNITS / 2 + halfWidth);
-    for (let i = 0; i < sortedTxs.length && sizeCount < rightBound; i++) {
-      const left = sizeCount;
-      const right = sizeCount + sortedTxs[i].size;
-      if (right > leftBound) {
-        const weight = Math.min(right, rightBound) - Math.max(left, leftBound);
-        medianFee += sortedTxs[i].rate * (weight / 4);
-        medianSize += weight;
-      }
-      sizeCount += sortedTxs[i].size;
-    }
-    const medianFeeRate = medianSize ? medianFee / (medianSize / 4) : 0;
-
-    // minimum effective fee heuristic:
-    // lowest of
-    // a) the 1st percentile of effective fee rates
-    // b) the minimum effective fee rate in the last 2% of transactions (in block order)
-    const minFee = Math.min(
-      Common.getNthPercentile(1, sortedTxs).rate,
-      transactions.slice(-transactions.length / 50).reduce((min, tx) => {
-        return Math.min(min, tx.effectiveFeePerSize || (tx.fee || 0) / tx.size);
-      }, Infinity)
-    );
-
-    // maximum effective fee heuristic:
-    // highest of
-    // a) the 99th percentile of effective fee rates
-    // b) the maximum effective fee rate in the first 2% of transactions (in block order)
-    const maxFee = Math.max(
-      Common.getNthPercentile(99, sortedTxs).rate,
-      transactions.slice(0, transactions.length / 50).reduce((max, tx) => {
-        return Math.max(max, tx.effectiveFeePerSize || (tx.fee || 0) / tx.size);
-      }, 0)
-    );
-
-    return {
-      medianFee: medianFeeRate,
-      feeRange: [minFee, [10, 25, 50, 75, 90].map((n) => Common.getNthPercentile(n, sortedTxs).rate), maxFee].flat(),
     };
   }
 
@@ -1080,7 +1011,7 @@ export class OnlineFeeStatsCalculator {
     }
   }
 
-  getRawFeeStats(): WorkingEffectiveFeeStats {
+  getRawFeeStats(): WorkingFeeStats {
     if (this.totalBandWeight > 0) {
       const avgBandFeeRate = this.totalBandWeight ? this.totalBandFee / this.totalBandWeight : 0;
       this.feeRange.unshift({
@@ -1100,7 +1031,7 @@ export class OnlineFeeStatsCalculator {
     };
   }
 
-  getFeeStats(): EffectiveFeeStats {
+  getFeeStats(): FeeStats {
     const stats = this.getRawFeeStats();
     stats.feeRange[0] = stats.minFee;
     stats.feeRange[stats.feeRange.length - 1] = stats.maxFee;

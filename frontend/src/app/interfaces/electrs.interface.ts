@@ -14,7 +14,6 @@ export interface Transaction {
   // Custom properties
   firstSeen?: number;
   feePerSize?: number;
-  effectiveFeePerSize?: number;
   ancestors?: Ancestor[];
   descendants?: Ancestor[];
   bestDescendant?: BestDescendant | null;

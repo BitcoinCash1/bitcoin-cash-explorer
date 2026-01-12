@@ -8,6 +8,6 @@ pub struct ThreadTransaction {
     pub fee: f64,
     pub size: u32,
     pub sigops: u32,
-    pub effective_fee_per_size: f64,
+    pub fee_per_size: f64,
     pub inputs: Vec<u32>,
 }

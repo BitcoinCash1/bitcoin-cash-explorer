@@ -97,10 +97,7 @@ export class EtaService {
     // use known projected position, or fall back to feerate-based estimate
     const mempoolPosition =
       position?.position ??
-      this.mempoolPositionFromFees(
-        tx.effectiveFeePerSize || tx.feePerSize,
-        mempoolBlocks
-      );
+      this.mempoolPositionFromFees(tx.feePerSize, mempoolBlocks);
     if (!mempoolPosition) {
       return null;
     }

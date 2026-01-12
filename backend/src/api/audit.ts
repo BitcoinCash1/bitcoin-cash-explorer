@@ -1,10 +1,10 @@
 import config from '../config';
 import logger from '../logger';
 import { MempoolTransactionExtended, MempoolBlockWithTransactions } from '../mempool.interfaces';
-import transactionUtils from './transaction-utils';
 
 const PROPAGATION_MARGIN = 180; // in seconds, time since a transaction is first seen after which it is assumed to have propagated to all miners
 
+// TODO: Basically all this code is not correct for BCH. BCH audit code need be revised.
 class Audit {
   auditBlock(
     height: number,
@@ -66,7 +66,7 @@ class Audit {
         ) {
           // tx was recently cpfp'd, miner may not have the latest effective rate
           fresh.push(txid);
-        } else if (mempool[txid].effectiveFeePerSize >= 1) {
+        } else if (mempool[txid].feePerSize >= 1) {
           // transactions paying < 1 sat/vbyte are never considered censored
           isCensored[txid] = true;
         }
@@ -97,12 +97,12 @@ class Audit {
       if (tx) {
         const fits = tx.size - displacedSizeRemaining < 4000;
         // 0.005 margin of error for any remaining vsize rounding issues
-        const feeMatches = tx.effectiveFeePerSize >= lastFeeRate - 0.005;
+        const feeMatches = tx.feePerSize >= lastFeeRate - 0.005;
         if (fits || feeMatches) {
           isDisplaced[txid] = true;
           if (fits) {
             // (tx.effectiveFeePerSize * tx.size) / Math.ceil(tx.size) attempts to correct for size rounding in the simple non-CPFP case
-            lastFeeRate = Math.min(lastFeeRate, (tx.effectiveFeePerSize * tx.size) / Math.ceil(tx.size));
+            lastFeeRate = Math.min(lastFeeRate, (tx.feePerSize * tx.size) / Math.ceil(tx.size));
           }
           if (tx.firstSeen == null || now - (tx?.firstSeen || 0) > PROPAGATION_MARGIN) {
             displacedSizeRemaining -= tx.size;
@@ -153,11 +153,11 @@ class Audit {
           if (isCensored[txid]) {
             delete isCensored[txid];
           }
-          if (tx.effectiveFeePerSize > maxOverflowRate) {
-            maxOverflowRate = tx.effectiveFeePerSize;
+          if (tx.feePerSize > maxOverflowRate) {
+            maxOverflowRate = tx.feePerSize;
             rateThreshold = Math.ceil(maxOverflowRate * 100) / 100 + 0.005;
           }
-        } else if (tx.effectiveFeePerSize <= rateThreshold) {
+        } else if (tx.feePerSize <= rateThreshold) {
           // tolerance of 0.01 sat/vb + rounding
           if (isCensored[txid]) {
             delete isCensored[txid];

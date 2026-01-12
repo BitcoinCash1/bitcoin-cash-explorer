@@ -80,7 +80,6 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
   flowEnabled: boolean;
   adjustedSize: number;
   filters: Filter[] = [];
-  hasEffectiveFeeRate: boolean;
   mempoolBlocksSubscription: Subscription;
 
   constructor(
@@ -231,11 +230,6 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
         (transaction.size + this.sizeFromMissingSig) / 4,
         transaction.sigops * 5
       );
-      const adjustedFeePerSize = transaction.fee / this.adjustedSize;
-      if (adjustedFeePerSize !== transaction.feePerSize) {
-        transaction.effectiveFeePerSize = adjustedFeePerSize;
-        this.hasEffectiveFeeRate = true;
-      }
     }
   }
 
@@ -279,9 +273,7 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
         if (this.transaction) {
           this.stateService.markBlock$.next({
             txid: this.transaction.txid,
-            txFeePerSize:
-              this.transaction.effectiveFeePerSize ||
-              this.transaction.feePerSize,
+            txFeePerSize: this.transaction.feePerSize,
           });
         }
       }
@@ -340,7 +332,6 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
     this.isLoadingPrevouts = false;
     this.isLoadingBroadcast = false;
     this.adjustedSize = null;
-    this.hasEffectiveFeeRate = false;
     this.filters = [];
     this.hasPrevouts = false;
     this.missingPrevouts = [];

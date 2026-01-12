@@ -46,7 +46,6 @@
 <ng-template #detailsRight>
   <ng-container *ngTemplateOutlet="feeRow"></ng-container>
   <ng-container *ngTemplateOutlet="feeRateRow"></ng-container>
-  <!-- <ng-container *ngTemplateOutlet="effectiveRateRow"></ng-container> -->
   @if (tx?.status?.confirmed) {
     <ng-container *ngTemplateOutlet="minerRow"></ng-container>
   }
@@ -301,7 +300,7 @@
       <td i18n="transaction.fee-rate|Transaction fee rate">Fee rate</td>
       <td>
         <app-fee-rate [fee]="tx.feePerSize"></app-fee-rate>
-        @if (tx?.status?.confirmed && tx.fee && !hasEffectiveFeeRate) {
+        @if (tx?.status?.confirmed && tx.fee) {
           &nbsp;
           <app-tx-fee-rating [tx]="tx"></app-tx-fee-rating>
         }
@@ -310,24 +309,6 @@
   } @else {
     <ng-container *ngTemplateOutlet="skeletonDetailsRow"></ng-container>
   }
-</ng-template>
-
-<ng-template #effectiveRateRow>
-  <tr>
-    <td i18n="transaction.effective-fee-rate|Effective transaction fee rate">
-      Effective fee rate
-    </td>
-    <td>
-      <div class="effective-fee-container">
-        @if (tx?.status?.confirmed && tx.fee && tx.effectiveFeePerSize) {
-          <app-tx-fee-rating
-            class="ml-2 mr-2 effective-fee-rating"
-            [tx]="tx"
-          ></app-tx-fee-rating>
-        }
-      </div>
-    </td>
-  </tr>
 </ng-template>
 
 <ng-template #minerRow>

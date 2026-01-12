@@ -7,7 +7,6 @@ import {
   MempoolBlockDelta,
   Ancestor,
   CompactThreadTransaction,
-  EffectiveFeeStats,
   TransactionClassified,
   TransactionCompressed,
   MempoolDeltaChange,
@@ -144,8 +143,7 @@ class MempoolBlocks {
           fee: entry.fee,
           size: entry.adjustedSize,
           sigops: entry.sigops,
-          feePerSize: entry.adjustedFeePerSize || entry.feePerSize,
-          effectiveFeePerSize: entry.effectiveFeePerSize || entry.adjustedFeePerSize || entry.feePerSize,
+          feePerSize: entry.feePerSize,
           inputs: entry.vin
             .map((v) => this.getUid(newMempool[v.txid]))
             .filter((uid) => uid !== null && uid !== undefined) as number[],
@@ -241,8 +239,7 @@ class MempoolBlocks {
           fee: entry.fee,
           size: entry.adjustedSize,
           sigops: entry.sigops,
-          feePerSize: entry.adjustedFeePerSize || entry.feePerSize,
-          effectiveFeePerSize: entry.effectiveFeePerSize || entry.adjustedFeePerSize || entry.feePerSize,
+          feePerSize: entry.feePerSize,
           inputs: entry.vin
             .map((v) => this.getUid(newMempool[v.txid]))
             .filter((uid) => uid !== null && uid !== undefined) as number[],
@@ -443,7 +440,7 @@ class MempoolBlocks {
     }
     for (const [txid, rate] of rates) {
       if (txid in mempool) {
-        mempool[txid].effectiveFeePerSize = rate;
+        mempool[txid].feePerSize = rate;
       }
     }
 
@@ -555,15 +552,7 @@ class MempoolBlocks {
           }
         }
       }
-      mempoolBlocks[blockIndex] = this.dataToMempoolBlocks(
-        block,
-        transactions,
-        totalSize,
-        totalFees,
-        hasBlockStack && blockIndex === lastBlockIndex && feeStatsCalculator
-          ? feeStatsCalculator.getRawFeeStats()
-          : undefined
-      );
+      mempoolBlocks[blockIndex] = this.dataToMempoolBlocks(block, transactions, totalSize, totalFees);
     }
 
     if (saveResults) {
@@ -579,18 +568,17 @@ class MempoolBlocks {
     transactionIds: string[],
     transactions: MempoolTransactionExtended[],
     totalSize: number,
-    totalFees: number,
-    feeStats?: EffectiveFeeStats
+    totalFees: number
   ): MempoolBlockWithTransactions {
-    if (!feeStats) {
-      feeStats = Common.calcEffectiveFeeStatistics(transactions);
-    }
     return {
       blockSize: totalSize,
       nTx: transactionIds.length,
       totalFees: totalFees,
-      medianFee: feeStats.medianFee, // Common.percentile(transactions.map((tx) => tx.effectiveFeePerVsize), config.MEMPOOL.RECOMMENDED_FEE_PERCENTILE),
-      feeRange: feeStats.feeRange, //Common.getFeesInRange(transactions, rangeLength),
+      medianFee: Common.percentile(
+        transactions.map((tx) => tx.feePerSize),
+        config.MEMPOOL.RECOMMENDED_FEE_PERCENTILE
+      ),
+      feeRange: Common.getFeesInRange(transactions, 8),
       transactionIds: transactionIds,
       transactions: transactions.map((tx) => Common.classifyTransaction(tx)),
     };

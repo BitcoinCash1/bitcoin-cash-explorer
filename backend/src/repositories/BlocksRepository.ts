@@ -1,5 +1,5 @@
 import bitcoinApi, { bitcoinCoreApi } from '../api/bitcoin/bitcoin-api-factory';
-import { BlockExtended, BlockExtension, BlockPrice, EffectiveFeeStats } from '../mempool.interfaces';
+import { BlockExtended, BlockExtension, BlockPrice, FeeStats } from '../mempool.interfaces';
 import DB from '../database';
 import logger from '../logger';
 import { Common } from '../api/common';
@@ -1019,26 +1019,6 @@ class BlocksRepository {
       );
     } catch (e) {
       logger.err(`Cannot update block fee_percentiles. Reason: ` + (e instanceof Error ? e.message : e));
-      throw e;
-    }
-  }
-
-  /**
-   * Save indexed effective fee statistics
-   *
-   * @param id
-   * @param feeStats
-   */
-  public async $saveEffectiveFeeStats(id: string, feeStats: EffectiveFeeStats): Promise<void> {
-    try {
-      await DB.query(
-        `
-        UPDATE blocks SET median_fee = ?, fee_span = ?
-        WHERE hash = ?`,
-        [feeStats.medianFee, JSON.stringify(feeStats.feeRange), id]
-      );
-    } catch (e) {
-      logger.err(`Cannot update block fee stats. Reason: ` + (e instanceof Error ? e.message : e));
       throw e;
     }
   }

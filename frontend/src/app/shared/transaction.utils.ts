@@ -832,7 +832,7 @@ export function getTransactionFlags(
 }
 
 export function getUnacceleratedFeeRate(tx: Transaction): number {
-  return tx.effectiveFeePerSize;
+  return tx.feePerSize;
 }
 
 // Adapted from mempool backend https://github.com/mempool/mempool/blob/14e49126c3ca8416a8d7ad134a95c5e090324d69/backend/src/api/transaction-utils.ts#L254

@@ -106,9 +106,8 @@ interface VoutStrippedToScriptPubkey {
 }
 
 export interface TransactionExtended extends IEsploraApi.Transaction {
-  feePerSize: number; // Fee per size is differently calculated in BCH
+  feePerSize: number;
   firstSeen?: number;
-  effectiveFeePerSize: number; // We might not have this in BCH
   ancestors?: Ancestor[];
   descendants?: Ancestor[];
   bestDescendant?: BestDescendant | null;
@@ -125,8 +124,7 @@ export interface TransactionExtended extends IEsploraApi.Transaction {
 export interface MempoolTransactionExtended extends TransactionExtended {
   order: number;
   sigops: number;
-  adjustedSize: number; // We might not have this in BCH
-  adjustedFeePerSize: number; // We might not have this in BCH
+  adjustedSize: number; // Pretty sure we do not have this in BCH, just size though. Need to be changed.
   inputs?: number[];
   lastBoosted?: number;
 }
@@ -135,8 +133,7 @@ export interface AuditTransaction {
   uid: number;
   fee: number;
   size: number;
-  feePerSize: number; // We might not have this in BCH
-  effectiveFeePerSize: number; // We might not have this in BCH
+  feePerSize: number;
   sigops: number;
   inputs: number[];
   relativesSet: boolean;
@@ -158,7 +155,6 @@ export interface CompactThreadTransaction {
   size: number;
   sigops: number;
   feePerSize: number;
-  effectiveFeePerSize: number;
   inputs: number[];
   dirty?: boolean;
 }
@@ -174,7 +170,6 @@ export interface ThreadTransaction {
   fee: number;
   size: number;
   feePerSize: number;
-  effectiveFeePerSize?: number;
   inputs: number[];
 }
 
@@ -339,12 +334,12 @@ export interface MempoolStats {
   tx_count: number;
 }
 
-export interface EffectiveFeeStats {
+export interface FeeStats {
   medianFee: number; // median effective fee rate
   feeRange: number[]; // 2nd, 10th, 25th, 50th, 75th, 90th, 98th percentiles
 }
 
-export interface WorkingEffectiveFeeStats extends EffectiveFeeStats {
+export interface WorkingFeeStats extends FeeStats {
   minFee: number;
   maxFee: number;
 }

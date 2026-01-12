@@ -415,8 +415,7 @@ export class TrackerComponent implements OnInit, OnDestroy {
           return;
         }
 
-        const txFeePerSize =
-          this.tx.effectiveFeePerSize || this.tx.fee / this.tx.size;
+        const txFeePerSize = this.tx.feePerSize || this.tx.fee / this.tx.size;
 
         let found = false;
         this.txInBlockIndex = 0;

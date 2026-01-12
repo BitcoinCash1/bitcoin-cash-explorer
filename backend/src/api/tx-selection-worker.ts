@@ -50,7 +50,6 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
       fee: tx.fee,
       size: tx.size,
       feePerSize: tx.feePerSize,
-      effectiveFeePerSize: tx.feePerSize,
       sigops: tx.sigops,
       inputs: tx.inputs || [],
       relativesSet: false,
@@ -137,6 +136,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
           }),
           nextTx,
         ];
+        // This calculation is wrong for BCH
         const effectiveFeeRate = Math.min(
           nextTx.dependencyRate || Infinity,
           nextTx.ancestorFee / (nextTx.ancestorWeight / 4)
@@ -150,11 +150,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
           }
           ancestor.used = true;
           ancestor.usedBy = nextTx.uid;
-          // update original copy of this tx with effective fee rate & relatives data
-          if (mempoolTx.effectiveFeePerSize !== effectiveFeeRate) {
-            mempoolTx.effectiveFeePerSize = effectiveFeeRate;
-            mempoolTx.dirty = true;
-          }
+          mempoolTx.feePerSize = effectiveFeeRate; // BCH doesn't have effective fee rate, just fee rate.
           transactions.push(ancestor);
           blockSize += ancestor.weight;
           used.push(ancestor);
@@ -216,7 +212,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
   const rates = new Map<number, number>();
   for (const tx of mempool.values()) {
     if (tx?.dirty) {
-      rates.set(tx.uid, tx.effectiveFeePerSize || tx.feePerSize);
+      rates.set(tx.uid, tx.feePerSize);
     }
   }
 
