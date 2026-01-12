@@ -146,8 +146,7 @@
   .community-sponsor,
   .project-translators,
   .community-integrations-sponsor,
-  .maintainers,
-  .managers {
+  .maintainers {
     scroll-margin: 30px;
     .wrapper {
       display: inline-block;
@@ -168,12 +167,36 @@
         }
         img,
         svg {
-          margin: 30px 29px 10px;
+          margin: 40px 29px 10px;
           &.image.coldcard {
             border-radius: 0;
             height: auto;
             margin: 20px 29px 20px;
           }
+        }
+      }
+    }
+  }
+
+  .managers {
+    scroll-margin: 30px;
+    .wrapper {
+      display: inline-block;
+      a {
+        display: inline-block;
+        &:hover {
+          text-decoration: none;
+          img.melroy-logo,
+          svg {
+            transform: scale(1.04);
+          }
+        }
+        img,
+        svg,
+        span,
+        code {
+          display: block;
+          transition: 250ms all;
         }
       }
     }
@@ -195,7 +218,7 @@
   }
 
   #project-members a.project-member-avatar img {
-    margin: 30px 20px 10px;
+    margin: 40px 20px 10px;
   }
 
   .copyright {
@@ -275,7 +298,17 @@
   height: 64px;
 }
 
-.melroy-logo {
+code {
+  font-family: "Courier New", Courier, monospace;
+  color: #fff;
+  background-color: #03271b;
+  padding: 2px;
+  border-radius: 5px;
+  margin: 10px;
+}
+
+.melroy-logo,
+.qr-code {
   width: 260px;
   max-width: 90vw;
   margin: auto;
