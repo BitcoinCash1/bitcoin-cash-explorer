@@ -94,13 +94,6 @@ const routes: Routes = [
           ),
       },
       {
-        path: 'trademark-policy',
-        loadChildren: () =>
-          import('@components/trademark-policy/trademark-policy.module').then(
-            (m) => m.TrademarkModule
-          ),
-      },
-      {
         path: 'tx',
         component: StartComponent,
         data: { preload: true, networkSpecific: true },
