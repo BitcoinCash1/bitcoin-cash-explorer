@@ -265,7 +265,7 @@
             <app-fiat
               [blockConversion]="blockConversion"
               [value]="block.extras?.medianFee * 140"
-              digitsInfo="1.5-8"
+              digitsInfo="1.2-3"
               placement="bottom"
               i18n-ngbTooltip="Transaction fee tooltip"
               ngbTooltip="Based on average native transaction of 140 Bytes"
@@ -286,7 +286,7 @@
               <app-fiat
                 [blockConversion]="blockConversion"
                 [value]="block.extras.totalFees"
-                digitsInfo="1.0-0"
+                digitsInfo="1.2-3"
               ></app-fiat>
             </span>
           </td>
@@ -305,7 +305,7 @@
               <app-fiat
                 [blockConversion]="blockConversion"
                 [value]="fees * 100000000"
-                digitsInfo="1.0-0"
+                digitsInfo="1.2-3"
               ></app-fiat>
             </span>
           </td>
