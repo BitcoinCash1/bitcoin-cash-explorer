@@ -8,7 +8,6 @@ import {
 import { TransactionStripped } from '@interfaces/node-api.interface';
 import { StateService } from '@app/services/state.service';
 import { selectPowerOfTen } from '@app/bitcoin.utils';
-import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-fee-distribution-graph',
@@ -37,8 +36,6 @@ export class FeeDistributionGraphComponent
   labelInterval: number = 50;
   smallScreen: boolean = window.innerWidth < 450;
 
-  rateUnitSub: Subscription;
-  weightMode: boolean = false;
   mempoolSizeFeesOptions: any;
   mempoolSizeFeesInitOptions = {
     renderer: 'svg',
@@ -47,12 +44,9 @@ export class FeeDistributionGraphComponent
   constructor(public stateService: StateService) {}
 
   ngOnInit() {
-    this.rateUnitSub = this.stateService.rateUnits$.subscribe((rateUnits) => {
-      this.weightMode = rateUnits === 'wu';
-      if (this.data) {
-        this.mountChart();
-      }
-    });
+    if (this.data) {
+      this.mountChart();
+    }
   }
 
   ngOnChanges(): void {
@@ -131,7 +125,7 @@ export class FeeDistributionGraphComponent
       xAxis: {
         type: 'category',
         boundaryGap: false,
-        name: '% Weight',
+        name: '% Block Size',
         nameLocation: 'middle',
         nameGap: 0,
         nameTextStyle: {
@@ -156,7 +150,7 @@ export class FeeDistributionGraphComponent
         type: 'log',
         min: this.minValue >= 1 ? 1 : 0.1,
         max: this.maxValue,
-        // name: 'Effective Fee Rate s/vb',
+        // name: 'Effective Fee Rate s/b',
         // nameLocation: 'middle',
         splitLine: {
           lineStyle: {
@@ -168,9 +162,8 @@ export class FeeDistributionGraphComponent
         axisLabel: {
           show: !this.smallScreen,
           formatter: (value: number): string => {
-            const unitValue = this.weightMode ? value / 4 : value;
-            const selectedPowerOfTen = selectPowerOfTen(unitValue);
-            const scaledValue = unitValue / selectedPowerOfTen.divider;
+            const selectedPowerOfTen = selectPowerOfTen(value);
+            const scaledValue = value / selectedPowerOfTen.divider;
             const newVal = '';
             switch (true) {
               case scaledValue >= 100:
@@ -199,9 +192,8 @@ export class FeeDistributionGraphComponent
             fontSize: this.smallScreen ? 10 : 12,
             formatter: (label: { data: number[] }): string => {
               const value = label.data[1];
-              const unitValue = this.weightMode ? value / 4 : value;
-              const selectedPowerOfTen = selectPowerOfTen(unitValue);
-              const scaledValue = unitValue / selectedPowerOfTen.divider;
+              const selectedPowerOfTen = selectPowerOfTen(value);
+              const scaledValue = value / selectedPowerOfTen.divider;
               const newVal =
                 scaledValue >= 100
                   ? Math.round(scaledValue)
@@ -240,7 +232,5 @@ export class FeeDistributionGraphComponent
     }
   }
 
-  ngOnDestroy(): void {
-    this.rateUnitSub.unsubscribe();
-  }
+  ngOnDestroy(): void {}
 }
