@@ -17,7 +17,7 @@ footer p {
 }
 
 footer .row.main {
-  padding: 40px 0 24px 0;
+  padding: 0; // 40px 0 24px 0
   max-width: 1140px;
   margin: 0 auto;
   &.services {
