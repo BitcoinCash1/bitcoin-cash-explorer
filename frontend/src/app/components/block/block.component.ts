@@ -1088,10 +1088,4 @@ export class BlockComponent implements OnInit, OnDestroy {
       this.fetchCanonicalBlock();
     }
   }
-
-  updateBlockReward(blockReward: number): void {
-    if (this.fees === undefined) {
-      this.fees = blockReward;
-    }
-  }
 }

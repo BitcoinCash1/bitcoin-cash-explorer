@@ -44,7 +44,7 @@ export class BlockchainComponent implements OnInit, OnDestroy, OnChanges {
   dividerOffset: number | null = null;
   mempoolOffset: number | null = null;
   positionStyle = {
-    transform: 'translateX(1280px)',
+    transform: 'translateX(420px)',
   };
   blockDisplayToggleStyle = {};
 
@@ -155,17 +155,9 @@ export class BlockchainComponent implements OnInit, OnDestroy, OnChanges {
   onResize(): void {
     const width = this.containerWidth || window.innerWidth;
     if (width >= 768) {
-      if (this.stateService.isLiquid()) {
-        this.dividerOffset = 420;
-      } else {
-        this.dividerOffset = width * 0.5;
-      }
+      this.dividerOffset = 420;
     } else {
-      if (this.stateService.isLiquid()) {
-        this.dividerOffset = width * 0.5;
-      } else {
-        this.dividerOffset = width * 0.95;
-      }
+      this.dividerOffset = width * 0.5;
     }
     this.updateStyle();
   }

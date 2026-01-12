@@ -548,10 +548,6 @@ export class StateService {
     this.blockScrolling$.next(value);
   }
 
-  isLiquid() {
-    return this.network === 'liquid' || this.network === 'liquidtestnet';
-  }
-
   isMainnet(): boolean {
     return this.env.ROOT_NETWORK === '' && this.network === '';
   }

@@ -195,11 +195,9 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
   ngOnInit() {
     this.enterpriseService.page();
 
-    if (!this.stateService.isLiquid()) {
-      this.miningService.getMiningStats('1m').subscribe((stats) => {
-        this.miningStats = stats;
-      });
-    }
+    this.miningService.getMiningStats('1m').subscribe((stats) => {
+      this.miningStats = stats;
+    });
 
     this.websocketService.want(['blocks', 'mempool-blocks']);
     this.stateService.networkChanged$.subscribe((network) => {

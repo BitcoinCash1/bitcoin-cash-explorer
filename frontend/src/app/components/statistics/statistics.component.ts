@@ -222,20 +222,10 @@ export class StatisticsComponent implements OnInit {
     _feeLevels.forEach((fee, i) => {
       let range;
       const nextIndex = this.inverted ? i + 1 : i - 1;
-      if (this.stateService.isLiquid()) {
-        if (_feeLevels[nextIndex] == null) {
-          range = `${(_feeLevels[i] / 10).toFixed(1)}+`;
-        } else {
-          range = `${(_feeLevels[i] / 10).toFixed(1)} - ${(
-            _feeLevels[nextIndex] / 10
-          ).toFixed(1)}`;
-        }
+      if (_feeLevels[nextIndex] == null) {
+        range = `${_feeLevels[i]}+`;
       } else {
-        if (_feeLevels[nextIndex] == null) {
-          range = `${_feeLevels[i]}+`;
-        } else {
-          range = `${_feeLevels[i]} - ${_feeLevels[nextIndex]}`;
-        }
+        range = `${_feeLevels[i]} - ${_feeLevels[nextIndex]}`;
       }
       if (this.inverted) {
         this.feeLevelDropdownData.push({

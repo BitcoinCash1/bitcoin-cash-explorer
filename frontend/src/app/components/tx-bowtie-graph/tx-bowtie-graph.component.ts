@@ -79,7 +79,6 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
   txWidth: number;
   connectorWidth: number;
   combinedWeight: number;
-  isLiquid: boolean = false;
   hoverLine: Xput | void = null;
   hoverConnector: boolean = false;
   tooltipPosition = { x: 0, y: 0 };
@@ -175,8 +174,6 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
   }
 
   initGraph(): void {
-    this.isLiquid =
-      this.network === 'liquid' || this.network === 'liquidtestnet';
     this.gradient = this.gradientColors[this.network];
     this.midWidth = Math.min(10, Math.ceil(this.width / 100));
     this.txWidth = this.connectors
@@ -200,14 +197,14 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
         displayValue: v?.value,
         address: v?.scriptpubkey_address || v?.scriptpubkey_type?.toUpperCase(),
         index: i,
-        confidential: this.isLiquid && v?.value === undefined,
+        confidential: false, // used to check if it was liquid network
         timestamp: this.tx.status.block_time,
         blockHeight: this.tx.status.block_height,
         asset: v?.asset,
       } as Xput;
     });
 
-    if (this.tx.fee && !this.isLiquid) {
+    if (this.tx.fee) {
       voutWithFee.unshift({ type: 'fee', value: this.tx.fee });
     }
     const outputCount = voutWithFee.length;
@@ -224,7 +221,7 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
           v?.prevout?.scriptpubkey_type?.toUpperCase(),
         index: i,
         coinbase: v?.is_coinbase,
-        confidential: this.isLiquid && v?.prevout?.value === undefined,
+        confidential: false, // used to check if it was liquid network
         timestamp: this.tx.status.block_time,
         blockHeight: this.tx.status.block_height,
         asset: v?.prevout?.asset,
@@ -292,38 +289,7 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
       0
     );
     // simple sum of outputs + fee for bitcoin
-    if (!this.isLiquid) {
-      return this.tx.fee ? totalOutput + this.tx.fee : totalOutput;
-    } else {
-      const totalInput = this.tx.vin.reduce(
-        (acc, v) => (this.getInputValue(v) || 0) + acc,
-        0
-      );
-      const confidentialInputCount = this.tx.vin.reduce(
-        (acc, v) => acc + (this.isUnknownInputValue(v) ? 1 : 0),
-        0
-      );
-      const confidentialOutputCount = this.tx.vout.reduce(
-        (acc, v) => acc + (this.isUnknownOutputValue(v) ? 1 : 0),
-        0
-      );
-
-      // if there are unknowns on both sides, the total is indeterminate, so we'll just fudge it
-      if (confidentialInputCount && confidentialOutputCount) {
-        const knownInputCount = tx.vin.length - confidentialInputCount || 1;
-        const knownOutputCount = tx.vout.length - confidentialOutputCount || 1;
-        // assume confidential inputs/outputs have the same average value as the known ones
-        const adjustedTotalInput =
-          totalInput + (totalInput / knownInputCount) * confidentialInputCount;
-        const adjustedTotalOutput =
-          totalOutput +
-          (totalOutput / knownOutputCount) * confidentialOutputCount;
-        return Math.max(adjustedTotalInput, adjustedTotalOutput);
-      } else {
-        // otherwise knowing the actual total of one side suffices
-        return Math.max(totalInput, totalOutput);
-      }
-    }
+    return this.tx.fee ? totalOutput + this.tx.fee : totalOutput;
   }
 
   initLines(
@@ -628,8 +594,6 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
   getOutputValue(v: Vout): number | void {
     if (!v) {
       return null;
-    } else if (this.isLiquid && v.asset !== this.nativeAssetId) {
-      return null;
     } else {
       return v.value;
     }
@@ -638,24 +602,17 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
   getInputValue(v: Vin): number | void {
     if (!v?.prevout) {
       return null;
-    } else if (this.isLiquid && v.prevout.asset !== this.nativeAssetId) {
-      return null;
     } else {
       return v.prevout.value;
     }
   }
 
   isUnknownInputValue(v: Vin): boolean {
-    return (
-      v?.prevout?.value == null ||
-      (this.isLiquid && v?.prevout?.asset !== this.nativeAssetId)
-    );
+    return v?.prevout?.value == null;
   }
 
   isUnknownOutputValue(v: Vout): boolean {
-    return (
-      v?.value == null || (this.isLiquid && v?.asset !== this.nativeAssetId)
-    );
+    return v?.value == null;
   }
 
   @HostListener('pointermove', ['$event'])
