@@ -60,10 +60,7 @@ class Audit {
         if (mempool[txid]?.firstSeen && now - (mempool[txid]?.firstSeen || 0) <= PROPAGATION_MARGIN) {
           // tx is recent, may have reached the miner too late for inclusion
           fresh.push(txid);
-        } else if (
-          mempool[txid]?.lastBoosted &&
-          now - (mempool[txid]?.lastBoosted || 0) <= PROPAGATION_MARGIN
-        ) {
+        } else if (mempool[txid]?.lastBoosted && now - (mempool[txid]?.lastBoosted || 0) <= PROPAGATION_MARGIN) {
           // tx was recently cpfp'd, miner may not have the latest effective rate
           fresh.push(txid);
         } else if (mempool[txid].feePerSize >= 1) {
