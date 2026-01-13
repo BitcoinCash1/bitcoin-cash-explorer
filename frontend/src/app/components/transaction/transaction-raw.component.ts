@@ -78,7 +78,6 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
   flowPrefSubscription: Subscription;
   hideFlow: boolean = this.stateService.hideFlow.value;
   flowEnabled: boolean;
-  adjustedSize: number;
   filters: Filter[] = [];
   mempoolBlocksSubscription: Subscription;
 
@@ -226,10 +225,6 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
       transaction.feePerSize =
         transaction.fee / ((transaction.size + this.sizeFromMissingSig) / 4);
       transaction.sigops = countSigops(transaction);
-      this.adjustedSize = Math.max(
-        (transaction.size + this.sizeFromMissingSig) / 4,
-        transaction.sigops * 5
-      );
     }
   }
 
@@ -331,7 +326,6 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
     this.isLoading = false;
     this.isLoadingPrevouts = false;
     this.isLoadingBroadcast = false;
-    this.adjustedSize = null;
     this.filters = [];
     this.hasPrevouts = false;
     this.missingPrevouts = [];

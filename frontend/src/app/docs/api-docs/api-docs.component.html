@@ -483,7 +483,7 @@
   order to increase the probability of finding new blocks.
 </ng-template>
 
-<ng-template type="what-are-vb-wu">
+<ng-template type="what-are-bytes">
   <p>
     Bytes (B) are used to measure the size of transactions and blocks on the
     Bitcoin Cash network.
@@ -497,13 +497,14 @@
     more in mining fees than smaller transactions.
   </p>
   <p>
-    Block sizes are in theory unlimited in BCH, and dynamically calculated by
-    ABLA (Adaptive Blocksize Limit Algorithm). Minimum size is 32 MB.
+    Block sizes have a minimum size of 32MB. But the block size can be larger
+    than that, and is calculated dynamically by ABLA (Adaptive Blocksize Limit
+    Algorithm). With ABLA there is no upper limit on the block size (although
+    capped to ~2x increase per year).
   </p>
-  <p>Transaction sizes and block sizes are measured in plain bytes.</p>
 </ng-template>
 
-<ng-template type="what-is-svb">
+<ng-template type="what-is-sb">
   <p>
     The priority of a pending Bitcoin Cash transaction is determined by its
     feerate. Feerates are measured in sat/B.
@@ -517,7 +518,8 @@
       [routerLink]="['/docs/faq' | relativeUrl]"
       fragment="why-is-transaction-stuck-in-mempool"
       >avoid it from getting stuck</a
-    >.
+    >. That being said, in Bitcoin Cash the fees are low, so you can usually get
+    away with a lower feerate.
   </p>
   <p>
     There are feerate estimates on the top of
@@ -558,32 +560,15 @@
 <ng-template type="how-to-get-transaction-confirmed-quickly">
   <p>
     To get your transaction confirmed quicker, you will need to increase its
-    effective feerate.
-  </p>
-  <p>
-    If your transaction was created with RBF enabled, your stuck transaction can
-    simply be replaced with a new one that has a higher fee. Otherwise, if you
-    control any of the stuck transaction's outputs, you can use CPFP to increase
-    your stuck transaction's effective feerate.
-  </p>
-  <p>
-    Another option to get your transaction confirmed more quickly is
-    <a
-      [href]="[
-        isMempoolSpaceBuild
-          ? '/accelerator'
-          : 'https://explorer.melroy.org/accelerator',
-      ]"
-      [target]="isMempoolSpaceBuild ? '' : 'blank'"
-      >Mempool Accelerator®</a
-    >.
+    feerate.
   </p>
 </ng-template>
 
 <ng-template type="how-prevent-stuck-transaction">
   <p>
     You must use an adequate transaction fee commensurate with how quickly you
-    need the transaction to be confirmed. See Mempool's fee estimates on the
+    need the transaction to be confirmed. See BCH Explorer's fee estimates on
+    the
     <a [routerLink]="['/' | relativeUrl]">front page</a>.
   </p>
 </ng-template>
@@ -607,7 +592,7 @@
     See real-time fee estimates on
     <a [routerLink]="['/' | relativeUrl]">the main dashboard</a>.
   </p>
-  <p>Here is an overview of Mempool's feerate suggestions:</p>
+  <p>Here is an overview of BCH Exploer's feerate suggestions:</p>
   <ul>
     <li>
       <b>High Priority.</b> This figure is the median feerate of transactions in
@@ -645,8 +630,8 @@
   <p>
     In all cases, the suggested feerate is adjusted lower if any of the mempool
     blocks involved in the calculation are not full (example: if there is only 1
-    mempool block that's less than half-full, Mempool will suggest a feerate of
-    1 sat/B—not the median feerate of transactions in the block).
+    mempool block that's less than half-full, BCH Explorer will suggest a
+    feerate of 1 sat/B—not the median feerate of transactions in the block).
   </p>
   <p>
     Mempool blocks use feerates, transaction sizes, and other metrics to
@@ -660,10 +645,10 @@
     estimation cannot be perfectly precise.
   </p>
   <p>
-    <b
-      >Use Mempool's feerate suggestions as a guide, and understand that they do
-      not guarantee transaction confirmation in any period of time.</b
-    >
+    Use BCH Explorer's feerate suggestions as a guide, and understand that they
+    do not guarantee transaction confirmation in any period of time. However, in
+    Bitcoin Cash the fees are low and the block sizes are big enough that most
+    transations are confirmed within the next block.
   </p>
 </ng-template>
 
@@ -690,7 +675,7 @@
     rejecting new transactions below a certain feerate threshold—so when this is
     the case, be extra sure to set a feerate that (at a minimum) exceeds that
     threshold. The current threshold feerate (and memory usage) are displayed
-    right on Mempool's front page.
+    right on BCH Explorer's front page.
   </p>
 </ng-template>
 
@@ -777,9 +762,9 @@
 
 <ng-template type="why-dont-fee-ranges-match">
   <p>
-    Mempool aims to show you the <i>effective feerate</i> range for blocks—how
-    much would you actually need to pay to get a transaction included in a
-    block.
+    BCH Explorer aims to show you the <i>effective feerate</i> range for
+    blocks—how much would you actually need to pay to get a transaction included
+    in a block.
   </p>
   <p>
     A transaction's effective feerate is not always the same as the feerate
@@ -795,11 +780,11 @@
 
 <ng-template type="how-do-block-audits-work">
   <p>
-    A block audit visually compares Mempool's expected block to the actual block
-    for a particular block height.
+    A block audit visually compares BCH Explorer's expected block to the actual
+    block for a particular block height.
   </p>
   <p>
-    How is the expected block determined? Mempool monitors its view of the
+    How is the expected block determined? BCH Explorer monitors its view of the
     mempool and runs a re-implementation of Bitcoin Cash Core's transaction
     selection algorithm to determine the transactions it expects to see in
     upcoming blocks (<a
@@ -812,7 +797,7 @@
     near real-time.
   </p>
   <p>
-    At the moment a new block is mined, Mempool saves a snapshot of its
+    At the moment a new block is mined, BCH Explorer saves a snapshot of its
     projected block template for the next block. We call this snapshot the
     <b>expected block</b> for the block height in question, and it serves as the
     basis for the block audit.
@@ -824,8 +809,8 @@
       >The purpose of block audits is to deduce when miners intentionally
       include or exclude transactions from blocks they mine.</b
     >
-    Since this information cannot be precisely known, Mempool uses a handful of
-    heuristics to accomplish this.
+    Since this information cannot be precisely known, BCH Explorer uses a
+    handful of heuristics to accomplish this.
   </p>
   <p>
     Block audits highlight transactions in different colors to convey these
@@ -862,8 +847,8 @@
       ><code>Recently broadcasted</code>
       <p>
         A transaction is highlighted dark pink if it is present in the expected
-        block, not present in the actual block, and was first seen by Mempool's
-        Bitcoin Cash node within 3 minutes of the block being mined.
+        block, not present in the actual block, and was first seen by BCH
+        Explorer's Bitcoin Cash node within 3 minutes of the block being mined.
       </p>
       <p>
         Due to network latency and other factors, it can take time for a miner's
@@ -948,7 +933,7 @@
   </p>
   <p>
     How is it calculated? Let <span class="math">s<sub>expected</sub></span> be
-    the set of all transactions in Mempool's expected block and let
+    the set of all transactions in BCH Explorer's expected block and let
     <span class="math">s<sub>actual</sub></span> be the set of all transactions
     in the actual block. Then let <span class="math">n</span> be the number of
     all transactions in both <span class="math">s<sub>expected</sub></span> and
@@ -957,7 +942,7 @@
   </p>
   <p>
     Furthermore, let <span class="math">r</span> be the number of transactions
-    Mempool deduces were
+    BCH Explorer deduces were
     <a
       [routerLink]="['/docs/faq' | relativeUrl]"
       fragment="how-do-block-audits-work"
@@ -1131,33 +1116,6 @@
   </p>
 </ng-template>
 
-<ng-template type="what-is-adjusted-vsize">
-  <p>
-    Bitcoin Cash blocks have two independent consensus-enforced resource
-    constraints - a 4MWU weight limit, and the 80,000 sigop limit.
-  </p>
-  <p>
-    Most transactions use more of the weight limit than the sigop limit.
-    However, some transactions use a disproportionate number of sigops compared
-    to their weight.
-  </p>
-  <p>
-    To account for this, Bitcoin Cash Core calculates and uses an "adjusted
-    vsize" equal 5 times the number of sigops, or the unadjusted vsize,
-    whichever is larger.
-  </p>
-  <p>
-    Then, during block template construction, Bitcoin Cash Core selects
-    transactions in descending order of fee rate measured in satoshis per
-    <i>adjusted vsize</i>
-  </p>
-  <p>
-    On explorer.melroy.org, effective fee rates for unconfirmed transactions are
-    also measured in terms of satoshis per adjusted vsize, after accounting for
-    CPFP relationships and other dependencies.
-  </p>
-</ng-template>
-
 <ng-template type="why-do-the-projected-block-fee-ranges-overlap">
   <p>
     The projected mempool blocks represent what we expect the next blocks would
@@ -1204,7 +1162,7 @@
 
 <ng-template type="host-my-own-instance-server">
   <p>
-    You can manually install Mempool on your own server, but this requires
+    You can manually install BCH Explorer on your own server, but this requires
     advanced sysadmin skills since you will be manually configuring everything.
     You could also use our
     <a

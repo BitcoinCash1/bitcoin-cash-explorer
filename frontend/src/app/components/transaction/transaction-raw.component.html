@@ -288,25 +288,6 @@
                   ></fa-icon>
                 </td>
               </tr>
-              <tr *ngIf="adjustedSize">
-                <td>
-                  <ng-container
-                    i18n="transaction.adjusted-size|Transaction Adjusted Size"
-                    >Adjusted size</ng-container
-                  >
-                  <a
-                    class="info-link"
-                    [routerLink]="['/docs/faq/' | relativeUrl]"
-                    fragment="what-is-adjusted-size"
-                  >
-                    <fa-icon
-                      [icon]="['fas', 'info-circle']"
-                      [fixedWidth]="true"
-                    ></fa-icon>
-                  </a>
-                </td>
-                <td [innerHTML]="'&lrm;' + (adjustedSize | bytes: 2)"></td>
-              </tr>
             </tbody>
           </table>
         </div>

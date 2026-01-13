@@ -7861,15 +7861,15 @@ export const faqData = [
     type: 'endpoint',
     category: 'basics',
     showConditions: bitcoinNetworks,
-    fragment: 'what-are-vb-wu',
-    title: 'What are virtual bytes (vB) and weight units (WU)?',
+    fragment: 'what-are-bytes',
+    title: 'What are bytes (B)?',
   },
   {
     type: 'endpoint',
     category: 'basics',
     showConditions: bitcoinNetworks,
-    fragment: 'what-is-svb',
-    title: 'What is sat/vB?',
+    fragment: 'what-is-sb',
+    title: 'What is sat/B?',
   },
   {
     type: 'category',
@@ -8021,13 +8021,6 @@ export const faqData = [
     showConditions: bitcoinNetworks,
     fragment: 'what-are-sigops',
     title: 'What are sigops?',
-  },
-  {
-    type: 'endpoint',
-    category: 'advanced',
-    showConditions: bitcoinNetworks,
-    fragment: 'what-is-adjusted-size',
-    title: 'What is adjusted size?',
   },
   {
     type: 'endpoint',
