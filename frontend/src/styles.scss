@@ -1,12 +1,12 @@
 @use "sass:color";
 
 /* Theme */
-$bg: #11131f;
-$active-bg: #000000;
+$bg: #1d1f31;
+$active-bg: #11131f;
 $hover-bg: #12131e;
 $fg: #fff;
 $nav-bg: $bg;
-$title-fg: #2055e3;
+$title-fg: #4a68b9;
 
 $taproot: #eba814;
 $taproot-light: #d5a90a;
@@ -20,10 +20,10 @@ $gray-700: $fg;
 
 $nav-tabs-link-active-bg: $active-bg;
 
-$primary: #007cfa;
-$secondary: #272f4e;
-$tertiary: #6225b2;
-$success: #0aab2f;
+$primary: #1f8148;
+$secondary: #2d3948;
+$tertiary: #13926e;
+$success: #1a9436;
 $info: #00ddff;
 
 $h5-font-size: 1.15rem !default;
@@ -113,25 +113,17 @@ $dropdown-link-active-bg: $active-bg;
   --box-bg: #171c2a;
   --stat-box-bg: #0b1018;
   --alert-bg: #3a1c61;
-  --navbar-bg: #212121;
   --transparent-fg: #ffffffbb;
-  --fade-out-box-bg-start: rgba(23, 28, 42, 0);
-  --fade-out-box-bg-end: rgba(23, 28, 42, 1);
+  --fade-out-box-bg-start: rgba(36, 39, 62, 0);
+  --fade-out-box-bg-end: rgba(36, 39, 62, 1);
   --opacity: 0.57;
 
   --testnet: #1d486f;
   --signet: #6f1d5d;
-  --liquid: #116761;
-  --liquidtestnet: #494a4a;
 
-  --mainnet-alt: #9339f4;
+  --mainnet-alt: #27915c;
   --testnet-alt: #183550;
   --signet-alt: #471850;
-  --liquidtestnet-alt: #272e46;
-
-  --taproot: #eba814;
-  --taproot-light: #d5a90a;
-  --taproot-dark: #9d7c05;
 
   --green: #83fd00;
   --red: #ff3d00;
@@ -196,20 +188,12 @@ main {
   }
 }
 
-.navbar-nav.liquid > .active {
-  background-color: var(--liquid) !important;
-}
-
 .navbar-nav.testnet > .active {
   background-color: var(--testnet) !important;
 }
 
 .navbar-nav.signet > .active {
   background-color: var(--signet) !important;
-}
-
-.navbar-nav.liquidtestnet > .active {
-  background-color: var(--liquidtestnet) !important;
 }
 
 .form-control {
@@ -787,10 +771,6 @@ h1, h2, h3 {
 
 .progress-mempool.signet {
   background: repeating-linear-gradient(to right, var(--secondary), var(--secondary) 0%, var(--signet) 0%, var(--signet-alt) 100%);
-}
-
-.progress-mempool.liquid {
-  background: repeating-linear-gradient(to right, var(--secondary), var(--secondary) 0%, var(--liquid) 0%, var(--testnet-alt) 100%);
 }
 
 .progress-dark {
@@ -1374,7 +1354,7 @@ th {
   display: none;
 }
 
-app-master-page, app-liquid-master-page {
+app-master-page {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
