@@ -20,8 +20,7 @@
           *ngIf="tx"
           [chainTip]="latestBlock?.height"
           [height]="tx?.status?.block_height"
-          [removed]="!this.tx?.status?.confirmed"
-          [cached]="isCached"
+          [confirmed]="this.tx?.status?.confirmed"
         ></app-confirmations>
       </div>
     </ng-container>
