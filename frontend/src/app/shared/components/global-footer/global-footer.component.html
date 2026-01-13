@@ -202,9 +202,7 @@
           officialMempoolSpace ||
             env.TESTNET_ENABLED ||
             env.TESTNET4_ENABLED ||
-            env.SIGNET_ENABLED ||
-            env.LIQUID_ENABLED ||
-            env.LIQUID_TESTNET_ENABLED;
+            env.SIGNET_ENABLED;
           else toolBox
         "
       >
@@ -251,28 +249,6 @@
         >
           <a [href]="networkLink('signet')" i18n="footer.signet-explorer"
             >Signet Explorer</a
-          >
-        </p>
-        <p
-          *ngIf="
-            (officialMempoolSpace || env.LIQUID_ENABLED) &&
-            currentNetwork !== 'liquidtestnet'
-          "
-        >
-          <a
-            [href]="networkLink('liquidtestnet')"
-            i18n="footer.liquid-testnet-explorer"
-            >Liquid Testnet Explorer</a
-          >
-        </p>
-        <p
-          *ngIf="
-            (officialMempoolSpace || env.LIQUID_ENABLED) &&
-            currentNetwork !== 'liquid'
-          "
-        >
-          <a [href]="networkLink('liquid')" i18n="footer.liquid-explorer"
-            >Liquid Explorer</a
           >
         </p>
       </div>

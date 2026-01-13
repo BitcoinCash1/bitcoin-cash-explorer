@@ -72,8 +72,6 @@ export interface Env {
   TESTNET_ENABLED: boolean;
   TESTNET4_ENABLED: boolean;
   SIGNET_ENABLED: boolean;
-  LIQUID_ENABLED: boolean;
-  LIQUID_TESTNET_ENABLED: boolean;
   ITEMS_PER_PAGE: number;
   KEEP_BLOCKS_AMOUNT: number;
   OFFICIAL_MEMPOOL_SPACE: boolean;
@@ -87,7 +85,6 @@ export interface Env {
   GIT_COMMIT_HASH: string;
   PACKAGE_JSON_VERSION: string;
   MEMPOOL_WEBSITE_URL: string;
-  LIQUID_WEBSITE_URL: string;
   MINING_DASHBOARD: boolean;
   LIGHTNING: boolean;
   AUDIT: boolean;
@@ -117,8 +114,6 @@ const defaultEnv: Env = {
   TESTNET_ENABLED: false,
   TESTNET4_ENABLED: false,
   SIGNET_ENABLED: false,
-  LIQUID_ENABLED: false,
-  LIQUID_TESTNET_ENABLED: false,
   BASE_MODULE: 'mempool',
   ROOT_NETWORK: '',
   ITEMS_PER_PAGE: 10,
@@ -132,7 +127,6 @@ const defaultEnv: Env = {
   GIT_COMMIT_HASH: '',
   PACKAGE_JSON_VERSION: '',
   MEMPOOL_WEBSITE_URL: 'https://explorer.melroy.org',
-  LIQUID_WEBSITE_URL: 'https://liquid.network',
   MINING_DASHBOARD: true,
   LIGHTNING: false,
   AUDIT: false,
@@ -466,10 +460,7 @@ export class StateService {
   }
 
   setNetworkBasedonUrl(url: string) {
-    if (
-      this.env.BASE_MODULE !== 'mempool' &&
-      this.env.BASE_MODULE !== 'liquid'
-    ) {
+    if (this.env.BASE_MODULE !== 'mempool') {
       return;
     }
     // horrible network regex breakdown:
@@ -494,14 +485,9 @@ export class StateService {
         }
         return;
       case 'testnet':
-        if (this.network !== 'testnet' && this.network !== 'liquidtestnet') {
-          if (this.env.BASE_MODULE === 'liquid') {
-            this.network = 'liquidtestnet';
-            this.networkChanged$.next('liquidtestnet');
-          } else {
-            this.network = 'testnet';
-            this.networkChanged$.next('testnet');
-          }
+        if (this.network !== 'testnet') {
+          this.network = 'testnet';
+          this.networkChanged$.next('testnet');
         }
         return;
       case 'testnet4':
@@ -553,9 +539,7 @@ export class StateService {
   }
 
   isAnyTestnet(): boolean {
-    return ['testnet', 'testnet4', 'signet', 'liquidtestnet'].includes(
-      this.network
-    );
+    return ['testnet', 'testnet4', 'signet'].includes(this.network);
   }
 
   resetChainTip() {

@@ -2,8 +2,6 @@
   "TESTNET_ENABLED": false,
   "TESTNET4_ENABLED": false,
   "SIGNET_ENABLED": false,
-  "LIQUID_ENABLED": false,
-  "LIQUID_TESTNET_ENABLED": false,
   "MAINNET_ENABLED": true,
   "ITEMS_PER_PAGE": 10,
   "KEEP_BLOCKS_AMOUNT": 8,
@@ -15,7 +13,6 @@
   "BASE_MODULE": "mempool",
   "ROOT_NETWORK": "",
   "MEMPOOL_WEBSITE_URL": "https://explorer.melroy.org",
-  "LIQUID_WEBSITE_URL": "https://liquid.network",
   "MINING_DASHBOARD": true,
   "AUDIT": false,
   "MAINNET_BLOCK_AUDIT_START_HEIGHT": 0,
@@ -28,5 +25,5 @@
   "ACCELERATOR_BUTTON": true,
   "PUBLIC_ACCELERATIONS": false,
   "STRATUM_ENABLED": false,
-  "SERVICES_API": "https://mempool.space/api/v1/services"
+  "SERVICES_API": "https://explorer.melroy.org/api/v1/services"
 }
