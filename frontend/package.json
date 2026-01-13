@@ -99,6 +99,7 @@
     "baseline-browser-mapping": "^2.9.11",
     "browser-sync": "^3.0.3",
     "eslint": "^9.39.0",
+    "eslint-config-prettier": "^10.1.8",
     "http-proxy-middleware": "~2.0.6",
     "prettier": "^3.0.0",
     "source-map-support": "^0.5.21",
