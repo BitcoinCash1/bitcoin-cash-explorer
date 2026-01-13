@@ -208,15 +208,15 @@ export const specialBlocks = {
     labelEventCompleted: 'Block Subsidy has halved to 12.5 BTC per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
   },
+  '478558': {
+    labelEvent: 'Bitcoin Cash Fork',
+    labelEventCompleted: 'Bitcoin Cash Fork has occurred!',
+    networks: ['mainnet', 'testnet', 'testnet4'],
+  },
   '630000': {
     labelEvent: "Bitcoin's 3rd Halving",
     labelEventCompleted: 'Block Subsidy has halved to 6.25 BTC per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
-  },
-  '709632': {
-    labelEvent: 'Taproot 🌱 activation',
-    labelEventCompleted: 'Taproot 🌱 has been activated!',
-    networks: ['mainnet'],
   },
   '840000': {
     labelEvent: "Bitcoin's 4th Halving",
@@ -277,11 +277,6 @@ export const specialBlocks = {
     labelEvent: "Bitcoin's 15th Halving",
     labelEventCompleted: 'Block Subsidy has halved to 0.00152587 BTC per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
-  },
-  '3477600': {
-    labelEvent: 'Simplicity activation',
-    labelEventCompleted: 'Simplicity has been activated!',
-    networks: ['liquid'],
   },
 };
 

@@ -8,9 +8,9 @@ $fg: #fff;
 $nav-bg: $bg;
 $title-fg: #2055e3;
 
-$taproot: #eba814;
-$taproot-light: #d5a90a;
-$taproot-dark: #9d7c05;
+$highlight: #eba814;
+$highlight-light: #d5a90a;
+$highlight-dark: #9d7c05;
 
 /* Bootstrap */
 $body-bg: $bg;
@@ -104,4 +104,25 @@ $dropdown-link-active-bg: $active-bg;
   --search-button-border: #472a6e;
   --search-button-focus: #533180;
   --search-button-shadow: #7c58ab80;
+}
+
+// Blinking block (like special blocks)
+@keyframes shadowyBackground {
+  0% {
+    box-shadow: -10px -15px 75px rgba($highlight, 1);
+  }
+  50% {
+    box-shadow: -10px -15px 75px rgba($highlight, .3);
+  }
+  100% {
+    box-shadow: -10px -15px 75px rgba($highlight, 1);
+  }
+}
+
+.blink-bg {
+  color: #fff;
+  background: repeating-linear-gradient($highlight-dark, $highlight-dark 0.163525%, $highlight-light 100%) !important;
+  animation: shadowyBackground 1s infinite;
+  box-shadow: -10px -15px 75px rgba($highlight, 1);
+  transition: 100ms all ease-in;
 }

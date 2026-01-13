@@ -6,11 +6,11 @@ $active-bg: #11131f;
 $hover-bg: #12131e;
 $fg: #fff;
 $nav-bg: $bg;
-$title-fg: #4a68b9;
+$title-fg: #4ab94f;
 
-$taproot: #eba814;
-$taproot-light: #d5a90a;
-$taproot-dark: #9d7c05;
+$highlight: #5ce93f;
+$highlight-light: #29af40;
+$highlight-dark: #09792e;
 
 /* Bootstrap */
 $body-bg: $bg;
@@ -1319,26 +1319,24 @@ th {
   }
 }
 
-
-
-// Blinking block
+// Blinking block (like special blocks)
 @keyframes shadowyBackground {
   0% {
-    box-shadow: -10px -15px 75px rgba($taproot, 1);
+    box-shadow: -10px -15px 75px rgba($highlight, 1);
   }
   50% {
-    box-shadow: -10px -15px 75px rgba($taproot, .3);
+    box-shadow: -10px -15px 75px rgba($highlight, .3);
   }
   100% {
-    box-shadow: -10px -15px 75px rgba($taproot, 1);
+    box-shadow: -10px -15px 75px rgba($highlight, 1);
   }
 }
 
 .blink-bg {
   color: #fff;
-  background: repeating-linear-gradient($taproot-dark, $taproot-dark 0.163525%, $taproot-light 100%) !important;
+  background: repeating-linear-gradient($highlight-dark, $highlight-dark 0.163525%, $highlight-light 100%) !important;
   animation: shadowyBackground 1s infinite;
-  box-shadow: -10px -15px 75px rgba($taproot, 1);
+  box-shadow: -10px -15px 75px rgba($highlight, 1);
   transition: 100ms all ease-in;
 }
 
