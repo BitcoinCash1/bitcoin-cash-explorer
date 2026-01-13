@@ -11,12 +11,8 @@ PROXY_CONFIG.forEach((entry) => {
     ? process.env.MEMPOOL_HOSTNAME
     : 'mempool.space';
 
-  const liquidHostname = process.env.LIQUID_HOSTNAME
-    ? process.env.LIQUID_HOSTNAME
-    : 'liquid.network';
 
   entry.target = entry.target.replace('mempool.space', mempoolHostname);
-  entry.target = entry.target.replace('liquid.network', liquidHostname);
 
   if (entry.onProxyReq) {
     const originalProxyReq = entry.onProxyReq;
