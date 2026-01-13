@@ -790,7 +790,7 @@ export class Common {
     return this.validateTransactionHex(matches[1].toLowerCase());
   }
 
-  static getTransactionsFromRequest(req: Request, limit: number = 25): string[] {
+  static getTransactionsFromRequest(req: Request, limit = 25): string[] {
     if (!Array.isArray(req.body) || req.body.some((hex) => typeof hex !== 'string')) {
       throw Object.assign(new Error('Invalid request body (should be an array of hexadecimal strings)'), { code: -1 });
     }
@@ -926,7 +926,7 @@ export class OnlineFeeStatsCalculator {
   private percentiles = [10, 25, 50, 75, 90];
 
   private bandWidthPercent = 2;
-  private bandWidth: number = 0;
+  private bandWidth = 0;
   private bandIndex = 0;
   private leftBound = 0;
   private rightBound = 0;
@@ -937,7 +937,7 @@ export class OnlineFeeStatsCalculator {
   private maxBandRate = 0;
 
   private feeRange: { avg: number; min: number; max: number }[] = [];
-  private totalSize: number = 0;
+  private totalSize = 0;
 
   constructor(maxWeight: number, percentileBandWidth?: number, percentiles?: number[]) {
     this.maxWeight = maxWeight;

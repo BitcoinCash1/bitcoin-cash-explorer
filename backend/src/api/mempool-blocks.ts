@@ -26,13 +26,13 @@ class MempoolBlocks {
   private mempoolBlocks: MempoolBlockWithTransactions[] = [];
   private mempoolBlockDeltas: MempoolBlockDelta[] = [];
   private txSelectionWorker: Worker | null = null;
-  private rustInitialized: boolean = false;
+  private rustInitialized = false;
   private rustGbtGenerator: GbtGenerator = new GbtGenerator(
     config.MEMPOOL.MIN_BLOCK_SIZE_UNITS,
     config.MEMPOOL.MEMPOOL_BLOCKS_AMOUNT
   );
 
-  private nextUid: number = 1;
+  private nextUid = 1;
   private uidMap: Map<number, string> = new Map(); // map short numerical uids to full txids
   private txidMap: Map<string, number> = new Map(); // map full txids back to short numerical uids
 
@@ -118,7 +118,7 @@ class MempoolBlocks {
     transactions: string[],
     newMempool: { [txid: string]: MempoolTransactionExtended },
     candidates: GbtCandidates | undefined,
-    saveResults: boolean = false
+    saveResults = false
   ): Promise<MempoolBlockWithTransactions[]> {
     const start = Date.now();
 
@@ -213,7 +213,7 @@ class MempoolBlocks {
     added: MempoolTransactionExtended[],
     removed: MempoolTransactionExtended[],
     candidates: GbtCandidates | undefined,
-    saveResults: boolean = false
+    saveResults = false
   ): Promise<void> {
     if (!this.txSelectionWorker) {
       // need to reset the worker
@@ -227,12 +227,12 @@ class MempoolBlocks {
     for (const tx of addedAndChanged) {
       this.setUid(tx, false);
     }
-    const removedTxs = removed.filter((tx) => tx.uid != null) as MempoolTransactionExtended[];
+    const removedTxs = removed.filter((tx) => tx.uid) as MempoolTransactionExtended[];
 
     // prepare a stripped down version of the mempool with only the minimum necessary data
     // to reduce the overhead of passing this data to the worker thread
     const addedStripped: CompactThreadTransaction[] = addedAndChanged
-      .filter((entry) => entry.uid != null)
+      .filter((entry) => entry.uid)
       .map((entry) => {
         return {
           uid: entry.uid || 0,
@@ -296,7 +296,7 @@ class MempoolBlocks {
     txids: string[],
     newMempool: { [txid: string]: MempoolTransactionExtended },
     candidates: GbtCandidates | undefined,
-    saveResults: boolean = false
+    saveResults = false
   ): Promise<MempoolBlockWithTransactions[]> {
     const start = Date.now();
 
@@ -305,7 +305,7 @@ class MempoolBlocks {
       this.resetUids();
     }
 
-    const transactions = txids.map((txid) => newMempool[txid]).filter((tx) => tx != null);
+    const transactions = txids.map((txid) => newMempool[txid]).filter((tx) => tx);
     // set missing short ids
     for (const tx of transactions) {
       this.setUid(tx, !saveResults);
@@ -386,11 +386,9 @@ class MempoolBlocks {
     }
     // set short ids for transaction inputs
     for (const tx of added) {
-      tx.inputs = tx.vin
-        .map((v) => this.getUid(newMempool[v.txid]))
-        .filter((uid) => uid !== null && uid !== undefined) as number[];
+      tx.inputs = tx.vin.map((v) => this.getUid(newMempool[v.txid])).filter((uid) => uid) as number[];
     }
-    const removedTxs = removed.filter((tx) => tx.uid != null) as MempoolTransactionExtended[];
+    const removedTxs = removed.filter((tx) => tx.uid) as MempoolTransactionExtended[];
 
     // run the block construction algorithm in a separate thread, and wait for a result
     try {

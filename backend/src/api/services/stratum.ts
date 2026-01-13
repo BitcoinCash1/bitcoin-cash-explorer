@@ -42,9 +42,9 @@ function isStratumJob(obj: any): obj is StratumJob {
 
 class StratumApi {
   private ws: WebSocket | null = null;
-  private runWebsocketLoop: boolean = false;
-  private startedWebsocketLoop: boolean = false;
-  private websocketConnected: boolean = false;
+  private runWebsocketLoop = false;
+  private startedWebsocketLoop = false;
+  private websocketConnected = false;
   private jobs: Record<string, StratumJob> = {};
 
   public constructor() {}

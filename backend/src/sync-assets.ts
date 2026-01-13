@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios';
+import axios from 'axios';
 import * as fs from 'fs';
 import config from './config';
 import backendInfo from './api/backend-info';
@@ -8,8 +8,6 @@ import { SocksProxyAgent } from 'socks-proxy-agent';
 const PATH = './';
 
 class SyncAssets {
-  constructor() {}
-
   public async syncAssets$() {
     for (const url of config.MEMPOOL.EXTERNAL_ASSETS) {
       try {

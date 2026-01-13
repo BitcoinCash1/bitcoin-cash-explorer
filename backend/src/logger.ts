@@ -92,15 +92,15 @@ class Logger {
   }
 
   private msg(priority, msg, tag?: string) {
-    let consolemsg, prionum, syslogmsg;
+    let syslogmsg;
     if (typeof msg === 'string' && msg.length > 0) {
       while (msg[msg.length - 1].charCodeAt(0) === 10) {
         msg = msg.slice(0, msg.length - 1);
       }
     }
     const network = this.network ? ' <' + this.network + '>' : '';
-    prionum = Logger.priorities[priority] || Logger.priorities.info;
-    consolemsg = `${this.ts()} [${process.pid}] ${priority.toUpperCase()}:${network} ${
+    const prionum = Logger.priorities[priority] || Logger.priorities.info;
+    const consolemsg = `${this.ts()} [${process.pid}] ${priority.toUpperCase()}:${network} ${
       tag ? '[' + tag + '] ' : ''
     }${msg}`;
 
@@ -126,8 +126,7 @@ class Logger {
   }
 
   private syslog(msg) {
-    let msgbuf;
-    msgbuf = Buffer.from(msg);
+    const msgbuf = Buffer.from(msg);
     this.client.send(msgbuf, 0, msgbuf.length, config.SYSLOG.PORT, config.SYSLOG.HOST, function (err, bytes) {
       if (err) {
         console.log(err);
@@ -143,17 +142,17 @@ class Logger {
   }
 
   private ts() {
-    let day, dt, hours, minutes, month, months, seconds;
-    dt = new Date();
-    hours = this.leadZero(dt.getHours());
-    minutes = this.leadZero(dt.getMinutes());
-    seconds = this.leadZero(dt.getSeconds());
-    month = dt.getMonth();
+    let day;
+    const dt = new Date();
+    const hours = this.leadZero(dt.getHours());
+    const minutes = this.leadZero(dt.getMinutes());
+    const seconds = this.leadZero(dt.getSeconds());
+    const month = dt.getMonth();
     day = dt.getDate();
     if (day < 10) {
       day = ' ' + day;
     }
-    months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
     return months[month] + ' ' + day + ' ' + hours + ':' + minutes + ':' + seconds;
   }
 

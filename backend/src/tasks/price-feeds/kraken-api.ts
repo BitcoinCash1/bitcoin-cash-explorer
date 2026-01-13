@@ -4,15 +4,12 @@ import { query } from '../../utils/axios-query';
 import priceUpdater, { PriceFeed, PriceHistory } from '../price-updater';
 
 class KrakenApi implements PriceFeed {
-  public name: string = 'Kraken';
+  public name = 'Kraken';
   public currencies: string[] = ['USD', 'EUR', 'GBP', 'AUD', 'JPY'];
 
-  public url: string = 'https://api.kraken.com/0/public/Ticker?pair=BCH';
-  public urlHistBtc: string = 'https://api.kraken.com/0/public/OHLC?interval={GRANULARITY}&pair=XBT';
-  public urlHist: string = 'https://api.kraken.com/0/public/OHLC?interval={GRANULARITY}&pair=BCH';
-
-  constructor() {}
-
+  public url = 'https://api.kraken.com/0/public/Ticker?pair=BCH';
+  public urlHistBtc = 'https://api.kraken.com/0/public/OHLC?interval={GRANULARITY}&pair=XBT';
+  public urlHist = 'https://api.kraken.com/0/public/OHLC?interval={GRANULARITY}&pair=BCH';
   private getTickerBtc(currency) {
     let ticker = `XXBTZ${currency}`;
     if (['CHF', 'AUD'].includes(currency)) {

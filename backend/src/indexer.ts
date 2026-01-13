@@ -105,7 +105,7 @@ class Indexer {
    * @param {number} timeout - delay in ms
    * @param {boolean} replace - `true` replaces any already scheduled task (works like a debounce), `false` ignores subsequent requests (works like a throttle)
    */
-  public scheduleSingleTask(task: TaskName, timeout: number = 10000, replace = false): void {
+  public scheduleSingleTask(task: TaskName, timeout = 10000, replace = false): void {
     if (this.tasksScheduled[task]) {
       if (!replace) {
         //throttle

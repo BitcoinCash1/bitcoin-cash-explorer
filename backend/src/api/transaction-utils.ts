@@ -1,10 +1,8 @@
 import { TransactionExtended, MempoolTransactionExtended, TransactionMinerInfo } from '../mempool.interfaces';
 import { IEsploraApi } from './bitcoin/esplora-api.interface';
-import { Common } from './common';
 import bitcoinApi, { bitcoinCoreApi } from './bitcoin/bitcoin-api-factory';
 import * as bitcoinjs from 'bitcoinjs-lib';
 import logger from '../logger';
-import config from '../config';
 import pLimit from '../utils/p-limit';
 
 class TransactionUtils {
@@ -132,7 +130,7 @@ class TransactionUtils {
 
   public extendMempoolTransaction(transaction: IEsploraApi.Transaction): MempoolTransactionExtended {
     const size = Math.ceil(transaction.size);
-    const sigops = transaction.sigops != null ? transaction.sigops : this.countSigops(transaction);
+    const sigops = transaction.sigops ? transaction.sigops : this.countSigops(transaction);
     // https://github.com/bitcoin/bitcoin/blob/e9262ea32a6e1d364fb7974844fadc36f931f8c6/src/policy/policy.cpp#L295-L298
     const adjustedSize = Math.max(transaction.size, sigops * 5); // adjusted vsize = Max(weight, sigops * bytes_per_sigop) / witness_scale_factor, this need to be changed for BCH
     const feePerBytes = (transaction.fee || 0) / transaction.size;
@@ -164,7 +162,7 @@ class TransactionUtils {
   /**
    *  Calculate the sigops cost of an asm script
    */
-  public countScriptSigops(script: string, isRawScript: boolean = false): number {
+  public countScriptSigops(script: string, isRawScript = false): number {
     if (!script?.length) {
       return 0;
     }

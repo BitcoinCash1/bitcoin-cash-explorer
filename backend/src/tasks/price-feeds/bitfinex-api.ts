@@ -2,12 +2,12 @@ import { query } from '../../utils/axios-query';
 import priceUpdater, { PriceFeed, PriceHistory } from '../price-updater';
 
 class BitfinexApi implements PriceFeed {
-  public name: string = 'Bitfinex';
+  public name = 'Bitfinex';
   public currencies: string[] = ['USD']; // Only works with USD
 
   // See also: https://api-pub.bitfinex.com/v2/conf/pub:list:pair:exchange
-  public url: string = 'https://api.bitfinex.com/v1/pubticker/BCHN:'; // BHCN for some reason (instead of BCH)
-  public urlHist: string = 'https://api-pub.bitfinex.com/v2/candles/trade:{GRANULARITY}:tBCH{CURRENCY}/hist';
+  public url = 'https://api.bitfinex.com/v1/pubticker/BCHN:'; // BHCN for some reason (instead of BCH)
+  public urlHist = 'https://api-pub.bitfinex.com/v2/candles/trade:{GRANULARITY}:tBCH{CURRENCY}/hist';
 
   public async $fetchPrice(currency): Promise<number> {
     const response = await query(this.url + currency);

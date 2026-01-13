@@ -2,14 +2,11 @@ import { query } from '../../utils/axios-query';
 import priceUpdater, { PriceFeed, PriceHistory } from '../price-updater';
 
 class CoinbaseApi implements PriceFeed {
-  public name: string = 'Coinbase';
+  public name = 'Coinbase';
   public currencies: string[] = ['USD', 'EUR', 'GBP'];
 
-  public url: string = 'https://api.coinbase.com/v2/prices/BCH-{CURRENCY}/spot';
-  public urlHist: string =
-    'https://api.exchange.coinbase.com/products/BCH-{CURRENCY}/candles?granularity={GRANULARITY}';
-
-  constructor() {}
+  public url = 'https://api.coinbase.com/v2/prices/BCH-{CURRENCY}/spot';
+  public urlHist = 'https://api.exchange.coinbase.com/products/BCH-{CURRENCY}/candles?granularity={GRANULARITY}';
 
   public async $fetchPrice(currency): Promise<number> {
     const response = await query(this.url.replace('{CURRENCY}', currency));

@@ -184,7 +184,7 @@ function setAncestors(
   tx: GraphTx,
   all: Map<string, GraphTx>,
   visited: Map<string, Map<string, GraphTx>>,
-  depth: number = 0
+  depth = 0
 ): Map<string, GraphTx> {
   // sanity check for infinite recursion / too many ancestors (should never happen)
   if (depth > MAX_RELATIVE_GRAPH_SIZE) {
@@ -292,7 +292,7 @@ export function mempoolComparator(a: GraphTx, b: GraphTx): number {
  */
 export function makeBlockTemplate(
   candidates: MempoolTransactionExtended[],
-  maxBlocks: number = 8,
+  maxBlocks = 8,
   sizeLimit: number = BLOCK_SIZE_UNITS,
   sigopLimit: number = BLOCK_SIGOPS
 ): TemplateTransaction[] {

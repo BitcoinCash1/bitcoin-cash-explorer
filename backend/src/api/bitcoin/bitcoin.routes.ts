@@ -623,7 +623,7 @@ class BitcoinRoutes {
     }
 
     try {
-      let lastTxId: string = '';
+      let lastTxId = '';
       if (req.query.after_txid && typeof req.query.after_txid === 'string') {
         lastTxId = req.query.after_txid;
       }
@@ -715,7 +715,7 @@ class BitcoinRoutes {
     try {
       // electrum expects scripthashes in little-endian
       const electrumScripthash = req.params.scripthash.match(/../g)?.reverse().join('') ?? '';
-      let lastTxId: string = '';
+      let lastTxId = '';
       if (req.query.after_txid && typeof req.query.after_txid === 'string') {
         lastTxId = req.query.after_txid;
       }

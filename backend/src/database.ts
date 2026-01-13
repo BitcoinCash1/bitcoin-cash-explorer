@@ -42,7 +42,7 @@ class DB {
   ): Promise<[T, FieldPacket[]]> {
     this.checkDBFlag();
     let hardTimeout;
-    if (query?.timeout != null) {
+    if (query?.timeout) {
       hardTimeout = Math.floor(query.timeout * 1.1);
     } else {
       hardTimeout = config.DATABASE.TIMEOUT;

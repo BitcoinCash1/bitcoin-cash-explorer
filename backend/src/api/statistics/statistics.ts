@@ -1,12 +1,11 @@
 import memPool from '../mempool';
 import logger from '../../logger';
 import { TransactionExtended, OptimizedStatistic } from '../../mempool.interfaces';
-import { Common } from '../common';
 import statisticsApi from './statistics-api';
 
 class Statistics {
   protected intervalTimer: NodeJS.Timer | undefined;
-  protected lastRun: number = 0;
+  protected lastRun = 0;
   protected newStatisticsEntryCallback: ((stats: OptimizedStatistic) => void) | undefined;
 
   public setNewStatisticsEntryCallback(fn: (stats: OptimizedStatistic) => void) {

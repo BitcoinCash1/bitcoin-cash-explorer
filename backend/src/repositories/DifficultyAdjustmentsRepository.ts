@@ -32,10 +32,7 @@ class DifficultyAdjustmentsRepository {
     }
   }
 
-  public async $getAdjustments(
-    interval: string | null,
-    descOrder: boolean = false
-  ): Promise<IndexedDifficultyAdjustment[]> {
+  public async $getAdjustments(interval: string | null, descOrder = false): Promise<IndexedDifficultyAdjustment[]> {
     interval = Common.getSqlInterval(interval);
 
     let query = `SELECT 
@@ -69,10 +66,7 @@ class DifficultyAdjustmentsRepository {
     }
   }
 
-  public async $getRawAdjustments(
-    interval: string | null,
-    descOrder: boolean = false
-  ): Promise<IndexedDifficultyAdjustment[]> {
+  public async $getRawAdjustments(interval: string | null, descOrder = false): Promise<IndexedDifficultyAdjustment[]> {
     interval = Common.getSqlInterval(interval);
 
     let query = `SELECT 

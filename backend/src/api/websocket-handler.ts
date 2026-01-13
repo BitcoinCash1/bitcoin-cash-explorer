@@ -54,10 +54,8 @@ class WebsocketHandler {
   private numDisconnected = 0;
 
   private socketData: { [key: string]: string } = {};
-  private serializedInitData: string = '{}';
-  private mempoolSequence: number = 0;
-
-  constructor() {}
+  private serializedInitData = '{}';
+  private mempoolSequence = 0;
 
   addWebsocketServer(wss: WebSocket.Server) {
     this.webSocketServers.push(wss);
@@ -70,7 +68,7 @@ class WebsocketHandler {
 
   private updateSocketDataFields(data: { [property: string]: any }): void {
     for (const property of Object.keys(data)) {
-      if (data[property] != null) {
+      if (data[property]) {
         this.socketData[property] = JSON.stringify(data[property]);
       } else {
         delete this.socketData[property];
@@ -366,7 +364,7 @@ class WebsocketHandler {
               delete client['track-mempool'];
             }
 
-            if (parsedMessage && parsedMessage['track-stratum'] != null) {
+            if (parsedMessage && parsedMessage['track-stratum']) {
               if (parsedMessage['track-stratum']) {
                 const sub = parsedMessage['track-stratum'];
                 client['track-stratum'] = sub;
@@ -1256,7 +1254,7 @@ class WebsocketHandler {
     return (
       '{' +
       Object.keys(response)
-        .filter((key) => response[key] != null)
+        .filter((key) => response[key])
         .map((key) => `"${key}": ${response[key]}`)
         .join(', ') +
       '}'
@@ -1342,7 +1340,6 @@ class WebsocketHandler {
       let numTxSubs = 0;
       let numTxsSubs = 0;
       let numProjectedSubs = 0;
-      const numRbfSubs = 0;
 
       // TODO - Fix indentation after PR is merged
       for (const server of this.webSocketServers) {
@@ -1353,7 +1350,7 @@ class WebsocketHandler {
           if (client['track-txs']) {
             numTxsSubs++;
           }
-          if (client['track-mempool-block'] != null && client['track-mempool-block'] >= 0) {
+          if (client['track-mempool-block'] && client['track-mempool-block'] >= 0) {
             numProjectedSubs++;
           }
         });

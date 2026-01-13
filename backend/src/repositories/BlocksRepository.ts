@@ -1,5 +1,5 @@
-import bitcoinApi, { bitcoinCoreApi } from '../api/bitcoin/bitcoin-api-factory';
-import { BlockExtended, BlockExtension, BlockPrice, FeeStats } from '../mempool.interfaces';
+import bitcoinApi from '../api/bitcoin/bitcoin-api-factory';
+import { BlockExtended, BlockExtension, BlockPrice } from '../mempool.interfaces';
 import DB from '../database';
 import logger from '../logger';
 import { Common } from '../api/common';
@@ -739,7 +739,7 @@ class BlocksRepository {
         }
       }
 
-      if (firstBadBlockHeight != null) {
+      if (firstBadBlockHeight) {
         logger.warn(`Chain divergence detected at block ${firstBadBlockHeight}`);
         await HashratesRepository.$deleteHashratesFromTimestamp(blocksByHash[firstBadBlockHeight].timestamp - 604800);
         await DifficultyAdjustmentsRepository.$deleteAdjustementsFromHeight(firstBadBlockHeight);
@@ -1181,7 +1181,7 @@ class BlocksRepository {
     extras.expectedSize = null;
     if (config.MEMPOOL.AUDIT) {
       const auditScore = await BlocksAuditsRepository.$getBlockAuditScore(dbBlk.id);
-      if (auditScore != null) {
+      if (auditScore) {
         extras.matchRate = auditScore.matchRate;
         extras.expectedFees = auditScore.expectedFees;
         extras.expectedSize = auditScore.expectedSize;
@@ -1193,11 +1193,10 @@ class BlocksRepository {
     if (Common.blocksSummariesIndexingEnabled() && (extras.medianFeeAmt === null || extras.feePercentiles === null)) {
       extras.feePercentiles = await BlocksSummariesRepository.$getFeePercentilesByBlockId(dbBlk.id);
       if (extras.feePercentiles === null) {
-        let summary;
         const summaryVersion = 0;
         // Call BHCN RPC
         const block = await bitcoinClient.getBlock(dbBlk.id, 2);
-        summary = blocks.summarizeBlock(block);
+        const summary = blocks.summarizeBlock(block);
 
         await BlocksSummariesRepository.$saveTransactions(dbBlk.height, dbBlk.id, summary.transactions, summaryVersion);
         extras.feePercentiles = await BlocksSummariesRepository.$getFeePercentilesByBlockId(dbBlk.id);

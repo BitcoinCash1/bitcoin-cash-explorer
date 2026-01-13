@@ -1,6 +1,6 @@
 import { Application, Request, Response } from 'express';
 import config from '../../config';
-import WalletApi from './wallets';
+// import WalletApi from './wallets';
 import { handleError } from '../../utils/api';
 
 class ServicesRoutes {

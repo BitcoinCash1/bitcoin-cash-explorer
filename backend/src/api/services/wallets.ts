@@ -2,7 +2,7 @@ import config from '../../config';
 import logger from '../../logger';
 import { IEsploraApi } from '../bitcoin/esplora-api.interface';
 import bitcoinApi from '../bitcoin/bitcoin-api-factory';
-import axios from 'axios';
+// import axios from 'axios';
 import { TransactionExtended } from '../../mempool.interfaces';
 import { promises as fsPromises } from 'fs';
 
@@ -35,7 +35,7 @@ interface Treasury {
   balances: { balance: number; time: number }[]; // off-chain balances
 }
 
-const POLL_FREQUENCY = 5 * 60 * 1000; // 5 minutes
+// const POLL_FREQUENCY = 5 * 60 * 1000; // 5 minutes
 
 class WalletApi {
   private treasuries: Treasury[] = [];
@@ -321,34 +321,34 @@ class WalletApi {
   }
 }
 
-function convertBalancesToWalletAddress(wallet: string, balances: { balance: number; time: number }[]): WalletAddress {
-  // represent the off-chain balance as a series of transactions modifying a single notional UTXO
-  const sortedBalances = balances.sort((a, b) => a.time - b.time);
-  const walletAddress: WalletAddress = {
-    address: 'private',
-    active: false,
-    stats: {
-      funded_txo_count: 0,
-      funded_txo_sum: sortedBalances[sortedBalances.length - 1].balance,
-      spent_txo_count: 0,
-      spent_txo_sum: 0,
-      tx_count: 0,
-    },
-    transactions: [],
-    lastSync: sortedBalances[sortedBalances.length - 1].time,
-  };
-  let lastBalance = 0;
-  for (const [index, entry] of sortedBalances.entries()) {
-    const diff = entry.balance - lastBalance;
-    walletAddress.transactions.push({
-      txid: `${wallet}-private-${index}`,
-      value: diff,
-      height: index,
-      time: entry.time,
-    });
-    lastBalance = entry.balance;
-  }
-  return walletAddress;
-}
+// function convertBalancesToWalletAddress(wallet: string, balances: { balance: number; time: number }[]): WalletAddress {
+//   // represent the off-chain balance as a series of transactions modifying a single notional UTXO
+//   const sortedBalances = balances.sort((a, b) => a.time - b.time);
+//   const walletAddress: WalletAddress = {
+//     address: 'private',
+//     active: false,
+//     stats: {
+//       funded_txo_count: 0,
+//       funded_txo_sum: sortedBalances[sortedBalances.length - 1].balance,
+//       spent_txo_count: 0,
+//       spent_txo_sum: 0,
+//       tx_count: 0,
+//     },
+//     transactions: [],
+//     lastSync: sortedBalances[sortedBalances.length - 1].time,
+//   };
+//   let lastBalance = 0;
+//   for (const [index, entry] of sortedBalances.entries()) {
+//     const diff = entry.balance - lastBalance;
+//     walletAddress.transactions.push({
+//       txid: `${wallet}-private-${index}`,
+//       value: diff,
+//       height: index,
+//       time: entry.time,
+//     });
+//     lastBalance = entry.balance;
+//   }
+//   return walletAddress;
+// }
 
 export default new WalletApi();

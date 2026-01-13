@@ -88,7 +88,7 @@ class PoolsRepository {
   /**
    * Get a mining pool info
    */
-  public async $getPool(slug: string, parse: boolean = true): Promise<PoolTag | null> {
+  public async $getPool(slug: string, parse = true): Promise<PoolTag | null> {
     const query = `
       SELECT *
       FROM pools
@@ -120,7 +120,7 @@ class PoolsRepository {
   /**
    * Get a mining pool info by its unique id
    */
-  public async $getPoolByUniqueId(id: number, parse: boolean = true): Promise<PoolTag | null> {
+  public async $getPoolByUniqueId(id: number, parse = true): Promise<PoolTag | null> {
     const query = `
       SELECT *
       FROM pools

@@ -57,11 +57,11 @@ class Audit {
     for (const txid of projectedBlocks[0].transactionIds) {
       if (!inBlock[txid]) {
         // conflict with any transaction in the mined block
-        if (mempool[txid]?.firstSeen != null && now - (mempool[txid]?.firstSeen || 0) <= PROPAGATION_MARGIN) {
+        if (mempool[txid]?.firstSeen && now - (mempool[txid]?.firstSeen || 0) <= PROPAGATION_MARGIN) {
           // tx is recent, may have reached the miner too late for inclusion
           fresh.push(txid);
         } else if (
-          mempool[txid]?.lastBoosted != null &&
+          mempool[txid]?.lastBoosted &&
           now - (mempool[txid]?.lastBoosted || 0) <= PROPAGATION_MARGIN
         ) {
           // tx was recently cpfp'd, miner may not have the latest effective rate

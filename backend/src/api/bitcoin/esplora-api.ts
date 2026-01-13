@@ -37,15 +37,15 @@ interface FailoverHost {
 class FailoverRouter {
   activeHost: FailoverHost;
   fallbackHost: FailoverHost;
-  maxSlippage: number = 2;
-  maxHeight: number = 0;
+  maxSlippage = 2;
+  maxHeight = 0;
   hosts: FailoverHost[];
   multihost: boolean;
-  gitHashInterval: number = 60000; // 1 minute
-  pollInterval: number = 60000; // 1 minute
+  gitHashInterval = 60000; // 1 minute
+  pollInterval = 60000; // 1 minute
   pollTimer: NodeJS.Timeout | null = null;
   pollConnection = axios.create();
-  localHostname: string = 'localhost';
+  localHostname = 'localhost';
   requestConnection = axios.create({
     httpAgent: new http.Agent({ keepAlive: true }),
   });
@@ -400,7 +400,7 @@ class FailoverRouter {
     data: any,
     responseType = 'json',
     host = this.activeHost,
-    retry: boolean = true
+    retry = true
   ): Promise<T> {
     let axiosConfig;
     let url;

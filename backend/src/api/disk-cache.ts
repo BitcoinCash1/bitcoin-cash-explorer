@@ -33,7 +33,7 @@ class DiskCache {
     });
   }
 
-  async $saveCacheToDisk(sync: boolean = false): Promise<void> {
+  async $saveCacheToDisk(sync = false): Promise<void> {
     if (!cluster.isPrimary || !config.MEMPOOL.CACHE_ENABLED) {
       return;
     }

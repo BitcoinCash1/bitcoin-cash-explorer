@@ -267,14 +267,6 @@ class BlocksAuditRepositories {
             .map((tx) => tx.txid)
             .filter((txid) => !isSeen.has(txid));
 
-          let lastEffectiveRate = 0;
-          // Iterate over the mined template from bottom to top (excluding the coinbase)
-          // BCH doesn't have transaction priority, so no special sauce needed
-          for (let i = audit.transactions.length - 1; i > 0; i--) {
-            const blockTx = audit.transactions[i];
-            lastEffectiveRate = blockTx.rate || 0;
-          }
-
           // Update audit in the database
           await DB.query(
             `

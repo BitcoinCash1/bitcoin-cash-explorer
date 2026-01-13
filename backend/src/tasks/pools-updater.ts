@@ -14,7 +14,7 @@ import { Common } from '../api/common';
 class PoolsUpdater {
   tag = 'PoolsUpdater';
 
-  lastRun: number = 0;
+  lastRun = 0;
   currentSha: string | null = null;
   poolsUrl: string = config.MEMPOOL.POOLS_JSON_URL;
   treeUrl: string = config.MEMPOOL.POOLS_JSON_TREE_URL;
@@ -173,8 +173,7 @@ class PoolsUpdater {
       timeout: number;
       httpsAgent?: https.Agent;
     };
-    const setDelay = (secs: number = 1): Promise<void> =>
-      new Promise((resolve) => setTimeout(() => resolve(), secs * 1000));
+    const setDelay = (secs = 1): Promise<void> => new Promise((resolve) => setTimeout(() => resolve(), secs * 1000));
     const axiosOptions: axiosOptions = {
       headers: {
         'User-Agent':

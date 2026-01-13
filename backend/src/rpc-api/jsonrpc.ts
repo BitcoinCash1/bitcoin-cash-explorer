@@ -152,7 +152,7 @@ JsonRPC.prototype.call = function (method, params) {
         // iterate over each response, normally there will be just one
         // unless a batch rpc call response is being processed
         decoded.forEach(function (decodedResponse, i) {
-          if (decodedResponse.hasOwnProperty('error') && decodedResponse.error != null) {
+          if (decodedResponse.hasOwnProperty('error') && decodedResponse.error) {
             if (reject) {
               err = new Error(decodedResponse.error.message || '');
               if (decodedResponse.error.code) {

@@ -18,10 +18,10 @@ class RedisCache {
   private schemaVersion = 1;
   private redisConfig: any;
 
-  private pauseFlush: boolean = false;
+  private pauseFlush = false;
   private cacheQueue: MempoolTransactionExtended[] = [];
   private removeQueue: string[] = [];
-  private txFlushLimit: number = 10000;
+  private txFlushLimit = 10000;
   private ignoreBlocksCache = false;
 
   constructor() {

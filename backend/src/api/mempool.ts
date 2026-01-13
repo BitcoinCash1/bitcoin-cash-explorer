@@ -12,8 +12,8 @@ import redisCache from './redis-cache';
 import blocks from './blocks';
 
 class Mempool {
-  private inSync: boolean = false;
-  private mempoolCacheDelta: number = -1;
+  private inSync = false;
+  private mempoolCacheDelta = -1;
   private mempoolCache: { [txId: string]: MempoolTransactionExtended } = {};
   private mempoolCandidates: { [txid: string]: boolean } = {};
   private spendMap = new Map<string, MempoolTransactionExtended>();
@@ -37,10 +37,10 @@ class Mempool {
     | undefined;
 
   private txPerSecondArray: number[] = [];
-  private txPerSecond: number = 0;
+  private txPerSecond = 0;
 
   private bytesPerSecondArray: BytesPerSecond[] = [];
-  private bytesPerSecond: number = 0;
+  private bytesPerSecond = 0;
   private mempoolProtection = 0;
   private latestTransactions: any[] = [];
 
@@ -49,7 +49,7 @@ class Mempool {
   private SAMPLE_TIME = 10000; // In ms
   private timer = new Date().getTime();
   private missingTxCount = 0;
-  private mainLoopTimeout: number = 120000;
+  private mainLoopTimeout = 120000;
   private txPerSecondInterval: NodeJS.Timeout | null = null;
 
   public limitGBT = config.MEMPOOL.USE_SECOND_NODE_FOR_MINFEE && config.MEMPOOL.LIMIT_GBT;
@@ -270,7 +270,7 @@ class Mempool {
     const timer = this.startTimer();
 
     const start = new Date().getTime();
-    let hasChange: boolean = false;
+    let hasChange = false;
     const currentMempoolSize = Object.keys(this.mempoolCache).length;
     this.updateTimerProgress(timer, 'got raw mempool');
     const diff = transactions.length - currentMempoolSize;
@@ -473,7 +473,6 @@ class Mempool {
           if (!newCandidateTxMap[txid]) {
             if (this.mempoolCache[txid]) {
               removed.push(this.mempoolCache[txid]);
-              this.mempoolCache[txid].feePerSize = this.mempoolCache[txid].feePerSize;
               this.mempoolCache[txid].ancestors = [];
               this.mempoolCache[txid].descendants = [];
               this.mempoolCache[txid].bestDescendant = null;

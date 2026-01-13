@@ -47,9 +47,9 @@ class Server {
   private currentBackendRetryInterval = 1;
   private backendRetryCount = 0;
 
-  private maxHeapSize: number = 0;
-  private heapLogInterval: number = 60;
-  private warnedHeapCritical: boolean = false;
+  private maxHeapSize = 0;
+  private heapLogInterval = 60;
+  private warnedHeapCritical = false;
   private lastHeapLogTime: number | null = null;
 
   constructor() {
@@ -360,7 +360,7 @@ class Server {
 
   forceExit(exitEvent, code?: number): void {
     logger.debug(`triggering exit for signal: ${exitEvent}`);
-    if (code != null) {
+    if (code) {
       // override the default exit code
       process.exitCode = code;
     }

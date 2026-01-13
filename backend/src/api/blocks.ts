@@ -56,11 +56,9 @@ class Blocks {
     txIds: string[],
     transactions: MempoolTransactionExtended[]
   ) => Promise<void>)[] = [];
-  private classifyingBlocks: boolean = false;
+  private classifyingBlocks = false;
 
-  private mainLoopTimeout: number = 120000;
-
-  constructor() {}
+  private mainLoopTimeout = 120000;
 
   public getBlocks(): BlockExtended[] {
     return this.blocks;
@@ -104,9 +102,9 @@ class Blocks {
     blockTime: number,
     onlyCoinbase: boolean,
     txIds: string[] | null = null,
-    quiet: boolean = false,
-    addMempoolData: boolean = false,
-    stale: boolean = false
+    quiet = false,
+    addMempoolData = false,
+    stale = false
   ): Promise<TransactionExtended[]> {
     const transactionMap: { [txid: string]: TransactionExtended } = {};
 
@@ -1173,7 +1171,7 @@ class Blocks {
   /**
    * Get one block by its hash
    */
-  public async $getBlock(hash: string, skipMemoryCache: boolean = false): Promise<BlockExtended | IEsploraApi.Block> {
+  public async $getBlock(hash: string, skipMemoryCache = false): Promise<BlockExtended | IEsploraApi.Block> {
     // Check the memory cache
     if (!skipMemoryCache) {
       const blockByHash = this.getBlocks().find((b) => b.id === hash);
@@ -1214,10 +1212,9 @@ class Blocks {
     }
 
     let height = blockHeight;
-    let summary: BlockSummary;
     let summaryVersion = 0;
     const txs = (await bitcoinApi.$getTxsForBlock(hash, true)).map((tx) => transactionUtils.extendTransaction(tx));
-    summary = this.summarizeBlockTransactions(hash, height || 0, txs);
+    const summary = this.summarizeBlockTransactions(hash, height || 0, txs);
     summaryVersion = 1;
 
     if (height == null) {
@@ -1256,7 +1253,7 @@ class Blocks {
    * @param limit
    * @returns
    */
-  public async $getBlocks(fromHeight?: number, limit: number = 15): Promise<BlockExtended[]> {
+  public async $getBlocks(fromHeight?: number, limit = 15): Promise<BlockExtended[]> {
     let currentHeight = fromHeight !== undefined ? fromHeight : this.currentBlockHeight;
     if (currentHeight > this.currentBlockHeight) {
       limit -= currentHeight - this.currentBlockHeight;
@@ -1352,11 +1349,10 @@ class Blocks {
       if (Common.blocksSummariesIndexingEnabled() && cleanBlock.fee_amt_percentiles === null) {
         cleanBlock.fee_amt_percentiles = await BlocksSummariesRepository.$getFeePercentilesByBlockId(cleanBlock.hash);
         if (cleanBlock.fee_amt_percentiles === null) {
-          let summary;
           const summaryVersion = 0;
           // Call BCHN RPC
           const block = await bitcoinClient.getBlock(cleanBlock.hash, 2);
-          summary = this.summarizeBlock(block);
+          const summary = this.summarizeBlock(block);
 
           await BlocksSummariesRepository.$saveTransactions(
             cleanBlock.height,

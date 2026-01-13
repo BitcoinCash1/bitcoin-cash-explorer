@@ -29,7 +29,7 @@ const steps = {
  * Syncs missing statistics data from trusted servers
  */
 class StatisticsReplication {
-  inProgress: boolean = false;
+  inProgress = false;
 
   public async $sync(): Promise<void> {
     if (!config.REPLICATION.ENABLED || !config.REPLICATION.STATISTICS || !config.STATISTICS.ENABLED) {

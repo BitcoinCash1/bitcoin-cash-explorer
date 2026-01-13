@@ -14,7 +14,7 @@ const BATCH_SIZE = 16;
  * Syncs missing block template and audit data from trusted servers
  */
 class AuditReplication {
-  inProgress: boolean = false;
+  inProgress = false;
   skip: Set<string> = new Set();
 
   public async $sync(): Promise<void> {

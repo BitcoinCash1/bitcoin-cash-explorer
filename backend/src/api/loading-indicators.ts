@@ -6,13 +6,11 @@ class LoadingIndicators {
   };
   private progressChangedCallback: ((loadingIndicators: ILoadingIndicators) => void) | undefined;
 
-  constructor() {}
-
   public setProgressChangedCallback(fn: (loadingIndicators: ILoadingIndicators) => void) {
     this.progressChangedCallback = fn;
   }
 
-  public setProgress(name: string, progressPercent: number, rounded: boolean = true) {
+  public setProgress(name: string, progressPercent: number, rounded = true) {
     const newProgress = rounded === true ? Math.round(progressPercent) : progressPercent;
     if (newProgress >= 100) {
       delete this.loadingIndicators[name];

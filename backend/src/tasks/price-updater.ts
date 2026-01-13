@@ -4,7 +4,6 @@ import config from '../config';
 import logger from '../logger';
 import PricesRepository, { ApiPrice, MAX_PRICES } from '../repositories/PricesRepository';
 import BitfinexApi from './price-feeds/bitfinex-api';
-// import BitflyerApi from './price-feeds/bitflyer-api';
 import CoinbaseApi from './price-feeds/coinbase-api';
 import GeminiApi from './price-feeds/gemini-api';
 import KrakenApi from './price-feeds/kraken-api';
@@ -84,7 +83,7 @@ class PriceUpdater {
     'TRY',
     'ZAR',
   ];
-  private lastTimeConversionsRatesFetched: number = 0;
+  private lastTimeConversionsRatesFetched = 0;
   private latestConversionsRatesFromFeed: ConversionRates = { USD: -1 };
   private ratesChangedCallback: ((rates: ApiPrice) => void) | undefined;
 
@@ -92,7 +91,6 @@ class PriceUpdater {
     this.latestPrices = this.getEmptyPricesObj();
     this.latestGoodPrices = this.getEmptyPricesObj();
 
-    // this.feeds.push(new BitflyerApi()); // Does not have historical endpoint, bitflyer doesn't have BCH_USD etc. Only BCH_BTC.
     this.feeds.push(new KrakenApi());
     this.feeds.push(new CoinbaseApi());
     this.feeds.push(new BitfinexApi());
@@ -372,7 +370,7 @@ class PriceUpdater {
     // Insert MtGox weekly prices
     const pricesJson: any[] = JSON.parse(fs.readFileSync(path.join(__dirname, 'mtgox-weekly.json')).toString());
     const prices = this.getEmptyPricesObj();
-    let insertedCount: number = 0;
+    let insertedCount = 0;
     for (const price of pricesJson) {
       if (existingPriceTimes.includes(price['ct'])) {
         continue;

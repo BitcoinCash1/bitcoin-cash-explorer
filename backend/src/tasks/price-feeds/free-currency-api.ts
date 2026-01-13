@@ -56,8 +56,6 @@ class FreeCurrencyApi implements ConversionFeed {
     ? `https://api.currencyapi.com/v3/`
     : `https://api.freecurrencyapi.com/v1/`;
 
-  constructor() {}
-
   public async $getQuota(): Promise<any> {
     const response = await query(`${this.API_URL_PREFIX}status?apikey=${this.API_KEY}`);
     if (response && response['quotas']) {

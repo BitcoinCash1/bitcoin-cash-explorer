@@ -5,7 +5,7 @@ import config from '../config';
 import logger from '../logger';
 import * as https from 'https';
 
-export async function query(path, throwOnFail: boolean = false): Promise<object | undefined> {
+export async function query(path, throwOnFail = false): Promise<object | undefined> {
   type axiosOptions = {
     headers: {
       'User-Agent': string;
@@ -13,8 +13,7 @@ export async function query(path, throwOnFail: boolean = false): Promise<object 
     timeout: number;
     httpsAgent?: https.Agent;
   };
-  const setDelay = (secs: number = 1): Promise<void> =>
-    new Promise((resolve) => setTimeout(() => resolve(), secs * 1000));
+  const setDelay = (secs = 1): Promise<void> => new Promise((resolve) => setTimeout(() => resolve(), secs * 1000));
   const axiosOptions: axiosOptions = {
     headers: {
       'User-Agent':
