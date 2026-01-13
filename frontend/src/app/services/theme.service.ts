@@ -27,7 +27,7 @@ export class ThemeService {
     // theme preference must be a valid known public theme
     if (
       !this.stateService.env.customize?.theme &&
-      !['default', 'contrast', 'softsimon'].includes(theme)
+      !['default', 'contrast', 'softsimon', 'bch', 'bukele'].includes(theme)
     ) {
       theme = 'default';
       this.storageService.setValue('theme-preference', 'default');

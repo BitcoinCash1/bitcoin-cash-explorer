@@ -181,6 +181,11 @@
                 "inject": false
               },
               {
+                "input": "src/theme-bch.scss",
+                "bundleName": "bch",
+                "inject": false
+              },
+              {
                 "input": "src/theme-softsimon.scss",
                 "bundleName": "softsimon",
                 "inject": false
