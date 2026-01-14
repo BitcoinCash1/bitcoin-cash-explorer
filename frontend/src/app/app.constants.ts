@@ -198,84 +198,194 @@ export const specialBlocks = {
     labelEventCompleted: 'The Genesis of Bitcoin',
     networks: ['mainnet', 'testnet', 'testnet4'],
   },
+  '124721': {
+    labelEvent: 'First miner burn',
+    labelEventCompleted:
+      "This block's coinbase claimed 4,999,999,999 satoshis instead of the maximum 5,001,000,000 (fees included), implicitly burning 1,000,001 satoshis.",
+    networks: ['mainnet'],
+  },
+  '133471': {
+    labelEvent: 'Biggest coinbase transaction',
+    labelEventCompleted:
+      'This block mined a coinbase transaction of 31,353, the biggest ever (as of 2026-01-14).',
+    networks: ['mainnet'],
+  },
   '210000': {
     labelEvent: "Bitcoin's 1st Halving",
     labelEventCompleted: 'Block Subsidy has halved to 25 BTC per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
+  },
+  '409008': {
+    labelEvent: 'Biggest fee',
+    labelEventCompleted:
+      'This block accumulated 29,153,275,103 satoshis in fees, the most ever (as of 2026-01-14).',
+    networks: ['mainnet'],
   },
   '420000': {
     labelEvent: "Bitcoin's 2nd Halving",
     labelEventCompleted: 'Block Subsidy has halved to 12.5 BTC per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
   },
-  '478558': {
-    labelEvent: 'Bitcoin Cash Fork',
-    labelEventCompleted: 'Bitcoin Cash Fork has occurred!',
-    networks: ['mainnet', 'testnet', 'testnet4'],
+  '478559': {
+    labelEvent:
+      'Bitcoin Cash Independence Day (2017-08-01); BTC-BCH hard fork; First >1 MB Block',
+    labelEventCompleted:
+      'This marks the first block which set Bitcoin Cash (BCH) apart from Bitcoin (BTC) by being mined according to user-activated hard fork (UAHF) consensus rules. Increase blocksize limit to 8 MB. First block which tested the upgraded blocksize limit (1,915,175 bytes). Upgrade sigops limit to scale with blocksize. Introduce SIGHASH_FORKID replay protection and upgrade sighash algorithm to adapted BIP143. Enforce SCRIPT_VERIFY_STRICTENC malleability protection. Introduce emergency difficulty adjustment algorithm (EDAA). (https://upgradespecs.bitcoincashnode.org/uahf-technical-spec/)',
+    networks: ['mainnet'],
+  },
+  '479469': {
+    labelEvent: 'First 8 MB Block',
+    labelEventCompleted:
+      'First block mined near the upgraded blocksize limit (7,998,130 bytes).',
+    networks: ['mainnet'],
+  },
+  '504032': {
+    labelEvent: 'November 2017 Upgrade',
+    labelEventCompleted:
+      'New difficulty adjustment algorithm (DAA), CW-144. Signature malleability fixes (LOW_S, NULLFAIL). This marks the first block mined to satisfy upgraded consensus rules. (https://upgradespecs.bitcoincashnode.org/nov-13-hardfork-spec/)',
+    networks: ['mainnet'],
+  },
+  '530356': {
+    labelEvent: 'May 2018 Upgrade',
+    labelEventCompleted:
+      'Blocksize limit increase to 32 MB. Re-enable several opcodes (OP_CAT, OP_SPLIT, OP_AND, OP_OR, OP_XOR, OP_DIV, OP_MOD, OP_NUM2BIN, OP_BIN2NUM). This marks the first block mined to satisfy upgraded consensus rules. (https://upgradespecs.bitcoincashnode.org/may-2018-hardfork/)',
+    networks: ['mainnet'],
+  },
+  '545958': {
+    labelEvent: 'First >8 MB Block',
+    labelEventCompleted:
+      'First block which tested the upgraded blocksize limit (10,281,454 bytes).',
+    networks: ['mainnet'],
+  },
+  '556034': {
+    labelEvent: 'First 32 MB Block',
+    labelEventCompleted:
+      'First block mined near the upgraded blocksize limit (31,997,624 bytes).',
+    networks: ['mainnet'],
+  },
+  '556767': {
+    labelEvent: 'November 2018 Upgrade; BCH-BSV hard fork',
+    labelEventCompleted:
+      'Enforce canonical transaction order (CTOR). Introduce OP_CHECKDATASIG and OP_CHECKDATASIGVERIFY opcodes. Fix merkle tree vulnerability by enforcing minimum transaction size (100 bytes). Input script malleability fixes (PUSH_ONLY, CLEAN_STACK). This marks the first block mined to satisfy upgraded consensus rules. (https://upgradespecs.bitcoincashnode.org/2018-nov-upgrade/)',
+    networks: ['mainnet'],
+  },
+  '582680': {
+    labelEvent: 'May 2019 Upgrade',
+    labelEventCompleted:
+      'Enable Schnorr signatures for OP_CHECKSIG and OP_CHECKSIGVERIFY. Introduce exception to CLEAN_STACK rule to allow Segwit recovery. This marks the first block mined to satisfy upgraded consensus rules. (https://upgradespecs.bitcoincashnode.org/2019-05-15-upgrade/)',
+    networks: ['mainnet'],
+  },
+  '609136': {
+    labelEvent: 'November 2019 Upgrade',
+    labelEventCompleted:
+      'Enable Schnorr signatures for OP_CHECKMULTISIG and OP_CHECKMULTISIGVERIFY. Input script malleability fixes (MINIMALDATA). This marks the first block mined to satisfy upgraded consensus rules. (https://upgradespecs.bitcoincashnode.org/2019-11-15-upgrade/)',
+    networks: ['mainnet'],
   },
   '630000': {
     labelEvent: "Bitcoin's 3rd Halving",
-    labelEventCompleted: 'Block Subsidy has halved to 6.25 BTC per block',
+    labelEventCompleted: 'Block Subsidy has halved to 6.25 BCH per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
+  },
+  '635259': {
+    labelEvent: 'May 2020 Upgrade',
+    labelEventCompleted:
+      'Replace script SigOps limits with SigChecks limits. Introduce OP_REVERSEBYTES. This marks the first block mined to satisfy upgraded consensus rules. (https://upgradespecs.bitcoincashnode.org/2020-05-15-upgrade/)',
+    networks: ['mainnet'],
+  },
+  '661648': {
+    labelEvent: 'November 2020 Upgrade; BCH-XEC hard fork',
+    labelEventCompleted:
+      'Introduce absolutely scheduled exponentially rising targets difficulty adjustment algorithm (ASERT-DAA). This marks the first block mined to satisfy upgraded consensus rules. (https://upgradespecs.bitcoincashnode.org/2020-11-15-upgrade/)',
+    networks: ['mainnet'],
+  },
+  '688094': {
+    labelEvent: 'May 2021 Upgrade; First CHIP upgrade',
+    labelEventCompleted:
+      'This is the first network that included an upgrade resulting from CHIP process (https://gitlab.com/im_uname/cash-improvement-proposals/-/blob/master/CHIPs.md). Removal of the unconfirmed transaction chain limit. CHIP-2021-03-12 Multiple OP_RETURNs for Bitcoin Cash. This marks the first block mined after activating new relay rules. (https://upgradespecs.bitcoincashnode.org/2021-05-15-upgrade/)',
+    networks: ['mainnet'],
+  },
+  '740238': {
+    labelEvent: 'May 2022 Upgrade',
+    labelEventCompleted:
+      'CHIP-2021-03: Bigger Script Integers. CHIP-2021-02: Native Introspection Opcodes. This marks the first block mined to satisfy upgraded consensus rules. (https://upgradespecs.bitcoincashnode.org/2022-05-15-upgrade/)',
+    networks: ['mainnet'],
+  },
+  '792773': {
+    labelEvent: 'May 2023 Upgrade',
+    labelEventCompleted:
+      'CHIP-2021-01 Restrict Transaction Version. CHIP-2021-01 Minimum Transaction Size. CHIP-2022-02 CashTokens. CHIP-2022-05 P2SH32. This marks the first block mined to satisfy upgraded consensus rules. (https://upgradespecs.bitcoincashnode.org/2023-05-15-upgrade/)',
+    networks: ['mainnet'],
   },
   '840000': {
-    labelEvent: "Bitcoin's 4th Halving",
-    labelEventCompleted: 'Block Subsidy has halved to 3.125 BTC per block',
+    labelEvent: "Bitcoin Cash's 4th Halving",
+    labelEventCompleted: 'Block Subsidy has halved to 3.125 BCH per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
   },
+  '845891': {
+    labelEvent: 'May 2024 Upgrade',
+    labelEventCompleted:
+      'CHIP-2023-04 Adaptive Blocksize Limit Algorithm for Bitcoin Cash. This marks the first block mined to satisfy upgraded consensus rules. (https://upgradespecs.bitcoincashnode.org/2024-05-15-upgrade/)',
+    networks: ['mainnet'],
+  },
+  '898374': {
+    labelEvent: 'May 2025 Upgrade',
+    labelEventCompleted:
+      'CHIP-2021-05 VM Limits: Targeted Virtual Machine Limits. CHIP-2024-07 BigInt: High-Precision Arithmetic for Bitcoin Cash. This marks the first block mined to satisfy upgraded consensus rules. (https://upgradespecs.bitcoincashnode.org/2025-05-15-upgrade/)',
+    networks: ['mainnet'],
+  },
   '1050000': {
-    labelEvent: "Bitcoin's 5th Halving",
-    labelEventCompleted: 'Block Subsidy has halved to 1.5625 BTC per block',
+    labelEvent: "Bitcoin Cash's 5th Halving",
+    labelEventCompleted: 'Block Subsidy has halved to 1.5625 BCH per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
   },
   '1260000': {
-    labelEvent: "Bitcoin's 6th Halving",
-    labelEventCompleted: 'Block Subsidy has halved to 0.78125 BTC per block',
+    labelEvent: "Bitcoin Cash's 6th Halving",
+    labelEventCompleted: 'Block Subsidy has halved to 0.78125 BCH per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
   },
   '1470000': {
-    labelEvent: "Bitcoin's 7th Halving",
-    labelEventCompleted: 'Block Subsidy has halved to 0.390625 BTC per block',
+    labelEvent: "Bitcoin Cash's 7th Halving",
+    labelEventCompleted: 'Block Subsidy has halved to 0.390625 BCH per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
   },
   '1680000': {
-    labelEvent: "Bitcoin's 8th Halving",
-    labelEventCompleted: 'Block Subsidy has halved to 0.1953125 BTC per block',
+    labelEvent: "Bitcoin Cash's 8th Halving",
+    labelEventCompleted: 'Block Subsidy has halved to 0.1953125 BCH per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
   },
   '1890000': {
-    labelEvent: "Bitcoin's 9th Halving",
-    labelEventCompleted: 'Block Subsidy has halved to 0.09765625 BTC per block',
+    labelEvent: "Bitcoin Cash's 9th Halving",
+    labelEventCompleted: 'Block Subsidy has halved to 0.09765625 BCH per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
   },
   '2100000': {
-    labelEvent: "Bitcoin's 10th Halving",
-    labelEventCompleted: 'Block Subsidy has halved to 0.04882812 BTC per block',
+    labelEvent: "Bitcoin Cash's 10th Halving",
+    labelEventCompleted: 'Block Subsidy has halved to 0.04882812 BCH per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
   },
   '2310000': {
-    labelEvent: "Bitcoin's 11th Halving",
-    labelEventCompleted: 'Block Subsidy has halved to 0.02441406 BTC per block',
+    labelEvent: "Bitcoin Cash's 11th Halving",
+    labelEventCompleted: 'Block Subsidy has halved to 0.02441406 BCH per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
   },
   '2520000': {
-    labelEvent: "Bitcoin's 12th Halving",
-    labelEventCompleted: 'Block Subsidy has halved to 0.01220703 BTC per block',
+    labelEvent: "Bitcoin Cash's 12th Halving",
+    labelEventCompleted: 'Block Subsidy has halved to 0.01220703 BCH per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
   },
   '2730000': {
-    labelEvent: "Bitcoin's 13th Halving",
-    labelEventCompleted: 'Block Subsidy has halved to 0.00610351 BTC per block',
+    labelEvent: "Bitcoin Cash's 13th Halving",
+    labelEventCompleted: 'Block Subsidy has halved to 0.00610351 BCH per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
   },
   '2940000': {
-    labelEvent: "Bitcoin's 14th Halving",
-    labelEventCompleted: 'Block Subsidy has halved to 0.00305175 BTC per block',
+    labelEvent: "Bitcoin Cash's 14th Halving",
+    labelEventCompleted: 'Block Subsidy has halved to 0.00305175 BCH per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
   },
   '3150000': {
-    labelEvent: "Bitcoin's 15th Halving",
-    labelEventCompleted: 'Block Subsidy has halved to 0.00152587 BTC per block',
+    labelEvent: "Bitcoin Cash's 15th Halving",
+    labelEventCompleted: 'Block Subsidy has halved to 0.00152587 BCH per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
   },
 };
