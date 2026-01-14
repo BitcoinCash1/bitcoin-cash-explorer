@@ -282,7 +282,7 @@ export const specialBlocks = {
     networks: ['mainnet'],
   },
   '630000': {
-    labelEvent: "Bitcoin's 3rd Halving",
+    labelEvent: "Bitcoin Cash's 3rd Halving",
     labelEventCompleted: 'Block Subsidy has halved to 6.25 BCH per block',
     networks: ['mainnet', 'testnet', 'testnet4'],
   },
