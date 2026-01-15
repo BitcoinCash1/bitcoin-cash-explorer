@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { Observable } from 'rxjs';
 import { FeeRoundingPipe } from '@app/shared/pipes/fee-rounding/fee-rounding.pipe';
 
 @Component({

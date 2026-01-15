@@ -14,7 +14,7 @@ export class FeeRoundingPipe implements PipeTransform {
     }
 
     if (fee >= Math.pow(10, (dp || 3) - 1)) {
-      return formatNumber(fee, this.locale, '1.0-0');
+      return formatNumber(fee, this.locale, '1.0-1');
     } else if (fee < Math.pow(10, (dp || 3) - 2)) {
       return formatNumber(fee, this.locale, '1.2-2');
     }
