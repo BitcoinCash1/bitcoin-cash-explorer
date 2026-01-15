@@ -58,8 +58,6 @@ export class IncomingTransactionsGraphComponent
   windowPreference: string;
   chartInstance: any = undefined;
   MA: number[][] = [];
-  weightMode: boolean = false;
-  rateUnitSub: Subscription;
   medianBytesPerSecond: number | undefined;
 
   constructor(
@@ -69,12 +67,9 @@ export class IncomingTransactionsGraphComponent
   ) {}
 
   ngOnInit() {
-    this.rateUnitSub = this.stateService.rateUnits$.subscribe((rateUnits) => {
-      this.weightMode = rateUnits === 'wu';
-      if (this.data) {
-        this.mountChart();
-      }
-    });
+    if (this.data) {
+      this.mountChart();
+    }
   }
 
   ngOnChanges(): void {
@@ -321,7 +316,7 @@ export class IncomingTransactionsGraphComponent
         axisLabel: {
           fontSize: 11,
           formatter: (value): string => {
-            return this.weightMode ? (value * 4).toString() : value.toString();
+            return value.toString();
           },
         },
         splitLine: {
@@ -404,7 +399,5 @@ export class IncomingTransactionsGraphComponent
     this.chartInstance.setOption(this.mempoolStatsChartOption);
   }
 
-  ngOnDestroy(): void {
-    this.rateUnitSub.unsubscribe();
-  }
+  ngOnDestroy(): void {}
 }

@@ -273,8 +273,7 @@ export class StateService {
     }
 
     if (document.location.hostname.endsWith('.onion')) {
-      this.env.SERVICES_API =
-        'http://sometoraddress.onion/api/v1/services';
+      this.env.SERVICES_API = 'http://sometoraddress.onion/api/v1/services';
     }
 
     if (this.isBrowser) {
