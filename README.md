@@ -1,6 +1,6 @@
 # BCH Explorer
 
-Bitcoin Cash Explorer is a fork of Mempool but tailored for Bitcoin Cash, a fully-featured mempool visualizer, explorer, and API service running at [explorer.melroy.org](https://explorer.melroy.org).
+Bitcoin Cash Explorer is a fork of Mempool but tailored for Bitcoin Cash, a fully-featured mempool visualizer, explorer, and API service running at [bchexplorer.cash](https://bchexplorer.cash).
 
 The BCH Explorer is created by Melroy van den Berg and is fully open source, under the same AGPL license.
 
