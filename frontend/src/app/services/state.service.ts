@@ -274,7 +274,7 @@ export class StateService {
 
     if (document.location.hostname.endsWith('.onion')) {
       this.env.SERVICES_API =
-        'http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/api/v1/services';
+        'http://sometoraddress.onion/api/v1/services';
     }
 
     if (this.isBrowser) {
