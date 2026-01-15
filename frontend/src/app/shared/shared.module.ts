@@ -193,11 +193,6 @@ import { SimpleProofWidgetComponent } from '@components/simpleproof-widget/simpl
 import { SimpleProofCuboWidgetComponent } from '@components/simpleproof-widget/simpleproof-cubo-widget.component';
 import { FaucetComponent } from '@components/faucet/faucet.component';
 import { TwitterLogin } from '@components/twitter-login/twitter-login.component';
-
-import {
-  OnlyVsizeDirective,
-  OnlyWeightDirective,
-} from '@app/shared/components/weight-directives/weight-directives';
 import { GithubLogin } from '@components/github-login.component/github-login.component';
 
 @NgModule({
@@ -294,8 +289,6 @@ import { GithubLogin } from '@components/github-login.component/github-login.com
     ClockchainComponent,
     ClockComponent,
     ClockFaceComponent,
-    OnlyVsizeDirective,
-    OnlyWeightDirective,
     MempoolErrorComponent,
     OrdDataComponent,
     HttpErrorComponent,
@@ -432,9 +425,6 @@ import { GithubLogin } from '@components/github-login.component/github-login.com
     ClockchainComponent,
     ClockComponent,
     ClockFaceComponent,
-
-    OnlyVsizeDirective,
-    OnlyWeightDirective,
   ],
 })
 export class SharedModule {

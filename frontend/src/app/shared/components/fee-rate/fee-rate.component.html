@@ -1,26 +1,24 @@
-<ng-container *ngIf="rateUnits$ | async as units">
-  <ng-container *ngIf="fee !== undefined; else noFee">
-    <ng-container
-      >{{ fee / size | feeRounding: rounding : dp }}
-      <span
-        *ngIf="showUnit"
-        [class]="unitClass"
-        [style]="unitStyle"
-        i18n="shared.sat-byte|sat/B"
-        >sat/B</span
-      ></ng-container
-    >
-  </ng-container>
-  <ng-template #noFee>
-    <ng-container
-      >-
-      <span
-        *ngIf="showUnit"
-        [class]="unitClass"
-        [style]="unitStyle"
-        i18n="shared.sat-byte|sat/B"
-        >sat/B</span
-      ></ng-container
-    >
-  </ng-template>
+<ng-container *ngIf="fee !== undefined; else noFee">
+  <ng-container
+    >{{ fee / size | feeRounding: rounding : dp }}
+    <span
+      *ngIf="showUnit"
+      [class]="unitClass"
+      [style]="unitStyle"
+      i18n="shared.sat-byte|sat/B"
+      >sat/B</span
+    ></ng-container
+  >
 </ng-container>
+<ng-template #noFee>
+  <ng-container
+    >-
+    <span
+      *ngIf="showUnit"
+      [class]="unitClass"
+      [style]="unitStyle"
+      i18n="shared.sat-byte|sat/B"
+      >sat/B</span
+    ></ng-container
+  >
+</ng-template>

@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { StateService } from '@app/services/state.service';
 import { FeeRoundingPipe } from '@app/shared/pipes/fee-rounding/fee-rounding.pipe';
 
 @Component({
@@ -19,16 +18,9 @@ export class FeeRateComponent implements OnInit {
   @Input() unitClass: string = 'symbol';
   @Input() unitStyle: any;
 
-  rateUnits$: Observable<string>;
+  constructor(private feeRoundingPipe: FeeRoundingPipe) {}
 
-  constructor(
-    private stateService: StateService,
-    private feeRoundingPipe: FeeRoundingPipe
-  ) {}
-
-  ngOnInit() {
-    this.rateUnits$ = this.stateService.rateUnits$;
-  }
+  ngOnInit() {}
 
   getIntegerPart(rate: number): string {
     const formatted = this.feeRoundingPipe.transform(
