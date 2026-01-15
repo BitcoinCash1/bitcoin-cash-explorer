@@ -8,6 +8,8 @@ I don't retrieve any money for building, maintaining or running this project. Ho
 
 # Installation Methods
 
+*Note:* Currently we are not yet listed on all these various one-click installation methods. For now, use the <a href="#advanced-installation-methods">Advanced Installation Methods</a>.
+
 BCH Explorer can be self-hosted on a wide variety of your own hardware, ranging from a simple one-click installation on a Raspberry Pi full-node distro all the way to a robust production instance on a powerful FreeBSD server. 
 
 Most people should use a <a href="#one-click-installation">one-click install method</a>.
