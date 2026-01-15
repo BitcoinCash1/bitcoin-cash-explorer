@@ -28,7 +28,6 @@ We do **not** offer any paid Enterprise versions, everything is open-source and 
 BCH Explorer can be conveniently installed on the following full-node distros: 
 - [Umbrel](https://github.com/getumbrel/umbrel)
 - [RaspiBlitz](https://github.com/rootzoll/raspiblitz)
-- [RoninDojo](https://code.samourai.io/ronindojo/RoninDojo)
 - [myNode](https://github.com/mynodebtc/mynode)
 - [StartOS](https://github.com/Start9Labs/start-os)
 - [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin/blob/a1eacce6768ca4894f365af8f79be5bbd594e1c3/examples/configuration.nix#L129)
