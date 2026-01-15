@@ -51,7 +51,7 @@ Your Mempool instance should be running at http://localhost. The graphs will be 
 
 ## Configure with Bitcoin Cash Node + Electrum Server
 
-First, configure `bitcoind` as specified above, and make sure your Electrum Server is running and synced. See [this FAQ](https://explorer.melroy.org/docs/faq#address-lookup-issues) if you need help picking an Electrum Server implementation.
+First, configure `bitcoind` as specified above, and make sure your Electrum Server is running and synced. See [this FAQ](https://bchexplorer.cash/docs/faq#address-lookup-issues) if you need help picking an Electrum Server implementation.
 
 Then, set the following variables in `docker-compose.yml` so Mempool can connect to your Electrum Server:
 

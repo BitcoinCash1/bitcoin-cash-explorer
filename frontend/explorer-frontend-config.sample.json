@@ -12,7 +12,7 @@
   "MEMPOOL_BLOCKS_AMOUNT": 8,
   "BASE_MODULE": "mempool",
   "ROOT_NETWORK": "",
-  "MEMPOOL_WEBSITE_URL": "https://explorer.melroy.org",
+  "MEMPOOL_WEBSITE_URL": "https://bchexplorer.cash",
   "MINING_DASHBOARD": true,
   "AUDIT": false,
   "MAINNET_BLOCK_AUDIT_START_HEIGHT": 0,
@@ -25,5 +25,5 @@
   "ACCELERATOR_BUTTON": true,
   "PUBLIC_ACCELERATIONS": false,
   "STRATUM_ENABLED": false,
-  "SERVICES_API": "https://explorer.melroy.org/api/v1/services"
+  "SERVICES_API": "https://bchexplorer.cash/api/v1/services"
 }

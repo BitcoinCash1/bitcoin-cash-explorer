@@ -695,7 +695,7 @@ export const wsApiDocsData = [
     title: 'Track Addresses',
     description: {
       default:
-        "Subscribe to multiple addresses to receive live updates on new transactions having these addresses in input or output. Limits on the maximum number of tracked addresses apply. For higher tracking limits, consider upgrading to an <a href='https://explorer.melroy.org/enterprise'>enterprise sponsorship</a>.",
+        "Subscribe to multiple addresses to receive live updates on new transactions having these addresses in input or output. Limits on the maximum number of tracked addresses apply. For higher tracking limits, consider upgrading to an <a href='https://bchexplorer.cash/pro'>enterprise sponsorship</a>.",
     },
     payload: `{
   "track-addresses": [
@@ -1165,7 +1165,7 @@ export const wsApiDocsData = [
     title: 'Track Transactions',
     description: {
       default:
-        "Subscribe to multiple transactions to receive live updates on their status and position in the mempool. Limits on the maximum number of tracked addresses apply. For higher tracking limits, consider upgrading to an <a href='https://explorer.melroy.org/enterprise'>enterprise sponsorship</a>.",
+        "Subscribe to multiple transactions to receive live updates on their status and position in the mempool. Limits on the maximum number of tracked addresses apply. For higher tracking limits, consider upgrading to an <a href='https://bchexplorer.cash/pro'>enterprise sponsorship</a>.",
     },
     payload: `{
       "track-txs": [
@@ -4031,7 +4031,7 @@ export const restApiDocsData = [
     title: 'GET Blocks (Bulk)',
     description: {
       default:
-        "<p>Returns details on the range of blocks between <code>:minHeight</code> and <code>:maxHeight</code>, inclusive, up to 10 blocks. If <code>:maxHeight</code> is not specified, it defaults to the current tip.</p><p>To return data for more than 10 blocks, consider becoming an <a href='https://explorer.melroy.org/enterprise'>enterprise sponsor</a>.</p>",
+        "<p>Returns details on the range of blocks between <code>:minHeight</code> and <code>:maxHeight</code>, inclusive, up to 10 blocks. If <code>:maxHeight</code> is not specified, it defaults to the current tip.</p><p>To return data for more than 10 blocks, consider becoming an <a href='https://bchexplorer.cash/pro'>enterprise sponsor</a>.</p>",
     },
     urlString: '/v1/blocks-bulk/:minHeight[/:maxHeight]',
     showConditions: bitcoinNetworks,
@@ -7960,7 +7960,7 @@ export const faqData = [
     category: 'advanced',
     showConditions: bitcoinNetworks,
     fragment: 'how-big-is-mempool-used-by-mempool-space',
-    title: 'How big is the mempool used by explorer.melroy.org?',
+    title: 'How big is the mempool used by bchexplorer.cash?',
     options: { officialOnly: true },
   },
   {

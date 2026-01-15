@@ -42,7 +42,7 @@ rpcpassword=explorer
 
 ### 3. Configure Electrum Server
 
-[Pick an Electrum Server implementation](https://explorer.melroy.org/docs/faq#address-lookup-issues), configure it, and make sure it's synced.
+[Pick an Electrum Server implementation](https://bchexplorer.cash/docs/faq#address-lookup-issues), configure it, and make sure it's synced.
 
 **This step is optional.** You can run BCH Explorer without configuring an Electrum Server for it, but address lookups will be disabled.
 

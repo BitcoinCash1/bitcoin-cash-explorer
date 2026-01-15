@@ -22,7 +22,7 @@ cd bitcoin-cash-explorer/frontend
 
 ### 2. Specify Website
 
-The same frontend codebase is used for https://explorer.melroy.org.
+The same frontend codebase is used for https://bchexplorer.cash.
 
 Configure the frontend for the site you want by running the corresponding command:
 
@@ -41,7 +41,7 @@ $ npm install
 $ npm run serve:local-prod
 ```
 
-The frontend will be available at http://localhost:4200/ and all API requests will be proxied to the production server at https://explorer.melroy.org.
+The frontend will be available at http://localhost:4200/ and all API requests will be proxied to the production server at https://bchexplorer.cash.
 
 ### 4. Test
 

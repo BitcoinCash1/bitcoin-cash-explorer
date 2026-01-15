@@ -12,7 +12,7 @@ export class SeoService {
   baseTitle = '';
   baseDescription =
     'Explore the full Bitcoin Cash ecosystem by Melroy van den Berg.';
-  baseDomain = 'explorer.melroy.org';
+  baseDomain = 'bchexplorer.cash';
 
   canonicalLink: HTMLLinkElement = document.getElementById(
     'canonical'

@@ -126,7 +126,7 @@ const defaultEnv: Env = {
   MEMPOOL_BLOCKS_AMOUNT: 8,
   GIT_COMMIT_HASH: '',
   PACKAGE_JSON_VERSION: '',
-  MEMPOOL_WEBSITE_URL: 'https://explorer.melroy.org',
+  MEMPOOL_WEBSITE_URL: 'https://bchexplorer.cash',
   MINING_DASHBOARD: true,
   LIGHTNING: false,
   AUDIT: false,
@@ -144,7 +144,7 @@ const defaultEnv: Env = {
   PUBLIC_ACCELERATIONS: false,
   ADDITIONAL_CURRENCIES: false,
   STRATUM_ENABLED: false,
-  SERVICES_API: 'https://explorer.melroy.org/api/v1/services',
+  SERVICES_API: 'https://bchexplorer.cash/api/v1/services',
   PROD_DOMAINS: [],
 };
 

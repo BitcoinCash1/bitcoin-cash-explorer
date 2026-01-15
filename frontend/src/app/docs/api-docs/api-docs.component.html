@@ -46,7 +46,7 @@
           <ng-template #faqDisclaimer i18n="faq.big-disclaimer"
             ><p>
               <b
-                >explorer.melroy.org merely provides data about the Bitcoin Cash
+                >bchexplorer.cash merely provides data about the Bitcoin Cash
                 network.</b
               >
               It cannot help you with retrieving funds, wallet issues, etc.
@@ -423,7 +423,7 @@
     and search and view those transactions.
   </p>
   <p>
-    The explorer.melroy.org website invented the concept of visualizing a
+    The bchexplorer.cash website invented the concept of visualizing a
     Bitcoin Cash node's mempool as <b>projected blocks</b>. These blocks are the
     inspiration for our half-filled block logo.
   </p>
@@ -681,7 +681,7 @@
 
 <ng-template type="how-big-is-mempool-used-by-mempool-space">
   <p>
-    explorer.melroy.org uses multiple Bitcoin Cash nodes to obtain data: some
+    bchexplorer.cash uses multiple Bitcoin Cash nodes to obtain data: some
     with the default 320MB mempool memory limit (call these Small Nodes) and
     others with a much larger mempool memory limit (call these Big Nodes).
   </p>
@@ -689,14 +689,14 @@
     Many nodes on the Bitcoin Cash network are configured to run with the
     default 320MB mempool memory setting. When all 320MB of memory are used up,
     such nodes will reject transactions below a certain threshold feerate.
-    Running Small Nodes allows explorer.melroy.org to tell you what this
+    Running Small Nodes allows bchexplorer.cash to tell you what this
     threshold feerate is—this is the "Purging" feerate that shows on the front
     page when mempools are full, which you can use to be reasonably sure that
     your transaction will be widely propagated.
   </p>
   <p>
     Big Node mempools are so big that they don't need to reject (or purge)
-    transactions. Such nodes allow for explorer.melroy.org to provide you with
+    transactions. Such nodes allow for bchexplorer.cash to provide you with
     information on any pending transaction it has received—no matter how
     congested the mempool is, and no matter how low-feerate or low-priority the
     transaction is.
@@ -712,9 +712,9 @@
     storage and processing.
   </p>
   <p>
-    explorer.melroy.org shows the memory usage of a Bitcoin Cash node that has a
+    bchexplorer.cash shows the memory usage of a Bitcoin Cash node that has a
     very high mempool memory limit. As a result, when mempools fill up, you may
-    notice memory usage on explorer.melroy.org go beyond 320MB. This is not a
+    notice memory usage on bchexplorer.cash go beyond 320MB. This is not a
     mistake—this memory usage figure is high because it's for a Bitcoin Cash
     node that isn't rejecting (or evicting) transactions. Consider it to be
     another data point to give you an idea of how congested the mempool is
@@ -919,7 +919,7 @@
   </p>
   <p class="note">
     Because of this feature's resource usage and availability requirements, it
-    is only supported on official explorer.melroy.org instances.
+    is only supported on official bchexplorer.cash instances.
   </p>
 </ng-template>
 
@@ -991,7 +991,7 @@
   </p>
   <p class="note">
     Because of this feature's resource usage and availability requirements, it
-    is only supported on official explorer.melroy.org instances.
+    is only supported on official bchexplorer.cash instances.
   </p>
 </ng-template>
 
@@ -1148,7 +1148,7 @@
 </ng-template>
 
 <ng-template type="who-runs-this-website">
-  The official explorer.melroy.org website is operated by
+  The official bchexplorer.cash website is operated by
   <a href="https://melroy.org/donate.html" target="_blank"
     >Melroy van den Berg</a
   >. See more information on our <a [routerLink]="['/about']">About page</a>.

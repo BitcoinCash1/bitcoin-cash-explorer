@@ -237,8 +237,8 @@ const defaults: IConfig = {
     PASSWORD: '',
   },
   EXTERNAL_DATA_SERVER: {
-    MEMPOOL_API: 'https://explorer.melroy.org/api/v1',
-    MEMPOOL_ONION: 'http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/api/v1',
+    MEMPOOL_API: 'https://bchexplorer.cash/api/v1',
+    MEMPOOL_ONION: 'http://upcomingtordomain.onion/api/v1',
   },
   MAXMIND: {
     ENABLED: false,
