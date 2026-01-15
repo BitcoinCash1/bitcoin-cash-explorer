@@ -10,7 +10,9 @@ In the near future, I will allow sponsorship options for this project, to suppor
 
 # Installation Methods
 
-*Note:* Currently we are not yet listed on all these various one-click installation methods. For now, use the <a href="#advanced-installation-methods">Advanced Installation Methods</a>.
+**Note:** Currently we are not yet listed on all these various "one-click installation" methods. For now, use the <a href="#advanced-installation-methods">Advanced Installation Methods</a>.
+
+---
 
 BCH Explorer can be self-hosted on a wide variety of your own hardware, ranging from a simple one-click installation on a Raspberry Pi full-node distro all the way to a robust production instance on a powerful FreeBSD server. 
 
@@ -31,7 +33,7 @@ BCH Explorer can be conveniently installed on the following full-node distros:
 - [StartOS](https://github.com/Start9Labs/start-os)
 - [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin/blob/a1eacce6768ca4894f365af8f79be5bbd594e1c3/examples/configuration.nix#L129)
 
-**We highly recommend you deploy your own BCH Explorer instance this way.** No matter which option you pick, you'll be able to get your own fully-sovereign instance of BCH Explorer up quickly without needing to fiddle with any settings.
+No matter which option you pick, you'll be able to get your own fully-sovereign instance of BCH Explorer up quickly without needing to fiddle with any settings.
 
 ## Advanced Installation Methods
 
