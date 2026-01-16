@@ -87,7 +87,7 @@ class Statistics {
       500, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000,
     ];
 
-    const sizeFees: { [feePerWU: number]: number } = {};
+    const sizeFees: { [feePerByte: number]: number } = {};
     const lastItem = logFees.length - 1;
 
     memPoolArray.forEach((transaction) => {
