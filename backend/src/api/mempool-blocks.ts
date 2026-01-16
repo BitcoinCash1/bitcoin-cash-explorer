@@ -171,7 +171,6 @@ class MempoolBlocks {
       const workerResultPromise = new Promise<{
         blocks: number[][];
         rates: Map<number, number>;
-        clusters: Map<number, number[]>;
       }>((resolve, reject) => {
         threadErrorListener = reject;
         this.txSelectionWorker?.once('message', (result): void => {
@@ -183,7 +182,7 @@ class MempoolBlocks {
         type: 'set',
         mempool: strippedMempool,
       });
-      const { blocks, rates, clusters } = this.convertResultTxids(await workerResultPromise);
+      const { blocks, rates } = this.convertResultTxids(await workerResultPromise);
 
       // clean up thread error listener
       this.txSelectionWorker?.removeListener('error', threadErrorListener);
@@ -193,7 +192,6 @@ class MempoolBlocks {
         blocks,
         null,
         Object.entries(rates),
-        Object.values(clusters),
         candidates,
         saveResults
       );
@@ -252,7 +250,6 @@ class MempoolBlocks {
       const workerResultPromise = new Promise<{
         blocks: number[][];
         rates: Map<number, number>;
-        clusters: Map<number, number[]>;
       }>((resolve, reject) => {
         threadErrorListener = reject;
         this.txSelectionWorker?.once('message', (result): void => {
@@ -265,22 +262,14 @@ class MempoolBlocks {
         added: addedStripped,
         removed: removedTxs.map((tx) => tx.uid) as number[],
       });
-      const { blocks, rates, clusters } = this.convertResultTxids(await workerResultPromise);
+      const { blocks, rates } = this.convertResultTxids(await workerResultPromise);
 
       this.removeUids(removedTxs);
 
       // clean up thread error listener
       this.txSelectionWorker?.removeListener('error', threadErrorListener);
 
-      this.processBlockTemplates(
-        newMempool,
-        blocks,
-        null,
-        Object.entries(rates),
-        Object.values(clusters),
-        candidates,
-        saveResults
-      );
+      this.processBlockTemplates(newMempool, blocks, null, Object.entries(rates), candidates, saveResults);
       logger.debug(`updateBlockTemplates completed in ${(Date.now() - start) / 1000} seconds`);
     } catch (e) {
       logger.err('updateBlockTemplates failed. ' + (e instanceof Error ? e.message : e));
@@ -322,7 +311,7 @@ class MempoolBlocks {
       ? this.rustGbtGenerator
       : new GbtGenerator(config.MEMPOOL.MIN_BLOCK_SIZE_UNITS, config.MEMPOOL.MEMPOOL_BLOCKS_AMOUNT);
     try {
-      const { blocks, blockSizes, rates, clusters, overflow } = this.convertNapiResultTxids(
+      const { blocks, blockSizes, rates, overflow } = this.convertNapiResultTxids(
         await rustGbt.make(transactions as RustThreadTransaction[], this.nextUid)
       );
       if (saveResults) {
@@ -333,15 +322,7 @@ class MempoolBlocks {
       logger.debug(
         `RUST updateBlockTemplates returned ${resultMempoolSize} txs out of ${expectedSize} in the mempool, ${overflow.length} were unmineable`
       );
-      const processed = this.processBlockTemplates(
-        newMempool,
-        blocks,
-        blockSizes,
-        rates,
-        clusters,
-        candidates,
-        saveResults
-      );
+      const processed = this.processBlockTemplates(newMempool, blocks, blockSizes, rates, candidates, saveResults);
       logger.debug(`RUST makeBlockTemplates completed in ${(Date.now() - start) / 1000} seconds`);
       return processed;
     } catch (e) {
@@ -392,7 +373,7 @@ class MempoolBlocks {
 
     // run the block construction algorithm in a separate thread, and wait for a result
     try {
-      const { blocks, blockSizes, rates, clusters, overflow } = this.convertNapiResultTxids(
+      const { blocks, blockSizes, rates, overflow } = this.convertNapiResultTxids(
         await this.rustGbtGenerator.update(
           added as RustThreadTransaction[],
           removedTxs.map((tx) => tx.uid) as number[],
@@ -408,7 +389,7 @@ class MempoolBlocks {
           `GBT returned wrong number of transactions ${transactions.length} vs ${resultMempoolSize}, cache is probably out of sync`
         );
       } else {
-        const processed = this.processBlockTemplates(newMempool, blocks, blockSizes, rates, clusters, candidates, true);
+        const processed = this.processBlockTemplates(newMempool, blocks, blockSizes, rates, candidates, true);
         this.removeUids(removedTxs);
         logger.debug(`RUST updateBlockTemplates completed in ${(Date.now() - start) / 1000} seconds`);
         return processed;
@@ -425,7 +406,6 @@ class MempoolBlocks {
     blocks: string[][],
     blockSizes: number[] | null,
     rates: [string, number][],
-    clusters: string[][],
     candidates: GbtCandidates | undefined,
     saveResults
   ): MempoolBlockWithTransactions[] {
@@ -454,58 +434,6 @@ class MempoolBlocks {
       }
       hasBlockStack = stackSize > config.MEMPOOL.MIN_BLOCK_SIZE_UNITS;
       feeStatsCalculator = new OnlineFeeStatsCalculator(stackSize, 0.5, [10, 20, 30, 40, 50, 60, 70, 80, 90]);
-    }
-
-    const ancestors: Ancestor[] = [];
-    const descendants: Ancestor[] = [];
-    let ancestor: MempoolTransactionExtended;
-    for (const cluster of clusters) {
-      for (const memberTxid of cluster) {
-        const mempoolTx = mempool[memberTxid];
-        if (mempoolTx) {
-          // ugly micro-optimization to avoid allocating new arrays
-          ancestors.length = 0;
-          descendants.length = 0;
-          let matched = false;
-          cluster.forEach((txid) => {
-            ancestor = mempool[txid];
-            if (txid === memberTxid) {
-              matched = true;
-            } else {
-              if (!ancestor) {
-                console.log('txid missing from mempool! ', txid, candidates?.txs[txid]);
-                return;
-              }
-              const relative = {
-                txid: txid,
-                fee: ancestor.fee,
-                size: ancestor.adjustedVsize,
-              };
-              if (matched) {
-                descendants.push(relative);
-                if (!mempoolTx.lastBoosted || (ancestor.firstSeen && ancestor.firstSeen > mempoolTx.lastBoosted)) {
-                  mempoolTx.lastBoosted = ancestor.firstSeen;
-                }
-              } else {
-                ancestors.push(relative);
-              }
-            }
-          });
-          // ugly micro-optimization to avoid allocating new arrays or objects
-          if (mempoolTx.ancestors) {
-            mempoolTx.ancestors.length = 0;
-          } else {
-            mempoolTx.ancestors = [];
-          }
-          if (mempoolTx.descendants) {
-            mempoolTx.descendants.length = 0;
-          } else {
-            mempoolTx.descendants = [];
-          }
-          mempoolTx.ancestors.push(...ancestors);
-          mempoolTx.descendants.push(...descendants);
-        }
-      }
     }
 
     const sizeLimit = config.MEMPOOL.MIN_BLOCK_SIZE_UNITS;
@@ -619,18 +547,9 @@ class MempoolBlocks {
     }
   }
 
-  private convertResultTxids({
-    blocks,
-    rates,
-    clusters,
-  }: {
-    blocks: number[][];
-    rates: Map<number, number>;
-    clusters: Map<number, number[]>;
-  }): {
+  private convertResultTxids({ blocks, rates }: { blocks: number[][]; rates: Map<number, number> }): {
     blocks: string[][];
     rates: { [root: string]: number };
-    clusters: { [root: string]: string[] };
   } {
     const convertedBlocks: string[][] = blocks.map((block) =>
       block.map((uid) => {
@@ -644,32 +563,20 @@ class MempoolBlocks {
         convertedRates[rateTxid] = rates.get(rateUid);
       }
     }
-    const convertedClusters = {};
-    for (const rootUid of clusters.keys()) {
-      const rootTxid = this.uidMap.get(rootUid);
-      if (rootTxid) {
-        const members = clusters.get(rootUid)?.map((uid) => {
-          return this.uidMap.get(uid);
-        });
-        convertedClusters[rootTxid] = members;
-      }
-    }
+
     return {
       blocks: convertedBlocks,
       rates: convertedRates,
-      clusters: convertedClusters,
     } as {
       blocks: string[][];
       rates: { [root: string]: number };
-      clusters: { [root: string]: string[] };
     };
   }
 
-  private convertNapiResultTxids({ blocks, blockSizes, rates, clusters, overflow }: GbtResult): {
+  private convertNapiResultTxids({ blocks, blockSizes, rates, overflow }: GbtResult): {
     blocks: string[][];
     blockSizes: number[];
     rates: [string, number][];
-    clusters: string[][];
     overflow: string[];
   } {
     const convertedBlocks: string[][] = blocks.map((block) =>
@@ -687,10 +594,6 @@ class MempoolBlocks {
       const rateTxid = this.uidMap.get(rateUid) as string;
       convertedRates.push([rateTxid, rate]);
     }
-    const convertedClusters: string[][] = [];
-    for (const cluster of clusters) {
-      convertedClusters.push(cluster.map((uid) => this.uidMap.get(uid)) as string[]);
-    }
     const convertedOverflow: string[] = overflow.map((uid) => {
       const txid = this.uidMap.get(uid);
       if (txid !== undefined) {
@@ -703,7 +606,6 @@ class MempoolBlocks {
       blocks: convertedBlocks,
       blockSizes: blockSizes,
       rates: convertedRates,
-      clusters: convertedClusters,
       overflow: convertedOverflow,
     };
   }

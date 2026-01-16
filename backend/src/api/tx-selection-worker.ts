@@ -19,11 +19,11 @@ if (parentPort) {
       });
     }
 
-    const { blocks, rates, clusters } = makeBlockTemplates(mempool);
+    const { blocks, rates } = makeBlockTemplates(mempool);
 
     // return the result to main thread.
     if (parentPort) {
-      parentPort.postMessage({ blocks, rates, clusters });
+      parentPort.postMessage({ blocks, rates });
     }
   });
 }
@@ -31,16 +31,16 @@ if (parentPort) {
 /*
  * Build projected mempool blocks using an approximation of the transaction selection algorithm from Bitcoin Core
  * (see BlockAssembler in https://github.com/bitcoin/bitcoin/blob/master/src/node/miner.cpp)
+ *
+ * All this code below needs to be adapted to match BCH.
  */
 function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
   blocks: number[][];
   rates: Map<number, number>;
-  clusters: Map<number, number[]>;
 } {
   const start = Date.now();
   const auditPool: Map<number, AuditTransaction> = new Map();
   const mempoolArray: AuditTransaction[] = [];
-  const cpfpClusters: Map<number, number[]> = new Map();
 
   mempool.forEach((tx) => {
     tx.dirty = false;
@@ -159,7 +159,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
         // remove these as valid package ancestors for any descendants remaining in the mempool
         if (used.length) {
           used.forEach((tx) => {
-            updateDescendants(tx, auditPool, modified, effectiveFeeRate);
+            updateDescendants(tx, auditPool, modified);
           });
         }
 
@@ -220,7 +220,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
   const time = end - start;
   logger.debug('Mempool templates calculated in ' + time / 1000 + ' seconds');
 
-  return { blocks, rates, clusters: cpfpClusters };
+  return { blocks, rates };
 }
 
 // traverse in-mempool ancestors
@@ -257,8 +257,7 @@ function setRelatives(tx: AuditTransaction, mempool: Map<number, AuditTransactio
 function updateDescendants(
   rootTx: AuditTransaction,
   mempool: Map<number, AuditTransaction>,
-  modified: PairingHeap<AuditTransaction>,
-  clusterRate: number
+  modified: PairingHeap<AuditTransaction>
 ): void {
   const descendantSet: Set<AuditTransaction> = new Set();
   // stack of nodes left to visit
@@ -281,10 +280,6 @@ function updateDescendants(
       descendantTx.ancestorSigops -= rootTx.sigops;
       tmpScore = descendantTx.score;
       descendantTx.score = descendantTx.ancestorFee / (descendantTx.ancestorSize || 1);
-      descendantTx.dependencyRate = descendantTx.dependencyRate
-        ? Math.min(descendantTx.dependencyRate, clusterRate)
-        : clusterRate;
-
       if (!descendantTx.modifiedNode) {
         descendantTx.modified = true;
         descendantTx.modifiedNode = modified.add(descendantTx);

@@ -132,13 +132,11 @@ impl GbtGenerator {
 /// This tuple contains the following:
 ///        blocks: A 2D Vector of transaction IDs (u32), the inner Vecs each represent a block.
 /// block_sizes: A Vector of total sizes per block.
-///      clusters: A 2D Vector of transaction IDs representing clusters of dependent mempool transactions
 ///         rates: A Vector of tuples containing transaction IDs (u32) and effective fee per size (f64)
 #[napi(constructor)]
 pub struct GbtResult {
     pub blocks: Vec<Vec<u32>>,
     pub block_sizes: Vec<u32>,
-    pub clusters: Vec<Vec<u32>>,
     pub rates: Vec<Vec<f64>>, // Tuples not supported. u32 fits inside f64
     pub overflow: Vec<u32>,
 }

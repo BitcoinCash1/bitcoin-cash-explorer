@@ -62,7 +62,6 @@ pub fn gbt(
     let mut audit_pool: AuditPool = Vec::with_capacity(max_uid + 1);
     audit_pool.resize(max_uid + 1, None);
     let mut mempool_stack: Vec<u32> = Vec::with_capacity(mempool_len);
-    let mut clusters: Vec<Vec<u32>> = Vec::new();
     let mut block_sizes: Vec<u32> = Vec::new();
 
     info!("Initializing working structs");
@@ -110,7 +109,6 @@ pub fn gbt(
         // And a header of ======
         trace!("\n\n\n\n\n\n\n\n\n\n==================================");
         trace!("mempool_array: {:#?}", mempool_stack);
-        trace!("clusters: {:#?}", clusters);
         trace!("modified: {:#?}", modified);
         trace!("audit_pool: {:#?}", audit_pool);
         trace!("blocks: {:#?}", blocks);
@@ -152,8 +150,6 @@ pub fn gbt(
                 failures += 1;
             } else {
                 let mut package: Vec<(u32, u32, usize)> = Vec::new();
-                let mut cluster: Vec<u32> = Vec::new();
-                let is_cluster: bool = !next_tx.ancestors.is_empty();
                 for ancestor_id in &next_tx.ancestors {
                     if let Some(Some(ancestor)) = audit_pool.get(*ancestor_id as usize) {
                         package.push((*ancestor_id, ancestor.order(), ancestor.ancestors.len()));
@@ -173,22 +169,14 @@ pub fn gbt(
                 });
                 package.push((next_tx.uid, next_tx.order(), next_tx.ancestors.len()));
 
-                let cluster_rate = next_tx.cluster_rate();
-
                 for (txid, _, _) in &package {
-                    cluster.push(*txid);
                     if let Some(Some(tx)) = audit_pool.get_mut(*txid as usize) {
                         tx.used = true;
-                        tx.set_dirty_if_different(cluster_rate);
                         transactions.push(tx.uid);
                         block_size += tx.size;
                         block_sigops += tx.sigops;
                     }
-                    update_descendants(*txid, &mut audit_pool, &mut modified, cluster_rate);
-                }
-
-                if is_cluster {
-                    clusters.push(cluster);
+                    update_descendants(*txid, &mut audit_pool, &mut modified);
                 }
 
                 failures = 0;
@@ -259,13 +247,11 @@ pub fn gbt(
     }
     trace!("\n\n\n\n\n====================");
     trace!("blocks: {:#?}", blocks);
-    trace!("clusters: {:#?}", clusters);
     trace!("rates: {:#?}\n====================\n\n\n\n\n", rates);
 
     GbtResult {
         blocks,
         block_sizes,
-        clusters,
         rates,
         overflow,
     }
@@ -362,7 +348,6 @@ fn update_descendants(
     root_txid: u32,
     audit_pool: &mut AuditPool,
     modified: &mut ModifiedQueue,
-    cluster_rate: f64,
 ) {
     let mut visited: HashSet<u32, U32HasherState> = u32hashset_new();
     let mut descendant_stack: Vec<u32> = Vec::new();
@@ -390,7 +375,6 @@ fn update_descendants(
                 root_fee,
                 root_sigop_adjusted_size,
                 root_sigops,
-                cluster_rate,
             );
             // add to priority queue or update priority if score has changed
             if descendant.score() < old_score {

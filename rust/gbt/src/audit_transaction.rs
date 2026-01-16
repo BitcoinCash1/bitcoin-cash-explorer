@@ -20,7 +20,6 @@ pub struct AuditTransaction {
     pub sigops: u32,
     adjusted_fee_per_size: f64,
     pub fee_per_size: f64,
-    pub dependency_rate: f64,
     pub inputs: Vec<u32>,
     pub relatives_set_flag: bool,
     pub ancestors: HashSet<u32, U32HasherState>,
@@ -110,7 +109,6 @@ impl AuditTransaction {
             sigops: tx.sigops,
             adjusted_fee_per_size: calc_fee_rate(fee, f64::from(sigop_adjusted_size)),
             fee_per_size,
-            dependency_rate: f64::INFINITY,
             inputs: tx.inputs.clone(),
             relatives_set_flag: false,
             ancestors: u32hashset_new(),
@@ -145,25 +143,6 @@ impl AuditTransaction {
         self.ancestor_sigops
     }
 
-    #[inline]
-    pub fn cluster_rate(&self) -> f64 {
-        // Safety: self.ancestor_sigop_adjusted_size can never be 0.
-        // Even if it could, as it approaches 0, the value inside the min() call
-        // grows, so if we think of 0 as "grew infinitely" then dependency_rate would be
-        // the smaller of the two. If either side is NaN, the other side is returned.
-        self.dependency_rate.min(calc_fee_rate(
-            self.ancestor_fee,
-            f64::from(self.ancestor_sigop_adjusted_size),
-        ))
-    }
-
-    pub fn set_dirty_if_different(&mut self, cluster_rate: f64) {
-        // if self.fee_per_size != cluster_rate {
-        //     self.fee_per_size = cluster_rate;
-        //     self.dirty = true;
-        // }
-    }
-
     /// Safety: This function must NEVER set score to NaN.
     #[inline]
     fn calc_new_score(&mut self) {
@@ -196,10 +175,8 @@ impl AuditTransaction {
         root_fee: u64,
         root_sigop_adjusted_size: u32,
         root_sigops: u32,
-        cluster_rate: f64,
     ) -> f64 {
         let old_score = self.score();
-        self.dependency_rate = self.dependency_rate.min(cluster_rate);
         if self.ancestors.remove(&root_txid) {
             self.ancestor_fee -= root_fee;
             self.ancestor_sigop_adjusted_size -= root_sigop_adjusted_size;
