@@ -61,7 +61,7 @@ class StatisticsApi {
       const [result]: any = await DB.query(query);
       return result.insertId;
     } catch (e) {
-      logger.err('$create() error' + (e instanceof Error ? e.message : e));
+      logger.err('$createZeroedStatistic() error' + (e instanceof Error ? e.message : e));
     }
   }
 
@@ -286,7 +286,7 @@ class StatisticsApi {
         return this.mapStatisticToOptimizedStatistic([rows[0]])[0];
       }
     } catch (e) {
-      logger.err('$list2H() error' + (e instanceof Error ? e.message : e));
+      logger.err('$get() error' + (e instanceof Error ? e.message : e));
     }
   }
 
