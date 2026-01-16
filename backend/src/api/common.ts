@@ -954,14 +954,7 @@ export class OnlineFeeStatsCalculator {
     this.setNextBounds();
   }
 
-  processNext(tx: {
-    size: number;
-    fee: number;
-    effectiveFeePerSize?: number;
-    feePerVsize?: number;
-    rate?: number;
-    txid: string;
-  }): void {
+  processNext(tx: { size: number; fee: number; feePerSize?: number; rate?: number; txid: string }): void {
     let left = this.totalSize;
     const right = this.totalSize + tx.size;
     if (!this.inBand && right <= this.leftBound) {
@@ -972,7 +965,7 @@ export class OnlineFeeStatsCalculator {
     while (left < right) {
       if (right > this.leftBound) {
         this.inBand = true;
-        const txRate = tx.rate || tx.effectiveFeePerSize || tx.feePerVsize || 0;
+        const txRate = tx.rate || tx.feePerSize || 0;
         const weight = Math.min(right, this.rightBound) - Math.max(left, this.leftBound);
         this.totalBandFee += txRate * weight;
         this.totalBandWeight += weight;

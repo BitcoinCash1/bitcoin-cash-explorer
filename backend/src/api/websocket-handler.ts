@@ -109,7 +109,6 @@ class WebsocketHandler {
       throw new Error('No WebSocket.Server have been set');
     }
 
-    // TODO - Fix indentation after PR is merged
     for (const server of this.webSocketServers) {
       server.on('connection', (client: WebSocket, req) => {
         this.numConnected++;
@@ -152,7 +151,7 @@ class WebsocketHandler {
 
             if (wantNow['want-stats']) {
               response['mempoolInfo'] = this.socketData['mempoolInfo'];
-              response['vBytesPerSecond'] = this.socketData['vBytesPerSecond'];
+              response['bytesPerSecond'] = this.socketData['bytesPerSecond'];
               response['fees'] = this.socketData['fees'];
               response['da'] = this.socketData['da'];
             }

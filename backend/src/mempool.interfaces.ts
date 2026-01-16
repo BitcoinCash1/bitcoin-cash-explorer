@@ -124,7 +124,8 @@ export interface TransactionExtended extends IEsploraApi.Transaction {
 export interface MempoolTransactionExtended extends TransactionExtended {
   order: number;
   sigops: number;
-  adjustedSize: number; // Pretty sure we do not have this in BCH, just size though. Need to be changed.
+  adjustedVsize: number;
+  adjustedFeePerVsize: number;
   inputs?: number[];
   lastBoosted?: number;
 }

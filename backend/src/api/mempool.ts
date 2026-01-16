@@ -148,7 +148,7 @@ class Mempool {
     }
     for (const txid of Object.keys(this.mempoolCache)) {
       if (
-        !this.mempoolCache[txid].adjustedSize ||
+        !this.mempoolCache[txid].adjustedVsize ||
         this.mempoolCache[txid].sigops == null ||
         this.mempoolCache[txid].feePerSize == null
       ) {

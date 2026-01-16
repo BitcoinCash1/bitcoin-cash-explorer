@@ -29,13 +29,12 @@ interface TemplateTransaction {
   txid: string;
   order: number;
   size: number;
-  adjustedSize: number; // sigop-adjusted vsize, rounded up to the nearest integer
+  adjustedVsize: number; // sigop-adjusted vsize, rounded up to the nearest integer
   sigops: number;
   fee: number;
   feeDelta: number;
   ancestors: string[];
   cluster: string[];
-  effectiveFeePerSize: number;
 }
 
 interface MinerTransaction extends TemplateTransaction {
@@ -301,17 +300,16 @@ export function makeBlockTemplate(
 
   candidates.forEach((tx) => {
     // initializing everything up front helps V8 optimize property access later
-    const adjustedSize = Math.ceil(Math.max(tx.size, 5 * (tx.sigops || 0)));
-    const feePerSize = tx.fee / adjustedSize;
+    const adjustedVsize = Math.ceil(Math.max(tx.size, 5 * (tx.sigops || 0)));
+    const feePerSize = tx.fee / adjustedVsize;
     auditPool.set(tx.txid, {
       txid: tx.txid,
       order: txidToOrdering(tx.txid),
       fee: tx.fee,
       feeDelta: 0,
       size: tx.size,
-      adjustedSize: adjustedSize,
+      adjustedVsize: adjustedVsize,
       feePerSize: feePerSize,
-      effectiveFeePerSize: feePerSize,
       dependencyRate: feePerSize,
       sigops: tx.sigops || 0,
       inputs: (tx.vin?.map((vin) => vin.txid) || []) as string[],
@@ -394,10 +392,6 @@ export function makeBlockTemplate(
           }
           ancestor.used = true;
           ancestor.usedBy = nextTx.txid;
-          // update this tx with effective fee rate & relatives data
-          if (ancestor.effectiveFeePerSize !== effectiveFeeRate) {
-            ancestor.effectiveFeePerSize = effectiveFeeRate;
-          }
           ancestor.cluster = clusterTxids;
           transactions.push(ancestor);
           blockSize += ancestor.weight;
@@ -454,11 +448,11 @@ function setRelatives(tx: MinerTransaction, mempool: Map<string, MinerTransactio
     }
   }
   tx.ancestorFee = tx.fee + tx.feeDelta;
-  tx.ancestorSize = tx.adjustedSize || 0;
+  tx.ancestorSize = tx.adjustedVsize || 0;
   tx.ancestorSigops = tx.sigops || 0;
   tx.ancestorMap.forEach((ancestor) => {
     tx.ancestorFee += ancestor.fee + ancestor.feeDelta;
-    tx.ancestorSize += ancestor.adjustedSize;
+    tx.ancestorSize += ancestor.adjustedVsize;
     tx.ancestorSigops += ancestor.sigops;
   });
   tx.score = tx.ancestorFee / tx.ancestorSize;
@@ -489,7 +483,7 @@ function updateDescendants(
       // remove tx as ancestor
       descendantTx.ancestorMap.delete(rootTx.txid);
       descendantTx.ancestorFee -= rootTx.fee + rootTx.feeDelta;
-      descendantTx.ancestorSize -= rootTx.adjustedSize;
+      descendantTx.ancestorSize -= rootTx.adjustedVsize;
       descendantTx.ancestorSigops -= rootTx.sigops;
       descendantTx.score = descendantTx.ancestorFee / descendantTx.ancestorSize;
       descendantTx.dependencyRate = descendantTx.dependencyRate

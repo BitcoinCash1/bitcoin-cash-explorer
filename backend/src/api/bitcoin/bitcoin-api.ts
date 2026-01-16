@@ -57,6 +57,8 @@ class BitcoinApi implements AbstractBitcoinApi {
       return this.$addPrevouts(txInMempool);
     }
 
+    // TODO: Why not use verbose '2' here instead of just 'true', which should return the fee?
+    // That would also mean we no longer would need calculateFeeFromInputs().
     return this.bitcoindClient
       .getRawTransaction(txId, true)
       .then((transaction: IBitcoinApi.Transaction) => {

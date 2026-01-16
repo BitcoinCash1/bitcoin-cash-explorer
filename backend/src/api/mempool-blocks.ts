@@ -141,7 +141,7 @@ class MempoolBlocks {
         const stripped = {
           uid: entry.uid,
           fee: entry.fee,
-          size: entry.adjustedSize,
+          size: entry.adjustedVsize,
           sigops: entry.sigops,
           feePerSize: entry.feePerSize,
           inputs: entry.vin
@@ -237,7 +237,7 @@ class MempoolBlocks {
         return {
           uid: entry.uid || 0,
           fee: entry.fee,
-          size: entry.adjustedSize,
+          size: entry.adjustedVsize,
           sigops: entry.sigops,
           feePerSize: entry.feePerSize,
           inputs: entry.vin
@@ -479,7 +479,7 @@ class MempoolBlocks {
               const relative = {
                 txid: txid,
                 fee: ancestor.fee,
-                size: ancestor.adjustedSize,
+                size: ancestor.adjustedVsize,
               };
               if (matched) {
                 descendants.push(relative);
