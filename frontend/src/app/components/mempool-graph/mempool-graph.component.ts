@@ -81,9 +81,12 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
     this.inverted = this.storageService.getValue('inverted-graph') === 'true';
     this.isWidget = this.template === 'widget';
     this.showCount = !this.isWidget && !this.hideCount;
+    if (this.data) {
+      this.mountFeeChart();
+    }
   }
 
-  ngOnChanges(changes) {
+  ngOnChanges(): void {
     if (!this.data) {
       return;
     }
@@ -120,12 +123,12 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
   handleNewMempoolData(mempoolStats: OptimizedMempoolStats[]) {
     mempoolStats.reverse();
     const labels = mempoolStats.map((stats) => stats.added);
-    const finalArrayVByte = this.generateArray(mempoolStats);
+    const finalArrayByte = this.generateArray(mempoolStats);
     const finalArrayCount = this.generateCountArray(mempoolStats);
 
     return {
       labels: labels,
-      series: finalArrayVByte,
+      series: finalArrayByte,
       countSeries: finalArrayCount,
     };
   }

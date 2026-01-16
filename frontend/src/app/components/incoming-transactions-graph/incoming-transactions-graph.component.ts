@@ -5,10 +5,9 @@ import {
   LOCALE_ID,
   ChangeDetectionStrategy,
   OnInit,
-  OnDestroy,
+  OnChanges,
 } from '@angular/core';
 import { EChartsOption } from '@app/graphs/echarts';
-import { OnChanges } from '@angular/core';
 import { StorageService } from '@app/services/storage.service';
 import {
   download,
@@ -17,8 +16,6 @@ import {
 } from '@app/shared/graphs.utils';
 import { formatNumber } from '@angular/common';
 import { StateService } from '@app/services/state.service';
-import { Subscription } from 'rxjs';
-
 const OUTLIERS_MEDIAN_MULTIPLIER = 4;
 
 @Component({
@@ -37,9 +34,7 @@ const OUTLIERS_MEDIAN_MULTIPLIER = 4;
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class IncomingTransactionsGraphComponent
-  implements OnInit, OnChanges, OnDestroy
-{
+export class IncomingTransactionsGraphComponent implements OnInit, OnChanges {
   @Input() data: any;
   @Input() theme: string;
   @Input() height: number | string = '200';
@@ -398,6 +393,4 @@ export class IncomingTransactionsGraphComponent
     this.mempoolStatsChartOption.backgroundColor = 'none';
     this.chartInstance.setOption(this.mempoolStatsChartOption);
   }
-
-  ngOnDestroy(): void {}
 }
