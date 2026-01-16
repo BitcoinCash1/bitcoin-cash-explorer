@@ -4,9 +4,7 @@ import {
   OnChanges,
   Input,
 } from '@angular/core';
-// import { isFeatureActive } from '@app/bitcoin.utils';
 import { Transaction } from '@interfaces/electrs.interface';
-import { StateService } from '@app/services/state.service';
 
 @Component({
   selector: 'app-tx-features',
@@ -18,12 +16,13 @@ import { StateService } from '@app/services/state.service';
 export class TxFeaturesComponent implements OnChanges {
   @Input() tx: Transaction;
 
-  constructor(private stateService: StateService) {}
+  isCheap: boolean;
 
   ngOnChanges() {
     if (!this.tx) {
       return;
     }
-    // this.someFeature = this.tx.status... || isFeatureActive(this.stateService.network, this.tx.status.block_height, 'someFeature')
+    console.log(this.tx);
+    this.isCheap = this.tx.feePerSize < 10.0;
   }
 }

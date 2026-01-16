@@ -30,7 +30,6 @@ export class TransactionDetailsComponent implements OnInit {
   @Input() isMobile: boolean;
   @Input() transactionTime: number;
   @Input() isLoadingFirstSeen: boolean;
-  @Input() featuresEnabled: boolean;
   @Input() auditStatus: TxAuditStatus;
   @Input() filters: Filter[];
   @Input() miningStats: MiningStats;

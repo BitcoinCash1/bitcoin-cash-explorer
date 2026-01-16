@@ -1,53 +1,9 @@
-<!--
-<ng-template [ngIf]="someKindOfBCHFeature">
-  <span
-    *ngIf="
-      someKindOfBCHFeature.realizedTaprootGains && !someKindOfBCHFeature.potentialTaprootGains;
-      else notFullyTaproot
-    "
-    class="badge badge-success mr-1"
-    i18n-ngbTooltip="Tooltip about fees saved with taproot"
-    ngbTooltip="This transaction uses Taproot and thereby saved at least {{
-      someKindOfBCHFeature.realizedTaprootGains * 100 | number: '1.0-0'
-    }}% on fees"
-    placement="bottom"
-    i18n="tx-features.tag.taproot|Taproot"
-    >Some feature</span
-  >
-  <ng-template #notFullyTaproot>
-    <span
-      *ngIf="
-        someKindOfBCHFeature.realizedTaprootGains && someKindOfBCHFeature.potentialTaprootGains;
-        else noFeature
-      "
-      class="badge badge-warning mr-1"
-      i18n-ngbTooltip="
-        Tooltip about fees that saved and could be saved with taproot
-      "
-      ngbTooltip="This transaction uses Taproot and already saved at least {{
-        someKindOfBCHFeature.realizedTaprootGains * 100 | number: '1.0-0'
-      }}% on fees, but could save an additional {{
-        someKindOfBCHFeature.potentialTaprootGains * 100 | number: '1.0-0'
-      }}% by fully using Taproot"
-      placement="bottom"
-      i18n="tx-features.tag.taproot|Taproot"
-      >Some feature</span
-    >
-    <ng-template #noFeature>
-      <span
-        *ngIf="
-          someKindOfBCHFeature.potentialTaprootGains &&
-            someKindOfBCHFeature.potentialTaprootGains > 0;
-          else negativeFeature
-        "
-        class="badge badge-danger mr-1"
-        i18n-ngbTooltip="Tooltip about fees that could be saved with taproot"
-        ngbTooltip="This transaction could save {{
-          someKindOfBCHFeature.potentialTaprootGains * 100 | number: '1.0-0'
-        }}% on fees by using Taproot"
-        placement="bottom"
-        ><del i18n="tx-features.tag.taproot|Taproot">Some feature</del></span
-      >
-    </ng-template>
-</ng-template>
--->
+<span
+  *ngIf="isCheap"
+  class="badge badge-success mr-1"
+  i18n-ngbTooltip="Tooltip about Cheap"
+  ngbTooltip="This transaction has a low transaction fee on L1, because of BCH"
+  placement="bottom"
+  i18n="tx-features.tag.cheap|Cheap"
+  >Cheap</span
+>
