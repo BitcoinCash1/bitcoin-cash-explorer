@@ -39,7 +39,7 @@ import {
 })
 export class MempoolGraphComponent implements OnInit, OnChanges {
   @Input() data: any[];
-  @Input() filterSize = 100000;
+  @Input() limitFee = 350;
   @Input() limitFilterFee = 1;
   @Input() hideCount: boolean = true;
   @Input() height: number | string = 200;
@@ -58,14 +58,11 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
   };
   windowPreference: string;
   hoverIndexSerie = 0;
-  maxFee: number;
   feeLimitIndex: number;
-  maxFeeIndex: number;
   feeLevelsOrdered = [];
   chartColorsOrdered = chartColors;
   inverted: boolean;
   chartInstance: any = undefined;
-  weightMode: boolean = false;
   isWidget: boolean = false;
   showCount: boolean = false;
 
@@ -81,9 +78,6 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
     this.inverted = this.storageService.getValue('inverted-graph') === 'true';
     this.isWidget = this.template === 'widget';
     this.showCount = !this.isWidget && !this.hideCount;
-    if (this.data) {
-      this.mountFeeChart();
-    }
   }
 
   ngOnChanges(): void {
@@ -136,14 +130,10 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
   generateArray(mempoolStats: OptimizedMempoolStats[]) {
     const finalArray: number[][][] = [];
     let feesArray: number[][] = [];
-
-    let maxTier = 0;
-    for (let index = 38; index > -1; index--) {
+    const limitFeesTemplate = this.template === 'advanced' ? 26 : 20;
+    for (let index = limitFeesTemplate; index > -1; index--) {
       feesArray = [];
       mempoolStats.forEach((stats) => {
-        if (stats.sizes[index] >= this.filterSize) {
-          maxTier = Math.max(maxTier, index);
-        }
         feesArray.push([
           stats.added * 1000,
           stats.sizes[index] ? stats.sizes[index] : 0,
@@ -151,8 +141,6 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
       });
       finalArray.push(feesArray);
     }
-    this.maxFeeIndex = maxTier;
-
     finalArray.reverse();
     return finalArray;
   }
@@ -171,7 +159,7 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
     const newColors = [];
     for (let index = 0; index < series.length; index++) {
       const value = series[index];
-      if (index >= this.feeLimitIndex && index <= this.maxFeeIndex) {
+      if (index >= this.feeLimitIndex) {
         newColors.push(this.chartColorsOrdered[index]);
         seriesGraph.push({
           zlevel: 0,
@@ -569,17 +557,12 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
 
   orderLevels() {
     this.feeLevelsOrdered = [];
-    const maxIndex = Math.min(feeLevels.length, this.maxFeeIndex);
     for (let i = 0; i < feeLevels.length; i++) {
       if (feeLevels[i] === this.limitFilterFee) {
         this.feeLimitIndex = i;
       }
-      if (feeLevels[i] <= feeLevels[this.maxFeeIndex]) {
-        if (i === maxIndex || feeLevels[i] == null) {
-          this.feeLevelsOrdered.push(`${feeLevels[i]}+`);
-        } else {
-          this.feeLevelsOrdered.push(`${feeLevels[i]} - ${feeLevels[i + 1]}`);
-        }
+      if (feeLevels[i] <= this.limitFee) {
+        this.feeLevelsOrdered.push(`${feeLevels[i]} - ${feeLevels[i + 1]}`);
       }
     }
     this.chartColorsOrdered = chartColors.slice(
