@@ -40,7 +40,6 @@ export class StatisticsComponent implements OnInit {
   filterSize = 100000;
   filterFeeIndex = 0;
   showCount = false;
-  maxFeeIndex: number;
   dropDownOpen = false;
   outlierCappingEnabled = false;
   mempoolStats: OptimizedMempoolStats[] = [];
@@ -179,15 +178,7 @@ export class StatisticsComponent implements OnInit {
     mempoolStats.reverse();
     const labels = mempoolStats.map((stats) => stats.added);
 
-    let maxTier = 0;
-    for (let index = 38; index > -1; index--) {
-      mempoolStats.forEach((stats) => {
-        if (stats.sizes[index] >= this.filterSize) {
-          maxTier = Math.max(maxTier, index);
-        }
-      });
-    }
-    this.maxFeeIndex = maxTier;
+    this.capExtremeBytesValues();
 
     this.mempoolTransactionsPerSecondData = {
       labels: labels,
@@ -198,6 +189,44 @@ export class StatisticsComponent implements OnInit {
         ]),
       ],
     };
+  }
+
+  /**
+   * All value higher that "median * capRatio" are capped
+   */
+  capExtremeBytesValues() {
+    if (this.stateService.network.length !== 0) {
+      return; // Only cap on Bitcoin Cash mainnet
+    }
+
+    let capRatio = 10;
+    if (
+      ['1m', '3m', '6m', '1y', '2y', '3y', '4y', 'all'].includes(
+        this.graphWindowPreference
+      )
+    ) {
+      capRatio = 4;
+    }
+
+    // Find median value
+    const bytes: number[] = [];
+    for (const stat of this.mempoolStats) {
+      bytes.push(stat.bytes_per_second);
+    }
+    const sorted = bytes.slice().sort((a, b) => a - b);
+    const middle = Math.floor(sorted.length / 2);
+    let median = sorted[middle];
+    if (sorted.length % 2 === 0) {
+      median = (sorted[middle - 1] + sorted[middle]) / 2;
+    }
+
+    // Cap
+    for (const stat of this.mempoolStats) {
+      stat.bytes_per_second = Math.min(
+        median * capRatio,
+        stat.bytes_per_second
+      );
+    }
   }
 
   saveGraphPreference() {

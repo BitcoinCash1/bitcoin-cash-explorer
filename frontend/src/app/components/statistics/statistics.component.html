@@ -235,9 +235,7 @@
                       let-i="index"
                       [ngForOf]="feeLevelDropdownData"
                     >
-                      <ng-template
-                        [ngIf]="feeData.fee <= feeLevels[maxFeeIndex]"
-                      >
+                      <ng-template [ngIf]="feeData.fee <= 400">
                         <li
                           (click)="filterFeeIndex = feeData.fee"
                           [class]="
