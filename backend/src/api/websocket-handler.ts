@@ -392,7 +392,6 @@ class WebsocketHandler {
       throw new Error('No WebSocket.Server have been set');
     }
 
-    // TODO - Fix indentation after PR is merged
     for (const server of this.webSocketServers) {
       server.clients.forEach((client) => {
         if (client.readyState !== WebSocket.OPEN) {
@@ -413,7 +412,6 @@ class WebsocketHandler {
     this.updateSocketDataFields({ loadingIndicators: indicators });
 
     const response = JSON.stringify({ loadingIndicators: indicators });
-    // TODO - Fix indentation after PR is merged
     for (const server of this.webSocketServers) {
       server.clients.forEach((client) => {
         if (client.readyState !== WebSocket.OPEN) {
@@ -432,7 +430,6 @@ class WebsocketHandler {
     this.updateSocketDataFields({ conversions: conversionRates });
 
     const response = JSON.stringify({ conversions: conversionRates });
-    // TODO - Fix indentation after PR is merged
     for (const server of this.webSocketServers) {
       server.clients.forEach((client) => {
         if (client.readyState !== WebSocket.OPEN) {
@@ -454,7 +451,6 @@ class WebsocketHandler {
       'live-2h-chart': stats,
     });
 
-    // TODO - Fix indentation after PR is merged
     for (const server of this.webSocketServers) {
       server.clients.forEach((client) => {
         if (client.readyState !== WebSocket.OPEN) {
@@ -483,7 +479,6 @@ class WebsocketHandler {
       da: da?.previousTime ? da : undefined,
     });
 
-    // TODO - Fix indentation after PR is merged
     for (const server of this.webSocketServers) {
       server.clients.forEach((client) => {
         if (client.readyState !== WebSocket.OPEN) {
@@ -598,7 +593,6 @@ class WebsocketHandler {
       [txid: string]: { [vout: number]: { vin: number; txid: string } };
     } = {};
     const trackedTxs = new Set<string>();
-    // TODO - Fix indentation after PR is merged
     for (const server of this.webSocketServers) {
       server.clients.forEach((client) => {
         if (client['track-tx']) {
@@ -632,7 +626,6 @@ class WebsocketHandler {
     const addressCache = this.makeAddressCache(newTransactions);
     const removedAddressCache = this.makeAddressCache(deletedTransactions);
 
-    // TODO - Fix indentation after PR is merged
     for (const server of this.webSocketServers) {
       server.clients.forEach(async (client) => {
         if (client.readyState !== WebSocket.OPEN) {
@@ -1012,7 +1005,6 @@ class WebsocketHandler {
       return responseCache[key];
     }
 
-    // TODO - Fix indentation after PR is merged
     for (const server of this.webSocketServers) {
       server.clients.forEach((client) => {
         if (client.readyState !== WebSocket.OPEN) {
@@ -1340,7 +1332,6 @@ class WebsocketHandler {
       let numTxsSubs = 0;
       let numProjectedSubs = 0;
 
-      // TODO - Fix indentation after PR is merged
       for (const server of this.webSocketServers) {
         server.clients.forEach((client) => {
           if (client['track-tx']) {
