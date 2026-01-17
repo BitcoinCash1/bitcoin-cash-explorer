@@ -454,15 +454,12 @@ class TransactionUtils {
     return { prioritized, deprioritized };
   }
 
-  // Copied from https://github.com/mempool/mempool/blob/14e49126c3ca8416a8d7ad134a95c5e090324d69/backend/src/api/bitcoin/bitcoin-api.ts#L324
+  // Copied from https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/-/blob/main/backend/src/api/bitcoin/bitcoin-api.ts?ref_type=heads#L371
   public translateScriptPubKeyType(outputType: string): string {
     const map = {
       pubkey: 'p2pk',
       pubkeyhash: 'p2pkh',
       scripthash: 'p2sh',
-      witness_v0_keyhash: 'v0_p2wpkh', // Not used by BCH
-      witness_v0_scripthash: 'v0_p2wsh', // Not used by BCH
-      witness_v1_taproot: 'v1_p2tr', // Not used by BCH
       nonstandard: 'nonstandard',
       multisig: 'multisig',
       anchor: 'anchor',
