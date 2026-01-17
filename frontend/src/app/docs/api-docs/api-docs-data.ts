@@ -6611,14 +6611,14 @@ export const faqData = [
     category: 'self-hosting',
     showConditions: bitcoinNetworks,
     fragment: 'host-my-own-instance-server',
-    title: 'How can I host a BCH Explorerinstance on my own server?',
+    title: 'How can I host a BCH Explorer instance on my own server?',
   },
   {
     type: 'endpoint',
     category: 'self-hosting',
     showConditions: bitcoinNetworks,
     fragment: 'install-mempool-with-docker',
-    title: 'Can I install BCH Explorerusing Docker?',
+    title: 'Can I install BCH Explorer using Docker?',
   },
   {
     type: 'endpoint',
@@ -6626,6 +6626,6 @@ export const faqData = [
     showConditions: bitcoinNetworks,
     fragment: 'address-lookup-issues',
     title:
-      'Why do I get an error for certain address lookups on my BCH Explorerinstance?',
+      'Why do I get an error for certain address lookups on my BCH Explorer instance?',
   },
 ];
