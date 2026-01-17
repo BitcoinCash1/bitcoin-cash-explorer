@@ -21,15 +21,13 @@ const MAX_STANDARD_TX_SIZE = 32_000_000; // Min. tx size
 const MAX_BLOCK_SIGOPS_COST = 80_000;
 const MAX_STANDARD_TX_SIGOPS_COST = MAX_BLOCK_SIGOPS_COST / 5;
 const MAX_P2SH_SIGOPS = 15;
-const MAX_STANDARD_P2WSH_STACK_ITEMS = 100;
-const MAX_STANDARD_P2WSH_STACK_ITEM_SIZE = 80;
-const MAX_STANDARD_TAPSCRIPT_STACK_ITEM_SIZE = 80;
-const MAX_STANDARD_P2WSH_SCRIPT_SIZE = 3600;
 const MAX_STANDARD_SCRIPTSIG_SIZE = 1650;
 const DUST_RELAY_TX_FEE = 3;
-const MAX_OP_RETURN_RELAY = 83;
 const DEFAULT_PERMIT_BAREMULTISIG = true;
 const MAX_TX_LEGACY_SIGOPS = 2_500 * 4; // witness-adjusted sigops
+const MAX_TX_BYTES = 1_000_000;
+const MAX_SCRIPT_SIZE = 1650;
+const VALID_VERSIONS = new Set([1, 2]);
 
 export class Common {
   static nativeAssetId = '6f0279e9ed041c3d710a9f57d0c02928416460c4b722ae3457a11eec381c526d';
@@ -791,26 +789,236 @@ export class Common {
     });
   }
 
-  private static validateTransactionHex(txhex: string): string {
+  private static validateTransactionHex(txHex: string): string {
     // Do not mutate txhex
 
     // We assume txhex to be valid hex (output of getTransactionFromRequest above)
+    try {
+      // --- basic hex validation ---
+      if (typeof txHex !== 'string' || txHex.length === 0) {
+        throw new Error('empty or non-string input');
+      }
 
-    logger.debug(`-----> Validate transaction HEX: ${txhex}`);
-    // Check 1: Valid transaction parse
+      if ((txHex.length & 1) !== 0) {
+        throw new Error('hex length must be even');
+      }
 
-    // let tx: bitcoinjs.Transaction;
-    // try {
-    //   tx = bitcoinjs.Transaction.fromHex(txhex);
-    // } catch (e) {
-    //   throw Object.assign(new Error('Invalid transaction (could not parse)'), {
-    //     code: -4,
-    //   });
-    // }
+      if (!/^[0-9a-fA-F]+$/.test(txHex)) {
+        throw new Error('non-hex characters detected');
+      }
 
-    // Pass through the input string untouched
-    return txhex;
+      const bin = Common.hexToBin(txHex);
+      const tx = Common.decodeTransaction(bin);
+
+      // 1. Size Check
+      if (tx.size > MAX_TX_BYTES) {
+        throw new Error('transaction exceeds maximum size');
+      }
+
+      // 2. Version Check
+      if (!VALID_VERSIONS.has(tx.version)) {
+        throw new Error(`invalid tx version: ${tx.version}`);
+      }
+
+      // 3. Input Validation
+      if (tx.inputs.length === 0) {
+        throw new Error('invalid input count: transaction must have at least one input');
+      }
+
+      for (const input of tx.inputs) {
+        // Check ScriptSig size (BCH policy/consensus limit check)
+        if (input.scriptSig.length > MAX_SCRIPT_SIZE) {
+          throw new Error(`input script too large (${input.scriptSig.length} bytes)`);
+        }
+      }
+
+      // 4. Output Validation
+      if (tx.outputs.length === 0) {
+        throw new Error('invalid output count: transaction must have at least one output');
+      }
+
+      for (const output of tx.outputs) {
+        // Check LockingScript size
+        if (output.lockingScript.length > MAX_SCRIPT_SIZE) {
+          throw new Error(`output script too large (${output.lockingScript.length} bytes)`);
+        }
+
+        // Optional: Check for negative values (though decodeTransaction uses BigUint64)
+        if (output.value < 0n) {
+          throw new Error('invalid output value');
+        }
+      }
+
+      // Pass through the input string untouched
+      return txHex;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown parsing error';
+      logger.debug(`Error validating transaction hex: ${txHex}, due to: ${msg}`);
+      throw Object.assign(new Error(`Invalid transaction (${msg})`), { code: -4 });
+    }
   }
+
+  /**
+   * Converts a hex string to a Uint8Array (Binary)
+   */
+  static hexToBin(hex: string): Uint8Array {
+    if (hex.length % 2 !== 0) {
+      throw new Error(`Hex string must have an even length. (Length: ${hex.length})`);
+    }
+
+    const bytes = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < hex.length; i += 2) {
+      const byte = parseInt(hex.slice(i, i + 2), 16);
+      if (Number.isNaN(byte)) {
+        throw new Error(`Invalid hex character at index ${i}`);
+      }
+      bytes[i / 2] = byte;
+    }
+    return bytes;
+  }
+
+  /**
+   * Decodes a raw BCH transaction.
+   * BCH uses the legacy format (no witness), so size is just bin.length.
+   */
+  static decodeTransaction(bin: Uint8Array): DecodedBCHTransaction {
+    // Basic sanity check: A 32-byte buffer is almost certainly a TXID, not a TX
+    if (bin.length === 32) {
+      throw new Error('Provided hex is a 32-byte TXID, not a raw transaction.');
+    }
+
+    const reader = new BufferReader(bin);
+
+    try {
+      const version = reader.readUInt32LE();
+
+      // Inputs
+      const vinCount = reader.readVarInt();
+      const inputs: TransactionInput[] = [];
+      for (let i = 0; i < vinCount; i++) {
+        inputs.push({
+          outpointHash: reader.readBytes(32),
+          outpointIndex: reader.readUInt32LE(),
+          scriptSig: reader.readBytes(reader.readVarInt()),
+          sequence: reader.readUInt32LE(),
+        });
+      }
+
+      // Outputs
+      const voutCount = reader.readVarInt();
+      const outputs: TransactionOutput[] = [];
+      for (let i = 0; i < voutCount; i++) {
+        outputs.push({
+          value: reader.readUInt64LE(),
+          lockingScript: reader.readBytes(reader.readVarInt()),
+        });
+      }
+
+      const locktime = reader.readUInt32LE();
+
+      // Integrity Check: BCH transactions must not have extra data (garbage) at the end.
+      if (reader.remaining() !== 0) {
+        throw new Error(`Trailing garbage: ${reader.remaining()} bytes left over`);
+      }
+
+      return {
+        version,
+        inputs,
+        outputs,
+        locktime,
+        size: bin.length, // Physical byte size
+      };
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Unknown parsing error';
+      throw new Error(`Failed to decode BCH transaction: ${msg}`);
+    }
+  }
+}
+
+/**
+ * Helper to handle binary reading of BCH transactions
+ */
+class BufferReader {
+  private offset = 0;
+  private readonly view: DataView;
+
+  constructor(private readonly buf: Uint8Array) {
+    this.view = new DataView(buf.buffer, buf.byteOffset, buf.byteLength);
+  }
+
+  remaining(): number {
+    return this.buf.length - this.offset;
+  }
+
+  readUInt8(): number {
+    if (this.remaining() < 1) throw new Error('truncated readUInt8');
+    return this.buf[this.offset++];
+  }
+
+  readUInt32LE(): number {
+    if (this.remaining() < 4) throw new Error('truncated readUInt32LE');
+    const v = this.view.getUint32(this.offset, true);
+    this.offset += 4;
+    return v;
+  }
+
+  readUInt64LE(): bigint {
+    if (this.remaining() < 8) throw new Error('truncated readUInt64LE');
+    const v = this.view.getBigUint64(this.offset, true);
+    this.offset += 8;
+    return v;
+  }
+
+  readBytes(n: number): Uint8Array {
+    if (this.remaining() < n) throw new Error('truncated readBytes');
+    const bytes = this.buf.slice(this.offset, this.offset + n);
+    this.offset += n;
+    return bytes;
+  }
+
+  readVarInt(): number {
+    const first = this.readUInt8();
+    if (first < 0xfd) return first;
+
+    let value: number | bigint;
+    if (first === 0xfd) {
+      if (this.remaining() < 2) throw new Error('truncated readVarInt');
+      value = this.view.getUint16(this.offset, true);
+      this.offset += 2;
+    } else if (first === 0xfe) {
+      if (this.remaining() < 4) throw new Error('truncated readVarInt');
+      value = this.view.getUint32(this.offset, true);
+      this.offset += 4;
+    } else {
+      if (this.remaining() < 8) throw new Error('truncated readVarInt');
+      value = this.view.getBigUint64(this.offset, true);
+      this.offset += 8;
+    }
+    return Number(value);
+  }
+}
+
+/**
+ * Transaction Interfaces
+ */
+export interface TransactionInput {
+  outpointHash: Uint8Array;
+  outpointIndex: number;
+  scriptSig: Uint8Array;
+  sequence: number;
+}
+
+export interface TransactionOutput {
+  value: bigint;
+  lockingScript: Uint8Array;
+}
+
+export interface DecodedBCHTransaction {
+  version: number;
+  inputs: TransactionInput[];
+  outputs: TransactionOutput[];
+  locktime: number;
+  size: number; // size in bytes
 }
 
 /**

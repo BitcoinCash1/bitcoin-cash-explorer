@@ -1,7 +1,7 @@
 {
-  "name": "mempool-frontend",
+  "name": "explorer-frontend",
   "version": "3.3",
-  "description": "Bitcoin Cash mempool visualizer and blockchain explorer backend",
+  "description": "Bitcoin Cash Explorer mempool visualizer and blockchain explorer frontend",
   "license": "GNU Affero General Public License v3.0",
   "homepage": "https://bchexplorer.cash",
   "repository": {
