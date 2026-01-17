@@ -49,7 +49,7 @@ try {
 try {
   const packageJson = fs.readFileSync('package.json');
   packetJsonVersion = JSON.parse(packageJson).version;
-  console.log(`mempool version ${packetJsonVersion}`);
+  console.log(`BCH explorer version ${packetJsonVersion}`);
 } catch (e) {
   throw new Error(e);
 }
@@ -69,7 +69,7 @@ if (process.env.DOCKER_COMMIT_HASH) {
     if (!gitRevParse.error) {
       const output = gitRevParse.stdout.toString('utf-8').replace(/[\n\r\s]+$/, '');
       gitCommitHash = output ? output : '?';
-      console.log(`mempool revision ${gitCommitHash}`);
+      console.log(`BCH explorer revision ${gitCommitHash}`);
     } else if (gitRevParse.error.code === 'ENOENT') {
       console.log('git not found, cannot parse git hash');
       gitCommitHash = '?';
