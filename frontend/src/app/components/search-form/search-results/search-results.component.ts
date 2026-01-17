@@ -40,10 +40,6 @@ export class SearchResultsComponent implements OnChanges {
         ...this.results.pools,
         ...this.results.otherNetworks,
       ];
-      // If searchText is a public key corresponding to a node, select it by default
-      // if (this.results.publicKey && this.results.nodes.length > 0) {
-      //   this.activeIdx = 1;
-      // }
     }
   }
 
