@@ -30,7 +30,7 @@ class FeeApi {
     const pBlocks = projectedBlocks.getMempoolBlocks();
     const mPool = mempool.getMempoolInfo();
 
-    // minimum non-zero minrelaytxfee / incrementalrelayfee is 1 sat/kvB = 0.001 sat/vB
+    // minimum non-zero minrelaytxfee / incrementalrelayfee is 1 sat/kB = 0.001 sat/B
     const recommendations = this.calculateRecommendedFee(pBlocks, mPool, 0.001);
     // enforce floor & offset for highest priority recommendations while <100% hashrate accepts sub-sat fees
     recommendations.fastestFee = Math.max(recommendations.fastestFee + this.priorityFactor, this.minFastestFee);
@@ -93,7 +93,7 @@ class FeeApi {
     };
   }
 
-  // TODO: Update calculation for BCH
+  // Updated for BCH 32MB blocks (not taking ABLA yet into account)
   private optimizeMedianFee(
     pBlock: MempoolBlock,
     nextBlock: MempoolBlock | undefined,
@@ -102,11 +102,15 @@ class FeeApi {
     minIncrement: number = this.minimumIncrement
   ): number {
     const useFee = previousFee ? (pBlock.medianFee + previousFee) / 2 : pBlock.medianFee;
-    if (pBlock.blockSize <= 500000 || pBlock.medianFee < minFee) {
+    // BCH has 32MB blocks, so thresholds are scaled accordingly:
+    // - Low congestion: ≤16MB (50% of 32MB)
+    // - Medium congestion: 16MB-30.4MB (50%-95% of 32MB)
+    // - High congestion: >30.4MB (>95% of 32MB)
+    if (pBlock.blockSize <= 16000000 || pBlock.medianFee < minFee) {
       return minFee;
     }
-    if (pBlock.blockSize <= 950000 && !nextBlock) {
-      const multiplier = (pBlock.blockSize - 500000) / 500000;
+    if (pBlock.blockSize <= 30400000 && !nextBlock) {
+      const multiplier = (pBlock.blockSize - 16000000) / 16000000;
       return Math.max(this.roundToNearest(useFee * multiplier, minIncrement), minFee);
     }
     return Math.max(this.roundUpToNearest(useFee, minIncrement), minFee);

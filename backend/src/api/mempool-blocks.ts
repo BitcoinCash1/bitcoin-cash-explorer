@@ -1,11 +1,10 @@
-import { GbtGenerator, GbtResult, ThreadTransaction as RustThreadTransaction } from 'rust-gbt'; // TODO: Update rust-gbt? Remove all the acceleration code. eg RustThreadAcceleration (its not relevant for BCH)
+import { GbtGenerator, GbtResult, ThreadTransaction as RustThreadTransaction } from 'rust-gbt';
 import logger from '../logger';
 import {
   MempoolBlock,
   MempoolTransactionExtended,
   MempoolBlockWithTransactions,
   MempoolBlockDelta,
-  Ancestor,
   CompactThreadTransaction,
   TransactionClassified,
   TransactionCompressed,
