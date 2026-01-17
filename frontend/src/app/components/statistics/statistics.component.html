@@ -22,11 +22,7 @@
           <form
             [formGroup]="radioGroupForm"
             class="formRadioGroup"
-            [class]="
-              stateService.env.MINING_DASHBOARD || stateService.env.LIGHTNING
-                ? 'mining'
-                : 'no-menu'
-            "
+            [class]="stateService.env.MINING_DASHBOARD ? 'mining' : 'no-menu'"
             (click)="saveGraphPreference()"
           >
             <div class="small-buttons">

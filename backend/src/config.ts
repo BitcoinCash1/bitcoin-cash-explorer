@@ -100,12 +100,6 @@ interface IConfig {
     MEMPOOL_API: string;
     MEMPOOL_ONION: string;
   };
-  MAXMIND: {
-    ENABLED: boolean;
-    GEOLITE2_CITY: string;
-    GEOLITE2_ASN: string;
-    GEOIP2_ISP: string;
-  };
   REPLICATION: {
     ENABLED: boolean;
     AUDIT: boolean;
@@ -236,12 +230,6 @@ const defaults: IConfig = {
     MEMPOOL_API: 'https://bchexplorer.cash/api/v1',
     MEMPOOL_ONION: 'http://upcomingtordomain.onion/api/v1',
   },
-  MAXMIND: {
-    ENABLED: false,
-    GEOLITE2_CITY: '/usr/local/share/GeoIP/GeoLite2-City.mmdb',
-    GEOLITE2_ASN: '/usr/local/share/GeoIP/GeoLite2-ASN.mmdb',
-    GEOIP2_ISP: '/usr/local/share/GeoIP/GeoIP2-ISP.mmdb',
-  },
   REPLICATION: {
     ENABLED: false,
     AUDIT: false,
@@ -284,7 +272,6 @@ class Config implements IConfig {
   STATISTICS: IConfig['STATISTICS'];
   SOCKS5PROXY: IConfig['SOCKS5PROXY'];
   EXTERNAL_DATA_SERVER: IConfig['EXTERNAL_DATA_SERVER'];
-  MAXMIND: IConfig['MAXMIND'];
   REPLICATION: IConfig['REPLICATION'];
   MEMPOOL_SERVICES: IConfig['MEMPOOL_SERVICES'];
   REDIS: IConfig['REDIS'];
@@ -304,7 +291,6 @@ class Config implements IConfig {
     this.STATISTICS = configs.STATISTICS;
     this.SOCKS5PROXY = configs.SOCKS5PROXY;
     this.EXTERNAL_DATA_SERVER = configs.EXTERNAL_DATA_SERVER;
-    this.MAXMIND = configs.MAXMIND;
     this.REPLICATION = configs.REPLICATION;
     this.MEMPOOL_SERVICES = configs.MEMPOOL_SERVICES;
     this.REDIS = configs.REDIS;

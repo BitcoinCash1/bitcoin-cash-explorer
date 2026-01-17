@@ -27,7 +27,6 @@ export class MasterPagePreviewComponent implements OnInit {
 
   ngOnInit() {
     this.network$ = merge(of(''), this.stateService.networkChanged$);
-    this.lightning$ = this.stateService.lightningChanged$;
     this.urlLanguage = this.languageService.getLanguageForUrl();
     this.subdomain = this.enterpriseService.getSubdomain();
     this.enterpriseInfo$ = this.enterpriseService.info$.subscribe((info) => {

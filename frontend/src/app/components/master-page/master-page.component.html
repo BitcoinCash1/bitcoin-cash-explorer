@@ -207,27 +207,6 @@
             </a>
           </li>
           <li
-            class="nav-item"
-            routerLinkActive="active"
-            [routerLinkActiveOptions]="{ exact: true }"
-            id="btn-home"
-            *ngIf="network.val === '' && stateService.env.ACCELERATOR"
-          >
-            <a
-              class="nav-link"
-              [routerLink]="['/acceleration' | relativeUrl]"
-              (click)="collapse()"
-            >
-              <div class="svg-wrapper">
-                <app-svg-images
-                  name="nav-rocket"
-                  width="21.59"
-                  height="100%"
-                ></app-svg-images>
-              </div>
-            </a>
-          </li>
-          <li
             class="nav-item mining"
             routerLinkActive="active"
             [routerLinkActiveOptions]="{ exact: true }"

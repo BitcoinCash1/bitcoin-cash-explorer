@@ -29,7 +29,6 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   electrsPort = 0;
   hostname = document.location.hostname;
   network$: Observable<string>;
-  active = 0;
   env: Env;
   code: any;
   baseNetworkUrl = '';
@@ -101,10 +100,6 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
           this.env.ROOT_NETWORK === ''
         ) {
           this.baseNetworkUrl = `/${network}`;
-        } else if (this.env.BASE_MODULE === 'liquid') {
-          if (!['', 'liquid'].includes(network)) {
-            this.baseNetworkUrl = `/${network}`;
-          }
         }
         return network;
       })
@@ -121,7 +116,6 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
     this.wsDocs = wsApiDocsData;
 
     this.network$.pipe(takeUntil(this.destroy$)).subscribe((network) => {
-      this.active = network === 'liquid' || network === 'liquidtestnet' ? 2 : 0;
       switch (network) {
         case '':
           this.electrsPort = 50002;
@@ -137,12 +131,6 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
           break;
         case 'signet':
           this.electrsPort = 60602;
-          break;
-        case 'liquid':
-          this.electrsPort = 51002;
-          break;
-        case 'liquidtestnet':
-          this.electrsPort = 51302;
           break;
       }
     });
@@ -229,19 +217,9 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
     if (network === 'signet') {
       curlResponse = code.codeSampleSignet.curl;
     }
-    if (network === 'liquid') {
-      curlResponse = code.codeSampleLiquid.curl;
-    }
-    if (network === 'liquidtestnet') {
-      curlResponse = code.codeSampleLiquidTestnet.curl;
-    }
     let curlNetwork = '';
     if (this.env.BASE_MODULE === 'mempool') {
       if (!['', 'mainnet'].includes(network)) {
-        curlNetwork = `/${network}`;
-      }
-    } else if (this.env.BASE_MODULE === 'liquid') {
-      if (!['', 'liquid'].includes(network)) {
         curlNetwork = `/${network}`;
       }
     }
@@ -264,10 +242,6 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
     let curlNetwork = '';
     if (this.env.BASE_MODULE === 'mempool') {
       if (!['', 'mainnet'].includes(network)) {
-        curlNetwork = `/${network}`;
-      }
-    } else if (this.env.BASE_MODULE === 'liquid') {
-      if (!['', 'liquid'].includes(network)) {
         curlNetwork = `/${network}`;
       }
     }

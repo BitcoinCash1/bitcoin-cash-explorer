@@ -29,7 +29,7 @@ describe('Mempool Backend Config', () => {
         CACHE_ENABLED: true,
         CLEAR_PROTECTION_MINUTES: 20,
         RECOMMENDED_FEE_PERCENTILE: 50,
-        BLOCK_WEIGHT_UNITS: 4000000,
+        MIN_BLOCK_SIZE_UNITS: 32000000,
         INITIAL_BLOCKS_AMOUNT: 8,
         MEMPOOL_BLOCKS_AMOUNT: 8,
         INDEXING_BLOCKS_AMOUNT: 11000,
@@ -116,15 +116,6 @@ describe('Mempool Backend Config', () => {
       expect(config.EXTERNAL_DATA_SERVER).toStrictEqual({
         MEMPOOL_API: 'https://mempool.space/api/v1',
         MEMPOOL_ONION: 'http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/api/v1',
-        LIQUID_API: 'https://liquid.network/api/v1',
-        LIQUID_ONION: 'http://liquidmom47f6s3m53ebfxn47p76a6tlnxib3wp6deux7wuzotdr6cyd.onion/api/v1',
-      });
-
-      expect(config.MAXMIND).toStrictEqual({
-        ENABLED: false,
-        GEOLITE2_CITY: '/usr/local/share/GeoIP/GeoLite2-City.mmdb',
-        GEOLITE2_ASN: '/usr/local/share/GeoIP/GeoLite2-ASN.mmdb',
-        GEOIP2_ISP: '/usr/local/share/GeoIP/GeoIP2-ISP.mmdb',
       });
 
       expect(config.REPLICATION).toStrictEqual({

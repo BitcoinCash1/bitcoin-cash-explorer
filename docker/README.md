@@ -97,7 +97,7 @@ Below we list all settings from `explorer-config.json` and the corresponding ove
     "CACHE_DIR": "./cache",
     "CLEAR_PROTECTION_MINUTES": 20,
     "RECOMMENDED_FEE_PERCENTILE": 50,
-    "BLOCK_WEIGHT_UNITS": 4000000,
+    "MIN_BLOCK_SIZE_UNITS": 32000000,
     "INITIAL_BLOCKS_AMOUNT": 8,
     "MEMPOOL_BLOCKS_AMOUNT": 8,
     "BLOCKS_SUMMARIES_INDEXING": false,
@@ -109,7 +109,6 @@ Below we list all settings from `explorer-config.json` and the corresponding ove
     "POOLS_JSON_URL": "https://raw.githubusercontent.com/mempool/mining-pools/master/pools-v2.json",
     "POOLS_JSON_TREE_URL": "https://api.github.com/repos/mempool/mining-pools/git/trees/master",
     "POOLS_UPDATE_DELAY": 604800,
-    "CPFP_INDEXING": false,
     "MAX_BLOCKS_BULK_QUERY": 0,
     "DISK_CACHE_BLOCK_INTERVAL": 6,
     "PRICE_UPDATES_PER_HOUR": 1
@@ -129,7 +128,7 @@ Corresponding `docker-compose.yml` overrides:
       MEMPOOL_CACHE_DIR: ""
       MEMPOOL_CLEAR_PROTECTION_MINUTES: ""
       MEMPOOL_RECOMMENDED_FEE_PERCENTILE: ""
-      MEMPOOL_BLOCK_WEIGHT_UNITS: ""
+      MEMPOOL_MIN_BLOCK_SIZE_UNITS: ""
       MEMPOOL_INITIAL_BLOCKS_AMOUNT: ""
       MEMPOOL_MEMPOOL_BLOCKS_AMOUNT: ""
       MEMPOOL_BLOCKS_SUMMARIES_INDEXING: ""
@@ -141,14 +140,11 @@ Corresponding `docker-compose.yml` overrides:
       MEMPOOL_POOLS_JSON_URL: ""
       MEMPOOL_POOLS_JSON_TREE_URL: ""
       MEMPOOL_POOLS_UPDATE_DELAY: ""
-      MEMPOOL_CPFP_INDEXING: ""
       MEMPOOL_MAX_BLOCKS_BULK_QUERY: ""
       MEMPOOL_DISK_CACHE_BLOCK_INTERVAL: ""
       MEMPOOL_PRICE_UPDATES_PER_HOUR: ""
       ...
 ```
-
-`CPFP_INDEXING` enables indexing CPFP (Child Pays For Parent) information for the last `INDEXING_BLOCKS_AMOUNT` blocks.
 
 <br/>
 
@@ -344,95 +340,5 @@ Corresponding `docker-compose.yml` overrides:
       SOCKS5PROXY_PORT: ""
       SOCKS5PROXY_USERNAME: ""
       SOCKS5PROXY_PASSWORD: ""
-      ...
-```
-
-<br/>
-
-`explorer-config.json`:
-```json
-  "LIGHTNING": {
-    "ENABLED": false
-    "BACKEND": "lnd"
-    "TOPOLOGY_FOLDER": ""
-    "STATS_REFRESH_INTERVAL": 600
-    "GRAPH_REFRESH_INTERVAL": 600
-    "LOGGER_UPDATE_INTERVAL": 30
-  }
-```
-
-Corresponding `docker-compose.yml` overrides:
-```yaml
-  api:
-    environment:
-      LIGHTNING_ENABLED: false
-      LIGHTNING_BACKEND: "lnd"
-      LIGHTNING_TOPOLOGY_FOLDER: ""
-      LIGHTNING_STATS_REFRESH_INTERVAL: 600
-      LIGHTNING_GRAPH_REFRESH_INTERVAL: 600
-      LIGHTNING_LOGGER_UPDATE_INTERVAL: 30
-      ...
-```
-
-<br/>
-
-`explorer-config.json`:
-```json
-  "LND": {
-    "TLS_CERT_PATH": ""
-    "MACAROON_PATH": ""
-    "REST_API_URL": "https://localhost:8080"
-    "TIMEOUT": 10000
-  }
-```
-
-Corresponding `docker-compose.yml` overrides:
-```yaml
-  api:
-    environment:
-      LND_TLS_CERT_PATH: ""
-      LND_MACAROON_PATH: ""
-      LND_REST_API_URL: "https://localhost:8080"
-      LND_TIMEOUT: 10000
-      ...
-```
-
-<br/>
-
-`explorer-config.json`:
-```json
-  "CLIGHTNING": {
-    "SOCKET": ""
-  }
-```
-
-Corresponding `docker-compose.yml` overrides:
-```yaml
-  api:
-    environment:
-      CLIGHTNING_SOCKET: ""
-      ...
-```
-
-<br/>
-
-`explorer-config.json`:
-```json
-  "MAXMIND": {
-    "ENABLED": true,
-    "GEOLITE2_CITY": "/usr/local/share/GeoIP/GeoLite2-City.mmdb",
-    "GEOLITE2_ASN": "/usr/local/share/GeoIP/GeoLite2-ASN.mmdb",
-    "GEOIP2_ISP": "/usr/local/share/GeoIP/GeoIP2-ISP.mmdb"
-  }
-```
-
-Corresponding `docker-compose.yml` overrides:
-```yaml
-  api:
-    environment:
-      MAXMIND_ENABLED: true,
-      MAXMIND_GEOLITE2_CITY: "/backend/GeoIP/GeoLite2-City.mmdb",
-      MAXMIND_GEOLITE2_ASN": "/backend/GeoIP/GeoLite2-ASN.mmdb",
-      MAXMIND_GEOIP2_ISP": "/backend/GeoIP/GeoIP2-ISP.mmdb"
       ...
 ```

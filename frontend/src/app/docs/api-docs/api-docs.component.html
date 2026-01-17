@@ -253,8 +253,7 @@
                 <ng-container
                   *ngIf="
                     network.val === 'bisq' &&
-                      item.codeExample.hasOwnProperty('bisq');
-                    else liquid_code_example
+                    item.codeExample.hasOwnProperty('bisq')
                   "
                   #bisq_code_example
                 >
@@ -267,34 +266,15 @@
                     [showCodeExample]="item.showJsExamples"
                   ></app-code-template>
                 </ng-container>
-                <ng-template #liquid_code_example>
-                  <ng-container
-                    *ngIf="
-                      network.val === 'liquid' &&
-                        item.codeExample.hasOwnProperty('liquid');
-                      else default_code_example
-                    "
-                  >
-                    <app-code-template
-                      [hostname]="hostname"
-                      [baseNetworkUrl]="baseNetworkUrl"
-                      [method]="item.httpRequestMethod"
-                      [code]="item.codeExample.liquid"
-                      [network]="network.val"
-                      [showCodeExample]="item.showJsExamples"
-                    ></app-code-template>
-                  </ng-container>
-                </ng-template>
-                <ng-template #default_code_example>
-                  <app-code-template
-                    [hostname]="hostname"
-                    [baseNetworkUrl]="baseNetworkUrl"
-                    [method]="item.httpRequestMethod"
-                    [code]="item.codeExample.default"
-                    [network]="network.val"
-                    [showCodeExample]="item.showJsExamples"
-                  ></app-code-template>
-                </ng-template>
+
+                <app-code-template
+                  [hostname]="hostname"
+                  [baseNetworkUrl]="baseNetworkUrl"
+                  [method]="item.httpRequestMethod"
+                  [code]="item.codeExample.default"
+                  [network]="network.val"
+                  [showCodeExample]="item.showJsExamples"
+                ></app-code-template>
               </div>
             </div>
           </div>

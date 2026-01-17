@@ -86,7 +86,6 @@ export interface Env {
   PACKAGE_JSON_VERSION: string;
   MEMPOOL_WEBSITE_URL: string;
   MINING_DASHBOARD: boolean;
-  LIGHTNING: boolean;
   AUDIT: boolean;
   MAINNET_BLOCK_AUDIT_START_HEIGHT: number;
   TESTNET_BLOCK_AUDIT_START_HEIGHT: number;
@@ -97,9 +96,6 @@ export interface Env {
   TESTNET4_TX_FIRST_SEEN_START_HEIGHT: number;
   SIGNET_TX_FIRST_SEEN_START_HEIGHT: number;
   HISTORICAL_PRICE: boolean;
-  ACCELERATOR: boolean;
-  ACCELERATOR_BUTTON: boolean;
-  PUBLIC_ACCELERATIONS: boolean;
   ADDITIONAL_CURRENCIES: boolean;
   GIT_COMMIT_HASH_MEMPOOL_SPACE?: string;
   PACKAGE_JSON_VERSION_MEMPOOL_SPACE?: string;
@@ -128,7 +124,6 @@ const defaultEnv: Env = {
   PACKAGE_JSON_VERSION: '',
   MEMPOOL_WEBSITE_URL: 'https://bchexplorer.cash',
   MINING_DASHBOARD: true,
-  LIGHTNING: false,
   AUDIT: false,
   MAINNET_BLOCK_AUDIT_START_HEIGHT: 0,
   TESTNET_BLOCK_AUDIT_START_HEIGHT: 0,
@@ -139,9 +134,6 @@ const defaultEnv: Env = {
   TESTNET4_TX_FIRST_SEEN_START_HEIGHT: 0,
   SIGNET_TX_FIRST_SEEN_START_HEIGHT: 0,
   HISTORICAL_PRICE: true,
-  ACCELERATOR: false,
-  ACCELERATOR_BUTTON: true,
-  PUBLIC_ACCELERATIONS: false,
   ADDITIONAL_CURRENCIES: false,
   STRATUM_ENABLED: false,
   SERVICES_API: 'https://bchexplorer.cash/api/v1/services',
@@ -158,8 +150,6 @@ export class StateService {
   isProdDomain: boolean;
   backend: 'electrum' | 'none' = 'electrum';
   network = '';
-  lightningNetworks = ['', 'mainnet', 'bitcoin', 'testnet', 'signet'];
-  lightning = false;
   blockSize: number;
   env: Env;
   latestBlockHeight = -1;
@@ -172,7 +162,6 @@ export class StateService {
 
   backend$ = new BehaviorSubject<'electrum' | 'none'>('electrum');
   networkChanged$ = new ReplaySubject<string>(1);
-  lightningChanged$ = new ReplaySubject<boolean>(1);
   signaturesMode$: BehaviorSubject<SignaturesMode>;
   blocksSubject$ = new BehaviorSubject<BlockExtended[]>([]);
   blocks$: Observable<BlockExtended[]>;
