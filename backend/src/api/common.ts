@@ -80,33 +80,6 @@ export class Common {
     return arr;
   }
 
-  static setSchnorrSighashFlags(flags: bigint, witness: string[]): bigint {
-    // no witness items
-    if (!witness?.length) {
-      return flags;
-    }
-    const hasAnnex = witness.length > 1 && witness[witness.length - 1].startsWith('50');
-    if (witness?.length === (hasAnnex ? 2 : 1)) {
-      // keypath spend, signature is the only witness item
-      if (witness[0].length === 130) {
-        flags |= this.setSighashFlags(flags, witness[0]);
-      } else {
-        flags |= TransactionFlags.sighash_default;
-      }
-    } else {
-      // scriptpath spend, all items except for the script, control block and annex could be signatures
-      for (let i = 0; i < witness.length - (hasAnnex ? 3 : 2); i++) {
-        // handle probable signatures
-        if (witness[i].length === 130) {
-          flags |= this.setSighashFlags(flags, witness[i]);
-        } else if (witness[i].length === 128) {
-          flags |= TransactionFlags.sighash_default;
-        }
-      }
-    }
-    return flags;
-  }
-
   static isDERSig(w: string): boolean {
     // heuristic to detect probable DER signatures
     return (
@@ -825,6 +798,7 @@ export class Common {
     // We assume txhex to be valid hex (output of getTransactionFromRequest above)
 
     // Check 1: Valid transaction parse
+    // TODO: Change to bchaddrjs to check for valid BCH address
     let tx: bitcoinjs.Transaction;
     try {
       tx = bitcoinjs.Transaction.fromHex(txhex);
@@ -834,77 +808,8 @@ export class Common {
       });
     }
 
-    // Check 2: Simple size check
-    if (tx.weight() > config.MEMPOOL.MAX_PUSH_TX_SIZE_WEIGHT) {
-      throw Object.assign(
-        new Error(`Transaction too large (max ${config.MEMPOOL.MAX_PUSH_TX_SIZE_WEIGHT} weight units)`),
-        { code: -3 }
-      );
-    }
-
-    // Check 3: Check unreachable script in taproot (if not allowed)
-    if (!config.MEMPOOL.ALLOW_UNREACHABLE) {
-      tx.ins.forEach((input) => {
-        const witness = input.witness;
-        // See BIP 341: Script validation rules
-        const hasAnnex = witness.length >= 2 && witness[witness.length - 1][0] === 0x50;
-        const scriptSpendMinLength = hasAnnex ? 3 : 2;
-        const maybeScriptSpend = witness.length >= scriptSpendMinLength;
-
-        if (maybeScriptSpend) {
-          const controlBlock = witness[witness.length - scriptSpendMinLength + 1];
-          if (controlBlock.length === 0 || !this.isValidLeafVersion(controlBlock[0])) {
-            // Skip this input, it's not taproot
-            return;
-          }
-          // Definitely taproot. Get script
-          const script = witness[witness.length - scriptSpendMinLength];
-          const decompiled = bitcoinjs.script.decompile(script);
-          if (!decompiled || decompiled.length < 2) {
-            // Skip this input
-            return;
-          }
-          // Iterate up to second last (will look ahead 1 item)
-          for (let i = 0; i < decompiled.length - 1; i++) {
-            const first = decompiled[i];
-            const second = decompiled[i + 1];
-            if (first === bitcoinjs.opcodes.OP_FALSE && second === bitcoinjs.opcodes.OP_IF) {
-              throw Object.assign(new Error('Unreachable taproot scripts not allowed'), { code: -5 });
-            }
-          }
-        }
-      });
-    }
-
     // Pass through the input string untouched
     return txhex;
-  }
-
-  private static isValidLeafVersion(leafVersion: number): boolean {
-    // See Note 7 in BIP341
-    // https://github.com/bitcoin/bips/blob/66a1a8151021913047934ebab3f8883f2f8ca75b/bip-0341.mediawiki#cite_note-7
-    // "What constraints are there on the leaf version?"
-
-    // Must be an integer between 0 and 255
-    // Since we're parsing a byte
-    if (Math.floor(leafVersion) !== leafVersion || leafVersion < 0 || leafVersion > 255) {
-      return false;
-    }
-    // "the leaf version cannot be odd"
-    if ((leafVersion & 0x01) === 1) {
-      return false;
-    }
-    // "The values that comply to this rule are
-    // the 32 even values between 0xc0 and 0xfe
-    if (leafVersion >= 0xc0 && leafVersion <= 0xfe) {
-      return true;
-    }
-    // and also 0x66, 0x7e, 0x80, 0x84, 0x96, 0x98, 0xba, 0xbc, 0xbe."
-    if ([0x66, 0x7e, 0x80, 0x84, 0x96, 0x98, 0xba, 0xbc, 0xbe].includes(leafVersion)) {
-      return true;
-    }
-    // Otherwise, invalid
-    return false;
   }
 }
 

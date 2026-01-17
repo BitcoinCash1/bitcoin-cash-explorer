@@ -32,11 +32,8 @@
     "AUDIT": true,
     "RUST_GBT": false,
     "LIMIT_GBT": false,
-    "CPFP_INDEXING": true,
     "MAX_BLOCKS_BULK_QUERY": 999,
     "DISK_CACHE_BLOCK_INTERVAL": 999,
-    "MAX_PUSH_TX_SIZE_WEIGHT": 4000000,
-    "ALLOW_UNREACHABLE": true,
     "PRICE_UPDATES_PER_HOUR": 1,
     "MAX_TRACKED_ADDRESSES": 1
   },
