@@ -232,14 +232,6 @@ export class WebsocketService {
     this.trackingWalletName = '';
   }
 
-  startTrackAsset(asset: string) {
-    this.websocketSubject.next({ 'track-asset': asset });
-  }
-
-  stopTrackingAsset() {
-    this.websocketSubject.next({ 'track-asset': 'stop' });
-  }
-
   startTrackMempoolBlock(block: number, force: boolean = false): boolean {
     if (this.stoppingTrackMempoolBlock) {
       clearTimeout(this.stoppingTrackMempoolBlock);

@@ -28,23 +28,8 @@ export namespace IEsploraApi {
     inner_redeemscript_asm: string;
     sequence: any;
     prevout: Vout | null;
-    // Elements
-    is_pegin?: boolean;
-    issuance?: Issuance;
     // Custom
     lazy?: boolean;
-  }
-
-  interface Issuance {
-    asset_id: string;
-    is_reissuance: string;
-    asset_blinding_nonce: string;
-    asset_entropy: string;
-    contract_hash: string;
-    assetamount?: number;
-    assetamountcommitment?: string;
-    tokenamount?: number;
-    tokenamountcommitment?: string;
   }
 
   export interface Vout {
@@ -53,17 +38,6 @@ export namespace IEsploraApi {
     scriptpubkey_type: string;
     scriptpubkey_address?: string;
     value: number;
-    // Elements
-    valuecommitment?: number;
-    asset?: string;
-    pegout?: Pegout;
-  }
-
-  interface Pegout {
-    genesis_hash: string;
-    scriptpubkey: string;
-    scriptpubkey_asm: string;
-    scriptpubkey_address: string;
   }
 
   export interface Status {

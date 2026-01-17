@@ -30,8 +30,6 @@ const MAX_SCRIPT_SIZE = 1650;
 const VALID_VERSIONS = new Set([1, 2]);
 
 export class Common {
-  static nativeAssetId = '6f0279e9ed041c3d710a9f57d0c02928416460c4b722ae3457a11eec381c526d';
-
   static median(numbers: number[]) {
     let medianNr = 0;
     const numsLen = numbers.length;

@@ -32,7 +32,6 @@ export interface WebsocketResponse {
   'track-address'?: string;
   'track-addresses'?: string[];
   'track-scriptpubkeys'?: string[];
-  'track-asset'?: string;
   'track-mempool-block'?: number;
   'track-wallet'?: string;
   'track-stratum'?: string | number;

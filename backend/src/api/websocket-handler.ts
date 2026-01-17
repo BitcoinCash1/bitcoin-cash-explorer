@@ -300,14 +300,6 @@ class WebsocketHandler {
               }
             }
 
-            if (parsedMessage && parsedMessage['track-asset']) {
-              if (/^[a-fA-F0-9]{64}$/.test(parsedMessage['track-asset'])) {
-                client['track-asset'] = parsedMessage['track-asset'];
-              } else {
-                client['track-asset'] = null;
-              }
-            }
-
             if (parsedMessage && parsedMessage['track-mempool-block'] !== undefined) {
               if (Number.isInteger(parsedMessage['track-mempool-block']) && parsedMessage['track-mempool-block'] >= 0) {
                 const index = parsedMessage['track-mempool-block'];
@@ -724,34 +716,6 @@ class WebsocketHandler {
           }
         }
 
-        if (client['track-asset']) {
-          const foundTransactions: TransactionExtended[] = [];
-
-          newTransactions.forEach((tx) => {
-            if (client['track-asset'] === Common.nativeAssetId) {
-              if (tx.vin.some((vin) => !!vin.is_pegin)) {
-                foundTransactions.push(tx);
-                return;
-              }
-              if (tx.vout.some((vout) => !!vout.pegout)) {
-                foundTransactions.push(tx);
-              }
-            } else {
-              if (tx.vin.some((vin) => !!vin.issuance && vin.issuance.asset_id === client['track-asset'])) {
-                foundTransactions.push(tx);
-                return;
-              }
-              if (tx.vout.some((vout) => !!vout.asset && vout.asset === client['track-asset'])) {
-                foundTransactions.push(tx);
-              }
-            }
-          });
-
-          if (foundTransactions.length) {
-            response['address-transactions'] = JSON.stringify(foundTransactions);
-          }
-        }
-
         if (client['track-tx']) {
           const trackTxid = client['track-tx'];
           const outspends = outspendCache[trackTxid];
@@ -1127,43 +1091,6 @@ class WebsocketHandler {
 
           if (Object.keys(spkMap).length > 0) {
             response['multi-scriptpubkey-transactions'] = JSON.stringify(spkMap);
-          }
-        }
-
-        if (client['track-asset']) {
-          const foundTransactions: TransactionExtended[] = [];
-
-          transactions.forEach((tx) => {
-            if (client['track-asset'] === Common.nativeAssetId) {
-              if (tx.vin && tx.vin.some((vin) => !!vin.is_pegin)) {
-                foundTransactions.push(tx);
-                return;
-              }
-              if (tx.vout && tx.vout.some((vout) => !!vout.pegout)) {
-                foundTransactions.push(tx);
-              }
-            } else {
-              if (tx.vin && tx.vin.some((vin) => !!vin.issuance && vin.issuance.asset_id === client['track-asset'])) {
-                foundTransactions.push(tx);
-                return;
-              }
-              if (tx.vout && tx.vout.some((vout) => !!vout.asset && vout.asset === client['track-asset'])) {
-                foundTransactions.push(tx);
-              }
-            }
-          });
-
-          if (foundTransactions.length) {
-            foundTransactions.forEach((tx) => {
-              tx.status = {
-                confirmed: true,
-                block_height: block.height,
-                block_hash: block.id,
-                block_time: block.timestamp,
-              };
-            });
-
-            response['block-transactions'] = JSON.stringify(foundTransactions);
           }
         }
 
