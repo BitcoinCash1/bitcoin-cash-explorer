@@ -827,6 +827,47 @@
         >
           Show more inputs to reveal fee data
         </div>
+
+        <div class="float-right">
+          <ng-container
+            *ngIf="showConfirmations && latestBlock$ | async as latestBlock"
+          >
+            <app-confirmations
+              [chainTip]="latestBlock?.height"
+              [height]="tx?.status?.block_height"
+              buttonClass="mt-2"
+            ></app-confirmations>
+          </ng-container>
+          <button
+            *ngIf="addresses.length === 0; else viewingAddress"
+            type="button"
+            class="btn btn-sm btn-primary mt-2 ml-2"
+            (click)="switchCurrency()"
+          >
+            <app-amount
+              [blockConversion]="tx.price"
+              [satoshis]="getTotalTxOutput(tx)"
+            ></app-amount>
+          </button>
+          <ng-template #viewingAddress>
+            <button
+              type="button"
+              class="btn btn-sm mt-2 ml-2"
+              (click)="switchCurrency()"
+              [ngClass]="{
+                'btn-success': tx['addressValue'] >= 0,
+                'btn-danger': tx['addressValue'] < 0,
+              }"
+            >
+              <app-amount
+                [blockConversion]="tx.price"
+                [satoshis]="tx['addressValue']"
+                [addPlus]="true"
+              ></app-amount>
+            </button>
+          </ng-template>
+        </div>
+
         <div class="clearfix"></div>
       </div>
     </div>
