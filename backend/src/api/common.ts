@@ -1,4 +1,3 @@
-import * as bitcoinjs from 'bitcoinjs-lib';
 import { Request } from 'express';
 import {
   FeeStats,
@@ -797,16 +796,17 @@ export class Common {
 
     // We assume txhex to be valid hex (output of getTransactionFromRequest above)
 
+    logger.debug(`-----> Validate transaction HEX: ${txhex}`);
     // Check 1: Valid transaction parse
-    // TODO: Change to bchaddrjs to check for valid BCH address
-    let tx: bitcoinjs.Transaction;
-    try {
-      tx = bitcoinjs.Transaction.fromHex(txhex);
-    } catch (e) {
-      throw Object.assign(new Error('Invalid transaction (could not parse)'), {
-        code: -4,
-      });
-    }
+
+    // let tx: bitcoinjs.Transaction;
+    // try {
+    //   tx = bitcoinjs.Transaction.fromHex(txhex);
+    // } catch (e) {
+    //   throw Object.assign(new Error('Invalid transaction (could not parse)'), {
+    //     code: -4,
+    //   });
+    // }
 
     // Pass through the input string untouched
     return txhex;
