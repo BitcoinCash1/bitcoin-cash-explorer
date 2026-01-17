@@ -85,14 +85,14 @@ export class FeeDistributionGraphComponent
     this.minValue = txs.length
       ? txs.reduce((min, tx) => Math.min(min, tx.rate), Infinity)
       : 0;
-    const maxBlockSize = this.stateService.env.MIN_BLOCK_SIZE_UNITS;
-    const sampleInterval = maxBlockSize / this.numSamples;
+    const blockSize = this.stateService.env.MIN_BLOCK_SIZE_UNITS;
+    const sampleInterval = blockSize / this.numSamples;
     let cumSize = 0;
     let sampleIndex = 0;
     let nextSample = 0;
     let txIndex = 0;
     this.labelInterval = this.numSamples / this.numLabels;
-    while (nextSample <= maxBlockSize) {
+    while (nextSample <= blockSize) {
       if (txIndex >= txs.length) {
         samples.push([(1 - sampleIndex / this.numSamples) * 100, 0.000001]);
         nextSample += sampleInterval;
@@ -150,7 +150,7 @@ export class FeeDistributionGraphComponent
         type: 'log',
         min: this.minValue >= 1 ? 1 : 0.1,
         max: this.maxValue,
-        // name: 'Effective Fee Rate s/b',
+        // name: 'Fee Rate s/b',
         // nameLocation: 'middle',
         splitLine: {
           lineStyle: {
