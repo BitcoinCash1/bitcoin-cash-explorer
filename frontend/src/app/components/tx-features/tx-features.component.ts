@@ -22,7 +22,6 @@ export class TxFeaturesComponent implements OnChanges {
     if (!this.tx) {
       return;
     }
-    console.log(this.tx);
     this.isCheap = this.tx.feePerSize < 10.0;
   }
 }
