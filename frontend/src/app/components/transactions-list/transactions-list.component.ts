@@ -630,12 +630,8 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     if (!tx['@vinLoaded'] && !this.txPreview) {
       this.electrsApiService.getTransaction$(tx.txid).subscribe((newTx) => {
         tx['@vinLoaded'] = true;
-        const temp = tx.vin;
         tx.vin = newTx.vin;
         tx.fee = newTx.fee;
-        for (const [index, vin] of temp.entries()) {
-          newTx.vin[index].isInscription = vin.isInscription;
-        }
         this.ref.markForCheck();
       });
     }

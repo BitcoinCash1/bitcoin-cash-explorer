@@ -189,47 +189,24 @@
                         ></span>
                       </ng-container>
                       <ng-container *ngSwitchDefault>
-                        <ng-template
-                          [ngIf]="!vin.prevout"
-                          [ngIfElse]="defaultAddress"
-                        >
-                          <span
-                            *ngIf="vin.lazy; else defaultNoPrevout"
-                            class="skeleton-loader"
-                          ></span>
-                          <ng-template #defaultNoPrevout>
-                            <span>{{
-                              vin.issuance ? "Issuance" : "UNKNOWN"
-                            }}</span>
-                          </ng-template>
+                        <app-address-text
+                          *ngIf="
+                            vin.prevout.scriptpubkey_address;
+                            else vinScriptPubkeyType
+                          "
+                          [address]="vin.prevout.scriptpubkey_address"
+                          [similarity]="
+                            similarityMatches
+                              .get(tx.txid)
+                              ?.get(vin.prevout.scriptpubkey_address)
+                          "
+                        ></app-address-text>
+                        <ng-template #vinScriptPubkeyType>
+                          {{ vin.prevout.scriptpubkey_type?.toUpperCase() }}
                         </ng-template>
-                        <ng-template #defaultAddress>
-                          <app-address-text
-                            *ngIf="
-                              vin.prevout.scriptpubkey_address;
-                              else vinScriptPubkeyType
-                            "
-                            [address]="vin.prevout.scriptpubkey_address"
-                            [similarity]="
-                              similarityMatches
-                                .get(tx.txid)
-                                ?.get(vin.prevout.scriptpubkey_address)
-                            "
-                          ></app-address-text>
-                          <ng-template #vinScriptPubkeyType>
-                            {{ vin.prevout.scriptpubkey_type?.toUpperCase() }}
-                          </ng-template>
-                          <div>
-                            <app-address-labels
-                              [vin]="vin"
-                              [channel]="
-                                tx._channels && tx._channels.inputs[vindex]
-                                  ? tx._channels.inputs[vindex]
-                                  : null
-                              "
-                            ></app-address-labels>
-                          </div>
-                        </ng-template>
+                        <div>
+                          <app-address-labels [vin]="vin"></app-address-labels>
+                        </div>
                       </ng-container>
                     </div>
                   </td>
@@ -237,16 +214,6 @@
                     class="text-right nowrap amount"
                     [class]="{ large: tx.largeInput }"
                   >
-                    <button
-                      *ngIf="vin.isInscription"
-                      (click)="toggleOrdData(tx.txid, 'vin', vindex)"
-                      type="button"
-                      class="btn btn-sm badge badge-ord primary"
-                      style="margin-right: 10px"
-                      i18n="transaction.inscription-tag"
-                    >
-                      Inscription
-                    </button>
                     <span *ngIf="vin.lazy" class="skeleton-loader"></span>
                     <app-amount
                       [blockConversion]="tx.price"
@@ -469,14 +436,7 @@
                       </ng-container>
                     </ng-template>
                     <div>
-                      <app-address-labels
-                        [vout]="vout"
-                        [channel]="
-                          tx._channels && tx._channels.outputs[vindex]
-                            ? tx._channels.outputs[vindex]
-                            : null
-                        "
-                      ></app-address-labels>
+                      <app-address-labels [vout]="vout"></app-address-labels>
                     </div>
                     <ng-template #scriptpubkey_type>
                       <ng-template

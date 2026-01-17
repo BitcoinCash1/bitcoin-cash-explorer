@@ -44,7 +44,6 @@ interface Xput {
   confidential?: boolean;
   timestamp?: number;
   blockHeight?: number;
-  asset?: string;
 }
 
 @Component({
@@ -86,10 +85,6 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
   zeroValueWidth = 60;
   zeroValueThickness = 20;
   hasLine: boolean;
-  nativeAssetId =
-    this.stateService.network === 'liquidtestnet'
-      ? environment.nativeTestAssetId
-      : environment.nativeAssetId;
 
   outspendsSubscription: Subscription;
   refreshOutspends$: ReplaySubject<string> = new ReplaySubject();
@@ -200,7 +195,6 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
         confidential: false, // used to check if it was liquid network
         timestamp: this.tx.status.block_time,
         blockHeight: this.tx.status.block_height,
-        asset: v?.asset,
       } as Xput;
     });
 
@@ -224,7 +218,6 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
         confidential: false, // used to check if it was liquid network
         timestamp: this.tx.status.block_time,
         blockHeight: this.tx.status.block_height,
-        asset: v?.prevout?.asset,
       } as Xput;
     });
 

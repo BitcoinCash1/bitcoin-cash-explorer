@@ -103,7 +103,6 @@ export namespace IBitcoinApi {
   export interface Vout {
     value: number; //  (numeric) The value in BCH
     n: number; //  (numeric) index
-    asset?: string; //  (string) Elements asset id
     scriptPubKey: {
       //  (json object)
       asm: string; //  (string) the asm

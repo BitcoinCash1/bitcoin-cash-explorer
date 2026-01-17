@@ -21,7 +21,6 @@ export class AddressLabelsComponent implements OnChanges {
   @Input() address: AddressTypeInfo;
   @Input() vin: Vin;
   @Input() vout: Vout;
-  @Input() channel: any;
   @Input() class: string = '';
 
   label?: string;
@@ -31,26 +30,13 @@ export class AddressLabelsComponent implements OnChanges {
   }
 
   ngOnChanges() {
-    if (this.channel) {
-      this.handleChannel();
-    } else if (this.address) {
+    if (this.address) {
       this.handleAddress();
     } else if (this.vin) {
       this.handleVin();
     } else if (this.vout) {
       this.handleVout();
     }
-  }
-
-  handleChannel() {
-    const type = this.vout ? 'open' : 'close';
-    const leftNodeName =
-      this.channel.node_left.alias ||
-      this.channel.node_left.public_key.substring(0, 10);
-    const rightNodeName =
-      this.channel.node_right.alias ||
-      this.channel.node_right.public_key.substring(0, 10);
-    this.label = `Channel ${type}: ${leftNodeName} <> ${rightNodeName}`;
   }
 
   handleAddress() {

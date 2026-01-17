@@ -17,7 +17,6 @@ import {
   Address,
   Outspend,
   Recent,
-  Asset,
   ScriptHash,
   AddressTxSummary,
   Utxo,
@@ -390,32 +389,6 @@ export class ElectrsApiService {
           { params }
         )
       )
-    );
-  }
-
-  getAsset$(assetId: string): Observable<Asset> {
-    return this.httpClient.get<Asset>(
-      this.apiBaseUrl + this.apiBasePath + '/api/asset/' + assetId
-    );
-  }
-
-  getAssetTransactions$(assetId: string): Observable<Transaction[]> {
-    return this.httpClient.get<Transaction[]>(
-      this.apiBaseUrl + this.apiBasePath + '/api/asset/' + assetId + '/txs'
-    );
-  }
-
-  getAssetTransactionsFromHash$(
-    assetId: string,
-    txid: string
-  ): Observable<Transaction[]> {
-    return this.httpClient.get<Transaction[]>(
-      this.apiBaseUrl +
-        this.apiBasePath +
-        '/api/asset/' +
-        assetId +
-        '/txs/chain/' +
-        txid
     );
   }
 

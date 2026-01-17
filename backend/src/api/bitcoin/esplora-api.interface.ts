@@ -107,51 +107,6 @@ export namespace IEsploraApi {
     status?: Status;
   }
 
-  export interface Asset {
-    asset_id: string;
-    issuance_txin: IssuanceTxin;
-    issuance_prevout: IssuancePrevout;
-    reissuance_token: string;
-    contract_hash: string;
-    status: Status;
-    chain_stats: AssetStats;
-    mempool_stats: AssetStats;
-  }
-
-  export interface AssetExtended extends Asset {
-    name: string;
-    ticker: string;
-    precision: number;
-    entity: Entity;
-    version: number;
-    issuer_pubkey: string;
-  }
-
-  export interface Entity {
-    domain: string;
-  }
-
-  interface IssuanceTxin {
-    txid: string;
-    vin: number;
-  }
-
-  interface IssuancePrevout {
-    txid: string;
-    vout: number;
-  }
-
-  interface AssetStats {
-    tx_count: number;
-    issuance_count: number;
-    issued_amount: number;
-    burned_amount: number;
-    has_blinded_issuances: boolean;
-    reissuance_tokens: number;
-    burned_reissuance_tokens: number;
-    burn_count: number;
-  }
-
   export interface AddressTxSummary {
     txid: string;
     value: number;

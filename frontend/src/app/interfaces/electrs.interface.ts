@@ -1,5 +1,4 @@
 import { Price } from '@app/services/price.service';
-import { IChannel } from '@interfaces/node-api.interface';
 
 export interface Transaction {
   txid: string;
@@ -22,17 +21,11 @@ export interface Transaction {
   _unblinded?: any;
   _deduced?: boolean;
   _outspends?: Outspend[];
-  _channels?: TransactionChannels;
   price?: Price;
   sigops?: number;
   flags?: bigint;
   largeInput?: boolean;
   largeOutput?: boolean;
-}
-
-export interface TransactionChannels {
-  inputs: { [vin: number]: IChannel };
-  outputs: { [vout: number]: IChannel };
 }
 
 interface Ancestor {
@@ -64,26 +57,10 @@ export interface Vin {
   inner_witnessscript_asm?: string;
   sequence: any;
   prevout: Vout;
-  // Elements
-  issuance?: Issuance;
   // Custom
   lazy?: boolean;
-  // Ord
-  isInscription?: boolean;
   // temporary field for extracted raw simplicity scripts
   inner_simplicityscript?: string;
-}
-
-interface Issuance {
-  asset_id: string;
-  is_reissuance: string;
-  asset_blinding_nonce: string;
-  asset_entropy: string;
-  contract_hash: string;
-  assetamount?: number;
-  assetamountcommitment?: string;
-  tokenamount?: number;
-  tokenamountcommitment?: string;
 }
 
 export interface Vout {
@@ -92,10 +69,6 @@ export interface Vout {
   scriptpubkey_type: string;
   scriptpubkey_address?: string;
   value: number;
-  // Elements
-  // TODO: Remove asset?
-  valuecommitment?: number;
-  asset?: string;
   // Ord
   isRunestone?: boolean;
 }
@@ -177,51 +150,6 @@ export interface Outspend {
   txid: string;
   vin: number;
   status: Status;
-}
-
-export interface Asset {
-  asset_id: string;
-  issuance_txin: IssuanceTxin;
-  issuance_prevout: IssuancePrevout;
-  reissuance_token: string;
-  contract_hash: string;
-  status: Status;
-  chain_stats: AssetStats;
-  mempool_stats: AssetStats;
-}
-
-export interface AssetExtended extends Asset {
-  name: string;
-  ticker: string;
-  precision: number;
-  entity: Entity;
-  version: number;
-  issuer_pubkey: string;
-}
-
-export interface Entity {
-  domain: string;
-}
-
-interface IssuanceTxin {
-  txid: string;
-  vin: number;
-}
-
-interface IssuancePrevout {
-  txid: string;
-  vout: number;
-}
-
-interface AssetStats {
-  tx_count: number;
-  issuance_count: number;
-  issued_amount: number;
-  burned_amount: number;
-  has_blinded_issuances: boolean;
-  reissuance_tokens: number;
-  burned_reissuance_tokens: number;
-  burn_count: number;
 }
 
 export interface Utxo {
