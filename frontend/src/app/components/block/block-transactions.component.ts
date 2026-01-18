@@ -86,6 +86,7 @@ export class BlockTransactionsComponent implements OnInit {
   }
 
   pageChange(page: number, target: HTMLElement): void {
+    console.log('page change? Target: ' + target)
     target.scrollIntoView(); // works for chrome
     this.router.navigate([], {
       queryParams: { page: page },

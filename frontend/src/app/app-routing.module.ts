@@ -252,7 +252,7 @@ if (!window['isMempoolSpaceBuild']) {
     RouterModule.forRoot(routes, {
       initialNavigation: 'enabledBlocking',
       scrollPositionRestoration: 'enabled',
-      anchorScrolling: 'disabled',
+      anchorScrolling: 'enabled',
       preloadingStrategy: AppPreloadingStrategy,
     }),
   ],
