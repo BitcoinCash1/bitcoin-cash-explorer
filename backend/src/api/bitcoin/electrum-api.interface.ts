@@ -16,4 +16,10 @@ export namespace IElectrumApi {
     tx_hash: string;
     height: number;
   }
+
+  export interface ScriptHashMempool {
+    fee: number;
+    height: number;
+    tx_hash: string;
+  }
 }

@@ -29,6 +29,7 @@ export interface AbstractBitcoinApi {
   $getScriptHash(scripthash: string): Promise<IEsploraApi.ScriptHash>;
   $getScriptHashTransactions(address: string, lastSeenTxId: string): Promise<IEsploraApi.Transaction[]>;
   $getScriptHashUtxos(scripthash: string): Promise<IEsploraApi.UTXO[]>;
+  $getScriptHashMempoolTransactions(scripthash: string): Promise<IEsploraApi.Transaction[]>;
   $sendRawTransaction(rawTransaction: string): Promise<string>;
   $testMempoolAccept(rawTransactions: string[], maxfeerate?: number): Promise<TestMempoolAcceptResult[]>;
   $submitPackage(rawTransactions: string[], maxfeerate?: number, maxburnamount?: number): Promise<SubmitPackageResult>;

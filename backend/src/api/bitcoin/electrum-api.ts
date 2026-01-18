@@ -257,8 +257,43 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     return result;
   }
 
+  async $getScriptHashMempoolTransactions(scripthash: string): Promise<IEsploraApi.Transaction[]> {
+    try {
+      loadingIndicators.setProgress('address-' + scripthash, 0);
+
+      const transactions: IEsploraApi.Transaction[] = [];
+      let utxos = memoryCache.get<IElectrumApi.ScriptHashMempool[]>('Scripthash_getMempool', scripthash);
+      if (!utxos) {
+        utxos = await this.$getScriptHashMempool(scripthash);
+        memoryCache.set('Scripthash_getMempool', scripthash, utxos, 2);
+      }
+      if (!utxos) {
+        throw new Error('failed to get scripthash mempool');
+      }
+      utxos.sort((a, b) => (b.height || 9999999) - (a.height || 9999999));
+
+      let startingIndex = 0;
+      const endIndex = Math.min(startingIndex + 10, utxos.length);
+
+      for (let i = startingIndex; i < endIndex; i++) {
+        const tx = await this.$getRawTransaction(utxos[i].tx_hash, false, true);
+        transactions.push(tx);
+        loadingIndicators.setProgress('address-' + scripthash, ((i + 1) / endIndex) * 100);
+      }
+
+      return transactions;
+    } catch (e: any) {
+      loadingIndicators.setProgress('address-' + scripthash, 100);
+      throw new Error(typeof e === 'string' ? e : (e && e.message) || e);
+    }
+  }
+
   private $getScriptHashUnspent(scriptHash: string): Promise<IElectrumApi.ScriptHashUtxos[]> {
     return this.electrumClient.blockchainScripthash_listunspent(scriptHash);
+  }
+
+  private $getScriptHashMempool(scriptHash: string): Promise<IElectrumApi.ScriptHashMempool[]> {
+    return this.electrumClient.blockchainScripthash_getMempool(scriptHash);
   }
 
   async $getTransactionMerkleProof(txId: string): Promise<IEsploraApi.MerkleProof> {
