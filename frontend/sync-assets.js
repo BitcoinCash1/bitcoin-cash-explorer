@@ -323,36 +323,9 @@ const downloadPromoVideo = async () => {
   }
 };
 
-// Download Liquid assets if configured
-const downloadLiquidAssets = () => {
-  if (configContent.BASE_MODULE !== 'liquid') {
-    if (config.verbose) {
-      console.log(`${LOG_TAG} BASE_MODULE is not set to Liquid (currently ${configContent.BASE_MODULE}), skipping downloading assets`);
-    }
-    return;
-  }
-
-  const liquidAssets = [
-    { file: 'assets.json', url: 'https://raw.githubusercontent.com/Blockstream/asset_registry_db/master/index.json' },
-    { file: 'assets.minimal.json', url: 'https://raw.githubusercontent.com/Blockstream/asset_registry_db/master/index.minimal.json' },
-    { file: 'assets-testnet.json', url: 'https://raw.githubusercontent.com/Blockstream/asset_registry_testnet_db/master/index.json' },
-    { file: 'assets-testnet.minimal.json', url: 'https://raw.githubusercontent.com/Blockstream/asset_registry_testnet_db/master/index.minimal.json' }
-  ];
-
-  console.log(`${LOG_TAG} Downloading assets`);
-  liquidAssets.forEach(({ file, url }) => {
-    const fileName = file.replace(/^assets/, 'assets');
-    console.log(`${LOG_TAG} Downloading ${fileName}`);
-    downloadFile(`${ASSETS_PATH}/${fileName}`, url);
-  });
-};
-
 // Main execution
 (async () => {
   try {
-    // Download Liquid assets (non-blocking)
-    downloadLiquidAssets();
-
     // Download GitHub assets sequentially
     if (config.verbose) {
       console.log(`${LOG_TAG} Downloading mining pool logos`);
