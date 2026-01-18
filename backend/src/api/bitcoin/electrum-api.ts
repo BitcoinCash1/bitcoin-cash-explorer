@@ -143,6 +143,43 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     }
   }
 
+  async $getAddressMempoolTransactions(address: string): Promise<IEsploraApi.Transaction[]> {
+    const addressInfo = await this.bitcoindClient.validateAddress(address);
+    if (!addressInfo || !addressInfo.isvalid) {
+      return [];
+    }
+    const scripthash = this.encodeScriptHash(addressInfo.scriptPubKey);
+
+    try {
+      loadingIndicators.setProgress('address-' + address, 0);
+
+      const transactions: IEsploraApi.Transaction[] = [];
+      let utxos = memoryCache.get<IElectrumApi.ScriptHashMempool[]>('Scripthash_getMempool', scripthash);
+      if (!utxos) {
+        utxos = await this.$getScriptHashMempool(scripthash);
+        memoryCache.set('Scripthash_getMempool', scripthash, utxos, 2);
+      }
+      if (!utxos) {
+        throw new Error('failed to get scripthash mempool');
+      }
+      utxos.sort((a, b) => (b.height || 9999999) - (a.height || 9999999));
+
+      let startingIndex = 0;
+      const endIndex = Math.min(startingIndex + 10, utxos.length);
+
+      for (let i = startingIndex; i < endIndex; i++) {
+        const tx = await this.$getRawTransaction(utxos[i].tx_hash, false, true);
+        transactions.push(tx);
+        loadingIndicators.setProgress('address-' + address, ((i + 1) / endIndex) * 100);
+      }
+
+      return transactions;
+    } catch (e: any) {
+      loadingIndicators.setProgress('address-' + address, 100);
+      throw new Error(typeof e === 'string' ? e : (e && e.message) || e);
+    }
+  }
+
   async $getScriptHash(scripthash: string): Promise<IEsploraApi.ScriptHash> {
     try {
       const balance = await this.electrumClient.blockchainScripthash_getBalance(scripthash);

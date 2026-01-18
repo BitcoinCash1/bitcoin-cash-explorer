@@ -78,8 +78,8 @@ class BitcoinRoutes {
       .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address', this.getAddress)
       .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs', this.getAddressTransactions)
       .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/summary', this.getAddressTransactionSummary)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/chain', this.getAddressChain)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/mempool', this.getAddressMempool)
+      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/chain', this.getAddressChainTransactions)
+      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/mempool', this.getAddressMempoolTransactions)
       .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/utxo', this.getAddressUtxo)
       .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash', this.getScriptHash)
       .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/txs', this.getScriptHashTransactions)
@@ -677,7 +677,7 @@ class BitcoinRoutes {
     return;
   }
 
-  private async getAddressChain(req: Request, res: Response): Promise<void> {
+  private async getAddressChainTransactions(req: Request, res: Response): Promise<void> {
     if (config.MEMPOOL.BACKEND === 'none') {
       handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
       return;
@@ -686,12 +686,12 @@ class BitcoinRoutes {
       handleError(req, res, 501, `Invalid address`);
       return;
     }
-
+    // TODO: Try to implement this with electrum?
     handleError(req, res, 405, 'Address chain lookups require mempool/electrs backend.');
     return;
   }
 
-  private async getAddressMempool(req: Request, res: Response): Promise<void> {
+  private async getAddressMempoolTransactions(req: Request, res: Response): Promise<void> {
     if (config.MEMPOOL.BACKEND === 'none') {
       handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
       return;
@@ -701,8 +701,20 @@ class BitcoinRoutes {
       return;
     }
 
-    handleError(req, res, 405, 'Address mempool lookups require mempool/electrs backend.');
-    return;
+    try {
+      const transactions = await bitcoinApi.$getAddressMempoolTransactions(req.params.address);
+      res.json(transactions);
+    } catch (e) {
+      if (
+        e instanceof Error &&
+        e.message &&
+        (e.message.indexOf('too long') > 0 || e.message.indexOf('confirmed status') > 0)
+      ) {
+        handleError(req, res, 413, e.message);
+        return;
+      }
+      handleError(req, res, 500, 'Failed to get address mempool transactions');
+    }
   }
 
   private async getScriptHash(req: Request, res: Response) {
@@ -789,7 +801,7 @@ class BitcoinRoutes {
         handleError(req, res, 413, e.message);
         return;
       }
-      handleError(req, res, 500, 'Failed to get script hash utxos');
+      handleError(req, res, 500, 'Failed to get script hash mempool transactions');
     }
   }
 
@@ -817,7 +829,7 @@ class BitcoinRoutes {
         handleError(req, res, 413, e.message);
         return;
       }
-      handleError(req, res, 500, 'Failed to get script hash');
+      handleError(req, res, 500, 'Failed to get script hash utxos');
     }
   }
 

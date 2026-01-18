@@ -557,6 +557,10 @@ class ElectrsApi implements AbstractBitcoinApi {
     throw new Error('Method getAddressTransactions not implemented.');
   }
 
+  $getAddressMempoolTransactions(address: string): Promise<IEsploraApi.Transaction[]> {
+    throw new Error('Method getAddressMempoolTransactions not implemented.');
+  }
+
   $getAddressUtxos(address: string): Promise<IEsploraApi.UTXO[]> {
     return this.failoverRouter.$get<IEsploraApi.UTXO[]>('/address/' + address + '/utxo');
   }
