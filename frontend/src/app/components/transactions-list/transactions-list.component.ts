@@ -255,10 +255,15 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   ngOnChanges(changes): void {
     if (changes.inputIndex || changes.outputIndex || changes.rowLimit) {
       this.inputRowLimit = Math.max(this.rowLimit, (this.inputIndex || 0) + 3);
-      this.outputRowLimit = Math.max(
-        this.rowLimit,
-        (this.outputIndex || 0) + 3
-      );
+      this.outputRowLimit = Math.max(this.rowLimit, (this.outputIndex || 0) + 3);
+      if ((this.inputIndex || this.outputIndex) && !changes.transactions) {
+        setTimeout(() => {
+          const assetBoxElements = document.getElementsByClassName('text-left');
+          if (assetBoxElements && assetBoxElements[0]) {
+            assetBoxElements[0].scrollIntoView({block: "center"});
+          }
+        }, 10);
+      }
     }
     if (changes.transactions || changes.addresses) {
       // this.similarityMatches.clear();
