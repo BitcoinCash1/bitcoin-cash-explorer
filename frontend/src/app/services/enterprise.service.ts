@@ -54,19 +54,20 @@ export class EnterpriseService {
       this.seoService.setEnterpriseTitle(info.title, true);
       this.info$.next(this.processEnterpriseInfo(info));
     } else {
-      this.apiService.getEnterpriseInfo$(this.subdomain).subscribe(
-        (info) => {
-          this.insertMatomo(info.site_id);
-          this.seoService.setEnterpriseTitle(info.title);
-          this.info$.next(this.processEnterpriseInfo(info));
-        },
-        (error) => {
-          if (error.status === 404) {
-            window.location.href =
-              'https://bchexplorer.cash' + window.location.pathname;
-          }
-        }
-      );
+      // Let's disable fetching enterpise info for now (we killed this endpoint anyways at the moment)
+      // this.apiService.getEnterpriseInfo$(this.subdomain).subscribe(
+      //   (info) => {
+      //     this.insertMatomo(info.site_id);
+      //     this.seoService.setEnterpriseTitle(info.title);
+      //     this.info$.next(this.processEnterpriseInfo(info));
+      //   },
+      //   (error) => {
+      //     if (error.status === 404) {
+      //       window.location.href =
+      //         'https://bchexplorer.cash' + window.location.pathname;
+      //     }
+      //   }
+      // );
     }
   }
 
