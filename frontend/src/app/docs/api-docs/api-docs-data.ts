@@ -1421,16 +1421,18 @@ export const restApiDocsData = [
           commonJS: [],
           curl: [],
           response: `{
-  progressPercent: 44.397234501112074,
-  difficultyChange: 98.45932018381687,
-  estimatedRetargetDate: 1627762478,
-  remainingBlocks: 1121,
-  remainingTime: 665977,
-  previousRetarget: -4.807005268478962,
-  nextRetargetHeight: 741888,
-  timeAvg: 302328,
-  adjustedTimeAvg: 302328,
-  timeOffset: 0
+  "progressPercent": 44.742063492063494,
+  "difficultyChange": -4.449668536640861,
+  "estimatedRetargetDate": 1769400129618,
+  "remainingBlocks": 1114,
+  "remainingTime": 700301618,
+  "previousRetarget": 0.3318677010110065,
+  "previousTime": 1768132797,
+  "nextRetargetHeight": 935424,
+  "timeAvg": 628637,
+  "adjustedTimeAvg": 628637,
+  "timeOffset": 0,
+  "expectedBlocks": 945.0516666666666
 }`,
         },
         codeSampleTestnet: {
@@ -1494,14 +1496,38 @@ export const restApiDocsData = [
           commonJS: [],
           curl: [],
           response: `{
-  time: 1703252411,
-  USD: 43753,
-  EUR: 40545,
-  GBP: 37528,
-  CAD: 58123,
-  CHF: 37438,
-  AUD: 64499,
-  JPY: 6218915
+  "time": 1768698003,
+  "USD": 593,
+  "EUR": 511,
+  "GBP": 443,
+  "AUD": 891,
+  "JPY": 91969,
+  "BGN": 987,
+  "BRL": 3185,
+  "CNY": 4132,
+  "CZK": 12403,
+  "DKK": 3820,
+  "HKD": 4623,
+  "HRK": 3850,
+  "HUF": 196769,
+  "IDR": 10010435,
+  "ILS": 1865,
+  "INR": 53791,
+  "ISK": 74754,
+  "KRW": 873193,
+  "MXN": 10453,
+  "MYR": 2406,
+  "NOK": 5986,
+  "NZD": 1031,
+  "PHP": 35215,
+  "PLN": 2157,
+  "RON": 2600,
+  "RUB": 46254,
+  "SEK": 5469,
+  "SGD": 764,
+  "THB": 18644,
+  "TRY": 25663,
+  "ZAR": 9730
 }`,
         },
         codeSampleTestnet: emptyCodeSample,
@@ -1534,20 +1560,46 @@ export const restApiDocsData = [
           commonJS: [],
           curl: [],
           response: `{
-  prices: [
+  "prices": [
     {
       "time": 1499904000,
       "EUR": 1964,
       "USD": 2254.9
     }
   ],
-  exchangeRates: {
-    "USDEUR": 0.92,
-    "USDGBP": 0.78,
-    "USDCAD": 1.36,
-    "USDCHF": 0.89,
-    "USDAUD": 1.53,
-    "USDJPY": 149.48
+  "exchangeRates": {
+    "USDEUR": 0.86,
+    "USDGBP": 0.75,
+    "USDCAD": 0,
+    "USDCHF": 0,
+    "USDAUD": 1.5,
+    "USDJPY": 155.09,
+    "USDBGN": 1.66,
+    "USDBRL": 5.37,
+    "USDCNY": 6.97,
+    "USDCZK": 20.92,
+    "USDDKK": 6.44,
+    "USDHKD": 7.8,
+    "USDHRK": 6.49,
+    "USDHUF": 331.82,
+    "USDIDR": 16880.94,
+    "USDILS": 3.15,
+    "USDINR": 90.71,
+    "USDISK": 126.06,
+    "USDKRW": 1472.5,
+    "USDMXN": 17.63,
+    "USDMYR": 4.06,
+    "USDNOK": 10.09,
+    "USDNZD": 1.74,
+    "USDPHP": 59.38,
+    "USDPLN": 3.64,
+    "USDRON": 4.38,
+    "USDRUB": 78,
+    "USDSEK": 9.22,
+    "USDSGD": 1.29,
+    "USDTHB": 31.44,
+    "USDTRY": 43.28,
+    "USDZAR": 16.41
   }
 }
 `,
@@ -1598,25 +1650,26 @@ export const restApiDocsData = [
           `,
         },
         codeSampleMainnet: {
-          esModule: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
-          commonJS: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
-          curl: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
+          esModule: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
+          commonJS: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
+          curl: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
           response: `{
-  address: "1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv",
-  chain_stats: {
-    funded_txo_count: 5,
-    funded_txo_sum: 15007599040,
-    spent_txo_count: 5,
-    spent_txo_sum: 15007599040,
-    tx_count: 7
+  "address": "bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d",
+  "chain_stats": {
+    "funded_txo_count": 0,
+    "funded_txo_sum": 309377169,
+    "spent_txo_count": 0,
+    "spent_txo_sum": 0,
+    "tx_count": 36
   },
-  mempool_stats: {
-    funded_txo_count: 0,
-    funded_txo_sum: 0,
-    spent_txo_count: 0,
-    spent_txo_sum: 0,
-    tx_count: 0
-  }
+  "mempool_stats": {
+    "funded_txo_count": 0,
+    "funded_txo_sum": 0,
+    "spent_txo_count": 0,
+    "spent_txo_sum": 0,
+    "tx_count": 0
+  },
+  "electrum": true
 }`,
         },
         codeSampleTestnet: {
@@ -1642,11 +1695,11 @@ export const restApiDocsData = [
 }`,
         },
         codeSampleSignet: {
-          esModule: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
-          commonJS: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
-          curl: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
+          esModule: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
+          commonJS: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
+          curl: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
           response: `{
-  address: "1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv",
+  address: "bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d",
   chain_stats: {
     funded_txo_count: 5,
     funded_txo_sum: 15007599040,
@@ -1700,24 +1753,56 @@ export const restApiDocsData = [
           `,
         },
         codeSampleMainnet: {
-          esModule: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
-          commonJS: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
-          curl: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
+          esModule: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
+          commonJS: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
+          curl: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
           response: `[
   {
-    txid: "dba43fd04b7ae3df8e5b596f2e7fab247c58629d622e3a5213f03a5a09684430",
-    version: 1,
-    locktime: 0,
-    vin: [ [Object] ],
-    vout: [ [Object], [Object] ],
-    size: 255,
-    weight: 1020,
-    fee: 10000,
-    status: {
-      confirmed: true,
-      block_height: 326148,
-      block_hash: "00000000000000001e4118adcfbb02364bc13c41c210d8811e4f39aeb3687e36",
-      block_time: 1413798020
+    "txid": "577d1c50fabc7a06d92561f7f987a971e356a28272afbcc5e7bccb11903462bb",
+    "version": 1,
+    "locktime": 0,
+    "size": 154,
+    "fee": 0,
+    "vin": [
+      {
+        "is_coinbase": true,
+        "prevout": null,
+        "scriptsig": "03a5410e2f4e696365486173682f",
+        "scriptsig_asm": "OP_PUSHBYTES_3 a5410e OP_PUSHBYTES_47 4e696365486173682f",
+        "sequence": 4294967295,
+        "txid": "",
+        "vout": 0,
+        "inner_redeemscript_asm": ""
+      }
+    ],
+    "vout": [
+      {
+        "value": 0,
+        "scriptpubkey": "6a0c5f30b0399e2d5127e5d90000",
+        "scriptpubkey_address": "",
+        "scriptpubkey_asm": "OP_RETURN OP_PUSHBYTES_12 5f30b0399e2d5127e5d90000",
+        "scriptpubkey_type": "op_return"
+      },
+      {
+        "value": 309377169,
+        "scriptpubkey": "a914cd09ec5dc8fcebf7047d7a3c72b25ff678992c4d87",
+        "scriptpubkey_address": "bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d",
+        "scriptpubkey_asm": "OP_HASH160 OP_PUSHBYTES_20 cd09ec5dc8fcebf7047d7a3c72b25ff678992c4d OP_EQUAL",
+        "scriptpubkey_type": "p2sh"
+      },
+      {
+        "value": 3125021,
+        "scriptpubkey": "76a914db41d33cc261f8d14e4daa6d60c1f3d3d2009cf988ac",
+        "scriptpubkey_address": "bitcoincash:qrd5r5eucfsl352wfk4x6cxp70fayqyulysaxljdrn",
+        "scriptpubkey_asm": "OP_DUP OP_HASH160 OP_PUSHBYTES_20 db41d33cc261f8d14e4daa6d60c1f3d3d2009cf9 OP_EQUALVERIFY OP_CHECKSIG",
+        "scriptpubkey_type": "p2pkh"
+      }
+    ],
+    "status": {
+      "confirmed": true,
+      "block_height": 934309,
+      "block_hash": "00000000000000000113e8e62ce2735a0da84798e3e6e67a5f5a5ee6e31c1dac",
+      "block_time": 1768698489
     }
   },
   ...
@@ -1748,11 +1833,11 @@ export const restApiDocsData = [
 ]`,
         },
         codeSampleSignet: {
-          esModule: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
-          commonJS: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
-          curl: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
+          esModule: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
+          commonJS: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
+          curl: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
           response: `{
-  address: "1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv",
+  address: "bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d",
   chain_stats: {
     funded_txo_count: 5,
     funded_txo_sum: 15007599040,
@@ -1806,9 +1891,9 @@ export const restApiDocsData = [
           `,
         },
         codeSampleMainnet: {
-          esModule: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
-          commonJS: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
-          curl: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
+          esModule: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
+          commonJS: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
+          curl: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
           response: `[
   {
     txid: "c4e53c2e37f4fac759fdb0d8380e4d49e6c7211233ae276a44ce7074a1d6d168",
@@ -1854,11 +1939,11 @@ export const restApiDocsData = [
 ],`,
         },
         codeSampleSignet: {
-          esModule: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
-          commonJS: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
-          curl: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
+          esModule: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
+          commonJS: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
+          curl: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
           response: `{
-  address: "1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv",
+  address: "bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d",
   chain_stats: {
     funded_txo_count: 765,
     funded_txo_sum: 87749875807,
@@ -1912,9 +1997,9 @@ export const restApiDocsData = [
           `,
         },
         codeSampleMainnet: {
-          esModule: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
-          commonJS: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
-          curl: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
+          esModule: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
+          commonJS: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
+          curl: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
           response: `[
   {
     txid: "16cd9bbc6b62313a22d16671fa559aec6bf581df8b5853d37775c84b0fddfa90",
@@ -1948,9 +2033,9 @@ export const restApiDocsData = [
 ]`,
         },
         codeSampleSignet: {
-          esModule: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
-          commonJS: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
-          curl: [`1wiz18xYmhRX6xStj2b9t1rwWX4GKUgpv`],
+          esModule: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
+          commonJS: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
+          curl: [`bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d`],
           response: `[
   {
     txid: "16cd9bbc6b62313a22d16671fa559aec6bf581df8b5853d37775c84b0fddfa90",
@@ -2007,15 +2092,15 @@ export const restApiDocsData = [
           curl: [`1KFHE7w8BhaENAswwryaoccDb6qcT6DbYY`],
           response: `[
   {
-    txid: "12f96289f8f9cd51ccfe390879a46d7eeb0435d9e0af9297776e6bdf249414ff",
-    vout: 0,
-    status: {
-      confirmed: true,
-      block_height: 698642,
-      block_hash: "00000000000000000007839f42e0e86fd53c797b64b7135fcad385158c9cafb8",
-      block_time: 1630561459
+    "txid": "a9fc96862da6ab36efd219d174d154400f8ff8895454f502bda205310a6ddc8e",
+    "vout": 1,
+    "status": {
+      "confirmed": true,
+      "block_height": 498792,
+      "block_hash": "00000000000000000957f9713e7fd67375a2e59c4755231ca774320df6a37baa",
+      "block_time": 1509158725
     },
-    value: 644951084
+    "value": 9988
   },
   ...
 ]`,
@@ -2090,10 +2175,11 @@ export const restApiDocsData = [
         codeSampleMainnet: {
           curl: [`1KFHE7w8BhaENAswwryaoccDb6qcT6DbYY`],
           response: `{
-  isvalid: true,
-  address: "1KFHE7w8BhaENAswwryaoccDb6qcT6DbYY",
-  scriptPubKey: "76a914c825a1ecf2a6830c4401620c3a16f1995057c2ab88ac",
-  isscript: false
+  "isvalid": true,
+  "address": "bitcoincash:qryztg0v72ngxrzyq93qcwsk7xv4q47z4vpp4t09dz",
+  "scriptPubKey": "76a914c825a1ecf2a6830c4401620c3a16f1995057c2ab88ac",
+  "isscript": false,
+  "istokenaware": false
 }`,
         },
         codeSampleTestnet: {
@@ -2657,19 +2743,38 @@ export const restApiDocsData = [
           ],
           response: `[
   {
-    txid: "cfe624ccdd8010cf78dbedd1b25e1ff601b470c4d7d90fa9fc8c1bcc5cdc6e0e",
-    version: 1,
-    locktime: 0,
-    vin: [],
-    vout: [],
-    size: 102,
-    weight: 408,
-    fee: 0,
-    status: {
-      confirmed: true,
-      block_height: 363366,
-      block_hash: "000000000000000015dc777b3ff2611091336355d3f0ee9766a2cf3be8e4b1ce",
-      block_time: 1435766771
+    "size": 102,
+    "feePerSize": 0,
+    "txid": "cfe624ccdd8010cf78dbedd1b25e1ff601b470c4d7d90fa9fc8c1bcc5cdc6e0e",
+    "version": 1,
+    "locktime": 0,
+    "fee": 0,
+    "vin": [
+      {
+        "is_coinbase": true,
+        "prevout": null,
+        "scriptsig": "03668b050455940ee2ebbc03100000046d",
+        "scriptsig_asm": "OP_PUSHBYTES_3 668b05 OP_PUSHBYTES_4 55940ee2 OP_RETURN_235 OP_RETURN_188 OP_PUSHBYTES_3 100000 OP_PUSHBYTES_4 6d",
+        "sequence": 4294967295,
+        "txid": "",
+        "vout": 0,
+        "inner_redeemscript_asm": ""
+      }
+    ],
+    "vout": [
+      {
+        "value": 2505949764,
+        "scriptpubkey": "76a91445160ea9d45f6edefef3977ac0b2cdcc29aa594a88ac",
+        "scriptpubkey_address": "bitcoincash:qpz3vr4f630kahh77wth4s9jehxzn2jefg4cg7juxz",
+        "scriptpubkey_asm": "OP_DUP OP_HASH160 OP_PUSHBYTES_20 45160ea9d45f6edefef3977ac0b2cdcc29aa594a OP_EQUALVERIFY OP_CHECKSIG",
+        "scriptpubkey_type": "p2pkh"
+      }
+    ],
+    "status": {
+      "confirmed": true,
+      "block_height": 363366,
+      "block_hash": "000000000000000015dc777b3ff2611091336355d3f0ee9766a2cf3be8e4b1ce",
+      "block_time": 1435766771
     }
   },
   ...
@@ -2918,57 +3023,74 @@ export const restApiDocsData = [
           curl: ['730000'],
           response: `[
   {
-    "id": "0000000000000000000384f28cb3b9cf4377a39cfd6c29ae9466951de38c0529",
+    "id": "0000000000000000054e29158e1dcc4f394a717e8b8d5254fd4ef16f979bef2a",
     "height": 730000,
-    "version": 536870912,
-    "timestamp": 1648829449,
-    "bits": 386521239,
-    "nonce": 3580664066,
-    "difficulty": 28587155782195.1,
-    "merkle_root": "efa344bcd6c0607f93b709515dd6dc5496178112d680338ebea459e3de7b4fbc",
-    "tx_count": 1627,
-    "size": 1210916,
-    "previousblockhash": "00000000000000000008b6f6fb83f8d74512ef1e0af29e642dd20daddd7d318f",
-    "mediantime": 1648827418,
+    "version": 862330880,
+    "timestamp": 1646487541,
+    "bits": 403009048,
+    "nonce": 1140673935,
+    "difficulty": 202483236647.4276,
+    "merkle_root": "7e1056e8dd46318e0b797d5805a566212f03697c1cb9ab2bae5e0fa8b3b41727",
+    "tx_count": 37,
+    "size": 16713,
+    "previousblockhash": "000000000000000000f739c6a466a4dc2b4b3d4f50daedb306b70245c5410b44",
+    "mediantime": 1646484293,
+    "abla_state": {
+      "block_size": null,
+      "block_size_limit": null,
+      "next_block_size_limit": null
+    },
     "extras": {
-      "totalFees": 16321983,
-      "medianFee": 11,
-      "feeRange": [1, 11, 11, 11, 18, 21, 660],
-      "reward": 641321983,
+      "totalFees": 77049,
+      "medianFee": 1,
+      "feeRange": [
+        1,
+        1,
+        1,
+        1,
+        2,
+        10,
+        28.999999999999996
+      ],
+      "reward": 625077049,
       "pool": {
-        "id": 105,
-        "name": "Binance Pool",
-        "slug": "binancepool",
+        "id": 0,
+        "name": "Unknown",
+        "slug": "unknown",
         "minerNames": null
       },
-      "avgFee": 10038,
-      "avgFeeRate": 16,
-      "coinbaseRaw": "0390230b1362696e616e63652f383038e0006f02cd583765fabe6d6d686355577affaad03015e732428a927a5d2d842471b350394139616bcb4401d804000000000000001a750000c9ad0000",
-      "coinbaseAddress": "1JvXhnHCi6XqcanvrZJ5s2Qiv4tsmm2UMy",
+      "avgFee": 2140,
+      "avgFeeRate": 4,
+      "coinbaseRaw": "0390230b04446c2362fabe6d6d9136987c6559141bcccd8df04eaa3ce36b521c7715761f4b105d9d3a0e4070ff040000000000000008500003a100000000142f70726f68617368696e672e636f6d75ed51012f",
+      "coinbaseAddress": "bitcoincash:qppvn6zej2tv8utj58n5vasw8uf46tstls8mjj5fqn",
       "coinbaseAddresses": [
-        "1JvXhnHCi6XqcanvrZJ5s2Qiv4tsmm2UMy"
+        "bitcoincash:qppvn6zej2tv8utj58n5vasw8uf46tstls8mjj5fqn"
       ],
-      "coinbaseSignature": "OP_DUP OP_HASH160 OP_PUSHBYTES_20 c499d0604392cc2051d7476056647d1c1bfc3f38 OP_EQUALVERIFY OP_CHECKSIG",
-      "coinbaseSignatureAscii": "...",
-      "avgTxSize": 744,
-      "totalInputs": 6249,
-      "totalOutputs": 6768,
-      "totalOutputAmt": 1314305994870,
-      "medianFeeAmt": 3182,
-      "feePercentiles": [313, 2086, 2538, 3182, 5625, 14136, 990660],
-      "segwitTotalTxs": 1314,
-      "segwitTotalSize": 1031785,
-      "segwitTotalWeight": 3277099,
-      "header": "000000208f317dddad0dd22d649ef20a1eef1245d7f883fbf6b608000000000000000000bc4f7bdee359a4be8e3380d61281179654dcd65d5109b7937f60c0d6bc44a3ef0924476297d8091702996cd5",
-      "utxoSetChange": 519,
-      "utxoSetSize": 80390138,
-      "totalInputAmt": 1314322316853,
-      "virtualSize": 998378.75,
+      "coinbaseSignature": "OP_DUP OP_HASH160 OP_PUSHBYTES_20 42c9e8599296c3f172a1e746760e3f135d2e0bfc OP_EQUALVERIFY OP_CHECKSIG",
+      "coinbaseSignatureAscii": "#búm6|eYðNª<ã/prohashing.comuí/",
+      "avgTxSize": 444.97,
+      "totalInputs": 75,
+      "totalOutputs": 90,
+      "totalOutputAmt": 24180,
+      "medianFeeAmt": 238,
+      "feePercentiles": [
+        219,
+        220,
+        220,
+        238,
+        748,
+        2250,
+        46270
+      ],
+      "header": "00206633440b41c54502b706b3edda504f3d4b2bdca466a4c639f70000000000000000002717b4b3a80f5eae2babb91c7c69032f2166a505587d790b8e3146dde856107ef5672362186e05188f4dfd43",
+      "utxoSetChange": 15,
+      "utxoSetSize": 65479981,
+      "totalInputAmt": 2418007911339,
       "firstSeen": null,
       "orphans": [],
       "matchRate": null,
       "expectedFees": null,
-      "expectedWeight": null
+      "expectedSize": null
     }
   },
   ...
@@ -5060,19 +5182,19 @@ export const restApiDocsData = [
           curl: [],
           response: `[
   {
-    blockSize: 873046,
-    nTx: 863,
-    totalFees: 8875608,
-    medianFee: 10.79646017699115,
-    feeRange: [
+    "blockSize": 6765,
+    "nTx": 20,
+    "totalFees": 11719,
+    "medianFee": 1.0022222222222221,
+    "feeRange": [
       1,
-      2.4242424242424243,
-      8.107816711590296,
-      10.148014440433213,
-      11.053311793214863,
-      12.041811846689896,
-      14.930957683741648,
-      302.11480362537765
+      1,
+      1,
+      1,
+      1.4976076555023923,
+      2.8258196721311477,
+      3.546666666666667,
+      5
     ]
   }
 ]`,
@@ -5161,11 +5283,11 @@ export const restApiDocsData = [
           commonJS: [],
           curl: [],
           response: `{
-  fastestFee: 1,
-  halfHourFee: 1,
-  hourFee: 1,
-  economyFee: 1,
-  minimumFee: 1
+  "fastestFee": 1,
+  "halfHourFee": 1,
+  "hourFee": 1,
+  "economyFee": 1,
+  "minimumFee": 1
 }`,
         },
         codeSampleTestnet: {
@@ -5173,11 +5295,11 @@ export const restApiDocsData = [
           commonJS: [],
           curl: [],
           response: `{
-  fastestFee: 1,
-  halfHourFee: 1,
-  hourFee: 1,
-  economyFee: 1,
-  minimumFee: 1
+  "fastestFee": 1,
+  "halfHourFee": 1,
+  "hourFee": 1,
+  "economyFee": 1,
+  "minimumFee": 1
 }`,
         },
         codeSampleSignet: {
@@ -5185,11 +5307,11 @@ export const restApiDocsData = [
           commonJS: [],
           curl: [],
           response: `{
-  fastestFee: 1,
-  halfHourFee: 1,
-  hourFee: 1,
-  economyFee: 1,
-  minimumFee: 1
+  "fastestFee": 1,
+  "halfHourFee": 1,
+  "hourFee": 1,
+  "economyFee": 1,
+  "minimumFee": 1
 }`,
         },
       },
@@ -5220,11 +5342,11 @@ export const restApiDocsData = [
           commonJS: [],
           curl: [],
           response: `{
-  "fastestFee": 2.023,
-  "halfHourFee": 1.094,
-  "hourFee": 0.502,
-  "economyFee": 0.2,
-  "minimumFee": 0.1
+  "fastestFee": 1.5,
+  "halfHourFee": 1.25,
+  "hourFee": 1,
+  "economyFee": 1,
+  "minimumFee": 1
 }`,
         },
         codeSampleTestnet: {
@@ -5373,9 +5495,10 @@ export const restApiDocsData = [
           commonJS: [],
           curl: [],
           response: `[
-  "65b04c4618999a221e8b66943a17c216172a9c865f49c88b76de81212b24bf01",
-  "4a3ebe804f273b4c7a96e63f6b963e812ef7e6e0e8381c2d662715bcf5bfa846",
-  "1ef9df26fab649183b591d148011ce809756f9cd9e6be3d383e80808b1929724",
+  "ccee60772e481a2cf24c192a99437c0a4d0c09e02e57ac71ca6253552464a76d",
+  "27bb80f75a2bd59b9203d23d0feb8b1055a1d50b8e96759367b8f723382cd3e0",
+  "39a7da1dcd1a515f33f53bed132d1b3cc3558ece7729b64e13a9f697796d6251",
+  "ad17e89d01a59a8276d5b70f4942e9143f86147059f2c41cb8a0001a0e6c4fcc",
   ...
 ]`,
         },
@@ -5524,29 +5647,74 @@ export const restApiDocsData = [
         },
         codeSampleMainnet: {
           esModule: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           commonJS: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           curl: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           response: `{
-  txid: "15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521",
-  version: 1,
-  locktime: 0,
-  vin: [],
-  vout: [],
-  size: 884,
-  weight: 3536,
-  fee: 20000,
-  status: {
-    confirmed: true,
-    block_height: 363348,
-    block_hash: "0000000000000000139385d7aa78ffb45469e0c715b8d6ea6cb2ffa98acc7171",
-    block_time: 1435754650
-  }
+  "txid": "683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb",
+  "version": 1,
+  "locktime": 0,
+  "size": 633,
+  "fee": 1278,
+  "vin": [
+    {
+      "is_coinbase": false,
+      "prevout": {
+        "value": 309554501,
+        "scriptpubkey": "a914cd09ec5dc8fcebf7047d7a3c72b25ff678992c4d87",
+        "scriptpubkey_address": "bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d",
+        "scriptpubkey_asm": "OP_HASH160 OP_PUSHBYTES_20 cd09ec5dc8fcebf7047d7a3c72b25ff678992c4d OP_EQUAL",
+        "scriptpubkey_type": "p2sh"
+      },
+      "scriptsig": "00483045022100e5d95fef394667ceb6467958b196fe8fd0eef908a871cf94a3483d721a02285a022071c30264ad95ff73dd329a2ab7e21f5f737b360393579f2047c83669b4a0a2f9414730440220110c614f097b404f3b3d61a68864c717912c956ef6eab2f4d0a95bf5fb620ab702201bb0c7e03b166b6235e69991fdcb04da40d87cd11582b04ce9978f9086304b71414c69522103c4067bd29c96cff965e650e9c28d778fb1cb5408808cd6a0d878daa826a667f82102ebb5b82081e40eec247a3c0882766f2126866f1c781634a078e4607f6b34ba572102c86c6d8fd4c06cce6d50ee300eebf3d140b745ef8f5b795af77b383e97dbbbb453ae",
+      "scriptsig_asm": "OP_0 OP_PUSHBYTES_72 3045022100e5d95fef394667ceb6467958b196fe8fd0eef908a871cf94a3483d721a02285a022071c30264ad95ff73dd329a2ab7e21f5f737b360393579f2047c83669b4a0a2f941 OP_PUSHBYTES_71 30440220110c614f097b404f3b3d61a68864c717912c956ef6eab2f4d0a95bf5fb620ab702201bb0c7e03b166b6235e69991fdcb04da40d87cd11582b04ce9978f9086304b7141 OP_PUSHDATA1 522103c4067bd29c96cff965e650e9c28d778fb1cb5408808cd6a0d878daa826a667f82102ebb5b82081e40eec247a3c0882766f2126866f1c781634a078e4607f6b34ba572102c86c6d8fd4c06cce6d50ee300eebf3d140b745ef8f5b795af77b383e97dbbbb453ae",
+      "sequence": 4294967295,
+      "txid": "16c1e1c5c7d80a69daabe2cebcac5d74615d2eef98409bc263ef49b5dcef4d62",
+      "vout": 1,
+      "inner_redeemscript_asm": "OP_PUSHNUM_2 OP_PUSHBYTES_33 03c4067bd29c96cff965e650e9c28d778fb1cb5408808cd6a0d878daa826a667f8 OP_PUSHBYTES_33 02ebb5b82081e40eec247a3c0882766f2126866f1c781634a078e4607f6b34ba57 OP_PUSHBYTES_33 02c86c6d8fd4c06cce6d50ee300eebf3d140b745ef8f5b795af77b383e97dbbbb4 OP_PUSHNUM_3 OP_CHECKMULTISIG"
+    },
+    {
+      "is_coinbase": false,
+      "prevout": {
+        "value": 309619058,
+        "scriptpubkey": "a914cd09ec5dc8fcebf7047d7a3c72b25ff678992c4d87",
+        "scriptpubkey_address": "bitcoincash:prxsnmzaer7whacy04arcu4jtlm83xfvf5fxdvr36d",
+        "scriptpubkey_asm": "OP_HASH160 OP_PUSHBYTES_20 cd09ec5dc8fcebf7047d7a3c72b25ff678992c4d OP_EQUAL",
+        "scriptpubkey_type": "p2sh"
+      },
+      "scriptsig": "0047304402200eca7b72c6d6e091fcedb8e72419bdc63f7ef397f6389d9d116f692491acc13902203f55b766b5693808f5894e5ea6d04b8786c63e436e0fc95fd9492c587bb275ec41473044022012558e97003b1d985f8472c5dead2ba8e4d9ad666270ea8fe3ceaec5932ad30102200c74939eea5bcc1c770d1cbb15b2bd3dd7ccfc9a790a290eaf6b28fe16cb6f09414c69522103c4067bd29c96cff965e650e9c28d778fb1cb5408808cd6a0d878daa826a667f82102ebb5b82081e40eec247a3c0882766f2126866f1c781634a078e4607f6b34ba572102c86c6d8fd4c06cce6d50ee300eebf3d140b745ef8f5b795af77b383e97dbbbb453ae",
+      "scriptsig_asm": "OP_0 OP_PUSHBYTES_71 304402200eca7b72c6d6e091fcedb8e72419bdc63f7ef397f6389d9d116f692491acc13902203f55b766b5693808f5894e5ea6d04b8786c63e436e0fc95fd9492c587bb275ec41 OP_PUSHBYTES_71 3044022012558e97003b1d985f8472c5dead2ba8e4d9ad666270ea8fe3ceaec5932ad30102200c74939eea5bcc1c770d1cbb15b2bd3dd7ccfc9a790a290eaf6b28fe16cb6f0941 OP_PUSHDATA1 522103c4067bd29c96cff965e650e9c28d778fb1cb5408808cd6a0d878daa826a667f82102ebb5b82081e40eec247a3c0882766f2126866f1c781634a078e4607f6b34ba572102c86c6d8fd4c06cce6d50ee300eebf3d140b745ef8f5b795af77b383e97dbbbb453ae",
+      "sequence": 4294967295,
+      "txid": "28c0c0c80d64566b4a99ba67b2d24f88d0c89962c4f1f557c4ee0750de815209",
+      "vout": 1,
+      "inner_redeemscript_asm": "OP_PUSHNUM_2 OP_PUSHBYTES_33 03c4067bd29c96cff965e650e9c28d778fb1cb5408808cd6a0d878daa826a667f8 OP_PUSHBYTES_33 02ebb5b82081e40eec247a3c0882766f2126866f1c781634a078e4607f6b34ba57 OP_PUSHBYTES_33 02c86c6d8fd4c06cce6d50ee300eebf3d140b745ef8f5b795af77b383e97dbbbb4 OP_PUSHNUM_3 OP_CHECKMULTISIG"
+    }
+  ],
+  "vout": [
+    {
+      "value": 619172281,
+      "scriptpubkey": "76a914e3c3c04e6feb9fd383aa8eb88211c4cf6012ffcc88ac",
+      "scriptpubkey_address": "bitcoincash:qr3u8szwdl4el5ur428t3qs3cn8kqyhlesjqfjmp7k",
+      "scriptpubkey_asm": "OP_DUP OP_HASH160 OP_PUSHBYTES_20 e3c3c04e6feb9fd383aa8eb88211c4cf6012ffcc OP_EQUALVERIFY OP_CHECKSIG",
+      "scriptpubkey_type": "p2pkh"
+    }
+  ],
+  "status": {
+    "confirmed": true,
+    "block_height": 934167,
+    "block_hash": "00000000000000000059de9dd719a7118561f8a16bc2eddd82f6412b59539ccc",
+    "block_time": 1768602736
+  },
+  "order": 3406722807,
+  "adjustedVsize": 633,
+  "sigops": 28,
+  "feePerSize": 2.018957345971564,
+  "adjustedFeePerVsize": 2.018957345971564
 }`,
         },
         codeSampleTestnet: {
@@ -5640,15 +5808,15 @@ export const restApiDocsData = [
         },
         codeSampleMainnet: {
           esModule: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           commonJS: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           curl: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
-          response: `010000000536a007284bd52ee826680a7f43536472f1bcce1e76cd76b826b88c5884eddf1f0c0000006b483045022100bcdf40fb3b5ebfa2c158ac8d1a41c03eb3dba4e180b00e81836bafd56d946efd022005cc40e35022b614275c1e485c409599667cbd41f6e5d78f421cb260a020a24f01210255ea3f53ce3ed1ad2c08dfc23b211b15b852afb819492a9a0f3f99e5747cb5f0ffffffffee08cb90c4e84dd7952b2cfad81ed3b088f5b...`,
+          response: `0100000002624defdcb549ef63c29b4098ef2e5d61745dacbccee2abda690ad8c7c5e1c11601000000fdfd0000483045022100e5d95fef394667ceb6467958b196fe8fd0eef908a871cf94a3483d721a02285a022071c30264ad95ff73dd329a2ab7e21f5f737b360393579f2047c83669b4a0a2f9414730440220110c614f097b404f3b3d61a68864c717912c956ef6eab2f4d0a95bf5fb620ab702201bb0c7e03b166b6235e69991fdcb04da40d87cd11582b04ce9978f9086304b71414c69522103c4067bd29c96cff965e650e9c28d778fb1cb5408808cd6a0d878daa826a667f82102ebb5b82081e40eec247a3c0882766f2126866f1c781634a078e4607f6b34ba572102c86c6d8fd4c06cce6d50ee300eebf3d140b745ef8f5b795af77b383e97dbbbb453aeffffffff095281de5007eec457f5f1c46299c8d0884fd2b267ba994a6b56640dc8c0c02801000000fc0047304402200eca7b72c6d6e091fcedb8e72419bdc63f7ef397f6389d9d116f692491acc13902203f55b766b5693808f5894e5ea6d04b8786c63e436e0fc95fd9492c587bb275ec41473044022012558e97003b1d985f8472c5dead2ba8e4d9ad666270ea8fe3ceaec5932ad30102200c74939eea5bcc1c770d1cbb15b2bd3dd7ccfc9a790a290eaf6b28fe16cb6f09414c69522103c4067bd29c96cff965e650e9c28d778fb1cb5408808cd6a0d878daa826a667f82102ebb5b82081e40eec247a3c0882766f2126866f1c781634a078e4607f6b34ba572102c86c6d8fd4c06cce6d50ee300eebf3d140b745ef8f5b795af77b383e97dbbbb453aeffffffff01b9d1e724000000001976a914e3c3c04e6feb9fd383aa8eb88211c4cf6012ffcc88ac00000000`,
         },
         codeSampleTestnet: {
           esModule: [
@@ -5712,13 +5880,13 @@ export const restApiDocsData = [
         },
         codeSampleMainnet: {
           esModule: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           commonJS: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           curl: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           response: `0300000058f6dd09ac5aea942c01d12e75b351e73f4304cc442741000000000000000000ef0c2fa8517414b742094a020da7eba891b47d660ef66f126ad01e5be99a2fd09ae093558e411618c14240df820700000ce4d15e17594f257b22d1ddf47d07b3b88779a8374fcd515ad883d79726c6027da6abfcbc1341a049b30277d3bf14e4663...`,
         },
@@ -5784,13 +5952,13 @@ export const restApiDocsData = [
         },
         codeSampleMainnet: {
           esModule: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           commonJS: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           curl: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           response: `{
   block_height: 363348,
@@ -5901,15 +6069,15 @@ export const restApiDocsData = [
         },
         codeSampleMainnet: {
           esModule: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
             '3',
           ],
           commonJS: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
             '3',
           ],
           curl: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
             '3',
           ],
           response: `{
@@ -6011,13 +6179,13 @@ export const restApiDocsData = [
         },
         codeSampleMainnet: {
           esModule: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           commonJS: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           curl: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           response: `[
   {
@@ -6122,13 +6290,13 @@ export const restApiDocsData = [
         },
         codeSampleMainnet: {
           esModule: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           commonJS: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           curl: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           response: ``,
         },
@@ -6194,19 +6362,19 @@ export const restApiDocsData = [
         },
         codeSampleMainnet: {
           esModule: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           commonJS: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           curl: [
-            '15e10745f15593a899cef391191bdd3d7c12412cc4696b7bcb669d0feadc8521',
+            '683c85868bc466dc325cad82cd2ca4e427e9ff74a9d75df33dd23b47f7760ecb',
           ],
           response: `{
-  confirmed: true,
-  block_height: 363348,
-  block_hash: "0000000000000000139385d7aa78ffb45469e0c715b8d6ea6cb2ffa98acc7171",
-  block_time: 1435754650
+  "confirmed": true,
+  "block_height": 934167,
+  "block_hash": "00000000000000000059de9dd719a7118561f8a16bc2eddd82f6412b59539ccc",
+  "block_time": 1768602736
 }`,
         },
         codeSampleTestnet: {
