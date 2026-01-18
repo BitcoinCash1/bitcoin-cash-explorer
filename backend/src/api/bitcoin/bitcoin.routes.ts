@@ -78,6 +78,8 @@ class BitcoinRoutes {
       .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address', this.getAddress)
       .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs', this.getAddressTransactions)
       .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/summary', this.getAddressTransactionSummary)
+      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/chain', this.getAddressChain)
+      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/mempool', this.getAddressMempool)
       .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/utxo', this.getAddressUtxo)
       .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash', this.getScriptHash)
       .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/txs', this.getScriptHashTransactions)
@@ -671,6 +673,34 @@ class BitcoinRoutes {
   private async getAddressTransactionSummary(req: Request, res: Response): Promise<void> {
     // if (config.MEMPOOL.BACKEND !== 'esplora') {
     handleError(req, res, 405, 'Address summary lookups require mempool/electrs backend.');
+    return;
+  }
+
+  private async getAddressChain(req: Request, res: Response): Promise<void> {
+    if (config.MEMPOOL.BACKEND === 'none') {
+      handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
+      return;
+    }
+    if (!ADDRESS_REGEX.test(req.params.address)) {
+      handleError(req, res, 501, `Invalid address`);
+      return;
+    }
+
+    handleError(req, res, 405, 'Address chain lookups require mempool/electrs backend.');
+    return;
+  }
+
+  private async getAddressMempool(req: Request, res: Response): Promise<void> {
+    if (config.MEMPOOL.BACKEND === 'none') {
+      handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
+      return;
+    }
+    if (!ADDRESS_REGEX.test(req.params.address)) {
+      handleError(req, res, 501, `Invalid address`);
+      return;
+    }
+
+    handleError(req, res, 405, 'Address mempool lookups require mempool/electrs backend.');
     return;
   }
 
