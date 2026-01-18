@@ -37,11 +37,13 @@ WORKDIR /backend
 
 RUN chown 1000:1000 ./
 COPY --from=builder --chown=1000:1000 /build/package ./package/
-#COPY --from=builder --chown=1000:1000 /build/GeoIP ./GeoIP/
 COPY --from=builder --chown=1000:1000 /build/explorer-config.json /build/start.sh /build/wait-for-it.sh ./
 
 USER 1000
 
 EXPOSE 8999
 
-CMD ["/backend/start.sh"]
+#CMD ["/backend/start.sh"]
+CMD ["node", "/backend/package/index.js"]
+
+
