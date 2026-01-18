@@ -28,6 +28,7 @@ class BackendInfo {
       gitCommit: versionInfo.gitCommit,
       backend: config.MEMPOOL.BACKEND,
       coreVersion: '?',
+      osVersion: `${os.type()} ${os.release()}`,
     };
 
     const _ = setInterval(

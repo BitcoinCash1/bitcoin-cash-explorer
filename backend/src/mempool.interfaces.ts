@@ -449,6 +449,7 @@ export interface IBackendInfo {
   gitCommit: string;
   version: string;
   coreVersion: string;
+  osVersion: string;
   backend: 'electrum' | 'none';
 }
 
