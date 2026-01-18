@@ -9,6 +9,9 @@
    viewBox="0 0 128 128"
    sodipodi:docname="explorer-bitcoin-cash-logo.svg"
    inkscape:version="1.4.3 (1:1.4.3+202512261035+0d15f75042)"
+   inkscape:export-filename="explorer-bitcoin-cash-logo.png"
+   inkscape:export-xdpi="96"
+   inkscape:export-ydpi="96"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -74,8 +77,8 @@
        rx="9"
        transform="scale(-1,1)" />
     <path
-       style="display:inline;fill:#4d4d4d;fill-opacity:1;stroke-width:1.04147"
-       d="m 120,64.232804 c 0,0 -25,34.627134 -55,0 -30,-34.627133 -55,0 -55,0 V 20.846561 C 10,20.846561 10,10 20,10 c 10,0 90,0 90,0 0,0 10,0 10,10.846561 0,10.846561 0,43.386243 0,43.386243 z"
+       style="display:inline;fill:#4d4d4d;fill-opacity:1;stroke-width:1.04576"
+       d="m 120.15094,64.312755 c 0,0 -25.102913,34.769681 -55.226411,0 -30.1235,-34.76968 -55.2264158,0 -55.2264158,0 V 20.747907 c 0,0 0,-10.8912126 10.0411658,-10.8912126 10.041167,0 90.370501,0 90.370501,0 0,0 10.04116,0 10.04116,10.8912126 0,10.891212 0,43.564848 0,43.564848 z"
        id="path2" />
   </g>
 </svg>

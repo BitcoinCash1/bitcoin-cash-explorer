@@ -10,8 +10,8 @@
    sodipodi:docname="explorer-bitcoin-cash-logo-banner.svg"
    inkscape:version="1.4.3 (1:1.4.3+202512261035+0d15f75042)"
    inkscape:export-filename="explorer-bitcoin-cash-logo-banner-plain.svg"
-   inkscape:export-xdpi="73.846153"
-   inkscape:export-ydpi="73.846153"
+   inkscape:export-xdpi="104.40939"
+   inkscape:export-ydpi="104.40939"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
@@ -27,9 +27,9 @@
      inkscape:pageopacity="0.0"
      inkscape:pagecheckerboard="0"
      inkscape:deskcolor="#d1d1d1"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="419.66787"
-     inkscape:cy="41.7193"
+     inkscape:zoom="2.0000001"
+     inkscape:cx="501.49998"
+     inkscape:cy="95.999996"
      inkscape:window-width="1920"
      inkscape:window-height="1050"
      inkscape:window-x="0"
@@ -77,13 +77,13 @@
        rx="8.9955778"
        transform="scale(-1,1)" />
     <path
-       style="display:inline;fill:#4d4d4d;fill-opacity:1;stroke-width:0.963971"
-       d="m 120,56.462279 c 0,0 -25,29.665728 -55,0 -30,-29.665727 -55,0 -55,0 V 19.292456 C 10,19.292456 10,10 20,10 c 10,0 90,0 90,0 0,0 10,0 10,9.292456 0,9.292456 0,37.169823 0,37.169823 z"
+       style="display:inline;fill:#4d4d4d;fill-opacity:1;stroke-width:0.965721"
+       d="m 120.22319,56.462279 c 0,0 -25.090901,29.665728 -55.199982,0 -30.109082,-29.665727 -55.1999847,0 -55.1999847,0 V 19.292456 c 0,0 0,-9.292456 10.0363617,-9.292456 10.036359,0 90.327255,0 90.327255,0 0,0 10.03635,0 10.03635,9.292456 0,9.292456 0,37.169823 0,37.169823 z"
        id="path2" />
     <text
        xml:space="preserve"
        style="font-size:74.6667px;font-family:Sans;-inkscape-font-specification:Sans;writing-mode:lr-tb;direction:ltr;fill:#ffffff;fill-opacity:1;stroke-width:0.965323"
-       x="169.08083"
+       x="149.08083"
        y="87.413292"
        id="text2"
        inkscape:export-filename="explorer-bitcoin-cash-logo-banner-plain.svg"
@@ -91,7 +91,7 @@
        inkscape:export-ydpi="38.863575"><tspan
          sodipodi:role="line"
          id="tspan2"
-         x="169.08083"
+         x="149.08083"
          y="87.413292"
          style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-size:74.6667px;font-family:'Noto Sans';-inkscape-font-specification:'Noto Sans Bold';fill:#ffffff;stroke-width:0.965323">BCH Explorer</tspan></text>
   </g>
