@@ -28,7 +28,6 @@ export class AddressPreviewComponent implements OnInit, OnDestroy {
   error: any;
   mainSubscription: Subscription;
   addressLoadingStatus$: Observable<number>;
-  addressInfo: null | AddressInformation = null;
 
   totalConfirmedTxCount = 0;
   loadedConfirmedTxCount = 0;
@@ -73,7 +72,6 @@ export class AddressPreviewComponent implements OnInit, OnDestroy {
           this.isLoadingAddress = true;
           this.loadedConfirmedTxCount = 0;
           this.address = null;
-          this.addressInfo = null;
           this.addressString = params.get('id') || '';
           if (
             /^[A-Z]{2,5}1[AC-HJ-NP-Z02-9]{8,100}|04[a-fA-F0-9]{128}|(02|03)[a-fA-F0-9]{64}$/.test(

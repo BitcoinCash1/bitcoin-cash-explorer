@@ -13,48 +13,23 @@
       </div>
       <table class="table table-borderless table-striped">
         <tbody>
-          <tr *ngIf="addressInfo && addressInfo.unconfidential">
-            <td i18n="address.unconfidential">Unconfidential</td>
-            <td>
-              <app-truncate
-                [text]="addressInfo.unconfidential"
-                [lastChars]="7"
-                [link]="['/address/' | relativeUrl, addressInfo.unconfidential]"
-              ></app-truncate>
-            </td>
-          </tr>
           <ng-template [ngIf]="!address.electrum">
             <tr>
               <td i18n="address.total-received">Total received</td>
-              <td
-                *ngIf="
-                  address.chain_stats.funded_txo_sum !== undefined;
-                  else confidentialTd
-                "
-              >
+              <td *ngIf="address.chain_stats.funded_txo_sum !== undefined">
                 <app-amount [satoshis]="received" [noFiat]="true"></app-amount>
               </td>
             </tr>
             <tr>
               <td i18n="address.total-sent">Total sent</td>
-              <td
-                *ngIf="
-                  address.chain_stats.spent_txo_sum !== undefined;
-                  else confidentialTd
-                "
-              >
+              <td *ngIf="address.chain_stats.spent_txo_sum !== undefined">
                 <app-amount [satoshis]="sent" [noFiat]="true"></app-amount>
               </td>
             </tr>
           </ng-template>
           <tr>
             <td i18n="address.balance">Balance</td>
-            <td
-              *ngIf="
-                address.chain_stats.funded_txo_sum !== undefined;
-                else confidentialTd
-              "
-            >
+            <td *ngIf="address.chain_stats.funded_txo_sum !== undefined">
               <app-amount
                 [satoshis]="received - sent"
                 [noFiat]="true"
@@ -80,7 +55,3 @@
     </div>
   </div>
 </div>
-
-<ng-template #confidentialTd>
-  <td i18n="shared.confidential">Confidential</td>
-</ng-template>

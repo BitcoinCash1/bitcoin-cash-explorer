@@ -247,12 +247,6 @@ export class ApiService {
     );
   }
 
-  getAssetGroup$(id: string): Observable<any> {
-    return this.httpClient.get<any[]>(
-      this.apiBaseUrl + '/api/v1/assets/group/' + id
-    );
-  }
-
   postTransaction$(hexPayload: string): Observable<any> {
     return this.httpClient.post<any>(
       this.apiBaseUrl + this.apiBasePath + '/api/tx',

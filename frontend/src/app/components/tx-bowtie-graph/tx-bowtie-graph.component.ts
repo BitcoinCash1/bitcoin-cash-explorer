@@ -41,7 +41,6 @@ interface Xput {
   address?: string;
   rest?: number;
   coinbase?: boolean;
-  confidential?: boolean;
   timestamp?: number;
   blockHeight?: number;
 }
@@ -188,7 +187,6 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
         displayValue: v?.value,
         address: v?.scriptpubkey_address || v?.scriptpubkey_type?.toUpperCase(),
         index: i,
-        confidential: false, // used to check if it was liquid network
         timestamp: this.tx.status.block_time,
         blockHeight: this.tx.status.block_height,
       } as Xput;
@@ -211,7 +209,6 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
           v?.prevout?.scriptpubkey_type?.toUpperCase(),
         index: i,
         coinbase: v?.is_coinbase,
-        confidential: false, // used to check if it was liquid network
         timestamp: this.tx.status.block_time,
         blockHeight: this.tx.status.block_height,
       } as Xput;

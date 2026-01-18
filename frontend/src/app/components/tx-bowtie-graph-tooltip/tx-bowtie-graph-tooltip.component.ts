@@ -23,14 +23,10 @@ interface Xput {
   address?: string;
   rest?: number;
   coinbase?: boolean;
-  pegin?: boolean;
-  pegout?: string;
-  confidential?: boolean;
   timestamp?: number;
   blockHeight?: number;
   status?: any;
   spent?: boolean;
-  asset?: string;
 }
 
 @Component({
@@ -43,7 +39,6 @@ export class TxBowtieGraphTooltipComponent implements OnChanges {
   @Input() line: Xput | void;
   @Input() cursorPosition: { x: number; y: number };
   @Input() isConnector: boolean = false;
-  @Input() assetsMinimal: any;
 
   tooltipPosition = { x: 0, y: 0 };
   blockConversions: { [timestamp: number]: Price } = {};

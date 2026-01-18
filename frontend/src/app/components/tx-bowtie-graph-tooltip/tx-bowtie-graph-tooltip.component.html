@@ -124,12 +124,6 @@
       </p>
     </ng-container>
   </ng-container>
-  <p
-    *ngIf="line.displayValue == null && line.confidential"
-    i18n="shared.confidential"
-  >
-    Confidential
-  </p>
   <p *ngIf="line.displayValue != null">
     <app-amount
       [blockConversion]="
@@ -145,18 +139,6 @@
     <app-truncate [text]="line.address"></app-truncate>
   </p>
 </div>
-
-<ng-template #assetBox let-item>
-  {{
-    item.displayValue / pow(10, assetsMinimal[item.asset][3])
-      | number
-        : "1." +
-            assetsMinimal[item.asset][3] +
-            "-" +
-            assetsMinimal[item.asset][3]
-  }}
-  <span class="symbol">{{ assetsMinimal[item.asset][1] }}</span>
-</ng-template>
 
 <ng-template #oneBlockEarlier>
   <span i18n="shared.one-block-earlier">1 block earlier</span>
