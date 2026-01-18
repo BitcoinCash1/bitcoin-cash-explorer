@@ -175,7 +175,7 @@
                       item.httpRequestMethod === 'GET' &&
                         network.val === 'bisq' &&
                         item.codeExample.hasOwnProperty('bisq');
-                      else liquid_link_example
+                      else default_link_example
                     "
                     #bisq_link_example
                   >
@@ -188,25 +188,6 @@
                       }}</a
                     >
                   </ng-container>
-                  <ng-template #liquid_link_example>
-                    <ng-container
-                      *ngIf="
-                        item.httpRequestMethod === 'GET' &&
-                          network.val === 'liquid' &&
-                          item.codeExample.hasOwnProperty('liquid');
-                        else default_link_example
-                      "
-                    >
-                      <a
-                        [href]="wrapUrl(network.val, item.codeExample.liquid)"
-                        target="_blank"
-                        rel="nofollow"
-                        >{{ item.httpRequestMethod }} {{ baseNetworkUrl }}/api{{
-                          item.urlString
-                        }}</a
-                      >
-                    </ng-container>
-                  </ng-template>
                   <ng-template #default_link_example>
                     <ng-container *ngIf="item.httpRequestMethod === 'GET'">
                       <a
@@ -229,23 +210,12 @@
                     *ngIf="
                       network.val === 'bisq' &&
                         item.description.hasOwnProperty('bisq');
-                      else liquid_description
+                      else default_description
                     "
                     #bisq_description
                   >
                     <div [innerHTML]="item.description.bisq" i18n></div>
                   </ng-container>
-                  <ng-template #liquid_description>
-                    <ng-container
-                      *ngIf="
-                        network.val === 'liquid' &&
-                          item.description.hasOwnProperty('liquid');
-                        else default_description
-                      "
-                    >
-                      <div [innerHTML]="item.description.liquid" i18n></div>
-                    </ng-container>
-                  </ng-template>
                   <ng-template #default_description>
                     <div [innerHTML]="item.description.default" i18n></div>
                   </ng-template>

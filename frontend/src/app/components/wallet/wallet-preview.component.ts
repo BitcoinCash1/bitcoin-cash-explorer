@@ -177,12 +177,7 @@ export class WalletPreviewComponent implements OnInit, OnDestroy {
           $localize`:@@wallet.component.browser-title:Wallet: ${walletName}:INTERPOLATION:`
         );
         this.seoService.setDescription(
-          $localize`:@@meta.description.bitcoin.wallet:See mempool transactions, confirmed transactions, balance, and more for ${
-            this.stateService.network === 'liquid' ||
-            this.stateService.network === 'liquidtestnet'
-              ? 'Liquid'
-              : 'Bitcoin'
-          }${seoDescriptionNetwork(
+          $localize`See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash${seoDescriptionNetwork(
             this.stateService.network
           )} wallet ${walletName}:INTERPOLATION:.`
         );

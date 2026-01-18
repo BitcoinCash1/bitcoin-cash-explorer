@@ -55,11 +55,6 @@ export class TxBowtieGraphTooltipComponent implements OnChanges {
   viewFiatSubscription: Subscription;
   chainTipSubscription: Subscription;
 
-  nativeAssetId =
-    this.stateService.network === 'liquidtestnet'
-      ? environment.nativeTestAssetId
-      : environment.nativeAssetId;
-
   @ViewChild('tooltip') tooltipElement: ElementRef<HTMLCanvasElement>;
 
   constructor(

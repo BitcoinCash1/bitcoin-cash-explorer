@@ -65,12 +65,7 @@ export class PushTransactionComponent implements OnInit {
       $localize`:@@f13cbfe8cfc955918e9f64466d2cafddb4760d9a:Broadcast Transaction`
     );
     this.seoService.setDescription(
-      $localize`:@@meta.description.push-tx:Broadcast a transaction to the ${
-        this.stateService.network === 'liquid' ||
-        this.stateService.network === 'liquidtestnet'
-          ? 'Liquid'
-          : 'Bitcoin'
-      }${seoDescriptionNetwork(
+      $localize`Broadcast a transaction to the Bitcoin Cash${seoDescriptionNetwork(
         this.stateService.network
       )} network using the transaction's hash.`
     );

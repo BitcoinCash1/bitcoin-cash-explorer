@@ -159,12 +159,6 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
       this.cd.markForCheck();
     });
 
-    if (
-      this.stateService.network === 'liquid' ||
-      this.stateService.network === 'liquidtestnet'
-    ) {
-      this.feeRounding = '1.0-1';
-    }
     this.mempoolEmptyBlocks.forEach((b) => {
       this.mempoolEmptyBlockStyles.push(
         this.getStyleForMempoolEmptyBlock(b.index)
@@ -376,12 +370,7 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   reduceEmptyBlocksToFitScreen(blocks: MempoolBlock[]): MempoolBlock[] {
-    const innerWidth =
-      this.containerWidth ||
-      (this.stateService.env.BASE_MODULE !== 'liquid' &&
-      window.innerWidth <= 767.98
-        ? window.innerWidth
-        : window.innerWidth / 2);
+    const innerWidth = this.containerWidth || window.innerWidth / 2;
     let blocksAmount = this.stateService.env.MEMPOOL_BLOCKS_AMOUNT;
     if (!this.allBlocks) {
       blocksAmount = Math.min(
@@ -406,12 +395,7 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   reduceMempoolBlocksToFitScreen(blocks: MempoolBlock[]): MempoolBlock[] {
-    const innerWidth =
-      this.containerWidth ||
-      (this.stateService.env.BASE_MODULE !== 'liquid' &&
-      window.innerWidth <= 767.98
-        ? window.innerWidth
-        : window.innerWidth / 2);
+    const innerWidth = this.containerWidth || window.innerWidth / 2;
     let blocksAmount = this.stateService.env.MEMPOOL_BLOCKS_AMOUNT;
     if (this.count) {
       blocksAmount = 8;

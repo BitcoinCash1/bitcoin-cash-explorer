@@ -33,12 +33,6 @@ export class NavigationService {
         },
       ],
     },
-    liquid: {
-      subnets: [
-        { name: 'liquid', path: '' },
-        { name: 'liquidtestnet', path: '/testnet' },
-      ],
-    },
   };
   networks = Object.keys(this.networkModules);
   initialLoad = true;

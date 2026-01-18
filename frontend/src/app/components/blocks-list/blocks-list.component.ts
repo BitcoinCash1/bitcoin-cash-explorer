@@ -106,22 +106,11 @@ export class BlocksList implements OnInit {
         $localize`:@@8a7b4bd44c0ac71b2e72de0398b303257f7d2f54:Blocks`
       );
       this.ogService.setManualOgImage('recent-blocks.jpg');
-      if (
-        this.stateService.network === 'liquid' ||
-        this.stateService.network === 'liquidtestnet'
-      ) {
-        this.seoService.setDescription(
-          $localize`:@@meta.description.liquid.blocks:See the most recent Liquid${seoDescriptionNetwork(
-            this.stateService.network
-          )} blocks along with basic stats such as block height, block size, and more.`
-        );
-      } else {
-        this.seoService.setDescription(
-          $localize`:@@meta.description.bitcoin.blocks:See the most recent Bitcoin${seoDescriptionNetwork(
-            this.stateService.network
-          )} blocks along with basic stats such as block height, block reward, block size, and more.`
-        );
-      }
+      this.seoService.setDescription(
+        $localize`See the most recent Bitcoin Cash${seoDescriptionNetwork(
+          this.stateService.network
+        )} blocks along with basic stats such as block height, block reward, block size, and more.`
+      );
 
       this.blocksCountInitializedSubscription = combineLatest([
         this.blocksCountInitialized$,

@@ -133,22 +133,11 @@ export class BlockViewComponent implements OnInit, OnDestroy {
         this.seoService.setTitle(
           $localize`:@@block.component.browser-title:Block ${block.height}:BLOCK_HEIGHT:: ${block.id}:BLOCK_ID:`
         );
-        if (
-          this.stateService.network === 'liquid' ||
-          this.stateService.network === 'liquidtestnet'
-        ) {
-          this.seoService.setDescription(
-            $localize`:@@meta.description.liquid.block:See size, weight, fee range, included transactions, and more for Liquid${seoDescriptionNetwork(
-              this.stateService.network
-            )} block ${block.height}:BLOCK_HEIGHT: (${block.id}:BLOCK_ID:).`
-          );
-        } else {
-          this.seoService.setDescription(
-            $localize`:@@meta.description.bitcoin.block:See size, weight, fee range, included transactions, audit (expected v actual), and more for Bitcoin${seoDescriptionNetwork(
-              this.stateService.network
-            )} block ${block.height}:BLOCK_HEIGHT: (${block.id}:BLOCK_ID:).`
-          );
-        }
+        this.seoService.setDescription(
+          $localize`See size, fee range, included transactions, audit (expected vs actual), and more for Bitcoin Cash${seoDescriptionNetwork(
+            this.stateService.network
+          )} block ${block.height}:BLOCK_HEIGHT: (${block.id}:BLOCK_ID:).`
+        );
         this.isLoadingBlock = false;
         this.isLoadingOverview = true;
       }),

@@ -173,13 +173,7 @@ export function nextRoundNumber(num: number): number {
 }
 
 export function seoDescriptionNetwork(network: string): string {
-  if (network === 'liquidtestnet' || network === 'testnet') {
-    return ' Testnet';
-  } else if (
-    network === 'signet' ||
-    network === 'testnet' ||
-    network === 'testnet4'
-  ) {
+  if (network === 'signet' || network === 'testnet' || network === 'testnet4') {
     return ' ' + network.charAt(0).toUpperCase() + network.slice(1);
   }
   return '';

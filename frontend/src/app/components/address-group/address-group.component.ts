@@ -89,18 +89,10 @@ export class AddressGroupComponent implements OnInit, OnDestroy {
 
           return forkJoin(
             this.addressStrings.map((address) => {
-              const getLiquidInfo =
-                (this.stateService.network === 'liquid' ||
-                  this.stateService.network === 'liquidtestnet') &&
-                /^([a-zA-HJ-NP-Z1-9]{26,35}|[a-z]{2,5}1[ac-hj-np-z02-9]{8,100}|[a-km-zA-HJ-NP-Z1-9]{80})$/.test(
-                  address
-                );
               return forkJoin([
                 of(address),
                 this.electrsApiService.getAddress$(address),
-                getLiquidInfo
-                  ? this.apiService.validateAddress$(address)
-                  : of(null),
+                of(null),
               ]);
             })
           );

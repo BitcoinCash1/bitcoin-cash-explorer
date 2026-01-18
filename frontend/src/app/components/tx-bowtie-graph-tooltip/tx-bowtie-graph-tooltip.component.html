@@ -131,33 +131,15 @@
     Confidential
   </p>
   <p *ngIf="line.displayValue != null">
-    <ng-template
-      [ngIf]="line.asset && line.asset !== nativeAssetId"
-      [ngIfElse]="defaultOutput"
-    >
-      <div
-        *ngIf="assetsMinimal && assetsMinimal[line.asset]; else assetNotFound"
-      >
-        <ng-container
-          *ngTemplateOutlet="assetBox; context: { $implicit: line }"
-        ></ng-container>
-      </div>
-      <ng-template #assetNotFound>
-        {{ line.displayValue }}
-        <span class="symbol">{{ line.asset | slice: 0 : 7 }}</span>
-      </ng-template>
-    </ng-template>
-    <ng-template #defaultOutput>
-      <app-amount
-        [blockConversion]="
-          isConnector
-            ? blockConversions[line?.status?.block_time]
-            : blockConversions[line?.timestamp]
-        "
-        [satoshis]="line.displayValue"
-        [forceBlockConversion]="isConnector && line?.status?.block_time"
-      ></app-amount>
-    </ng-template>
+    <app-amount
+      [blockConversion]="
+        isConnector
+          ? blockConversions[line?.status?.block_time]
+          : blockConversions[line?.timestamp]
+      "
+      [satoshis]="line.displayValue"
+      [forceBlockConversion]="isConnector && line?.status?.block_time"
+    ></app-amount>
   </p>
   <p *ngIf="line.type !== 'fee' && line.address" class="address">
     <app-truncate [text]="line.address"></app-truncate>

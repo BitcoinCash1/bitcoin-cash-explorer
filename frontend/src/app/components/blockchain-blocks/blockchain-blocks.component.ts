@@ -78,8 +78,6 @@ export class BlockchainBlocksComponent implements OnInit, OnChanges, OnDestroy {
 
   gradientColors = {
     '': ['var(--mainnet-alt)', 'var(--primary)'],
-    liquid: ['var(--liquid)', 'var(--testnet-alt)'],
-    liquidtestnet: ['var(--liquidtestnet)', 'var(--liquidtestnet-alt)'],
     testnet: ['var(--testnet)', 'var(--testnet-alt)'],
     testnet4: ['var(--testnet)', 'var(--testnet-alt)'],
     signet: ['var(--signet)', 'var(--signet-alt)'],
@@ -138,13 +136,6 @@ export class BlockchainBlocksComponent implements OnInit, OnChanges, OnDestroy {
       this.timeLtr = !!ltr;
       this.cd.markForCheck();
     });
-
-    if (
-      this.stateService.network === 'liquid' ||
-      this.stateService.network === 'liquidtestnet'
-    ) {
-      this.feeRounding = '1.0-1';
-    }
     this.emptyBlocks.forEach((b) =>
       this.emptyBlockStyles.push(this.getStyleForEmptyBlock(b))
     );

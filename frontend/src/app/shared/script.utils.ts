@@ -160,11 +160,6 @@ export interface ScriptTemplate {
 export const ScriptTemplates: {
   [type: string]: (...args: any) => ScriptTemplate;
 } = {
-  liquid_peg_out: () => ({ type: 'liquid_peg_out', label: 'Liquid Peg Out' }),
-  liquid_peg_out_emergency: () => ({
-    type: 'liquid_peg_out_emergency',
-    label: 'Emergency Liquid Peg Out',
-  }),
   ln_force_close: () => ({
     type: 'ln_force_close',
     label: 'Lightning Force Close',

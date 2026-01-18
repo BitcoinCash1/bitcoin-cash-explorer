@@ -323,9 +323,6 @@
     flex-direction: column;
     justify-content: space-around;
     padding: 22px 20px;
-    &.liquid {
-      height: 124.5px;
-    }
   }
   .less-padding {
     padding: 20px 20px;
@@ -420,22 +417,6 @@
 .quick-filter {
   margin-top: 5px;
   margin-bottom: 6px;
-}
-
-.card-liquid {
-  background-color: var(--bg);
-  height: 418px;
-  @media (min-width: 992px) {
-    height: 512px;
-  }
-  &.smaller {
-    height: 408px;
-  }
-}
-
-.card-title-liquid {
-  padding-top: 20px;
-  margin-left: 10px;
 }
 
 .in-progress-message {

@@ -124,40 +124,38 @@ const routes: Routes = [
         path: 'tools/calculator',
         component: CalculatorComponent,
       },
+      {
+        path: 'monitoring',
+        data: { networks: ['bitcoin'] },
+        component: ServerHealthComponent,
+      },
+      {
+        path: 'nodes',
+        data: { networks: ['bitcoin'] },
+        component: ServerStatusComponent,
+      },
     ],
   },
 ];
 
-if (window['__env']?.OFFICIAL_MEMPOOL_SPACE) {
+if (window['isMempoolSpaceBuild']) {
   routes[0].children.push({
-    path: 'monitoring',
-    data: { networks: ['bitcoin', 'liquid'] },
-    component: ServerHealthComponent,
+    path: 'faucet',
+    canActivate: [
+      (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
+        return state.url.startsWith('/testnet4/');
+      },
+    ],
+    component: StartComponent,
+    data: { preload: true, networkSpecific: true },
+    children: [
+      {
+        path: '',
+        data: { networks: ['bitcoin'] },
+        component: FaucetComponent,
+      },
+    ],
   });
-  routes[0].children.push({
-    path: 'nodes',
-    data: { networks: ['bitcoin', 'liquid'] },
-    component: ServerStatusComponent,
-  });
-  if (window['isMempoolSpaceBuild']) {
-    routes[0].children.push({
-      path: 'faucet',
-      canActivate: [
-        (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
-          return state.url.startsWith('/testnet4/');
-        },
-      ],
-      component: StartComponent,
-      data: { preload: true, networkSpecific: true },
-      children: [
-        {
-          path: '',
-          data: { networks: ['bitcoin'] },
-          component: FaucetComponent,
-        },
-      ],
-    });
-  }
 }
 
 if (

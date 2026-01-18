@@ -16,12 +16,7 @@ export class RelativeUrlPipe implements PipeTransform {
     ) {
       network = '';
     }
-    if (
-      this.stateService.env.BASE_MODULE === 'liquid' &&
-      network === 'liquidtestnet'
-    ) {
-      network = 'testnet';
-    } else if (this.stateService.env.BASE_MODULE !== 'mempool') {
+    if (this.stateService.env.BASE_MODULE !== 'mempool') {
       network = '';
     }
     return (network ? '/' + network : '') + value;
