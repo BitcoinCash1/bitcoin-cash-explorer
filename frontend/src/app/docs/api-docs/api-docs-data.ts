@@ -347,7 +347,7 @@ export const wsApiDocsData = [
       "bestDescendant": null,
       "position": {
         "block": 0,
-        "vsize": 191567
+        "size": 191567
       },
       "flags": 1099511659526
     }
@@ -437,7 +437,7 @@ export const wsApiDocsData = [
       "bestDescendant": null,
       "position": {
         "block": 0,
-        "vsize": 191567
+        "size": 191567
       },
       "flags": 1099511659526
     }
@@ -527,7 +527,7 @@ export const wsApiDocsData = [
       "bestDescendant": null,
       "position": {
         "block": 0,
-        "vsize": 191567
+        "size": 191567
       },
       "flags": 1099511659526
     }
@@ -618,7 +618,7 @@ export const wsApiDocsData = [
           "bestDescendant": null,
           "position": {
             "block": 0,
-            "vsize": 134866.5
+            "size": 134866.5
           },
           "flags": 1099511640074
         }
@@ -689,7 +689,7 @@ export const wsApiDocsData = [
           "bestDescendant": null,
           "position": {
             "block": 0,
-            "vsize": 134866.5
+            "size": 134866.5
           },
           "flags": 1099511640074
         }
@@ -838,7 +838,7 @@ export const wsApiDocsData = [
     ],
     "position": {
       "block": 0,
-      "vsize": 726868
+      "size": 726868
     }
   }
 }`,
@@ -875,13 +875,13 @@ export const wsApiDocsData = [
     "8a4666c6d22ce74fa47e1c4fdb09af556a234cc6a606539a75caf66ba44a2d07": {
       "position": {
         "block": 0,
-        "vsize": 434494
+        "size": 434494
       }
     },
     "941df06064c290b4627e92bdbf3bff7c0e97aab33e273c2a20404f9cfd21b607": {
       "position": {
         "block": 2,
-        "vsize": 932479.5
+        "size": 932479.5
       }
     }
   }
@@ -896,13 +896,13 @@ export const wsApiDocsData = [
     "8a4666c6d22ce74fa47e1c4fdb09af556a234cc6a606539a75caf66ba44a2d07": {
       "position": {
         "block": 0,
-        "vsize": 434494
+        "size": 434494
       }
     },
     "941df06064c290b4627e92bdbf3bff7c0e97aab33e273c2a20404f9cfd21b607": {
       "position": {
         "block": 2,
-        "vsize": 932479.5
+        "size": 932479.5
       }
     }
   }
@@ -917,13 +917,13 @@ export const wsApiDocsData = [
     "8a4666c6d22ce74fa47e1c4fdb09af556a234cc6a606539a75caf66ba44a2d07": {
       "position": {
         "block": 0,
-        "vsize": 434494
+        "size": 434494
       }
     },
     "941df06064c290b4627e92bdbf3bff7c0e97aab33e273c2a20404f9cfd21b607": {
       "position": {
         "block": 2,
-        "vsize": 932479.5
+        "size": 932479.5
       }
     }
   }
