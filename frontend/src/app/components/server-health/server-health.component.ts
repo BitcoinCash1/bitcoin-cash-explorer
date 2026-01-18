@@ -25,9 +25,9 @@ export class ServerHealthComponent implements OnInit {
   now: number = Date.now();
 
   repoMap = {
-    frontend: 'mempool',
+    frontend: 'bitcoin-cash-explorer',
     hybrid: 'mempool.space',
-    backend: 'mempool',
+    backend: 'bitcoin-cash-explorer',
     electrs: 'electrs',
     ssr: 'mempool.space',
   };

@@ -76,9 +76,9 @@
                 @if (type !== "core" && host.hashes?.[type]) {
                   <a
                     [style.color]="'white'"
-                    href="https://github.com/mempool/{{
+                    href="https://gitlab.melroy.org/bitcoincash/{{
                       repoMap[type]
-                    }}/commit/{{ host.hashes[type] }}"
+                    }}/-/commit/{{ host.hashes[type] }}"
                     target="_blank"
                     >{{ host.hashes[type].slice(0, 8) || "?" }}</a
                   >
