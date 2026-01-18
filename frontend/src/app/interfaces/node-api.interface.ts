@@ -209,49 +209,6 @@ export interface AuditScore {
   matchRate?: number;
 }
 
-// export interface Acceleration {
-//   txid: string;
-//   status:
-//     | 'requested'
-//     | 'accelerating'
-//     | 'completed_provisional'
-//     | 'completed'
-//     | 'failed'
-//     | 'failed_provisional';
-//   pools: number[];
-//   feePaid: number;
-//   added: number; // timestamp
-//   lastUpdated: number; // timestamp
-//   baseFee: number;
-//   vsizeFee: number;
-//   effectiveFee: number;
-//   effectiveVsize: number;
-//   feeDelta: number;
-//   blockHash: string;
-//   blockHeight: number;
-//   acceleratedFeeRate?: number;
-//   boost?: number;
-//   bidBoost?: number;
-//   boostCost?: number;
-//   boostRate?: number;
-//   minedByPoolUniqueId?: number;
-//   canceled?: number;
-// }
-
-// export interface AccelerationInfo {
-//   txid: string;
-//   height: number;
-//   pool: {
-//     id: number;
-//     slug: string;
-//     name: string;
-//   };
-//   effective_vsize: number;
-//   effective_fee: number;
-//   boost_rate: number;
-//   boost_cost: number;
-// }
-
 export interface TestMempoolAcceptResult {
   txid: string;
   wtxid: string;

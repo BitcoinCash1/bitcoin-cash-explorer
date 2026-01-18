@@ -850,8 +850,8 @@ class BitcoinRoutes {
     const info = mempool.getMempoolInfo();
     res.json({
       count: info.size,
-      vsize: info.bytes,
-      total_fee: info.total_fee * 1e8,
+      size: info.bytes,
+      total_fee: info.total_fee * 1e8, // Currently missing in BCHN at the moment
       fee_histogram: [],
     });
   }

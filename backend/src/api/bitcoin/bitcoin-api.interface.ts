@@ -15,8 +15,7 @@ export namespace IBitcoinApi {
   }
 
   export interface MempoolEntry {
-    vsize: number; //  (numeric) virtual transaction size as defined in BIP 141.
-    weight: number; //  (numeric) transaction weight as defined in BIP 141.
+    size: number; //  (numeric) transaction size in bytes
     time: number; //  (numeric) local time transaction entered pool in seconds since 1 Jan 1970 GMT
     height: number; //  (numeric) block height when transaction entered pool
     descendantcount: number; //  (numeric) number of in-mempool descendant transactions (including this one)

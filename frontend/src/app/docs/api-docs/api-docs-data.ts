@@ -336,7 +336,6 @@ export const wsApiDocsData = [
         "block_time": 1734704791
       },
       "order": 864069877,
-      "vsize": 5514,
       "adjustedSize": 5514,
       "feePerSize": 7.979688066739209,
       "adjustedFeePerSize": 7.979688066739209,
@@ -427,7 +426,6 @@ export const wsApiDocsData = [
         "block_time": 1734704791
       },
       "order": 864069877,
-      "vsize": 5514,
       "adjustedSize": 5514,
       "feePerSize": 7.979688066739209,
       "adjustedFeePerSize": 7.979688066739209,
@@ -518,7 +516,6 @@ export const wsApiDocsData = [
         "block_time": 1734704791
       },
       "order": 864069877,
-      "vsize": 5514,
       "adjustedSize": 5514,
       "feePerSize": 7.979688066739209,
       "adjustedFeePerSize": 7.979688066739209,
@@ -610,7 +607,6 @@ export const wsApiDocsData = [
             "block_time": 1734720142
           },
           "order": 81067521,
-          "vsize": 189,
           "adjustedSize": 189,
           "feePerSize": 22.253968253968253,
           "adjustedFeePerSize": 22.253968253968253,
@@ -682,7 +678,6 @@ export const wsApiDocsData = [
             "block_time": 1734720142
           },
           "order": 81067521,
-          "vsize": 189,
           "adjustedSize": 189,
           "feePerSize": 22.253968253968253,
           "adjustedFeePerSize": 22.253968253968253,
@@ -754,7 +749,6 @@ export const wsApiDocsData = [
             "block_time": 1734720142
           },
           "order": 81067521,
-          "vsize": 189,
           "adjustedSize": 189,
           "feePerSize": 22.253968253968253,
           "adjustedFeePerSize": 22.253968253968253,
@@ -5066,7 +5060,7 @@ export const restApiDocsData = [
     {
       txid: "6556caa3c6bff537f04837a6f7182dd7a253f31a46de4f21dec9584720156d35",
       fee: 109707,
-      vsize: 264.75,
+      size: 264.75,
       value: 456855,
       rate: 414.37960339943345,
       flags: 9895621445642
@@ -5074,7 +5068,7 @@ export const restApiDocsData = [
     {
       txid: "53b7743b8cfa0108dbcdc7c2f5e661b9d8f56216845a439449d7f9dfc466b147",
       fee: 74640,
-      vsize: 215.5,
+      size: 215.5,
       value: 19063915,
       rate: 348.5338491295938,
       flags: 1099528491017
@@ -5112,7 +5106,7 @@ export const restApiDocsData = [
     {
       txid: "f95b38742c483b81dc4ff49a803bae7625f1596ec5756c944d7586dfe8b38250",
       fee: 3766,
-      vsize: 172.25,
+      size: 172.25,
       value: 115117171776,
       rate: 21.86357039187228,
       flags: 1099528425481
@@ -5120,7 +5114,7 @@ export const restApiDocsData = [
     {
       txid: "8665c4d05732c930c2037bc0220e4ab9b1b64ce3302363ff7d118827c7347b52",
       fee: 3766,
-      vsize: 172.25,
+      size: 172.25,
       value: 115116509429,
       rate: 21.86357039187228,
       flags: 1099528425481
@@ -5419,7 +5413,7 @@ export const restApiDocsData = [
           curl: [],
           response: `{
   count: 3169,
-  vsize: 1891542,
+  size: 1891542,
   total_fee: 20317481,
   fee_histogram: []
 }`,
@@ -5430,7 +5424,7 @@ export const restApiDocsData = [
           curl: [],
           response: `{
   count: 16,
-  vsize: 2692,
+  size: 2692,
   total_fee: 46318,
   fee_histogram: [
     [
@@ -5446,7 +5440,7 @@ export const restApiDocsData = [
           curl: [],
           response: `{
   count: 58,
-  vsize: 8008,
+  size: 8008,
   total_fee: 10407,
   fee_histogram: [
     [
@@ -5537,7 +5531,7 @@ export const restApiDocsData = [
     title: 'GET Mempool Recent',
     description: {
       default:
-        'Get a list of the last 10 transactions to enter the mempool. Each transaction object contains simplified overview data, with the following fields: <code>txid</code>, <code>fee</code>, <code>vsize</code>, and <code>value</code>.',
+        'Get a list of the last 10 transactions to enter the mempool. Each transaction object contains simplified overview data, with the following fields: <code>txid</code>, <code>fee</code>, <code>size</code>, and <code>value</code>.',
     },
     urlString: '/mempool/recent',
     showConditions: bitcoinNetworks,
@@ -5568,7 +5562,7 @@ export const restApiDocsData = [
   {
     txid: "4b93c138293a7e3dfea6f0a63d944890b5ba571b03cc22d8c66995535e90dce8",
     fee: 18277,
-    vsize: 2585,
+    size: 2585,
     value: 4972029
   },
   ...
@@ -5582,7 +5576,7 @@ export const restApiDocsData = [
   {
     txid: "1fc5098fe3378828a890fa5144883cdd1411d9cdbb1af365c20e72503b11dc81",
     fee: 221,
-    vsize: 201,
+    size: 201,
     value: 944960
   },
   ...
@@ -5596,7 +5590,7 @@ export const restApiDocsData = [
   {
     txid: "18dcbd5405f65f583ed32db2f86f84510c07c59ac5321bb90cbd3a3f2963c224",
     fee: 183,
-    vsize: 140,
+    size: 140,
     value: 4369990908
   },
   ...
