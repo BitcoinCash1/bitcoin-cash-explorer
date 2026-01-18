@@ -25,6 +25,7 @@
             <th class="electrs only-large">Electrs</th>
             <th class="ssr only-large">SSR</th>
             <th class="core only-large">Core</th>
+            <th class="os only-large">OS</th>
           </tr>
           <tr *ngFor="let host of hosts; let i = index; trackBy: trackByFn">
             <td class="rank">{{ i + 1 }}</td>
@@ -62,18 +63,16 @@
                   'electrs',
                   'ssr',
                   'core',
+                  'os',
                 ]
               "
             >
               <td
-                class="{{ type }} only-large"
-                [style.background-color]="
-                  type !== 'core' && host.hashes?.[type]
-                    ? '#' + host.hashes[type].slice(0, 6)
-                    : ''
-                "
+                class="{{ type }}"
+                [class.hash]="type !== 'core' && type !== 'os'"
+                [style.background-color]="colors[host.host][type]"
               >
-                @if (type !== "core" && host.hashes?.[type]) {
+                @if (type !== "core" && type !== "os" && host.hashes?.[type]) {
                   <a
                     [style.color]="'white'"
                     href="https://gitlab.melroy.org/bitcoincash/{{
@@ -83,9 +82,18 @@
                     >{{ host.hashes[type].slice(0, 8) || "?" }}</a
                   >
                 } @else if (host.hashes?.[type]) {
-                  <span [style.color]="'white'" style="font-size: 10px">{{
-                    host.hashes[type] || "?"
-                  }}</span>
+                  <span
+                    [style.color]="'white'"
+                    class="only-large"
+                    style="font-size: 10px"
+                    >{{ host.hashes[type] || "?" }}</span
+                  >
+                  <span
+                    [style.color]="'white'"
+                    class="only-small"
+                    style="font-size: 10px"
+                    >{{ shortenVersion(host.hashes[type]) || "?" }}</span
+                  >
                 } @else {
                   <span>?</span>
                 }
