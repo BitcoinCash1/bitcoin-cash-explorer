@@ -691,6 +691,36 @@
   </p>
 </ng-template>
 
+<ng-template type="what-is-abla">
+  <p>
+    <strong>ABLA</strong> stands for
+    <strong>Adaptive Blocksize Limit Algorithm</strong>, which is the mechanism
+    that Bitcoin Cash uses to automatically adjust the maximum block size limit
+    based on network demand.
+  </p>
+  <p>
+    Bitcoin Cash implemented ABLA to allow the block size to grow organically as
+    the network scales. The algorithm monitors block sizes over time and
+    gradually increases the limit when blocks are consistently full, ensuring
+    the network can handle increased transaction volume without requiring hard
+    forks for size adjustments.
+  </p>
+  <p>The algorithm works by:</p>
+  <ul>
+    <li>Tracking the average block size over a recent period</li>
+    <li>
+      Gradually increasing the limit when blocks are consistently near capacity
+    </li>
+    <li>Providing predictable growth patterns for developers and users</li>
+    <li>Ensuring the network can scale to meet growing demand</li>
+  </ul>
+  <p>
+    This approach allows Bitcoin Cash to maintain low fees and reliable
+    transaction confirmation times even as adoption grows, making it suitable
+    for global payment applications.
+  </p>
+</ng-template>
+
 <ng-template type="why-block-timestamps-dont-always-increase">
   <p>
     Block validation rules do not strictly require that a block's timestamp be

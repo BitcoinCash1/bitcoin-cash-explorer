@@ -6748,6 +6748,13 @@ export const faqData = [
     type: 'endpoint',
     category: 'advanced',
     showConditions: bitcoinNetworks,
+    fragment: 'what-is-abla',
+    title: 'What is ABLA?',
+  },
+  {
+    type: 'endpoint',
+    category: 'advanced',
+    showConditions: bitcoinNetworks,
     fragment: 'why-block-timestamps-dont-always-increase',
     title: "Why don't block timestamps always increase?",
   },
