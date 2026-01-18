@@ -189,24 +189,31 @@
                         ></span>
                       </ng-container>
                       <ng-container *ngSwitchDefault>
-                        <app-address-text
-                          *ngIf="
-                            vin.prevout.scriptpubkey_address;
-                            else vinScriptPubkeyType
-                          "
-                          [address]="vin.prevout.scriptpubkey_address"
-                          [similarity]="
-                            similarityMatches
-                              .get(tx.txid)
-                              ?.get(vin.prevout.scriptpubkey_address)
-                          "
-                        ></app-address-text>
-                        <ng-template #vinScriptPubkeyType>
-                          {{ vin.prevout.scriptpubkey_type?.toUpperCase() }}
+                        <ng-container *ngIf="vin.prevout; else noPrevout">
+                          <app-address-text
+                            *ngIf="
+                              vin.prevout.scriptpubkey_address;
+                              else vinScriptPubkeyType
+                            "
+                            [address]="vin.prevout.scriptpubkey_address"
+                            [similarity]="
+                              similarityMatches
+                                .get(tx.txid)
+                                ?.get(vin.prevout.scriptpubkey_address)
+                            "
+                          ></app-address-text>
+                          <ng-template #vinScriptPubkeyType>
+                            {{ vin.prevout.scriptpubkey_type?.toUpperCase() }}
+                          </ng-template>
+                          <div>
+                            <app-address-labels
+                              [vin]="vin"
+                            ></app-address-labels>
+                          </div>
+                        </ng-container>
+                        <ng-template #noPrevout>
+                          <span class="text-muted">No previous output</span>
                         </ng-template>
-                        <div>
-                          <app-address-labels [vin]="vin"></app-address-labels>
-                        </div>
                       </ng-container>
                     </div>
                   </td>
