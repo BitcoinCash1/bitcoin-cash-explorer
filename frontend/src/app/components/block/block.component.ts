@@ -518,6 +518,25 @@ export class BlockComponent implements OnInit, OnDestroy {
       }
     );
 
+    // Handle fragment scrolling with header offset
+    this.route.fragment.subscribe((fragment) => {
+      if (fragment) {
+        setTimeout(() => {
+          const element = document.getElementById(fragment);
+          if (element) {
+            const headerOffset = 70;
+            const elementPosition = element.getBoundingClientRect().top;
+            const offsetPosition =
+              elementPosition + window.pageYOffset - headerOffset;
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth',
+            });
+          }
+        }, 100); // Small delay to ensure DOM is updated
+      }
+    });
+
     this.keyNavigationSubscription = this.stateService.keyNavigation$.subscribe(
       (event) => {
         const prevKey = this.timeLtr ? 'ArrowLeft' : 'ArrowRight';
