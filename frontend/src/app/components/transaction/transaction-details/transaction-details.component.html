@@ -238,6 +238,17 @@
               height="100%"
             ></app-svg-images
           ></span>
+          <a
+            class="goggles-link"
+            [routerLink]="['/docs/faq/' | relativeUrl]"
+            fragment="how-do-explorer-goggles-work"
+            title="How do Explorer goggles work?"
+          >
+            <fa-icon
+              [icon]="['fas', 'info-circle']"
+              [fixedWidth]="true"
+            ></fa-icon>
+          </a>
         </td>
         <td class="wrap-cell">
           <ng-container *ngFor="let filter of filters">

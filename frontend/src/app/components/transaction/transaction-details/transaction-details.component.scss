@@ -161,8 +161,17 @@
 }
 
 .goggles-icon {
-  display: block;
+  display: inline-block;
   width: 2.7em;
+}
+
+.goggles-link {
+  margin-left: 4px;
+  text-decoration: none;
+
+  .ng-fa-icon {
+    font-size: 14px;
+  }
 }
 
 .pool-logo {
