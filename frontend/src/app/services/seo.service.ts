@@ -134,14 +134,12 @@ export class SeoService {
     if (this.network === 'signet') {
       return this.baseTitle + ' - Bitcoin Cash Signet';
     }
-    return this.baseTitle;
-    // Actually since the baseTitle alreadt contain 'Bitcoin Cash Explorer' (since that is the title in index.html)
-    // return (
-    //   this.baseTitle +
-    //   ' - ' +
-    //   ((this.network ? this.ucfirst(this.network) : 'Bitcoin Cash') +
-    //     ' Explorer')
-    // );
+   
+    return (
+      this.baseTitle +
+      ' - ' +
+      ((this.network ? this.ucfirst(this.network) : 'Bitcoin Cash'))
+    );
   }
 
   getDescription(): string {
