@@ -36,6 +36,7 @@ import {
 import { ElectrsApiService } from '@app/services/electrs-api.service';
 import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pipe';
 import { ApiService } from '@app/services/api.service';
+import { normalizeBchAddress } from '@app/shared/address-utils';
 import { SearchResultsComponent } from '@components/search-form/search-results/search-results.component';
 import {
   Network,
@@ -279,13 +280,15 @@ export class SearchFormComponent implements OnInit {
       result <= this.stateService.latestBlockHeight
     ) {
       this.navigate('/block/', result.toString());
-    } else if (result.alias) {
-      this.navigate('/lightning/node/', result.public_key);
-    } else if (result.short_id) {
-      this.navigate('/lightning/channel/', result.id);
     } else if (result.network) {
       if (result.isNetworkAvailable) {
-        this.navigate('/address/', result.address, undefined, result.network);
+        const normalizedAddress = normalizeBchAddress(result.address);
+        this.navigate(
+          '/address/',
+          normalizedAddress,
+          undefined,
+          result.network
+        );
       } else {
         this.searchForm.setValue({
           searchText: '',
@@ -306,7 +309,8 @@ export class SearchFormComponent implements OnInit {
         !this.regexTransaction.test(searchText) &&
         this.regexAddress.test(searchText)
       ) {
-        this.navigate('/address/', searchText);
+        const normalizedAddress = normalizeBchAddress(searchText);
+        this.navigate('/address/', normalizedAddress);
       } else if (this.regexBlockhash.test(searchText)) {
         this.navigate('/block/', searchText);
       } else if (this.regexBlockheight.test(searchText)) {

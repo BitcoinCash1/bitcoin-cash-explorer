@@ -5,7 +5,6 @@ export const BASE58_CHARS = `[a-km-zA-HJ-NP-Z1-9]`;
 
 // CashAddr character set (Bitcoin Cash address format)
 export const CASHADDR_CHARS = `[023456789acdefghjklmnpqrstuvwxyz]`;
-const CASHADDR_CHARS_UP = `[023456789ACDEFGHJKLMNPQRSTUVWXYZ]`;
 
 // all bech32 characters (after the separator)
 export const BECH32_CHARS_LW = `[ac-hj-np-z02-9]`;
@@ -38,7 +37,7 @@ const ADDRESS_CHARS: {
   };
 } = {
   mainnet: {
-    base58: `[13]` // Starts with a single 1 or 3
+    base58: `bitcoin:[13]` // Starts with a single 1 or 3 (can start with bitcoin: prefix, we will remove that later)
       + BASE58_CHARS
       + `{26,33}`, // Repeat the previous char 26-33 times.
       // Version byte 0x00 (P2PKH) can be as short as 27 characters, up to 34 length

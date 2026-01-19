@@ -463,3 +463,11 @@ export function checkedCompareAddressStrings(
     { address: b, type: type, network: network } as AddressTypeInfo
   );
 }
+
+export function normalizeBchAddress(address: string): string {
+  // Remove bitcoin: prefix for legacy base58 addresses (keep bitcoincash: prefix)
+  if (address.startsWith('bitcoin:')) {
+    return address.replace('bitcoin:', '');
+  }
+  return address;
+}
