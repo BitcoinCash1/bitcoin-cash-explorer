@@ -803,7 +803,6 @@
     <div class="clearfix"></div>
 
     <app-transactions-list
-      *ngIf="transactions; else loading"
       [transactions]="transactions"
       [paginated]="true"
       [blockTime]="block.timestamp"
@@ -816,43 +815,6 @@
       </app-http-error>
       <br />
       <br />
-    </ng-template>
-
-    <ng-template #loading>
-      <div class="tx-skeleton">
-        <ng-container
-          *ngIf="
-            txsLoadingStatus$ | async as txsLoadingStatus;
-            else headerLoader
-          "
-        >
-          <div class="header-bg box">
-            <div
-              class="progress progress-dark"
-              style="margin: 4px; height: 14px"
-            >
-              <div
-                class="progress-bar progress-light"
-                role="progressbar"
-                [ngStyle]="{ width: txsLoadingStatus + '%' }"
-              ></div>
-            </div>
-          </div>
-        </ng-container>
-
-        <div class="header-bg box">
-          <div class="row">
-            <div class="col-sm">
-              <span class="skeleton-loader"></span>
-            </div>
-            <div class="col-sm">
-              <span class="skeleton-loader"></span>
-              <span class="skeleton-loader"></span>
-              <span class="skeleton-loader"></span>
-            </div>
-          </div>
-        </div>
-      </div>
     </ng-template>
 
     <ng-template #headerLoader>
