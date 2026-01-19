@@ -226,25 +226,19 @@ export const TransactionFilters: { [key: string]: Filter } = {
 export const FilterGroups: { label: string; filters: Filter[] }[] = [
   {
     label: $localize`:@@885666551418fd59011ceb09d5c481095940193b:Features`,
-    filters: ['rbf', 'no_rbf', 'v1', 'v2', 'v3', 'nonstandard'],
+    filters: ['v1', 'v2', 'nonstandard'], // 'v3',
   },
   {
     label: $localize`Address Types`,
-    filters: ['p2pk', 'p2ms', 'p2pkh', 'p2sh', 'p2wpkh', 'p2wsh', 'p2tr'],
+    filters: ['p2pk', 'p2ms', 'p2pkh', 'p2sh'],
   },
   {
     label: $localize`Behavior`,
-    filters: ['cpfp_parent', 'cpfp_child', 'replacement', 'acceleration'],
+    filters: [], // Like replacement or acceleration, but BCH doesn't have those.
   },
   {
     label: $localize`Data`,
-    filters: [
-      'op_return',
-      'fake_pubkey',
-      'fake_scripthash',
-      'inscription',
-      'annex',
-    ],
+    filters: ['op_return', 'fake_pubkey', 'fake_scripthash'],
   },
   {
     label: $localize`Heuristics`,
