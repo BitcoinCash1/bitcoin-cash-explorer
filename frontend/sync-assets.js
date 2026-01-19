@@ -55,7 +55,7 @@ const loadConfig = () => {
   }
 };
 
-const configContent = loadConfig();
+loadConfig();
 
 // Utility: Make HTTPS request
 const httpsRequest = (options) => {
