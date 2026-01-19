@@ -125,7 +125,6 @@ export class SeoService {
   }
 
   getTitle(): string {
-    // I do not want to return the this baseTitle + ' - ' +
     if (this.network === 'testnet') {
       return this.baseTitle + ' - Bitcoin Cash Testnet3';
     }
@@ -135,13 +134,14 @@ export class SeoService {
     if (this.network === 'signet') {
       return this.baseTitle + ' - Bitcoin Cash Signet';
     }
-    // I do not want to return the this baseTitle + ' - ' +
-    return (
-      this.baseTitle +
-      ' - ' +
-      ((this.network ? this.ucfirst(this.network) : 'Bitcoin Cash') +
-        ' Explorer')
-    );
+    return this.baseTitle;
+    // Actually since the baseTitle alreadt contain 'Bitcoin Cash Explorer' (since that is the title in index.html)
+    // return (
+    //   this.baseTitle +
+    //   ' - ' +
+    //   ((this.network ? this.ucfirst(this.network) : 'Bitcoin Cash') +
+    //     ' Explorer')
+    // );
   }
 
   getDescription(): string {
