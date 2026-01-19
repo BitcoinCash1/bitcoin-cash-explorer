@@ -17,8 +17,6 @@ interface MempoolBlocksData {
 interface MempoolInfoData {
   memPoolInfo: MempoolInfo;
   bytesPerSecond: number;
-  progressWidth: string;
-  progressColor: string;
 }
 
 @Component({
@@ -33,7 +31,6 @@ export class FooterComponent implements OnInit {
 
   mempoolBlocksData$: Observable<MempoolBlocksData>;
   mempoolInfoData$: Observable<MempoolInfoData>;
-  bytesPerSecondLimit = 1200;
   isLoadingWebSocket$: Observable<boolean>;
   mempoolLoadingStatus$: Observable<number>;
 
@@ -52,44 +49,9 @@ export class FooterComponent implements OnInit {
       this.stateService.bytesPerSecond$,
     ]).pipe(
       map(([mempoolInfo, bytesPerSecond]) => {
-        const percent = Math.round(
-          (Math.min(bytesPerSecond, this.bytesPerSecondLimit) /
-            this.bytesPerSecondLimit) *
-            100
-        );
-
-        let progressColor = '#7CB342';
-        if (bytesPerSecond > 1667) {
-          progressColor = '#FDD835';
-        }
-        if (bytesPerSecond > 2000) {
-          progressColor = '#FFB300';
-        }
-        if (bytesPerSecond > 2500) {
-          progressColor = '#FB8C00';
-        }
-        if (bytesPerSecond > 3000) {
-          progressColor = '#F4511E';
-        }
-        if (bytesPerSecond > 3500) {
-          progressColor = '#D81B60';
-        }
-
-        const mempoolSizePercentage =
-          (mempoolInfo.usage / mempoolInfo.maxmempool) * 100;
-        let mempoolSizeProgress = 'bg-danger';
-        if (mempoolSizePercentage <= 50) {
-          mempoolSizeProgress = 'bg-success';
-        } else if (mempoolSizePercentage <= 75) {
-          mempoolSizeProgress = 'bg-warning';
-        }
-
         return {
           memPoolInfo: mempoolInfo,
           bytesPerSecond: bytesPerSecond,
-          progressWidth: percent + '%',
-          progressColor: progressColor,
-          mempoolSizeProgress: mempoolSizeProgress,
         };
       })
     );
