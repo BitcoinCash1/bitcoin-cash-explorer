@@ -15,20 +15,15 @@ import {
   of,
   Subject,
   Subscription,
-  timer,
 } from 'rxjs';
 import {
   catchError,
-  delayWhen,
   filter,
   map,
   scan,
-  share,
   shareReplay,
   switchMap,
-  takeUntil,
   tap,
-  throttleTime,
 } from 'rxjs/operators';
 import {
   AuditStatus,
@@ -57,8 +52,7 @@ interface MempoolBlocksData {
 interface MempoolInfoData {
   memPoolInfo: MempoolInfo;
   bytesPerSecond: number;
-  progressWidth: string;
-  progressColor: string;
+  mempoolSizeProgressClass: string;
 }
 
 interface MempoolStatsData {
@@ -217,30 +211,19 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
             this.bytesPerSecondLimit) *
             100
         );
-
-        let progressColor = 'bg-success';
-        if (bytesPerSecond > 1667) {
-          progressColor = 'bg-warning';
-        }
-        if (bytesPerSecond > 3000) {
-          progressColor = 'bg-danger';
-        }
-
         const mempoolSizePercentage =
           (mempoolInfo.usage / mempoolInfo.maxmempool) * 100;
-        let mempoolSizeProgress = 'bg-danger';
+        let mempoolSizeProgressClass = 'bg-danger';
         if (mempoolSizePercentage <= 50) {
-          mempoolSizeProgress = 'bg-success';
+          mempoolSizeProgressClass = 'bg-success';
         } else if (mempoolSizePercentage <= 75) {
-          mempoolSizeProgress = 'bg-warning';
+          mempoolSizeProgressClass = 'bg-warning';
         }
 
         return {
           memPoolInfo: mempoolInfo,
           bytesPerSecond: bytesPerSecond,
-          progressWidth: percent + '%',
-          progressColor: progressColor,
-          mempoolSizeProgress: mempoolSizeProgress,
+          mempoolSizeProgressClass: mempoolSizeProgressClass,
         };
       })
     );

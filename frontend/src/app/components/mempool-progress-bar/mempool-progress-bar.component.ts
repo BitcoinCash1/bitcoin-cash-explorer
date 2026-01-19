@@ -1,6 +1,5 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { MempoolInfo } from '@interfaces/websocket.interface';
 
 interface MempoolInfoData {

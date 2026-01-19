@@ -416,7 +416,9 @@
       >
         <div class="progress">
           <div
-            class="progress-bar {{ mempoolInfoData.value.mempoolSizeProgress }}"
+            class="progress-bar {{
+              mempoolInfoData.value.mempoolSizeProgressClass
+            }}"
             role="progressbar"
             [ngStyle]="{
               width:
