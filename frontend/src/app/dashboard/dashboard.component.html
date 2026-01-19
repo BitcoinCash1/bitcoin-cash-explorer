@@ -84,6 +84,12 @@
           <h5 class="card-title mt-3" i18n="dashboard.incoming-transactions">
             Incoming Transactions
           </h5>
+          <app-mempool-progress-bar
+            *ngIf="mempoolInfoData$ | async as mempoolInfoData"
+            [mempoolLoadingStatus$]="mempoolLoadingStatus$"
+            [mempoolInfoData]="mempoolInfoData"
+            [isLoadingWebSocket$]="isLoadingWebSocket$"
+          ></app-mempool-progress-bar>
           <div
             class="mempool-graph"
             *ngIf="mempoolStats$ | async as mempoolStats"
@@ -454,7 +460,7 @@
       class="in-progress-message"
       *ngIf="auditStatus.lastBlockAudit && auditStatus.bitcoinHeaders"
     >
-      <div i18n="lightning.indexing-in-progress">Indexing in progress</div>
+      <div i18n="indexing-in-progress">Indexing in progress</div>
       <div>
         #{{ auditStatus.lastBlockAudit }} / #{{ auditStatus.bitcoinHeaders }}
       </div>
