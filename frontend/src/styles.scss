@@ -109,6 +109,8 @@ $dropdown-link-active-bg: $active-bg;
   --icon: #f1f1f1;
   --skeleton-bg: #2e314e;
   --skeleton-bg-light: #36355a;
+  --form-control-bg: #f0f0f0;
+  --form-control-color: #141414;
 
   --box-bg: #24273e;
   --stat-box-bg: #181b2d;
@@ -197,14 +199,14 @@ main {
 }
 
 .form-control {
-  color: var(--fg);
-  background-color: var(--secondary);
+  color: var(--form-control-color);
+  background-color: var(--form-control-bg);
   border: 1px solid rgba(17, 19, 31, 0.2);
 }
 
 .form-control:focus {
-  color: var(--fg);
-  background-color: var(--secondary);
+  color: var(--form-control-color);
+  background-color: var(--form-control-bg);
 }
 
 .btn-purple {

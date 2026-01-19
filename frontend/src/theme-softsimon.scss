@@ -73,6 +73,8 @@ $dropdown-link-active-bg: $active-bg;
   --icon: #f1f1f1;
   --skeleton-bg: #2e324e;
   --skeleton-bg-light: #5d6182;
+  --form-control-bg: #{$secondary};
+  --form-control-color: #{$fg};
 
   --box-bg: #24273e;
   --stat-box-bg: #181b2d;
