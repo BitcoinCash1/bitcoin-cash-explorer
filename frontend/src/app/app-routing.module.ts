@@ -250,7 +250,7 @@ if (!window['isMempoolSpaceBuild']) {
 @NgModule({
   imports: [
     RouterModule.forRoot(routes, {
-      initialNavigation: 'enabledBlocking',
+      initialNavigation: 'enabledNonBlocking',
       scrollPositionRestoration: 'enabled',
       anchorScrolling: 'enabled',
       preloadingStrategy: AppPreloadingStrategy,

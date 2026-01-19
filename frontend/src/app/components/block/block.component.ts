@@ -1042,7 +1042,15 @@ export class BlockComponent implements OnInit, OnDestroy {
     this.isLoadingTransactions = true;
     this.transactions = null;
     this.transactionsError = null;
-    target.scrollIntoView(); // works for chrome
+
+    // Scroll to target with header offset
+    const headerOffset = 70;
+    const elementPosition = target.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth',
+    });
 
     this.electrsApiService
       .getBlockTransactions$(this.block.id, start)
@@ -1055,7 +1063,15 @@ export class BlockComponent implements OnInit, OnDestroy {
       .subscribe((transactions) => {
         this.transactions = transactions;
         this.isLoadingTransactions = false;
-        target.scrollIntoView(); // works for firefox
+
+        // Scroll to target with header offset
+        const elementPosition = target.getBoundingClientRect().top;
+        const offsetPosition =
+          elementPosition + window.pageYOffset - headerOffset;
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth',
+        });
       });
   }
 
