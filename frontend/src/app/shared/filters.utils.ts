@@ -36,11 +36,7 @@ export const TransactionFlags = {
   p2wpkh: 0b00010000_00000000n,
   p2wsh: 0b00100000_00000000n,
   p2tr: 0b01000000_00000000n,
-  // behavior
-  cpfp_parent: 0b00000001_00000000_00000000n,
-  cpfp_child: 0b00000010_00000000_00000000n,
-  replacement: 0b00000100_00000000_00000000n,
-  acceleration: 0b00001000_00000000_00000000n,
+  // behavior, BCH doesn't have behaviors
   // data
   op_return: 0b00000001_00000000_00000000_00000000n,
   fake_pubkey: 0b00000010_00000000_00000000_00000000n,
@@ -232,10 +228,10 @@ export const FilterGroups: { label: string; filters: Filter[] }[] = [
     label: $localize`Address Types`,
     filters: ['p2pk', 'p2ms', 'p2pkh', 'p2sh'],
   },
-  {
-    label: $localize`Behavior`,
-    filters: [], // Like replacement or acceleration, but BCH doesn't have those.
-  },
+  // {
+  //   label: $localize`Behavior`,
+  //   filters: [], // Like replacement or acceleration, but BCH doesn't have those.
+  // },
   {
     label: $localize`Data`,
     filters: ['op_return', 'fake_pubkey', 'fake_scripthash'],
