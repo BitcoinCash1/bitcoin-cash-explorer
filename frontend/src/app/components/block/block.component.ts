@@ -100,7 +100,7 @@ export class BlockComponent implements OnInit, OnDestroy {
   auditParamEnabled: boolean = false;
   auditSupported: boolean =
     this.stateService.env.AUDIT &&
-    this.stateService.env.BASE_MODULE === 'mempool' &&
+    this.stateService.env.BASE_MODULE === 'explorer' &&
     this.stateService.env.MINING_DASHBOARD === true;
   auditModeEnabled: boolean = !this.stateService.hideAudit.value;
   auditAvailable = true;

@@ -10,7 +10,7 @@ describe('Testnet4', () => {
     cy.intercept('/api/tx/*/outspends').as('tx-outspends');
   });
 
-  if (baseModule === 'mempool') {
+  if (baseModule === 'explorer') {
 
     it('loads the dashboard', () => {
       cy.visit('/testnet4');

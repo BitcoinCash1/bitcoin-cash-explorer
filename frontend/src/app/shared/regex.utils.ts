@@ -168,13 +168,13 @@ function isNetworkAvailable(network: Network, env: Env): boolean {
 }
 
 export function needBaseModuleChange(
-  fromBaseModule: 'mempool',
+  fromBaseModule: 'explorer',
   toNetwork: Network
 ): boolean {
   if (!toNetwork) {
     return false;
   } // No target network means no change needed
-  if (fromBaseModule === 'mempool') {
+  if (fromBaseModule === 'explorer') {
     return (
       toNetwork !== 'mainnet' &&
       toNetwork !== 'testnet' &&

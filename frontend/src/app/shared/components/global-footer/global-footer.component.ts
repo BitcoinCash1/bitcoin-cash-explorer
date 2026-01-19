@@ -115,7 +115,7 @@ export class GlobalFooterComponent implements OnInit, OnDestroy, OnChanges {
       network === 'signet'
     ) {
       return (
-        (this.env.BASE_MODULE === 'mempool'
+        (this.env.BASE_MODULE === 'explorer'
           ? ''
           : this.env.MEMPOOL_WEBSITE_URL + this.urlLanguage) +
           this.networkPaths[thisNetwork] || '/'

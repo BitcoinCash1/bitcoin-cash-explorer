@@ -34,7 +34,7 @@ if (configContent && configContent.CUSTOMIZATION) {
   }
 }
 
-const baseModuleName = configContent.BASE_MODULE || 'mempool';
+const baseModuleName = configContent.BASE_MODULE || 'explorer';
 const customBuildName = (customConfigContent && customConfigContent.enterprise) ? ('.' + customConfigContent.enterprise) : '';
 const indexFilePath = 'src/index.' + baseModuleName + customBuildName + '.html';
 

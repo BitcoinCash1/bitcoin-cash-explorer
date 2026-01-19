@@ -356,7 +356,7 @@ export class SearchFormComponent implements OnInit {
   ) {
     if (
       needBaseModuleChange(
-        this.env.BASE_MODULE as 'mempool',
+        this.env.BASE_MODULE as 'explorer',
         swapNetwork as Network
       )
     ) {

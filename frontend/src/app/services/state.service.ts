@@ -110,7 +110,7 @@ const defaultEnv: Env = {
   TESTNET_ENABLED: false,
   TESTNET4_ENABLED: false,
   SIGNET_ENABLED: false,
-  BASE_MODULE: 'mempool',
+  BASE_MODULE: 'explorer',
   ROOT_NETWORK: '',
   ITEMS_PER_PAGE: 10,
   KEEP_BLOCKS_AMOUNT: 8,
@@ -257,7 +257,7 @@ export class StateService {
 
     this.env = Object.assign(defaultEnv, browserWindowEnv);
 
-    if (defaultEnv.BASE_MODULE !== 'mempool') {
+    if (defaultEnv.BASE_MODULE !== 'explorer') {
       this.env.MINING_DASHBOARD = false;
     }
 
@@ -448,7 +448,7 @@ export class StateService {
   }
 
   setNetworkBasedonUrl(url: string) {
-    if (this.env.BASE_MODULE !== 'mempool') {
+    if (this.env.BASE_MODULE !== 'explorer') {
       return;
     }
     // horrible network regex breakdown:
@@ -485,7 +485,7 @@ export class StateService {
         }
         return;
       default:
-        if (this.env.BASE_MODULE !== 'mempool') {
+        if (this.env.BASE_MODULE !== 'explorer') {
           if (this.network !== this.env.BASE_MODULE) {
             this.network = this.env.BASE_MODULE;
             this.networkChanged$.next(this.env.BASE_MODULE);

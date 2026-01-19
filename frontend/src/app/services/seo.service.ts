@@ -9,7 +9,7 @@ import { StateService } from '@app/services/state.service';
 })
 export class SeoService {
   network = '';
-  baseTitle = '';
+  baseTitle = 'explorer';
   baseDescription =
     'Explore the full Bitcoin Cash ecosystem by Melroy van den Berg.';
   baseDomain = 'bchexplorer.cash';

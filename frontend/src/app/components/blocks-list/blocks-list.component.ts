@@ -83,7 +83,7 @@ export class BlocksList implements OnInit {
     private relativeUrlPipe: RelativeUrlPipe,
     @Inject(LOCALE_ID) private locale: string
   ) {
-    this.isMempoolModule = this.stateService.env.BASE_MODULE === 'mempool';
+    this.isMempoolModule = this.stateService.env.BASE_MODULE === 'explorer';
     if (
       this.locale.startsWith('ar') ||
       this.locale.startsWith('fa') ||
@@ -95,7 +95,7 @@ export class BlocksList implements OnInit {
 
   ngOnInit(): void {
     this.indexingAvailable =
-      this.stateService.env.BASE_MODULE === 'mempool' &&
+      this.stateService.env.BASE_MODULE === 'explorer' &&
       this.stateService.env.MINING_DASHBOARD === true;
     this.auditAvailable = this.indexingAvailable && this.stateService.env.AUDIT;
 
@@ -181,7 +181,7 @@ export class BlocksList implements OnInit {
                 this.lastBlockHeight = Math.max(...blocks.map((o) => o.height));
               }),
               map((blocks) => {
-                if (this.stateService.env.BASE_MODULE === 'mempool') {
+                if (this.stateService.env.BASE_MODULE === 'explorer') {
                   for (const block of blocks) {
                     // @ts-ignore: Need to add an extra field for the template
                     block.extras.pool.logo =

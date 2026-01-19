@@ -157,7 +157,7 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
   accelerateCtaType: 'alert' | 'button' = 'button';
   auditEnabled: boolean =
     this.stateService.env.AUDIT &&
-    this.stateService.env.BASE_MODULE === 'mempool' &&
+    this.stateService.env.BASE_MODULE === 'explorer' &&
     this.stateService.env.MINING_DASHBOARD === true;
   isMempoolSpaceBuild = this.stateService.isMempoolSpaceBuild;
 
@@ -778,7 +778,7 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   isFirstSeenAvailable(blockHeight: number): boolean {
-    if (this.stateService.env.BASE_MODULE !== 'mempool') {
+    if (this.stateService.env.BASE_MODULE !== 'explorer') {
       return false;
     }
     switch (this.stateService.network) {

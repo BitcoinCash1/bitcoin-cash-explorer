@@ -31,7 +31,7 @@ export class DocsComponent implements OnInit {
   ngOnInit(): void {
     this.websocket.want(['blocks']);
     this.env = this.stateService.env;
-    this.showFaqTab = this.env.BASE_MODULE === 'mempool' ? true : false;
+    this.showFaqTab = this.env.BASE_MODULE === 'explorer' ? true : false;
     this.showElectrsTab = this.stateService.env.OFFICIAL_MEMPOOL_SPACE;
 
     document.querySelector<HTMLElement>('html').style.scrollBehavior = 'smooth';

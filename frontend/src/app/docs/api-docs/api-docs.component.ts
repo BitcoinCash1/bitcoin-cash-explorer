@@ -95,7 +95,7 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
     this.network$ = merge(of(''), this.stateService.networkChanged$).pipe(
       tap((network: string) => {
         if (
-          this.env.BASE_MODULE === 'mempool' &&
+          this.env.BASE_MODULE === 'explorer' &&
           network !== '' &&
           this.env.ROOT_NETWORK === ''
         ) {
@@ -218,7 +218,7 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
       curlResponse = code.codeSampleSignet.curl;
     }
     let curlNetwork = '';
-    if (this.env.BASE_MODULE === 'mempool') {
+    if (this.env.BASE_MODULE === 'explorer') {
       if (!['', 'mainnet'].includes(network)) {
         curlNetwork = `/${network}`;
       }
@@ -240,7 +240,7 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
 
   websocketUrl(network: string) {
     let curlNetwork = '';
-    if (this.env.BASE_MODULE === 'mempool') {
+    if (this.env.BASE_MODULE === 'explorer') {
       if (!['', 'mainnet'].includes(network)) {
         curlNetwork = `/${network}`;
       }

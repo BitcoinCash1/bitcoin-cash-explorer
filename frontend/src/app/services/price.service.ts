@@ -222,7 +222,7 @@ export class PriceService {
     currency: string
   ): Observable<Price | undefined> {
     if (
-      this.stateService.env.BASE_MODULE !== 'mempool' ||
+      this.stateService.env.BASE_MODULE !== 'explorer' ||
       !this.stateService.env.HISTORICAL_PRICE
     ) {
       return of(undefined);

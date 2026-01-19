@@ -81,7 +81,7 @@ export class PoolRankingComponent implements OnInit {
     this.radioGroupForm.controls.dateSpan.setValue(this.miningWindowPreference);
 
     this.indexingAvailable =
-      this.stateService.env.BASE_MODULE === 'mempool' &&
+      this.stateService.env.BASE_MODULE === 'explorer' &&
       this.stateService.env.MINING_DASHBOARD === true;
     this.auditAvailable = this.indexingAvailable && this.stateService.env.AUDIT;
 

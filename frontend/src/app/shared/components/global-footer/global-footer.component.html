@@ -209,7 +209,7 @@
         <p class="category" i18n="footer.networks">Networks</p>
         <p
           *ngIf="
-            (officialMempoolSpace || env.BASE_MODULE === 'mempool') &&
+            (officialMempoolSpace || env.BASE_MODULE === 'explorer') &&
             currentNetwork !== '' &&
             currentNetwork !== 'mainnet'
           "
@@ -220,7 +220,7 @@
         </p>
         <p
           *ngIf="
-            (officialMempoolSpace || env.BASE_MODULE === 'mempool') &&
+            (officialMempoolSpace || env.BASE_MODULE === 'explorer') &&
             currentNetwork !== 'testnet' &&
             env.TESTNET_ENABLED
           "
@@ -231,7 +231,7 @@
         </p>
         <p
           *ngIf="
-            (officialMempoolSpace || env.BASE_MODULE === 'mempool') &&
+            (officialMempoolSpace || env.BASE_MODULE === 'explorer') &&
             currentNetwork !== 'testnet4' &&
             env.TESTNET4_ENABLED
           "
@@ -242,7 +242,7 @@
         </p>
         <p
           *ngIf="
-            (officialMempoolSpace || env.BASE_MODULE === 'mempool') &&
+            (officialMempoolSpace || env.BASE_MODULE === 'explorer') &&
             currentNetwork !== 'signet' &&
             env.SIGNET_ENABLED
           "

@@ -53,7 +53,7 @@ describe('Mainnet', () => {
     // });
   });
 
-  if (baseModule === 'mempool') {
+  if (baseModule === 'explorer') {
 
     it('check first mempool block after skeleton loads', () => {
       cy.visit('/');

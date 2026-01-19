@@ -11,7 +11,7 @@ describe('Signet', () => {
   });
 
 
-  if (baseModule === 'mempool') {
+  if (baseModule === 'explorer') {
     it('loads the dashboard', () => {
       cy.visit('/signet');
       cy.waitForSkeletonGone();

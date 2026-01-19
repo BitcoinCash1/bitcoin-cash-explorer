@@ -15,7 +15,7 @@ describe('Mainnet - Mining Features', () => {
     }
   });
 
-  if (baseModule === 'mempool') {
+  if (baseModule === 'explorer') {
 
     describe('Miner page', () => {
       beforeEach(() => {

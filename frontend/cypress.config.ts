@@ -17,9 +17,9 @@ export default defineConfig({
       const CONFIG_FILE = 'explorer-frontend-config.json';
       if (fs.existsSync(CONFIG_FILE)) {
         const contents = JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8'));
-        config.env.BASE_MODULE = contents.BASE_MODULE ? contents.BASE_MODULE : 'mempool';
+        config.env.BASE_MODULE = contents.BASE_MODULE ? contents.BASE_MODULE : 'explorer';
       } else {
-        config.env.BASE_MODULE = 'mempool';
+        config.env.BASE_MODULE = 'explorer';
       }
       return config;
     },

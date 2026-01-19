@@ -127,7 +127,7 @@ export class TrackerComponent implements OnInit, OnDestroy {
   paymentReceiptUrl: string | null = null;
   auditEnabled: boolean =
     this.stateService.env.AUDIT &&
-    this.stateService.env.BASE_MODULE === 'mempool' &&
+    this.stateService.env.BASE_MODULE === 'explorer' &&
     this.stateService.env.MINING_DASHBOARD === true;
 
   enterpriseInfo: any;

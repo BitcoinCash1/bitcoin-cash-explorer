@@ -10,7 +10,7 @@
   "NGINX_PORT": "80",
   "MIN_BLOCK_SIZE_UNITS": 32000000,
   "MEMPOOL_BLOCKS_AMOUNT": 8,
-  "BASE_MODULE": "mempool",
+  "BASE_MODULE": "explorer",
   "ROOT_NETWORK": "",
   "MEMPOOL_WEBSITE_URL": "https://bchexplorer.cash",
   "MINING_DASHBOARD": true,
