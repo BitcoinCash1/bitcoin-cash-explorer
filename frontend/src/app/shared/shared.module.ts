@@ -194,6 +194,7 @@ import { SimpleProofCuboWidgetComponent } from '@components/simpleproof-widget/s
 import { FaucetComponent } from '@components/faucet/faucet.component';
 import { TwitterLogin } from '@components/twitter-login/twitter-login.component';
 import { GithubLogin } from '@components/github-login.component/github-login.component';
+import { MempoolProgressBarComponent } from '@components/mempool-progress-bar/mempool-progress-bar.component';
 
 @NgModule({
   declarations: [
@@ -298,6 +299,7 @@ import { GithubLogin } from '@components/github-login.component/github-login.com
     FaucetComponent,
     TwitterLogin,
     GithubLogin,
+    MempoolProgressBarComponent,
   ],
   imports: [
     CommonModule,
@@ -419,6 +421,7 @@ import { GithubLogin } from '@components/github-login.component/github-login.com
     SimpleProofCuboWidgetComponent,
     TwitterLogin,
     GithubLogin,
+    MempoolProgressBarComponent,
     BitcoinsatoshisPipe,
 
     MempoolBlockOverviewComponent,
