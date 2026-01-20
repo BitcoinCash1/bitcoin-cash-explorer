@@ -43,10 +43,9 @@ function mempoolFromArrayBuffer(buf: ArrayBuffer): {
       uid,
       order: txidToOrdering(vectorUidMap.get(uid) as string),
       fee: view.getFloat64(offset + 4, false),
-      weight: view.getUint32(offset + 12, false),
+      size: view.getUint32(offset + 12, false),
       sigops: view.getUint32(offset + 16, false),
-      // feePerVsize: view.getFloat64(offset + 20, false),
-      effectiveFeePerVsize: view.getFloat64(offset + 28, false),
+      feePerSize: view.getFloat64(offset + 20, false),
       inputs: [],
     };
     const numInputs = view.getUint32(offset + 36, false);

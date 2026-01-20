@@ -29,7 +29,7 @@ interface TemplateTransaction {
   txid: string;
   order: number;
   size: number;
-  adjustedVsize: number; // sigop-adjusted vsize, rounded up to the nearest integer
+  adjustedSize: number; // sigop-adjusted vsize, rounded up to the nearest integer
   sigops: number;
   fee: number;
   feeDelta: number;
@@ -300,15 +300,15 @@ export function makeBlockTemplate(
 
   candidates.forEach((tx) => {
     // initializing everything up front helps V8 optimize property access later
-    const adjustedVsize = Math.ceil(Math.max(tx.size, 5 * (tx.sigops || 0)));
-    const feePerSize = tx.fee / adjustedVsize;
+    const adjustedSize = Math.ceil(Math.max(tx.size, 5 * (tx.sigops || 0)));
+    const feePerSize = tx.fee / adjustedSize;
     auditPool.set(tx.txid, {
       txid: tx.txid,
       order: txidToOrdering(tx.txid),
       fee: tx.fee,
       feeDelta: 0,
       size: tx.size,
-      adjustedVsize: adjustedVsize,
+      adjustedSize: adjustedSize,
       feePerSize: feePerSize,
       dependencyRate: feePerSize,
       sigops: tx.sigops || 0,
@@ -448,11 +448,11 @@ function setRelatives(tx: MinerTransaction, mempool: Map<string, MinerTransactio
     }
   }
   tx.ancestorFee = tx.fee + tx.feeDelta;
-  tx.ancestorSize = tx.adjustedVsize || 0;
+  tx.ancestorSize = tx.adjustedSize || 0;
   tx.ancestorSigops = tx.sigops || 0;
   tx.ancestorMap.forEach((ancestor) => {
     tx.ancestorFee += ancestor.fee + ancestor.feeDelta;
-    tx.ancestorSize += ancestor.adjustedVsize;
+    tx.ancestorSize += ancestor.adjustedSize;
     tx.ancestorSigops += ancestor.sigops;
   });
   tx.score = tx.ancestorFee / tx.ancestorSize;
@@ -483,7 +483,7 @@ function updateDescendants(
       // remove tx as ancestor
       descendantTx.ancestorMap.delete(rootTx.txid);
       descendantTx.ancestorFee -= rootTx.fee + rootTx.feeDelta;
-      descendantTx.ancestorSize -= rootTx.adjustedVsize;
+      descendantTx.ancestorSize -= rootTx.adjustedSize;
       descendantTx.ancestorSigops -= rootTx.sigops;
       descendantTx.score = descendantTx.ancestorFee / descendantTx.ancestorSize;
       descendantTx.dependencyRate = descendantTx.dependencyRate

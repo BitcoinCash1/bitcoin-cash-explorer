@@ -131,16 +131,16 @@ class TransactionUtils {
     const size = Math.ceil(transaction.size);
     const sigops = transaction.sigops ? transaction.sigops : this.countSigops(transaction);
     // https://gitlab.com/bitcoin-cash-node/bitcoin-cash-node/-/blob/master/src/policy/policy.cpp#L182-185
-    const adjustedVsize = Math.max(transaction.size, sigops * 5); // adjusted vsize = std::max(nSize, nSigChecks * bytes_per_sigcheck)
+    const adjustedSize = Math.max(transaction.size, sigops * 5); // adjusted vsize = std::max(nSize, nSigChecks * bytes_per_sigcheck)
     const feePerBytes = (transaction.fee || 0) / transaction.size;
-    const adjustedFeePerVsize = (transaction.fee || 0) / adjustedVsize;
+    const adjustedFeePerSize = (transaction.fee || 0) / adjustedSize;
     const transactionExtended: MempoolTransactionExtended = Object.assign(transaction, {
       order: this.txidToOrdering(transaction.txid),
       size: size,
-      adjustedVsize: adjustedVsize,
+      adjustedSize: adjustedSize,
       sigops,
       feePerSize: feePerBytes,
-      adjustedFeePerVsize: adjustedFeePerVsize,
+      adjustedFeePerSize: adjustedFeePerSize,
     });
     if (!transactionExtended?.status?.confirmed && !transactionExtended.firstSeen) {
       transactionExtended.firstSeen = Math.round(Date.now() / 1000);

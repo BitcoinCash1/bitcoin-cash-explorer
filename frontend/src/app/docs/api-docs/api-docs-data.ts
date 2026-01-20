@@ -2030,10 +2030,10 @@ export const restApiDocsData = [
       "confirmed": false
     },
     "order": 89813267,
-    "adjustedVsize": 209,
+    "adjustedSize": 209,
     "sigops": 4,
     "feePerSize": 1.4976076555023923,
-    "adjustedFeePerVsize": 1.4976076555023923,
+    "adjustedFeePerSize": 1.4976076555023923,
     "firstSeen": 1768747602,
     "uid": 5,
     "inputs": [],
@@ -5744,10 +5744,10 @@ export const restApiDocsData = [
     "block_time": 1768602736
   },
   "order": 3406722807,
-  "adjustedVsize": 633,
+  "adjustedSize": 633,
   "sigops": 28,
   "feePerSize": 2.018957345971564,
-  "adjustedFeePerVsize": 2.018957345971564
+  "adjustedFeePerSize": 2.018957345971564
 }`,
         },
         codeSampleTestnet: {

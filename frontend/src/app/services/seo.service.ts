@@ -134,11 +134,11 @@ export class SeoService {
     if (this.network === 'signet') {
       return this.baseTitle + ' - Bitcoin Cash Signet';
     }
-   
+
     return (
       this.baseTitle +
       ' - ' +
-      ((this.network ? this.ucfirst(this.network) : 'Bitcoin Cash'))
+      (this.network ? this.ucfirst(this.network) : 'Bitcoin Cash')
     );
   }
 

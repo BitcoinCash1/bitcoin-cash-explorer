@@ -140,7 +140,7 @@ class MempoolBlocks {
         const stripped = {
           uid: entry.uid,
           fee: entry.fee,
-          size: entry.adjustedVsize,
+          size: entry.adjustedSize,
           sigops: entry.sigops,
           feePerSize: entry.feePerSize,
           inputs: entry.vin
@@ -234,7 +234,7 @@ class MempoolBlocks {
         return {
           uid: entry.uid || 0,
           fee: entry.fee,
-          size: entry.adjustedVsize,
+          size: entry.adjustedSize,
           sigops: entry.sigops,
           feePerSize: entry.feePerSize,
           inputs: entry.vin

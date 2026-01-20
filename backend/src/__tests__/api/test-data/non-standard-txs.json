@@ -40,11 +40,9 @@
             "block_time": 1746868490
         },
         "order": 2877166599,
-        "vsize": 93,
-        "adjustedVsize": 92.75,
+        "adjustedSize": 92.75,
         "sigops": 0,
-        "feePerVsize": 124.91644204851752,
-        "adjustedFeePerVsize": 124.91644204851752,
-        "effectiveFeePerVsize": 124.91644204851752
+        "feePerSize": 124.91644204851752,
+        "adjustedfeePerSize": 124.91644204851752
     }
 ]
