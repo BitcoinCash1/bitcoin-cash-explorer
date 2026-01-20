@@ -42,7 +42,6 @@ export default class TxView implements TransactionStripped {
     | 'missing'
     | 'sigop'
     | 'fresh'
-    | 'freshcpfp'
     | 'added'
     | 'censored'
     | 'selected'

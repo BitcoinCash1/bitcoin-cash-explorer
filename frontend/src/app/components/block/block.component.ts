@@ -909,11 +909,7 @@ export class BlockComponent implements OnInit, OnDestroy {
             tx.status = 'found';
           } else {
             if (isFresh[tx.txid]) {
-              if (tx.rate - tx.fee / tx.size >= 0.1) {
-                tx.status = 'freshcpfp'; // BCH doesnt have CPFP
-              } else {
-                tx.status = 'fresh';
-              }
+              tx.status = 'fresh';
             } else if (isSigop[tx.txid]) {
               tx.status = 'sigop';
             } else {

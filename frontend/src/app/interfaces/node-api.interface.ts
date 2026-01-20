@@ -176,7 +176,6 @@ export interface TransactionStripped {
     | 'missing'
     | 'sigop'
     | 'fresh'
-    | 'freshcpfp'
     | 'added'
     | 'censored'
     | 'selected'

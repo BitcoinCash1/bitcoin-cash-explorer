@@ -162,7 +162,6 @@ export function defaultColorFunction(
     case 'missing':
     case 'sigop':
     case 'fresh':
-    case 'freshcpfp':
       return auditColors.missing;
     case 'added':
       return auditColors.added;
