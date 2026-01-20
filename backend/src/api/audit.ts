@@ -35,7 +35,7 @@ class Audit {
     const matches: string[] = []; // present in both mined block and template
     const added: string[] = []; // present in mined block, not in template
     const unseen: string[] = []; // present in the mined block, not in our mempool
-    const fresh: string[] = []; // missing, but firstSeen or lastBoosted within PROPAGATION_MARGIN
+    const fresh: string[] = []; // missing, but firstSeen within PROPAGATION_MARGIN
     const isCensored = {}; // missing, without excuse
     const isDisplaced = {};
     let displacedSize = 0;
@@ -59,9 +59,6 @@ class Audit {
         // conflict with any transaction in the mined block
         if (mempool[txid]?.firstSeen && now - (mempool[txid]?.firstSeen || 0) <= PROPAGATION_MARGIN) {
           // tx is recent, may have reached the miner too late for inclusion
-          fresh.push(txid);
-        } else if (mempool[txid]?.lastBoosted && now - (mempool[txid]?.lastBoosted || 0) <= PROPAGATION_MARGIN) {
-          // tx was recently cpfp'd, miner may not have the latest effective rate
           fresh.push(txid);
         } else if (mempool[txid].feePerSize >= 1) {
           // transactions paying < 1 sat/vbyte are never considered censored

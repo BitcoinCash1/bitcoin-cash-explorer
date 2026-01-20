@@ -176,6 +176,8 @@ export function expandRelativesGraph(
  * Recursively traverses an in-mempool dependency graph, and sets a Map of in-mempool ancestors
  * for each transaction.
  *
+ * TODO: Revise all this code for BCH.... We do not have cpfp to begin with.
+ *
  * @param tx
  * @param all
  */

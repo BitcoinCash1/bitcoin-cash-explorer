@@ -126,7 +126,6 @@ export interface MempoolTransactionExtended extends TransactionExtended {
   adjustedSize: number; // I believe BCH has also adjusted size, but in just size iso vsize
   adjustedFeePerSize: number; // I believe BCH has also adjusted fee per size, but in just size iso vsize
   inputs?: number[];
-  lastBoosted?: number;
 }
 
 export interface AuditTransaction {
