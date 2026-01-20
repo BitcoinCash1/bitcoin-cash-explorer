@@ -70,6 +70,7 @@
               <td
                 class="{{ type }}"
                 [class.hash]="type !== 'core' && type !== 'os'"
+                [class.version]="type === 'core' || type === 'os'"
                 [style.background-color]="colors[host.host][type]"
               >
                 @if (type !== "core" && type !== "os" && host.hashes?.[type]) {
@@ -84,14 +85,8 @@
                 } @else if (host.hashes?.[type]) {
                   <span
                     [style.color]="'white'"
-                    class="only-large"
-                    style="font-size: 10px"
-                    >{{ host.hashes[type] || "?" }}</span
-                  >
-                  <span
-                    [style.color]="'white'"
-                    class="only-small"
-                    style="font-size: 10px"
+                    ngbTooltip="{{ host.hashes[type] }}"
+                    placement="top"
                     >{{ shortenVersion(host.hashes[type]) || "?" }}</span
                   >
                 } @else {
