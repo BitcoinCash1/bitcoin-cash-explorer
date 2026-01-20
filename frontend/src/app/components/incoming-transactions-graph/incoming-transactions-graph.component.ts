@@ -220,7 +220,7 @@ export class IncomingTransactionsGraphComponent implements OnInit, OnChanges {
         show: !this.isMobile(),
         trigger: 'axis',
         position: (pos, params, el, elRect, size) => {
-          const obj = { top: -20 };
+          const obj = { top: 5 };
           obj[['left', 'right'][+(pos[0] < size.viewSize[0] / 2)]] = 80;
           return obj;
         },
