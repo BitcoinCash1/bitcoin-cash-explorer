@@ -230,17 +230,16 @@
 
   <ng-template [ngIf]="error">
     <br />
-    <ng-template
-      [ngIf]="
+    <div class="text-center">
+      <span i18n="address.error.loading-address-data"
+        >Error loading address data.</span
+      >
+      <br />
+      <i class="small">({{ error | httpErrorMsg }})</i>
+      <br />
+      @if (
         error.status === 413 || error.status === 405 || error.status === 504
-      "
-      [ngIfElse]="displayServerError"
-    >
-      <div class="text-center">
-        <span i18n="address.error.loading-address-data"
-          >Error loading address data.</span
-        >
-        <br />
+      ) {
         <ng-container i18n="Electrum server limit exceeded error">
           <i
             >There are too many transactions on this address, more than your
@@ -252,34 +251,17 @@
           <br /><br />
           Consider viewing this address on the official BCH Explorer website
           instead:
+          <br />
+          <a
+            href="https://bchexplorer.cash/address/{{ addressString }}"
+            target="_blank"
+            >https://bchexplorer.cash/address/{{ addressString }}</a
+          >
+          <!-- <br>
+          <a href="http://sometoraddress.onion/address/{{ addressString }}" target="_blank">http://sometoraddress.onion/address/{{ addressString }}</a> -->
         </ng-container>
-        <br />
-        <a
-          href="https://bchexplorer.cash/address/{{ addressString }}"
-          target="_blank"
-          >https://bchexplorer.cash/address/{{ addressString }}</a
-        >
-        <br />
-        <!--<a
-          href="http://sometoraddress.onion/address/{{
-            addressString
-          }}"
-          target="_blank"
-          >http://sometoraddress.onion/address/{{
-            addressString
-          }}</a
-        >
-        <br /><br />-->
-        <i class="small">({{ error | httpErrorMsg }})</i>
-      </div>
-    </ng-template>
-    <ng-template #displayServerError>
-      <app-http-error [error]="error">
-        <span i18n="address.error.loading-address-data"
-          >Error loading address data.</span
-        >
-      </app-http-error>
-    </ng-template>
+      }
+    </div>
   </ng-template>
 </div>
 
