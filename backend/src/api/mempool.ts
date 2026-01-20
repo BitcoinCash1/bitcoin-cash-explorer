@@ -475,7 +475,6 @@ class Mempool {
               removed.push(this.mempoolCache[txid]);
               this.mempoolCache[txid].ancestors = [];
               this.mempoolCache[txid].descendants = [];
-              this.mempoolCache[txid].bestDescendant = null;
             } else if (deletedTxsMap[txid]) {
               removed.push(deletedTxsMap[txid]);
             }

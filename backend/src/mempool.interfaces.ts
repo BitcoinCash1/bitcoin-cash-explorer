@@ -110,7 +110,6 @@ export interface TransactionExtended extends IEsploraApi.Transaction {
   firstSeen?: number;
   ancestors?: Ancestor[];
   descendants?: Ancestor[];
-  bestDescendant?: BestDescendant | null;
   position?: {
     block: number;
     size: number;
@@ -188,12 +187,6 @@ export interface TransactionSet {
   available?: boolean;
   modified?: boolean;
   modifiedNode?: HeapNode<string>;
-}
-
-interface BestDescendant {
-  txid: string;
-  size: number;
-  fee: number;
 }
 
 export interface TransactionStripped {

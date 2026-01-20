@@ -344,7 +344,6 @@ export const wsApiDocsData = [
       "cpfpDirty": false,
       "ancestors": [],
       "descendants": [],
-      "bestDescendant": null,
       "position": {
         "block": 0,
         "size": 191567
@@ -434,7 +433,6 @@ export const wsApiDocsData = [
       "cpfpDirty": false,
       "ancestors": [],
       "descendants": [],
-      "bestDescendant": null,
       "position": {
         "block": 0,
         "size": 191567
@@ -524,7 +522,6 @@ export const wsApiDocsData = [
       "cpfpDirty": false,
       "ancestors": [],
       "descendants": [],
-      "bestDescendant": null,
       "position": {
         "block": 0,
         "size": 191567
@@ -615,7 +612,6 @@ export const wsApiDocsData = [
           "cpfpDirty": false,
           "ancestors": [],
           "descendants": [],
-          "bestDescendant": null,
           "position": {
             "block": 0,
             "size": 134866.5
@@ -686,7 +682,6 @@ export const wsApiDocsData = [
           "cpfpDirty": false,
           "ancestors": [],
           "descendants": [],
-          "bestDescendant": null,
           "position": {
             "block": 0,
             "size": 134866.5
@@ -756,7 +751,6 @@ export const wsApiDocsData = [
           "inputs": [],
           "ancestors": [],
           "descendants": [],
-          "bestDescendant": null,
           "position": {
             "block": 0,
             "size": 134866.5
@@ -1014,7 +1008,6 @@ export const wsApiDocsData = [
         "inputs": [],
         "ancestors": [],
         "descendants": [],
-        "bestDescendant": null,
         "position": {
           "block": 0,
           "size": 125270
@@ -1089,7 +1082,6 @@ export const wsApiDocsData = [
         "cpfpDirty": false,
         "ancestors": [],
         "descendants": [],
-        "bestDescendant": null,
         "position": {
           "block": 0,
           "size": 125270
@@ -1164,7 +1156,6 @@ export const wsApiDocsData = [
         "cpfpDirty": false,
         "ancestors": [],
         "descendants": [],
-        "bestDescendant": null,
         "position": {
           "block": 0,
           "size": 125270
@@ -2048,7 +2039,6 @@ export const restApiDocsData = [
     "inputs": [],
     "ancestors": [],
     "descendants": [],
-    "bestDescendant": null,
     "position": {
       "block": 0,
       "size": 1827.5

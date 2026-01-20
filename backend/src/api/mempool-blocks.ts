@@ -412,7 +412,6 @@ class MempoolBlocks {
       if (txid in mempool) {
         mempool[txid].ancestors = [];
         mempool[txid].descendants = [];
-        mempool[txid].bestDescendant = null;
       }
     }
     for (const [txid, rate] of rates) {

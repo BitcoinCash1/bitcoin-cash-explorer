@@ -68,9 +68,7 @@
         "position": {
             "block": 0,
             "vsize": 13846
-        },
-        "bestDescendant": null,
-        "cpfpChecked": true
+        }
     },
     {
         "txid": "b7981a624e4261c11f1246314d41e74be56af82eb557bcd054a5e0f94c023668",
@@ -132,8 +130,6 @@
         "position": {
             "block": 7,
             "vsize": 22021095.5
-        },
-        "bestDescendant": null,
-        "cpfpChecked": true
+        }
     }
 ]

@@ -15,7 +15,6 @@ export interface Transaction {
   feePerSize?: number;
   ancestors?: Ancestor[];
   descendants?: Ancestor[];
-  bestDescendant?: BestDescendant | null;
   feeDelta?: number;
   deleteAfter?: number;
   _unblinded?: any;
