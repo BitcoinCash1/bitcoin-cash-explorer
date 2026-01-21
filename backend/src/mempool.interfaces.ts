@@ -219,7 +219,7 @@ export const TransactionFlags = {
   p2pk: 0b00000001_00000000n,
   p2ms: 0b00000010_00000000n,
   p2pkh: 0b00000100_00000000n,
-  p2sh: 0b00001000_00000000n,
+  p2sh: 0b00001000_00000000n, // In BCH this can be both p2sh and p2sh32. Since currently this flag is set if type is scripthash
   p2wpkh: 0b00010000_00000000n, // pay to witness (keyhash), not used by BCH
   p2wsh: 0b00100000_00000000n, // pay to witness (scripthash), not used by BCH
   p2tr: 0b01000000_00000000n, // pay to witness (taproot), BCH doesn't have tap root
@@ -242,7 +242,7 @@ export const TransactionFlags = {
   sighash_none: 0b00000010_00000000_00000000_00000000_00000000_00000000n,
   sighash_single: 0b00000100_00000000_00000000_00000000_00000000_00000000n,
   sighash_default: 0b00001000_00000000_00000000_00000000_00000000_00000000n,
-  sighash_acp: 0b00010000_00000000_00000000_00000000_00000000_00000000n,
+  sighash_acp: 0b00010000_00000000_00000000_00000000_00000000_00000000n, // Also known as "anyone can pay"
 };
 
 export interface BlockExtension {

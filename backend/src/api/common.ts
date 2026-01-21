@@ -414,6 +414,14 @@ export class Common {
         }
       }
 
+      // sighash flags
+      if (vin.scriptsig?.length) {
+        flags |= this.setLegacySighashFlags(
+          flags,
+          vin.scriptsig_asm || transactionUtils.convertScriptSigAsm(vin.scriptsig)
+        );
+      }
+
       if (vin.prevout?.scriptpubkey_address) {
         reusedInputAddresses[vin.prevout?.scriptpubkey_address] =
           (reusedInputAddresses[vin.prevout?.scriptpubkey_address] || 0) + 1;
