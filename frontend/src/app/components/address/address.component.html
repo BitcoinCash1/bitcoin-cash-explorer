@@ -47,16 +47,16 @@
                     *ngTemplateOutlet="pendingBalanceRow"
                   ></ng-container>
                 </tr>
-                @if (!address.electrum) {
-                  <tr>
-                    <ng-container *ngTemplateOutlet="utxoRow"></ng-container>
-                  </tr>
-                  <tr>
-                    <ng-container
-                      *ngTemplateOutlet="pendingUtxoRow"
-                    ></ng-container>
-                  </tr>
-                }
+                <tr>
+                  <ng-container
+                    *ngTemplateOutlet="transactionsRow"
+                  ></ng-container>
+                </tr>
+                <tr>
+                  <ng-container
+                    *ngTemplateOutlet="pendingTransactionsRow"
+                  ></ng-container>
+                </tr>
                 @if (!address.electrum) {
                   <tr>
                     <ng-container *ngTemplateOutlet="volumeRow"></ng-container>
@@ -81,15 +81,15 @@
                     *ngTemplateOutlet="pendingBalanceRow"
                   ></ng-container>
                 </tr>
-                @if (!address.electrum) {
-                  <tr>
-                    <ng-container *ngTemplateOutlet="utxoRow"></ng-container>
-                    <ng-container *ngTemplateOutlet="spacerCell"></ng-container>
-                    <ng-container
-                      *ngTemplateOutlet="pendingUtxoRow"
-                    ></ng-container>
-                  </tr>
-                }
+                <tr>
+                  <ng-container
+                    *ngTemplateOutlet="transactionsRow"
+                  ></ng-container>
+                  <ng-container *ngTemplateOutlet="spacerCell"></ng-container>
+                  <ng-container
+                    *ngTemplateOutlet="pendingTransactionsRow"
+                  ></ng-container>
+                </tr>
                 <tr>
                   @if (!address.electrum) {
                     <ng-container *ngTemplateOutlet="volumeRow"></ng-container>
@@ -307,15 +307,17 @@
   </td>
 </ng-template>
 
-<ng-template #utxoRow>
-  <td i18n="address.confirmed-utxos">Confirmed UTXOs</td>
-  <td class="wrap-cell">{{ chainStats.utxos }}</td>
+<ng-template #transactionsRow>
+  <td i18n="address.confirmed-transactions">Confirmed Transactions</td>
+  <td class="wrap-cell">{{ chainStats.tx_count }}</td>
 </ng-template>
 
-<ng-template #pendingUtxoRow>
-  <td i18n="address.pending-utxos" class="font-italic">Pending UTXOs</td>
+<ng-template #pendingTransactionsRow>
+  <td i18n="address.pending-transactions" class="font-italic">
+    Pending Transactions
+  </td>
   <td class="font-italic wrap-cell">
-    {{ mempoolStats.utxos > 0 ? "+" : "" }}{{ mempoolStats.utxos }}
+    {{ mempoolStats.tx_count }}
   </td>
 </ng-template>
 
