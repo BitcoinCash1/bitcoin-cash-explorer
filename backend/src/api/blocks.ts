@@ -628,15 +628,141 @@ class Blocks {
    * [INDEXING] Index transaction classification flags for Goggles
    */
   public async $classifyBlocks(): Promise<void> {
-    if (this.classifyingBlocks) {
-      return;
-    }
-    this.classifyingBlocks = true;
-
-    // classification requires an esplora backend
-    // We only support electrum, so always return here
     return;
-    // All code below is removed now.
+
+    // All code below is currently not used, since they say it requires esplora backend.
+    // It also seems to save this as a 'template', which is the blocks_templates DB table.
+    // Where the tranactions become some kind of json string and put in the template column.
+
+    // Old code starts here:
+    // if (this.classifyingBlocks) {
+    //   return;
+    // }
+    // this.classifyingBlocks = true;
+
+    // // classification requires an esplora backend
+    // if (!Common.gogglesIndexingEnabled() || config.MEMPOOL.BACKEND !== 'esplora') {
+    //   return;
+    // }
+
+    // const currentBlockHeight = this.getCurrentBlockHeight();
+
+    // const targetSummaryVersion: number = 1;
+    // const targetTemplateVersion: number = 1;
+
+    // const unclassifiedBlocksList = await BlocksSummariesRepository.$getSummariesBelowVersion(targetSummaryVersion);
+    // const unclassifiedTemplatesList = await BlocksSummariesRepository.$getTemplatesBelowVersion(targetTemplateVersion);
+
+    // // nothing to do
+    // if (!unclassifiedBlocksList?.length && !unclassifiedTemplatesList?.length) {
+    //   return;
+    // }
+
+    // let timer = Date.now();
+    // let indexedThisRun = 0;
+    // let indexedTotal = 0;
+
+    // const minHeight = Math.min(
+    //   unclassifiedBlocksList[unclassifiedBlocksList.length - 1]?.height ?? Infinity,
+    //   unclassifiedTemplatesList[unclassifiedTemplatesList.length - 1]?.height ?? Infinity,
+    // );
+    // const numToIndex = Math.max(
+    //   unclassifiedBlocksList.length,
+    //   unclassifiedTemplatesList.length,
+    // );
+
+    // const unclassifiedBlocks = {};
+    // const unclassifiedTemplates = {};
+    // for (const block of unclassifiedBlocksList) {
+    //   unclassifiedBlocks[block.height] = block.id;
+    // }
+    // for (const template of unclassifiedTemplatesList) {
+    //   unclassifiedTemplates[template.height] = template.id;
+    // }
+
+    // logger.debug(`Classifying blocks and templates from #${currentBlockHeight} to #${minHeight}`, logger.tags.goggles);
+
+    // for (let height = currentBlockHeight; height >= 0; height--) {
+    //   try {
+    //     let txs: MempoolTransactionExtended[] | null = null;
+    //     if (unclassifiedBlocks[height]) {
+    //       const blockHash = unclassifiedBlocks[height];
+    //       // fetch transactions
+    //       txs = (await bitcoinApi.$getTxsForBlock(blockHash, true)).map(tx => transactionUtils.extendMempoolTransaction(tx)) || [];
+    //       // add CPFP
+    //       const cpfpSummary = calculateGoodBlockCpfp(height, txs, []);
+    //       // classify
+    //       const { transactions: classifiedTxs } = this.summarizeBlockTransactions(blockHash, height, cpfpSummary.transactions);
+    //       await BlocksSummariesRepository.$saveTransactions(height, blockHash, classifiedTxs, 2);
+    //       if (unclassifiedBlocks[height].version < 2 && targetSummaryVersion === 2) {
+    //         const cpfpClusters = await CpfpRepository.$getClustersAt(height);
+    //         if (!cpfpRepository.compareClusters(cpfpClusters, cpfpSummary.clusters)) {
+    //           // CPFP clusters changed - update the compact_cpfp tables
+    //           await CpfpRepository.$deleteClustersAt(height);
+    //           await this.$saveCpfp(blockHash, height, cpfpSummary);
+    //         }
+    //       }
+    //       await Common.sleep$(250);
+    //     }
+    //     if (unclassifiedTemplates[height]) {
+    //       // classify template
+    //       const blockHash = unclassifiedTemplates[height];
+    //       const template = await BlocksSummariesRepository.$getTemplate(blockHash);
+    //       const alreadyClassified = template?.transactions?.reduce((classified, tx) => (classified || tx.flags > 0), false);
+    //       let classifiedTemplate = template?.transactions || [];
+    //       if (!alreadyClassified) {
+    //         const templateTxs: (TransactionExtended | TransactionClassified)[] = [];
+    //         const blockTxMap: { [txid: string]: TransactionExtended } = {};
+    //         for (const tx of (txs || [])) {
+    //           blockTxMap[tx.txid] = tx;
+    //         }
+    //         for (const templateTx of (template?.transactions || [])) {
+    //           let tx: TransactionExtended | null = blockTxMap[templateTx.txid];
+    //           if (!tx) {
+    //             try {
+    //               tx = await transactionUtils.$getTransactionExtended(templateTx.txid, false, true, false);
+    //             } catch (e) {
+    //               // transaction probably not found
+    //             }
+    //           }
+    //           templateTxs.push(tx || templateTx);
+    //         }
+    //         const cpfpSummary = calculateGoodBlockCpfp(height, templateTxs?.filter(tx => tx['effectiveFeePerVsize'] != null) as MempoolTransactionExtended[], []);
+    //         // classify
+    //         const { transactions: classifiedTxs } = this.summarizeBlockTransactions(blockHash, height, cpfpSummary.transactions);
+    //         const classifiedTxMap: { [txid: string]: TransactionClassified } = {};
+    //         for (const tx of classifiedTxs) {
+    //           classifiedTxMap[tx.txid] = tx;
+    //         }
+    //         classifiedTemplate = classifiedTemplate.map(tx => {
+    //           if (classifiedTxMap[tx.txid]) {
+    //             tx.flags = classifiedTxMap[tx.txid].flags || 0;
+    //           }
+    //           return tx;
+    //         });
+    //       }
+    //       await BlocksSummariesRepository.$saveTemplate({ height, template: { id: blockHash, transactions: classifiedTemplate }, version: 1 });
+    //       await Common.sleep$(250);
+    //     }
+    //   } catch (e) {
+    //     logger.warn(`Failed to classify template or block summary at ${height}`, logger.tags.goggles);
+    //   }
+
+    //   // timing & logging
+    //   if (unclassifiedBlocks[height] || unclassifiedTemplates[height]) {
+    //     indexedThisRun++;
+    //     indexedTotal++;
+    //   }
+    //   const elapsedSeconds = (Date.now() - timer) / 1000;
+    //   if (elapsedSeconds > 5) {
+    //     const perSecond = indexedThisRun / elapsedSeconds;
+    //     logger.debug(`Classified #${height}: ${indexedTotal} / ${numToIndex} blocks (${perSecond.toFixed(1)}/s)`);
+    //     timer = Date.now();
+    //     indexedThisRun = 0;
+    //   }
+    // }
+
+    // this.classifyingBlocks = false;
   }
 
   /**
