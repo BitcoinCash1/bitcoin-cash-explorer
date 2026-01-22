@@ -388,9 +388,11 @@ export class Common {
       flags |= TransactionFlags.v1;
     } else if (tx.version === 2) {
       flags |= TransactionFlags.v2;
-    } else if (tx.version === 3) {
-      flags |= TransactionFlags.v3;
     }
+    // Currently not yet used in BCH
+    //  else if (tx.version === 3) {
+    //   flags |= TransactionFlags.v3;
+    // }
     const reusedInputAddresses: { [address: string]: number } = {};
     const reusedOutputAddresses: { [address: string]: number } = {};
     const inValues = {};
@@ -428,8 +430,6 @@ export class Common {
       }
       inValues[vin.prevout?.value || Math.random()] = (inValues[vin.prevout?.value || Math.random()] || 0) + 1;
     }
-    // BCH has never RBF
-    flags |= TransactionFlags.no_rbf;
     let hasFakePubkey = false;
     for (const vout of tx.vout) {
       // Only switch between BCH supported types

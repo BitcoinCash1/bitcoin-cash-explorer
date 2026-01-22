@@ -747,10 +747,8 @@ export function getTransactionFlags(
     inValues[vin.prevout?.value || Math.random()] =
       (inValues[vin.prevout?.value || Math.random()] || 0) + 1;
   }
-  flags |= TransactionFlags.no_rbf;
+
   let hasFakePubkey = false;
-  let P2WSHCount = 0;
-  const olgaSize = 0;
   for (const vout of tx.vout) {
     switch (vout.scriptpubkey_type) {
       case 'p2pk':
@@ -787,7 +785,6 @@ export function getTransactionFlags(
       reusedOutputAddresses[vout.scriptpubkey_address] =
         (reusedOutputAddresses[vout.scriptpubkey_address] || 0) + 1;
     }
-    P2WSHCount = 0;
     outValues[vout.value || Math.random()] =
       (outValues[vout.value || Math.random()] || 0) + 1;
   }

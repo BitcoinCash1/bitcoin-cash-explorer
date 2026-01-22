@@ -209,11 +209,9 @@ export type MempoolDeltaChange = [string, number, number];
 // binary flags for transaction classification
 export const TransactionFlags = {
   // features
-  rbf: 0b00000001n, // Not used by BCH
-  no_rbf: 0b00000010n, // Not used by BCH
   v1: 0b00000100n,
   v2: 0b00001000n,
-  v3: 0b00010000n,
+  // v3: 0b00010000n, // Not used by BCH at this moment in time
   nonstandard: 0b00100000n,
   // address types
   p2pk: 0b00000001_00000000n,
@@ -223,10 +221,7 @@ export const TransactionFlags = {
   p2wpkh: 0b00010000_00000000n, // pay to witness (keyhash), not used by BCH
   p2wsh: 0b00100000_00000000n, // pay to witness (scripthash), not used by BCH
   p2tr: 0b01000000_00000000n, // pay to witness (taproot), BCH doesn't have tap root
-  // behavior
-  cpfp_parent: 0b00000001_00000000_00000000n, // Not used by BCH
-  cpfp_child: 0b00000010_00000000_00000000n, // Not used by BCH
-  replacement: 0b00000100_00000000_00000000n, // Not used by BCH
+  // behavior, BCH doesn't have behaviors (used to be cpfp_parent, cpfp_child and replacement)
   // data
   op_return: 0b00000001_00000000_00000000_00000000n,
   fake_pubkey: 0b00000010_00000000_00000000_00000000n,

@@ -22,8 +22,6 @@ export interface ActiveFilter {
 // binary flags for transaction classification
 export const TransactionFlags = {
   // features
-  rbf: 0b00000001n,
-  no_rbf: 0b00000010n,
   v1: 0b00000100n,
   v2: 0b00001000n,
   v3: 0b00010000n,
