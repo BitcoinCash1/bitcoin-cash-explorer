@@ -58,6 +58,8 @@ class BitcoinApi implements AbstractBitcoinApi {
 
     // TODO: Why not use verbose '2' here instead of just 'true', which should return the fee?
     // That would also mean we no longer would need calculateFeeFromInputs().
+    // TODO, TODO: We could actually leverage the patterns argument here as well, to get even more output, see also ticket: https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/-/issues/1
+    // Like getting the byteCodePattern, etc. Something the core RPC doesn't have.
     return this.bitcoindClient
       .getRawTransaction(txId, true)
       .then((transaction: IBitcoinApi.Transaction) => {
