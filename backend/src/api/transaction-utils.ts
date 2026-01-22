@@ -116,7 +116,6 @@ class TransactionUtils {
     const feePerBytes = (transaction.fee || 0) / transaction.size;
     const transactionExtended: TransactionExtended = Object.assign(
       {
-        size: transaction.size,
         feePerSize: feePerBytes,
       },
       transaction
