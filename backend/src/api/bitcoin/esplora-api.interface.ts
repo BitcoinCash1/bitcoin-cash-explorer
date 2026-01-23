@@ -28,10 +28,12 @@ export namespace IEsploraApi {
     scriptsig_asm: string; // in asm
     scriptsig_byte_code_pattern: string; // in hex
     scriptsig_byte_code_data: string[]; // script data in hex
-    // TODO: Add scriptpubkey as well
-    // TODO: Add redeemscript as well
-    // TODO: Add tokenData (CashToken) as well
+    scriptpubkey: string;
+    scriptpubkey_asm: string;
+    scriptpubkey_type: string;
+    scriptpubkey_address?: string;
     inner_redeemscript_asm: string;
+    // TODO: Add tokenData (CashToken) as well
     sequence: any;
     prevout: Vout | null;
     // Custom

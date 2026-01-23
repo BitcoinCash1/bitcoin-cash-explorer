@@ -326,7 +326,7 @@ class BitcoinApi implements AbstractBitcoinApi {
         value: Math.round(vout.value * 100000000),
         scriptpubkey: vout.scriptPubKey.hex,
         scriptpubkey_address: vout.scriptPubKey && vout.scriptPubKey.addresses ? vout.scriptPubKey.addresses[0] : '',
-        scriptpubkey_asm: vout.scriptPubKey.asm ? transactionUtils.convertScriptSigAsm(vout.scriptPubKey.hex) : '',
+        scriptpubkey_asm: vout.scriptPubKey.asm ? transactionUtils.convertScriptSigAsm(vout.scriptPubKey.hex) : '', // TODO: Why would you call convertScriptSigAsm, if you already have the asm?
         scriptpubkey_type: this.translateScriptPubKeyType(vout.scriptPubKey.type),
       };
     });
@@ -342,12 +342,23 @@ class BitcoinApi implements AbstractBitcoinApi {
           : vin.coinbase
             ? transactionUtils.convertScriptSigAsm(vin.coinbase)
             : '',
-        scriptsig_byte_code_pattern: vin.scriptSig?.byteCodePattern?.pattern || '',
-        scriptsig_byte_code_data: vin.scriptSig?.byteCodePattern?.data || [],
+        scriptsig_byte_code_pattern: '',
+        scriptsig_byte_code_data: [],
+        scriptpubkey: '',
+        scriptpubkey_address: '',
+        scriptpubkey_asm: '',
+        scriptpubkey_type: '',
+        inner_redeemscript_asm: '',
+        //scriptsig_byte_code_pattern: vin.scriptSig?.byteCodePattern?.pattern || '',
+        // scriptsig_byte_code_data: vin.scriptSig?.byteCodePattern?.data || [],
+        // scriptpubkey: vin.scriptPubKey && vin.scriptPubKey.hex || '',
+        // scriptpubkey_address: vin.scriptPubKey && vin.scriptPubKey.address ? vin.scriptPubKey.address : '',
+        // scriptpubkey_asm: vin.scriptPubKey.asm ? transactionUtils.convertScriptSigAsm(vin.scriptPubKey.hex) : '', // TODO: Why would you call convertScriptSigAsm, if you already have the asm?
+        // scriptpubkey_type: this.translateScriptPubKeyType(vin.scriptPubKey.type),
         sequence: vin.sequence,
         txid: vin.txid || '',
         vout: vin.vout || 0,
-        inner_redeemscript_asm: '',
+        // inner_redeemscript_asm: vin.scriptSig?.redeemScript ? vin.scriptSig.redeemScript.asm : '',
       };
     });
 
