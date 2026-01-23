@@ -22,9 +22,15 @@ export namespace IEsploraApi {
   export interface Vin {
     txid: string;
     vout: number;
+    value: number | null;
     is_coinbase: boolean;
-    scriptsig: string;
-    scriptsig_asm: string;
+    scriptsig: string; // in hex
+    scriptsig_asm: string; // in asm
+    scriptsig_byte_code_pattern: string; // in hex
+    scriptsig_byte_code_data: string[]; // script data in hex
+    // TODO: Add scriptpubkey as well
+    // TODO: Add redeemscript as well
+    // TODO: Add tokenData (CashToken) as well
     inner_redeemscript_asm: string;
     sequence: any;
     prevout: Vout | null;

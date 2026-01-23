@@ -87,16 +87,51 @@ export namespace IBitcoinApi {
   export interface Vin {
     txid?: string; //  (string) The transaction id
     vout?: number; //  (string)
+    value?: number; //  (numeric) The value in BCH
     scriptSig?: {
       //  (json object) The script
       asm: string; //  (string) asm
       hex: string; //  (string) hex
-      // Also add byteCodePattern and redeemScript?
+      byteCodePattern?: {
+        //  (json object)
+        pattern: string; // (string) the pattern hex
+        data: string[]; //  (array) the data hex
+      };
+      redeemScript?: {
+        //  (json object)
+        asm: string; //  (string) the asm
+        hex: string; //  (string) the hex
+        byteCodePattern?: {
+          //  (json object)
+          pattern: string; // (string) the pattern hex
+          data: string[]; //  (array) the data hex
+          p2shType: string; // (string) the p2sh type (either p2sh20 or p2sh32)
+        };
+      };
+    };
+    scriptPubKey: {
+      //  (json object)
+      asm: string; //  (string) the asm
+      hex: string; //  (string) the hex
+      type: string; //  (string) The type, eg. nonstandard, pubkey, pubkeyhash, scripthash, multisig, nulldata
+      address?: string; //  (string) bitcoin address
+      byteCodePattern?: {
+        //  (json object)
+        pattern: string; // (string) the pattern hex
+        data: string[]; //  (array) the data hex
+      };
+    };
+    tokenData?: {
+      //  (json object)
+      category: string; // token id
+      amount: number; // fungible amount
+      nft: {
+        capability: string; // one of "none", "mutable", "minting"
+        commitment: string; // NFT commitment
+      };
     };
     sequence: number; //  (numeric) The script sequence number
-    coinbase?: string;
-    // TODO: Add scriptPubKey to Vin as well, apparently that is possible in BCH
-    // TODO: add tokenData to Vin as well.
+    coinbase?: string; // (string) only present if coinbase transaction in hex
   }
 
   export interface Vout {
@@ -107,11 +142,23 @@ export namespace IBitcoinApi {
       asm: string; //  (string) the asm
       hex: string; //  (string) the hex
       reqSigs?: number; //  (numeric) The required sigs
-      type: string; //  (string) The type, eg 'pubkeyhash'
-      address?: string; //  (string) bitcoin address
+      type: string; //  (string) The type, eg. 'pubkeyhash'
       addresses?: string[]; //  (string) bitcoin addresses
+      byteCodePattern?: {
+        //  (json object)
+        pattern: string; // (string) the pattern hex
+        data: string[]; //  (array) the data hex
+      };
     };
-    // TODO: add tokenData to Vout as well.
+    tokenData?: {
+      //  (json object)
+      category: string; // token id
+      amount: number; // fungible amount
+      nft: {
+        capability: string; // one of "none", "mutable", "minting"
+        commitment: string; // NFT commitment
+      };
+    };
   }
 
   export interface AddressInformation {

@@ -75,16 +75,6 @@ export class Common {
     return arr;
   }
 
-  static isDERSig(w: string): boolean {
-    // heuristic to detect probable DER signatures
-    return (
-      w.length >= 18 &&
-      w.startsWith('30') && // minimum DER signature length is 8 bytes + sighash flag (see https://mempool.space/testnet/tx/c6c232a36395fa338da458b86ff1327395a9afc28c5d2daa4273e410089fd433)
-      ['01', '02', '03', '81', '82', '83'].includes(w.slice(-2)) && // signature must end with a valid sighash flag
-      w.length === 2 * parseInt(w.slice(2, 4), 16) + 6 // second byte encodes the combined length of the R and S components
-    );
-  }
-
   /**
    * Validates most standardness rules
    *
@@ -333,39 +323,6 @@ export class Common {
     return false;
   }
 
-  static setLegacySighashFlags(flags: bigint, scriptsig_asm: string): bigint {
-    for (const item of scriptsig_asm?.split(' ') ?? []) {
-      // skip op_codes
-      if (item.startsWith('OP_')) {
-        continue;
-      }
-      // check pushed data
-      if (this.isDERSig(item)) {
-        flags |= this.setSighashFlags(flags, item);
-      }
-    }
-    return flags;
-  }
-
-  static setSighashFlags(flags: bigint, signature: string): bigint {
-    switch (signature.slice(-2)) {
-      case '01':
-        return flags | TransactionFlags.sighash_all;
-      case '02':
-        return flags | TransactionFlags.sighash_none;
-      case '03':
-        return flags | TransactionFlags.sighash_single;
-      case '81':
-        return flags | TransactionFlags.sighash_all | TransactionFlags.sighash_acp;
-      case '82':
-        return flags | TransactionFlags.sighash_none | TransactionFlags.sighash_acp;
-      case '83':
-        return flags | TransactionFlags.sighash_single | TransactionFlags.sighash_acp;
-      default:
-        return flags | TransactionFlags.sighash_default; // taproot only
-    }
-  }
-
   static isBurnKey(pubkey: string): boolean {
     return [
       '022222222222222222222222222222222222222222222222222222222222222222',
@@ -417,12 +374,13 @@ export class Common {
       }
 
       // sighash flags
-      if (vin.scriptsig?.length) {
-        flags |= this.setLegacySighashFlags(
-          flags,
-          vin.scriptsig_asm || transactionUtils.convertScriptSigAsm(vin.scriptsig)
-        );
-      }
+      // TODO: use vin.scriptsig_data
+      // if (vin.scriptsig?.length) {
+      //   flags |= this.setSighashFlags(
+      //     flags,
+      //     vin.scriptsig_asm || transactionUtils.convertScriptSigAsm(vin.scriptsig)
+      //   );
+      // }
 
       if (vin.prevout?.scriptpubkey_address) {
         reusedInputAddresses[vin.prevout?.scriptpubkey_address] =
@@ -501,6 +459,25 @@ export class Common {
     }
 
     return Number(flags);
+  }
+
+  static setSighashFlags(flags: bigint, signature: string): bigint {
+    switch (signature.slice(-2)) {
+      case '01':
+        return flags | TransactionFlags.sighash_all;
+      case '02':
+        return flags | TransactionFlags.sighash_none;
+      case '03':
+        return flags | TransactionFlags.sighash_single;
+      case '81':
+        return flags | TransactionFlags.sighash_all | TransactionFlags.sighash_acp;
+      case '82':
+        return flags | TransactionFlags.sighash_none | TransactionFlags.sighash_acp;
+      case '83':
+        return flags | TransactionFlags.sighash_single | TransactionFlags.sighash_acp;
+      default:
+        return flags | TransactionFlags.sighash_default; // taproot only
+    }
   }
 
   static classifyTransaction(tx: TransactionExtended, height?: number): TransactionClassified {

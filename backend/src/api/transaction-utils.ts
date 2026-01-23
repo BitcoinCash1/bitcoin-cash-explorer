@@ -25,8 +25,16 @@ class TransactionUtils {
     };
   }
 
-  // Wrapper for $getTransactionExtended with an automatic retry direct to Core if the first API request fails.
-  // Propagates any error from the retry request.
+  /**
+   * Wrapper for $getTransactionExtended with an automatic retry direct to Core if the first API request fails.
+   * Propagates any error from the retry request.
+   * @param txid
+   * @param addPrevouts
+   * @param lazyPrevouts
+   * @param forceCore
+   * @param addMempoolData
+   * @returns Promise<TransactionExtended>
+   */
   public async $getTransactionExtendedRetry(
     txid: string,
     addPrevouts = false,
@@ -53,6 +61,8 @@ class TransactionUtils {
    * @param addPrevouts
    * @param lazyPrevouts
    * @param forceCore - See https://github.com/mempool/mempool/issues/2904
+   * @param addMempoolData
+   * @returns Promise<TransactionExtended>
    */
   public async $getTransactionExtended(
     txId: string,
@@ -75,6 +85,14 @@ class TransactionUtils {
     }
   }
 
+  /**
+   *
+   * @param txId
+   * @param addPrevouts
+   * @param lazyPrevouts
+   * @param forceCore
+   * @returns Promise<MempoolTransactionExtended>
+   */
   public async $getMempoolTransactionExtended(
     txId: string,
     addPrevouts = false,
@@ -113,10 +131,10 @@ class TransactionUtils {
       // @ts-ignore
       return transaction;
     }
-    const feePerBytes = (transaction.fee || 0) / transaction.size;
+    const feePerSize = (transaction.fee || 0) / transaction.size;
     const transactionExtended: TransactionExtended = Object.assign(
       {
-        feePerSize: feePerBytes,
+        feePerSize: feePerSize,
       },
       transaction
     );
@@ -131,15 +149,15 @@ class TransactionUtils {
     const sigops = transaction.sigops ? transaction.sigops : this.countSigops(transaction);
     // https://gitlab.com/bitcoin-cash-node/bitcoin-cash-node/-/blob/master/src/policy/policy.cpp#L182-185
     const adjustedSize = Math.max(transaction.size, sigops * 5); // adjusted vsize = std::max(nSize, nSigChecks * bytes_per_sigcheck)
-    const feePerBytes = (transaction.fee || 0) / transaction.size;
+    const feePerSize = (transaction.fee || 0) / transaction.size;
     const adjustedFeePerSize = (transaction.fee || 0) / adjustedSize;
     const transactionExtended: MempoolTransactionExtended = Object.assign(transaction, {
       order: this.txidToOrdering(transaction.txid),
-      size: size,
-      adjustedSize: adjustedSize,
+      size,
+      adjustedSize,
       sigops,
-      feePerSize: feePerBytes,
-      adjustedFeePerSize: adjustedFeePerSize,
+      feePerSize,
+      adjustedFeePerSize,
     });
     if (!transactionExtended?.status?.confirmed && !transactionExtended.firstSeen) {
       transactionExtended.firstSeen = Math.round(Date.now() / 1000);

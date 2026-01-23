@@ -90,10 +90,12 @@ class Blocks {
    * Return the list of transaction for a block
    * @param blockHash
    * @param blockHeight
+   * @param blockTime
    * @param onlyCoinbase - Set to true if you only need the coinbase transaction
    * @param txIds - optional ordered list of transaction ids if already known
-   * @param quiet - don't print non-essential logs
-   * @param addMempoolData - calculate sigops etc
+   * @param quiet - don't print non-essential logs (default false)
+   * @param addMempoolData - calculate sigops etc (default false)
+   * @param stale - Set to true if the block is stale (default false)
    * @returns Promise<TransactionExtended[]>
    */
   private async $getTransactionsExtended(

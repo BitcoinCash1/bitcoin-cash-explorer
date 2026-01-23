@@ -325,12 +325,7 @@ class BitcoinApi implements AbstractBitcoinApi {
       return {
         value: Math.round(vout.value * 100000000),
         scriptpubkey: vout.scriptPubKey.hex,
-        scriptpubkey_address:
-          vout.scriptPubKey && vout.scriptPubKey.address
-            ? vout.scriptPubKey.address
-            : vout.scriptPubKey.addresses
-              ? vout.scriptPubKey.addresses[0]
-              : '',
+        scriptpubkey_address: vout.scriptPubKey && vout.scriptPubKey.addresses ? vout.scriptPubKey.addresses[0] : '',
         scriptpubkey_asm: vout.scriptPubKey.asm ? transactionUtils.convertScriptSigAsm(vout.scriptPubKey.hex) : '',
         scriptpubkey_type: this.translateScriptPubKeyType(vout.scriptPubKey.type),
       };
@@ -338,6 +333,7 @@ class BitcoinApi implements AbstractBitcoinApi {
 
     esploraTransaction.vin = transaction.vin.map((vin) => {
       return {
+        value: vin.value ? Math.round(vin.value * 100000000) : null,
         is_coinbase: !!vin.coinbase,
         prevout: null,
         scriptsig: (vin.scriptSig && vin.scriptSig.hex) || vin.coinbase || '',
@@ -346,6 +342,8 @@ class BitcoinApi implements AbstractBitcoinApi {
           : vin.coinbase
             ? transactionUtils.convertScriptSigAsm(vin.coinbase)
             : '',
+        scriptsig_byte_code_pattern: vin.scriptSig?.byteCodePattern?.pattern || '',
+        scriptsig_byte_code_data: vin.scriptSig?.byteCodePattern?.data || [],
         sequence: vin.sequence,
         txid: vin.txid || '',
         vout: vin.vout || 0,
