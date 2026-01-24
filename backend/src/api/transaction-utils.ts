@@ -212,8 +212,10 @@ class TransactionUtils {
       value: v.value,
     }));
 
-    const { vin: _, vout: __, ...rest } = transaction;
-    return { ...rest, vin, vout } as IPublicApi.Transaction;
+    const result: IPublicApi.Transaction = { ...transaction };
+    result.vin = vin;
+    result.vout = vout;
+    return result;
   }
 
   // Method to strip verbosity from arrays of verbose transactions
