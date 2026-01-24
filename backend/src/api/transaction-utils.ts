@@ -192,7 +192,15 @@ class TransactionUtils {
       scriptsig_asm: v.scriptsig_asm,
       inner_redeemscript_asm: v.inner_redeemscript_asm,
       sequence: v.sequence,
-      prevout: v.prevout,
+      prevout: v.prevout
+        ? {
+            scriptpubkey: v.prevout.scriptpubkey,
+            scriptpubkey_asm: v.prevout.scriptpubkey_asm,
+            scriptpubkey_type: v.prevout.scriptpubkey_type,
+            scriptpubkey_address: v.prevout.scriptpubkey_address,
+            value: v.prevout.value,
+          }
+        : null,
       lazy: v.lazy,
     }));
 
