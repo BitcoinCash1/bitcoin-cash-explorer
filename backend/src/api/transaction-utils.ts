@@ -148,12 +148,10 @@ class TransactionUtils {
       return transaction;
     }
     const feePerSize = (transaction.fee || 0) / transaction.size;
-    const transactionExtended: VerboseTransactionExtended = Object.assign(
-      {
-        feePerSize: feePerSize,
-      },
-      transaction
-    );
+    const transactionExtended: VerboseTransactionExtended = {
+      feePerSize,
+      ...transaction,
+    };
     if (!transaction?.status?.confirmed && !transactionExtended.firstSeen) {
       transactionExtended.firstSeen = Math.round(Date.now() / 1000);
     }
@@ -167,14 +165,15 @@ class TransactionUtils {
     const adjustedSize = Math.max(transaction.size, sigops * 5); // adjusted vsize = std::max(nSize, nSigChecks * bytes_per_sigcheck)
     const feePerSize = (transaction.fee || 0) / transaction.size;
     const adjustedFeePerSize = (transaction.fee || 0) / adjustedSize;
-    const transactionExtended: VerboseMempoolTransactionExtended = Object.assign(transaction, {
+    const transactionExtended: VerboseMempoolTransactionExtended = {
+      ...transaction,
       order: this.txidToOrdering(transaction.txid),
       size,
       adjustedSize,
       sigops,
       feePerSize,
       adjustedFeePerSize,
-    });
+    };
     if (!transactionExtended?.status?.confirmed && !transactionExtended.firstSeen) {
       transactionExtended.firstSeen = Math.round(Date.now() / 1000);
     }

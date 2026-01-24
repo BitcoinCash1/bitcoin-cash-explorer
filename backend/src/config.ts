@@ -303,7 +303,7 @@ class Config implements IConfig {
     // @ts-ignore
     return objects.reduce((prev, next) => {
       Object.keys(prev).forEach((key) => {
-        next[key] = { ...next[key], ...prev[key] };
+        Object.assign(next[key], prev[key]);
       });
       return next;
     });

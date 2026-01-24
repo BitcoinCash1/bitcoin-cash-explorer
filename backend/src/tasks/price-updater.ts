@@ -153,7 +153,7 @@ class PriceUpdater {
    */
   public async $initializeLatestPriceWithDb(): Promise<void> {
     this.latestPrices = await PricesRepository.$getLatestConversionRates();
-    this.latestGoodPrices = JSON.parse(JSON.stringify(this.latestPrices));
+    this.latestGoodPrices = structuredClone(this.latestPrices);
   }
 
   public async $run(): Promise<void> {
