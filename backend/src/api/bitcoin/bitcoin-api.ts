@@ -60,8 +60,9 @@ class BitcoinApi implements AbstractBitcoinApi {
     // That would also mean we no longer would need calculateFeeFromInputs().
     // TODO, TODO: We could actually leverage the patterns argument here as well, to get even more output, see also ticket: https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/-/issues/1
     // Like getting the byteCodePattern, etc. Something the core RPC doesn't have.
+    // This is also using the convertTransaction with requires verbosity 2 + patterns, ignore blockhash argument (use an empty string)
     return this.bitcoindClient
-      .getRawTransaction(txId, true)
+      .getRawTransaction(txId, 2, '', true)
       .then((transaction: IBitcoinApi.Transaction) => {
         if (skipConversion) {
           transaction.vout.forEach((vout) => {
@@ -128,7 +129,8 @@ class BitcoinApi implements AbstractBitcoinApi {
   }
 
   async $getTxsForBlock(hash: string, fallbackToCore = false): Promise<IEsploraApi.Transaction[]> {
-    const verboseBlock: IBitcoinApi.VerboseBlock = await this.bitcoindClient.getBlock(hash, 2);
+    // This is also using the convertTransaction with requires verbosity 2 + patterns
+    const verboseBlock: IBitcoinApi.VerboseBlock = await this.bitcoindClient.getBlock(hash, 2, true);
     const transactions: IEsploraApi.Transaction[] = [];
     for (const tx of verboseBlock.tx) {
       const converted = await this.$convertTransaction(tx, true, false, verboseBlock.confirmations === -1);
@@ -342,23 +344,16 @@ class BitcoinApi implements AbstractBitcoinApi {
           : vin.coinbase
             ? transactionUtils.convertScriptSigAsm(vin.coinbase)
             : '',
-        scriptsig_byte_code_pattern: '',
-        scriptsig_byte_code_data: [],
-        scriptpubkey: '',
-        scriptpubkey_address: '',
-        scriptpubkey_asm: '',
-        scriptpubkey_type: '',
-        inner_redeemscript_asm: '',
-        //scriptsig_byte_code_pattern: vin.scriptSig?.byteCodePattern?.pattern || '',
-        // scriptsig_byte_code_data: vin.scriptSig?.byteCodePattern?.data || [],
-        // scriptpubkey: vin.scriptPubKey && vin.scriptPubKey.hex || '',
-        // scriptpubkey_address: vin.scriptPubKey && vin.scriptPubKey.address ? vin.scriptPubKey.address : '',
-        // scriptpubkey_asm: vin.scriptPubKey.asm ? transactionUtils.convertScriptSigAsm(vin.scriptPubKey.hex) : '', // TODO: Why would you call convertScriptSigAsm, if you already have the asm?
-        // scriptpubkey_type: this.translateScriptPubKeyType(vin.scriptPubKey.type),
+        scriptsig_byte_code_pattern: vin.scriptSig?.byteCodePattern?.pattern || '',
+        scriptsig_byte_code_data: vin.scriptSig?.byteCodePattern?.data || [],
+        scriptpubkey: (vin.scriptPubKey && vin.scriptPubKey.hex) || '',
+        scriptpubkey_address: vin.scriptPubKey && vin.scriptPubKey.address ? vin.scriptPubKey.address : '',
+        scriptpubkey_asm: vin.scriptPubKey?.asm ? transactionUtils.convertScriptSigAsm(vin.scriptPubKey.hex) : '', // TODO: Why would you call convertScriptSigAsm, if you already have the asm?
+        scriptpubkey_type: vin.scriptPubKey ? this.translateScriptPubKeyType(vin.scriptPubKey.type) : '',
         sequence: vin.sequence,
         txid: vin.txid || '',
         vout: vin.vout || 0,
-        // inner_redeemscript_asm: vin.scriptSig?.redeemScript ? vin.scriptSig.redeemScript.asm : '',
+        inner_redeemscript_asm: vin.scriptSig?.redeemScript ? vin.scriptSig.redeemScript.asm : '',
       };
     });
 
@@ -445,7 +440,8 @@ class BitcoinApi implements AbstractBitcoinApi {
 
   protected $returnCoinbaseTransaction(): Promise<IEsploraApi.Transaction> {
     return this.bitcoindClient.getBlockHash(0).then((hash: string) =>
-      this.bitcoindClient.getBlock(hash, 2).then((block: IBitcoinApi.Block) => {
+      // This is also using the convertTransaction with requires verbosity 2 + patterns
+      this.bitcoindClient.getBlock(hash, 2, true).then((block: IBitcoinApi.Block) => {
         return this.$convertTransaction(
           Object.assign(block.tx[0], {
             confirmations: blocks.getCurrentBlockHeight() + 1,
