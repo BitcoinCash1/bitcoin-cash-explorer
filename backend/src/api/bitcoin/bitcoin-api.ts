@@ -1,6 +1,6 @@
 import { AbstractBitcoinApi, HealthCheckHost } from './bitcoin-api-abstract-factory';
 import { IBitcoinApi, SubmitPackageResult, TestMempoolAcceptResult } from './bitcoin-api.interface';
-import { IEsploraApi } from './esplora-api.interface';
+import { IPublicApi } from './public-api.interface';
 import blocks from '../blocks';
 import mempool from '../mempool';
 import { TransactionExtended } from '../../mempool.interfaces';
@@ -15,7 +15,7 @@ class BitcoinApi implements AbstractBitcoinApi {
     this.bitcoindClient = bitcoinClient;
   }
 
-  static convertBlock(block: IBitcoinApi.Block): IEsploraApi.Block {
+  static convertBlock(block: IBitcoinApi.Block): IPublicApi.Block {
     const returnBlock = {
       id: block.hash,
       height: block.height,
@@ -49,7 +49,7 @@ class BitcoinApi implements AbstractBitcoinApi {
     skipConversion = false,
     addPrevout = false,
     lazyPrevouts = false
-  ): Promise<IEsploraApi.Transaction> {
+  ): Promise<IPublicApi.Transaction> {
     // If the transaction is in the mempool we already converted and fetched the fee. Only prevouts are missing
     const txInMempool = mempool.getMempool()[txId];
     if (txInMempool && addPrevout) {
@@ -80,8 +80,8 @@ class BitcoinApi implements AbstractBitcoinApi {
       });
   }
 
-  async $getRawTransactions(txids: string[]): Promise<IEsploraApi.Transaction[]> {
-    const txs: IEsploraApi.Transaction[] = [];
+  async $getRawTransactions(txids: string[]): Promise<IPublicApi.Transaction[]> {
+    const txs: IPublicApi.Transaction[] = [];
     for (const txid of txids) {
       try {
         const tx = await this.$getRawTransaction(txid, false, true);
@@ -93,11 +93,11 @@ class BitcoinApi implements AbstractBitcoinApi {
     return txs;
   }
 
-  $getMempoolTransactions(txids: string[]): Promise<IEsploraApi.Transaction[]> {
+  $getMempoolTransactions(txids: string[]): Promise<IPublicApi.Transaction[]> {
     throw new Error('Method getMempoolTransactions not supported by the Bitcoin RPC API.');
   }
 
-  $getAllMempoolTransactions(lastTxid?: string, max_txs?: number): Promise<IEsploraApi.Transaction[]> {
+  $getAllMempoolTransactions(lastTxid?: string, max_txs?: number): Promise<IPublicApi.Transaction[]> {
     throw new Error('Method getAllMempoolTransactions not supported by the Bitcoin RPC API.');
   }
 
@@ -112,7 +112,7 @@ class BitcoinApi implements AbstractBitcoinApi {
     });
   }
 
-  $getTransactionMerkleProof(txId: string): Promise<IEsploraApi.MerkleProof> {
+  $getTransactionMerkleProof(txId: string): Promise<IPublicApi.MerkleProof> {
     throw new Error('Method getTransactionMerkleProof not supported by the Bitcoin RPC API.');
   }
 
@@ -128,10 +128,10 @@ class BitcoinApi implements AbstractBitcoinApi {
     return this.bitcoindClient.getBlock(hash, 1).then((rpcBlock: IBitcoinApi.Block) => rpcBlock.tx);
   }
 
-  async $getTxsForBlock(hash: string, fallbackToCore = false): Promise<IEsploraApi.Transaction[]> {
+  async $getTxsForBlock(hash: string, fallbackToCore = false): Promise<IPublicApi.Transaction[]> {
     // This is also using the convertTransaction with requires verbosity 2 + patterns
     const verboseBlock: IBitcoinApi.VerboseBlock = await this.bitcoindClient.getBlock(hash, 2, true);
-    const transactions: IEsploraApi.Transaction[] = [];
+    const transactions: IPublicApi.Transaction[] = [];
     for (const tx of verboseBlock.tx) {
       const converted = await this.$convertTransaction(tx, true, false, verboseBlock.confirmations === -1);
       converted.status = {
@@ -157,7 +157,7 @@ class BitcoinApi implements AbstractBitcoinApi {
     return this.bitcoindClient.getBlockHeader(hash, false);
   }
 
-  async $getBlock(hash: string): Promise<IEsploraApi.Block> {
+  async $getBlock(hash: string): Promise<IPublicApi.Block> {
     const foundBlock = blocks.getBlocks().find((block) => block.id === hash);
     if (foundBlock) {
       return foundBlock;
@@ -166,39 +166,39 @@ class BitcoinApi implements AbstractBitcoinApi {
     return this.bitcoindClient.getBlock(hash).then((block: IBitcoinApi.Block) => BitcoinApi.convertBlock(block));
   }
 
-  $getAddress(address: string): Promise<IEsploraApi.Address> {
+  $getAddress(address: string): Promise<IPublicApi.Address> {
     throw new Error('Method getAddress not supported by the Bitcoin RPC API.');
   }
 
-  $getAddressTransactions(address: string, lastSeenTxId: string): Promise<IEsploraApi.Transaction[]> {
+  $getAddressTransactions(address: string, lastSeenTxId: string): Promise<IPublicApi.Transaction[]> {
     throw new Error('Method getAddressTransactions not supported by the Bitcoin RPC API.');
   }
 
-  $getAddressMempoolTransactions(address: string): Promise<IEsploraApi.Transaction[]> {
+  $getAddressMempoolTransactions(address: string): Promise<IPublicApi.Transaction[]> {
     throw new Error('Method getAddressMempoolTransactions not supported by the Bitcoin RPC API.');
   }
 
-  $getAddressUtxos(address: string): Promise<IEsploraApi.UTXO[]> {
+  $getAddressUtxos(address: string): Promise<IPublicApi.UTXO[]> {
     throw new Error('Method getAddressUtxos not supported by the Bitcoin RPC API.');
   }
 
-  $getScriptHash(scripthash: string): Promise<IEsploraApi.ScriptHash> {
+  $getScriptHash(scripthash: string): Promise<IPublicApi.ScriptHash> {
     throw new Error('Method getScriptHash not supported by the Bitcoin RPC API.');
   }
 
-  $getScriptHashTransactions(scripthash: string, lastSeenTxId: string): Promise<IEsploraApi.Transaction[]> {
+  $getScriptHashTransactions(scripthash: string, lastSeenTxId: string): Promise<IPublicApi.Transaction[]> {
     throw new Error('Method getScriptHashTransactions not supported by the Bitcoin RPC API.');
   }
 
-  $getScriptHashUtxos(scripthash: string): Promise<IEsploraApi.UTXO[]> {
+  $getScriptHashUtxos(scripthash: string): Promise<IPublicApi.UTXO[]> {
     throw new Error('Method getScriptHashUtxos not supported by the Bitcoin RPC API.');
   }
 
-  $getScriptHashMempoolTransactions(scripthash: string): Promise<IEsploraApi.Transaction[]> {
+  $getScriptHashMempoolTransactions(scripthash: string): Promise<IPublicApi.Transaction[]> {
     throw new Error('Method getScriptHashMempoolTransactions not supported by the Bitcoin RPC API.');
   }
 
-  $getRawMempool(): Promise<IEsploraApi.Transaction['txid'][]> {
+  $getRawMempool(): Promise<IPublicApi.Transaction['txid'][]> {
     return this.bitcoindClient.getRawMemPool();
   }
 
@@ -242,7 +242,7 @@ class BitcoinApi implements AbstractBitcoinApi {
     return this.bitcoindClient.submitPackage(rawTransactions, maxfeerate ?? undefined, maxburnamount ?? undefined);
   }
 
-  async $getOutspend(txId: string, vout: number): Promise<IEsploraApi.Outspend> {
+  async $getOutspend(txId: string, vout: number): Promise<IPublicApi.Outspend> {
     const txOut = await this.bitcoindClient.getTxOut(txId, vout, false);
     return {
       spent: txOut === null,
@@ -252,8 +252,8 @@ class BitcoinApi implements AbstractBitcoinApi {
     };
   }
 
-  async $getOutspends(txId: string): Promise<IEsploraApi.Outspend[]> {
-    const outSpends: IEsploraApi.Outspend[] = [];
+  async $getOutspends(txId: string): Promise<IPublicApi.Outspend[]> {
+    const outSpends: IPublicApi.Outspend[] = [];
     const tx = await this.$getRawTransaction(txId, true, false);
     for (let i = 0; i < tx.vout.length; i++) {
       if (tx.status && tx.status.block_height === 0) {
@@ -270,8 +270,8 @@ class BitcoinApi implements AbstractBitcoinApi {
     return outSpends;
   }
 
-  async $getBatchedOutspends(txId: string[]): Promise<IEsploraApi.Outspend[][]> {
-    const outspends: IEsploraApi.Outspend[][] = [];
+  async $getBatchedOutspends(txId: string[]): Promise<IPublicApi.Outspend[][]> {
+    const outspends: IPublicApi.Outspend[][] = [];
     for (const tx of txId) {
       const outspend = await this.$getOutspends(tx);
       outspends.push(outspend);
@@ -279,12 +279,12 @@ class BitcoinApi implements AbstractBitcoinApi {
     return outspends;
   }
 
-  async $getBatchedOutspendsInternal(txId: string[]): Promise<IEsploraApi.Outspend[][]> {
+  async $getBatchedOutspendsInternal(txId: string[]): Promise<IPublicApi.Outspend[][]> {
     return this.$getBatchedOutspends(txId);
   }
 
-  async $getOutSpendsByOutpoint(outpoints: { txid: string; vout: number }[]): Promise<IEsploraApi.Outspend[]> {
-    const outspends: IEsploraApi.Outspend[] = [];
+  async $getOutSpendsByOutpoint(outpoints: { txid: string; vout: number }[]): Promise<IPublicApi.Outspend[]> {
+    const outspends: IPublicApi.Outspend[] = [];
     for (const outpoint of outpoints) {
       const outspend = await this.$getOutspend(outpoint.txid, outpoint.vout);
       outspends.push(outspend);
@@ -292,12 +292,12 @@ class BitcoinApi implements AbstractBitcoinApi {
     return outspends;
   }
 
-  async $getCoinbaseTx(blockhash: string): Promise<IEsploraApi.Transaction> {
+  async $getCoinbaseTx(blockhash: string): Promise<IPublicApi.Transaction> {
     const txids = await this.$getTxIdsForBlock(blockhash);
     return this.$getRawTransaction(txids[0]);
   }
 
-  async $getAddressTransactionSummary(address: string): Promise<IEsploraApi.AddressTxSummary[]> {
+  async $getAddressTransactionSummary(address: string): Promise<IPublicApi.AddressTxSummary[]> {
     throw new Error('Method getAddressTransactionSummary not supported by the Bitcoin RPC API.');
   }
 
@@ -311,8 +311,8 @@ class BitcoinApi implements AbstractBitcoinApi {
     addPrevout: boolean,
     lazyPrevouts = false,
     allowMissingPrevouts = false
-  ): Promise<IEsploraApi.Transaction> {
-    let esploraTransaction: IEsploraApi.Transaction = {
+  ): Promise<IPublicApi.Transaction> {
+    let esploraTransaction: IPublicApi.Transaction = {
       txid: transaction.txid,
       version: transaction.version,
       locktime: transaction.locktime,
@@ -403,7 +403,7 @@ class BitcoinApi implements AbstractBitcoinApi {
     }
   }
 
-  private async $appendMempoolFeeData(transaction: IEsploraApi.Transaction): Promise<IEsploraApi.Transaction> {
+  private async $appendMempoolFeeData(transaction: IPublicApi.Transaction): Promise<IPublicApi.Transaction> {
     if (transaction.fee) {
       return transaction;
     }
@@ -442,7 +442,7 @@ class BitcoinApi implements AbstractBitcoinApi {
     return transaction;
   }
 
-  protected $returnCoinbaseTransaction(): Promise<IEsploraApi.Transaction> {
+  protected $returnCoinbaseTransaction(): Promise<IPublicApi.Transaction> {
     return this.bitcoindClient.getBlockHash(0).then((hash: string) =>
       // This is also using the convertTransaction with requires verbosity 2 + patterns
       this.bitcoindClient.getBlock(hash, 2, true).then((block: IBitcoinApi.Block) => {
@@ -466,10 +466,10 @@ class BitcoinApi implements AbstractBitcoinApi {
   }
 
   private async $calculateFeeFromInputs(
-    transaction: IEsploraApi.Transaction,
+    transaction: IPublicApi.Transaction,
     addPrevout: boolean,
     lazyPrevouts: boolean
-  ): Promise<IEsploraApi.Transaction> {
+  ): Promise<IPublicApi.Transaction> {
     if (transaction.vin[0].is_coinbase) {
       transaction.fee = 0;
       return transaction;

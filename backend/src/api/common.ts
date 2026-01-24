@@ -14,7 +14,7 @@ import transactionUtils from './transaction-utils';
 import { isPoint } from '../utils/secp256k1';
 import logger from '../logger';
 import { getVarIntLength, opcodes, parseMultisigScript } from '../utils/bitcoin-script';
-import { IEsploraApi } from './bitcoin/esplora-api.interface';
+import { IPublicApi } from './bitcoin/public-api.interface';
 
 // Bitcoin Cash Node default policy settings
 const MAX_STANDARD_TX_SIZE = 32_000_000; // Min. tx size
@@ -250,7 +250,7 @@ export class Common {
     signet: 211_000,
     '': 863_500,
   };
-  static isNonStandardAnchor(vin: IEsploraApi.Vin, height?: number): boolean {
+  static isNonStandardAnchor(vin: IPublicApi.Vin, height?: number): boolean {
     if (
       height != null &&
       this.ANCHOR_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK] &&

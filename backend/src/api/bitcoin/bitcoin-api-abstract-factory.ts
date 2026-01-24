@@ -1,46 +1,46 @@
 import { SubmitPackageResult, TestMempoolAcceptResult } from './bitcoin-api.interface';
-import { IEsploraApi } from './esplora-api.interface';
+import { IPublicApi } from './public-api.interface';
 
 export interface AbstractBitcoinApi {
-  $getRawMempool(): Promise<IEsploraApi.Transaction['txid'][]>;
+  $getRawMempool(): Promise<IPublicApi.Transaction['txid'][]>;
   $getRawTransaction(
     txId: string,
     skipConversion?: boolean,
     addPrevout?: boolean,
     lazyPrevouts?: boolean
-  ): Promise<IEsploraApi.Transaction>;
-  $getRawTransactions(txids: string[]): Promise<IEsploraApi.Transaction[]>;
-  $getMempoolTransactions(txids: string[]): Promise<IEsploraApi.Transaction[]>;
+  ): Promise<IPublicApi.Transaction>;
+  $getRawTransactions(txids: string[]): Promise<IPublicApi.Transaction[]>;
+  $getMempoolTransactions(txids: string[]): Promise<IPublicApi.Transaction[]>;
   $getAllMempoolTransactions(lastTxid?: string, max_txs?: number);
   $getTransactionHex(txId: string): Promise<string>;
-  $getTransactionMerkleProof(txId: string): Promise<IEsploraApi.MerkleProof>;
+  $getTransactionMerkleProof(txId: string): Promise<IPublicApi.MerkleProof>;
   $getBlockHeightTip(): Promise<number>;
   $getBlockHashTip(): Promise<string>;
   $getTxIdsForBlock(hash: string, fallbackToCore?: boolean): Promise<string[]>;
-  $getTxsForBlock(hash: string, fallbackToCore?: boolean): Promise<IEsploraApi.Transaction[]>;
+  $getTxsForBlock(hash: string, fallbackToCore?: boolean): Promise<IPublicApi.Transaction[]>;
   $getBlockHash(height: number): Promise<string>;
   $getBlockHeader(hash: string): Promise<string>;
-  $getBlock(hash: string): Promise<IEsploraApi.Block>;
+  $getBlock(hash: string): Promise<IPublicApi.Block>;
   $getRawBlock(hash: string): Promise<Buffer>;
-  $getAddress(address: string): Promise<IEsploraApi.Address>;
-  $getAddressTransactions(address: string, lastSeenTxId: string): Promise<IEsploraApi.Transaction[]>;
-  $getAddressMempoolTransactions(address: string): Promise<IEsploraApi.Transaction[]>;
-  $getAddressUtxos(address: string): Promise<IEsploraApi.UTXO[]>;
+  $getAddress(address: string): Promise<IPublicApi.Address>;
+  $getAddressTransactions(address: string, lastSeenTxId: string): Promise<IPublicApi.Transaction[]>;
+  $getAddressMempoolTransactions(address: string): Promise<IPublicApi.Transaction[]>;
+  $getAddressUtxos(address: string): Promise<IPublicApi.UTXO[]>;
   $getAddressPrefix(prefix: string): string[];
-  $getScriptHash(scripthash: string): Promise<IEsploraApi.ScriptHash>;
-  $getScriptHashTransactions(address: string, lastSeenTxId: string): Promise<IEsploraApi.Transaction[]>;
-  $getScriptHashUtxos(scripthash: string): Promise<IEsploraApi.UTXO[]>;
-  $getScriptHashMempoolTransactions(scripthash: string): Promise<IEsploraApi.Transaction[]>;
+  $getScriptHash(scripthash: string): Promise<IPublicApi.ScriptHash>;
+  $getScriptHashTransactions(address: string, lastSeenTxId: string): Promise<IPublicApi.Transaction[]>;
+  $getScriptHashUtxos(scripthash: string): Promise<IPublicApi.UTXO[]>;
+  $getScriptHashMempoolTransactions(scripthash: string): Promise<IPublicApi.Transaction[]>;
   $sendRawTransaction(rawTransaction: string): Promise<string>;
   $testMempoolAccept(rawTransactions: string[], maxfeerate?: number): Promise<TestMempoolAcceptResult[]>;
   $submitPackage(rawTransactions: string[], maxfeerate?: number, maxburnamount?: number): Promise<SubmitPackageResult>;
-  $getOutspend(txId: string, vout: number): Promise<IEsploraApi.Outspend>;
-  $getOutspends(txId: string): Promise<IEsploraApi.Outspend[]>;
-  $getBatchedOutspends(txId: string[]): Promise<IEsploraApi.Outspend[][]>;
-  $getBatchedOutspendsInternal(txId: string[]): Promise<IEsploraApi.Outspend[][]>;
-  $getOutSpendsByOutpoint(outpoints: { txid: string; vout: number }[]): Promise<IEsploraApi.Outspend[]>;
-  $getCoinbaseTx(blockhash: string): Promise<IEsploraApi.Transaction>;
-  $getAddressTransactionSummary(address: string): Promise<IEsploraApi.AddressTxSummary[]>;
+  $getOutspend(txId: string, vout: number): Promise<IPublicApi.Outspend>;
+  $getOutspends(txId: string): Promise<IPublicApi.Outspend[]>;
+  $getBatchedOutspends(txId: string[]): Promise<IPublicApi.Outspend[][]>;
+  $getBatchedOutspendsInternal(txId: string[]): Promise<IPublicApi.Outspend[][]>;
+  $getOutSpendsByOutpoint(outpoints: { txid: string; vout: number }[]): Promise<IPublicApi.Outspend[]>;
+  $getCoinbaseTx(blockhash: string): Promise<IPublicApi.Transaction>;
+  $getAddressTransactionSummary(address: string): Promise<IPublicApi.AddressTxSummary[]>;
 
   startHealthChecks(): void;
   getHealthStatus(): HealthCheckHost[];

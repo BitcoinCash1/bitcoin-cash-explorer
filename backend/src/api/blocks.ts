@@ -19,7 +19,7 @@ import diskCache from './disk-cache';
 import transactionUtils from './transaction-utils';
 import bitcoinClient from './bitcoin/bitcoin-client';
 import { IBitcoinApi } from './bitcoin/bitcoin-api.interface';
-import { IEsploraApi } from './bitcoin/esplora-api.interface';
+import { IPublicApi } from './bitcoin/public-api.interface';
 import poolsRepository from '../repositories/PoolsRepository';
 import blocksRepository from '../repositories/BlocksRepository';
 import loadingIndicators from './loading-indicators';
@@ -258,7 +258,7 @@ class Blocks {
    * @returns BlockExtended
    */
   private async $getBlockExtended(
-    block: IEsploraApi.Block,
+    block: IPublicApi.Block,
     transactions: TransactionExtended[]
   ): Promise<BlockExtended> {
     const coinbaseTx = transactionUtils.stripCoinbaseTransaction(transactions[0]);
@@ -386,7 +386,7 @@ class Blocks {
   }
 
   private async $getBlockStats(
-    block: IEsploraApi.Block,
+    block: IPublicApi.Block,
     transactions: TransactionExtended[]
   ): Promise<IBitcoinApi.BlockStats> {
     if (!block.stale) {
@@ -887,7 +887,7 @@ class Blocks {
             loadingIndicators.setProgress('block-indexing', progress, false);
           }
           const blockHash = await bitcoinApi.$getBlockHash(blockHeight);
-          const block: IEsploraApi.Block = await bitcoinApi.$getBlock(blockHash);
+          const block: IPublicApi.Block = await bitcoinApi.$getBlock(blockHash);
           const transactions = await this.$getTransactionsExtended(
             blockHash,
             block.height,
@@ -960,7 +960,7 @@ class Blocks {
         const heightDiff = blockHeightTip % 2016;
         const blockHash = await bitcoinApi.$getBlockHash(blockHeightTip - heightDiff);
         this.updateTimerProgress(timer, 'got block hash for initial difficulty adjustment');
-        const block: IEsploraApi.Block = await bitcoinApi.$getBlock(blockHash);
+        const block: IPublicApi.Block = await bitcoinApi.$getBlock(blockHash);
         this.updateTimerProgress(timer, 'got block for initial difficulty adjustment');
         this.lastDifficultyAdjustmentTime = block.timestamp;
         this.currentBits = block.bits;
@@ -968,7 +968,7 @@ class Blocks {
         if (blockHeightTip >= 2016) {
           const previousPeriodBlockHash = await bitcoinApi.$getBlockHash(blockHeightTip - heightDiff - 2016);
           this.updateTimerProgress(timer, 'got previous block hash for initial difficulty adjustment');
-          const previousPeriodBlock: IEsploraApi.Block = await bitcoinApi.$getBlock(previousPeriodBlockHash);
+          const previousPeriodBlock: IPublicApi.Block = await bitcoinApi.$getBlock(previousPeriodBlockHash);
           this.updateTimerProgress(timer, 'got previous block for initial difficulty adjustment');
           this.previousDifficultyRetarget = calcBitsDifference(previousPeriodBlock.bits, block.bits);
           logger.debug(`Initial difficulty adjustment data set.`);
@@ -1261,7 +1261,7 @@ class Blocks {
   /**
    * Index a block if it's missing from the database. Returns the block after indexing
    */
-  public async $indexBlock(hash: string, block?: IEsploraApi.Block, skipDb = false): Promise<BlockExtended> {
+  public async $indexBlock(hash: string, block?: IPublicApi.Block, skipDb = false): Promise<BlockExtended> {
     if (Common.indexingEnabled() && !skipDb) {
       const dbBlock = await blocksRepository.$getBlockByHash(hash);
       if (dbBlock !== null) {
@@ -1299,7 +1299,7 @@ class Blocks {
   /**
    * Get one block by its hash
    */
-  public async $getBlock(hash: string, skipMemoryCache = false): Promise<BlockExtended | IEsploraApi.Block> {
+  public async $getBlock(hash: string, skipMemoryCache = false): Promise<BlockExtended | IPublicApi.Block> {
     // Check the memory cache
     if (!skipMemoryCache) {
       const blockByHash = this.getBlocks().find((b) => b.id === hash);

@@ -1,6 +1,6 @@
 import config from '../../config';
 import logger from '../../logger';
-import { IEsploraApi } from '../bitcoin/esplora-api.interface';
+import { IPublicApi } from '../bitcoin/public-api.interface';
 import bitcoinApi from '../bitcoin/bitcoin-api-factory';
 // import axios from 'axios';
 import { TransactionExtended } from '../../mempool.interfaces';
@@ -16,7 +16,7 @@ interface WalletAddress {
     spent_txo_sum: number;
     tx_count: number;
   };
-  transactions: IEsploraApi.AddressTxSummary[];
+  transactions: IPublicApi.AddressTxSummary[];
   lastSync: number;
 }
 
@@ -269,8 +269,8 @@ class WalletApi {
   }
 
   // check a new block for transactions that affect wallet address balances, and add relevant transactions to wallets
-  processBlock(block: IEsploraApi.Block, blockTxs: TransactionExtended[]): Record<string, IEsploraApi.Transaction[]> {
-    const walletTransactions: Record<string, IEsploraApi.Transaction[]> = {};
+  processBlock(block: IPublicApi.Block, blockTxs: TransactionExtended[]): Record<string, IPublicApi.Transaction[]> {
+    const walletTransactions: Record<string, IPublicApi.Transaction[]> = {};
     for (const walletKey of Object.keys(this.wallets)) {
       const wallet = this.wallets[walletKey];
       walletTransactions[walletKey] = [];
@@ -304,7 +304,7 @@ class WalletApi {
           wallet.addresses[address].stats.funded_txo_sum += funded[address] || 0;
           wallet.addresses[address].stats.spent_txo_sum += spent[address] || 0;
           // add tx to summary
-          const txSummary: IEsploraApi.AddressTxSummary = {
+          const txSummary: IPublicApi.AddressTxSummary = {
             txid: tx.txid,
             value: (funded[address] ?? 0) - (spent[address] ?? 0),
             height: block.height,

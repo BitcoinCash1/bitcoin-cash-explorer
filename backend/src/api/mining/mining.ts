@@ -12,7 +12,7 @@ import config from '../../config';
 import BlocksAuditsRepository from '../../repositories/BlocksAuditsRepository';
 import PricesRepository from '../../repositories/PricesRepository';
 import bitcoinApi from '../bitcoin/bitcoin-api-factory';
-import { IEsploraApi } from '../bitcoin/esplora-api.interface';
+import { IPublicApi } from '../bitcoin/public-api.interface';
 import database from '../../database';
 
 interface DifficultyBlock {
@@ -767,7 +767,7 @@ class Mining {
     difficulty: number;
   }> {
     if (this.genesisData == null) {
-      const genesisBlock: IEsploraApi.Block = await bitcoinApi.$getBlock(await bitcoinApi.$getBlockHash(0));
+      const genesisBlock: IPublicApi.Block = await bitcoinApi.$getBlock(await bitcoinApi.$getBlockHash(0));
       this.genesisData = {
         timestamp: genesisBlock.timestamp,
         bits: genesisBlock.bits,

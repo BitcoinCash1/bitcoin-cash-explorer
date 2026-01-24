@@ -9,7 +9,7 @@ import bitcoinApi from './bitcoin-api-factory';
 import { Common } from '../common';
 import backendInfo from '../backend-info';
 import transactionUtils from '../transaction-utils';
-import { IEsploraApi } from './esplora-api.interface';
+import { IPublicApi } from './public-api.interface';
 import loadingIndicators from '../loading-indicators';
 import { TransactionExtended } from '../../mempool.interfaces';
 import logger from '../../logger';
@@ -147,7 +147,7 @@ class BitcoinRoutes {
     res.json(times);
   }
 
-  private async $getBatchedOutspends(req: Request, res: Response): Promise<IEsploraApi.Outspend[][] | void> {
+  private async $getBatchedOutspends(req: Request, res: Response): Promise<IPublicApi.Outspend[][] | void> {
     const txids_csv = req.query.txids;
     if (!txids_csv || typeof txids_csv !== 'string') {
       handleError(req, res, 500, 'Invalid txids format');
@@ -205,7 +205,7 @@ class BitcoinRoutes {
       return;
     }
     try {
-      const transaction: IEsploraApi.Transaction = await bitcoinApi.$getRawTransaction(req.params.txId, true);
+      const transaction: IPublicApi.Transaction = await bitcoinApi.$getRawTransaction(req.params.txId, true);
       res.setHeader('content-type', 'text/plain');
       res.send(transaction.hex);
     } catch (e) {
@@ -515,7 +515,7 @@ class BitcoinRoutes {
 
   private async getLegacyBlocks(req: Request, res: Response) {
     try {
-      const returnBlocks: IEsploraApi.Block[] = [];
+      const returnBlocks: IPublicApi.Block[] = [];
       const tip = blocks.getCurrentBlockHeight();
       const fromHeight = Math.min(parseInt(req.params.height, 10) || tip, tip);
 
@@ -1120,7 +1120,7 @@ class BitcoinRoutes {
 
       for (let i = 0; i < outpoints.length; i++) {
         const outpoint = outpoints[i];
-        let prevout: IEsploraApi.Vout | null = null;
+        let prevout: IPublicApi.Vout | null = null;
         let unconfirmed: boolean | null = null;
 
         const mempoolTx = memPool[outpoint.txid];

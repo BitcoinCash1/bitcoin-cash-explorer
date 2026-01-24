@@ -1,4 +1,4 @@
-export namespace IEsploraApi {
+export namespace IPublicApi {
   export interface Transaction {
     txid: string;
     version: number;

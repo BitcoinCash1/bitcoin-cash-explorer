@@ -1,4 +1,4 @@
-import { IEsploraApi } from './api/bitcoin/esplora-api.interface';
+import { IPublicApi } from './api/bitcoin/public-api.interface';
 import { OrphanedBlock } from './api/chain-tips';
 import { HeapNode } from './utils/pairing-heap';
 
@@ -105,7 +105,7 @@ interface VoutStrippedToScriptPubkey {
   value: number;
 }
 
-export interface TransactionExtended extends IEsploraApi.Transaction {
+export interface TransactionExtended extends IPublicApi.Transaction {
   feePerSize: number;
   firstSeen?: number;
   ancestors?: Ancestor[];
@@ -281,7 +281,7 @@ export interface BlockExtension {
  * Note: Everything that is added in here will be automatically returned through
  * /api/v1/block and /api/v1/blocks APIs
  */
-export interface BlockExtended extends IEsploraApi.Block {
+export interface BlockExtended extends IPublicApi.Block {
   extras: BlockExtension;
   canonical?: string;
   indexVersion?: number;

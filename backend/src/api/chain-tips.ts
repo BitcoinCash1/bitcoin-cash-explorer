@@ -4,7 +4,7 @@ import { BlockExtended } from '../mempool.interfaces';
 import BlocksSummariesRepository from '../repositories/BlocksSummariesRepository';
 import bitcoinApi, { bitcoinCoreApi } from './bitcoin/bitcoin-api-factory';
 import bitcoinClient from './bitcoin/bitcoin-client';
-import { IEsploraApi } from './bitcoin/esplora-api.interface';
+import { IPublicApi } from './bitcoin/public-api.interface';
 import blocks from './blocks';
 import { Common } from './common';
 
@@ -36,7 +36,7 @@ class ChainTips {
   private indexingOrphanedBlocks = false;
   private indexingQueue: {
     blockhash?: string;
-    block?: IEsploraApi.Block;
+    block?: IPublicApi.Block;
     tip: OrphanedBlock;
   }[] = [];
 

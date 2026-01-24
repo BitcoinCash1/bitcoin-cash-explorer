@@ -1,5 +1,5 @@
 import { TransactionExtended, MempoolTransactionExtended, TransactionMinerInfo } from '../mempool.interfaces';
-import { IEsploraApi } from './bitcoin/esplora-api.interface';
+import { IPublicApi } from './bitcoin/public-api.interface';
 import bitcoinApi, { bitcoinCoreApi } from './bitcoin/bitcoin-api-factory';
 import * as bitcoinjs from 'bitcoinjs-lib';
 import logger from '../logger';
@@ -71,7 +71,7 @@ class TransactionUtils {
     forceCore = false,
     addMempoolData = false
   ): Promise<TransactionExtended> {
-    let transaction: IEsploraApi.Transaction;
+    let transaction: IPublicApi.Transaction;
     if (forceCore === true) {
       transaction = await bitcoinCoreApi.$getRawTransaction(txId, false, addPrevouts, lazyPrevouts);
     } else {
@@ -125,7 +125,7 @@ class TransactionUtils {
       .map((r) => (r as PromiseFulfilledResult<MempoolTransactionExtended>).value);
   }
 
-  public extendTransaction(transaction: IEsploraApi.Transaction): TransactionExtended {
+  public extendTransaction(transaction: IPublicApi.Transaction): TransactionExtended {
     // @ts-ignore
     if (transaction.vsize) {
       // @ts-ignore
@@ -144,7 +144,7 @@ class TransactionUtils {
     return transactionExtended;
   }
 
-  public extendMempoolTransaction(transaction: IEsploraApi.Transaction): MempoolTransactionExtended {
+  public extendMempoolTransaction(transaction: IPublicApi.Transaction): MempoolTransactionExtended {
     const size = Math.ceil(transaction.size);
     const sigops = transaction.sigops ? transaction.sigops : this.countSigops(transaction);
     // https://gitlab.com/bitcoin-cash-node/bitcoin-cash-node/-/blob/master/src/policy/policy.cpp#L182-185
@@ -205,7 +205,7 @@ class TransactionUtils {
     return sigops * 4;
   }
 
-  public countSigops(transaction: IEsploraApi.Transaction): number {
+  public countSigops(transaction: IPublicApi.Transaction): number {
     let sigops = 0;
 
     for (const input of transaction.vin) {
@@ -275,7 +275,7 @@ class TransactionUtils {
     return parseInt(txid.substr(62, 2) + txid.substr(60, 2) + txid.substr(58, 2) + txid.substr(56, 2), 16);
   }
 
-  public addInnerScriptsToVin(vin: IEsploraApi.Vin): void {
+  public addInnerScriptsToVin(vin: IPublicApi.Vin): void {
     if (!vin.prevout) {
       return;
     }
