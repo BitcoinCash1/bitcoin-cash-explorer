@@ -11,7 +11,7 @@ import backendInfo from '../backend-info';
 import transactionUtils from '../transaction-utils';
 import { IPublicApi } from './public-api.interface';
 import loadingIndicators from '../loading-indicators';
-import { VerboseTransactionExtended } from '../../mempool.interfaces';
+import { TransactionExtended } from '../../mempool.interfaces';
 import logger from '../../logger';
 import blocks from '../blocks';
 import bitcoinClient from './bitcoin-client';
@@ -181,7 +181,8 @@ class BitcoinRoutes {
     }
     try {
       const transaction = await transactionUtils.$getTransactionExtended(req.params.txId, true, false, false, true);
-      res.json(transaction);
+      const nonVerboseTransaction = transactionUtils.stripVerbosityTransaction(transaction);
+      res.json(nonVerboseTransaction);
     } catch (e) {
       let statusCode = 500;
       if (
@@ -291,7 +292,8 @@ class BitcoinRoutes {
     }
     try {
       const transaction = await transactionUtils.$getTransactionExtended(req.params.txId, true);
-      res.json(transaction.status);
+      const nonVerboseTransaction = transactionUtils.stripVerbosityTransaction(transaction);
+      res.json(nonVerboseTransaction.status);
     } catch (e) {
       let statusCode = 500;
       if (e instanceof Error && e.message && e.message.indexOf('No such mempool or blockchain transaction') > -1) {
@@ -556,14 +558,15 @@ class BitcoinRoutes {
       loadingIndicators.setProgress('blocktxs-' + req.params.hash, 0);
 
       const txIds = await bitcoinApi.$getTxIdsForBlock(req.params.hash);
-      const transactions: VerboseTransactionExtended[] = [];
+      const transactions: TransactionExtended[] = [];
       const startingIndex = Math.max(0, parseInt(req.params.index || '0', 10));
 
       const endIndex = Math.min(startingIndex + 10, txIds.length);
       for (let i = startingIndex; i < endIndex; i++) {
         try {
           const transaction = await transactionUtils.$getTransactionExtended(txIds[i], true, true);
-          transactions.push(transaction);
+          const nonVerboseTransaction = transactionUtils.stripVerbosityTransaction(transaction);
+          transactions.push(nonVerboseTransaction);
           loadingIndicators.setProgress(
             'blocktxs-' + req.params.hash,
             ((i - startingIndex + 1) / (endIndex - startingIndex)) * 100
