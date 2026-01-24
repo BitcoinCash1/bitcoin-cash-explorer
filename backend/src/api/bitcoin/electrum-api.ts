@@ -108,7 +108,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     }
   }
 
-  async $getAddressTransactions(address: string, lastSeenTxId: string): Promise<IPublicApi.Transaction[]> {
+  async $getAddressTransactions(address: string, lastSeenTxId: string): Promise<IPublicApi.VerboseTransaction[]> {
     const addressInfo = await this.bitcoindClient.validateAddress(address);
     if (!addressInfo || !addressInfo.isvalid) {
       return [];
@@ -117,7 +117,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     try {
       loadingIndicators.setProgress('address-' + address, 0);
 
-      const transactions: IPublicApi.Transaction[] = [];
+      const transactions: IPublicApi.VerboseTransaction[] = [];
       const history = await this.$getScriptHashHistory(addressInfo.scriptPubKey);
       history.sort((a, b) => (b.height || 9999999) - (a.height || 9999999));
 
@@ -143,7 +143,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     }
   }
 
-  async $getAddressMempoolTransactions(address: string): Promise<IPublicApi.Transaction[]> {
+  async $getAddressMempoolTransactions(address: string): Promise<IPublicApi.VerboseTransaction[]> {
     const addressInfo = await this.bitcoindClient.validateAddress(address);
     if (!addressInfo || !addressInfo.isvalid) {
       return [];
@@ -153,7 +153,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     try {
       loadingIndicators.setProgress('address-' + address, 0);
 
-      const transactions: IPublicApi.Transaction[] = [];
+      const transactions: IPublicApi.VerboseTransaction[] = [];
       let utxos = memoryCache.get<IElectrumApi.ScriptHashMempool[]>('Scripthash_getMempool', scripthash);
       if (!utxos) {
         utxos = await this.$getScriptHashMempool(scripthash);
@@ -223,11 +223,14 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     return this.$getScriptHashUtxos(scripthash);
   }
 
-  async $getScriptHashTransactions(scripthash: string, lastSeenTxId?: string): Promise<IPublicApi.Transaction[]> {
+  async $getScriptHashTransactions(
+    scripthash: string,
+    lastSeenTxId?: string
+  ): Promise<IPublicApi.VerboseTransaction[]> {
     try {
       loadingIndicators.setProgress('address-' + scripthash, 0);
 
-      const transactions: IPublicApi.Transaction[] = [];
+      const transactions: IPublicApi.VerboseTransaction[] = [];
       let history = memoryCache.get<IElectrumApi.ScriptHashHistory[]>('Scripthash_getHistory', scripthash);
       if (!history) {
         history = await this.electrumClient.blockchainScripthash_getHistory(scripthash);
@@ -294,11 +297,11 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     return result;
   }
 
-  async $getScriptHashMempoolTransactions(scripthash: string): Promise<IPublicApi.Transaction[]> {
+  async $getScriptHashMempoolTransactions(scripthash: string): Promise<IPublicApi.VerboseTransaction[]> {
     try {
       loadingIndicators.setProgress('address-' + scripthash, 0);
 
-      const transactions: IPublicApi.Transaction[] = [];
+      const transactions: IPublicApi.VerboseTransaction[] = [];
       let utxos = memoryCache.get<IElectrumApi.ScriptHashMempool[]>('Scripthash_getMempool', scripthash);
       if (!utxos) {
         utxos = await this.$getScriptHashMempool(scripthash);

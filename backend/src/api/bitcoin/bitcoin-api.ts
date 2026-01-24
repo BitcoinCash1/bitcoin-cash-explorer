@@ -166,11 +166,11 @@ class BitcoinApi implements AbstractBitcoinApi {
     throw new Error('Method getAddress not supported by the Bitcoin RPC API.');
   }
 
-  $getAddressTransactions(address: string, lastSeenTxId: string): Promise<IPublicApi.Transaction[]> {
+  $getAddressTransactions(address: string, lastSeenTxId: string): Promise<IPublicApi.VerboseTransaction[]> {
     throw new Error('Method getAddressTransactions not supported by the Bitcoin RPC API.');
   }
 
-  $getAddressMempoolTransactions(address: string): Promise<IPublicApi.Transaction[]> {
+  $getAddressMempoolTransactions(address: string): Promise<IPublicApi.VerboseTransaction[]> {
     throw new Error('Method getAddressMempoolTransactions not supported by the Bitcoin RPC API.');
   }
 
@@ -182,7 +182,7 @@ class BitcoinApi implements AbstractBitcoinApi {
     throw new Error('Method getScriptHash not supported by the Bitcoin RPC API.');
   }
 
-  $getScriptHashTransactions(scripthash: string, lastSeenTxId: string): Promise<IPublicApi.Transaction[]> {
+  $getScriptHashTransactions(scripthash: string, lastSeenTxId: string): Promise<IPublicApi.VerboseTransaction[]> {
     throw new Error('Method getScriptHashTransactions not supported by the Bitcoin RPC API.');
   }
 
@@ -190,7 +190,7 @@ class BitcoinApi implements AbstractBitcoinApi {
     throw new Error('Method getScriptHashUtxos not supported by the Bitcoin RPC API.');
   }
 
-  $getScriptHashMempoolTransactions(scripthash: string): Promise<IPublicApi.Transaction[]> {
+  $getScriptHashMempoolTransactions(scripthash: string): Promise<IPublicApi.VerboseTransaction[]> {
     throw new Error('Method getScriptHashMempoolTransactions not supported by the Bitcoin RPC API.');
   }
 
@@ -288,9 +288,9 @@ class BitcoinApi implements AbstractBitcoinApi {
     return outspends;
   }
 
-  async $getCoinbaseTx(blockhash: string): Promise<IPublicApi.Transaction> {
+  async $getCoinbaseTx(blockhash: string): Promise<IPublicApi.VerboseTransaction> {
     const txids = await this.$getTxIdsForBlock(blockhash);
-    return this.$getRawTransaction(txids[0]) as Promise<IPublicApi.Transaction>;
+    return this.$getRawTransaction(txids[0]) as Promise<IPublicApi.VerboseTransaction>;
   }
 
   async $getAddressTransactionSummary(address: string): Promise<IPublicApi.AddressTxSummary[]> {

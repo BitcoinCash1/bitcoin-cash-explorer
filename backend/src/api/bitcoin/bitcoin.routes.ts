@@ -181,7 +181,7 @@ class BitcoinRoutes {
     }
     try {
       const transaction = await transactionUtils.$getTransactionExtended(req.params.txId, true, false, false, true);
-      const nonVerboseTransaction = transactionUtils.stripVerbosityTransaction(transaction);
+      const nonVerboseTransaction = transactionUtils.stripVerbosityFromTransaction(transaction);
       res.json(nonVerboseTransaction);
     } catch (e) {
       let statusCode = 500;
@@ -292,7 +292,7 @@ class BitcoinRoutes {
     }
     try {
       const transaction = await transactionUtils.$getTransactionExtended(req.params.txId, true);
-      const nonVerboseTransaction = transactionUtils.stripVerbosityTransaction(transaction);
+      const nonVerboseTransaction = transactionUtils.stripVerbosityFromTransaction(transaction);
       res.json(nonVerboseTransaction.status);
     } catch (e) {
       let statusCode = 500;
@@ -565,7 +565,7 @@ class BitcoinRoutes {
       for (let i = startingIndex; i < endIndex; i++) {
         try {
           const transaction = await transactionUtils.$getTransactionExtended(txIds[i], true, true);
-          const nonVerboseTransaction = transactionUtils.stripVerbosityTransaction(transaction);
+          const nonVerboseTransaction = transactionUtils.stripVerbosityFromTransaction(transaction);
           transactions.push(nonVerboseTransaction);
           loadingIndicators.setProgress(
             'blocktxs-' + req.params.hash,
@@ -633,7 +633,9 @@ class BitcoinRoutes {
         lastTxId = req.query.after_txid;
       }
       const transactions = await bitcoinApi.$getAddressTransactions(req.params.address, lastTxId);
-      res.json(transactions);
+      console.log('REMOVE VERBOSITY FROM TRANSACTIONS');
+      const nonVerboseTransactions = transactionUtils.stripVerbosityFromTransactions(transactions);
+      res.json(nonVerboseTransactions);
     } catch (e) {
       if (
         e instanceof Error &&
@@ -704,7 +706,8 @@ class BitcoinRoutes {
 
     try {
       const transactions = await bitcoinApi.$getAddressMempoolTransactions(req.params.address);
-      res.json(transactions);
+      const nonVerboseTransactions = transactionUtils.stripVerbosityFromTransactions(transactions);
+      res.json(nonVerboseTransactions);
     } catch (e) {
       if (
         e instanceof Error &&
@@ -764,7 +767,8 @@ class BitcoinRoutes {
         lastTxId = req.query.after_txid;
       }
       const transactions = await bitcoinApi.$getScriptHashTransactions(electrumScripthash, lastTxId);
-      res.json(transactions);
+      const nonVerboseTransactions = transactionUtils.stripVerbosityFromTransactions(transactions);
+      res.json(nonVerboseTransactions);
     } catch (e) {
       if (
         e instanceof Error &&
@@ -792,7 +796,8 @@ class BitcoinRoutes {
       // electrum expects scripthashes in little-endian
       const electrumScripthash = req.params.scripthash.match(/../g)?.reverse().join('') ?? '';
       const transactions = await bitcoinApi.$getScriptHashMempoolTransactions(electrumScripthash);
-      res.json(transactions);
+      const nonVerboseTransactions = transactionUtils.stripVerbosityFromTransactions(transactions);
+      res.json(nonVerboseTransactions);
     } catch (e) {
       if (
         e instanceof Error &&

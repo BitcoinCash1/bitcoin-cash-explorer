@@ -181,7 +181,8 @@ class TransactionUtils {
     return transactionExtended;
   }
 
-  public stripVerbosityTransaction(transaction: VerboseTransactionExtended): TransactionExtended {
+  // Generic method to strip verbosity from any verbose transaction type
+  private stripVerbosity<T extends IPublicApi.VerboseTransaction>(transaction: T): IPublicApi.Transaction {
     // Convert verbose vin/vout to non-verbose versions
     const vin: IPublicApi.Vin[] = transaction.vin.map((v) => ({
       txid: v.txid,
@@ -204,33 +205,17 @@ class TransactionUtils {
     }));
 
     const { vin: _, vout: __, ...rest } = transaction;
-    return { ...rest, vin, vout } as TransactionExtended;
+    return { ...rest, vin, vout } as IPublicApi.Transaction;
   }
 
-  public stripVerbosityMempoolTransaction(transaction: VerboseMempoolTransactionExtended): MempoolTransactionExtended {
-    // Convert verbose vin/vout to non-verbose versions
-    const vin: IPublicApi.Vin[] = transaction.vin.map((v) => ({
-      txid: v.txid,
-      vout: v.vout,
-      is_coinbase: v.is_coinbase,
-      scriptsig: v.scriptsig,
-      scriptsig_asm: v.scriptsig_asm,
-      inner_redeemscript_asm: v.inner_redeemscript_asm,
-      sequence: v.sequence,
-      prevout: v.prevout,
-      lazy: v.lazy,
-    }));
+  // Method to strip verbosity from arrays of verbose transactions
+  public stripVerbosityFromTransactions(transactions: IPublicApi.VerboseTransaction[]): IPublicApi.Transaction[] {
+    return transactions.map((tx) => this.stripVerbosity(tx));
+  }
 
-    const vout: IPublicApi.Vout[] = transaction.vout.map((v) => ({
-      scriptpubkey: v.scriptpubkey,
-      scriptpubkey_asm: v.scriptpubkey_asm,
-      scriptpubkey_type: v.scriptpubkey_type,
-      scriptpubkey_address: v.scriptpubkey_address,
-      value: v.value,
-    }));
-
-    const { vin: _, vout: __, ...rest } = transaction;
-    return { ...rest, vin, vout } as MempoolTransactionExtended;
+  // Method to strip verbosity from a single verbose transaction (extended types)
+  public stripVerbosityFromTransaction(transaction: VerboseTransactionExtended): TransactionExtended {
+    return this.stripVerbosity(transaction) as TransactionExtended;
   }
 
   public hex2ascii(hex: string) {

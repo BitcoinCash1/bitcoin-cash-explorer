@@ -24,14 +24,14 @@ export interface AbstractBitcoinApi {
   $getBlock(hash: string): Promise<IPublicApi.Block>;
   $getRawBlock(hash: string): Promise<Buffer>;
   $getAddress(address: string): Promise<IPublicApi.Address>;
-  $getAddressTransactions(address: string, lastSeenTxId: string): Promise<IPublicApi.Transaction[]>;
-  $getAddressMempoolTransactions(address: string): Promise<IPublicApi.Transaction[]>;
+  $getAddressTransactions(address: string, lastSeenTxId: string): Promise<IPublicApi.VerboseTransaction[]>;
+  $getAddressMempoolTransactions(address: string): Promise<IPublicApi.VerboseTransaction[]>;
   $getAddressUtxos(address: string): Promise<IPublicApi.UTXO[]>;
   $getAddressPrefix(prefix: string): string[];
   $getScriptHash(scripthash: string): Promise<IPublicApi.ScriptHash>;
-  $getScriptHashTransactions(address: string, lastSeenTxId: string): Promise<IPublicApi.Transaction[]>;
+  $getScriptHashTransactions(address: string, lastSeenTxId: string): Promise<IPublicApi.VerboseTransaction[]>;
   $getScriptHashUtxos(scripthash: string): Promise<IPublicApi.UTXO[]>;
-  $getScriptHashMempoolTransactions(scripthash: string): Promise<IPublicApi.Transaction[]>;
+  $getScriptHashMempoolTransactions(scripthash: string): Promise<IPublicApi.VerboseTransaction[]>;
   $sendRawTransaction(rawTransaction: string): Promise<string>;
   $testMempoolAccept(rawTransactions: string[], maxfeerate?: number): Promise<TestMempoolAcceptResult[]>;
   $submitPackage(rawTransactions: string[], maxfeerate?: number, maxburnamount?: number): Promise<SubmitPackageResult>;
@@ -40,7 +40,7 @@ export interface AbstractBitcoinApi {
   $getBatchedOutspends(txId: string[]): Promise<IPublicApi.Outspend[][]>;
   $getBatchedOutspendsInternal(txId: string[]): Promise<IPublicApi.Outspend[][]>;
   $getOutSpendsByOutpoint(outpoints: { txid: string; vout: number }[]): Promise<IPublicApi.Outspend[]>;
-  $getCoinbaseTx(blockhash: string): Promise<IPublicApi.Transaction>;
+  $getCoinbaseTx(blockhash: string): Promise<IPublicApi.VerboseTransaction>;
   $getAddressTransactionSummary(address: string): Promise<IPublicApi.AddressTxSummary[]>;
 
   startHealthChecks(): void;
