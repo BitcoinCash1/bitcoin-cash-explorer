@@ -4,7 +4,7 @@ import {
   AddressTxSummary,
   Transaction,
   Address,
-} from '@interfaces/electrs.interface';
+} from '@app/interfaces/backend-api.interface';
 import { ApiService } from '@app/services/api.service';
 import { StateService } from '@app/services/state.service';
 import {

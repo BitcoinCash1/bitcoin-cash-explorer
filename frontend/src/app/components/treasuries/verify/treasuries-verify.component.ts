@@ -22,7 +22,7 @@ import {
 } from 'rxjs';
 import { StateService } from '@app/services/state.service';
 import { WalletStats } from '../../../shared/wallet-stats';
-import { AddressTxSummary } from '../../../interfaces/electrs.interface';
+import { AddressTxSummary } from '../../../interfaces/backend-api.interface';
 import { Treasury } from '../../../interfaces/node-api.interface';
 
 interface VerifyShare {

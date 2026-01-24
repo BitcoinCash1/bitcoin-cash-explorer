@@ -30,7 +30,7 @@ import {
   tap,
 } from 'rxjs';
 import { StateService } from '@app/services/state.service';
-import { Transaction } from '@interfaces/electrs.interface';
+import { Transaction } from '@app/interfaces/backend-api.interface';
 import { Conversion } from '@app/services/price.service';
 import { StorageService } from '@app/services/storage.service';
 import { WebsocketResponse } from '@interfaces/websocket.interface';

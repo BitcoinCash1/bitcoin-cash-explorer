@@ -6,7 +6,7 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { Transaction } from '@interfaces/electrs.interface';
+import { Transaction } from '@app/interfaces/backend-api.interface';
 import {
   Pool,
   TxAuditStatus,

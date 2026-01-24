@@ -4,7 +4,7 @@ import {
   OnChanges,
   Input,
 } from '@angular/core';
-import { Transaction } from '@interfaces/electrs.interface';
+import { Transaction } from '@app/interfaces/backend-api.interface';
 
 @Component({
   selector: 'app-tx-features',

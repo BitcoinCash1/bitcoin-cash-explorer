@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { ElectrsApiService } from '@app/services/electrs-api.service';
 import { switchMap, filter, catchError, map, tap } from 'rxjs/operators';
-import { Address, Transaction } from '@interfaces/electrs.interface';
+import { Address, Transaction } from '@app/interfaces/backend-api.interface';
 import { StateService } from '@app/services/state.service';
 import { OpenGraphService } from '@app/services/opengraph.service';
 import { AudioService } from '@app/services/audio.service';

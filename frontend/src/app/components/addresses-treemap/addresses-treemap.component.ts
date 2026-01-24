@@ -13,7 +13,7 @@ import { lerpColor } from '@app/shared/graphs.utils';
 import { AmountShortenerPipe } from '@app/shared/pipes/amount-shortener.pipe';
 import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pipe';
 import { StateService } from '@app/services/state.service';
-import { Address } from '@interfaces/electrs.interface';
+import { Address } from '@app/interfaces/backend-api.interface';
 import { formatNumber } from '@angular/common';
 
 @Component({

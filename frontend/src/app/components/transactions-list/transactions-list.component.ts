@@ -20,7 +20,7 @@ import {
   of,
   forkJoin,
 } from 'rxjs';
-import { Outspend, Transaction, Vout } from '@interfaces/electrs.interface';
+import { Outspend, Transaction, Vout } from '@app/interfaces/backend-api.interface';
 import { ElectrsApiService } from '@app/services/electrs-api.service';
 import { environment } from '@environments/environment';
 import { map, tap, switchMap } from 'rxjs/operators';

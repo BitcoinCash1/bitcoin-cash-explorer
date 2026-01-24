@@ -7,7 +7,7 @@ import {
   ChangeDetectorRef,
   OnDestroy,
 } from '@angular/core';
-import { Transaction } from '@interfaces/electrs.interface';
+import { Transaction } from '@app/interfaces/backend-api.interface';
 import { StateService } from '@app/services/state.service';
 import { Subscription } from 'rxjs';
 import { BlockExtended } from '@interfaces/node-api.interface';

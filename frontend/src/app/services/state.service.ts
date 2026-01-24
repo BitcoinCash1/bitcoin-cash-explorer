@@ -6,7 +6,7 @@ import {
   fromEvent,
   Observable,
 } from 'rxjs';
-import { Transaction } from '@interfaces/electrs.interface';
+import { Transaction } from '@app/interfaces/backend-api.interface';
 import {
   HealthCheckHost,
   IBackendInfo,

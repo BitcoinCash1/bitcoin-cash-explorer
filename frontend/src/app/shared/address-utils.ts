@@ -1,6 +1,6 @@
 import '@angular/localize/init';
 import { ScriptInfo } from '@app/shared/script.utils';
-import { Vin, Vout } from '@interfaces/electrs.interface';
+import { Vin, Vout } from '@app/interfaces/backend-api.interface';
 import {
   BECH32_CHARS_LW,
   BASE58_CHARS,

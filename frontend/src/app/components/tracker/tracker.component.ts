@@ -22,7 +22,7 @@ import {
   startWith,
   retry,
 } from 'rxjs/operators';
-import { Transaction } from '@interfaces/electrs.interface';
+import { Transaction } from '@app/interfaces/backend-api.interface';
 import {
   of,
   merge,

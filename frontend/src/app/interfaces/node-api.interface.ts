@@ -1,4 +1,4 @@
-import { AddressTxSummary, Block, ChainStats } from './electrs.interface';
+import { AddressTxSummary, Block, ChainStats } from './backend-api.interface';
 
 export interface OptimizedMempoolStats {
   added: number;

@@ -20,7 +20,7 @@ import {
   ScriptHash,
   AddressTxSummary,
   Utxo,
-} from '@interfaces/electrs.interface';
+} from '@app/interfaces/backend-api.interface';
 import { StateService } from '@app/services/state.service';
 import { BlockExtended } from '@interfaces/node-api.interface';
 import { calcScriptHash$ } from '@app/bitcoin.utils';

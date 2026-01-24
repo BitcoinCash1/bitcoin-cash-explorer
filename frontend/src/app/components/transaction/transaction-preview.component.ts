@@ -8,7 +8,7 @@ import {
   retryWhen,
   delay,
 } from 'rxjs/operators';
-import { Transaction, Vout } from '@interfaces/electrs.interface';
+import { Transaction, Vout } from '@app/interfaces/backend-api.interface';
 import { of, merge, Subscription, Observable, Subject, from } from 'rxjs';
 import { StateService } from '@app/services/state.service';
 import { CacheService } from '@app/services/cache.service';

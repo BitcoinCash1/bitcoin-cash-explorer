@@ -16,7 +16,7 @@ import { StateService } from '@app/services/state.service';
 import { download } from '@app/shared/graphs.utils';
 import { isMobile } from '@app/shared/common.utils';
 import { WalletStats } from '@app/shared/wallet-stats';
-import { AddressTxSummary } from '@interfaces/electrs.interface';
+import { AddressTxSummary } from '@app/interfaces/backend-api.interface';
 import { originalChartColors as chartColors } from '@app/app.constants';
 import { formatNumber } from '@angular/common';
 import { Treasury } from '@interfaces/node-api.interface';

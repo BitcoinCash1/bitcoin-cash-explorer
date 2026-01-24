@@ -16,7 +16,7 @@ import {
   TransactionFlags,
   toFilters,
 } from '@app/shared/filters.utils';
-import { Block } from '@interfaces/electrs.interface.js';
+import { Block } from '@app/interfaces/backend-api.interface.js';
 
 @Component({
   selector: 'app-block-overview-tooltip',

@@ -7,7 +7,7 @@ import {
   OnDestroy,
 } from '@angular/core';
 import { BytesPipe } from '@app/shared/pipes/bytes-pipe/bytes.pipe';
-import { Transaction, Vout } from '@interfaces/electrs.interface';
+import { Transaction, Vout } from '@app/interfaces/backend-api.interface';
 import { StateService } from '@app/services/state.service';
 import { Filter, toFilters } from '@app/shared/filters.utils';
 import {

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { WebsocketResponse } from '@interfaces/websocket.interface';
 import { StateService } from '@app/services/state.service';
-import { Transaction } from '@interfaces/electrs.interface';
+import { Transaction } from '@app/interfaces/backend-api.interface';
 import { firstValueFrom, Subscription } from 'rxjs';
 import { ApiService } from '@app/services/api.service';
 import { take } from 'rxjs/operators';

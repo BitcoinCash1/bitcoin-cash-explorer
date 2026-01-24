@@ -4,7 +4,7 @@ import {
   parseMultisigScript,
   isPoint,
 } from '@app/shared/script.utils';
-import { Transaction, Vin } from '@interfaces/electrs.interface';
+import { Transaction, Vin } from '@app/interfaces/backend-api.interface';
 import { hash, Hash } from '@app/shared/sha256';
 import { AddressType } from '@app/shared/address-utils';
 

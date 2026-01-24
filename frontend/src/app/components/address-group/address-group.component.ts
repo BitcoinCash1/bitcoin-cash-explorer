@@ -8,7 +8,7 @@ import {
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { ElectrsApiService } from '@app/services/electrs-api.service';
 import { switchMap, catchError } from 'rxjs/operators';
-import { Address, Transaction } from '@interfaces/electrs.interface';
+import { Address, Transaction } from '@app/interfaces/backend-api.interface';
 import { WebsocketService } from '@app/services/websocket.service';
 import { StateService } from '@app/services/state.service';
 import { AudioService } from '@app/services/audio.service';

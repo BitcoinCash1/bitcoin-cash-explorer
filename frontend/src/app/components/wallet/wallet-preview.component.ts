@@ -14,7 +14,7 @@ import {
   AddressTxSummary,
   ChainStats,
   Transaction,
-} from '@interfaces/electrs.interface';
+} from '@app/interfaces/backend-api.interface';
 import { StateService } from '@app/services/state.service';
 import { ApiService } from '@app/services/api.service';
 import { of, Observable, Subscription } from 'rxjs';

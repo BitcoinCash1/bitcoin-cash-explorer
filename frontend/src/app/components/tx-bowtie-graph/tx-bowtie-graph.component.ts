@@ -13,7 +13,7 @@ import {
   Transaction,
   Vin,
   Vout,
-} from '@interfaces/electrs.interface';
+} from '@app/interfaces/backend-api.interface';
 import { Router } from '@angular/router';
 import { ReplaySubject, merge, Subscription, of } from 'rxjs';
 import { tap, switchMap } from 'rxjs/operators';

@@ -1,6 +1,6 @@
 import { SafeResourceUrl } from '@angular/platform-browser';
 import { ILoadingIndicators } from '@app/services/state.service';
-import { Transaction } from '@interfaces/electrs.interface';
+import { Transaction } from '@app/interfaces/backend-api.interface';
 import {
   BlockExtended,
   DifficultyAdjustment,

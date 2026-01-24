@@ -13,7 +13,7 @@ import {
 import { EChartsOption } from '@app/graphs/echarts';
 import { BehaviorSubject, Observable, Subscription, combineLatest } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { AddressTxSummary } from '@interfaces/electrs.interface';
+import { AddressTxSummary } from '@app/interfaces/backend-api.interface';
 import { AmountShortenerPipe } from '@app/shared/pipes/amount-shortener.pipe';
 import { StateService } from '@app/services/state.service';
 import { SeriesOption } from 'echarts/types/dist/echarts';

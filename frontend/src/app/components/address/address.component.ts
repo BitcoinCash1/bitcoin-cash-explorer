@@ -8,7 +8,7 @@ import {
   Transaction,
   Utxo,
   Vin,
-} from '@interfaces/electrs.interface';
+} from '@app/interfaces/backend-api.interface';
 import { WebsocketService } from '@app/services/websocket.service';
 import { StateService } from '@app/services/state.service';
 import { AudioService } from '@app/services/audio.service';

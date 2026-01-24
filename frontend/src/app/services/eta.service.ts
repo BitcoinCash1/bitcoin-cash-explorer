@@ -6,7 +6,7 @@ import {
 } from '@interfaces/node-api.interface';
 import { StateService } from '@app/services/state.service';
 import { MempoolBlock } from '@interfaces/websocket.interface';
-import { Transaction } from '@interfaces/electrs.interface';
+import { Transaction } from '@app/interfaces/backend-api.interface';
 import { MiningService, MiningStats } from '@app/services/mining.service';
 import { Observable, combineLatest, map, of, shareReplay } from 'rxjs';
 

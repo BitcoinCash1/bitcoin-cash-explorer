@@ -1,4 +1,4 @@
-import { ChainStats, Transaction } from '@interfaces/electrs.interface';
+import { ChainStats, Transaction } from '@app/interfaces/backend-api.interface';
 
 export class WalletStats implements ChainStats {
   addresses: string[];
