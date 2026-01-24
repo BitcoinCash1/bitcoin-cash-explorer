@@ -67,8 +67,11 @@ export function countScriptSigops(
 // enforce canonical DER-encoded signature format
 // <0x30> <total len> <0x02> <len R> <R> <0x02> <len S> <S> <hashtype>
 // see https://github.com/bitcoin/bitcoin/blob/9a05b45da60d214cb1e5a50c3d2293b1defc9bb0/src/script/interpreter.cpp#L97-L106
+//
+// TODO: For BCH this DER Sig check is incomplete. While it might work on some P2PKH transactions, it will not work on SIGHASH_UTXOS
 export function isCanonicalDERSig(w: string): boolean {
   // minimum DER signature length is 8 bytes + sighash flag (see https://mempool.space/testnet/tx/c6c232a36395fa338da458b86ff1327395a9afc28c5d2daa4273e410089fd433)
+
   if (w.length < 18) {
     return false;
   }
@@ -113,42 +116,52 @@ export function isCanonicalDERSig(w: string): boolean {
 }
 
 export enum SighashFlag {
-  DEFAULT = 0,
   ALL = 1,
   NONE = 2,
   SINGLE = 3,
   UTXOS = 0x20,
+  FORKID = 0x40,
   ANYONECANPAY = 0x80,
 }
 
 export type SighashValue =
-  | SighashFlag.DEFAULT
-  | SighashFlag.ALL
-  | SighashFlag.NONE
-  | SighashFlag.SINGLE
-  | (SighashFlag.ALL & SighashFlag.ANYONECANPAY)
-  | (SighashFlag.NONE & SighashFlag.ANYONECANPAY)
-  | (SighashFlag.SINGLE & SighashFlag.ANYONECANPAY)
-  | (SighashFlag.ALL & SighashFlag.NONE);
+  | (SighashFlag.ALL | SighashFlag.FORKID)
+  | (SighashFlag.NONE | SighashFlag.FORKID)
+  | (SighashFlag.SINGLE | SighashFlag.FORKID)
+  | (SighashFlag.ALL | SighashFlag.UTXOS | SighashFlag.FORKID)
+  | (SighashFlag.NONE | SighashFlag.UTXOS | SighashFlag.FORKID)
+  | (SighashFlag.SINGLE | SighashFlag.UTXOS | SighashFlag.FORKID)
+  | (SighashFlag.ALL | SighashFlag.ANYONECANPAY | SighashFlag.FORKID)
+  | (SighashFlag.NONE | SighashFlag.ANYONECANPAY | SighashFlag.FORKID)
+  | (SighashFlag.SINGLE | SighashFlag.ANYONECANPAY | SighashFlag.FORKID)
+  | (SighashFlag.ALL | SighashFlag.NONE | SighashFlag.FORKID);
 
+// Combinations of Bitwise OR (converted to Decimal)
+// All decimals are with FORKID, but we omit this in the label name
 export const SighashLabels: Record<number, string> = {
-  '0': 'SIGHASH_DEFAULT',
-  '1': 'SIGHASH_ALL',
-  '2': 'SIGHASH_NONE',
-  '3': 'SIGHASH_SINGLE',
-  '129': 'SIGHASH_ALL | ACP',
-  '130': 'SIGHASH_NONE | ACP',
-  '131': 'SIGHASH_SINGLE | ACP',
+  '65': 'SIGHASH_ALL',
+  '66': 'SIGHASH_NONE',
+  '67': 'SIGHASH_SINGLE',
+  '97': 'SIGHASH_ALL | SIGHASH_UTXOS',
+  '98': 'SIGHASH_NONE | SIGHASH_UTXOS',
+  '99': 'SIGHASH_SINGLE | SIGHASH_UTXOS',
+  '193': 'SIGHASH_ALL | ACP',
+  '194': 'SIGHASH_NONE | ACP',
+  '195': 'SIGHASH_SINGLE | ACP',
 };
 
 export interface SigInfo {
   signature: string;
-  sighash: SighashValue;
+  sighash: SighashValue; // in hex
 }
 
 export class Sighash {
   static isACP(val: SighashValue): boolean {
     return val >= SighashFlag.ANYONECANPAY;
+  }
+
+  static isUTXOS(val: SighashValue): boolean {
+    return val >= SighashFlag.UTXOS;
   }
 
   static isNone(val: SighashValue): boolean {
@@ -162,20 +175,16 @@ export class Sighash {
   static isAll(val: SighashValue): boolean {
     return (val & 0x7f) === SighashFlag.ALL;
   }
-
-  static isDefault(val: SighashValue): boolean {
-    return val === SighashFlag.DEFAULT;
-  }
 }
 
 export function decodeSighashFlag(sighash: number): SighashValue {
   if (
-    (sighash >= 0 && sighash <= 0x03) ||
-    (sighash > 0x80 && sighash <= 0x83)
+    (sighash >= 0x41 && sighash <= 0x67) ||
+    (sighash >= 0x61 && sighash <= 0xc3)
   ) {
     return sighash as SighashValue;
   }
-  return SighashFlag.DEFAULT;
+  return (SighashFlag.ALL | SighashFlag.FORKID) as SighashValue;
 }
 
 export function extractDERSignaturesASM(script_asm: string): SigInfo[] {
@@ -190,6 +199,7 @@ export function extractDERSignaturesASM(script_asm: string): SigInfo[] {
     // Look for OP_PUSHBYTES_N followed by a hex string
     if (ops[i].startsWith('OP_PUSHBYTES_')) {
       const hexData = ops[i + 1];
+      // TODO: Maybe its better in BCH to check just if its P2PKH
       if (isCanonicalDERSig(hexData)) {
         const sighash = decodeSighashFlag(parseInt(hexData.slice(-2), 16));
         signatures.push({

@@ -743,9 +743,7 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   sigIsInteresting(sig: SigInfo): boolean {
-    return (
-      sig.sighash !== SighashFlag.DEFAULT && sig.sighash !== SighashFlag.ALL
-    );
+    return sig.sighash !== (SighashFlag.ALL | SighashFlag.FORKID);
   }
 
   shouldShowSignatures(tx): boolean {

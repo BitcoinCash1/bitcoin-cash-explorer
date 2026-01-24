@@ -1,25 +1,36 @@
 .sig {
   cursor: pointer;
 
-  &.sighash-0 {
+  /* Reference:
+  '65': 'SIGHASH_ALL',
+  '66': 'SIGHASH_NONE',
+  '67': 'SIGHASH_SINGLE',
+  '97': 'SIGHASH_ALL | SIGHASH_UTXOS',
+  '98': 'SIGHASH_NONE | SIGHASH_UTXOS',
+  '99': 'SIGHASH_SINGLE | SIGHASH_UTXOS',
+  '193': 'SIGHASH_ALL | ACP',
+  '194': 'SIGHASH_NONE | ACP',
+  '195': 'SIGHASH_SINGLE | ACP',
+*/
+  &.sighash-65 {
     --sigColor: var(--green);
   }
-  &.sighash-1 {
+  &.sighash-66 {
     --sigColor: var(--green);
   }
-  &.sighash-2 {
+  &.sighash-67 {
     --sigColor: gold;
   }
-  &.sighash-3 {
-    --sigColor: cornflowerblue;
-  }
-  &.sighash-129 {
+  // &.sighash-someotherhexvalue {
+  //   --sigColor: cornflowerblue;
+  // }
+  &.sighash-97 {
     --sigColor: darkviolet;
   }
-  &.sighash-130 {
+  &.sighash-98 {
     --sigColor: darkorange;
   }
-  &.sighash-131 {
+  &.sighash-99 {
     --sigColor: var(--pink);
   }
   &.sig-no-lock {

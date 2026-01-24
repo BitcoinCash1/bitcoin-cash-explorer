@@ -22,22 +22,17 @@
         >
           <fa-icon [icon]="['fas', 'key']" [fixedWidth]="true"></fa-icon>
         </span>
-        <ng-container *ngIf="sigInfo.sig.sighash !== 0; else plainSig">
-          {{ arg.slice(0, -2)
-          }}<span
-            class="sig sighash-{{ sigInfo.sig.sighash }}"
-            [class.hovered]="
-              annotations.selectedSig && annotations.selectedSig === sigInfo.sig
-            "
-            (mouseenter)="doShowSigInfo(sigInfo.sig)"
-            (mouseleave)="doHideSigInfo()"
-            [title]="sighashLabels[sigInfo.sig.sighash]"
-            >{{ arg.slice(-2) }}</span
-          >
-        </ng-container>
-        <ng-template #plainSig>
-          {{ arg }}
-        </ng-template>
+        {{ arg.slice(0, -2)
+        }}<span
+          class="sig sighash-{{ sigInfo.sig.sighash }}"
+          [class.hovered]="
+            annotations.selectedSig && annotations.selectedSig === sigInfo.sig
+          "
+          (mouseenter)="doShowSigInfo(sigInfo.sig)"
+          (mouseleave)="doHideSigInfo()"
+          [title]="sighashLabels[sigInfo.sig.sighash]"
+          >{{ arg.slice(-2) }}</span
+        >
       </ng-container>
       <ng-template #plainArg>
         @if (annotations.p2sh && i === instructions.length - 1) {

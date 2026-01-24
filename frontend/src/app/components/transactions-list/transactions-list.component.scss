@@ -80,26 +80,25 @@
   &.sig-overflow {
     opacity: 0;
   }
-
-  &.sighash-0 {
+  &.sighash-65 {
     --sigColor: var(--green);
   }
-  &.sighash-1 {
+  &.sighash-66 {
     --sigColor: var(--green);
   }
-  &.sighash-2 {
+  &.sighash-67 {
     --sigColor: gold;
   }
-  &.sighash-3 {
-    --sigColor: cornflowerblue;
-  }
-  &.sighash-129 {
+  // &.sighash-someotherhexvalue {
+  //   --sigColor: cornflowerblue;
+  // }
+  &.sighash-97 {
     --sigColor: darkviolet;
   }
-  &.sighash-130 {
+  &.sighash-98 {
     --sigColor: darkorange;
   }
-  &.sighash-131 {
+  &.sighash-99 {
     --sigColor: var(--pink);
   }
   &.sig-no-lock {

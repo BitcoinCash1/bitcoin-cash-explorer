@@ -1,3 +1,5 @@
+// See also: https://documentation.cash/protocol/blockchain/script.html#operation-codes-opcodes
+// Below are the decimal numbers (NOT the hex values)
 const opcodes = {
   OP_FALSE: 0,
   OP_0: 0,
