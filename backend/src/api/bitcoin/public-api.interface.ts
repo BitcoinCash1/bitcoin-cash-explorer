@@ -75,7 +75,7 @@ export namespace IPublicApi {
     inner_redeemscript_asm: string;
     // TODO: Add tokenData (CashToken) as well
     sequence: any;
-    prevout: Vout | null;
+    prevout: VerboseVout | null;
     // Custom
     lazy?: boolean;
   }
