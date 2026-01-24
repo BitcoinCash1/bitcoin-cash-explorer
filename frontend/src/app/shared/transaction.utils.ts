@@ -12,7 +12,7 @@ import { AddressType } from '@app/shared/address-utils';
 const MIN_BLOCK_SIZE = 32_000_000;
 const MAX_BLOCK_SIGOPS_COST = 80_000;
 const MAX_STANDARD_TX_SIGOPS_COST = MAX_BLOCK_SIGOPS_COST / 5;
-const MIN_STANDARD_TX_NONWITNESS_SIZE = 65;
+const MIN_STANDARD_TX_SIZE = 65; /// TODO: Check for BCH
 const MAX_P2SH_SIGOPS = 15;
 const MAX_STANDARD_P2WSH_STACK_ITEMS = 100;
 const MAX_STANDARD_P2WSH_STACK_ITEM_SIZE = 80;
@@ -62,16 +62,6 @@ export function countScriptSigops(
   }
 
   return sigops * 4;
-}
-
-export function isDERSig(w: string): boolean {
-  // heuristic to detect probable DER signatures
-  return (
-    w.length >= 18 &&
-    w.startsWith('30') && // minimum DER signature length is 8 bytes + sighash flag (see https://mempool.space/testnet/tx/c6c232a36395fa338da458b86ff1327395a9afc28c5d2daa4273e410089fd433)
-    ['01', '02', '03', '81', '82', '83'].includes(w.slice(-2)) && // signature must end with a valid sighash flag
-    w.length === 2 * parseInt(w.slice(2, 4), 16) + 6 // second byte encodes the combined length of the R and S components
-  );
 }
 
 // enforce canonical DER-encoded signature format
@@ -357,7 +347,7 @@ export function isNonStandard(
   }
 
   // tx-size-small
-  if (getNonWitnessSize(tx) < MIN_STANDARD_TX_NONWITNESS_SIZE) {
+  if (getSize(tx) < MIN_STANDARD_TX_SIZE) {
     return true;
   }
 
@@ -491,16 +481,18 @@ function isNonStandardVersion(
   height?: number,
   network?: string
 ): boolean {
-  let TX_MAX_STANDARD_VERSION = 3;
-  if (
-    height != null &&
-    network != null &&
-    V3_STANDARDNESS_ACTIVATION_HEIGHT[network] &&
-    height <= V3_STANDARDNESS_ACTIVATION_HEIGHT[network]
-  ) {
-    // V3 transactions were non-standard to spend before v28.x (scheduled for 2024/09/30 https://github.com/bitcoin/bitcoin/issues/29891)
-    TX_MAX_STANDARD_VERSION = 2;
-  }
+  let TX_MAX_STANDARD_VERSION = 2;
+
+  // Note: BCH Currently doesn't *yet* have v3 transactions
+  // if (
+  //   height != null &&
+  //   network != null &&
+  //   V3_STANDARDNESS_ACTIVATION_HEIGHT[network] &&
+  //   height <= V3_STANDARDNESS_ACTIVATION_HEIGHT[network]
+  // ) {
+  //   // V3 transactions were non-standard to spend before v28.x (scheduled for 2024/09/30 https://github.com/bitcoin/bitcoin/issues/29891)
+  //   TX_MAX_STANDARD_VERSION = 2;
+  // }
 
   if (tx.version > TX_MAX_STANDARD_VERSION) {
     return true;
@@ -628,62 +620,43 @@ function isWitnessProgram(
   return false;
 }
 
-export function getNonWitnessSize(tx: Transaction): number {
+export function getSize(tx: Transaction): number {
   return Math.ceil(tx.size);
 }
 
-export function setSegwitSighashFlags(
-  flags: bigint,
-  witness: string[]
-): bigint {
-  for (const w of witness) {
-    if (isCanonicalDERSig(w)) {
-      flags |= setSighashFlags(flags, w);
-    }
+export function setSighashFlags(flags: bigint, byte_code_data: string): bigint {
+  const SIGHASH_ALL = 0x01;
+  const SIGHASH_NONE = 0x02;
+  const SIGHASH_SINGLE = 0x03;
+  const SIGHASH_UTXOS = 0x20;
+  const SIGHASH_ANYONECANPAY = 0x80;
+
+  const sighashHex = byte_code_data.slice(-2); // 2 hex digits == 1 byte
+  const sighash = parseInt(sighashHex, 16);
+
+  // Extract the lower 2 bits
+  const baseType = sighash & 0x03;
+  switch (baseType) {
+    case SIGHASH_ALL:
+      flags |= TransactionFlags.sighash_all;
+      break;
+    case SIGHASH_NONE:
+      flags |= TransactionFlags.sighash_none;
+      break;
+    case SIGHASH_SINGLE:
+      flags |= TransactionFlags.sighash_single;
+      break;
+  }
+
+  // Now we check on the modifiers (higher bits)
+  if (sighash & SIGHASH_UTXOS) {
+    flags |= TransactionFlags.sighash_utxos;
+  }
+
+  if (sighash & SIGHASH_ANYONECANPAY) {
+    flags |= TransactionFlags.sighash_acp;
   }
   return flags;
-}
-
-export function setLegacySighashFlags(
-  flags: bigint,
-  scriptsig_asm: string
-): bigint {
-  for (const item of scriptsig_asm.split(' ')) {
-    // skip op_codes
-    if (item.startsWith('OP_')) {
-      continue;
-    }
-    // check pushed data
-    if (isCanonicalDERSig(item)) {
-      flags |= setSighashFlags(flags, item);
-    }
-  }
-  return flags;
-}
-
-export function setSighashFlags(flags: bigint, signature: string): bigint {
-  switch (signature.slice(-2)) {
-    case '01':
-      return flags | TransactionFlags.sighash_all;
-    case '02':
-      return flags | TransactionFlags.sighash_none;
-    case '03':
-      return flags | TransactionFlags.sighash_single;
-    case '81':
-      return (
-        flags | TransactionFlags.sighash_all | TransactionFlags.sighash_acp
-      );
-    case '82':
-      return (
-        flags | TransactionFlags.sighash_none | TransactionFlags.sighash_acp
-      );
-    case '83':
-      return (
-        flags | TransactionFlags.sighash_single | TransactionFlags.sighash_acp
-      );
-    default:
-      return flags | TransactionFlags.sighash_default; // taproot only
-  }
 }
 
 export function isBurnKey(pubkey: string): boolean {
@@ -712,9 +685,11 @@ export function getTransactionFlags(
     flags |= TransactionFlags.v1;
   } else if (tx.version === 2) {
     flags |= TransactionFlags.v2;
-  } else if (tx.version === 3) {
-    flags |= TransactionFlags.v3;
   }
+  // BCH currently doesn't have txs v3 yet
+  //  else if (tx.version === 3) {
+  //   flags |= TransactionFlags.v3;
+  // }
   const reusedInputAddresses: { [address: string]: number } = {};
   const reusedOutputAddresses: { [address: string]: number } = {};
   const inValues = {};
@@ -736,8 +711,11 @@ export function getTransactionFlags(
     }
 
     // sighash flags
-    if (vin.scriptsig?.length) {
-      flags |= setLegacySighashFlags(flags, vin.scriptsig_asm);
+    if (
+      vin.scriptsig_byte_code_data.length > 0 &&
+      vin.scriptpubkey_byte_code_pattern === '76a95188ac'
+    ) {
+      flags |= setSighashFlags(flags, vin.scriptsig_byte_code_data[0]);
     }
 
     if (vin.prevout?.scriptpubkey_address) {
@@ -914,7 +892,13 @@ export function addInnerScriptsToVin(vin: Vin): void {
 
 // Adapted from bitcoinjs-lib at https://github.com/bitcoinjs/bitcoinjs-lib/blob/32e08aa57f6a023e995d8c4f0c9fbdc5f11d1fa0/ts_src/transaction.ts#L78
 /**
- * @param buffer The raw transaction data
+ * Convert a buffer from a hex string to a transaction object
+ * Example is from TX ID: 138dabc52e88eda9760976f8adad5bebb92409be2d1842c345d41e606deae45e
+ *
+ * Hex raw transaction example: 0100000001bec86c1d8ab6d8ef16a4fa22f1b9a72baada515310caf7cd17f4ab2cfcab7b19080000006b483045022100e7421746f94f61724a6b5a2337121e56ddfc68e146ca72bfb2776de6db94a0470220370bc471c362e6ad337ea5152fd589ca30c42d9f40c55b8108d3ea5aad2b15bf41210208c6b6d97ca3d625fba56b6460bdcceb3e06f5555c1184590b3339c0f5879be1ffffffff0284156a94000000001976a91490f228539519931540f0e1de25dbc0093498c7a588ac46e29800000000001976a91463d690ca9b9a4c91cead49805037c2635473fea488ac00000000
+ * Becomes buffer: {"0":1,"1":0,"2":0,"3":0,"4":1,"5":190,"6":200,"7":108,"8":29,"9":138,"10":182,"11":216,"12":239,"13":22,"14":164,"15":250,"16":34,"17":241,"18":185,"19":167,"20":43,"21":170,"22":218,"23":81,"24":83,"25":16,"26":202,"27":247,"28":205,"29":23,"30":244,"31":171,"32":44,"33":252,"34":171,"35":123,"36":25,"37":8,"38":0,"39":0,"40":0,"41":107,"42":72,"43":48,"44":69,"45":2,"46":33,"47":0,"48":231,"49":66,"50":23,"51":70,"52":249,"53":79,"54":97,"55":114,"56":74,"57":107,"58":90,"59":35,"60":55,"61":18,"62":30,"63":86,"64":221,"65":252,"66":104,"67":225,"68":70,"69":202,"70":114,"71":191,"72":178,"73":119,"74":109,"75":230,"76":219,"77":148,"78":160,"79":71,"80":2,"81":32,"82":55,"83":11,"84":196,"85":113,"86":195,"87":98,"88":230,"89":173,"90":51,"91":126,"92":165,"93":21,"94":47,"95":213,"96":137,"97":202,"98":48,"99":196,"100":45,"101":159,"102":64,"103":197,"104":91,"105":129,"106":8,"107":211,"108":234,"109":90,"110":173,"111":43,"112":21,"113":191,"114":65,"115":33,"116":2,"117":8,"118":198,"119":182,"120":217,"121":124,"122":163,"123":214,"124":37,"125":251,"126":165,"127":107,"128":100,"129":96,"130":189,"131":204,"132":235,"133":62,"134":6,"135":245,"136":85,"137":92,"138":17,"139":132,"140":89,"141":11,"142":51,"143":57,"144":192,"145":245,"146":135,"147":155,"148":225,"149":255,"150":255,"151":255,"152":255,"153":2,"154":132,"155":21,"156":106,"157":148,"158":0,"159":0,"160":0,"161":0,"162":25,"163":118,"164":169,"165":20,"166":144,"167":242,"168":40,"169":83,"170":149,"171":25,"172":147,"173":21,"174":64,"175":240,"176":225,"177":222,"178":37,"179":219,"180":192,"181":9,"182":52,"183":152,"184":199,"185":165,"186":136,"187":172,"188":70,"189":226,"190":152,"191":0,"192":0,"193":0,"194":0,"195":0,"196":25,"197":118,"198":169,"199":20,"200":99,"201":214,"202":144,"203":202,"204":155,"205":154,"206":76,"207":145,"208":206,"209":173,"210":73,"211":128,"212":80,"213":55,"214":194,"215":99,"216":84,"217":115,"218":254,"219":164,"220":136,"221":172,"222":0,"223":0,"224":0,"225":0}
+ *
+ * @param buffer The raw transaction data as a buffer
  * @param network
  * @param inputs Additional information from a PSBT, if available
  * @returns The decoded transaction object and the raw hex
@@ -965,13 +949,34 @@ function fromBuffer(
     [sequence, offset] = readInt32(buffer, offset, true);
     const is_coinbase = txid === '0'.repeat(64);
     const scriptsig_asm = convertScriptSigAsm(scriptsig);
+    // TODO: Parse value, scriptsig_byte_code_pattern, scriptsig_byte_code_data, scriptpubkey, scriptpubkey_asm, scriptpubkey_type, scriptpubkey_address, scriptpubkey_byte_code_pattern, scriptpubkey_byte_code_data
+    const value = null;
+    const scriptsig_byte_code_pattern = '';
+    const scriptsig_byte_code_data: string[] = [];
+    const scriptpubkey = '';
+    const scriptpubkey_asm = '';
+    const scriptpubkey_type = '';
+    const scriptpubkey_address = '';
+    const scriptpubkey_byte_code_pattern = '';
+    const scriptpubkey_byte_code_data: string[] = [];
+    const inner_redeemscript_asm = '';
     tx.vin.push({
+      value,
       txid,
       vout,
-      scriptsig,
-      sequence,
       is_coinbase,
+      scriptsig,
       scriptsig_asm,
+      scriptsig_byte_code_pattern,
+      scriptsig_byte_code_data,
+      scriptpubkey,
+      scriptpubkey_asm,
+      scriptpubkey_type,
+      scriptpubkey_address,
+      scriptpubkey_byte_code_pattern,
+      scriptpubkey_byte_code_data,
+      inner_redeemscript_asm,
+      sequence,
       prevout: null,
     });
   }
@@ -989,22 +994,19 @@ function fromBuffer(
     const toAddress = scriptPubKeyToAddress(scriptpubkey, network);
     const scriptpubkey_type = toAddress.type;
     const scriptpubkey_address = toAddress?.address;
+    // TODO: scriptpubkey_byte_code_pattern, scriptpubkey_byte_code_data
+    const scriptpubkey_byte_code_pattern = '';
+    const scriptpubkey_byte_code_data: string[] = [];
     tx.vout.push({
       value,
       scriptpubkey,
       scriptpubkey_asm,
       scriptpubkey_type,
       scriptpubkey_address,
+      scriptpubkey_byte_code_pattern,
+      scriptpubkey_byte_code_data,
     });
   }
-
-  // if (!isLegacyTransaction) {
-  //   for (let i = 0; i < vinLen; ++i) {
-  //     let witness;
-  //     [witness, offset] = readVector(buffer, offset);
-  //     tx.vin[i].witness = witness.map(uint8ArrayToHexString);
-  //   }
-  // }
 
   [tx.locktime, offset] = readInt32(buffer, offset, true);
 

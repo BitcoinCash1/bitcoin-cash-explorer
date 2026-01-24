@@ -148,7 +148,6 @@ export { opcodes };
 export type ScriptType =
   | 'scriptpubkey'
   | 'scriptsig'
-  | 'inner_witnessscript'
   | 'inner_redeemscript'
   | 'inner_simplicityscript';
 

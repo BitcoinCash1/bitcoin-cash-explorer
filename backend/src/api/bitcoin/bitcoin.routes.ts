@@ -1131,6 +1131,7 @@ class BitcoinRoutes {
           }
         } else {
           try {
+            // TODO: BCH currently doesn't have the patterns argument yet on getTxOut, so we can't use byteCodePattern.
             const rawPrevout = await bitcoinClient.getTxOut(outpoint.txid, outpoint.vout, false);
             if (rawPrevout) {
               prevout = {
@@ -1142,6 +1143,8 @@ class BitcoinRoutes {
                 scriptpubkey_type: transactionUtils.translateScriptPubKeyType(rawPrevout.scriptPubKey.type),
                 scriptpubkey_address:
                   rawPrevout.scriptPubKey && rawPrevout.scriptPubKey.address ? rawPrevout.scriptPubKey.address : '',
+                scriptpubkey_byte_code_pattern: '', // rawPrevout.scriptPubKey?.byteCodePattern?.pattern || '',
+                scriptpubkey_byte_code_data: [], // rawPrevout.scriptPubKey?.byteCodePattern?.data || [],
               };
               unconfirmed = false;
             }

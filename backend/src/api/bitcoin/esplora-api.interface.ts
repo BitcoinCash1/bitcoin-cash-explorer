@@ -31,6 +31,8 @@ export namespace IEsploraApi {
     scriptpubkey: string;
     scriptpubkey_asm: string;
     scriptpubkey_type: string;
+    scriptpubkey_byte_code_pattern: string; // in hex
+    scriptpubkey_byte_code_data: string[]; // script data in hex
     scriptpubkey_address?: string;
     inner_redeemscript_asm: string;
     // TODO: Add tokenData (CashToken) as well
@@ -45,6 +47,8 @@ export namespace IEsploraApi {
     scriptpubkey_asm: string;
     scriptpubkey_type: string;
     scriptpubkey_address?: string;
+    scriptpubkey_byte_code_pattern: string; // in hex
+    scriptpubkey_byte_code_data: string[]; // script data in hex
     value: number;
   }
 

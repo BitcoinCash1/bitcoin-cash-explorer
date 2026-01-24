@@ -365,7 +365,7 @@ export class Common {
             flags |= TransactionFlags.p2ms;
             break;
           case 'p2pkh':
-            flags |= TransactionFlags.p2pkh;
+            flags |= TransactionFlags.p2pkh; // TODO: This is just only looking at the type (pubkeyhash), not the actual script
             break;
           case 'p2sh':
             flags |= TransactionFlags.p2sh;
@@ -373,14 +373,17 @@ export class Common {
         }
       }
 
+      // TODO: Filter on vin.scriptsig_byte_code_pattern instead of just the type.
+      // - 76a95188ac === P2PKH
+      // - a95187 === P2SH
+      // - aa5187 === P2SH32
+      // - ?????? === multisign
+
       // sighash flags
-      // TODO: use vin.scriptsig_data
-      // if (vin.scriptsig?.length) {
-      //   flags |= this.setSighashFlags(
-      //     flags,
-      //     vin.scriptsig_asm || transactionUtils.convertScriptSigAsm(vin.scriptsig)
-      //   );
-      // }
+      // For now only look at p2pkh transactions (76a95188ac pattern)
+      if (vin.scriptsig_byte_code_data.length > 0 && vin.scriptpubkey_byte_code_pattern === '76a95188ac') {
+        flags |= this.setSighashFlags(flags, vin.scriptsig_byte_code_data[0]);
+      }
 
       if (vin.prevout?.scriptpubkey_address) {
         reusedInputAddresses[vin.prevout?.scriptpubkey_address] =
@@ -461,23 +464,48 @@ export class Common {
     return Number(flags);
   }
 
-  static setSighashFlags(flags: bigint, signature: string): bigint {
-    switch (signature.slice(-2)) {
-      case '01':
-        return flags | TransactionFlags.sighash_all;
-      case '02':
-        return flags | TransactionFlags.sighash_none;
-      case '03':
-        return flags | TransactionFlags.sighash_single;
-      case '81':
-        return flags | TransactionFlags.sighash_all | TransactionFlags.sighash_acp;
-      case '82':
-        return flags | TransactionFlags.sighash_none | TransactionFlags.sighash_acp;
-      case '83':
-        return flags | TransactionFlags.sighash_single | TransactionFlags.sighash_acp;
-      default:
-        return flags | TransactionFlags.sighash_default; // taproot only
+  /**
+   * Set sighash flags based on first data line (index 0) of the byteCodePattern data (hex string),
+   * and then using the last 2 hex digits as the sighash byte. This is only valid for P2PKH UTXO.
+   *
+   * See spec: https://documentation.cash/protocol/blockchain/transaction/transaction-signing.html#bitcoin-cash-signatures
+   * @param flags
+   * @param byte_code_data
+   * @returns
+   */
+  static setSighashFlags(flags: bigint, byte_code_data: string): bigint {
+    const SIGHASH_ALL = 0x01;
+    const SIGHASH_NONE = 0x02;
+    const SIGHASH_SINGLE = 0x03;
+    const SIGHASH_UTXOS = 0x20;
+    const SIGHASH_ANYONECANPAY = 0x80;
+
+    const sighashHex = byte_code_data.slice(-2); // 2 hex digits == 1 byte
+    const sighash = parseInt(sighashHex, 16);
+
+    // Extract the lower 2 bits
+    const baseType = sighash & 0x03;
+    switch (baseType) {
+      case SIGHASH_ALL:
+        flags |= TransactionFlags.sighash_all;
+        break;
+      case SIGHASH_NONE:
+        flags |= TransactionFlags.sighash_none;
+        break;
+      case SIGHASH_SINGLE:
+        flags |= TransactionFlags.sighash_single;
+        break;
     }
+
+    // Now we check on the modifiers (higher bits)
+    if (sighash & SIGHASH_UTXOS) {
+      flags |= TransactionFlags.sighash_utxos;
+    }
+
+    if (sighash & SIGHASH_ANYONECANPAY) {
+      flags |= TransactionFlags.sighash_acp;
+    }
+    return flags;
   }
 
   static classifyTransaction(tx: TransactionExtended, height?: number): TransactionClassified {

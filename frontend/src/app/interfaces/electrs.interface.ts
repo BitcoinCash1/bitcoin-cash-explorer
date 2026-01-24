@@ -47,15 +47,24 @@ export interface Recent {
 }
 
 export interface Vin {
+  value: number | null;
   txid: string;
   vout: number;
   is_coinbase: boolean;
-  scriptsig: string;
-  scriptsig_asm: string;
-  inner_redeemscript_asm?: string;
-  inner_witnessscript_asm?: string;
+  scriptsig: string; // in hex
+  scriptsig_asm: string; // in asm
+  scriptsig_byte_code_pattern: string; // in hex
+  scriptsig_byte_code_data: string[]; // script data in hex
+  scriptpubkey: string;
+  scriptpubkey_asm: string;
+  scriptpubkey_type: string;
+  scriptpubkey_address?: string;
+  scriptpubkey_byte_code_pattern: string; // in hex
+  scriptpubkey_byte_code_data: string[]; // script data in hex
+  inner_redeemscript_asm: string;
+  // TODO: Add tokenData (CashToken) as well
   sequence: any;
-  prevout: Vout;
+  prevout: Vout | null;
   // Custom
   lazy?: boolean;
   // temporary field for extracted raw simplicity scripts
@@ -67,6 +76,8 @@ export interface Vout {
   scriptpubkey_asm: string;
   scriptpubkey_type: string;
   scriptpubkey_address?: string;
+  scriptpubkey_byte_code_pattern: string; // in hex
+  scriptpubkey_byte_code_data: string[]; // script data in hex
   value: number;
   // Ord
   isRunestone?: boolean;

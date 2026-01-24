@@ -184,10 +184,6 @@ export interface TransactionStripped {
   context?: 'projected' | 'actual' | 'stale' | 'canonical';
 }
 
-// TODO: Should the mined boolean be moved to TransactionStripped?
-export interface RbfTransaction extends TransactionStripped {
-  mined?: boolean;
-}
 export interface MempoolPosition {
   block: number;
   size: number;

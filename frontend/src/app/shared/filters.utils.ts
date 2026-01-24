@@ -24,23 +24,20 @@ export const TransactionFlags = {
   // features
   v1: 0b00000100n,
   v2: 0b00001000n,
-  v3: 0b00010000n,
+  // v3: 0b00010000n, // Currently BCH has not yet transaction v3
   nonstandard: 0b00100000n,
   // address types
   p2pk: 0b00000001_00000000n,
   p2ms: 0b00000010_00000000n,
   p2pkh: 0b00000100_00000000n,
   p2sh: 0b00001000_00000000n,
-  p2wpkh: 0b00010000_00000000n,
-  p2wsh: 0b00100000_00000000n,
-  p2tr: 0b01000000_00000000n,
   // behavior, BCH doesn't have behaviors
   // data
   op_return: 0b00000001_00000000_00000000_00000000n,
   fake_pubkey: 0b00000010_00000000_00000000_00000000n,
-  inscription: 0b00000100_00000000_00000000_00000000n,
+  inscription: 0b00000100_00000000_00000000_00000000n, // related to witness, not used by BCH
   fake_scripthash: 0b00001000_00000000_00000000_00000000n,
-  annex: 0b00010000_00000000_00000000_00000000n,
+  annex: 0b00010000_00000000_00000000_00000000n, // related to witness, not used by BCH
   // heuristics
   coinjoin: 0b00000001_00000000_00000000_00000000_00000000n,
   consolidation: 0b00000010_00000000_00000000_00000000_00000000n,
@@ -49,8 +46,8 @@ export const TransactionFlags = {
   sighash_all: 0b00000001_00000000_00000000_00000000_00000000_00000000n,
   sighash_none: 0b00000010_00000000_00000000_00000000_00000000_00000000n,
   sighash_single: 0b00000100_00000000_00000000_00000000_00000000_00000000n,
-  sighash_default: 0b00001000_00000000_00000000_00000000_00000000_00000000n,
-  sighash_acp: 0b00010000_00000000_00000000_00000000_00000000_00000000n,
+  sighash_utxos: 0b00001000_00000000_00000000_00000000_00000000_00000000n,
+  sighash_acp: 0b00010000_00000000_00000000_00000000_00000000_00000000n, // Also known as "anyone can pay"
 };
 
 export function toFlags(filters: string[]): bigint {
@@ -204,10 +201,10 @@ export const TransactionFilters: { [key: string]: Filter } = {
     flag: TransactionFlags.sighash_single,
     tooltip: true,
   },
-  sighash_default: {
-    key: 'sighash_default',
-    label: 'sighash_default',
-    flag: TransactionFlags.sighash_default,
+  sighash_utxos: {
+    key: 'sighash_utxos',
+    label: 'sighash_utxos',
+    flag: TransactionFlags.sighash_utxos,
   },
   sighash_acp: {
     key: 'sighash_acp',
@@ -244,7 +241,7 @@ export const FilterGroups: { label: string; filters: Filter[] }[] = [
       'sighash_all',
       'sighash_none',
       'sighash_single',
-      'sighash_default',
+      'sighash_utxos',
       'sighash_acp',
     ],
   },

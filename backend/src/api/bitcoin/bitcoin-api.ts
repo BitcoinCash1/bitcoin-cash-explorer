@@ -323,16 +323,6 @@ class BitcoinApi implements AbstractBitcoinApi {
       status: { confirmed: false },
     };
 
-    esploraTransaction.vout = transaction.vout.map((vout) => {
-      return {
-        value: Math.round(vout.value * 100000000),
-        scriptpubkey: vout.scriptPubKey.hex,
-        scriptpubkey_address: vout.scriptPubKey && vout.scriptPubKey.addresses ? vout.scriptPubKey.addresses[0] : '',
-        scriptpubkey_asm: vout.scriptPubKey.asm ? transactionUtils.convertScriptSigAsm(vout.scriptPubKey.hex) : '', // TODO: Why would you call convertScriptSigAsm, if you already have the asm?
-        scriptpubkey_type: this.translateScriptPubKeyType(vout.scriptPubKey.type),
-      };
-    });
-
     esploraTransaction.vin = transaction.vin.map((vin) => {
       return {
         value: vin.value ? Math.round(vin.value * 100000000) : null,
@@ -350,10 +340,24 @@ class BitcoinApi implements AbstractBitcoinApi {
         scriptpubkey_address: vin.scriptPubKey && vin.scriptPubKey.address ? vin.scriptPubKey.address : '',
         scriptpubkey_asm: vin.scriptPubKey?.asm ? transactionUtils.convertScriptSigAsm(vin.scriptPubKey.hex) : '', // TODO: Why would you call convertScriptSigAsm, if you already have the asm?
         scriptpubkey_type: vin.scriptPubKey ? this.translateScriptPubKeyType(vin.scriptPubKey.type) : '',
+        scriptpubkey_byte_code_pattern: vin.scriptPubKey?.byteCodePattern?.pattern || '',
+        scriptpubkey_byte_code_data: vin.scriptPubKey?.byteCodePattern?.data || [],
         sequence: vin.sequence,
         txid: vin.txid || '',
         vout: vin.vout || 0,
         inner_redeemscript_asm: vin.scriptSig?.redeemScript ? vin.scriptSig.redeemScript.asm : '',
+      };
+    });
+
+    esploraTransaction.vout = transaction.vout.map((vout) => {
+      return {
+        value: Math.round(vout.value * 100000000),
+        scriptpubkey: vout.scriptPubKey.hex,
+        scriptpubkey_address: vout.scriptPubKey && vout.scriptPubKey.addresses ? vout.scriptPubKey.addresses[0] : '',
+        scriptpubkey_asm: vout.scriptPubKey.asm ? transactionUtils.convertScriptSigAsm(vout.scriptPubKey.hex) : '', // TODO: Why would you call convertScriptSigAsm, if you already have the asm?
+        scriptpubkey_type: this.translateScriptPubKeyType(vout.scriptPubKey.type),
+        scriptpubkey_byte_code_pattern: vout.scriptPubKey?.byteCodePattern?.pattern || '',
+        scriptpubkey_byte_code_data: vout.scriptPubKey?.byteCodePattern?.data || [],
       };
     });
 
