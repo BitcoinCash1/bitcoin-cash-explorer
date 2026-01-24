@@ -7,8 +7,11 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { StateService } from '@app/services/state.service';
-import { Address, AddressTxSummary } from '@app/interfaces/backend-api.interface';
-import { ElectrsApiService } from '@app/services/electrs-api.service';
+import {
+  Address,
+  AddressTxSummary,
+} from '@app/interfaces/backend-api.interface';
+import { ElectrsApiService } from '@app/services/backend-api.service';
 import {
   Observable,
   Subscription,

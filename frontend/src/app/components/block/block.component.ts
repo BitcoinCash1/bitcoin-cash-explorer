@@ -9,7 +9,7 @@ import {
 import { Location } from '@angular/common';
 import { ActivatedRoute, ParamMap, Params, Router } from '@angular/router';
 import { Transaction, Vout } from '@app/interfaces/backend-api.interface';
-import { ElectrsApiService } from '@app/services/electrs-api.service';
+import { ElectrsApiService } from '@app/services/backend-api.service';
 import {
   switchMap,
   tap,

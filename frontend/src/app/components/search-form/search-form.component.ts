@@ -33,7 +33,7 @@ import {
   startWith,
   tap,
 } from 'rxjs/operators';
-import { ElectrsApiService } from '@app/services/electrs-api.service';
+import { ElectrsApiService } from '@app/services/backend-api.service';
 import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pipe';
 import { ApiService } from '@app/services/api.service';
 import { normalizeBchAddress } from '@app/shared/address-utils';

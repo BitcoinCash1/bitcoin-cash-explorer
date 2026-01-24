@@ -6,7 +6,7 @@ import {
   HostListener,
 } from '@angular/core';
 import { ActivatedRoute, ParamMap, Router } from '@angular/router';
-import { ElectrsApiService } from '@app/services/electrs-api.service';
+import { ElectrsApiService } from '@app/services/backend-api.service';
 import {
   switchMap,
   tap,

@@ -33,7 +33,7 @@ import {
   UntypedFormGroup,
   Validators,
 } from '@angular/forms';
-import { ElectrsApiService } from '@app/services/electrs-api.service';
+import { ElectrsApiService } from '@app/services/backend-api.service';
 import { SeoService } from '@app/services/seo.service';
 import { seoDescriptionNetwork } from '@app/shared/common.utils';
 import { ApiService } from '@app/services/api.service';

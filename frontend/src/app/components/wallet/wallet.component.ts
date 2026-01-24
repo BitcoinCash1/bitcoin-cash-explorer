@@ -22,7 +22,7 @@ import { of, Observable, Subscription } from 'rxjs';
 import { SeoService } from '@app/services/seo.service';
 import { seoDescriptionNetwork } from '@app/shared/common.utils';
 import { WalletAddress } from '@interfaces/node-api.interface';
-import { ElectrsApiService } from '@app/services/electrs-api.service';
+import { ElectrsApiService } from '@app/services/backend-api.service';
 import { AudioService } from '@app/services/audio.service';
 import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pipe';
 import { WalletStats } from '@app/shared/wallet-stats';

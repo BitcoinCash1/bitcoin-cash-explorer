@@ -6,7 +6,7 @@ import {
   HostListener,
 } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { ElectrsApiService } from '@app/services/electrs-api.service';
+import { ElectrsApiService } from '@app/services/backend-api.service';
 import { switchMap, catchError } from 'rxjs/operators';
 import { Address, Transaction } from '@app/interfaces/backend-api.interface';
 import { WebsocketService } from '@app/services/websocket.service';

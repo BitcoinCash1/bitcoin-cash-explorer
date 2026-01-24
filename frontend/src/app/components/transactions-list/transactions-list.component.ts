@@ -20,8 +20,12 @@ import {
   of,
   forkJoin,
 } from 'rxjs';
-import { Outspend, Transaction, Vout } from '@app/interfaces/backend-api.interface';
-import { ElectrsApiService } from '@app/services/electrs-api.service';
+import {
+  Outspend,
+  Transaction,
+  Vout,
+} from '@app/interfaces/backend-api.interface';
+import { ElectrsApiService } from '@app/services/backend-api.service';
 import { environment } from '@environments/environment';
 import { map, tap, switchMap } from 'rxjs/operators';
 import { BlockExtended } from '@interfaces/node-api.interface';

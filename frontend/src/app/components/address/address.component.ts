@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
-import { ElectrsApiService } from '@app/services/electrs-api.service';
+import { ElectrsApiService } from '@app/services/backend-api.service';
 import { switchMap, filter, catchError, map, tap } from 'rxjs/operators';
 import {
   Address,

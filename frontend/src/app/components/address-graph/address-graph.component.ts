@@ -19,8 +19,11 @@ import {
   of,
 } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
-import { AddressTxSummary, ChainStats } from '@app/interfaces/backend-api.interface';
-import { ElectrsApiService } from '@app/services/electrs-api.service';
+import {
+  AddressTxSummary,
+  ChainStats,
+} from '@app/interfaces/backend-api.interface';
+import { ElectrsApiService } from '@app/services/backend-api.service';
 import { AmountShortenerPipe } from '@app/shared/pipes/amount-shortener.pipe';
 import { Router } from '@angular/router';
 import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pipe';

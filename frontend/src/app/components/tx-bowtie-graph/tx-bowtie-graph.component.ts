@@ -19,7 +19,7 @@ import { ReplaySubject, merge, Subscription, of } from 'rxjs';
 import { tap, switchMap } from 'rxjs/operators';
 import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pipe';
 import { environment } from '@environments/environment';
-import { ElectrsApiService } from '@app/services/electrs-api.service';
+import { ElectrsApiService } from '@app/services/backend-api.service';
 
 interface SvgLine {
   path: string;

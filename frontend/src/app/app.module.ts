@@ -9,7 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ZONE_SERVICE } from '@app/injection-tokens';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from '@components/app/app.component';
-import { ElectrsApiService } from '@app/services/electrs-api.service';
+import { ElectrsApiService } from '@app/services/backend-api.service';
 import { StateService } from '@app/services/state.service';
 import { CacheService } from '@app/services/cache.service';
 import { PriceService } from '@app/services/price.service';

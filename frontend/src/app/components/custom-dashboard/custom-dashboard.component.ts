@@ -45,8 +45,11 @@ import {
   toFlags,
 } from '@app/shared/filters.utils';
 import { detectWebGL } from '@app/shared/graphs.utils';
-import { Address, AddressTxSummary } from '@app/interfaces/backend-api.interface';
-import { ElectrsApiService } from '@app/services/electrs-api.service';
+import {
+  Address,
+  AddressTxSummary,
+} from '@app/interfaces/backend-api.interface';
+import { ElectrsApiService } from '@app/services/backend-api.service';
 
 interface MempoolBlocksData {
   blocks: number;
