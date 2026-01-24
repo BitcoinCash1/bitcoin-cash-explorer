@@ -633,7 +633,6 @@ class BitcoinRoutes {
         lastTxId = req.query.after_txid;
       }
       const transactions = await bitcoinApi.$getAddressTransactions(req.params.address, lastTxId);
-      console.log('REMOVE VERBOSITY FROM TRANSACTIONS');
       const nonVerboseTransactions = transactionUtils.stripVerbosityFromTransactions(transactions);
       res.json(nonVerboseTransactions);
     } catch (e) {
