@@ -846,8 +846,6 @@ function convertScriptSigAsm(hex: string): string {
         b.push('OP_CLTV');
       } else if (op === 0xb2) {
         b.push('OP_CSV');
-      } else if (op === 0xba) {
-        b.push('OP_CHECKSIGADD');
       } else {
         const opcode = opcodes[op];
         if (opcode) {
@@ -1892,7 +1890,7 @@ export function compactSize(n: number): Uint8Array {
   }
 }
 
-// Inversed the opcodes object from https://github.com/mempool/mempool/blob/14e49126c3ca8416a8d7ad134a95c5e090324d69/backend/src/utils/bitcoin-script.ts#L1
+// Inversed the opcodes object from https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/-/blob/main/backend/src/utils/bitcoin-script.ts?ref_type=heads
 const opcodes = {
   0: 'OP_0',
   76: 'OP_PUSHDATA1',
@@ -1950,6 +1948,7 @@ const opcodes = {
   128: 'OP_LEFT',
   129: 'OP_RIGHT',
   130: 'OP_SIZE',
+  188: 'OP_REVERSEBYTES',
   131: 'OP_INVERT',
   132: 'OP_AND',
   133: 'OP_OR',
@@ -2005,7 +2004,26 @@ const opcodes = {
   183: 'OP_NOP8',
   184: 'OP_NOP9',
   185: 'OP_NOP10',
-  186: 'OP_CHECKSIGADD',
+  192: 'OP_INPUTINDEX',
+  193: 'OP_ACTIVEBYTECODE',
+  194: 'OP_TXVERSION',
+  195: 'OP_TXINPUTCOUNT',
+  196: 'OP_TXOUTPUTCOUNT',
+  197: 'OP_TXLOCKTIME',
+  198: 'OP_UTXOVALUE',
+  199: 'OP_UTXOBYTECODE',
+  200: 'OP_OUTPOINTTXHASH',
+  201: 'OP_OUTPOINTINDEX',
+  202: 'OP_INPUTBYTECODE',
+  203: 'OP_INPUTSEQUENCENUMBER',
+  204: 'OP_OUTPUTVALUE',
+  205: 'OP_OUTPUTBYTECODE',
+  206: 'OP_UTXOTOKENCATEGORY',
+  207: 'OP_UTXOTOKENCOMMITMENT',
+  208: 'OP_UTXOTOKENAMOUNT',
+  209: 'OP_OUTPUTTOKENCATEGORY',
+  210: 'OP_OUTPUTTOKENCOMMITMENT',
+  211: 'OP_OUTPUTTOKENAMOUNT',
   253: 'OP_PUBKEYHASH',
   254: 'OP_PUBKEY',
   255: 'OP_INVALIDOPCODE',

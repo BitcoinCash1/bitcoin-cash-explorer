@@ -334,8 +334,6 @@ class TransactionUtils {
           b.push('OP_CLTV');
         } else if (op === 0xb2) {
           b.push('OP_CSV');
-        } else if (op === 0xba) {
-          b.push('OP_CHECKSIGADD');
         } else {
           const opcode = bitcoinjs.script.toASM([op]);
           if (opcode && op < 0xfd) {
