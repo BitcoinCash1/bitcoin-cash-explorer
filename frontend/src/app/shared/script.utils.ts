@@ -148,8 +148,7 @@ export { opcodes };
 export type ScriptType =
   | 'scriptpubkey'
   | 'scriptsig'
-  | 'inner_redeemscript'
-  | 'inner_simplicityscript';
+  | 'inner_redeemscript';
 
 export interface ScriptTemplate {
   type: string;

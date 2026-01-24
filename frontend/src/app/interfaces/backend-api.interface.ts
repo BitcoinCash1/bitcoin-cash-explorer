@@ -73,13 +73,10 @@ export interface Vin {
   scriptpubkey_byte_code_pattern: string; // in hex
   scriptpubkey_byte_code_data: string[]; // script data in hex
   inner_redeemscript_asm: string;
-  // TODO: Add tokenData (CashToken) as well
   sequence: any;
   prevout: Vout | null;
   // Custom
   lazy?: boolean;
-  // temporary field for extracted raw simplicity scripts
-  inner_simplicityscript?: string;
 }
 
 export interface Vout {

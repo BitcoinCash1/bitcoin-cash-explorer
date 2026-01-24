@@ -52,7 +52,6 @@ export namespace IPublicApi {
     scriptpubkey_byte_code_data: string[]; // script data in hex
     scriptpubkey_address?: string;
     inner_redeemscript_asm: string;
-    // TODO: Add tokenData (CashToken) as well
     sequence: any;
     prevout: Vout | null;
     // Custom
