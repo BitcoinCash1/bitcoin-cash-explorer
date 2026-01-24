@@ -145,10 +145,7 @@ for (let i = 187; i <= 255; i++) {
 
 export { opcodes };
 
-export type ScriptType =
-  | 'scriptpubkey'
-  | 'scriptsig'
-  | 'inner_redeemscript';
+export type ScriptType = 'scriptpubkey' | 'scriptsig' | 'inner_redeemscript';
 
 export interface ScriptTemplate {
   type: string;

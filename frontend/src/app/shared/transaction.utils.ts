@@ -117,6 +117,7 @@ export enum SighashFlag {
   ALL = 1,
   NONE = 2,
   SINGLE = 3,
+  UTXOS = 0x20,
   ANYONECANPAY = 0x80,
 }
 
@@ -196,30 +197,6 @@ export function extractDERSignaturesASM(script_asm: string): SigInfo[] {
           sighash,
         });
       }
-    }
-  }
-
-  return signatures;
-}
-
-export function extractSchnorrSignatures(witnesses: string[]): SigInfo[] {
-  if (!witnesses?.length) {
-    return [];
-  }
-
-  const signatures: SigInfo[] = [];
-
-  for (const witness of witnesses) {
-    if (witness.length === 130) {
-      signatures.push({
-        signature: witness,
-        sighash: decodeSighashFlag(parseInt(witness.slice(-2), 16)),
-      });
-    } else if (witness.length === 128) {
-      signatures.push({
-        signature: witness,
-        sighash: SighashFlag.DEFAULT,
-      });
     }
   }
 
@@ -340,7 +317,6 @@ export function isNonStandard(
     return true;
   }
 
-  // TODO: Combine just one tx-size (BCH doesn't have witness)
   // tx-size
   if (tx.size > MIN_BLOCK_SIZE) {
     return true;
