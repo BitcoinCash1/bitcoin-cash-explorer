@@ -284,7 +284,7 @@ export class StartComponent implements OnInit, AfterViewChecked, OnDestroy {
     }
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize(): void {
     this.chainWidth = window.innerWidth;
     this.isMobile = this.chainWidth <= 767.98;

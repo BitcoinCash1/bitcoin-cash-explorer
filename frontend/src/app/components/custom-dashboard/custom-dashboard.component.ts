@@ -560,7 +560,7 @@ export class CustomDashboardComponent
     });
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize(): void {
     if (window.innerWidth >= 992) {
       this.incomingGraphHeight = 300;

@@ -192,7 +192,7 @@ export class TreasuriesVerifyProgressComponent implements OnInit, OnDestroy {
   }
 
   @HostListener('window:resize', ['$event'])
-  onResize(): void {
+  onResize(event): void {
     this.isMobile = window.innerWidth <= 767.98;
   }
 

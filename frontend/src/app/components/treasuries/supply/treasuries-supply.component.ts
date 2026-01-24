@@ -210,7 +210,7 @@ export class TreasuriesSupplyComponent implements OnInit, OnDestroy {
     this.hoverSection = undefined;
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize(): void {
     this.isMobile = window.innerWidth <= 767.98;
   }

@@ -588,7 +588,7 @@ export class AddressComponent implements OnInit, OnDestroy {
     );
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize(): void {
     this.isMobile = window.innerWidth < 768;
   }
