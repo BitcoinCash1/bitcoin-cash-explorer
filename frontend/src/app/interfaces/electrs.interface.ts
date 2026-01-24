@@ -79,8 +79,6 @@ export interface Vout {
   scriptpubkey_byte_code_pattern: string; // in hex
   scriptpubkey_byte_code_data: string[]; // script data in hex
   value: number;
-  // Ord
-  isRunestone?: boolean;
 }
 
 export interface Status {

@@ -176,7 +176,6 @@ import { GeolocationComponent } from '@app/shared/components/geolocation/geoloca
 import { TestnetAlertComponent } from '@app/shared/components/testnet-alert/testnet-alert.component';
 import { GlobalFooterComponent } from '@app/shared/components/global-footer/global-footer.component';
 import { MempoolErrorComponent } from '@app/shared/components/mempool-error/mempool-error.component';
-import { OrdDataComponent } from '@components/ord-data/ord-data.component';
 
 import { BlockViewComponent } from '@components/block-view/block-view.component';
 import { EightBlocksComponent } from '@components/eight-blocks/eight-blocks.component';
@@ -291,7 +290,6 @@ import { MempoolProgressBarComponent } from '@components/mempool-progress-bar/me
     ClockComponent,
     ClockFaceComponent,
     MempoolErrorComponent,
-    OrdDataComponent,
     HttpErrorComponent,
     TwitterWidgetComponent,
     SimpleProofWidgetComponent,
@@ -414,7 +412,6 @@ import { MempoolProgressBarComponent } from '@components/mempool-progress-bar/me
     PreviewTitleComponent,
     GlobalFooterComponent,
     MempoolErrorComponent,
-    OrdDataComponent,
     HttpErrorComponent,
     TwitterWidgetComponent,
     SimpleProofWidgetComponent,

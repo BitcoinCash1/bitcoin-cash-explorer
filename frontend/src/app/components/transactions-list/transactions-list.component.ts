@@ -28,9 +28,6 @@ import { BlockExtended } from '@interfaces/node-api.interface';
 import { ApiService } from '@app/services/api.service';
 import { PriceService } from '@app/services/price.service';
 import { StorageService } from '@app/services/storage.service';
-import { OrdApiService } from '@app/services/ord-api.service';
-import { Inscription } from '@app/shared/ord/inscription.utils';
-import { Etching, Runestone } from '@app/shared/ord/rune.utils';
 import {
   ADDRESS_SIMILARITY_THRESHOLD,
   AddressMatch,
@@ -91,14 +88,6 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   showFullScriptPubkeyHex: { [voutIndex: number]: boolean } = {};
   showFullOpReturnData: { [voutIndex: number]: boolean } = {};
   showFullOpReturnPreview: { [voutIndex: number]: boolean } = {};
-  showOrdData: {
-    [key: string]: {
-      show: boolean;
-      inscriptions?: Inscription[]; // BCH doesn't have inscriptions, which is used for taproot
-      runestone?: Runestone;
-      runeInfo?: { [id: string]: { etching: Etching; txid: string } };
-    };
-  } = {};
   similarityMatches: Map<
     string,
     Map<string, { score: number; match: AddressMatch; group: number }>
@@ -116,7 +105,6 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     public stateService: StateService,
     private cacheService: CacheService,
     private electrsApiService: ElectrsApiService,
-    private ordApiService: OrdApiService,
     private ref: ChangeDetectorRef,
     private priceService: PriceService,
     private storageService: StorageService,
@@ -365,14 +353,6 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
             )
             .pipe(tap((price) => (tx['price'] = price)))
             .subscribe();
-        }
-
-        // Check for ord data fingerprints in inputs and outputs
-        for (let i = 0; i < tx.vout.length; i++) {
-          if (tx.vout[i]?.scriptpubkey?.startsWith('6a5d')) {
-            tx.vout[i].isRunestone = true;
-            break;
-          }
         }
 
         // process signature data
@@ -714,35 +694,6 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   toggleShowFullOpReturnPreview(voutIndex: number): void {
     this.showFullOpReturnPreview[voutIndex] =
       !this.showFullOpReturnPreview[voutIndex];
-  }
-
-  toggleOrdData(txid: string, type: 'vin' | 'vout', index: number) {
-    const tx = this.transactions.find((tx) => tx.txid === txid);
-    if (!tx) {
-      return;
-    }
-
-    const key = tx.txid + '-' + type + '-' + index;
-    this.showOrdData[key] = this.showOrdData[key] || { show: false };
-
-    if (type === 'vin') {
-      this.showOrdData[key].show = !this.showOrdData[key].show;
-    } else if (type === 'vout') {
-      if (!this.showOrdData[key].runestone) {
-        this.ordApiService
-          .decodeRunestone$(tx)
-          .pipe(
-            tap((runestone) => {
-              if (runestone) {
-                Object.assign(this.showOrdData[key], runestone);
-                this.ref.markForCheck();
-              }
-            })
-          )
-          .subscribe();
-      }
-      this.showOrdData[key].show = !this.showOrdData[key].show;
-    }
   }
 
   showSigInfo(txIndex: number, vindex: number, sig: SigInfo): void {

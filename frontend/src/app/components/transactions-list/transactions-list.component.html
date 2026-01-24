@@ -229,35 +229,6 @@
                     ></app-amount>
                   </td>
                 </tr>
-                <tr
-                  *ngIf="showOrdData[tx.txid + '-vin-' + vindex]?.show"
-                  [ngClass]="{
-                    highlight:
-                      addresses?.length &&
-                      (addresses.includes(vin.prevout?.scriptpubkey_address) ||
-                        (vin.prevout?.scriptpubkey_type === 'p2pk' &&
-                          addresses.includes(
-                            vin.prevout?.scriptpubkey.slice(2, -2)
-                          ))),
-                    sigged:
-                      selectedSig &&
-                      selectedSig.txIndex === i &&
-                      sigHighlights.vin[vindex],
-                  }"
-                >
-                  <td></td>
-                  @if (tx["_showSignatures"]) {
-                    <td></td>
-                  }
-                  <td colspan="2">
-                    <app-ord-data
-                      [inscriptions]="
-                        showOrdData[tx.txid + '-vin-' + vindex]['inscriptions']
-                      "
-                      [type]="'vin'"
-                    ></app-ord-data>
-                  </td>
-                </tr>
                 <tr *ngIf="(showDetails$ | async) === true">
                   <td
                     [attr.colspan]="tx['_showSignatures'] ? 4 : 3"
@@ -451,65 +422,54 @@
                         [ngIfElse]="otherPubkeyType"
                       >
                         OP_RETURN&nbsp;
-                        @if (vout.isRunestone) {
-                          <button
-                            (click)="toggleOrdData(tx.txid, 'vout', vindex)"
-                            type="button"
-                            class="btn btn-sm badge badge-ord"
-                          >
-                            Runestone
-                          </button>
-                        } @else {
-                          <a placement="bottom" style="cursor: pointer">
-                            @if (
-                              (vout.scriptpubkey_asm | hex2ascii).length > 200
-                            ) {
-                              <span
-                                *ngIf="vout.scriptpubkey_asm !== 'OP_RETURN'"
-                                class="badge badge-secondary scriptmessage opreturn-msg"
-                                (click)="toggleShowFullOpReturnPreview(vindex)"
-                                >{{
-                                  vout.scriptpubkey_asm
-                                    | hex2ascii
-                                    | slice: 0 : 200
-                                }}</span
-                              >
-                              <ng-container
-                                *ngIf="(showDetails$ | async) === false"
-                              >
-                                @if (
-                                  (vout.scriptpubkey_asm | hex2ascii).length >
-                                  200
-                                ) {
-                                  @if (!showFullOpReturnPreview[vindex]) {
-                                    <span
-                                      class="badge badge-primary"
-                                      (click)="
-                                        toggleShowFullOpReturnPreview(vindex)
-                                      "
-                                      >Show more</span
-                                    >
-                                  } @else {
-                                    <span
-                                      class="badge badge-primary"
-                                      (click)="
-                                        toggleShowFullOpReturnPreview(vindex)
-                                      "
-                                      >Show less</span
-                                    >
-                                  }
+                        <a placement="bottom" style="cursor: pointer">
+                          @if (
+                            (vout.scriptpubkey_asm | hex2ascii).length > 200
+                          ) {
+                            <span
+                              *ngIf="vout.scriptpubkey_asm !== 'OP_RETURN'"
+                              class="badge badge-secondary scriptmessage opreturn-msg"
+                              (click)="toggleShowFullOpReturnPreview(vindex)"
+                              >{{
+                                vout.scriptpubkey_asm
+                                  | hex2ascii
+                                  | slice: 0 : 200
+                              }}</span
+                            >
+                            <ng-container
+                              *ngIf="(showDetails$ | async) === false"
+                            >
+                              @if (
+                                (vout.scriptpubkey_asm | hex2ascii).length > 200
+                              ) {
+                                @if (!showFullOpReturnPreview[vindex]) {
+                                  <span
+                                    class="badge badge-primary"
+                                    (click)="
+                                      toggleShowFullOpReturnPreview(vindex)
+                                    "
+                                    >Show more</span
+                                  >
+                                } @else {
+                                  <span
+                                    class="badge badge-primary"
+                                    (click)="
+                                      toggleShowFullOpReturnPreview(vindex)
+                                    "
+                                    >Show less</span
+                                  >
                                 }
-                              </ng-container>
-                            } @else {
-                              <span
-                                *ngIf="vout.scriptpubkey_asm !== 'OP_RETURN'"
-                                [ngbTooltip]="vout.scriptpubkey_asm | hex2ascii"
-                                class="badge badge-secondary scriptmessage"
-                                >{{ vout.scriptpubkey_asm | hex2ascii }}</span
-                              >
-                            }
-                          </a>
-                        }
+                              }
+                            </ng-container>
+                          } @else {
+                            <span
+                              *ngIf="vout.scriptpubkey_asm !== 'OP_RETURN'"
+                              [ngbTooltip]="vout.scriptpubkey_asm | hex2ascii"
+                              class="badge badge-secondary scriptmessage"
+                              >{{ vout.scriptpubkey_asm | hex2ascii }}</span
+                            >
+                          }
+                        </a>
                       </ng-template>
                       <ng-template #otherPubkeyType>{{
                         vout.scriptpubkey_type | scriptpubkeyType
@@ -579,33 +539,6 @@
                         </ng-template>
                       </ng-template>
                     </ng-template>
-                  </td>
-                </tr>
-
-                <tr
-                  *ngIf="showOrdData[tx.txid + '-vout-' + vindex]?.show"
-                  [ngClass]="{
-                    highlight:
-                      addresses?.length &&
-                      (addresses.includes(vout.scriptpubkey_address) ||
-                        (vout.scriptpubkey_type === 'p2pk' &&
-                          addresses.includes(vout.scriptpubkey.slice(2, -2)))),
-                    sigged:
-                      selectedSig &&
-                      selectedSig.txIndex === i &&
-                      sigHighlights.vout[vindex],
-                  }"
-                >
-                  <td colspan="3">
-                    <app-ord-data
-                      [runestone]="
-                        showOrdData[tx.txid + '-vout-' + vindex]['runestone']
-                      "
-                      [runeInfo]="
-                        showOrdData[tx.txid + '-vout-' + vindex]['runeInfo']
-                      "
-                      [type]="'vout'"
-                    ></app-ord-data>
                   </td>
                 </tr>
                 <tr
