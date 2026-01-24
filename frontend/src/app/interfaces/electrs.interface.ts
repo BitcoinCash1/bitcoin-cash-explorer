@@ -88,6 +88,12 @@ export interface Status {
   block_time?: number;
 }
 
+export interface BlockAblaState {
+  block_size: number;
+  block_size_limit: number;
+  next_block_size_limit: number;
+}
+
 export interface Block {
   id: string;
   height: number;
@@ -102,7 +108,7 @@ export interface Block {
   previousblockhash: string;
   stale?: boolean;
   canonical?: string;
-  // TODO: Add optional ABLA fields
+  abla_state?: BlockAblaState;
 }
 
 export interface Address {

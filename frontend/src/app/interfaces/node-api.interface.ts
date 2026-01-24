@@ -135,15 +135,8 @@ export interface BlockExtension {
   }[];
 }
 
-export interface BlockAblaState {
-  block_size: number;
-  block_size_limit: number;
-  next_block_size_limit: number;
-}
-
 export interface BlockExtended extends Block {
   extras?: BlockExtension;
-  abla_state?: BlockAblaState;
 }
 
 export interface BlockAudit extends BlockExtended {
