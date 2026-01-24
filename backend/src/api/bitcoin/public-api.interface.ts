@@ -12,11 +12,28 @@ export namespace IPublicApi {
     hex?: string;
   }
 
+  // TODO: Verbose Transactions still needs to be implemented,
+  // but we at least have the interface definitions in place.
+  export interface VerboseTransaction {
+    txid: string;
+    version: number;
+    locktime: number;
+    size: number;
+    fee: number;
+    sigops?: number;
+    vin: VerboseVin[];
+    vout: VerboseVout[];
+    status: Status;
+    hex?: string;
+  }
+
   export interface Recent {
     txid: string;
     fee: number;
-    vsize: number;
+    size: number;
     value: number;
+    rate: number;
+    time: number;
   }
 
   export interface Vin {
@@ -43,6 +60,39 @@ export namespace IPublicApi {
   }
 
   export interface Vout {
+    scriptpubkey: string;
+    scriptpubkey_asm: string;
+    scriptpubkey_type: string;
+    scriptpubkey_address?: string;
+    scriptpubkey_byte_code_pattern: string; // in hex
+    scriptpubkey_byte_code_data: string[]; // script data in hex
+    value: number;
+  }
+
+  export interface VerboseVin {
+    txid: string;
+    vout: number;
+    value: number | null;
+    is_coinbase: boolean;
+    scriptsig: string; // in hex
+    scriptsig_asm: string; // in asm
+    scriptsig_byte_code_pattern: string; // in hex
+    scriptsig_byte_code_data: string[]; // script data in hex
+    scriptpubkey: string;
+    scriptpubkey_asm: string;
+    scriptpubkey_type: string;
+    scriptpubkey_byte_code_pattern: string; // in hex
+    scriptpubkey_byte_code_data: string[]; // script data in hex
+    scriptpubkey_address?: string;
+    inner_redeemscript_asm: string;
+    // TODO: Add tokenData (CashToken) as well
+    sequence: any;
+    prevout: Vout | null;
+    // Custom
+    lazy?: boolean;
+  }
+
+  export interface VerboseVout {
     scriptpubkey: string;
     scriptpubkey_asm: string;
     scriptpubkey_type: string;

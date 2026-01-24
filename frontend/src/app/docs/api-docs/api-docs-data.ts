@@ -5791,10 +5791,20 @@ export const restApiDocsData = [
           curl: [],
           response: `[
   {
-    txid: "4b93c138293a7e3dfea6f0a63d944890b5ba571b03cc22d8c66995535e90dce8",
-    fee: 18277,
-    size: 2585,
-    value: 4972029
+    "txid": "be577245d7a1ef30b13099c1c386dc01e81ef9c190cbbe7ac3d5d76c2de52fc0",
+    "fee": 310,
+    "size": 260,
+    "value": 950467415,
+    "rate": 1.1923076923076923,
+    "time": 1769270945
+  },
+  {
+    "txid": "220ea90301f3475c910bbc801a3f7cdfa8964ff21b16ba65df525b1c5ce2f8b0",
+    "fee": 226,
+    "size": 225,
+    "value": 2089818257,
+    "rate": 1.0044444444444445,
+    "time": 1769270943
   },
   ...
 ]`,
@@ -5805,10 +5815,20 @@ export const restApiDocsData = [
           curl: [],
           response: `[
   {
-    txid: "1fc5098fe3378828a890fa5144883cdd1411d9cdbb1af365c20e72503b11dc81",
-    fee: 221,
-    size: 201,
-    value: 944960
+    "txid": "be577245d7a1ef30b13099c1c386dc01e81ef9c190cbbe7ac3d5d76c2de52fc0",
+    "fee": 310,
+    "size": 260,
+    "value": 950467415,
+    "rate": 1.1923076923076923,
+    "time": 1769270945
+  },
+  {
+    "txid": "220ea90301f3475c910bbc801a3f7cdfa8964ff21b16ba65df525b1c5ce2f8b0",
+    "fee": 226,
+    "size": 225,
+    "value": 2089818257,
+    "rate": 1.0044444444444445,
+    "time": 1769270943
   },
   ...
 ]`,
@@ -5819,10 +5839,20 @@ export const restApiDocsData = [
           curl: [],
           response: `[
   {
-    txid: "18dcbd5405f65f583ed32db2f86f84510c07c59ac5321bb90cbd3a3f2963c224",
-    fee: 183,
-    size: 140,
-    value: 4369990908
+    "txid": "be577245d7a1ef30b13099c1c386dc01e81ef9c190cbbe7ac3d5d76c2de52fc0",
+    "fee": 310,
+    "size": 260,
+    "value": 950467415,
+    "rate": 1.1923076923076923,
+    "time": 1769270945
+  },
+  {
+    "txid": "220ea90301f3475c910bbc801a3f7cdfa8964ff21b16ba65df525b1c5ce2f8b0",
+    "fee": 226,
+    "size": 225,
+    "value": 2089818257,
+    "rate": 1.0044444444444445,
+    "time": 1769270943
   },
   ...
 ]`,
