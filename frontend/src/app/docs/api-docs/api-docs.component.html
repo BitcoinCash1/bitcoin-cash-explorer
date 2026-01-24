@@ -616,7 +616,7 @@
     mempool grows in size.
   </p>
   <p>
-    By default, Bitcoin Cash Core allocates 320MB of memory for its mempool, so
+    By default, Bitcoin Cash Node allocates 320MB of memory for its mempool, so
     when a node's mempool grows big enough to use all 320MB of allocated memory,
     we say it's "full".
   </p>
@@ -658,7 +658,7 @@
     Memory usage on the front page refers to the real-time amount of system
     memory used by a Bitcoin Cash node's mempool. This memory usage number is
     always higher than the total size of all pending transactions in the mempool
-    due to indexes, pointers, and other overhead used by Bitcoin Cash Core for
+    due to indexes, pointers, and other overhead used by Bitcoin Cash Node for
     storage and processing.
   </p>
   <p>
@@ -765,7 +765,7 @@
   </p>
   <p>
     How is the expected block determined? BCH Explorer monitors its view of the
-    mempool and runs a re-implementation of Bitcoin Cash Core's transaction
+    mempool and runs a re-implementation of Bitcoin Cash Node's transaction
     selection algorithm to determine the transactions it expects to see in
     upcoming blocks (<a
       href="https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/blob/master/backend/src/api/mempool-blocks.ts"
