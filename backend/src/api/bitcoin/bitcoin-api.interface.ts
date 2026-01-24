@@ -76,15 +76,52 @@ export namespace IBitcoinApi {
     time: number; //  (numeric) Same as blocktime
   }
 
+  export interface VerboseTransaction {
+    in_active_chain: boolean; //  (boolean) Whether specified block is in the active chain or not
+    hex: string; //  (string) The serialized, hex-encoded data for 'txid'
+    txid: string; //  (string) The transaction id (same as provided)
+    hash: string; //  (string) The transaction hash
+    size: number; //  (numeric) The serialized transaction size
+    version: number; //  (numeric) The version
+    locktime: number; //  (numeric) The lock time
+    vin: VerboseVin[];
+    vout: VerboseVout[];
+    blockhash: string; //  (string) the block hash
+    confirmations: number; //  (numeric) The confirmations
+    blocktime: number; //  (numeric) The block time expressed in UNIX epoch time
+    time: number; //  (numeric) Same as blocktime
+    fee?: number; //  (numeric) The transaction fee in BCH, omitted if block undo data is not available
+  }
+
   export interface VerboseBlock extends Block {
     tx: VerboseTransaction[]; // The transactions in the format of the getrawtransaction RPC. Different from verbosity = 1 "tx" result
   }
 
-  export interface VerboseTransaction extends Transaction {
-    fee?: number; //  (numeric) The transaction fee in BCH, omitted if block undo data is not available
+  export interface Vin {
+    txid?: string; //  (string) The transaction id
+    vout?: number; //  (string)
+    scriptSig?: {
+      //  (json object) The script
+      asm: string; //  (string) asm
+      hex: string; //  (string) hex
+    };
+    sequence: number; //  (numeric) The script sequence number
+    coinbase?: string; // (string) only present if coinbase transaction in hex
   }
 
-  export interface Vin {
+  export interface Vout {
+    value: number; //  (numeric) The value in BCH
+    n: number; //  (numeric) index
+    scriptPubKey: {
+      //  (json object)
+      asm: string; //  (string) the asm
+      hex: string; //  (string) the hex
+      reqSigs?: number; //  (numeric) The required sigs
+      type: string; //  (string) The type, eg. 'pubkeyhash'
+    };
+  }
+
+  export interface VerboseVin {
     txid?: string; //  (string) The transaction id
     vout?: number; //  (string)
     value?: number; //  (numeric) The value in BCH
@@ -134,7 +171,7 @@ export namespace IBitcoinApi {
     coinbase?: string; // (string) only present if coinbase transaction in hex
   }
 
-  export interface Vout {
+  export interface VerboseVout {
     value: number; //  (numeric) The value in BCH
     n: number; //  (numeric) index
     scriptPubKey: {

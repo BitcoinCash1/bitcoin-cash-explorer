@@ -258,6 +258,7 @@ class Mempool {
   }
 
   // Melroy: Only used with esplora?
+  // TODO: If so, we need to remote this.
   public async $updateMempool(
     transactions: string[],
     minFeeMempool: string[],
@@ -473,8 +474,6 @@ class Mempool {
           if (!newCandidateTxMap[txid]) {
             if (this.mempoolCache[txid]) {
               removed.push(this.mempoolCache[txid]);
-              this.mempoolCache[txid].ancestors = [];
-              this.mempoolCache[txid].descendants = [];
             } else if (deletedTxsMap[txid]) {
               removed.push(deletedTxsMap[txid]);
             }

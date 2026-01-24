@@ -930,6 +930,7 @@ function fromBuffer(
     const is_coinbase = txid === '0'.repeat(64);
     const scriptsig_asm = convertScriptSigAsm(scriptsig);
     // TODO: Parse value, scriptsig_byte_code_pattern, scriptsig_byte_code_data, scriptpubkey, scriptpubkey_asm, scriptpubkey_type, scriptpubkey_address, scriptpubkey_byte_code_pattern, scriptpubkey_byte_code_data
+    // Q: Is this even all stored in a raw transaction hex?
     const value = null;
     const scriptsig_byte_code_pattern = '';
     const scriptsig_byte_code_data: string[] = [];
@@ -975,6 +976,7 @@ function fromBuffer(
     const scriptpubkey_type = toAddress.type;
     const scriptpubkey_address = toAddress?.address;
     // TODO: scriptpubkey_byte_code_pattern, scriptpubkey_byte_code_data
+    // Q: Is this even all stored in a raw transaction hex?
     const scriptpubkey_byte_code_pattern = '';
     const scriptpubkey_byte_code_data: string[] = [];
     tx.vout.push({

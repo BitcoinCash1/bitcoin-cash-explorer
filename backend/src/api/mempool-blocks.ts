@@ -405,15 +405,9 @@ class MempoolBlocks {
     blocks: string[][],
     blockSizes: number[] | null,
     rates: [string, number][],
-    candidates: GbtCandidates | undefined,
+    candidates: GbtCandidates | undefined, // candidates is not used in BCH (this is used in BTC for CPFP)
     saveResults
   ): MempoolBlockWithTransactions[] {
-    for (const txid of Object.keys(candidates?.txs ?? mempool)) {
-      if (txid in mempool) {
-        mempool[txid].ancestors = [];
-        mempool[txid].descendants = [];
-      }
-    }
     for (const [txid, rate] of rates) {
       if (txid in mempool) {
         mempool[txid].feePerSize = rate;

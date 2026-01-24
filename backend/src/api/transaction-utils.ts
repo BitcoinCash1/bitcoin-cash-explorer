@@ -71,11 +71,21 @@ class TransactionUtils {
     forceCore = false,
     addMempoolData = false
   ): Promise<TransactionExtended> {
-    let transaction: IPublicApi.Transaction;
+    let transaction: IPublicApi.VerboseTransaction;
     if (forceCore === true) {
-      transaction = await bitcoinCoreApi.$getRawTransaction(txId, false, addPrevouts, lazyPrevouts);
+      transaction = (await bitcoinCoreApi.$getRawTransaction(
+        txId,
+        false,
+        addPrevouts,
+        lazyPrevouts
+      )) as IPublicApi.VerboseTransaction;
     } else {
-      transaction = await bitcoinApi.$getRawTransaction(txId, false, addPrevouts, lazyPrevouts);
+      transaction = (await bitcoinApi.$getRawTransaction(
+        txId,
+        false,
+        addPrevouts,
+        lazyPrevouts
+      )) as IPublicApi.VerboseTransaction;
     }
 
     if (addMempoolData || !transaction?.status?.confirmed) {
@@ -125,7 +135,7 @@ class TransactionUtils {
       .map((r) => (r as PromiseFulfilledResult<MempoolTransactionExtended>).value);
   }
 
-  public extendTransaction(transaction: IPublicApi.Transaction): TransactionExtended {
+  public extendTransaction(transaction: IPublicApi.VerboseTransaction): TransactionExtended {
     // @ts-ignore
     if (transaction.vsize) {
       // @ts-ignore
@@ -144,7 +154,7 @@ class TransactionUtils {
     return transactionExtended;
   }
 
-  public extendMempoolTransaction(transaction: IPublicApi.Transaction): MempoolTransactionExtended {
+  public extendMempoolTransaction(transaction: IPublicApi.VerboseTransaction): MempoolTransactionExtended {
     const size = Math.ceil(transaction.size);
     const sigops = transaction.sigops ? transaction.sigops : this.countSigops(transaction);
     // https://gitlab.com/bitcoin-cash-node/bitcoin-cash-node/-/blob/master/src/policy/policy.cpp#L182-185

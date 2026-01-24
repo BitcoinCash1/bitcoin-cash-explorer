@@ -105,17 +105,14 @@ interface VoutStrippedToScriptPubkey {
   value: number;
 }
 
-export interface TransactionExtended extends IPublicApi.Transaction {
+export interface TransactionExtended extends IPublicApi.VerboseTransaction {
   feePerSize: number;
   firstSeen?: number;
-  ancestors?: Ancestor[];
-  descendants?: Ancestor[];
   position?: {
     block: number;
     size: number;
   };
   feeDelta?: number; // Does BCH has fee delta? I suspect this was part of CPFP
-  replacement?: boolean; // Does BCH has replacement? This is part of RBF
   uid?: number;
   flags?: number;
 }

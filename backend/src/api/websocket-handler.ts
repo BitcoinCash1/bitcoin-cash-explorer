@@ -660,7 +660,7 @@ class WebsocketHandler {
         if (client['track-address']) {
           const newTransactions = Array.from(addressCache[client['track-address']]?.values() || []);
           const removedTransactions = Array.from(removedAddressCache[client['track-address']]?.values() || []);
-          // txs may be missing prevouts in non-esplora backends
+          // txs may be missing prevouts,
           // so fetch the full transactions now
           const fullTransactions = await this.getFullTransactions(newTransactions);
 
@@ -677,7 +677,7 @@ class WebsocketHandler {
           for (const [address, key] of Object.entries(client['track-addresses'] || {})) {
             const newTransactions = Array.from(addressCache[key as string]?.values() || []);
             const removedTransactions = Array.from(removedAddressCache[key as string]?.values() || []);
-            // txs may be missing prevouts in non-esplora backends
+            // txs may be missing prevouts,
             // so fetch the full transactions now
             const fullTransactions = await this.getFullTransactions(newTransactions);
             if (fullTransactions?.length) {
@@ -699,7 +699,7 @@ class WebsocketHandler {
           for (const spk of client['track-scriptpubkeys'] || []) {
             const newTransactions = Array.from(addressCache[spk as string]?.values() || []);
             const removedTransactions = Array.from(removedAddressCache[spk as string]?.values() || []);
-            // txs may be missing prevouts in non-esplora backends
+            // txs may be missing prevouts,
             // so fetch the full transactions now
             const fullTransactions = await this.getFullTransactions(newTransactions);
             if (fullTransactions?.length) {

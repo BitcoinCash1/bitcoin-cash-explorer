@@ -131,7 +131,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       const endIndex = Math.min(startingIndex + 10, history.length);
 
       for (let i = startingIndex; i < endIndex; i++) {
-        const tx = await this.$getRawTransaction(history[i].tx_hash, false, true);
+        const tx = (await this.$getRawTransaction(history[i].tx_hash, false, true)) as IPublicApi.VerboseTransaction;
         transactions.push(tx);
         loadingIndicators.setProgress('address-' + address, ((i + 1) / endIndex) * 100);
       }
@@ -168,7 +168,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       const endIndex = Math.min(startingIndex + 10, utxos.length);
 
       for (let i = startingIndex; i < endIndex; i++) {
-        const tx = await this.$getRawTransaction(utxos[i].tx_hash, false, true);
+        const tx = (await this.$getRawTransaction(utxos[i].tx_hash, false, true)) as IPublicApi.VerboseTransaction;
         transactions.push(tx);
         loadingIndicators.setProgress('address-' + address, ((i + 1) / endIndex) * 100);
       }
@@ -248,7 +248,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       const endIndex = Math.min(startingIndex + 10, history.length);
 
       for (let i = startingIndex; i < endIndex; i++) {
-        const tx = await this.$getRawTransaction(history[i].tx_hash, false, true);
+        const tx = (await this.$getRawTransaction(history[i].tx_hash, false, true)) as IPublicApi.VerboseTransaction;
         transactions.push(tx);
         loadingIndicators.setProgress('address-' + scripthash, ((i + 1) / endIndex) * 100);
       }
@@ -313,7 +313,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       const endIndex = Math.min(startingIndex + 10, utxos.length);
 
       for (let i = startingIndex; i < endIndex; i++) {
-        const tx = await this.$getRawTransaction(utxos[i].tx_hash, false, true);
+        const tx = (await this.$getRawTransaction(utxos[i].tx_hash, false, true)) as IPublicApi.VerboseTransaction;
         transactions.push(tx);
         loadingIndicators.setProgress('address-' + scripthash, ((i + 1) / endIndex) * 100);
       }
@@ -334,7 +334,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
   }
 
   async $getTransactionMerkleProof(txId: string): Promise<IPublicApi.MerkleProof> {
-    const tx = await this.$getRawTransaction(txId);
+    const tx = (await this.$getRawTransaction(txId)) as IPublicApi.VerboseTransaction;
     return this.electrumClient.blockchainTransaction_getMerkle(txId, tx.status.block_height);
   }
 

@@ -50,8 +50,7 @@ class BitcoinRoutes {
       .get(config.MEMPOOL.API_URL_PREFIX + 'blocks-bulk/:from/:to', this.getBlocksByBulk.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'chain-tips', this.getChainTips.bind(this))
       .get(config.MEMPOOL.API_URL_PREFIX + 'stale-tips', this.getStaleTips.bind(this))
-      .post(config.MEMPOOL.API_URL_PREFIX + 'prevouts', this.$getPrevouts)
-      // Temporarily add txs/package endpoint for all backends until esplora supports it
+      .post(config.MEMPOOL.API_URL_PREFIX + 'prevouts', this.$getPrevouts) // TODO: Prevouts with Verbose (new end-point)
       .post(config.MEMPOOL.API_URL_PREFIX + 'txs/package', this.$submitPackage)
       // Internal routes
       .get(config.MEMPOOL.API_URL_PREFIX + 'internal/blocks/definition/list', this.getBlockDefinitionHashes)
@@ -60,10 +59,10 @@ class BitcoinRoutes {
       .get(config.MEMPOOL.API_URL_PREFIX + 'mempool', this.getMempool)
       .get(config.MEMPOOL.API_URL_PREFIX + 'mempool/txids', this.getMempoolTxIds)
       .get(config.MEMPOOL.API_URL_PREFIX + 'mempool/recent', this.getRecentMempoolTransactions)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId', this.getTransaction)
+      .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId', this.getTransaction) // TODO: tx with Verbose (new end-point)
       .post(config.MEMPOOL.API_URL_PREFIX + 'tx', this.$postTransaction)
       .post(config.MEMPOOL.API_URL_PREFIX + 'txs/test', this.$testTransactions)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/hex', this.getRawTransaction)
+      .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/hex', this.getTransactionHex)
       .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/status', this.getTransactionStatus)
       .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/outspends', this.getTransactionOutspends)
       .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/merkle-proof', this.getTransactionMerkleProof)
@@ -72,19 +71,19 @@ class BitcoinRoutes {
       .get(config.MEMPOOL.API_URL_PREFIX + 'blocks/tip/hash', this.getBlockTipHash)
       .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/raw', this.getRawBlock)
       .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/txids', this.getTxIdsForBlock)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/txs', this.getBlockTransactions)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/txs/:index', this.getBlockTransactions)
+      .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/txs', this.getBlockTransactions) // TODO: txs with Verbose (new end-point)
+      .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/txs/:index', this.getBlockTransactions) // TODO: txs with Verbose (new end-point)
       .get(config.MEMPOOL.API_URL_PREFIX + 'block-height/:height', this.getBlockHeight)
       .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address', this.getAddress)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs', this.getAddressTransactions)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/summary', this.getAddressTransactionSummary)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/chain', this.getAddressChainTransactions)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/mempool', this.getAddressMempoolTransactions)
+      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs', this.getAddressTransactions) // TODO: txs with Verbose (new end-point)
+      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/summary', this.getAddressTransactionSummary) // TODO: Requires mempool/electrs backend atm.. I think we can also use fulcrum or bchn here.
+      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/chain', this.getAddressChainTransactions) // TODO: Requires mempool/electrs backend atm.. I think we can also use fulcrum or bchn here.
+      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/mempool', this.getAddressMempoolTransactions) // TODO: txs mempool with Verbose (new end-point)
       .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/utxo', this.getAddressUtxo)
       .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash', this.getScriptHash)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/txs', this.getScriptHashTransactions)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/txs/mempool', this.getScriptHashMempoolTransactions)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/txs/summary', this.getScriptHashTransactionSummary)
+      .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/txs', this.getScriptHashTransactions) // TODO: txs with Verbose (new end-point)
+      .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/txs/mempool', this.getScriptHashMempoolTransactions) // TODO: txs mempool with Verbose (new end-point)
+      .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/txs/summary', this.getScriptHashTransactionSummary) // TODO: Requires mempool/electrs backend atm.. I think we can also use fulcrum or bchn here.
       .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/utxo', this.getScriptHashUtxo)
       .get(config.MEMPOOL.API_URL_PREFIX + 'address-prefix/:prefix', this.getAddressPrefix);
   }
@@ -199,15 +198,15 @@ class BitcoinRoutes {
     }
   }
 
-  private async getRawTransaction(req: Request, res: Response) {
+  private async getTransactionHex(req: Request, res: Response) {
     if (!TXID_REGEX.test(req.params.txId)) {
       handleError(req, res, 501, `Invalid transaction ID`);
       return;
     }
     try {
-      const transaction: IPublicApi.Transaction = await bitcoinApi.$getRawTransaction(req.params.txId, true);
+      const transaction = await bitcoinApi.$getTransactionHex(req.params.txId);
       res.setHeader('content-type', 'text/plain');
-      res.send(transaction.hex);
+      res.send(transaction);
     } catch (e) {
       let statusCode = 500;
       if (e instanceof Error && e.message && e.message.indexOf('No such mempool or blockchain transaction') > -1) {
@@ -672,7 +671,6 @@ class BitcoinRoutes {
   }
 
   private async getAddressTransactionSummary(req: Request, res: Response): Promise<void> {
-    // if (config.MEMPOOL.BACKEND !== 'esplora') {
     handleError(req, res, 405, 'Address summary lookups require mempool/electrs backend.');
     return;
   }
@@ -834,8 +832,6 @@ class BitcoinRoutes {
   }
 
   private async getScriptHashTransactionSummary(req: Request, res: Response): Promise<void> {
-    // It used to have a: if (config.MEMPOOL.BACKEND !== 'esplora') {
-    // We only support Fulcrum electrum..
     handleError(req, res, 405, 'Scripthash summary lookups require mempool/electrs backend.');
     return;
   }
@@ -1143,8 +1139,6 @@ class BitcoinRoutes {
                 scriptpubkey_type: transactionUtils.translateScriptPubKeyType(rawPrevout.scriptPubKey.type),
                 scriptpubkey_address:
                   rawPrevout.scriptPubKey && rawPrevout.scriptPubKey.address ? rawPrevout.scriptPubKey.address : '',
-                scriptpubkey_byte_code_pattern: '', // rawPrevout.scriptPubKey?.byteCodePattern?.pattern || '',
-                scriptpubkey_byte_code_data: [], // rawPrevout.scriptPubKey?.byteCodePattern?.data || [],
               };
               unconfirmed = false;
             }

@@ -39,18 +39,9 @@ export namespace IPublicApi {
   export interface Vin {
     txid: string;
     vout: number;
-    value: number | null;
     is_coinbase: boolean;
     scriptsig: string; // in hex
     scriptsig_asm: string; // in asm
-    scriptsig_byte_code_pattern: string; // in hex
-    scriptsig_byte_code_data: string[]; // script data in hex
-    scriptpubkey: string;
-    scriptpubkey_asm: string;
-    scriptpubkey_type: string;
-    scriptpubkey_byte_code_pattern: string; // in hex
-    scriptpubkey_byte_code_data: string[]; // script data in hex
-    scriptpubkey_address?: string;
     inner_redeemscript_asm: string;
     sequence: any;
     prevout: Vout | null;
@@ -63,8 +54,6 @@ export namespace IPublicApi {
     scriptpubkey_asm: string;
     scriptpubkey_type: string;
     scriptpubkey_address?: string;
-    scriptpubkey_byte_code_pattern: string; // in hex
-    scriptpubkey_byte_code_data: string[]; // script data in hex
     value: number;
   }
 

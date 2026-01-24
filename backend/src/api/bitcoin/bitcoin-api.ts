@@ -1,4 +1,4 @@
-import { AbstractBitcoinApi, HealthCheckHost } from './bitcoin-api-abstract-factory';
+import { AbstractBitcoinApi } from './bitcoin-api-abstract-factory';
 import { IBitcoinApi, SubmitPackageResult, TestMempoolAcceptResult } from './bitcoin-api.interface';
 import { IPublicApi } from './public-api.interface';
 import blocks from '../blocks';
@@ -49,21 +49,17 @@ class BitcoinApi implements AbstractBitcoinApi {
     skipConversion = false,
     addPrevout = false,
     lazyPrevouts = false
-  ): Promise<IPublicApi.Transaction> {
+  ): Promise<IPublicApi.VerboseTransaction | IBitcoinApi.VerboseTransaction> {
     // If the transaction is in the mempool we already converted and fetched the fee. Only prevouts are missing
     const txInMempool = mempool.getMempool()[txId];
     if (txInMempool && addPrevout) {
       return this.$addPrevouts(txInMempool);
     }
 
-    // TODO: Why not use verbose '2' here instead of just 'true', which should return the fee?
-    // That would also mean we no longer would need calculateFeeFromInputs().
-    // TODO, TODO: We could actually leverage the patterns argument here as well, to get even more output, see also ticket: https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/-/issues/1
-    // Like getting the byteCodePattern, etc. Something the core RPC doesn't have.
-    // This is also using the convertTransaction with requires verbosity 2 + patterns, ignore blockhash argument (use an empty string)
+    // This is using the convertTransaction with requires verbosity 2 + patterns, ignore blockhash argument (use an empty string)
     return this.bitcoindClient
       .getRawTransaction(txId, 2, '', true)
-      .then((transaction: IBitcoinApi.Transaction) => {
+      .then((transaction: IBitcoinApi.VerboseTransaction) => {
         if (skipConversion) {
           transaction.vout.forEach((vout) => {
             vout.value = Math.round(vout.value * 100000000);
@@ -80,11 +76,11 @@ class BitcoinApi implements AbstractBitcoinApi {
       });
   }
 
-  async $getRawTransactions(txids: string[]): Promise<IPublicApi.Transaction[]> {
-    const txs: IPublicApi.Transaction[] = [];
+  async $getRawTransactions(txids: string[]): Promise<IPublicApi.VerboseTransaction[]> {
+    const txs: IPublicApi.VerboseTransaction[] = [];
     for (const txid of txids) {
       try {
-        const tx = await this.$getRawTransaction(txid, false, true);
+        const tx = (await this.$getRawTransaction(txid, false, true)) as IPublicApi.VerboseTransaction;
         txs.push(tx);
       } catch (err) {
         // skip failures
@@ -107,7 +103,7 @@ class BitcoinApi implements AbstractBitcoinApi {
       return txInMempool.hex;
     }
 
-    return this.bitcoindClient.getRawTransaction(txId, true).then((transaction: IBitcoinApi.Transaction) => {
+    return this.bitcoindClient.getRawTransaction(txId, true).then((transaction: IBitcoinApi.VerboseTransaction) => {
       return transaction.hex;
     });
   }
@@ -124,14 +120,14 @@ class BitcoinApi implements AbstractBitcoinApi {
     return this.bitcoindClient.getBestBlockHash();
   }
 
-  $getTxIdsForBlock(hash: string, fallbackToCore = false): Promise<string[]> {
+  $getTxIdsForBlock(hash: string): Promise<string[]> {
     return this.bitcoindClient.getBlock(hash, 1).then((rpcBlock: IBitcoinApi.Block) => rpcBlock.tx);
   }
 
-  async $getTxsForBlock(hash: string, fallbackToCore = false): Promise<IPublicApi.Transaction[]> {
-    // This is also using the convertTransaction with requires verbosity 2 + patterns
+  async $getTxsForBlock(hash: string): Promise<IPublicApi.VerboseTransaction[]> {
+    // This is using the convertTransaction with requires verbosity 2 + patterns
     const verboseBlock: IBitcoinApi.VerboseBlock = await this.bitcoindClient.getBlock(hash, 2, true);
-    const transactions: IPublicApi.Transaction[] = [];
+    const transactions: IPublicApi.VerboseTransaction[] = [];
     for (const tx of verboseBlock.tx) {
       const converted = await this.$convertTransaction(tx, true, false, verboseBlock.confirmations === -1);
       converted.status = {
@@ -254,7 +250,7 @@ class BitcoinApi implements AbstractBitcoinApi {
 
   async $getOutspends(txId: string): Promise<IPublicApi.Outspend[]> {
     const outSpends: IPublicApi.Outspend[] = [];
-    const tx = await this.$getRawTransaction(txId, true, false);
+    const tx = (await this.$getRawTransaction(txId, false, false)) as IPublicApi.Transaction;
     for (let i = 0; i < tx.vout.length; i++) {
       if (tx.status && tx.status.block_height === 0) {
         outSpends.push({
@@ -294,7 +290,7 @@ class BitcoinApi implements AbstractBitcoinApi {
 
   async $getCoinbaseTx(blockhash: string): Promise<IPublicApi.Transaction> {
     const txids = await this.$getTxIdsForBlock(blockhash);
-    return this.$getRawTransaction(txids[0]);
+    return this.$getRawTransaction(txids[0]) as Promise<IPublicApi.Transaction>;
   }
 
   async $getAddressTransactionSummary(address: string): Promise<IPublicApi.AddressTxSummary[]> {
@@ -307,12 +303,12 @@ class BitcoinApi implements AbstractBitcoinApi {
   }
 
   protected async $convertTransaction(
-    transaction: IBitcoinApi.Transaction,
+    transaction: IBitcoinApi.VerboseTransaction,
     addPrevout: boolean,
     lazyPrevouts = false,
     allowMissingPrevouts = false
-  ): Promise<IPublicApi.Transaction> {
-    let esploraTransaction: IPublicApi.Transaction = {
+  ): Promise<IPublicApi.VerboseTransaction> {
+    let publicTransaction: IPublicApi.VerboseTransaction = {
       txid: transaction.txid,
       version: transaction.version,
       locktime: transaction.locktime,
@@ -323,7 +319,7 @@ class BitcoinApi implements AbstractBitcoinApi {
       status: { confirmed: false },
     };
 
-    esploraTransaction.vin = transaction.vin.map((vin) => {
+    publicTransaction.vin = transaction.vin.map((vin) => {
       return {
         value: vin.value ? Math.round(vin.value * 100000000) : null,
         is_coinbase: !!vin.coinbase,
@@ -349,7 +345,7 @@ class BitcoinApi implements AbstractBitcoinApi {
       };
     });
 
-    esploraTransaction.vout = transaction.vout.map((vout) => {
+    publicTransaction.vout = transaction.vout.map((vout) => {
       return {
         value: Math.round(vout.value * 100000000),
         scriptpubkey: vout.scriptPubKey.hex,
@@ -362,7 +358,7 @@ class BitcoinApi implements AbstractBitcoinApi {
     });
 
     if (transaction.confirmations) {
-      esploraTransaction.status = {
+      publicTransaction.status = {
         confirmed: true,
         block_height: blocks.getCurrentBlockHeight() - transaction.confirmations + 1,
         block_hash: transaction.blockhash,
@@ -372,17 +368,17 @@ class BitcoinApi implements AbstractBitcoinApi {
 
     if (addPrevout) {
       try {
-        esploraTransaction = await this.$calculateFeeFromInputs(esploraTransaction, false, lazyPrevouts);
+        publicTransaction = await this.$calculateFeeFromInputs(publicTransaction, false, lazyPrevouts);
       } catch (e) {
         if (!allowMissingPrevouts) {
           throw e;
         }
       }
     } else if (!transaction.confirmations) {
-      esploraTransaction = await this.$appendMempoolFeeData(esploraTransaction);
+      publicTransaction = await this.$appendMempoolFeeData(publicTransaction);
     }
 
-    return esploraTransaction;
+    return publicTransaction;
   }
 
   private translateScriptPubKeyType(outputType: string): string {
@@ -403,7 +399,9 @@ class BitcoinApi implements AbstractBitcoinApi {
     }
   }
 
-  private async $appendMempoolFeeData(transaction: IPublicApi.Transaction): Promise<IPublicApi.Transaction> {
+  private async $appendMempoolFeeData(
+    transaction: IPublicApi.VerboseTransaction
+  ): Promise<IPublicApi.VerboseTransaction> {
     if (transaction.fee) {
       return transaction;
     }
@@ -426,7 +424,7 @@ class BitcoinApi implements AbstractBitcoinApi {
       if (vin.prevout) {
         continue;
       }
-      const innerTx = await this.$getRawTransaction(vin.txid, false, false);
+      const innerTx = (await this.$getRawTransaction(vin.txid, false, false)) as IPublicApi.Transaction;
       vin.prevout = innerTx.vout[vin.vout];
       transactionUtils.addInnerScriptsToVin(vin);
       addedPrevouts = true;
@@ -442,10 +440,10 @@ class BitcoinApi implements AbstractBitcoinApi {
     return transaction;
   }
 
-  protected $returnCoinbaseTransaction(): Promise<IPublicApi.Transaction> {
+  protected $returnCoinbaseTransaction(): Promise<IPublicApi.VerboseTransaction> {
     return this.bitcoindClient.getBlockHash(0).then((hash: string) =>
-      // This is also using the convertTransaction with requires verbosity 2 + patterns
-      this.bitcoindClient.getBlock(hash, 2, true).then((block: IBitcoinApi.Block) => {
+      // This is using the convertTransaction with requires verbosity 2 + patterns
+      this.bitcoindClient.getBlock(hash, 2, true).then((block: IBitcoinApi.VerboseBlock) => {
         return this.$convertTransaction(
           Object.assign(block.tx[0], {
             confirmations: blocks.getCurrentBlockHeight() + 1,
@@ -466,10 +464,10 @@ class BitcoinApi implements AbstractBitcoinApi {
   }
 
   private async $calculateFeeFromInputs(
-    transaction: IPublicApi.Transaction,
+    transaction: IPublicApi.VerboseTransaction,
     addPrevout: boolean,
     lazyPrevouts: boolean
-  ): Promise<IPublicApi.Transaction> {
+  ): Promise<IPublicApi.VerboseTransaction> {
     if (transaction.vin[0].is_coinbase) {
       transaction.fee = 0;
       return transaction;
@@ -481,7 +479,7 @@ class BitcoinApi implements AbstractBitcoinApi {
         transaction.vin[i].lazy = true;
         continue;
       }
-      const innerTx = await this.$getRawTransaction(transaction.vin[i].txid, false, false);
+      const innerTx = (await this.$getRawTransaction(transaction.vin[i].txid, false, false)) as IPublicApi.Transaction;
       transaction.vin[i].prevout = innerTx.vout[transaction.vin[i].vout];
       transactionUtils.addInnerScriptsToVin(transaction.vin[i]);
       totalIn += innerTx.vout[transaction.vin[i].vout].value;
