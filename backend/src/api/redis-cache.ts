@@ -3,7 +3,7 @@ import memPool from './mempool';
 import blocks from './blocks';
 import logger from '../logger';
 import config from '../config';
-import { BlockExtended, BlockSummary, MempoolTransactionExtended } from '../mempool.interfaces';
+import { BlockExtended, BlockSummary, VerboseMempoolTransactionExtended } from '../mempool.interfaces';
 import transactionUtils from './transaction-utils';
 
 enum NetworkDB {
@@ -19,7 +19,7 @@ class RedisCache {
   private redisConfig: any;
 
   private pauseFlush = false;
-  private cacheQueue: MempoolTransactionExtended[] = [];
+  private cacheQueue: VerboseMempoolTransactionExtended[] = [];
   private removeQueue: string[] = [];
   private txFlushLimit = 10000;
   private ignoreBlocksCache = false;
@@ -123,7 +123,7 @@ class RedisCache {
     }
   }
 
-  async $addTransaction(tx: MempoolTransactionExtended): Promise<void> {
+  async $addTransaction(tx: VerboseMempoolTransactionExtended): Promise<void> {
     if (!config.REDIS.ENABLED) {
       return;
     }
@@ -237,7 +237,7 @@ class RedisCache {
     }
   }
 
-  async $getMempool(): Promise<{ [txid: string]: MempoolTransactionExtended }> {
+  async $getMempool(): Promise<{ [txid: string]: VerboseMempoolTransactionExtended }> {
     if (!config.REDIS.ENABLED) {
       return {};
     }
@@ -248,7 +248,7 @@ class RedisCache {
     const start = Date.now();
     const mempool = {};
     try {
-      const mempoolList = await this.scanKeys<MempoolTransactionExtended>('mempool:tx:*');
+      const mempoolList = await this.scanKeys<VerboseMempoolTransactionExtended>('mempool:tx:*');
       for (const tx of mempoolList) {
         mempool[tx.key] = tx.value;
       }
@@ -281,7 +281,7 @@ class RedisCache {
     await memPool.$setMempool(loadedMempool);
   }
 
-  private inflateLoadedTxs(mempool: { [txid: string]: MempoolTransactionExtended }): void {
+  private inflateLoadedTxs(mempool: { [txid: string]: VerboseMempoolTransactionExtended }): void {
     for (const tx of Object.values(mempool)) {
       for (const vin of tx.vin) {
         if (vin.scriptsig) {

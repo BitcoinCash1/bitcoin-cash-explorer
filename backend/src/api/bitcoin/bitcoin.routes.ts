@@ -11,7 +11,7 @@ import backendInfo from '../backend-info';
 import transactionUtils from '../transaction-utils';
 import { IPublicApi } from './public-api.interface';
 import loadingIndicators from '../loading-indicators';
-import { TransactionExtended } from '../../mempool.interfaces';
+import { VerboseTransactionExtended } from '../../mempool.interfaces';
 import logger from '../../logger';
 import blocks from '../blocks';
 import bitcoinClient from './bitcoin-client';
@@ -556,7 +556,7 @@ class BitcoinRoutes {
       loadingIndicators.setProgress('blocktxs-' + req.params.hash, 0);
 
       const txIds = await bitcoinApi.$getTxIdsForBlock(req.params.hash);
-      const transactions: TransactionExtended[] = [];
+      const transactions: VerboseTransactionExtended[] = [];
       const startingIndex = Math.max(0, parseInt(req.params.index || '0', 10));
 
       const endIndex = Math.min(startingIndex + 10, txIds.length);

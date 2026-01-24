@@ -2,8 +2,8 @@ import logger from '../logger';
 import * as WebSocket from 'ws';
 import {
   BlockExtended,
-  TransactionExtended,
-  MempoolTransactionExtended,
+  VerboseTransactionExtended,
+  VerboseMempoolTransactionExtended,
   WebsocketResponse,
   OptimizedStatistic,
   ILoadingIndicators,
@@ -34,9 +34,9 @@ import bitcoinApi from './bitcoin/bitcoin-api-factory';
 import walletApi from './services/wallets';
 
 interface AddressTransactions {
-  mempool: MempoolTransactionExtended[];
-  confirmed: MempoolTransactionExtended[];
-  removed: MempoolTransactionExtended[];
+  mempool: VerboseMempoolTransactionExtended[];
+  confirmed: VerboseMempoolTransactionExtended[];
+  removed: VerboseMempoolTransactionExtended[];
 }
 import bitcoinSecondClient from './bitcoin/bitcoin-second-client';
 import { getRecentFirstSeen } from '../utils/file-read';
@@ -503,10 +503,10 @@ class WebsocketHandler {
    * @param candidates
    */
   async $handleMempoolChange(
-    newMempool: { [txid: string]: MempoolTransactionExtended },
+    newMempool: { [txid: string]: VerboseMempoolTransactionExtended },
     mempoolSize: number,
-    newTransactions: MempoolTransactionExtended[],
-    recentlyDeletedTransactions: MempoolTransactionExtended[][],
+    newTransactions: VerboseMempoolTransactionExtended[],
+    recentlyDeletedTransactions: VerboseMempoolTransactionExtended[][],
     candidates?: GbtCandidates
   ): Promise<void> {
     if (!this.webSocketServers.length) {
@@ -789,7 +789,7 @@ class WebsocketHandler {
   async handleNewBlock(
     block: BlockExtended,
     txIds: string[],
-    transactions: MempoolTransactionExtended[]
+    transactions: VerboseMempoolTransactionExtended[]
   ): Promise<void> {
     if (!this.webSocketServers.length) {
       throw new Error('No WebSocket.Server have been set');
@@ -1040,7 +1040,7 @@ class WebsocketHandler {
         }
 
         if (client['track-address']) {
-          const foundTransactions: TransactionExtended[] = Array.from(
+          const foundTransactions: VerboseTransactionExtended[] = Array.from(
             addressCache[client['track-address']]?.values() || []
           );
 
@@ -1205,10 +1205,10 @@ class WebsocketHandler {
     }
   }
 
-  private makeAddressCache(transactions: MempoolTransactionExtended[]): {
-    [address: string]: Set<MempoolTransactionExtended>;
+  private makeAddressCache(transactions: VerboseMempoolTransactionExtended[]): {
+    [address: string]: Set<VerboseMempoolTransactionExtended>;
   } {
-    const addressCache: { [address: string]: Set<MempoolTransactionExtended> } = {};
+    const addressCache: { [address: string]: Set<VerboseMempoolTransactionExtended> } = {};
     for (const tx of transactions) {
       for (const vin of tx.vin) {
         if (vin?.prevout?.scriptpubkey_address) {
@@ -1242,7 +1242,7 @@ class WebsocketHandler {
     return addressCache;
   }
 
-  private async getFullTransactions(transactions: MempoolTransactionExtended[]): Promise<MempoolTransactionExtended[]> {
+  private async getFullTransactions(transactions: VerboseMempoolTransactionExtended[]): Promise<VerboseMempoolTransactionExtended[]> {
     for (let i = 0; i < transactions.length; i++) {
       try {
         transactions[i] = await transactionUtils.$getMempoolTransactionExtended(transactions[i].txid, true);

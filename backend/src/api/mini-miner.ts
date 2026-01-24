@@ -1,4 +1,4 @@
-import { MempoolTransactionExtended } from '../mempool.interfaces';
+import { VerboseMempoolTransactionExtended } from '../mempool.interfaces';
 import logger from '../logger';
 
 const BLOCK_SIZE_UNITS = 32_000_000;
@@ -59,10 +59,10 @@ interface MinerTransaction extends TemplateTransaction {
  * @param tx
  */
 export function getSameBlockRelatives(
-  tx: MempoolTransactionExtended,
-  transactions: MempoolTransactionExtended[]
+  tx: VerboseMempoolTransactionExtended,
+  transactions: VerboseMempoolTransactionExtended[]
 ): Map<string, GraphTx> {
-  const blockTxs = new Map<string, MempoolTransactionExtended>(); // map of txs in this block
+  const blockTxs = new Map<string, VerboseMempoolTransactionExtended>(); // map of txs in this block
   const spendMap = new Map<string, string>(); // map of outpoints to spending txids
   for (const tx of transactions) {
     blockTxs.set(tx.txid, tx);
@@ -103,8 +103,8 @@ export function getSameBlockRelatives(
  * @param tx
  */
 export function convertToGraphTx(
-  tx: MempoolTransactionExtended,
-  spendMap?: Map<string, MempoolTransactionExtended | string>
+  tx: VerboseMempoolTransactionExtended,
+  spendMap?: Map<string, VerboseMempoolTransactionExtended | string>
 ): GraphTx {
   return {
     txid: tx.txid,
@@ -136,9 +136,9 @@ export function convertToGraphTx(
  * Takes a map of transaction ancestors, and expands it into a full graph of up to MAX_GRAPH_SIZE in-mempool relatives
  */
 export function expandRelativesGraph(
-  mempool: { [txid: string]: MempoolTransactionExtended },
+  mempool: { [txid: string]: VerboseMempoolTransactionExtended },
   ancestors: Map<string, GraphTx>,
-  spendMap: Map<string, MempoolTransactionExtended>
+  spendMap: Map<string, VerboseMempoolTransactionExtended>
 ): Map<string, GraphTx> {
   const relatives: Map<string, GraphTx> = new Map();
   const stack: GraphTx[] = Array.from(ancestors.values());
@@ -292,7 +292,7 @@ export function mempoolComparator(a: GraphTx, b: GraphTx): number {
  * (see BlockAssembler in https://github.com/bitcoin/bitcoin/blob/master/src/node/miner.cpp)
  */
 export function makeBlockTemplate(
-  candidates: MempoolTransactionExtended[],
+  candidates: VerboseMempoolTransactionExtended[],
   maxBlocks = 8,
   sizeLimit: number = BLOCK_SIZE_UNITS,
   sigopLimit: number = BLOCK_SIGOPS

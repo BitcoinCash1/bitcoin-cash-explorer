@@ -89,7 +89,7 @@ export interface MempoolDeltaTxids {
 
 export interface MempoolDelta {
   sequence: number;
-  added: MempoolTransactionExtended[];
+  added: VerboseMempoolTransactionExtended[];
   removed: string[];
   mined: string[];
   // replaced;  Not used in BCH (since we do not have RBF)
@@ -105,7 +105,7 @@ interface VoutStrippedToScriptPubkey {
   value: number;
 }
 
-export interface TransactionExtended extends IPublicApi.VerboseTransaction {
+export interface VerboseTransactionExtended extends IPublicApi.VerboseTransaction {
   feePerSize: number;
   firstSeen?: number;
   position?: {
@@ -117,7 +117,7 @@ export interface TransactionExtended extends IPublicApi.VerboseTransaction {
   flags?: number;
 }
 
-export interface MempoolTransactionExtended extends TransactionExtended {
+export interface VerboseMempoolTransactionExtended extends VerboseTransactionExtended {
   order: number;
   sigops: number;
   adjustedSize: number; // I believe BCH has also adjusted size, but in just size iso vsize
@@ -157,8 +157,8 @@ export interface CompactThreadTransaction {
 
 export interface GbtCandidates {
   txs: { [txid: string]: boolean };
-  added: MempoolTransactionExtended[];
-  removed: MempoolTransactionExtended[];
+  added: VerboseMempoolTransactionExtended[];
+  removed: VerboseMempoolTransactionExtended[];
 }
 
 export interface ThreadTransaction {

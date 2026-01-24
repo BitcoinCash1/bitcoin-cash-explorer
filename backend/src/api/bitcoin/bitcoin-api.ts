@@ -3,7 +3,7 @@ import { IBitcoinApi, SubmitPackageResult, TestMempoolAcceptResult } from './bit
 import { IPublicApi } from './public-api.interface';
 import blocks from '../blocks';
 import mempool from '../mempool';
-import { TransactionExtended } from '../../mempool.interfaces';
+import { VerboseTransactionExtended } from '../../mempool.interfaces';
 import transactionUtils from '../transaction-utils';
 import { Common } from '../common';
 
@@ -418,7 +418,7 @@ class BitcoinApi implements AbstractBitcoinApi {
     return transaction;
   }
 
-  protected async $addPrevouts(transaction: TransactionExtended): Promise<TransactionExtended> {
+  protected async $addPrevouts(transaction: VerboseTransactionExtended): Promise<VerboseTransactionExtended> {
     let addedPrevouts = false;
     for (const vin of transaction.vin) {
       if (vin.prevout) {

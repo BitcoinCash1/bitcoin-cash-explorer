@@ -3,7 +3,7 @@ import logger from '../../logger';
 import { IPublicApi } from '../bitcoin/public-api.interface';
 import bitcoinApi from '../bitcoin/bitcoin-api-factory';
 // import axios from 'axios';
-import { TransactionExtended } from '../../mempool.interfaces';
+import { VerboseTransactionExtended } from '../../mempool.interfaces';
 import { promises as fsPromises } from 'fs';
 
 interface WalletAddress {
@@ -269,7 +269,7 @@ class WalletApi {
   }
 
   // check a new block for transactions that affect wallet address balances, and add relevant transactions to wallets
-  processBlock(block: IPublicApi.Block, blockTxs: TransactionExtended[]): Record<string, IPublicApi.Transaction[]> {
+  processBlock(block: IPublicApi.Block, blockTxs: VerboseTransactionExtended[]): Record<string, IPublicApi.Transaction[]> {
     const walletTransactions: Record<string, IPublicApi.Transaction[]> = {};
     for (const walletKey of Object.keys(this.wallets)) {
       const wallet = this.wallets[walletKey];

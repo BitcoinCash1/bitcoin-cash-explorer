@@ -7,9 +7,9 @@ import {
   BlockExtension,
   BlockSummary,
   PoolTag,
-  TransactionExtended,
+  VerboseTransactionExtended,
   TransactionMinerInfo,
-  MempoolTransactionExtended,
+  VerboseMempoolTransactionExtended,
   TransactionClassified,
   BlockAudit,
   TransactionAudit,
@@ -49,12 +49,12 @@ class Blocks {
   private lastDifficultyAdjustmentTime = 0;
   private previousDifficultyRetarget = 0;
   private quarterEpochBlockTime: number | null = null;
-  private newBlockCallbacks: ((block: BlockExtended, txIds: string[], transactions: TransactionExtended[]) => void)[] =
+  private newBlockCallbacks: ((block: BlockExtended, txIds: string[], transactions: VerboseTransactionExtended[]) => void)[] =
     [];
   private newAsyncBlockCallbacks: ((
     block: BlockExtended,
     txIds: string[],
-    transactions: MempoolTransactionExtended[]
+    transactions: VerboseMempoolTransactionExtended[]
   ) => Promise<void>)[] = [];
   private classifyingBlocks = false;
 
@@ -76,12 +76,12 @@ class Blocks {
     this.blockSummaries = blockSummaries;
   }
 
-  public setNewBlockCallback(fn: (block: BlockExtended, txIds: string[], transactions: TransactionExtended[]) => void) {
+  public setNewBlockCallback(fn: (block: BlockExtended, txIds: string[], transactions: VerboseTransactionExtended[]) => void) {
     this.newBlockCallbacks.push(fn);
   }
 
   public setNewAsyncBlockCallback(
-    fn: (block: BlockExtended, txIds: string[], transactions: MempoolTransactionExtended[]) => Promise<void>
+    fn: (block: BlockExtended, txIds: string[], transactions: VerboseMempoolTransactionExtended[]) => Promise<void>
   ) {
     this.newAsyncBlockCallbacks.push(fn);
   }
@@ -107,8 +107,8 @@ class Blocks {
     quiet = false,
     addMempoolData = false,
     stale = false
-  ): Promise<TransactionExtended[]> {
-    const transactionMap: { [txid: string]: TransactionExtended } = {};
+  ): Promise<VerboseTransactionExtended[]> {
+    const transactionMap: { [txid: string]: VerboseTransactionExtended } = {};
 
     if (!txIds) {
       txIds = await bitcoinApi.$getTxIdsForBlock(blockHash, stale);
@@ -244,7 +244,7 @@ class Blocks {
     };
   }
 
-  public summarizeBlockTransactions(hash: string, height: number, transactions: TransactionExtended[]): BlockSummary {
+  public summarizeBlockTransactions(hash: string, height: number, transactions: VerboseTransactionExtended[]): BlockSummary {
     return {
       id: hash,
       transactions: Common.classifyTransactions(transactions, height),
@@ -259,7 +259,7 @@ class Blocks {
    */
   private async $getBlockExtended(
     block: IPublicApi.Block,
-    transactions: TransactionExtended[]
+    transactions: VerboseTransactionExtended[]
   ): Promise<BlockExtended> {
     const coinbaseTx = transactionUtils.stripCoinbaseTransaction(transactions[0]);
 
@@ -387,7 +387,7 @@ class Blocks {
 
   private async $getBlockStats(
     block: IPublicApi.Block,
-    transactions: TransactionExtended[]
+    transactions: VerboseTransactionExtended[]
   ): Promise<IBitcoinApi.BlockStats> {
     if (!block.stale) {
       return bitcoinClient.getBlockStats(block.id);
@@ -1011,7 +1011,7 @@ class Blocks {
         txIds,
         false,
         true
-      )) as MempoolTransactionExtended[];
+      )) as VerboseMempoolTransactionExtended[];
 
       // fill in missing transaction fee data from verboseBlock
       for (let i = 0; i < transactions.length; i++) {

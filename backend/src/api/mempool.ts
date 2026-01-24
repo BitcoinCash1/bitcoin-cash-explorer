@@ -1,6 +1,6 @@
 import config from '../config';
 import bitcoinApi from './bitcoin/bitcoin-api-factory';
-import { MempoolTransactionExtended, TransactionExtended, BytesPerSecond, GbtCandidates } from '../mempool.interfaces';
+import { VerboseMempoolTransactionExtended, VerboseTransactionExtended, BytesPerSecond, GbtCandidates } from '../mempool.interfaces';
 import logger from '../logger';
 import { Common } from './common';
 import transactionUtils from './transaction-utils';
@@ -14,24 +14,24 @@ import blocks from './blocks';
 class Mempool {
   private inSync = false;
   private mempoolCacheDelta = -1;
-  private mempoolCache: { [txId: string]: MempoolTransactionExtended } = {};
+  private mempoolCache: { [txId: string]: VerboseMempoolTransactionExtended } = {};
   private mempoolCandidates: { [txid: string]: boolean } = {};
-  private spendMap = new Map<string, MempoolTransactionExtended>();
-  private recentlyDeleted: MempoolTransactionExtended[][] = []; // buffer of transactions deleted in recent mempool updates
+  private spendMap = new Map<string, VerboseMempoolTransactionExtended>();
+  private recentlyDeleted: VerboseMempoolTransactionExtended[][] = []; // buffer of transactions deleted in recent mempool updates
   private mempoolInfo: IBitcoinApi.MempoolInfo;
   private mempoolChangedCallback:
     | ((
-        newMempool: { [txId: string]: MempoolTransactionExtended },
-        newTransactions: MempoolTransactionExtended[],
-        deletedTransactions: MempoolTransactionExtended[][]
+        newMempool: { [txId: string]: VerboseMempoolTransactionExtended },
+        newTransactions: VerboseMempoolTransactionExtended[],
+        deletedTransactions: VerboseMempoolTransactionExtended[][]
       ) => void)
     | undefined;
   private $asyncMempoolChangedCallback:
     | ((
-        newMempool: { [txId: string]: MempoolTransactionExtended },
+        newMempool: { [txId: string]: VerboseMempoolTransactionExtended },
         mempoolSize: number,
-        newTransactions: MempoolTransactionExtended[],
-        deletedTransactions: MempoolTransactionExtended[][],
+        newTransactions: VerboseMempoolTransactionExtended[],
+        deletedTransactions: VerboseMempoolTransactionExtended[][],
         candidates?: GbtCandidates
       ) => Promise<void>)
     | undefined;
@@ -107,9 +107,9 @@ class Mempool {
 
   public setMempoolChangedCallback(
     fn: (
-      newMempool: { [txId: string]: MempoolTransactionExtended },
-      newTransactions: MempoolTransactionExtended[],
-      deletedTransactions: MempoolTransactionExtended[][]
+      newMempool: { [txId: string]: VerboseMempoolTransactionExtended },
+      newTransactions: VerboseMempoolTransactionExtended[],
+      deletedTransactions: VerboseMempoolTransactionExtended[][]
     ) => void
   ): void {
     this.mempoolChangedCallback = fn;
@@ -117,29 +117,29 @@ class Mempool {
 
   public setAsyncMempoolChangedCallback(
     fn: (
-      newMempool: { [txId: string]: MempoolTransactionExtended },
+      newMempool: { [txId: string]: VerboseMempoolTransactionExtended },
       mempoolSize: number,
-      newTransactions: MempoolTransactionExtended[],
-      deletedTransactions: MempoolTransactionExtended[][],
+      newTransactions: VerboseMempoolTransactionExtended[],
+      deletedTransactions: VerboseMempoolTransactionExtended[][],
       candidates?: GbtCandidates
     ) => Promise<void>
   ): void {
     this.$asyncMempoolChangedCallback = fn;
   }
 
-  public getMempool(): { [txid: string]: MempoolTransactionExtended } {
+  public getMempool(): { [txid: string]: VerboseMempoolTransactionExtended } {
     return this.mempoolCache;
   }
 
-  public getSpendMap(): Map<string, MempoolTransactionExtended> {
+  public getSpendMap(): Map<string, VerboseMempoolTransactionExtended> {
     return this.spendMap;
   }
 
-  public getFromSpendMap(txid, index): MempoolTransactionExtended | void {
+  public getFromSpendMap(txid, index): VerboseMempoolTransactionExtended | void {
     return this.spendMap.get(`${txid}:${index}`);
   }
 
-  public async $setMempool(mempoolData: { [txId: string]: MempoolTransactionExtended }) {
+  public async $setMempool(mempoolData: { [txId: string]: VerboseMempoolTransactionExtended }) {
     this.mempoolCache = mempoolData;
     let count = 0;
     const redisTimer = Date.now();
@@ -186,11 +186,11 @@ class Mempool {
   }
 
   // Melroy: Only used with esplora?
-  public async $reloadMempool(expectedCount: number): Promise<MempoolTransactionExtended[]> {
+  public async $reloadMempool(expectedCount: number): Promise<VerboseMempoolTransactionExtended[]> {
     let count = 0;
     let done = false;
     let last_txid;
-    const newTransactions: MempoolTransactionExtended[] = [];
+    const newTransactions: VerboseMempoolTransactionExtended[] = [];
     loadingIndicators.setProgress('mempool', (count / expectedCount) * 100);
     while (!done) {
       try {
@@ -275,7 +275,7 @@ class Mempool {
     const currentMempoolSize = Object.keys(this.mempoolCache).length;
     this.updateTimerProgress(timer, 'got raw mempool');
     const diff = transactions.length - currentMempoolSize;
-    const newTransactions: MempoolTransactionExtended[] = [];
+    const newTransactions: VerboseMempoolTransactionExtended[] = [];
 
     this.mempoolCacheDelta = Math.abs(diff);
 
@@ -373,7 +373,7 @@ class Mempool {
       );
     }
 
-    const deletedTransactions: MempoolTransactionExtended[] = [];
+    const deletedTransactions: VerboseMempoolTransactionExtended[] = [];
 
     if (this.mempoolProtection !== 1) {
       this.mempoolProtection = 0;
@@ -449,7 +449,7 @@ class Mempool {
   public getNextCandidates(
     minFeeTransactions: string[],
     blockHeight: number,
-    deletedTransactions: MempoolTransactionExtended[]
+    deletedTransactions: VerboseMempoolTransactionExtended[]
   ): GbtCandidates | undefined {
     if (this.limitGBT) {
       const deletedTxsMap = {};
@@ -462,8 +462,8 @@ class Mempool {
           newCandidateTxMap[txid] = true;
         }
       }
-      const removed: MempoolTransactionExtended[] = [];
-      const added: MempoolTransactionExtended[] = [];
+      const removed: VerboseMempoolTransactionExtended[] = [];
+      const added: VerboseMempoolTransactionExtended[] = [];
       // don't prematurely remove txs included in a new block
       if (blockHeight > blocks.getCurrentBlockHeight()) {
         for (const txid of Object.keys(this.mempoolCandidates)) {
@@ -518,7 +518,7 @@ class Mempool {
     }
   }
 
-  public addToSpendMap(transactions: MempoolTransactionExtended[]): void {
+  public addToSpendMap(transactions: VerboseMempoolTransactionExtended[]): void {
     for (const tx of transactions) {
       for (const vin of tx.vin) {
         this.spendMap.set(`${vin.txid}:${vin.vout}`, tx);
@@ -526,7 +526,7 @@ class Mempool {
     }
   }
 
-  public removeFromSpendMap(transactions: TransactionExtended[]): void {
+  public removeFromSpendMap(transactions: VerboseTransactionExtended[]): void {
     for (const tx of transactions) {
       for (const vin of tx.vin) {
         const key = `${vin.txid}:${vin.vout}`;

@@ -5,7 +5,7 @@ import memPool from './mempool';
 import blocks from './blocks';
 import logger from '../logger';
 import config from '../config';
-import { TransactionExtended } from '../mempool.interfaces';
+import { VerboseTransactionExtended } from '../mempool.interfaces';
 import { Common } from './common';
 
 class DiskCache {
@@ -46,7 +46,7 @@ class DiskCache {
       this.isWritingCache = true;
 
       const mempool = memPool.getMempool();
-      const mempoolArray: TransactionExtended[] = [];
+      const mempoolArray: VerboseTransactionExtended[] = [];
       for (const tx in mempool) {
         if (mempool[tx]) {
           mempoolArray.push(mempool[tx]);

@@ -2,7 +2,7 @@ import { GbtGenerator, GbtResult, ThreadTransaction as RustThreadTransaction } f
 import logger from '../logger';
 import {
   MempoolBlock,
-  MempoolTransactionExtended,
+  VerboseMempoolTransactionExtended,
   MempoolBlockWithTransactions,
   MempoolBlockDelta,
   CompactThreadTransaction,
@@ -115,7 +115,7 @@ class MempoolBlocks {
 
   public async $makeBlockTemplates(
     transactions: string[],
-    newMempool: { [txid: string]: MempoolTransactionExtended },
+    newMempool: { [txid: string]: VerboseMempoolTransactionExtended },
     candidates: GbtCandidates | undefined,
     saveResults = false
   ): Promise<MempoolBlockWithTransactions[]> {
@@ -206,9 +206,9 @@ class MempoolBlocks {
 
   public async $updateBlockTemplates(
     transactions: string[],
-    newMempool: { [txid: string]: MempoolTransactionExtended },
-    added: MempoolTransactionExtended[],
-    removed: MempoolTransactionExtended[],
+    newMempool: { [txid: string]: VerboseMempoolTransactionExtended },
+    added: VerboseMempoolTransactionExtended[],
+    removed: VerboseMempoolTransactionExtended[],
     candidates: GbtCandidates | undefined,
     saveResults = false
   ): Promise<void> {
@@ -224,7 +224,7 @@ class MempoolBlocks {
     for (const tx of addedAndChanged) {
       this.setUid(tx, false);
     }
-    const removedTxs = removed.filter((tx) => tx.uid) as MempoolTransactionExtended[];
+    const removedTxs = removed.filter((tx) => tx.uid) as VerboseMempoolTransactionExtended[];
 
     // prepare a stripped down version of the mempool with only the minimum necessary data
     // to reduce the overhead of passing this data to the worker thread
@@ -282,7 +282,7 @@ class MempoolBlocks {
 
   public async $rustMakeBlockTemplates(
     txids: string[],
-    newMempool: { [txid: string]: MempoolTransactionExtended },
+    newMempool: { [txid: string]: VerboseMempoolTransactionExtended },
     candidates: GbtCandidates | undefined,
     saveResults = false
   ): Promise<MempoolBlockWithTransactions[]> {
@@ -335,7 +335,7 @@ class MempoolBlocks {
 
   public async $oneOffRustBlockTemplates(
     transactions: string[],
-    newMempool: { [txid: string]: MempoolTransactionExtended },
+    newMempool: { [txid: string]: VerboseMempoolTransactionExtended },
     candidates: GbtCandidates | undefined
   ): Promise<MempoolBlockWithTransactions[]> {
     return this.$rustMakeBlockTemplates(transactions, newMempool, candidates, false);
@@ -343,9 +343,9 @@ class MempoolBlocks {
 
   public async $rustUpdateBlockTemplates(
     transactions: string[],
-    newMempool: { [txid: string]: MempoolTransactionExtended },
-    added: MempoolTransactionExtended[],
-    removed: MempoolTransactionExtended[],
+    newMempool: { [txid: string]: VerboseMempoolTransactionExtended },
+    added: VerboseMempoolTransactionExtended[],
+    removed: VerboseMempoolTransactionExtended[],
     candidates: GbtCandidates | undefined
   ): Promise<MempoolBlockWithTransactions[]> {
     // GBT optimization requires that uids never get too sparse
@@ -368,7 +368,7 @@ class MempoolBlocks {
     for (const tx of added) {
       tx.inputs = tx.vin.map((v) => this.getUid(newMempool[v.txid])).filter((uid) => uid) as number[];
     }
-    const removedTxs = removed.filter((tx) => tx.uid) as MempoolTransactionExtended[];
+    const removedTxs = removed.filter((tx) => tx.uid) as VerboseMempoolTransactionExtended[];
 
     // run the block construction algorithm in a separate thread, and wait for a result
     try {
@@ -401,7 +401,7 @@ class MempoolBlocks {
   }
 
   private processBlockTemplates(
-    mempool: { [txid: string]: MempoolTransactionExtended },
+    mempool: { [txid: string]: VerboseMempoolTransactionExtended },
     blocks: string[][],
     blockSizes: number[] | null,
     rates: [string, number][],
@@ -430,13 +430,13 @@ class MempoolBlocks {
 
     const sizeLimit = config.MEMPOOL.MIN_BLOCK_SIZE_UNITS;
     // update this thread's mempool with the results
-    let mempoolTx: MempoolTransactionExtended;
+    let mempoolTx: VerboseMempoolTransactionExtended;
     const mempoolBlocks: MempoolBlockWithTransactions[] = [];
     for (let blockIndex = 0; blockIndex < blocks.length; blockIndex++) {
       const block = blocks[blockIndex];
       let totalSize = 0;
       let totalFees = 0;
-      const transactions: MempoolTransactionExtended[] = [];
+      const transactions: VerboseMempoolTransactionExtended[] = [];
 
       // backfill purged transactions
       if (candidates?.txs && blockIndex === blocks.length - 1) {
@@ -484,7 +484,7 @@ class MempoolBlocks {
 
   private dataToMempoolBlocks(
     transactionIds: string[],
-    transactions: MempoolTransactionExtended[],
+    transactions: VerboseMempoolTransactionExtended[],
     totalSize: number,
     totalFees: number
   ): MempoolBlockWithTransactions {
@@ -508,7 +508,7 @@ class MempoolBlocks {
     this.nextUid = 1;
   }
 
-  private setUid(tx: MempoolTransactionExtended, skipSet = false): number {
+  private setUid(tx: VerboseMempoolTransactionExtended, skipSet = false): number {
     if (!this.txidMap.has(tx.txid) || !skipSet) {
       const uid = this.nextUid;
       this.nextUid++;
@@ -522,13 +522,13 @@ class MempoolBlocks {
     }
   }
 
-  private getUid(tx: MempoolTransactionExtended): number | void {
+  private getUid(tx: VerboseMempoolTransactionExtended): number | void {
     if (tx) {
       return this.txidMap.get(tx.txid);
     }
   }
 
-  private removeUids(txs: MempoolTransactionExtended[]): void {
+  private removeUids(txs: VerboseMempoolTransactionExtended[]): void {
     for (const tx of txs) {
       const uid = this.txidMap.get(tx.txid);
       if (uid != null) {

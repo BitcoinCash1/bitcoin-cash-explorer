@@ -1,6 +1,6 @@
 import memPool from '../mempool';
 import logger from '../../logger';
-import { TransactionExtended, OptimizedStatistic } from '../../mempool.interfaces';
+import { VerboseTransactionExtended, OptimizedStatistic } from '../../mempool.interfaces';
 import statisticsApi from './statistics-api';
 
 class Statistics {
@@ -54,7 +54,7 @@ class Statistics {
 
     logger.debug('Running statistics');
 
-    let memPoolArray: TransactionExtended[] = [];
+    let memPoolArray: VerboseTransactionExtended[] = [];
     for (const i in currentMempool) {
       if (currentMempool.hasOwnProperty(i)) {
         memPoolArray.push(currentMempool[i]);

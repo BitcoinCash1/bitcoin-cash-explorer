@@ -1,4 +1,4 @@
-import { TransactionExtended, MempoolTransactionExtended, TransactionMinerInfo } from '../mempool.interfaces';
+import { VerboseTransactionExtended, VerboseMempoolTransactionExtended, TransactionMinerInfo } from '../mempool.interfaces';
 import { IPublicApi } from './bitcoin/public-api.interface';
 import bitcoinApi, { bitcoinCoreApi } from './bitcoin/bitcoin-api-factory';
 import * as bitcoinjs from 'bitcoinjs-lib';
@@ -8,7 +8,7 @@ import pLimit from '../utils/p-limit';
 class TransactionUtils {
   constructor() {}
 
-  public stripCoinbaseTransaction(tx: TransactionExtended): TransactionMinerInfo {
+  public stripCoinbaseTransaction(tx: VerboseTransactionExtended): TransactionMinerInfo {
     return {
       vin: [
         {
@@ -26,7 +26,7 @@ class TransactionUtils {
   }
 
   /**
-   * Wrapper for $getTransactionExtended with an automatic retry direct to Core if the first API request fails.
+   * Wrapper for $getTransactionExtended with an automatic retry direct to BCHN if the first API request fails.
    * Propagates any error from the retry request.
    * @param txid
    * @param addPrevouts
@@ -41,7 +41,7 @@ class TransactionUtils {
     lazyPrevouts = false,
     forceCore = false,
     addMempoolData = false
-  ): Promise<TransactionExtended> {
+  ): Promise<VerboseTransactionExtended> {
     try {
       const result = await this.$getTransactionExtended(txid, addPrevouts, lazyPrevouts, forceCore, addMempoolData);
       if (result) {
@@ -70,7 +70,7 @@ class TransactionUtils {
     lazyPrevouts = false,
     forceCore = false,
     addMempoolData = false
-  ): Promise<TransactionExtended> {
+  ): Promise<VerboseTransactionExtended> {
     let transaction: IPublicApi.VerboseTransaction;
     if (forceCore === true) {
       transaction = (await bitcoinCoreApi.$getRawTransaction(
@@ -108,14 +108,14 @@ class TransactionUtils {
     addPrevouts = false,
     lazyPrevouts = false,
     forceCore = false
-  ): Promise<MempoolTransactionExtended> {
+  ): Promise<VerboseMempoolTransactionExtended> {
     return (await this.$getTransactionExtended(
       txId,
       addPrevouts,
       lazyPrevouts,
       forceCore,
       true
-    )) as MempoolTransactionExtended;
+    )) as VerboseMempoolTransactionExtended;
   }
 
   public async $getMempoolTransactionsExtended(
@@ -123,7 +123,7 @@ class TransactionUtils {
     addPrevouts = false,
     lazyPrevouts = false,
     forceCore = false
-  ): Promise<MempoolTransactionExtended[]> {
+  ): Promise<VerboseMempoolTransactionExtended[]> {
     const limiter = pLimit(8); // Run 8 requests at a time
     const results = await Promise.allSettled(
       txids.map((txid) =>
@@ -132,17 +132,17 @@ class TransactionUtils {
     );
     return results
       .filter((reply) => reply.status === 'fulfilled')
-      .map((r) => (r as PromiseFulfilledResult<MempoolTransactionExtended>).value);
+      .map((r) => (r as PromiseFulfilledResult<VerboseMempoolTransactionExtended>).value);
   }
 
-  public extendTransaction(transaction: IPublicApi.VerboseTransaction): TransactionExtended {
+  public extendTransaction(transaction: IPublicApi.VerboseTransaction): VerboseTransactionExtended {
     // @ts-ignore
     if (transaction.vsize) {
       // @ts-ignore
       return transaction;
     }
     const feePerSize = (transaction.fee || 0) / transaction.size;
-    const transactionExtended: TransactionExtended = Object.assign(
+    const transactionExtended: VerboseTransactionExtended = Object.assign(
       {
         feePerSize: feePerSize,
       },
@@ -154,14 +154,14 @@ class TransactionUtils {
     return transactionExtended;
   }
 
-  public extendMempoolTransaction(transaction: IPublicApi.VerboseTransaction): MempoolTransactionExtended {
+  public extendMempoolTransaction(transaction: IPublicApi.VerboseTransaction): VerboseMempoolTransactionExtended {
     const size = Math.ceil(transaction.size);
     const sigops = transaction.sigops ? transaction.sigops : this.countSigops(transaction);
     // https://gitlab.com/bitcoin-cash-node/bitcoin-cash-node/-/blob/master/src/policy/policy.cpp#L182-185
     const adjustedSize = Math.max(transaction.size, sigops * 5); // adjusted vsize = std::max(nSize, nSigChecks * bytes_per_sigcheck)
     const feePerSize = (transaction.fee || 0) / transaction.size;
     const adjustedFeePerSize = (transaction.fee || 0) / adjustedSize;
-    const transactionExtended: MempoolTransactionExtended = Object.assign(transaction, {
+    const transactionExtended: VerboseMempoolTransactionExtended = Object.assign(transaction, {
       order: this.txidToOrdering(transaction.txid),
       size,
       adjustedSize,
@@ -257,7 +257,7 @@ class TransactionUtils {
    * or fewer. This method of accounting was introduced by BIP16, and BIP54 reuses it.
    * The GetSigOpCount call on the previous scriptPubKey counts both bare and P2SH sigops."
    */
-  public checkSigopsBIP54(tx: TransactionExtended, limit): boolean {
+  public checkSigopsBIP54(tx: VerboseTransactionExtended, limit): boolean {
     let sigops = 0;
     for (const input of tx.vin) {
       if (input.scriptsig_asm) {

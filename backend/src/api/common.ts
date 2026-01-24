@@ -2,7 +2,7 @@ import { Request } from 'express';
 import {
   FeeStats,
   MempoolBlockWithTransactions,
-  TransactionExtended,
+  VerboseTransactionExtended,
   TransactionStripped,
   WorkingFeeStats,
   TransactionClassified,
@@ -52,8 +52,8 @@ export class Common {
     return numbers[index];
   }
 
-  static getFeesInRange(transactions: TransactionExtended[], rangeLength: number) {
-    const filtered: TransactionExtended[] = [];
+  static getFeesInRange(transactions: VerboseTransactionExtended[], rangeLength: number) {
+    const filtered: VerboseTransactionExtended[] = [];
     let lastValidRate = Infinity;
     // filter out anomalous fee rates to ensure monotonic range
     for (const tx of transactions) {
@@ -84,7 +84,7 @@ export class Common {
    * As standardness rules change, we'll need to apply the rules in force *at the time* to older blocks.
    * For now, just pull out individual rules into versioned functions where necessary.
    */
-  static isNonStandard(tx: TransactionExtended, height?: number): boolean {
+  static isNonStandard(tx: VerboseTransactionExtended, height?: number): boolean {
     // version
     if (this.isNonStandardVersion(tx, height)) {
       return true;
@@ -227,7 +227,7 @@ export class Common {
     signet: 211_000,
     '': 863_500,
   };
-  static isNonStandardVersion(tx: TransactionExtended, height?: number): boolean {
+  static isNonStandardVersion(tx: VerboseTransactionExtended, height?: number): boolean {
     let TX_MAX_STANDARD_VERSION = 3;
     if (
       height != null &&
@@ -270,7 +270,7 @@ export class Common {
     signet: 260_000,
     '': 905_000,
   };
-  static isStandardEphemeralDust(tx: TransactionExtended, height?: number): boolean {
+  static isStandardEphemeralDust(tx: VerboseTransactionExtended, height?: number): boolean {
     if (
       tx.fee === 0 &&
       (height == null ||
@@ -310,7 +310,7 @@ export class Common {
     signet: 276_500,
     '': 921_000,
   };
-  static isNonStandardLegacySigops(tx: TransactionExtended, height?: number): boolean {
+  static isNonStandardLegacySigops(tx: VerboseTransactionExtended, height?: number): boolean {
     if (
       height == null ||
       (this.LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK] &&
@@ -332,7 +332,7 @@ export class Common {
     ].includes(pubkey);
   }
 
-  static getTransactionFlags(tx: TransactionExtended, height?: number): number {
+  static getTransactionFlags(tx: VerboseTransactionExtended, height?: number): number {
     let flags = tx.flags ? BigInt(tx.flags) : 0n;
 
     // Already processed static flags, no need to do it again
@@ -508,7 +508,7 @@ export class Common {
     return flags;
   }
 
-  static classifyTransaction(tx: TransactionExtended, height?: number): TransactionClassified {
+  static classifyTransaction(tx: VerboseTransactionExtended, height?: number): TransactionClassified {
     let flags = 0;
     try {
       flags = Common.getTransactionFlags(tx, height);
@@ -522,11 +522,11 @@ export class Common {
     };
   }
 
-  static classifyTransactions(txs: TransactionExtended[], height?: number): TransactionClassified[] {
+  static classifyTransactions(txs: VerboseTransactionExtended[], height?: number): TransactionClassified[] {
     return txs.map((tx) => Common.classifyTransaction(tx, height));
   }
 
-  static stripTransaction(tx: TransactionExtended): TransactionStripped {
+  static stripTransaction(tx: VerboseTransactionExtended): TransactionStripped {
     return {
       txid: tx.txid,
       fee: tx.fee || 0,
@@ -537,7 +537,7 @@ export class Common {
     };
   }
 
-  static stripTransactions(txs: TransactionExtended[]): TransactionStripped[] {
+  static stripTransactions(txs: VerboseTransactionExtended[]): TransactionStripped[] {
     return txs.map(Common.stripTransaction);
   }
 
@@ -557,7 +557,7 @@ export class Common {
   }
 
   // calculates the ratio of matched transactions to projected transactions by size
-  static getSimilarity(projectedBlock: MempoolBlockWithTransactions, transactions: TransactionExtended[]): number {
+  static getSimilarity(projectedBlock: MempoolBlockWithTransactions, transactions: VerboseTransactionExtended[]): number {
     let matchedSize = 0;
     let projectedSize = 0;
     const inBlock = {};

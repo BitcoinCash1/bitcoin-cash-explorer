@@ -1,6 +1,6 @@
 import config from '../config';
 import logger from '../logger';
-import { MempoolTransactionExtended, MempoolBlockWithTransactions } from '../mempool.interfaces';
+import { VerboseMempoolTransactionExtended, MempoolBlockWithTransactions } from '../mempool.interfaces';
 
 const PROPAGATION_MARGIN = 180; // in seconds, time since a transaction is first seen after which it is assumed to have propagated to all miners
 
@@ -8,9 +8,9 @@ const PROPAGATION_MARGIN = 180; // in seconds, time since a transaction is first
 class Audit {
   auditBlock(
     height: number,
-    transactions: MempoolTransactionExtended[],
+    transactions: VerboseMempoolTransactionExtended[],
     projectedBlocks: MempoolBlockWithTransactions[],
-    mempool: { [txId: string]: MempoolTransactionExtended }
+    mempool: { [txId: string]: VerboseMempoolTransactionExtended }
   ): {
     unseen: string[];
     censored: string[];
