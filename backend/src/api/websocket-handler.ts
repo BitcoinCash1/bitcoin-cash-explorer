@@ -1242,7 +1242,9 @@ class WebsocketHandler {
     return addressCache;
   }
 
-  private async getFullTransactions(transactions: VerboseMempoolTransactionExtended[]): Promise<VerboseMempoolTransactionExtended[]> {
+  private async getFullTransactions(
+    transactions: VerboseMempoolTransactionExtended[]
+  ): Promise<VerboseMempoolTransactionExtended[]> {
     for (let i = 0; i < transactions.length; i++) {
       try {
         transactions[i] = await transactionUtils.$getMempoolTransactionExtended(transactions[i].txid, true);

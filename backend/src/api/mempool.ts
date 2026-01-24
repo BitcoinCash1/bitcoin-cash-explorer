@@ -1,6 +1,11 @@
 import config from '../config';
 import bitcoinApi from './bitcoin/bitcoin-api-factory';
-import { VerboseMempoolTransactionExtended, VerboseTransactionExtended, BytesPerSecond, GbtCandidates } from '../mempool.interfaces';
+import {
+  VerboseMempoolTransactionExtended,
+  VerboseTransactionExtended,
+  BytesPerSecond,
+  GbtCandidates,
+} from '../mempool.interfaces';
 import logger from '../logger';
 import { Common } from './common';
 import transactionUtils from './transaction-utils';

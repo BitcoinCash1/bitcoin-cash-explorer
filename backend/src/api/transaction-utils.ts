@@ -1,4 +1,10 @@
-import { VerboseTransactionExtended, VerboseMempoolTransactionExtended, TransactionMinerInfo } from '../mempool.interfaces';
+import {
+  VerboseTransactionExtended,
+  VerboseMempoolTransactionExtended,
+  TransactionExtended,
+  MempoolTransactionExtended,
+  TransactionMinerInfo,
+} from '../mempool.interfaces';
 import { IPublicApi } from './bitcoin/public-api.interface';
 import bitcoinApi, { bitcoinCoreApi } from './bitcoin/bitcoin-api-factory';
 import * as bitcoinjs from 'bitcoinjs-lib';
@@ -173,6 +179,58 @@ class TransactionUtils {
       transactionExtended.firstSeen = Math.round(Date.now() / 1000);
     }
     return transactionExtended;
+  }
+
+  public stripVerbosityTransaction(transaction: VerboseTransactionExtended): TransactionExtended {
+    // Convert verbose vin/vout to non-verbose versions
+    const vin: IPublicApi.Vin[] = transaction.vin.map((v) => ({
+      txid: v.txid,
+      vout: v.vout,
+      is_coinbase: v.is_coinbase,
+      scriptsig: v.scriptsig,
+      scriptsig_asm: v.scriptsig_asm,
+      inner_redeemscript_asm: v.inner_redeemscript_asm,
+      sequence: v.sequence,
+      prevout: v.prevout,
+      lazy: v.lazy,
+    }));
+
+    const vout: IPublicApi.Vout[] = transaction.vout.map((v) => ({
+      scriptpubkey: v.scriptpubkey,
+      scriptpubkey_asm: v.scriptpubkey_asm,
+      scriptpubkey_type: v.scriptpubkey_type,
+      scriptpubkey_address: v.scriptpubkey_address,
+      value: v.value,
+    }));
+
+    const { vin: _, vout: __, ...rest } = transaction;
+    return { ...rest, vin, vout } as TransactionExtended;
+  }
+
+  public stripVerbosityMempoolTransaction(transaction: VerboseMempoolTransactionExtended): MempoolTransactionExtended {
+    // Convert verbose vin/vout to non-verbose versions
+    const vin: IPublicApi.Vin[] = transaction.vin.map((v) => ({
+      txid: v.txid,
+      vout: v.vout,
+      is_coinbase: v.is_coinbase,
+      scriptsig: v.scriptsig,
+      scriptsig_asm: v.scriptsig_asm,
+      inner_redeemscript_asm: v.inner_redeemscript_asm,
+      sequence: v.sequence,
+      prevout: v.prevout,
+      lazy: v.lazy,
+    }));
+
+    const vout: IPublicApi.Vout[] = transaction.vout.map((v) => ({
+      scriptpubkey: v.scriptpubkey,
+      scriptpubkey_asm: v.scriptpubkey_asm,
+      scriptpubkey_type: v.scriptpubkey_type,
+      scriptpubkey_address: v.scriptpubkey_address,
+      value: v.value,
+    }));
+
+    const { vin: _, vout: __, ...rest } = transaction;
+    return { ...rest, vin, vout } as MempoolTransactionExtended;
   }
 
   public hex2ascii(hex: string) {

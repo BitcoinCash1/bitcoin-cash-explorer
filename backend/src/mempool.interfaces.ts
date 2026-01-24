@@ -105,7 +105,8 @@ interface VoutStrippedToScriptPubkey {
   value: number;
 }
 
-export interface VerboseTransactionExtended extends IPublicApi.VerboseTransaction {
+// Base extension fields that are common to both regular and verbose transactions
+interface BaseTransactionExtension {
   feePerSize: number;
   firstSeen?: number;
   position?: {
@@ -117,13 +118,26 @@ export interface VerboseTransactionExtended extends IPublicApi.VerboseTransactio
   flags?: number;
 }
 
-export interface VerboseMempoolTransactionExtended extends VerboseTransactionExtended {
+// Additional fields for mempool transactions
+interface MempoolExtension {
   order: number;
   sigops: number;
   adjustedSize: number; // I believe BCH has also adjusted size, but in just size iso vsize
   adjustedFeePerSize: number; // I believe BCH has also adjusted fee per size, but in just size iso vsize
   inputs?: number[];
 }
+
+// Generic extended transaction interface
+type ExtendedTransaction<T> = T & BaseTransactionExtension;
+
+// Generic extended mempool transaction interface
+type ExtendedMempoolTransaction<T> = T & BaseTransactionExtension & MempoolExtension;
+
+// Specific interfaces using the generic types
+export interface TransactionExtended extends ExtendedTransaction<IPublicApi.Transaction> {}
+export interface MempoolTransactionExtended extends ExtendedMempoolTransaction<IPublicApi.Transaction> {}
+export interface VerboseTransactionExtended extends ExtendedTransaction<IPublicApi.VerboseTransaction> {}
+export interface VerboseMempoolTransactionExtended extends ExtendedMempoolTransaction<IPublicApi.VerboseTransaction> {}
 
 export interface AuditTransaction {
   uid: number;

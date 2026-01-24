@@ -557,7 +557,10 @@ export class Common {
   }
 
   // calculates the ratio of matched transactions to projected transactions by size
-  static getSimilarity(projectedBlock: MempoolBlockWithTransactions, transactions: VerboseTransactionExtended[]): number {
+  static getSimilarity(
+    projectedBlock: MempoolBlockWithTransactions,
+    transactions: VerboseTransactionExtended[]
+  ): number {
     let matchedSize = 0;
     let projectedSize = 0;
     const inBlock = {};

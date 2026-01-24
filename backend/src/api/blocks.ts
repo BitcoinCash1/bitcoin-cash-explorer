@@ -49,8 +49,11 @@ class Blocks {
   private lastDifficultyAdjustmentTime = 0;
   private previousDifficultyRetarget = 0;
   private quarterEpochBlockTime: number | null = null;
-  private newBlockCallbacks: ((block: BlockExtended, txIds: string[], transactions: VerboseTransactionExtended[]) => void)[] =
-    [];
+  private newBlockCallbacks: ((
+    block: BlockExtended,
+    txIds: string[],
+    transactions: VerboseTransactionExtended[]
+  ) => void)[] = [];
   private newAsyncBlockCallbacks: ((
     block: BlockExtended,
     txIds: string[],
@@ -76,7 +79,9 @@ class Blocks {
     this.blockSummaries = blockSummaries;
   }
 
-  public setNewBlockCallback(fn: (block: BlockExtended, txIds: string[], transactions: VerboseTransactionExtended[]) => void) {
+  public setNewBlockCallback(
+    fn: (block: BlockExtended, txIds: string[], transactions: VerboseTransactionExtended[]) => void
+  ) {
     this.newBlockCallbacks.push(fn);
   }
 
@@ -244,7 +249,11 @@ class Blocks {
     };
   }
 
-  public summarizeBlockTransactions(hash: string, height: number, transactions: VerboseTransactionExtended[]): BlockSummary {
+  public summarizeBlockTransactions(
+    hash: string,
+    height: number,
+    transactions: VerboseTransactionExtended[]
+  ): BlockSummary {
     return {
       id: hash,
       transactions: Common.classifyTransactions(transactions, height),

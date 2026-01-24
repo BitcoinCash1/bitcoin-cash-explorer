@@ -269,7 +269,10 @@ class WalletApi {
   }
 
   // check a new block for transactions that affect wallet address balances, and add relevant transactions to wallets
-  processBlock(block: IPublicApi.Block, blockTxs: VerboseTransactionExtended[]): Record<string, IPublicApi.Transaction[]> {
+  processBlock(
+    block: IPublicApi.Block,
+    blockTxs: VerboseTransactionExtended[]
+  ): Record<string, IPublicApi.Transaction[]> {
     const walletTransactions: Record<string, IPublicApi.Transaction[]> = {};
     for (const walletKey of Object.keys(this.wallets)) {
       const wallet = this.wallets[walletKey];
