@@ -7,6 +7,7 @@ import {
 import { Transaction, Vin, Utxo } from '@app/interfaces/backend-api.interface';
 import { hash, Hash } from '@app/shared/sha256';
 import { AddressType, detectAddressType } from '@app/shared/address-utils';
+import { CASHADDR_CHARS } from '@app/shared/regex.utils';
 
 // BCHN default policy settings
 const MIN_BLOCK_SIZE = 32_000_000;
@@ -17,6 +18,10 @@ const MAX_P2SH_SIGOPS = 15;
 const MAX_STANDARD_SCRIPTSIG_SIZE = 1650;
 const DUST_RELAY_TX_FEE = 3;
 const MAX_OP_RETURN_RELAY = 83;
+
+// CashAddr constants
+const cashaddrRegex = RegExp('^' + CASHADDR_CHARS + '{20,100}$');
+const CASHADDR_ALPHABET = '023456789acdefghjklmnpqrstuvwxyz';
 const DEFAULT_PERMIT_BAREMULTISIG = true;
 const MAX_TX_LEGACY_SIGOPS = 2_500 * 4; // witness-adjusted sigops
 
@@ -1588,6 +1593,16 @@ export function addressToScriptPubKey(
   }
 
   if (type === 'p2pkh' || type === 'p2sh') {
+    // Check if it's a CashAddr address (BCH format)
+    if (
+      cashaddrRegex.test(address) ||
+      address.includes('bitcoincash:') ||
+      address.includes('bchtest:') ||
+      address.includes('bchreg:')
+    ) {
+      return { scriptPubKey: cashaddrToSpk(address, network), type };
+    }
+    // Fall back to base58 for legacy addresses
     return { scriptPubKey: base58ToSpk(address, network), type };
   }
 
@@ -1848,6 +1863,115 @@ function bech32ToSpk(address: string, network: string): string | null {
     // Invalid bech32 address
   }
   return null;
+}
+
+// CashAddr encoding/decoding for Bitcoin Cash
+function cashaddrDecode(address: string): {
+  prefix: string;
+  version: number;
+  hash: Uint8Array;
+} {
+  // Remove prefix if present
+  let prefix = '';
+  let addr = address;
+  const colonIndex = address.indexOf(':');
+  if (colonIndex !== -1) {
+    prefix = address.slice(0, colonIndex);
+    addr = address.slice(colonIndex + 1);
+  } else {
+    // Default to bitcoincash for addresses without prefix
+    prefix = 'bitcoincash';
+  }
+
+  // Convert to lowercase
+  addr = addr.toLowerCase();
+
+  // Decode base32
+  const words: number[] = [];
+  for (let i = 0; i < addr.length; i++) {
+    const char = addr.charAt(i);
+    const index = CASHADDR_ALPHABET.indexOf(char);
+    if (index === -1) {
+      throw new Error('Invalid CashAddr character');
+    }
+    words.push(index);
+  }
+
+  // Remove checksum (last 8 characters)
+  const dataWords = words.slice(0, -8);
+
+  // Convert from 5-bit to 8-bit
+  let data: Uint8Array;
+
+  try {
+    data = fromWords(dataWords);
+  } catch (e) {
+    // Manual 5-bit to 8-bit conversion as fallback
+    let acc = 0;
+    let bits = 0;
+    const ret = [];
+
+    for (let i = 0; i < dataWords.length; ++i) {
+      const value = dataWords[i];
+      acc = (acc << 5) | value;
+      bits += 5;
+
+      while (bits >= 8) {
+        bits -= 8;
+        ret.push((acc >> bits) & 0xff);
+      }
+    }
+
+    data = new Uint8Array(ret);
+  }
+
+  // Extract version byte and hash
+  if (data.length < 1) {
+    throw new Error('Invalid CashAddr data');
+  }
+
+  const version = data[0];
+  const hash = data.slice(1);
+
+  return { prefix, version, hash };
+}
+
+function cashaddrToSpk(address: string, network: string): string | null {
+  try {
+    const decoded = cashaddrDecode(address);
+
+    // For CashAddr, we determine type from the address format
+    // P2PKH addresses start with 'q', P2SH addresses start with 'p'
+    const addressPart = address.includes(':') ? address.split(':')[1] : address;
+    const firstChar = addressPart.charAt(0).toLowerCase();
+
+    const actualType = ['q'].includes(firstChar)
+      ? 0
+      : ['p'].includes(firstChar)
+        ? 1
+        : null;
+
+    if (actualType === null) {
+      return null; // Unsupported address type
+    }
+
+    const hashHex = uint8ArrayToHexString(decoded.hash);
+
+    // P2PKH (type = 0)
+    if (actualType === 0) {
+      return '76a914' + hashHex + '88ac';
+    }
+
+    // P2SH (type = 1)
+    if (actualType === 1) {
+      return 'a914' + hashHex + '87';
+    }
+
+    return null;
+  } catch (e) {
+    // Invalid CashAddr address
+    return null;
+  }
 }
 
 function bech32Polymod(prefix: string, words: number[]): number {
