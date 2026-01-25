@@ -230,20 +230,16 @@ export function processInputSignatures(vin: Vin): SigInfo[] {
 }
 
 /*
- * returns the number of missing signatures, the number of bytes to add to the transaction
- * and whether these should benefit from witness discounting
- * - Add a DER sig     in scriptsig/witness: 71 bytes signature + 1 push or witness size byte = 72 bytes
- * - Add a public key  in scriptsig/witness: 33 bytes pubkey    + 1 push or witness size byte = 34 bytes
- * - Add a Schnorr sig in           witness: 64 bytes signature + 1 witness size byte         = 65 bytes
+ * returns the number of missing signatures and the number of bytes to add to the transaction
+ * - Add a DER sig     in scriptsig: 71 bytes signature + 1 push byte = 72 bytes
+ * - Add a public key  in scriptsig: 33 bytes pubkey    + 1 push byte = 34 bytes
  */
 export function fillUnsignedInput(vin: Vin): {
   missingSigs: number;
   bytes: number;
-  addToWitness: boolean;
 } {
   let missingSigs = 0;
   let bytes = 0;
-  const addToWitness = false;
 
   const addressType = vin.prevout?.scriptpubkey_type as AddressType;
   let signatures: SigInfo[] = [];
@@ -296,7 +292,7 @@ export function fillUnsignedInput(vin: Vin): {
     default:
       break;
   }
-  return { missingSigs, bytes, addToWitness };
+  return { missingSigs, bytes };
 }
 
 /**
@@ -1415,14 +1411,10 @@ export function createMessageSigningPsbt(
   // Estimate fee
   let rawTx = serializeTransaction(tx);
   let fee = fallbackFee;
-  const { bytes, addToWitness } = fillUnsignedInput(tx.vin[0]);
+  const { bytes } = fillUnsignedInput(tx.vin[0]);
   if (bytes) {
-    let finalVsize = rawTx.length + (addToWitness ? bytes / 4 : bytes);
-    if (addToWitness) {
-      finalVsize += 2 / 4; // marker and flag
-      finalVsize += tx.vin.length / 4; // 1 byte compact size per input (assume witness stack count < 253)
-    }
-    fee = Math.ceil(finalVsize * feeRate);
+    let finalSize = rawTx.length + bytes;
+    fee = Math.ceil(finalSize * feeRate);
   }
   const dustThreshold = getDustThreshold(tx.vout[1].scriptpubkey);
   // console.log(`Estimated fee: ${fee} sats, dust threshold: ${dustThreshold} sats`);
