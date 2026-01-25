@@ -51,11 +51,8 @@
         <tr>
           <th class="allowed" i18n="test-tx.is-allowed">Allowed?</th>
           <th class="txid" i18n="dashboard.latest-transactions.txid">TXID</th>
-          <th
-            class="rate"
-            i18n="transaction.effective-fee-rate|Effective transaction fee rate"
-          >
-            Effective fee rate
+          <th class="rate" i18n="transaction.fee-rate|Transaction fee rate">
+            Fee rate
           </th>
           <th class="reason" i18n="test-tx.rejection-reason">
             Rejection reason
@@ -75,10 +72,10 @@
             </td>
             <td class="rate">
               <app-fee-rate
-                *ngIf="result.fees?.['effective-feerate'] != null"
-                [fee]="result.fees?.['effective-feerate'] * 100000"
+                *ngIf="result.fees?.['feerate'] != null"
+                [fee]="result.fees?.['feerate'] * 100000"
               ></app-fee-rate>
-              <span *ngIf="result.fees?.['effective-feerate'] == null">-</span>
+              <span *ngIf="result.fees?.['feerate'] == null">-</span>
             </td>
             <td class="reason">
               {{ result["reject-reason"] || "-" }}
