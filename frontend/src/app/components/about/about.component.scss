@@ -58,7 +58,7 @@
   .community-integrations-sponsor,
   .maintainers,
   .managers {
-    margin-top: 30px;
+    margin-top: 20px;
     margin-bottom: 68px;
     scroll-margin: 30px;
 
@@ -69,7 +69,7 @@
 
   .maintainers,
   .managers {
-    margin-top: 30px;
+    margin-top: 20px;
     margin-bottom: 50px;
   }
 
@@ -189,8 +189,7 @@
         }
         img,
         svg,
-        span,
-        code {
+        span {
           display: block;
           transition: 250ms all;
         }
@@ -295,12 +294,13 @@
 }
 
 code {
+  display: inline-block;
   font-family: "Courier New", Courier, monospace;
   color: #fff;
   background-color: #03271b;
   padding: 2px;
   border-radius: 5px;
-  margin: 10px;
+  margin: 15px 0;
 }
 
 .melroy-logo,
@@ -308,6 +308,10 @@ code {
   width: 260px;
   max-width: 90vw;
   margin: auto;
+}
+
+.melroy-name {
+  font-size: 1.5em;
 }
 
 .enterprise-sponsor {
