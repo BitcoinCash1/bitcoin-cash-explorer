@@ -176,6 +176,7 @@ import { GeolocationComponent } from '@app/shared/components/geolocation/geoloca
 import { TestnetAlertComponent } from '@app/shared/components/testnet-alert/testnet-alert.component';
 import { GlobalFooterComponent } from '@app/shared/components/global-footer/global-footer.component';
 import { MempoolErrorComponent } from '@app/shared/components/mempool-error/mempool-error.component';
+import { VerifyAddressComponent } from '../components/verify-address/verify-address.component';
 
 import { BlockViewComponent } from '@components/block-view/block-view.component';
 import { EightBlocksComponent } from '@components/eight-blocks/eight-blocks.component';
@@ -298,6 +299,7 @@ import { MempoolProgressBarComponent } from '@components/mempool-progress-bar/me
     TwitterLogin,
     GithubLogin,
     MempoolProgressBarComponent,
+    VerifyAddressComponent,
   ],
   imports: [
     CommonModule,
@@ -420,6 +422,7 @@ import { MempoolProgressBarComponent } from '@components/mempool-progress-bar/me
     GithubLogin,
     MempoolProgressBarComponent,
     BitcoinsatoshisPipe,
+    VerifyAddressComponent,
 
     MempoolBlockOverviewComponent,
     ClockchainComponent,

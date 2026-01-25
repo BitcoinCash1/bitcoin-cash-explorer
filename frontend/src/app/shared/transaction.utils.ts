@@ -1591,12 +1591,7 @@ export function addressToScriptPubKey(
     return { scriptPubKey: base58ToSpk(address, network), type };
   }
 
-  if (
-    type === 'v0_p2wpkh' ||
-    type === 'v0_p2wsh' ||
-    type === 'v1_p2tr' ||
-    address === p2a(network)
-  ) {
+  if (address === p2a(network)) {
     return { scriptPubKey: bech32ToSpk(address, network), type };
   }
 
@@ -1744,7 +1739,6 @@ function base58ToSpk(address: string, network: string): string | null {
     if (decoded.length !== 25) {
       return null;
     }
-
     const version = decoded[0];
     const payload = decoded.slice(1, 21);
     const checksum = decoded.slice(21, 25);
@@ -1763,6 +1757,7 @@ function base58ToSpk(address: string, network: string): string | null {
       }
     }
 
+    console.log('ok?');
     const payloadHex = uint8ArrayToHexString(payload);
 
     // P2PKH

@@ -137,6 +137,7 @@ export function detectAddressType(
   }
 
   // BTC backwards compatibility lookup (just for people who like this), won't be used in BCH at all
+  // Since BCH does not have taproot or witness.
   if (address.startsWith(ADDRESS_PREFIXES[network].bech32)) {
     const suffix = address.slice(ADDRESS_PREFIXES[network].bech32.length);
     if (p2wpkhRegex.test(suffix)) {
