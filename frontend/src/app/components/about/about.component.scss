@@ -322,3 +322,12 @@ code {
     max-width: 850px;
   }
 }
+
+.box-wrapper {
+  display: inline-block;
+  text-align: center;
+
+  > span {
+    display: block;
+  }
+}
