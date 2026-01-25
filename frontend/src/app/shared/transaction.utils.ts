@@ -6,11 +6,7 @@ import {
 } from '@app/shared/script.utils';
 import { Transaction, Vin, Utxo } from '@app/interfaces/backend-api.interface';
 import { hash, Hash } from '@app/shared/sha256';
-import {
-  AddressType,
-  detectAddressType,
-  addressToScriptPubKey,
-} from '@app/shared/address-utils';
+import { AddressType } from '@app/shared/address-utils';
 
 // BCHN default policy settings
 const MIN_BLOCK_SIZE = 32_000_000;
@@ -24,12 +20,6 @@ const MAX_OP_RETURN_RELAY = 83;
 
 const DEFAULT_PERMIT_BAREMULTISIG = true;
 const MAX_TX_LEGACY_SIGOPS = 2_500 * 4; // witness-adjusted sigops
-
-const TAPROOT_NUMS_INTERNAL_KEY =
-  '50929b74c1a04954b78b4b6035e97a5e078a5a0f28ec96d547bfee9ace803ac0';
-const SECP256K1_ORDER = BigInt(
-  '0xfffffffffffffffffffffffffffffffebaaedce6af48a03bbfd25e8cd0364141'
-);
 
 export function countScriptSigops(
   script: string,
@@ -2297,8 +2287,4 @@ export function convertTextToBuffer(input: string): Uint8Array {
     throw new Error('Invalid input: not hex or base64');
   }
   return buffer;
-}
-
-function isInternalKeyNUMS(internalKey: string): boolean {
-  return internalKey === TAPROOT_NUMS_INTERNAL_KEY;
 }
