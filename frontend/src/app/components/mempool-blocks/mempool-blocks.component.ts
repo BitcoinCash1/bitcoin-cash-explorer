@@ -358,7 +358,7 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
     clearTimeout(this.resetTransitionTimeout);
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize(): void {
     this.animateEntry = false;
     this.reduceEmptyBlocksToFitScreen(this.mempoolEmptyBlocks);
