@@ -482,7 +482,7 @@ export class BlockOverviewGraphComponent
     }
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   resizeCanvas(): void {
     if (this.canvas) {
       this.cssWidth = this.canvas.nativeElement.offsetParent.clientWidth;
