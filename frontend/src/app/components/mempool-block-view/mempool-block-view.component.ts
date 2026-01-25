@@ -89,7 +89,7 @@ export class MempoolBlockViewComponent implements OnInit, OnDestroy {
     );
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize(): void {
     if (this.autofit) {
       this.resolution = bestFitResolution(
