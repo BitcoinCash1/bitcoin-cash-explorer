@@ -2,19 +2,9 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
-    "types": [
-      "jasmine",
-      "node",
-      "cypress",
-      "cypress-wait-until"
-]
+    "types": ["node", "@angular/localize"]
   },
-  "files": [
-    "src/test.ts",
-    "src/polyfills.ts"
-  ],
-  "include": [
-    "src/**/*.spec.ts",
-    "src/**/*.d.ts"
-  ]
+  "files": ["src/test.ts", "src/polyfills.ts"],
+  "exclude": ["./cypress.config.ts", "node_modules", "dist", "cypress"],
+  "include": ["src/**/*.spec.ts", "src/**/*.d.ts"]
 }
