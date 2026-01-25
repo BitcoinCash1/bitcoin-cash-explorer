@@ -226,16 +226,17 @@ class BitcoinApi implements AbstractBitcoinApi {
     return this.bitcoindClient.sendRawTransaction(rawTransaction);
   }
 
-  async $testMempoolAccept(rawTransactions: string[], maxfeerate?: number): Promise<TestMempoolAcceptResult[]> {
+  async $testMempoolAccept(rawTransactions: string[], allowhighfees = false): Promise<TestMempoolAcceptResult[]> {
     if (rawTransactions.length) {
-      return this.bitcoindClient.testMempoolAccept(rawTransactions, maxfeerate ?? undefined);
+      return this.bitcoindClient.testMempoolAccept(rawTransactions, allowhighfees);
     } else {
       return [];
     }
   }
 
-  $submitPackage(rawTransactions: string[], maxfeerate?: number, maxburnamount?: number): Promise<SubmitPackageResult> {
-    return this.bitcoindClient.submitPackage(rawTransactions, maxfeerate ?? undefined, maxburnamount ?? undefined);
+  // BCHN doesn't have this
+  $submitPackage(rawTransactions: string[], allowhighfees = false): Promise<SubmitPackageResult> {
+    return this.bitcoindClient.submitPackage(rawTransactions, allowhighfees);
   }
 
   async $getOutspend(txId: string, vout: number): Promise<IPublicApi.Outspend> {

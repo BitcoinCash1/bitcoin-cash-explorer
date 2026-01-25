@@ -1068,8 +1068,8 @@ class BitcoinRoutes {
   private async $testTransactions(req: Request, res: Response) {
     try {
       const rawTxs = Common.getTransactionsFromRequest(req);
-      const maxfeerate = parseFloat(req.query.maxfeerate as string);
-      const result = await bitcoinApi.$testMempoolAccept(rawTxs, maxfeerate);
+      const allowhighfees = req.query.allowhighfees === '1';
+      const result = await bitcoinApi.$testMempoolAccept(rawTxs, allowhighfees);
       res.send(result);
     } catch (e: any) {
       handleError(
@@ -1086,9 +1086,8 @@ class BitcoinRoutes {
   private async $submitPackage(req: Request, res: Response) {
     try {
       const rawTxs = Common.getTransactionsFromRequest(req);
-      const maxfeerate = parseFloat(req.query.maxfeerate as string);
-      const maxburnamount = parseFloat(req.query.maxburnamount as string);
-      const result = await bitcoinClient.submitPackage(rawTxs, maxfeerate ?? undefined, maxburnamount ?? undefined);
+      const allowhighfees = req.query.allowhighfees === '1';
+      const result = await bitcoinClient.submitPackage(rawTxs, allowhighfees);
       res.send(result);
     } catch (e: any) {
       handleError(

@@ -91,6 +91,23 @@ $dropdown-link-active-bg: $active-bg;
   border: 1px solid #20263e !important;
 }
 
+
+input[type="radio"].form-control,
+input[type="checkbox"].form-control {
+  accent-color: $primary;
+  display: inline-block;
+  width: auto;
+  height: auto;
+  text-align: left;
+  margin: 15px 20px 20px 20px;
+  vertical-align: middle;
+  transform: scale(1.5, 1.5);
+  -moz-transform: scale(1.5, 1.5);
+  -ms-transform: scale(1.5, 1.5);
+  -webkit-transform: scale(1.5, 1.5);
+  -o-transform: scale(1.5, 1.5);
+}
+
 :root {
   --bg: #{$bg};
   --active-bg: #{$active-bg};

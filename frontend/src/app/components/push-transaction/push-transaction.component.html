@@ -61,27 +61,12 @@
           placeholder="Comma-separated list of raw transactions"
         ></textarea>
       </div>
-      <label i18n="test.tx.max-fee-rate">Maximum fee rate (sat/B)</label>
+      <label i18n="test.tx.allow-high-fees">Allow high fees?</label>
       <input
-        type="number"
+        type="checkbox"
         class="form-control input-dark"
-        formControlName="maxfeerate"
-        id="maxfeerate"
-        [value]="10000"
-        placeholder="10,000 s/b"
-        [class]="{ invalid: invalidMaxfeerate }"
-      />
-      <label i18n="submitpackage.tx.max-burn-amount"
-        >Maximum burn amount (sats)</label
-      >
-      <input
-        type="number"
-        class="form-control input-dark"
-        formControlName="maxburnamount"
-        id="maxburnamount"
-        [value]="0"
-        placeholder="0 sat"
-        [class]="{ invalid: invalidMaxburnamount }"
+        formControlName="allowhighfees"
+        id="allowhighfees"
       />
       <br />
       <button

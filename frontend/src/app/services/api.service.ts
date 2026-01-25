@@ -257,13 +257,13 @@ export class ApiService {
 
   testTransactions$(
     rawTxs: string[],
-    maxfeerate?: number
+    allowhighfees?: boolean
   ): Observable<TestMempoolAcceptResult[]> {
     return this.httpClient.post<TestMempoolAcceptResult[]>(
       this.apiBaseUrl +
         this.apiBasePath +
         `/api/txs/test${
-          maxfeerate != null ? '?maxfeerate=' + maxfeerate.toFixed(8) : ''
+          allowhighfees ? '?allowhighfees=' + (allowhighfees ? '1' : '0') : ''
         }`,
       rawTxs
     );
@@ -271,18 +271,14 @@ export class ApiService {
 
   submitPackage$(
     rawTxs: string[],
-    maxfeerate?: number,
-    maxburnamount?: number
+    allowhighfees?: boolean
   ): Observable<SubmitPackageResult> {
     const queryParams = [];
 
-    if (maxfeerate) {
-      queryParams.push(`maxfeerate=${maxfeerate}`);
+    if (allowhighfees) {
+      queryParams.push(`allowhighfees=${allowhighfees ? '1' : '0'}`);
     }
 
-    if (maxburnamount) {
-      queryParams.push(`maxburnamount=${maxburnamount}`);
-    }
     return this.httpClient.post<SubmitPackageResult>(
       this.apiBaseUrl +
         this.apiBasePath +

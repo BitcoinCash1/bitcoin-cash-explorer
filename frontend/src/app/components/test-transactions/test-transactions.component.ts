@@ -21,7 +21,6 @@ export class TestTransactionsComponent implements OnInit {
   error: string = '';
   results: TestMempoolAcceptResult[] = [];
   isLoading = false;
-  invalidMaxfeerate = false;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -34,7 +33,7 @@ export class TestTransactionsComponent implements OnInit {
   ngOnInit(): void {
     this.testTxsForm = this.formBuilder.group({
       txs: ['', Validators.required],
-      maxfeerate: ['', Validators.min(0)],
+      allowhighfees: [false],
     });
 
     this.seoService.setTitle(
@@ -61,39 +60,27 @@ export class TestTransactionsComponent implements OnInit {
       return;
     }
 
-    let maxfeerate;
-    this.invalidMaxfeerate = false;
-    try {
-      const maxfeerateVal = this.testTxsForm.get('maxfeerate')?.value;
-      if (maxfeerateVal != null && maxfeerateVal !== '') {
-        maxfeerate = parseFloat(maxfeerateVal) / 100_000;
-      }
-    } catch (e) {
-      this.invalidMaxfeerate = true;
-    }
-
+    let allowhighfees = this.testTxsForm.get('allowhighfees')?.value;
     this.isLoading = true;
     this.error = '';
     this.results = [];
-    this.apiService
-      .testTransactions$(txs, maxfeerate === 0.1 ? null : maxfeerate)
-      .subscribe(
-        (result) => {
-          this.isLoading = false;
-          this.results = result || [];
-          this.testTxsForm.reset();
-        },
-        (error) => {
-          if (typeof error.error === 'string') {
-            const matchText = error.error
-              .replace(/\\/g, '')
-              .match('"message":"(.*?)"');
-            this.error = (matchText && matchText[1]) || error.error;
-          } else if (error.message) {
-            this.error = error.message;
-          }
-          this.isLoading = false;
+    this.apiService.testTransactions$(txs, allowhighfees).subscribe(
+      (result) => {
+        this.isLoading = false;
+        this.results = result || [];
+        this.testTxsForm.reset();
+      },
+      (error) => {
+        if (typeof error.error === 'string') {
+          const matchText = error.error
+            .replace(/\\/g, '')
+            .match('"message":"(.*?)"');
+          this.error = (matchText && matchText[1]) || error.error;
+        } else if (error.message) {
+          this.error = error.message;
         }
-      );
+        this.isLoading = false;
+      }
+    );
   }
 }

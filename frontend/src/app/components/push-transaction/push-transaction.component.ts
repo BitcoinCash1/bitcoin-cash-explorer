@@ -29,8 +29,6 @@ export class PushTransactionComponent implements OnInit {
   errorPackage: string = '';
   packageMessage: string = '';
   results: TxResult[] = [];
-  invalidMaxfeerate = false;
-  invalidMaxburnamount = false;
   isLoadingPackage = false;
 
   network = this.stateService.network;
@@ -53,8 +51,7 @@ export class PushTransactionComponent implements OnInit {
 
     this.submitTxsForm = this.formBuilder.group({
       txs: ['', Validators.required],
-      maxfeerate: ['', Validators.min(0)],
-      maxburnamount: ['', Validators.min(0)],
+      allowhighfees: [false],
     });
 
     this.stateService.networkChanged$.subscribe(
@@ -127,60 +124,33 @@ export class PushTransactionComponent implements OnInit {
       return;
     }
 
-    let maxfeerate;
-    let maxburnamount;
-    this.invalidMaxfeerate = false;
-    this.invalidMaxburnamount = false;
-    try {
-      const maxfeerateVal = this.submitTxsForm.get('maxfeerate')?.value;
-      if (maxfeerateVal != null && maxfeerateVal !== '') {
-        maxfeerate = parseFloat(maxfeerateVal) / 100_000;
-      }
-    } catch (e) {
-      this.invalidMaxfeerate = true;
-    }
-    try {
-      const maxburnamountVal = this.submitTxsForm.get('maxburnamount')?.value;
-      if (maxburnamountVal != null && maxburnamountVal !== '') {
-        maxburnamount = parseInt(maxburnamountVal) / 100_000_000;
-      }
-    } catch (e) {
-      this.invalidMaxburnamount = true;
-    }
-
+    let allowhighfees = this.submitTxsForm.get('allowhighfees')?.value;
     this.isLoadingPackage = true;
     this.errorPackage = '';
     this.results = [];
-    this.apiService
-      .submitPackage$(
-        txs,
-        maxfeerate === 0.1 ? null : maxfeerate,
-        maxburnamount === 0 ? null : maxburnamount
-      )
-      .subscribe(
-        (result) => {
-          this.isLoadingPackage = false;
+    this.apiService.submitPackage$(txs, allowhighfees).subscribe(
+      (result) => {
+        this.isLoadingPackage = false;
 
-          this.packageMessage = result['package_msg'];
-          for (const wtxid in result['tx-results']) {
-            this.results.push(result['tx-results'][wtxid]);
-          }
-
-          this.submitTxsForm.reset();
-        },
-        (error) => {
-          if (typeof error.error?.error === 'string') {
-            const matchText = error.error.error
-              .replace(/\\/g, '')
-              .match('"message":"(.*?)"');
-            this.errorPackage =
-              (matchText && matchText[1]) || error.error.error;
-          } else if (error.message) {
-            this.errorPackage = error.message;
-          }
-          this.isLoadingPackage = false;
+        this.packageMessage = result['package_msg'];
+        for (const wtxid in result['tx-results']) {
+          this.results.push(result['tx-results'][wtxid]);
         }
-      );
+
+        this.submitTxsForm.reset();
+      },
+      (error) => {
+        if (typeof error.error?.error === 'string') {
+          const matchText = error.error.error
+            .replace(/\\/g, '')
+            .match('"message":"(.*?)"');
+          this.errorPackage = (matchText && matchText[1]) || error.error.error;
+        } else if (error.message) {
+          this.errorPackage = error.message;
+        }
+        this.isLoadingPackage = false;
+      }
+    );
   }
 
   private async handleColdcardPushTx(
