@@ -2,11 +2,11 @@ import '@angular/localize/init';
 import { ScriptInfo } from '@app/shared/script.utils';
 import { Vin, Vout } from '@app/interfaces/backend-api.interface';
 import {
-  BECH32_CHARS_LW,
   BASE58_CHARS,
   HEX_CHARS,
   CASHADDR_CHARS,
 } from '@app/shared/regex.utils';
+import { hash, Hash } from '@app/shared/sha256';
 
 export type AddressType =
   | 'fee'
@@ -17,11 +17,6 @@ export type AddressType =
   | 'p2pk'
   | 'p2pkh'
   | 'p2sh'
-  | 'p2sh-p2wpkh'
-  | 'p2sh-p2wsh'
-  | 'v0_p2wpkh'
-  | 'v0_p2wsh'
-  | 'v1_p2tr'
   | 'anchor'
   | 'unknown';
 
@@ -71,9 +66,6 @@ const ADDRESS_PREFIXES: Record<string, NetworkConfig> = {
 
 // precompiled regexes for common address types (excluding prefixes)
 const base58Regex = RegExp('^' + BASE58_CHARS + '{26,34}$');
-const p2wpkhRegex = RegExp('^q' + BECH32_CHARS_LW + '{38}$');
-const p2wshRegex = RegExp('^q' + BECH32_CHARS_LW + '{58}$');
-const p2trRegex = RegExp('^p' + BECH32_CHARS_LW + '{58}$');
 const cashaddrRegex = RegExp('^' + CASHADDR_CHARS + '{20,100}$');
 const pubkeyRegex = RegExp(
   '^' + `(04${HEX_CHARS}{128})|(0[23]${HEX_CHARS}{64})$`
@@ -135,20 +127,6 @@ export function detectAddressType(
   if (pubkeyRegex.test(address)) {
     return 'p2pk';
   }
-
-  // BTC backwards compatibility lookup (just for people who like this), won't be used in BCH at all
-  // Since BCH does not have taproot or witness.
-  if (address.startsWith(ADDRESS_PREFIXES[network].bech32)) {
-    const suffix = address.slice(ADDRESS_PREFIXES[network].bech32.length);
-    if (p2wpkhRegex.test(suffix)) {
-      return 'v0_p2wpkh';
-    } else if (p2wshRegex.test(suffix)) {
-      return 'v0_p2wsh';
-    } else if (p2trRegex.test(suffix)) {
-      return 'v1_p2tr';
-    }
-  }
-
   return 'unknown';
 }
 
@@ -203,25 +181,21 @@ export class AddressTypeInfo {
 
   public processInputs(vin: Vin[] = [], vinIds: string[] = []): void {
     // for single-script types, if we've seen one input we've seen them all
-    if (['p2sh', 'v0_p2wsh'].includes(this.type)) {
+    if (['p2sh'].includes(this.type)) {
       if (!this.scripts.size && vin.length) {
         const v = vin[0];
-
-        // real script, always true (BCH doesn't have P2SH-P2WPKH)
-        if (this.type !== 'p2sh-p2wpkh') {
-          if (v.inner_redeemscript_asm) {
-            this.processScript(
-              new ScriptInfo(
-                'inner_redeemscript',
-                undefined,
-                v.inner_redeemscript_asm
-              )
-            );
-          } else if (v.scriptsig || v.scriptsig_asm) {
-            this.processScript(
-              new ScriptInfo('scriptsig', v.scriptsig, v.scriptsig_asm)
-            );
-          }
+        if (v.inner_redeemscript_asm) {
+          this.processScript(
+            new ScriptInfo(
+              'inner_redeemscript',
+              undefined,
+              v.inner_redeemscript_asm
+            )
+          );
+        } else if (v.scriptsig || v.scriptsig_asm) {
+          this.processScript(
+            new ScriptInfo('scriptsig', v.scriptsig, v.scriptsig_asm)
+          );
         }
       }
     } else if (this.type === 'multisig') {
@@ -386,17 +360,7 @@ export function compareAddressInfo(
   if (a.type !== b.type) {
     return { status: 'incomparable' };
   }
-  if (
-    ![
-      'p2pkh',
-      'p2sh',
-      'p2sh-p2wpkh',
-      'p2sh-p2wsh',
-      'v0_p2wpkh',
-      'v0_p2wsh',
-      'v1_p2tr',
-    ].includes(a.type)
-  ) {
+  if (!['p2pkh', 'p2sh'].includes(a.type)) {
     return { status: 'incomparable' };
   }
   const isBase58 = a.type === 'p2pkh' || a.type === 'p2sh';
@@ -471,4 +435,413 @@ export function normalizeBchAddress(address: string): string {
     return address.replace('bitcoin:', '');
   }
   return address;
+}
+
+// CashAddr constants
+const CASHADDR_ALPHABET = '023456789acdefghjklmnpqrstuvwxyz';
+
+// Helper functions
+function uint8ArrayToHexString(uint8Array: Uint8Array): string {
+  return Array.from(uint8Array)
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+}
+
+function convertBits(data, fromBits, toBits, pad) {
+  let acc = 0;
+  let bits = 0;
+  const ret = [];
+  const maxV = (1 << toBits) - 1;
+
+  for (let i = 0; i < data.length; ++i) {
+    const value = data[i];
+    if (value < 0 || value >> fromBits) {
+      throw new Error('Invalid value');
+    }
+    acc = (acc << fromBits) | value;
+    bits += fromBits;
+    while (bits >= toBits) {
+      bits -= toBits;
+      ret.push((acc >> bits) & maxV);
+    }
+  }
+  if (pad) {
+    if (bits > 0) {
+      ret.push((acc << (toBits - bits)) & maxV);
+    }
+  } else if (bits >= fromBits || (acc << (toBits - bits)) & maxV) {
+    throw new Error('Invalid data');
+  }
+  return ret;
+}
+
+function fromWords(words: number[]) {
+  return new Uint8Array(convertBits(words, 5, 8, false));
+}
+
+// CashAddr encoding/decoding for Bitcoin Cash
+function cashaddrDecode(address: string): {
+  prefix: string;
+  version: number;
+  hash: Uint8Array;
+} {
+  // Remove prefix if present
+  let prefix = '';
+  let addr = address;
+  const colonIndex = address.indexOf(':');
+  if (colonIndex !== -1) {
+    prefix = address.slice(0, colonIndex);
+    addr = address.slice(colonIndex + 1);
+  } else {
+    // Default to bitcoincash for addresses without prefix
+    prefix = 'bitcoincash';
+  }
+
+  // Convert to lowercase
+  addr = addr.toLowerCase();
+
+  // Decode base32
+  const words: number[] = [];
+  for (let i = 0; i < addr.length; i++) {
+    const char = addr.charAt(i);
+    const index = CASHADDR_ALPHABET.indexOf(char);
+    if (index === -1) {
+      throw new Error('Invalid CashAddr character');
+    }
+    words.push(index);
+  }
+
+  // Remove checksum (last 8 characters)
+  const dataWords = words.slice(0, -8);
+
+  // Convert from 5-bit to 8-bit
+  let data: Uint8Array;
+
+  try {
+    data = fromWords(dataWords);
+  } catch (e) {
+    // Manual 5-bit to 8-bit conversion as fallback
+    let acc = 0;
+    let bits = 0;
+    const ret = [];
+
+    for (let i = 0; i < dataWords.length; ++i) {
+      const value = dataWords[i];
+      acc = (acc << 5) | value;
+      bits += 5;
+
+      while (bits >= 8) {
+        bits -= 8;
+        ret.push((acc >> bits) & 0xff);
+      }
+    }
+
+    data = new Uint8Array(ret);
+  }
+
+  // Extract version byte and hash
+  if (data.length < 1) {
+    throw new Error('Invalid CashAddr data');
+  }
+
+  const version = data[0];
+  const hash = data.slice(1);
+
+  return { prefix, version, hash };
+}
+
+function cashaddrToSpk(address: string, network: string): string | null {
+  try {
+    const decoded = cashaddrDecode(address);
+
+    // For CashAddr, we determine type from the address format
+    // P2PKH addresses start with 'q', P2SH addresses start with 'p'
+    const addressPart = address.includes(':') ? address.split(':')[1] : address;
+    const firstChar = addressPart.charAt(0).toLowerCase();
+
+    const actualType = ['q'].includes(firstChar)
+      ? 0
+      : ['p'].includes(firstChar)
+        ? 1
+        : null;
+
+    if (actualType === null) {
+      return null; // Unsupported address type
+    }
+
+    const hashHex = uint8ArrayToHexString(decoded.hash);
+
+    // P2PKH (type = 0)
+    if (actualType === 0) {
+      return '76a914' + hashHex + '88ac';
+    }
+
+    // P2SH (type = 1)
+    if (actualType === 1) {
+      return 'a914' + hashHex + '87';
+    }
+
+    return null;
+  } catch (e) {
+    // Invalid CashAddr address
+    return null;
+  }
+}
+
+function base58Decode(address: string): Uint8Array {
+  const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  let num = 0n;
+  let leadingZeros = 0;
+
+  for (const char of address) {
+    const value = BigInt(alphabet.indexOf(char));
+    if (value === -1n) {
+      throw new Error('Invalid base58 character');
+    }
+    num = num * 58n + value;
+  }
+
+  for (const char of address) {
+    if (char === '1') {
+      leadingZeros++;
+    } else {
+      break;
+    }
+  }
+
+  const bytes = [];
+  while (num > 0n) {
+    bytes.unshift(Number(num % 256n));
+    num = num / 256n;
+  }
+
+  while (bytes.length < leadingZeros) {
+    bytes.unshift(0);
+  }
+
+  return new Uint8Array(bytes);
+}
+
+function base58ToSpk(address: string, network: string): string | null {
+  try {
+    const decoded = base58Decode(address);
+    if (decoded.length !== 25) {
+      return null;
+    }
+    const version = decoded[0];
+    const payload = decoded.slice(1, 21);
+    const checksum = decoded.slice(21, 25);
+
+    // Verify checksum
+    const versionedPayload = new Uint8Array([version, ...payload]);
+    const hash1 = new Hash().update(versionedPayload).digest();
+    const hash2 = new Hash().update(hash1).digest();
+    const expectedChecksum = hash2.slice(0, 4);
+    if (checksum.length !== expectedChecksum.length) {
+      return null;
+    }
+    for (let i = 0; i < checksum.length; i++) {
+      if (checksum[i] !== expectedChecksum[i]) {
+        return null;
+      }
+    }
+
+    const payloadHex = uint8ArrayToHexString(payload);
+
+    // P2PKH
+    const p2pkhVersion = ['testnet', 'testnet4', 'signet'].includes(network)
+      ? 0x6f
+      : 0x00;
+    if (version === p2pkhVersion) {
+      return '76a914' + payloadHex + '88ac';
+    }
+
+    // P2SH
+    const p2shVersion = ['testnet', 'testnet4', 'signet'].includes(network)
+      ? 0xc4
+      : 0x05;
+    if (version === p2shVersion) {
+      return 'a914' + payloadHex + '87';
+    }
+  } catch (e) {
+    // Invalid base58
+  }
+  return null;
+}
+
+function bech32ToSpk(address: string, network: string): string | null {
+  const expectedHrp = ['testnet', 'testnet4', 'signet'].includes(network)
+    ? 'tb'
+    : 'bc';
+  try {
+    const decoded = bech32Decode(address);
+    if (decoded.prefix !== expectedHrp) {
+      return null;
+    }
+    const version = decoded.words[0];
+    const data = fromWords(decoded.words.slice(1));
+    const versionOpcode =
+      version === 0 ? '00' : (version + 0x50).toString(16).padStart(2, '0');
+    const pushLen = data.length.toString(16).padStart(2, '0');
+    return versionOpcode + pushLen + uint8ArrayToHexString(data);
+  } catch (e) {
+    // Invalid bech32 address
+  }
+  return null;
+}
+
+function p2a(network: string): string {
+  const hrp = ['testnet', 'testnet4', 'signet'].includes(network) ? 'tb' : 'bc';
+  const pubkeyHashArray = hexStringToUint8Array('4e73');
+  const version = 1;
+  const words = [version].concat(toWords(pubkeyHashArray));
+  const bech32Address = bech32Encode(hrp, words, 'bech32m');
+  return bech32Address;
+}
+
+// bech32 encoding / decoding
+const BECH32_ALPHABET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
+type Bech32Encoding = 'bech32' | 'bech32m';
+
+function bech32Encode(
+  prefix: string,
+  words: number[],
+  encoding: Bech32Encoding = 'bech32'
+): string {
+  const constant = encoding === 'bech32m' ? 0x2bc830a3 : 1;
+  const checksum = createChecksum(prefix, words, constant);
+  const combined = words.concat(checksum);
+  let result = prefix + '1';
+  for (let i = 0; i < combined.length; ++i) {
+    result += BECH32_ALPHABET.charAt(combined[i]);
+  }
+  return result;
+}
+
+function bech32Decode(address: string): {
+  prefix: string;
+  words: number[];
+  encoding: Bech32Encoding;
+} {
+  const normalized = address.toLowerCase();
+  const separator = normalized.lastIndexOf('1');
+  const prefix = normalized.slice(0, separator);
+  const encodedWords = normalized.slice(separator + 1);
+  const words: number[] = [];
+  for (let i = 0; i < encodedWords.length; i++) {
+    words.push(BECH32_ALPHABET.indexOf(encodedWords.charAt(i)));
+  }
+
+  const polymod = bech32Polymod(prefix, words);
+  let encoding: Bech32Encoding;
+  if (polymod === 1) {
+    encoding = 'bech32';
+  } else if (polymod === 0x2bc830a3) {
+    encoding = 'bech32m';
+  } else {
+    throw new Error('Invalid bech32 checksum');
+  }
+
+  return { prefix, words: words.slice(0, -6), encoding };
+}
+
+function bech32Polymod(prefix: string, words: number[]): number {
+  let chk = prefixChk(prefix);
+  for (let i = 0; i < words.length; ++i) {
+    chk = polymodStep(chk) ^ words[i];
+  }
+  return chk;
+}
+
+function polymodStep(pre) {
+  const GENERATORS = [
+    0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3,
+  ];
+  const b = pre >> 25;
+  return (
+    ((pre & 0x1ffffff) << 5) ^
+    ((b & 0x01 ? GENERATORS[0] : 0) ^
+      (b & 0x02 ? GENERATORS[1] : 0) ^
+      (b & 0x04 ? GENERATORS[2] : 0) ^
+      (b & 0x08 ? GENERATORS[3] : 0) ^
+      (b & 0x10 ? GENERATORS[4] : 0))
+  );
+}
+
+function prefixChk(prefix) {
+  let chk = 1;
+  for (let i = 0; i < prefix.length; ++i) {
+    chk = polymodStep(chk) ^ (prefix.charCodeAt(i) & 0x1f);
+  }
+  return polymodStep(chk);
+}
+
+function createChecksum(
+  prefix: string,
+  words: number[],
+  constant: number
+): number[] {
+  const values = [
+    ...prefix
+      .toLowerCase()
+      .split('')
+      .map((c) => c.charCodeAt(0) & 0x1f),
+    0,
+    ...words,
+  ];
+  const polymod = bech32Polymod(prefix, values.concat([0, 0, 0, 0, 0, 0]));
+  return (polymod ^ constant)
+    .toString(16)
+    .match(/.{2}/g)
+    .map((hex) => parseInt(hex, 16));
+}
+
+function toWords(bytes) {
+  return convertBits(bytes, 8, 5, true);
+}
+
+function hexStringToUint8Array(hex: string): Uint8Array {
+  const result = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < hex.length; i += 2) {
+    result[i / 2] = parseInt(hex.substr(i, 2), 16);
+  }
+  return result;
+}
+
+// Main function to convert address to scriptPubKey
+export function addressToScriptPubKey(
+  address: string,
+  network: string
+): { scriptPubKey: string | null; type: AddressType } {
+  const type = detectAddressType(address, network);
+
+  if (type === 'p2pk') {
+    if (address.length === 66) {
+      return { scriptPubKey: '21' + address + 'ac', type };
+    }
+    if (address.length === 130) {
+      return { scriptPubKey: '41' + address + 'ac', type };
+    }
+    return { scriptPubKey: null, type };
+  }
+
+  if (type === 'p2pkh' || type === 'p2sh') {
+    // Check if it's a CashAddr address (BCH format)
+    if (
+      cashaddrRegex.test(address) ||
+      address.includes('bitcoincash:') ||
+      address.includes('bchtest:') ||
+      address.includes('bchreg:')
+    ) {
+      return { scriptPubKey: cashaddrToSpk(address, network), type };
+    }
+    // Fall back to base58 for legacy addresses
+    return { scriptPubKey: base58ToSpk(address, network), type };
+  }
+
+  if (address === p2a(network)) {
+    return { scriptPubKey: bech32ToSpk(address, network), type };
+  }
+
+  return { scriptPubKey: null, type };
 }

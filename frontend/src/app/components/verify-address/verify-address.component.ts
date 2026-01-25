@@ -16,9 +16,11 @@ import { distinctUntilChanged, takeUntil } from 'rxjs/operators';
 import { StateService } from '@app/services/state.service';
 import { ElectrsApiService } from '@app/services/backend-api.service';
 import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pipe';
-import { AddressTypeInfo } from '../../shared/address-utils';
 import {
+  AddressTypeInfo,
   addressToScriptPubKey,
+} from '../../shared/address-utils';
+import {
   scriptPubKeyToAddress,
   createMessageSigningPsbt,
 } from '../../shared/transaction.utils';
@@ -110,10 +112,6 @@ export class VerifyAddressComponent implements OnInit, OnDestroy {
 
         try {
           let normalizedAddress = (address || '').trim();
-          // remove bitcoincash: prefix is present
-          if (normalizedAddress.startsWith('bitcoincash:')) {
-            normalizedAddress = normalizedAddress.substring(12);
-          }
           const { scriptPubKey } = addressToScriptPubKey(
             normalizedAddress,
             this.network || ''

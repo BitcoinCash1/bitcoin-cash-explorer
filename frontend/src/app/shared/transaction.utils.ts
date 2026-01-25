@@ -6,8 +6,11 @@ import {
 } from '@app/shared/script.utils';
 import { Transaction, Vin, Utxo } from '@app/interfaces/backend-api.interface';
 import { hash, Hash } from '@app/shared/sha256';
-import { AddressType, detectAddressType } from '@app/shared/address-utils';
-import { CASHADDR_CHARS } from '@app/shared/regex.utils';
+import {
+  AddressType,
+  detectAddressType,
+  addressToScriptPubKey,
+} from '@app/shared/address-utils';
 
 // BCHN default policy settings
 const MIN_BLOCK_SIZE = 32_000_000;
@@ -19,9 +22,6 @@ const MAX_STANDARD_SCRIPTSIG_SIZE = 1650;
 const DUST_RELAY_TX_FEE = 3;
 const MAX_OP_RETURN_RELAY = 83;
 
-// CashAddr constants
-const cashaddrRegex = RegExp('^' + CASHADDR_CHARS + '{20,100}$');
-const CASHADDR_ALPHABET = '023456789acdefghjklmnpqrstuvwxyz';
 const DEFAULT_PERMIT_BAREMULTISIG = true;
 const MAX_TX_LEGACY_SIGOPS = 2_500 * 4; // witness-adjusted sigops
 
@@ -1576,43 +1576,6 @@ export function scriptPubKeyToAddress(
   return { address: null, type: 'unknown' };
 }
 
-export function addressToScriptPubKey(
-  address: string,
-  network: string
-): { scriptPubKey: string | null; type: AddressType } {
-  const type = detectAddressType(address, network);
-
-  if (type === 'p2pk') {
-    if (address.length === 66) {
-      return { scriptPubKey: '21' + address + 'ac', type };
-    }
-    if (address.length === 130) {
-      return { scriptPubKey: '41' + address + 'ac', type };
-    }
-    return { scriptPubKey: null, type };
-  }
-
-  if (type === 'p2pkh' || type === 'p2sh') {
-    // Check if it's a CashAddr address (BCH format)
-    if (
-      cashaddrRegex.test(address) ||
-      address.includes('bitcoincash:') ||
-      address.includes('bchtest:') ||
-      address.includes('bchreg:')
-    ) {
-      return { scriptPubKey: cashaddrToSpk(address, network), type };
-    }
-    // Fall back to base58 for legacy addresses
-    return { scriptPubKey: base58ToSpk(address, network), type };
-  }
-
-  if (address === p2a(network)) {
-    return { scriptPubKey: bech32ToSpk(address, network), type };
-  }
-
-  return { scriptPubKey: null, type };
-}
-
 /**
  * see https://github.com/bitcoin/bitcoin/blob/25c45bb0d0bd6618ec9296a1a43605657124e5de/src/policy/policy.cpp#L166-L193
  * returns true if the transactions is permitted under bip54 sigops rules
@@ -1865,113 +1828,55 @@ function bech32ToSpk(address: string, network: string): string | null {
   return null;
 }
 
-// CashAddr encoding/decoding for Bitcoin Cash
-function cashaddrDecode(address: string): {
-  prefix: string;
-  version: number;
-  hash: Uint8Array;
-} {
-  // Remove prefix if present
-  let prefix = '';
-  let addr = address;
-  const colonIndex = address.indexOf(':');
-  if (colonIndex !== -1) {
-    prefix = address.slice(0, colonIndex);
-    addr = address.slice(colonIndex + 1);
-  } else {
-    // Default to bitcoincash for addresses without prefix
-    prefix = 'bitcoincash';
+export function hexStringToUint8Array(hex: string): Uint8Array {
+  const buf = new Uint8Array(hex.length / 2);
+  for (let i = 0; i < buf.length; i++) {
+    buf[i] = parseInt(hex.substr(i * 2, 2), 16);
   }
-
-  // Convert to lowercase
-  addr = addr.toLowerCase();
-
-  // Decode base32
-  const words: number[] = [];
-  for (let i = 0; i < addr.length; i++) {
-    const char = addr.charAt(i);
-    const index = CASHADDR_ALPHABET.indexOf(char);
-    if (index === -1) {
-      throw new Error('Invalid CashAddr character');
-    }
-    words.push(index);
-  }
-
-  // Remove checksum (last 8 characters)
-  const dataWords = words.slice(0, -8);
-
-  // Convert from 5-bit to 8-bit
-  let data: Uint8Array;
-
-  try {
-    data = fromWords(dataWords);
-  } catch (e) {
-    // Manual 5-bit to 8-bit conversion as fallback
-    let acc = 0;
-    let bits = 0;
-    const ret = [];
-
-    for (let i = 0; i < dataWords.length; ++i) {
-      const value = dataWords[i];
-      acc = (acc << 5) | value;
-      bits += 5;
-
-      while (bits >= 8) {
-        bits -= 8;
-        ret.push((acc >> bits) & 0xff);
-      }
-    }
-
-    data = new Uint8Array(ret);
-  }
-
-  // Extract version byte and hash
-  if (data.length < 1) {
-    throw new Error('Invalid CashAddr data');
-  }
-
-  const version = data[0];
-  const hash = data.slice(1);
-
-  return { prefix, version, hash };
+  return buf;
 }
 
-function cashaddrToSpk(address: string, network: string): string | null {
-  try {
-    const decoded = cashaddrDecode(address);
+// Helper functions needed by transaction.utils.ts
+export function uint8ArrayToHexString(uint8Array: Uint8Array): string {
+  return Array.from(uint8Array)
+    .map((byte) => byte.toString(16).padStart(2, '0'))
+    .join('');
+}
 
-    // For CashAddr, we determine type from the address format
-    // P2PKH addresses start with 'q', P2SH addresses start with 'p'
-    const addressPart = address.includes(':') ? address.split(':')[1] : address;
-    const firstChar = addressPart.charAt(0).toLowerCase();
+function convertBits(data, fromBits, toBits, pad) {
+  let acc = 0;
+  let bits = 0;
+  const ret = [];
+  const maxV = (1 << toBits) - 1;
 
-    const actualType = ['q'].includes(firstChar)
-      ? 0
-      : ['p'].includes(firstChar)
-        ? 1
-        : null;
-
-    if (actualType === null) {
-      return null; // Unsupported address type
+  for (let i = 0; i < data.length; ++i) {
+    const value = data[i];
+    if (value < 0 || value >> fromBits) {
+      throw new Error('Invalid value');
     }
-
-    const hashHex = uint8ArrayToHexString(decoded.hash);
-
-    // P2PKH (type = 0)
-    if (actualType === 0) {
-      return '76a914' + hashHex + '88ac';
+    acc = (acc << fromBits) | value;
+    bits += fromBits;
+    while (bits >= toBits) {
+      bits -= toBits;
+      ret.push((acc >> bits) & maxV);
     }
-
-    // P2SH (type = 1)
-    if (actualType === 1) {
-      return 'a914' + hashHex + '87';
-    }
-
-    return null;
-  } catch (e) {
-    // Invalid CashAddr address
-    return null;
   }
+  if (pad) {
+    if (bits > 0) {
+      ret.push((acc << (toBits - bits)) & maxV);
+    }
+  } else if (bits >= fromBits || (acc << (toBits - bits)) & maxV) {
+    throw new Error('Invalid data');
+  }
+  return ret;
+}
+
+function toWords(bytes) {
+  return convertBits(bytes, 8, 5, true);
+}
+
+function fromWords(words: number[]) {
+  return new Uint8Array(convertBits(words, 5, 8, false));
 }
 
 function bech32Polymod(prefix: string, words: number[]): number {
@@ -2028,57 +1933,6 @@ function createChecksum(prefix: string, words: number[], constant: number) {
     checksum.push((chk >> (5 * (5 - i))) & 31);
   }
   return checksum;
-}
-
-function convertBits(data, fromBits, toBits, pad) {
-  let acc = 0;
-  let bits = 0;
-  const ret = [];
-  const maxV = (1 << toBits) - 1;
-
-  for (let i = 0; i < data.length; ++i) {
-    const value = data[i];
-    if (value < 0 || value >> fromBits) {
-      throw new Error('Invalid value');
-    }
-    acc = (acc << fromBits) | value;
-    bits += fromBits;
-    while (bits >= toBits) {
-      bits -= toBits;
-      ret.push((acc >> bits) & maxV);
-    }
-  }
-  if (pad) {
-    if (bits > 0) {
-      ret.push((acc << (toBits - bits)) & maxV);
-    }
-  } else if (bits >= fromBits || (acc << (toBits - bits)) & maxV) {
-    throw new Error('Invalid data');
-  }
-  return ret;
-}
-
-function toWords(bytes) {
-  return convertBits(bytes, 8, 5, true);
-}
-
-function fromWords(words: number[]) {
-  return new Uint8Array(convertBits(words, 5, 8, false));
-}
-
-// Helper functions
-export function uint8ArrayToHexString(uint8Array: Uint8Array): string {
-  return Array.from(uint8Array)
-    .map((byte) => byte.toString(16).padStart(2, '0'))
-    .join('');
-}
-
-export function hexStringToUint8Array(hex: string): Uint8Array {
-  const buf = new Uint8Array(hex.length / 2);
-  for (let i = 0; i < buf.length; i++) {
-    buf[i] = parseInt(hex.substr(i * 2, 2), 16);
-  }
-  return buf;
 }
 
 function base64ToUint8Array(base64: string): Uint8Array {
