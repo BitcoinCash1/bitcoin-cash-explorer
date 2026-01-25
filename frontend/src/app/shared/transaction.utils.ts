@@ -4,9 +4,9 @@ import {
   parseMultisigScript,
   isPoint,
 } from '@app/shared/script.utils';
-import { Transaction, Vin } from '@app/interfaces/backend-api.interface';
+import { Transaction, Vin, Utxo } from '@app/interfaces/backend-api.interface';
 import { hash, Hash } from '@app/shared/sha256';
-import { AddressType } from '@app/shared/address-utils';
+import { AddressType, detectAddressType } from '@app/shared/address-utils';
 
 // BCHN default policy settings
 const MIN_BLOCK_SIZE = 32_000_000;
@@ -398,10 +398,7 @@ export function isNonStandard(
     } else if (vout.scriptpubkey_type === 'unknown') {
       // undefined segwit version/length combinations are actually standard in outputs
       // https://github.com/bitcoin/bitcoin/blob/2c79abc7ad4850e9e3ba32a04c530155cda7f980/src/script/interpreter.cpp#L1950-L1951
-      if (
-        vout.scriptpubkey.startsWith('00') ||
-        !isWitnessProgram(vout.scriptpubkey)
-      ) {
+      if (vout.scriptpubkey.startsWith('00')) {
         return true;
       }
     } else if (vout.scriptpubkey_type === 'multisig') {
@@ -419,22 +416,12 @@ export function isNonStandard(
       opreturnBytes += vout.scriptpubkey.length / 2;
     }
     // dust
-    // (we could probably hardcode this for the different output types...)
-    if (vout.scriptpubkey_type !== 'op_return') {
-      let dustSize = vout.scriptpubkey.length / 2;
-      // add varint length overhead
-      dustSize += getVarIntLength(dustSize);
-      // add value size
-      dustSize += 8;
-      if (isWitnessProgram(vout.scriptpubkey)) {
-        dustSize += 67;
-      } else {
-        dustSize += 148;
-      }
-      if (vout.value < dustSize * DUST_RELAY_TX_FEE) {
-        // under minimum output size
-        return !isStandardEphemeralDust(tx, height, network);
-      }
+    if (
+      vout.scriptpubkey_type !== 'op_return' &&
+      isDustOutput(vout.value, vout.scriptpubkey)
+    ) {
+      // under minimum output size
+      return !isStandardEphemeralDust(tx, height, network);
     }
   }
 
@@ -575,29 +562,6 @@ function isNonStandardLegacySigops(
     if (!checkSigopsBIP54(tx, MAX_TX_LEGACY_SIGOPS)) {
       return true;
     }
-  }
-  return false;
-}
-
-// A witness program is any valid scriptpubkey that consists of a 1-byte push opcode
-// followed by a data push between 2 and 40 bytes.
-// https://github.com/bitcoin/bitcoin/blob/2c79abc7ad4850e9e3ba32a04c530155cda7f980/src/script/script.cpp#L224-L240
-function isWitnessProgram(
-  scriptpubkey: string
-): false | { version: number; program: string } {
-  if (scriptpubkey.length < 8 || scriptpubkey.length > 84) {
-    return false;
-  }
-  const version = parseInt(scriptpubkey.slice(0, 2), 16);
-  if ((version !== 0 && version < 0x51) || version > 0x60) {
-    return false;
-  }
-  const push = parseInt(scriptpubkey.slice(2, 4), 16);
-  if (push + 2 === scriptpubkey.length / 2) {
-    return {
-      version: version ? version - 0x50 : 0,
-      program: scriptpubkey.slice(4),
-    };
   }
   return false;
 }
@@ -791,6 +755,18 @@ export function getTransactionFlags(
 
 export function getUnacceleratedFeeRate(tx: Transaction): number {
   return tx.feePerSize;
+}
+
+function getDustThreshold(scriptpubkey: string): number {
+  let dustSize = scriptpubkey.length / 2;
+  dustSize += getVarIntLength(dustSize);
+  dustSize += 8;
+  dustSize += 148; // no witness in BCH, TODO: Still validate if this dust threshold is correct in BCH.
+  return dustSize * DUST_RELAY_TX_FEE;
+}
+
+function isDustOutput(value: number, scriptpubkey: string): boolean {
+  return value < getDustThreshold(scriptpubkey);
 }
 
 // Adapted from mempool backend https://github.com/mempool/mempool/blob/14e49126c3ca8416a8d7ad134a95c5e090324d69/backend/src/api/transaction-utils.ts#L254
@@ -997,14 +973,14 @@ function fromBuffer(
     throw new Error('Transaction has unexpected data');
   }
 
-  // Optionally add data from PSBT: prevouts, redeem/witness scripts and signatures
+  // Optionally add data from PSBT: prevouts, redeem scripts and signatures
   if (inputs) {
     for (let i = 0; i < tx.vin.length; i++) {
       const vin = tx.vin[i];
       const inputRecords = inputs[i];
 
       const groups = {
-        nonWitnessUtxo: inputRecords.get(PSBT_IN.NON_WITNESS_UTXO)?.[0] || null,
+        normalUtxo: inputRecords.get(PSBT_IN.NORMAL_UTXO)?.[0] || null,
         finalScriptSig: inputRecords.get(PSBT_IN.FINAL_SCRIPTSIG)?.[0] || null,
         redeemScript: inputRecords.get(PSBT_IN.REDEEM_SCRIPT)?.[0] || null,
         partialSigs: inputRecords.get(PSBT_IN.PARTIAL_SIG) || [],
@@ -1038,8 +1014,8 @@ function fromBuffer(
       //     scriptpubkey_address,
       //   };
       // }
-      if (groups.nonWitnessUtxo && !vin.prevout) {
-        const utxoTx = fromBuffer(groups.nonWitnessUtxo.value, network).tx;
+      if (groups.normalUtxo && !vin.prevout) {
+        const utxoTx = fromBuffer(groups.normalUtxo.value, network).tx;
         vin.prevout = utxoTx.vout[vin.vout];
       }
 
@@ -1124,17 +1100,13 @@ type PsbtKeyValueMap = Map<number, PsbtKeyValue[]>;
 
 // TODO: This is different for BCH for sure, we need to update this
 const PSBT_IN = {
-  NON_WITNESS_UTXO: 0x00,
-  WITNESS_UTXO: 0x01,
+  NORMAL_UTXO: 0x00,
+  // WITNESS_UTXO: 0x01,
   PARTIAL_SIG: 0x02,
   REDEEM_SCRIPT: 0x04,
   WITNESS_SCRIPT: 0x05,
   BIP32_DERIVATION: 0x06,
   FINAL_SCRIPTSIG: 0x07,
-  FINAL_SCRIPTWITNESS: 0x08,
-  TAP_SCRIPT_SIG: 0x14,
-  TAP_LEAF_SCRIPT: 0x15,
-  TAP_INTERNAL_KEY: 0x17,
 };
 
 // PSBT_OUT was only TAP root related, and is removed for now.
@@ -1267,6 +1239,69 @@ function decodePsbt(psbtBuffer: Uint8Array): {
   return { rawTx, inputs, outputs };
 }
 
+/**
+ * Encodes an unsigned transaction and input/output data into a PSBT buffer
+ * @param rawTx - The unsigned transaction as Uint8Array
+ * @param inputs - Array of input maps containing key-value pairs for each input
+ * @param outputs - Array of output maps containing key-value pairs for each output
+ * @returns PSBT buffer as Uint8Array
+ */
+function encodePsbt(
+  rawTx: Uint8Array,
+  inputs: PsbtKeyValueMap[],
+  outputs: PsbtKeyValueMap[]
+): Uint8Array {
+  const result: number[] = [];
+
+  // Magic bytes: "psbt" in ASCII
+  result.push(0x70, 0x73, 0x62, 0x74);
+
+  // Separator
+  result.push(0xff);
+
+  const writeKeyValue = (
+    keyType: number,
+    keyData: Uint8Array,
+    value: Uint8Array
+  ): void => {
+    const keyTypeBytes = varIntToBytes(keyType);
+    const keyLength = keyTypeBytes.length + keyData.length;
+    result.push(...varIntToBytes(keyLength));
+    result.push(...keyTypeBytes);
+    result.push(...keyData);
+    result.push(...varIntToBytes(value.length));
+    result.push(...value);
+  };
+
+  const writeMap = (records: PsbtKeyValueMap): void => {
+    for (const [keyType, items] of records) {
+      for (const record of items) {
+        writeKeyValue(keyType, record.keyData, record.value);
+      }
+    }
+    result.push(0x00);
+  };
+
+  // GLOBAL MAP
+  // Add unsigned transaction (key type 0x00)
+  writeKeyValue(0x00, new Uint8Array(), rawTx);
+
+  // End global map
+  result.push(0x00);
+
+  // INPUT MAPS
+  for (const inputMap of inputs) {
+    writeMap(inputMap);
+  }
+
+  // OUTPUT MAPS
+  for (const outputMap of outputs) {
+    writeMap(outputMap);
+  }
+
+  return new Uint8Array(result);
+}
+
 export function decodeRawTransaction(
   input: string,
   network: string
@@ -1329,6 +1364,139 @@ function txid(tx: Transaction): string {
   return uint8ArrayToHexString(hash2.reverse());
 }
 
+export function createMessageSigningPsbt(
+  utxo: Utxo,
+  scriptPubKey: string,
+  addressType: AddressType,
+  address: string,
+  message: string,
+  feeRate: number,
+  fallbackFee: number,
+  sequence: number,
+  locktime: number,
+  normalUtxoHex?: string
+): string {
+  const opReturnScript = buildOpReturnScript(message);
+
+  // Build transaction
+  const tx = {
+    version: 2,
+    vin: [
+      {
+        txid: utxo.txid,
+        vout: utxo.vout,
+        is_coinbase: false,
+        scriptsig: '',
+        scriptsig_asm: '',
+        sequence: sequence,
+        prevout: {
+          value: utxo.value,
+          scriptpubkey: scriptPubKey,
+          scriptpubkey_asm: null,
+          scriptpubkey_type: addressType,
+          scriptpubkey_address: address,
+        },
+      },
+    ],
+    vout: [
+      {
+        value: 0,
+        scriptpubkey: opReturnScript.script,
+        scriptpubkey_asm: 'OP_RETURN ' + opReturnScript.dataHex,
+        scriptpubkey_type: 'op_return',
+        scriptpubkey_address: undefined,
+      },
+      {
+        value: utxo.value, // fee will be estimated and subtracted later
+        scriptpubkey: scriptPubKey,
+        scriptpubkey_asm: null,
+        scriptpubkey_type: addressType,
+        scriptpubkey_address: address,
+      },
+    ],
+    locktime: locktime,
+  } as Transaction;
+
+  // Estimate fee
+  let rawTx = serializeTransaction(tx);
+  let fee = fallbackFee;
+  const { bytes, addToWitness } = fillUnsignedInput(tx.vin[0]);
+  if (bytes) {
+    let finalVsize = rawTx.length + (addToWitness ? bytes / 4 : bytes);
+    if (addToWitness) {
+      finalVsize += 2 / 4; // marker and flag
+      finalVsize += tx.vin.length / 4; // 1 byte compact size per input (assume witness stack count < 253)
+    }
+    fee = Math.ceil(finalVsize * feeRate);
+  }
+  const dustThreshold = getDustThreshold(tx.vout[1].scriptpubkey);
+  // console.log(`Estimated fee: ${fee} sats, dust threshold: ${dustThreshold} sats`);
+  // console.log(`Output value before fee: ${tx.vout[1].value} sats`);
+  if (tx.vout[1].value < fee + dustThreshold) {
+    throw new Error(
+      `Output value is under dust threshold of ${dustThreshold} sats`
+    );
+  }
+  tx.vout[1].value -= fee;
+
+  // Build PSBT
+  rawTx = serializeTransaction(tx);
+  const inputRecords: PsbtKeyValueMap = new Map<number, PsbtKeyValue[]>();
+  if (normalUtxoHex) {
+    inputRecords.set(PSBT_IN.NORMAL_UTXO, [
+      {
+        keyData: new Uint8Array(),
+        value: hexStringToUint8Array(normalUtxoHex.trim()),
+      },
+    ]);
+  }
+
+  const inputs: PsbtKeyValueMap[] = [inputRecords];
+  const outputs: PsbtKeyValueMap[] = Array.from(
+    { length: tx.vout.length },
+    () => new Map<number, PsbtKeyValue[]>()
+  );
+  const psbt = uint8ArrayToBase64(encodePsbt(rawTx, inputs, outputs));
+  return psbt;
+}
+
+function buildOpReturnScript(messageText: string): {
+  script: string;
+  dataHex: string;
+} {
+  const messageBytes = new TextEncoder().encode(messageText);
+  if (messageBytes.length > MAX_OP_RETURN_RELAY) {
+    throw new Error(
+      `Message too long, max supported size is ${MAX_OP_RETURN_RELAY} bytes.`
+    );
+  }
+  const dataHex = uint8ArrayToHexString(messageBytes);
+  const len = messageBytes.length;
+  const pushData: number[] = [];
+
+  if (len <= 0x4b) {
+    pushData.push(len);
+  } else if (len <= 0xff) {
+    pushData.push(0x4c, len);
+  } else if (len <= 0xffff) {
+    pushData.push(0x4d, len & 0xff, (len >> 8) & 0xff);
+  } else if (len <= 0xffffffff) {
+    pushData.push(
+      0x4e,
+      len & 0xff,
+      (len >> 8) & 0xff,
+      (len >> 16) & 0xff,
+      (len >> 24) & 0xff
+    );
+  }
+
+  const scriptBytes = [0x6a, ...pushData, ...Array.from(messageBytes)];
+  return {
+    script: uint8ArrayToHexString(new Uint8Array(scriptBytes)),
+    dataHex,
+  };
+}
+
 // Copied from explorer backend https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/-/blob/main/backend/src/api/transaction-utils.ts?ref_type=heads#L196
 export function countSigops(transaction: Transaction): number {
   let sigops = 0;
@@ -1361,6 +1529,78 @@ export function countSigops(transaction: Transaction): number {
   }
 
   return sigops;
+}
+
+export function scriptPubKeyToAddress(
+  scriptPubKey: string,
+  network: string
+): { address: string; type: string } {
+  // P2PKH
+  if (/^76a914[0-9a-f]{40}88ac$/.test(scriptPubKey)) {
+    return {
+      address: p2pkh(scriptPubKey.substring(6, 6 + 40), network),
+      type: 'p2pkh',
+    };
+  }
+  // P2PK
+  if (
+    /^21[0-9a-f]{66}ac$/.test(scriptPubKey) ||
+    /^41[0-9a-f]{130}ac$/.test(scriptPubKey)
+  ) {
+    return { address: null, type: 'p2pk' };
+  }
+  // P2SH
+  if (/^a914[0-9a-f]{40}87$/.test(scriptPubKey)) {
+    return {
+      address: p2sh(scriptPubKey.substring(4, 4 + 40), network),
+      type: 'p2sh',
+    };
+  }
+  // multisig
+  if (/^[0-9a-f]+ae$/.test(scriptPubKey)) {
+    return { address: null, type: 'multisig' };
+  }
+  // anchor
+  if (scriptPubKey === '51024e73') {
+    return { address: p2a(network), type: 'anchor' };
+  }
+  // op_return
+  if (/^6a/.test(scriptPubKey)) {
+    return { address: null, type: 'op_return' };
+  }
+  return { address: null, type: 'unknown' };
+}
+
+export function addressToScriptPubKey(
+  address: string,
+  network: string
+): { scriptPubKey: string | null; type: AddressType } {
+  const type = detectAddressType(address, network);
+
+  if (type === 'p2pk') {
+    if (address.length === 66) {
+      return { scriptPubKey: '21' + address + 'ac', type };
+    }
+    if (address.length === 130) {
+      return { scriptPubKey: '41' + address + 'ac', type };
+    }
+    return { scriptPubKey: null, type };
+  }
+
+  if (type === 'p2pkh' || type === 'p2sh') {
+    return { scriptPubKey: base58ToSpk(address, network), type };
+  }
+
+  if (
+    type === 'v0_p2wpkh' ||
+    type === 'v0_p2wsh' ||
+    type === 'v1_p2tr' ||
+    address === p2a(network)
+  ) {
+    return { scriptPubKey: bech32ToSpk(address, network), type };
+  }
+
+  return { scriptPubKey: null, type };
 }
 
 /**
@@ -1404,46 +1644,6 @@ function checkSigopsBIP54(
   return true;
 }
 
-function scriptPubKeyToAddress(
-  scriptPubKey: string,
-  network: string
-): { address: string; type: string } {
-  // P2PKH
-  if (/^76a914[0-9a-f]{40}88ac$/.test(scriptPubKey)) {
-    return {
-      address: p2pkh(scriptPubKey.substring(6, 6 + 40), network),
-      type: 'p2pkh',
-    };
-  }
-  // P2PK
-  if (
-    /^21[0-9a-f]{66}ac$/.test(scriptPubKey) ||
-    /^41[0-9a-f]{130}ac$/.test(scriptPubKey)
-  ) {
-    return { address: null, type: 'p2pk' };
-  }
-  // P2SH
-  if (/^a914[0-9a-f]{40}87$/.test(scriptPubKey)) {
-    return {
-      address: p2sh(scriptPubKey.substring(4, 4 + 40), network),
-      type: 'p2sh',
-    };
-  }
-  // multisig
-  if (/^[0-9a-f]+ae$/.test(scriptPubKey)) {
-    return { address: null, type: 'multisig' };
-  }
-  // anchor
-  if (scriptPubKey === '51024e73') {
-    return { address: p2a(network), type: 'anchor' };
-  }
-  // op_return
-  if (/^6a/.test(scriptPubKey)) {
-    return { address: null, type: 'op_return' };
-  }
-  return { address: null, type: 'unknown' };
-}
-
 function p2pkh(pubKeyHash: string, network: string): string {
   const pubkeyHashArray = hexStringToUint8Array(pubKeyHash);
   const version = ['testnet', 'testnet4', 'signet'].includes(network)
@@ -1472,33 +1672,6 @@ function p2sh(scriptHash: string, network: string): string {
   return bitcoinAddress;
 }
 
-function p2wpkh(pubKeyHash: string, network: string): string {
-  const pubkeyHashArray = hexStringToUint8Array(pubKeyHash);
-  const hrp = ['testnet', 'testnet4', 'signet'].includes(network) ? 'tb' : 'bc';
-  const version = 0;
-  const words = [version].concat(toWords(pubkeyHashArray));
-  const bech32Address = bech32Encode(hrp, words);
-  return bech32Address;
-}
-
-function p2wsh(scriptHash: string, network: string): string {
-  const scriptHashArray = hexStringToUint8Array(scriptHash);
-  const hrp = ['testnet', 'testnet4', 'signet'].includes(network) ? 'tb' : 'bc';
-  const version = 0;
-  const words = [version].concat(toWords(scriptHashArray));
-  const bech32Address = bech32Encode(hrp, words);
-  return bech32Address;
-}
-
-function p2tr(pubKey: string, network: string): string {
-  const pubkeyArray = hexStringToUint8Array(pubKey);
-  const hrp = ['testnet', 'testnet4', 'signet'].includes(network) ? 'tb' : 'bc';
-  const version = 1;
-  const words = [version].concat(toWords(pubkeyArray));
-  const bech32Address = bech32Encode(hrp, words, 'bech32m');
-  return bech32Address;
-}
-
 function p2a(network: string): string {
   const pubkeyHashArray = hexStringToUint8Array('4e73');
   const hrp = ['testnet', 'testnet4', 'signet'].includes(network) ? 'tb' : 'bc';
@@ -1508,11 +1681,10 @@ function p2a(network: string): string {
   return bech32Address;
 }
 
+const BASE58_ALPHABET =
+  '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
 // base58 encoding
 function base58Encode(data: Uint8Array): string {
-  const BASE58_ALPHABET =
-    '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
-
   const hexString = Array.from(data)
     .map((byte) => byte.toString(16).padStart(2, '0'))
     .join('');
@@ -1535,6 +1707,83 @@ function base58Encode(data: Uint8Array): string {
   }
 
   return encoded;
+}
+
+// base58 decoding
+function base58Decode(s: string): Uint8Array {
+  let num = BigInt(0);
+  const base = BigInt(58);
+
+  for (let i = 0; i < s.length; i++) {
+    const char = s[i];
+    const index = BASE58_ALPHABET.indexOf(char);
+    if (index < 0) {
+      throw new Error('Invalid base58 character');
+    }
+    num = num * base + BigInt(index);
+  }
+
+  let hex = num.toString(16);
+  if (hex.length % 2) hex = '0' + hex;
+
+  const bytes = [];
+  for (let i = 0; i < hex.length; i += 2) {
+    bytes.push(parseInt(hex.substr(i, 2), 16));
+  }
+
+  for (let i = 0; i < s.length && s[i] === '1'; i++) {
+    bytes.unshift(0);
+  }
+
+  return new Uint8Array(bytes);
+}
+
+function base58ToSpk(address: string, network: string): string | null {
+  try {
+    const decoded = base58Decode(address);
+    if (decoded.length !== 25) {
+      return null;
+    }
+
+    const version = decoded[0];
+    const payload = decoded.slice(1, 21);
+    const checksum = decoded.slice(21, 25);
+
+    // Verify checksum
+    const versionedPayload = new Uint8Array([version, ...payload]);
+    const hash1 = new Hash().update(versionedPayload).digest();
+    const hash2 = new Hash().update(hash1).digest();
+    const expectedChecksum = hash2.slice(0, 4);
+    if (checksum.length !== expectedChecksum.length) {
+      return null;
+    }
+    for (let i = 0; i < checksum.length; i++) {
+      if (checksum[i] !== expectedChecksum[i]) {
+        return null;
+      }
+    }
+
+    const payloadHex = uint8ArrayToHexString(payload);
+
+    // P2PKH
+    const p2pkhVersion = ['testnet', 'testnet4', 'signet'].includes(network)
+      ? 0x6f
+      : 0x00;
+    if (version === p2pkhVersion) {
+      return '76a914' + payloadHex + '88ac';
+    }
+
+    // P2SH
+    const p2shVersion = ['testnet', 'testnet4', 'signet'].includes(network)
+      ? 0xc4
+      : 0x05;
+    if (version === p2shVersion) {
+      return 'a914' + payloadHex + '87';
+    }
+  } catch (e) {
+    // Invalid base58
+  }
+  return null;
 }
 
 // bech32 encoding / decoding
@@ -1583,6 +1832,27 @@ function bech32Decode(address: string): {
   }
 
   return { prefix, words: words.slice(0, -6), encoding };
+}
+
+function bech32ToSpk(address: string, network: string): string | null {
+  const expectedHrp = ['testnet', 'testnet4', 'signet'].includes(network)
+    ? 'tb'
+    : 'bc';
+  try {
+    const decoded = bech32Decode(address);
+    if (decoded.prefix !== expectedHrp) {
+      return null;
+    }
+    const version = decoded.words[0];
+    const data = fromWords(decoded.words.slice(1));
+    const versionOpcode =
+      version === 0 ? '00' : (version + 0x50).toString(16).padStart(2, '0');
+    const pushLen = data.length.toString(16).padStart(2, '0');
+    return versionOpcode + pushLen + uint8ArrayToHexString(data);
+  } catch (e) {
+    // Invalid bech32 address
+  }
+  return null;
 }
 
 function bech32Polymod(prefix: string, words: number[]): number {
@@ -1695,6 +1965,14 @@ export function hexStringToUint8Array(hex: string): Uint8Array {
 function base64ToUint8Array(base64: string): Uint8Array {
   const binaryString = atob(base64);
   return new Uint8Array([...binaryString].map((char) => char.charCodeAt(0)));
+}
+
+function uint8ArrayToBase64(uint8Array: Uint8Array): string {
+  let binaryString = '';
+  for (let i = 0; i < uint8Array.length; i++) {
+    binaryString += String.fromCharCode(uint8Array[i]);
+  }
+  return btoa(binaryString);
 }
 
 function intToBytes(value: number, byteLength: number): number[] {
