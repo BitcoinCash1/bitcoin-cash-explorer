@@ -193,7 +193,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
 
     this.chartOptions = {
       title: title,
-      color: ['#ff9f00', '#0aab2f'],
+      color: ['#da9820', '#10c73a'],
       animation: false,
       grid: {
         top: 80,
