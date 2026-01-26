@@ -51,6 +51,43 @@
           <table
             class="table table-fixed table-borderless smaller-text table-sm table-tx-vin"
           >
+            @if (tx["_hasCashTokenVin"] && tx["_showSignatures"]) {
+              <colgroup>
+                <col style="width: 30px" />
+                <!-- Arrow -->
+                <col style="width: 30px" />
+                <!-- Cash Token -->
+                <col style="width: 30px" />
+                <!-- Sig -->
+                <col style="width: auto" />
+                <!-- Address -->
+                <col style="width: 36%" />
+                <!-- Amount -->
+              </colgroup>
+            } @else if (
+              (tx["_hasCashTokenVin"] && !tx["_showSignatures"]) ||
+              (!tx["_hasCashTokenVin"] && tx["_showSignatures"])
+            ) {
+              <colgroup>
+                <col style="width: 30px" />
+                <!-- Arrow -->
+                <col style="width: 30px" />
+                <!-- Cash Token or Sig -->
+                <col style="width: auto" />
+                <!-- Address -->
+                <col style="width: 36%" />
+                <!-- Amount -->
+              </colgroup>
+            } @else {
+              <colgroup>
+                <col style="width: 30px" />
+                <!-- Arrow -->
+                <col style="width: auto" />
+                <!-- Address -->
+                <col style="width: 36%" />
+                <!-- Amount -->
+              </colgroup>
+            }
             <tbody>
               <ng-template
                 ngFor
@@ -425,11 +462,32 @@
             </tbody>
           </table>
         </div>
-        <!-- <div class="w-100 d-block d-md-none"></div> -->
+        <div class="w-100 d-block d-md-none"></div>
         <div class="col mobile-bottomcol">
           <table
             class="table table-fixed table-borderless smaller-text table-sm table-tx-vout"
           >
+            @if (tx["_hasCashTokenVout"]) {
+              <colgroup>
+                <col style="width: 30px" />
+                <!-- Cash Token -->
+                <col style="width: auto" />
+                <!-- Address -->
+                <col style="width: 36%" />
+                <!-- Amount -->
+                <col style="width: 30px" />
+                <!-- Arrow -->
+              </colgroup>
+            } @else {
+              <colgroup>
+                <col style="width: auto" />
+                <!-- Address -->
+                <col style="width: 36%" />
+                <!-- Amount -->
+                <col style="width: 30px" />
+                <!-- Arrow -->
+              </colgroup>
+            }
             <tbody>
               <ng-template
                 ngFor
