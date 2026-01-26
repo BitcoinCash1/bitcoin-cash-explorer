@@ -328,6 +328,24 @@
                             </td>
                           </tr>
                         </ng-template>
+                        <ng-template [ngIf]="vin.token_category">
+                          <tr>
+                            <td i18n="transactions-list.token.category">
+                              Token Category
+                            </td>
+                            <td style="text-align: left">
+                              {{ vin.token_category }}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td i18n="transactions-list.token.amount">
+                              Token Amount
+                            </td>
+                            <td style="text-align: left">
+                              {{ vin.token_amount }}
+                            </td>
+                          </tr>
+                        </ng-template>
                       </tbody>
                     </table>
                   </td>
@@ -718,6 +736,24 @@
                             {{ vout.scriptpubkey_type.toUpperCase() }}
                           </td>
                         </tr>
+                        <ng-template [ngIf]="vout.token_category">
+                          <tr>
+                            <td i18n="transactions-list.token.category">
+                              Token Category
+                            </td>
+                            <td style="text-align: left">
+                              {{ vout.token_category }}
+                            </td>
+                          </tr>
+                          <tr>
+                            <td i18n="transactions-list.token.amount">
+                              Token Amount
+                            </td>
+                            <td style="text-align: left">
+                              {{ vout.token_amount }}
+                            </td>
+                          </tr>
+                        </ng-template>
                       </tbody>
                     </table>
                   </td>
