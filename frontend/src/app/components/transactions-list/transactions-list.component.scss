@@ -17,7 +17,6 @@
 }
 
 .arrow-td {
-  width: 30px;
   padding-top: 0;
   padding-bottom: 0;
 }
@@ -43,10 +42,6 @@
   color: var(--grey);
 }
 
-.token-td {
-  width: 30px;
-}
-
 .token {
   cursor: pointer;
   color: var(--green);
@@ -61,7 +56,6 @@
 }
 
 .sig-td {
-  width: 30px;
   position: relative;
 }
 
