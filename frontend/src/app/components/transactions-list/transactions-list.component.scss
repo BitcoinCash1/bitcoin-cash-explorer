@@ -46,6 +46,24 @@
   color: var(--grey);
 }
 
+.token-td {
+  width: 30px;
+  position: relative;
+}
+
+.token {
+  cursor: pointer;
+  color: var(--green);
+  &:hover,
+  &.hovered {
+    color: color-mix(in srgb, var(--green) 80%, white);
+  }
+
+  ::ng-deep svg path {
+    pointer-events: auto;
+  }
+}
+
 .sig-td {
   width: 30px;
   position: relative;
@@ -56,7 +74,6 @@
   width: 30px;
   transition: transform 0.2s ease;
 }
-
 .sig-td:hover {
   .sig-stack {
     .sig-key {

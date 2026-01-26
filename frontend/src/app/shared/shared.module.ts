@@ -83,6 +83,7 @@ import {
   faLayerGroup,
   faHeart,
   faCashRegister,
+  faTag,
   faCodeFork,
   faCode,
 } from '@fortawesome/free-solid-svg-icons';
@@ -508,6 +509,7 @@ export class SharedModule {
     library.addIcons(faLayerGroup);
     library.addIcons(faHeart);
     library.addIcons(faCashRegister);
+    library.addIcons(faTag);
     library.addIcons(faCodeFork);
     library.addIcons(faCode);
   }
