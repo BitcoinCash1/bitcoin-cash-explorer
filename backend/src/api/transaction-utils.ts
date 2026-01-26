@@ -183,33 +183,45 @@ class TransactionUtils {
   // Generic method to strip verbosity from any verbose transaction type
   private stripVerbosity<T extends IPublicApi.VerboseTransaction>(transaction: T): IPublicApi.Transaction {
     // Convert verbose vin/vout to non-verbose versions
-    const vin: IPublicApi.Vin[] = transaction.vin.map((v) => ({
-      txid: v.txid,
-      vout: v.vout,
-      is_coinbase: v.is_coinbase,
-      scriptsig: v.scriptsig,
-      scriptsig_asm: v.scriptsig_asm,
-      inner_redeemscript_asm: v.inner_redeemscript_asm,
-      sequence: v.sequence,
-      prevout: v.prevout
-        ? {
-            scriptpubkey: v.prevout.scriptpubkey,
-            scriptpubkey_asm: v.prevout.scriptpubkey_asm,
-            scriptpubkey_type: v.prevout.scriptpubkey_type,
-            scriptpubkey_address: v.prevout.scriptpubkey_address,
-            value: v.prevout.value,
-          }
-        : null,
-      lazy: v.lazy,
-    }));
+    const vin = transaction.vin.map(
+      (v): IPublicApi.Vin => ({
+        txid: v.txid,
+        vout: v.vout,
+        is_coinbase: v.is_coinbase,
+        scriptsig: v.scriptsig,
+        scriptsig_asm: v.scriptsig_asm,
+        inner_redeemscript_asm: v.inner_redeemscript_asm,
+        scriptsig_byte_code: v.scriptsig_byte_code,
+        scriptpubkey_byte_code_pattern: v.scriptpubkey_byte_code_pattern,
+        token_category: v.token_category,
+        token_amount: v.token_amount,
+        sequence: v.sequence,
+        prevout: v.prevout
+          ? {
+              scriptpubkey: v.prevout.scriptpubkey,
+              scriptpubkey_asm: v.prevout.scriptpubkey_asm,
+              scriptpubkey_type: v.prevout.scriptpubkey_type,
+              scriptpubkey_address: v.prevout.scriptpubkey_address,
+              token_category: v.prevout.token_category,
+              token_amount: v.prevout.token_amount,
+              value: v.prevout.value,
+            }
+          : null,
+        lazy: v.lazy,
+      })
+    );
 
-    const vout: IPublicApi.Vout[] = transaction.vout.map((v) => ({
-      scriptpubkey: v.scriptpubkey,
-      scriptpubkey_asm: v.scriptpubkey_asm,
-      scriptpubkey_type: v.scriptpubkey_type,
-      scriptpubkey_address: v.scriptpubkey_address,
-      value: v.value,
-    }));
+    const vout = transaction.vout.map(
+      (v): IPublicApi.Vout => ({
+        scriptpubkey: v.scriptpubkey,
+        scriptpubkey_asm: v.scriptpubkey_asm,
+        scriptpubkey_type: v.scriptpubkey_type,
+        scriptpubkey_address: v.scriptpubkey_address,
+        value: v.value,
+        token_category: v.token_category,
+        token_amount: v.token_amount,
+      })
+    );
 
     const result: IPublicApi.Transaction = { ...transaction };
     result.vin = vin;

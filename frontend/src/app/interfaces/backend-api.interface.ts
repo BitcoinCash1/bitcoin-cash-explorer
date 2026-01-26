@@ -64,6 +64,10 @@ export interface Vin {
   scriptsig: string; // in hex
   scriptsig_asm: string; // in asm
   inner_redeemscript_asm: string;
+  scriptsig_byte_code: string[]; // script data in hex
+  scriptpubkey_byte_code_pattern: string; // in hex
+  token_category: string;
+  token_amount: number;
   sequence: any;
   prevout: Vout | null;
   // Custom
@@ -75,6 +79,8 @@ export interface Vout {
   scriptpubkey_asm: string;
   scriptpubkey_type: string;
   scriptpubkey_address?: string;
+  token_category: string;
+  token_amount: number;
   value: number;
 }
 
@@ -85,16 +91,17 @@ export interface VerboseVin {
   is_coinbase: boolean;
   scriptsig: string; // in hex
   scriptsig_asm: string; // in asm
+  inner_redeemscript_asm: string;
   scriptsig_byte_code_pattern: string; // in hex
-  scriptsig_byte_code_data: string[]; // script data in hex
+  scriptsig_byte_code: string[]; // script data in hex
   scriptpubkey: string;
   scriptpubkey_asm: string;
   scriptpubkey_type: string;
   scriptpubkey_byte_code_pattern: string; // in hex
-  scriptpubkey_byte_code_data: string[]; // script data in hex
+  scriptpubkey_byte_code: string[]; // script data in hex
   scriptpubkey_address?: string;
-  inner_redeemscript_asm: string;
-  // TODO: Add tokenData (CashToken) as well
+  token_category: string;
+  token_amount: number;
   sequence: any;
   prevout: Vout | null;
   // Custom
@@ -107,7 +114,9 @@ export interface VerboseVout {
   scriptpubkey_type: string;
   scriptpubkey_address?: string;
   scriptpubkey_byte_code_pattern: string; // in hex
-  scriptpubkey_byte_code_data: string[]; // script data in hex
+  scriptpubkey_byte_code: string[]; // script data in hex
+  token_category: string;
+  token_amount: number;
   value: number;
 }
 

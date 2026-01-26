@@ -381,8 +381,8 @@ export class Common {
 
       // sighash flags
       // For now only look at p2pkh transactions (76a95188ac pattern)
-      if (vin.scriptsig_byte_code_data.length > 0 && vin.scriptpubkey_byte_code_pattern === '76a95188ac') {
-        flags |= this.setSighashFlags(flags, vin.scriptsig_byte_code_data[0]);
+      if (vin.scriptsig_byte_code.length > 0 && vin.scriptpubkey_byte_code_pattern === '76a95188ac') {
+        flags |= this.setSighashFlags(flags, vin.scriptsig_byte_code[0]);
       }
 
       if (vin.prevout?.scriptpubkey_address) {

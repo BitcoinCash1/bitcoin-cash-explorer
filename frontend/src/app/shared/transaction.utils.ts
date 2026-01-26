@@ -648,13 +648,12 @@ export function getTransactionFlags(
     }
 
     // sighash flags
-    // Due to data traffic reasons we are not exposing the scriptsig_byte_code_data and scriptpubkey_byte_code_pattern atm.
-    // if (
-    //   vin.scriptsig_byte_code_data.length > 0 &&
-    //   vin.scriptpubkey_byte_code_pattern === '76a95188ac'
-    // ) {
-    //   flags |= setSighashFlags(flags, vin.scriptsig_byte_code_data[0]);
-    // }
+    if (
+      vin.scriptsig_byte_code.length > 0 &&
+      vin.scriptpubkey_byte_code_pattern === '76a95188ac'
+    ) {
+      flags |= setSighashFlags(flags, vin.scriptsig_byte_code[0]);
+    }
 
     if (vin.prevout?.scriptpubkey_address) {
       reusedInputAddresses[vin.prevout?.scriptpubkey_address] =
@@ -897,18 +896,20 @@ function fromBuffer(
     [sequence, offset] = readInt32(buffer, offset, true);
     const is_coinbase = txid === '0'.repeat(64);
     const scriptsig_asm = convertScriptSigAsm(scriptsig);
+    const inner_redeemscript_asm = '';
     // TODO: Parse value, scriptsig_byte_code_pattern, scriptsig_byte_code_data, scriptpubkey, scriptpubkey_asm, scriptpubkey_type, scriptpubkey_address, scriptpubkey_byte_code_pattern, scriptpubkey_byte_code_data
     // Q: Is this even all stored in a raw transaction hex?
     // const value = null;
     // const scriptsig_byte_code_pattern = '';
-    // const scriptsig_byte_code_data: string[] = [];
+    const scriptsig_byte_code: string[] = [];
     // const scriptpubkey = '';
     // const scriptpubkey_asm = '';
     // const scriptpubkey_type = '';
     // const scriptpubkey_address = '';
-    // const scriptpubkey_byte_code_pattern = '';
-    // const scriptpubkey_byte_code_data: string[] = [];
-    const inner_redeemscript_asm = '';
+    const scriptpubkey_byte_code_pattern = '';
+    // const scriptpubkey_byte_code: string[] = [];
+    const token_category = '';
+    const token_amount = 0;
     tx.vin.push({
       // value,
       txid,
@@ -916,15 +917,17 @@ function fromBuffer(
       is_coinbase,
       scriptsig,
       scriptsig_asm,
+      inner_redeemscript_asm,
       // scriptsig_byte_code_pattern,
-      // scriptsig_byte_code_data,
+      scriptsig_byte_code,
       // scriptpubkey,
       // scriptpubkey_asm,
       // scriptpubkey_type,
       // scriptpubkey_address,
-      // scriptpubkey_byte_code_pattern,
-      // scriptpubkey_byte_code_data,
-      inner_redeemscript_asm,
+      scriptpubkey_byte_code_pattern,
+      // scriptpubkey_byte_code,
+      token_category,
+      token_amount,
       sequence,
       prevout: null,
     });
@@ -946,7 +949,9 @@ function fromBuffer(
     // TODO: scriptpubkey_byte_code_pattern, scriptpubkey_byte_code_data
     // Q: Is this even all stored in a raw transaction hex?
     // const scriptpubkey_byte_code_pattern = '';
-    // const scriptpubkey_byte_code_data: string[] = [];
+    // const scriptpubkey_byte_code: string[] = [];
+    const token_category = '';
+    const token_amount = 0;
     tx.vout.push({
       value,
       scriptpubkey,
@@ -954,7 +959,9 @@ function fromBuffer(
       scriptpubkey_type,
       scriptpubkey_address,
       // scriptpubkey_byte_code_pattern,
-      // scriptpubkey_byte_code_data,
+      // scriptpubkey_byte_code,
+      token_category,
+      token_amount,
     });
   }
 

@@ -9,6 +9,7 @@ export namespace IPublicApi {
     vin: Vin[];
     vout: Vout[];
     status: Status;
+    // TODO: Also add blockhash, confirmations, time and blocktime.. No need for this status object
     hex?: string;
   }
 
@@ -25,6 +26,7 @@ export namespace IPublicApi {
     vout: VerboseVout[];
     status: Status;
     hex?: string;
+    // TODO: Also add blockhash, confirmations, time and blocktime.. No need for this status object
   }
 
   export interface Recent {
@@ -43,6 +45,10 @@ export namespace IPublicApi {
     scriptsig: string; // in hex
     scriptsig_asm: string; // in asm
     inner_redeemscript_asm: string;
+    scriptsig_byte_code: string[]; // script data in hex
+    scriptpubkey_byte_code_pattern: string; // in hex
+    token_category: string;
+    token_amount: number;
     sequence: any;
     prevout: Vout | null;
     // Custom
@@ -54,6 +60,8 @@ export namespace IPublicApi {
     scriptpubkey_asm: string;
     scriptpubkey_type: string;
     scriptpubkey_address?: string;
+    token_category: string;
+    token_amount: number;
     value: number;
   }
 
@@ -64,16 +72,17 @@ export namespace IPublicApi {
     is_coinbase: boolean;
     scriptsig: string; // in hex
     scriptsig_asm: string; // in asm
+    inner_redeemscript_asm: string;
     scriptsig_byte_code_pattern: string; // in hex
-    scriptsig_byte_code_data: string[]; // script data in hex
+    scriptsig_byte_code: string[]; // script data in hex
     scriptpubkey: string;
     scriptpubkey_asm: string;
     scriptpubkey_type: string;
     scriptpubkey_byte_code_pattern: string; // in hex
-    scriptpubkey_byte_code_data: string[]; // script data in hex
+    scriptpubkey_byte_code: string[]; // script data in hex
     scriptpubkey_address?: string;
-    inner_redeemscript_asm: string;
-    // TODO: Add tokenData (CashToken) as well
+    token_category: string;
+    token_amount: number;
     sequence: any;
     prevout: VerboseVout | null;
     // Custom
@@ -86,7 +95,9 @@ export namespace IPublicApi {
     scriptpubkey_type: string;
     scriptpubkey_address?: string;
     scriptpubkey_byte_code_pattern: string; // in hex
-    scriptpubkey_byte_code_data: string[]; // script data in hex
+    scriptpubkey_byte_code: string[]; // script data in hex
+    token_category: string;
+    token_amount: number;
     value: number;
   }
 
