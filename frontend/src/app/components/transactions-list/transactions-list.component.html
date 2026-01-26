@@ -157,7 +157,12 @@
                       </div>
                     </td>
                   }
-                  <td class="address-cell">
+                  <td
+                    class="address-cell"
+                    [attr.colspan]="
+                      tx['_hasCashTokenVin'] && !vin.token_category ? 2 : 1
+                    "
+                  >
                     <div [ngSwitch]="true">
                       <ng-container *ngSwitchCase="vin.is_coinbase"
                         ><span i18n="transactions-list.coinbase">Coinbase</span
@@ -241,10 +246,10 @@
                   <td
                     [attr.colspan]="
                       tx['_showSignatures']
-                        ? vin.token_category
+                        ? hasVinCashToken(tx)
                           ? 5
                           : 4
-                        : vin.token_category
+                        : hasVinCashToken(tx)
                           ? 4
                           : 3
                     "
@@ -420,7 +425,7 @@
             </tbody>
           </table>
         </div>
-        <div class="w-100 d-block d-md-none"></div>
+        <!-- <div class="w-100 d-block d-md-none"></div> -->
         <div class="col mobile-bottomcol">
           <table
             class="table table-fixed table-borderless smaller-text table-sm table-tx-vout"
@@ -448,7 +453,19 @@
                       sigHighlights.vout[vindex],
                   }"
                 >
-                  <td class="address-cell">
+                  @if (vout.token_category) {
+                    <td class="token-td">
+                      <span class="token" ngbTooltip="Cash Token">
+                        <fa-icon [icon]="['fas', 'tag']"></fa-icon>
+                      </span>
+                    </td>
+                  }
+                  <td
+                    class="address-cell"
+                    [attr.colspan]="
+                      tx['_hasCashTokenVout'] && !vout.token_category ? 2 : 1
+                    "
+                  >
                     <app-address-text
                       *ngIf="vout.scriptpubkey_address; else pubkey_type"
                       [address]="vout.scriptpubkey_address"
@@ -553,13 +570,6 @@
                       [satoshis]="vout.value"
                     ></app-amount>
                   </td>
-                  @if (vout.token_category) {
-                    <td class="token-td">
-                      <span class="token" ngbTooltip="Cash Token">
-                        <fa-icon [icon]="['fas', 'tag']"></fa-icon>
-                      </span>
-                    </td>
-                  }
                   <td class="arrow-td">
                     <span
                       *ngIf="
@@ -637,7 +647,7 @@
                 </tr>
                 <tr *ngIf="(showDetails$ | async) === true">
                   <td
-                    [attr.colspan]="vout.token_category ? 5 : 4"
+                    [attr.colspan]="hasVinCashToken(tx) ? 4 : 3"
                     class="details-container"
                   >
                     <table

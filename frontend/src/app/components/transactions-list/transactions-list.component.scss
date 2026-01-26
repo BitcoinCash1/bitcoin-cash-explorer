@@ -5,7 +5,7 @@
       padding-right: 15px;
     }
     td:last-child {
-      padding-right: calc(0.3em + 15px);
+      padding-right: calc(15px);
     }
   }
   &:last-child {
@@ -14,7 +14,7 @@
       padding-left: 15px;
     }
     td:first-child {
-      padding-left: calc(0.3em + 15px);
+      padding-left: calc(15px);
     }
   }
 }
@@ -48,7 +48,6 @@
 
 .token-td {
   width: 30px;
-  position: relative;
 }
 
 .token {
@@ -341,17 +340,6 @@ h2 {
 .vin-witness {
   .witness-item {
     overflow: hidden;
-  }
-}
-
-.badge-ord {
-  background-color: var(--grey);
-  position: relative;
-  top: -2px;
-  font-size: 81%;
-  border: 0;
-  &.primary {
-    background-color: var(--primary);
   }
 }
 

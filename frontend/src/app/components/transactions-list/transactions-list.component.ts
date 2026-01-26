@@ -651,6 +651,14 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     tx['@voutLimit'] = this.getVoutLimit(tx, true);
   }
 
+  hasVinCashToken(tx: Transaction): boolean {
+    return tx.vin.some((v: Vin) => v.token_category);
+  }
+
+  hasVoutCashToken(tx: Transaction): boolean {
+    return tx.vout.some((v: Vout) => v.token_category);
+  }
+
   getVinLimit(tx: Transaction, next = false): number {
     let limit;
     if ((tx['@vinLimit'] || 0) > this.inputRowLimit) {
