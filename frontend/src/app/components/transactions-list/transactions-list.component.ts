@@ -282,6 +282,8 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
       this.transactions.forEach((tx) => {
         tx['@voutLimit'] = true;
         tx['@vinLimit'] = true;
+        tx['_hasCashTokenVin'] = false;
+        tx['_hasCashTokenVout'] = false;
         tx['_showSignatures'] = false;
         tx['_interestingSignatures'] = false;
 
@@ -378,6 +380,10 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
           }
         }
         tx['_showSignatures'] = this.shouldShowSignatures(tx);
+        tx['_hasCashTokenVin'] = tx.vin.some(
+          (vin) => vin?.prevout?.token_category
+        );
+        tx['_hasCashTokenVout'] = tx.vout.some((vout) => vout?.token_category);
 
         tx.largeInput =
           tx.largeInput ||
