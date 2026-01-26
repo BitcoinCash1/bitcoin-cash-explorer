@@ -1,14 +1,14 @@
 <div *ngIf="stateService.env.MINING_DASHBOARD" class="mb-3 d-flex menu">
   <a
     routerLinkActive="active"
-    class="btn btn-success w-50"
+    class="btn btn-purple w-50"
     [routerLink]="['/graphs/mempool' | relativeUrl]"
     >Mempool</a
   >
 
   <div ngbDropdown class="w-50" *ngIf="stateService.env.MINING_DASHBOARD">
     <button
-      class="btn btn-success w-100"
+      class="btn btn-purple w-100"
       id="dropdownBasic1"
       ngbDropdownToggle
       i18n="mining"

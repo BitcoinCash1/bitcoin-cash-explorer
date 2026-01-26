@@ -23,11 +23,13 @@ class TransactionUtils {
         },
       ],
       vout: tx.vout
-        .map((vout): VoutStrippedToScriptPubkey => ({
-          scriptpubkey_address: vout.scriptpubkey_address,
-          scriptpubkey_asm: vout.scriptpubkey_asm,
-          value: vout.value,
-        }))
+        .map(
+          (vout): VoutStrippedToScriptPubkey => ({
+            scriptpubkey_address: vout.scriptpubkey_address,
+            scriptpubkey_asm: vout.scriptpubkey_asm,
+            value: vout.value,
+          })
+        )
         .filter((vout) => vout.value),
     };
   }
@@ -188,6 +190,7 @@ class TransactionUtils {
       (v): IPublicApi.Vin => ({
         txid: v.txid,
         vout: v.vout,
+        value: v.value,
         is_coinbase: v.is_coinbase,
         scriptsig: v.scriptsig,
         scriptsig_asm: v.scriptsig_asm,

@@ -906,7 +906,7 @@ function fromBuffer(
     const inner_redeemscript_asm = '';
     // TODO: Parse value, scriptsig_byte_code_pattern, scriptsig_byte_code_data, scriptpubkey, scriptpubkey_asm, scriptpubkey_type, scriptpubkey_address, scriptpubkey_byte_code_pattern, scriptpubkey_byte_code_data
     // Q: Is this even all stored in a raw transaction hex?
-    // const value = null;
+    const value = null;
     // const scriptsig_byte_code_pattern = '';
     const scriptsig_byte_code: string[] = [];
     // const scriptpubkey = '';
@@ -918,7 +918,7 @@ function fromBuffer(
     const token_category = '';
     const token_amount = 0;
     tx.vin.push({
-      // value,
+      value,
       txid,
       vout,
       is_coinbase,

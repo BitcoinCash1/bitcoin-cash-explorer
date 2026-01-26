@@ -23,6 +23,7 @@ import {
 import {
   Outspend,
   Transaction,
+  Vin,
   Vout,
 } from '@app/interfaces/backend-api.interface';
 import { ElectrsApiService } from '@app/services/backend-api.service';
@@ -568,6 +569,12 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
 
   haveBlindedOutputValues(tx: Transaction): boolean {
     return tx.vout.some((v: any) => v.value === undefined);
+  }
+
+  getTotalTxInput(tx: Transaction): number {
+    return tx.vin
+      .map((v: Vin) => v.value || 0)
+      .reduce((a: number, b: number) => a + b);
   }
 
   getTotalTxOutput(tx: Transaction): number {

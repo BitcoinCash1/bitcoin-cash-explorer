@@ -27,7 +27,7 @@
           >
             <div class="small-buttons">
               <a
-                class="btn btn-success btn-sm mb-0"
+                class="btn btn-purple btn-sm mb-0"
                 [routerLink]="['/clock/mempool/0' | relativeUrl]"
                 style="color: white"
                 id="btn-clock"
@@ -44,7 +44,7 @@
             <div class="btn-toggle-rows" name="radioBasic">
               <div class="btn-group btn-group-toggle">
                 <label
-                  class="btn btn-success btn-sm"
+                  class="btn btn-purple btn-sm"
                   [class.active]="radioGroupForm.get('dateSpan').value === '2h'"
                 >
                   <input
@@ -57,7 +57,7 @@
                   2H (LIVE)
                 </label>
                 <label
-                  class="btn btn-success btn-sm"
+                  class="btn btn-purple btn-sm"
                   [class.active]="
                     radioGroupForm.get('dateSpan').value === '24h'
                   "
@@ -72,7 +72,7 @@
                   24H
                 </label>
                 <label
-                  class="btn btn-success btn-sm"
+                  class="btn btn-purple btn-sm"
                   [class.active]="radioGroupForm.get('dateSpan').value === '1w'"
                 >
                   <input
@@ -85,7 +85,7 @@
                   1W
                 </label>
                 <label
-                  class="btn btn-success btn-sm"
+                  class="btn btn-purple btn-sm"
                   [class.active]="radioGroupForm.get('dateSpan').value === '1m'"
                 >
                   <input
@@ -98,7 +98,7 @@
                   1M
                 </label>
                 <label
-                  class="btn btn-success btn-sm"
+                  class="btn btn-purple btn-sm"
                   [class.active]="radioGroupForm.get('dateSpan').value === '3m'"
                 >
                   <input
@@ -113,7 +113,7 @@
               </div>
               <div class="btn-group btn-group-toggle">
                 <label
-                  class="btn btn-success btn-sm"
+                  class="btn btn-purple btn-sm"
                   [class.active]="radioGroupForm.get('dateSpan').value === '6m'"
                 >
                   <input
@@ -126,7 +126,7 @@
                   6M
                 </label>
                 <label
-                  class="btn btn-success btn-sm"
+                  class="btn btn-purple btn-sm"
                   [class.active]="radioGroupForm.get('dateSpan').value === '1y'"
                 >
                   <input
@@ -139,7 +139,7 @@
                   1Y
                 </label>
                 <label
-                  class="btn btn-success btn-sm"
+                  class="btn btn-purple btn-sm"
                   [class.active]="radioGroupForm.get('dateSpan').value === '2y'"
                 >
                   <input
@@ -152,7 +152,7 @@
                   2Y
                 </label>
                 <label
-                  class="btn btn-success btn-sm"
+                  class="btn btn-purple btn-sm"
                   [class.active]="radioGroupForm.get('dateSpan').value === '3y'"
                 >
                   <input
@@ -165,7 +165,7 @@
                   3Y
                 </label>
                 <label
-                  class="btn btn-success btn-sm"
+                  class="btn btn-purple btn-sm"
                   [class.active]="radioGroupForm.get('dateSpan').value === '4y'"
                 >
                   <input
@@ -178,7 +178,7 @@
                   4Y
                 </label>
                 <label
-                  class="btn btn-success btn-sm"
+                  class="btn btn-purple btn-sm"
                   [class.active]="
                     radioGroupForm.get('dateSpan').value === 'all'
                   "
@@ -196,7 +196,7 @@
             <div class="small-buttons">
               <div ngbDropdown #myDrop="ngbDropdown">
                 <button
-                  class="btn btn btn-success btn-sm"
+                  class="btn btn btn-purple btn-sm"
                   id="dropdownFees"
                   ngbDropdownAnchor
                   (click)="myDrop.toggle()"
@@ -250,10 +250,7 @@
                 </div>
               </div>
 
-              <button
-                (click)="invertGraph()"
-                class="btn btn btn-success btn-sm"
-              >
+              <button (click)="invertGraph()" class="btn btn btn-purple btn-sm">
                 <fa-icon
                   [icon]="['fas', 'exchange-alt']"
                   [rotate]="90"

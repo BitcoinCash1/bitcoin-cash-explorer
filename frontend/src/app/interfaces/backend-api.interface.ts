@@ -60,6 +60,7 @@ export interface Recent {
 export interface Vin {
   txid: string;
   vout: number;
+  value: number | null;
   is_coinbase: boolean;
   scriptsig: string; // in hex
   scriptsig_asm: string; // in asm
