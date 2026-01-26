@@ -42,10 +42,7 @@ import { ApiService } from '@app/services/api.service';
 import { SeoService } from '@app/services/seo.service';
 import { StorageService } from '@app/services/storage.service';
 import { seoDescriptionNetwork } from '@app/shared/common.utils';
-import {
-  getTransactionFlags,
-  getUnacceleratedFeeRate,
-} from '@app/shared/transaction.utils';
+import { getTransactionFlags } from '@app/shared/transaction.utils';
 import { Filter, TransactionFlags, toFilters } from '@app/shared/filters.utils';
 import {
   BlockExtended,
@@ -430,7 +427,7 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
         ) {
           this.mempoolPosition = txPosition.position;
           if (this.tx && !this.tx.status.confirmed) {
-            const txFeePerSize = getUnacceleratedFeeRate(this.tx);
+            const txFeePerSize = this.tx.feePerSize;
             this.stateService.markBlock$.next({
               txid: txPosition.txid,
               txFeePerSize: txFeePerSize,

@@ -280,15 +280,27 @@
                           <tr *ngIf="vin.scriptsig_byte_code?.length">
                             <td
                               i18n="
-                                transactions-list.scriptsig.byte.code|ScriptSig Byte Code
+                                transactions-list.scriptsig.byte.code|ScriptSig
+                                Byte Code
                               "
                             >
                               ScriptSig Byte Code
                             </td>
-                            <td style="text-align: left" class="scriptsig-byte-code">
-                                @for (byte of vin.scriptsig_byte_code; track byte; let isFirst = $first; let isLast = $last) {
-                                  @if (!isFirst) {<br />}{{ byte }}
+                            <td
+                              style="text-align: left"
+                              class="scriptsig-byte-code"
+                            >
+                              @for (
+                                byte of vin.scriptsig_byte_code;
+                                track byte;
+                                let isFirst = $first;
+                                let isLast = $last
+                              ) {
+                                @if (!isFirst) {
+                                  <br />
                                 }
+                                {{ byte }}
+                              }
                             </td>
                           </tr>
                         </ng-template>

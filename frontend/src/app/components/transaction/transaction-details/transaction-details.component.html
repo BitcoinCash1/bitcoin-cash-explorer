@@ -232,9 +232,26 @@
           ETA
         </td>
         <td>
-          <ng-container
-            *ngIf="ETA$ | async as eta; else etaSkeleton"
-          ></ng-container>
+          <ng-container *ngIf="ETA$ | async as eta; else etaSkeleton">
+            <span class="etaDeepMempool d-flex justify-content-between">
+              @if (eta.blocks >= 7) {
+                <span
+                  i18n="
+                    transaction.eta.not-any-time-soon|Transaction ETA not any
+                    time soon
+                  "
+                  >Not any time soon</span
+                >
+              } @else {
+                <app-time
+                  kind="until"
+                  [time]="eta.time"
+                  [fastRender]="false"
+                  [fixedRender]="true"
+                ></app-time>
+              }
+            </span>
+          </ng-container>
           <ng-template #etaSkeleton>
             <span class="skeleton-loader"></span>
           </ng-template>

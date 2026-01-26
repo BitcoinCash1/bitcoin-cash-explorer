@@ -743,16 +743,23 @@ export function getTransactionFlags(
   return flags;
 }
 
-export function getUnacceleratedFeeRate(tx: Transaction): number {
-  return tx.feePerSize;
-}
-
+/**
+ * TODO: I really need to start using https://github.com/bitauth/libauth/blob/60aec23/src/lib/vm/instruction-sets/common/instruction-sets-utils.ts#L780 to get the getDustThreshold
+ * See also: https://gitlab.com/bitcoin-cash-node/bitcoin-cash-node/-/blob/master/src/policy/policy.cpp?ref_type=heads#L39
+ *
+ * "Dust" is defined in terms of dustRelayFee, which has units
+ * satoshis-per-kilobyte. If you'd pay more than 1/3 in fees to spend
+ * something, then we consider it dust.  A typical spendable txout is 34
+ * bytes big, and will need a CTxIn of at least 148 bytes to spend: so dust
+ * is a spendable txout less than 546*dustRelayFee/1000 (in satoshis).
+ */
 function getDustThreshold(scriptpubkey: string): number {
   let dustSize = scriptpubkey.length / 2;
   dustSize += getVarIntLength(dustSize);
-  dustSize += 8;
-  dustSize += 148; // no witness in BCH, TODO: Still validate if this dust threshold is correct in BCH.
-  return dustSize * DUST_RELAY_TX_FEE;
+  // the 148 mentioned above
+  dustSize += 32 + 4 + 1 + 107 + 4;
+
+  return DUST_RELAY_TX_FEE * dustSize;
 }
 
 function isDustOutput(value: number, scriptpubkey: string): boolean {

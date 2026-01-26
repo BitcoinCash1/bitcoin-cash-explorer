@@ -41,7 +41,7 @@ import { AudioService } from '@app/services/audio.service';
 import { ApiService } from '@app/services/api.service';
 import { SeoService } from '@app/services/seo.service';
 import { seoDescriptionNetwork } from '@app/shared/common.utils';
-import { Filter, TransactionFlags } from '@app/shared/filters.utils';
+import { Filter } from '@app/shared/filters.utils';
 import {
   BlockExtended,
   MempoolPosition,
@@ -53,10 +53,6 @@ import { ZONE_SERVICE } from '@app/injection-tokens';
 import { TrackerStage } from '@components/tracker/tracker-bar.component';
 import { MiningService, MiningStats } from '@app/services/mining.service';
 import { ETA, EtaService } from '@app/services/eta.service';
-import {
-  getTransactionFlags,
-  getUnacceleratedFeeRate,
-} from '@app/shared/transaction.utils';
 
 interface Pool {
   id: number;
@@ -243,7 +239,7 @@ export class TrackerComponent implements OnInit, OnDestroy {
           this.loadingPosition = false;
           this.mempoolPosition = txPosition.position;
           if (this.tx && !this.tx.status.confirmed) {
-            const txFeePerSize = getUnacceleratedFeeRate(this.tx);
+            const txFeePerSize = this.tx.feePerSize;
             this.stateService.markBlock$.next({
               txid: txPosition.txid,
               txFeePerSize,
