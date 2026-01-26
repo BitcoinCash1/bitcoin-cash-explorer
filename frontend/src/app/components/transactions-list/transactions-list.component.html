@@ -101,8 +101,7 @@
                       </a>
                     </ng-template>
                   </td>
-                  <!-- if tx has a cash token (like token_category), we want to show an fa icon which a cash icon -->
-                  @if (tx.vin[0].prevout?.token_category) {
+                  @if (tx.vin[vindex].prevout?.token_category) {
                     <td class="token-td">
                       <span class="token" ngbTooltip="Cash Token">
                         <fa-icon [icon]="['fas', 'tag']"></fa-icon>
@@ -538,6 +537,13 @@
                       [satoshis]="vout.value"
                     ></app-amount>
                   </td>
+                  @if (vout.token_category) {
+                    <td class="token-td">
+                      <span class="token" ngbTooltip="Cash Token">
+                        <fa-icon [icon]="['fas', 'tag']"></fa-icon>
+                      </span>
+                    </td>
+                  }
                   <td class="arrow-td">
                     <span
                       *ngIf="
