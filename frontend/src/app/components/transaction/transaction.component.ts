@@ -15,7 +15,6 @@ import {
   switchMap,
   filter,
   catchError,
-  retryWhen,
   tap,
   map,
   retry,
@@ -30,7 +29,6 @@ import {
   Subscription,
   Observable,
   Subject,
-  from,
   combineLatest,
   BehaviorSubject,
 } from 'rxjs';
@@ -43,7 +41,7 @@ import { SeoService } from '@app/services/seo.service';
 import { StorageService } from '@app/services/storage.service';
 import { seoDescriptionNetwork } from '@app/shared/common.utils';
 import { getTransactionFlags } from '@app/shared/transaction.utils';
-import { Filter, TransactionFlags, toFilters } from '@app/shared/filters.utils';
+import { Filter, toFilters } from '@app/shared/filters.utils';
 import {
   BlockExtended,
   MempoolPosition,

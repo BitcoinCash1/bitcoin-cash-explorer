@@ -3,8 +3,6 @@ import {
   OnInit,
   Input,
   ChangeDetectionStrategy,
-  Output,
-  EventEmitter,
 } from '@angular/core';
 import { Transaction } from '@app/interfaces/backend-api.interface';
 import {
