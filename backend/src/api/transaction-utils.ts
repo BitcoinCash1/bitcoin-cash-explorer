@@ -4,6 +4,7 @@ import {
   TransactionExtended,
   MempoolTransactionExtended,
   TransactionMinerInfo,
+  VoutStrippedToScriptPubkey,
 } from '../mempool.interfaces';
 import { IPublicApi } from './bitcoin/public-api.interface';
 import bitcoinApi, { bitcoinCoreApi } from './bitcoin/bitcoin-api-factory';
@@ -22,7 +23,7 @@ class TransactionUtils {
         },
       ],
       vout: tx.vout
-        .map((vout) => ({
+        .map((vout): VoutStrippedToScriptPubkey => ({
           scriptpubkey_address: vout.scriptpubkey_address,
           scriptpubkey_asm: vout.scriptpubkey_asm,
           value: vout.value,

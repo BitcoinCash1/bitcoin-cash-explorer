@@ -320,8 +320,8 @@ class BitcoinApi implements AbstractBitcoinApi {
       status: { confirmed: false },
     };
 
-    publicTransaction.vin = transaction.vin.map((vin) => {
-      return {
+    publicTransaction.vin = transaction.vin.map(
+      (vin): IPublicApi.VerboseVin => ({
         txid: vin.txid || '',
         vout: vin.vout || 0,
         value: vin.value ? Math.round(vin.value * 100000000) : null,
@@ -345,11 +345,11 @@ class BitcoinApi implements AbstractBitcoinApi {
         sequence: vin.sequence,
         token_category: vin.tokenData?.category || '',
         token_amount: vin.tokenData?.amount || 0,
-      };
-    });
+      })
+    );
 
-    publicTransaction.vout = transaction.vout.map((vout) => {
-      return {
+    publicTransaction.vout = transaction.vout.map(
+      (vout): IPublicApi.VerboseVout => ({
         value: Math.round(vout.value * 100000000),
         scriptpubkey: vout.scriptPubKey.hex,
         scriptpubkey_address: vout.scriptPubKey && vout.scriptPubKey.addresses ? vout.scriptPubKey.addresses[0] : '',
@@ -359,8 +359,8 @@ class BitcoinApi implements AbstractBitcoinApi {
         scriptpubkey_byte_code: vout.scriptPubKey?.byteCodePattern?.data || [],
         token_category: vout.tokenData?.category || '',
         token_amount: vout.tokenData?.amount || 0,
-      };
-    });
+      })
+    );
 
     if (transaction.confirmations) {
       publicTransaction.status = {

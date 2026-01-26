@@ -233,7 +233,7 @@ class Blocks {
    * @returns BlockSummary
    */
   public summarizeBlock(block: IBitcoinApi.VerboseBlock): BlockSummary {
-    const stripped = block.tx.map((tx: IBitcoinApi.VerboseTransaction) => {
+    const stripped = block.tx.map((tx: IBitcoinApi.VerboseTransaction): TransactionClassified => {
       return {
         txid: tx.txid,
         size: tx.size,

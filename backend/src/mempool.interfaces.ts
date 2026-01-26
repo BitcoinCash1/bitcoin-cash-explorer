@@ -95,11 +95,11 @@ export interface MempoolDelta {
   // replaced;  Not used in BCH (since we do not have RBF)
 }
 
-interface VinStrippedToScriptsig {
+export interface VinStrippedToScriptsig {
   scriptsig: string;
 }
 
-interface VoutStrippedToScriptPubkey {
+export interface VoutStrippedToScriptPubkey {
   scriptpubkey_address: string | undefined;
   scriptpubkey_asm: string | undefined;
   value: number;
