@@ -164,6 +164,7 @@
     ></app-transaction-details>
 
     <ng-container *ngIf="flowEnabled; else flowPlaceholder">
+      <br />
       <div class="title float-left">
         <h2 id="flow" i18n="transaction.flow|Transaction flow">Flow</h2>
       </div>
@@ -214,9 +215,8 @@
           </ng-template>
         </div>
       </div>
-
-      <br />
     </ng-container>
+    <br />
     <ng-template #flowPlaceholder>
       <div class="box hidden">
         <div class="graph-container" #graphContainer></div>
@@ -287,16 +287,16 @@
                   ></fa-icon>
                 </td>
               </tr>
+              <tr>
+                <td i18n="transaction.version">Version</td>
+                <td [innerHTML]="'&lrm;' + (transaction.version | number)"></td>
+              </tr>
             </tbody>
           </table>
         </div>
         <div class="col-sm">
           <table class="table table-borderless table-striped">
             <tbody>
-              <tr>
-                <td i18n="transaction.version">Version</td>
-                <td [innerHTML]="'&lrm;' + (transaction.version | number)"></td>
-              </tr>
               <tr>
                 <td i18n="transaction.locktime">Locktime</td>
                 <td
