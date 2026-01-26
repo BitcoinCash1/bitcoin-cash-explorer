@@ -57,7 +57,7 @@ import { SighashFlag } from '@app/shared/transaction.utils';
 })
 export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   network = '';
-  nativeAssetId = environment.nativeAssetId;
+  bcmrBaseURL = environment.bcmrBaseURL;
   showMoreIncrement = 1000;
 
   @Input() transactions: Transaction[];
