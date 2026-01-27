@@ -44,16 +44,9 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
         switchMap((params: ParamMap) => {
           this.category = params.get('category') || '';
           this.isLoading = true;
-          this.error = null;
           this.metadata = null;
 
-          if (!this.category) {
-            this.error = { message: 'Token category is required' };
-            this.isLoading = false;
-            return of(null);
-          }
-
-          this.seoService.setTitle(`Token: ${this.category}`);
+          this.seoService.setTitle(`Cash Token: ${this.category}`);
           this.seoService.setDescription(
             `View details for Bitcoin Cash token ${this.category} including name, symbol, decimals, description and more.`
           );
@@ -71,10 +64,6 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
       .subscribe((metadata: BcmrMetadata | null) => {
         this.metadata = metadata;
         this.isLoading = false;
-
-        if (!metadata) {
-          this.error = { message: 'Token metadata not found' };
-        }
       });
   }
 

@@ -213,20 +213,12 @@
 
 <!-- Error template -->
 <ng-template #errorTemplate>
-  <div class="container-xl">
-    <div class="box">
-      <div class="icon-container">
-        <fa-icon
-          [icon]="['fas', 'exclamation-triangle']"
-          [fixedWidth]="true"
-        ></fa-icon>
-      </div>
-      <span>
-        <strong>Error:</strong>
-        {{ error?.message || "Failed to load token metadata" }}
-      </span>
-    </div>
-  </div>
+  <br />
+  <app-http-error [error]="error">
+    <span i18n="pool.error.loading-pool-data"
+      >Failed to load cash token metadata.</span
+    >
+  </app-http-error>
 </ng-template>
 
 <!-- Main loading template -->
