@@ -26,11 +26,11 @@ import {
   Vin,
   Vout,
 } from '@app/interfaces/backend-api.interface';
+import { BcmrMetadata } from '@app/interfaces/bcmr-api.interface';
+import { BcmrService } from '@app/services/bcmr.service';
 import { ElectrsApiService } from '@app/services/backend-api.service';
-import { environment } from '@environments/environment';
 import { map, tap, switchMap } from 'rxjs/operators';
 import { BlockExtended } from '@interfaces/node-api.interface';
-import { ApiService } from '@app/services/api.service';
 import { PriceService } from '@app/services/price.service';
 import { StorageService } from '@app/services/storage.service';
 import {
@@ -57,7 +57,6 @@ import { SighashFlag } from '@app/shared/transaction.utils';
 })
 export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   network = '';
-  bcmrBaseURL = environment.bcmrBaseURL;
   showMoreIncrement = 1000;
 
   @Input() transactions: Transaction[];
@@ -113,7 +112,8 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     private ref: ChangeDetectorRef,
     private priceService: PriceService,
     private storageService: StorageService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private bcmrService: BcmrService
   ) {
     this.signaturesMode =
       this.forceSignaturesMode || this.stateService.signaturesMode$.value;
@@ -696,6 +696,8 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     }
     return limit;
   }
+
+  // this.bcmrService.getBcmrMetadata(category);
 
   toggleShowFullScript(vinIndex: number): void {
     this.showFullScript[vinIndex] = !this.showFullScript[vinIndex];
