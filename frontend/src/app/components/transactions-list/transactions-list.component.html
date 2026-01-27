@@ -240,7 +240,19 @@
                         ></span>
                       </ng-container>
                       <ng-container *ngSwitchDefault>
-                        <ng-container *ngIf="vin.prevout; else noPrevout">
+                        <ng-template
+                          [ngIf]="!vin.prevout"
+                          [ngIfElse]="defaultAddress"
+                        >
+                          <span
+                            *ngIf="vin.lazy; else defaultNoPrevout"
+                            class="skeleton-loader"
+                          ></span>
+                          <ng-template #defaultNoPrevout>
+                            <span class="text-muted">No previous output</span>
+                          </ng-template>
+                        </ng-template>
+                        <ng-template #defaultAddress>
                           <app-address-text
                             *ngIf="
                               vin.prevout.scriptpubkey_address;
@@ -261,9 +273,6 @@
                               [vin]="vin"
                             ></app-address-labels>
                           </div>
-                        </ng-container>
-                        <ng-template #noPrevout>
-                          <span class="text-muted">No previous output</span>
                         </ng-template>
                       </ng-container>
                     </div>
