@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { BcmrService } from '@app/services/bcmr.service';
 import { BcmrMetadata } from '@app/interfaces/bcmr-api.interface';
@@ -22,6 +22,8 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
   error: any = null;
   network = '';
   networkChangeSubscription: Subscription;
+  showQR = false;
+  isMobile: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -78,6 +80,11 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.networkChangeSubscription?.unsubscribe();
+  }
+
+  @HostListener('window:resize')
+  onResize(): void {
+    this.isMobile = window.innerWidth < 768;
   }
 
   getTokenInfo(): any {
