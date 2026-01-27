@@ -8,7 +8,8 @@ import { BcmrMetadata } from '@app/interfaces/bcmr-api.interface';
   standalone: false,
 })
 export class TokenIconAndTextComponent {
-  @Input() metadata: BcmrMetadata | null | undefined;
+  @Input() metadata: BcmrMetadata | undefined;
+  @Input() category: string | null;
 
   private readonly IPFS_GATEWAY = 'https://ipfs.io/ipfs/';
 

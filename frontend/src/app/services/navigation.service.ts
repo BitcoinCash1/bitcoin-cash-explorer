@@ -74,6 +74,8 @@ export class NavigationService {
   }
 
   // For each network (bitcoin/liquid), find and save the longest url path compatible with the current route
+  // TODO: In BCH don't have liquid, I think we can fully remove this, or at least get rid of the 'networkSpecific',
+  // meaning we can also clean up the master-page module.
   updateSubnetPaths(root: ActivatedRouteSnapshot): void {
     let path = '';
     const networkPaths = {};
