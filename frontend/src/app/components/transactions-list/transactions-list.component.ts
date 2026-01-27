@@ -19,6 +19,7 @@ import {
   Subscription,
   of,
   forkJoin,
+  catchError,
 } from 'rxjs';
 import {
   Outspend,
@@ -612,7 +613,9 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
 
     if (observables.length > 0) {
       // Wait for all HTTP requests to complete
-      forkJoin(observables.map((obs) => obs.metadata$)).subscribe((results) => {
+      forkJoin(observables.map((obs) => obs.metadata$)).pipe(
+        catchError(() => of([] as BcmrMetadata[]))
+      ).subscribe((results) => {
         results.forEach((metadata, index) => {
           const category = observables[index].category;
           map.set(category, metadata);
