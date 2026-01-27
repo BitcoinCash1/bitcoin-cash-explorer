@@ -31,11 +31,10 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.network = this.stateService.network;
-    this.networkChangeSubscription = this.stateService.networkChanged$.subscribe(
-      (network) => {
+    this.networkChangeSubscription =
+      this.stateService.networkChanged$.subscribe((network) => {
         this.network = network;
-      }
-    );
+      });
 
     this.route.paramMap
       .pipe(
@@ -51,9 +50,7 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
             return of(null);
           }
 
-          this.seoService.setTitle(
-            `Token: ${this.category}`
-          );
+          this.seoService.setTitle(`Token: ${this.category}`);
           this.seoService.setDescription(
             `View details for Bitcoin Cash token ${this.category} including name, symbol, decimals, description and more.`
           );
@@ -91,14 +88,17 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
       category: this.category,
       name: this.metadata.name || 'Unknown',
       symbol: this.metadata.token?.symbol || 'N/A',
-      decimals: this.metadata.token?.decimals !== undefined ? this.metadata.token.decimals : 'N/A',
+      decimals:
+        this.metadata.token?.decimals !== undefined
+          ? this.metadata.token.decimals
+          : 'N/A',
       description: this.metadata.description || 'No description available',
       uris: this.metadata.uris || {},
-      hasIcon: !!(this.metadata.uris?.icon),
-      hasWebsite: !!(this.metadata.uris?.web),
+      hasIcon: !!this.metadata.uris?.icon,
+      hasWebsite: !!this.metadata.uris?.web,
       hasDescription: !!this.metadata.description,
       isNft: this.metadata.is_nft || false,
-      status: this.metadata.status || 'unknown'
+      status: this.metadata.status || 'unknown',
     };
   }
 
@@ -125,7 +125,7 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
     }
   }
 
-  getAdditionalUris(uris: any): Array<{key: string, value: string}> {
+  getAdditionalUris(uris: any): Array<{ key: string; value: string }> {
     const excludedKeys = ['icon', 'web'];
     return Object.entries(uris)
       .filter(([key]) => !excludedKeys.includes(key))

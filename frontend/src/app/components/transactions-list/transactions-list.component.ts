@@ -594,8 +594,10 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
       });
     });
     // Only retrieve unique categories
-    const observables: Array<{ category: string; metadata$: Observable<BcmrMetadata> }> =
-      [];
+    const observables: Array<{
+      category: string;
+      metadata$: Observable<BcmrMetadata>;
+    }> = [];
     uniqueCategories.forEach((category) => {
       // If the category is already in the cache, skip the HTTP call
       if (map.has(category)) {
@@ -603,7 +605,7 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
       }
       // Create a list of observables to retrieve the metadata for each category
       observables.push({
-        category,
+        category, // For later reference
         metadata$: this.bcmrService.getBcmrMetadata(category),
       });
     });
@@ -615,7 +617,7 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
           const category = observables[index].category;
           map.set(category, metadata);
         });
-        // emit the new map to the subject only after all requests are done
+        // Emit the new map to the subject only after all requests are done
         this.bcmrMetadataSubject.next(map);
       });
     } else {
