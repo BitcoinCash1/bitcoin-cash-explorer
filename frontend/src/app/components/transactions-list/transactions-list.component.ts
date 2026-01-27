@@ -61,7 +61,6 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   private bcmrMetadataSubject = new BehaviorSubject<Map<string, BcmrMetadata>>(
     new Map()
   ); // key is the category (token id)
-  private readonly IPFS_GATEWAY = 'https://ipfs.io/ipfs/';
 
   @Input() transactions: Transaction[];
   @Input() cached: boolean = false;
@@ -623,14 +622,6 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
       // No new categories to fetch, emit the current map
       this.bcmrMetadataSubject.next(map);
     }
-  }
-
-  resolveIconUrl(icon?: string): string | null {
-    if (!icon) return null;
-    if (icon.startsWith('ipfs://')) {
-      return this.IPFS_GATEWAY + icon.slice('ipfs://'.length);
-    }
-    return icon; // http(s) already fine
   }
 
   formatTokenAmount(amount: number, decimals: number): string {

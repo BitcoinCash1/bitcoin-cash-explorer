@@ -1,0 +1,10 @@
+@if (metadata) {
+  <img
+    *ngIf="resolveIconUrl(metadata?.uris?.icon) as iconUrl"
+    class="token-icon"
+    [src]="iconUrl"
+    alt="{{ metadata?.name }} icon"
+    loading="lazy"
+  />
+  <span>{{ metadata?.name }}</span>
+}

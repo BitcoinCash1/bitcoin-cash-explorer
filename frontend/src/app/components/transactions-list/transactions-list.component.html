@@ -269,18 +269,9 @@
                     </div>
                     <ng-container *ngIf="vin.token_category">
                       <div *ngIf="bcmrMetadata$ | async as meta">
-                        <img
-                          *ngIf="
-                            resolveIconUrl(
-                              meta.get(vin.token_category)?.uris?.icon
-                            ) as iconUrl
-                          "
-                          class="token-icon"
-                          [src]="iconUrl"
-                          alt="{{ meta.get(vin.token_category)?.name }} icon"
-                          loading="lazy"
-                        />
-                        <span>{{ meta.get(vin.token_category)?.name }}</span>
+                        <app-token-icon-and-text
+                          [metadata]="meta.get(vin.token_category)"
+                        ></app-token-icon-and-text>
                       </div>
                     </ng-container>
                   </td>
@@ -655,18 +646,9 @@
                     </ng-template>
                     <ng-container *ngIf="vout.token_category">
                       <div *ngIf="bcmrMetadata$ | async as meta">
-                        <img
-                          *ngIf="
-                            resolveIconUrl(
-                              meta.get(vout.token_category)?.uris?.icon
-                            ) as iconUrl
-                          "
-                          class="token-icon"
-                          [src]="iconUrl"
-                          alt="{{ meta.get(vout.token_category)?.name }} icon"
-                          loading="lazy"
-                        />
-                        <span>{{ meta.get(vout.token_category)?.name }}</span>
+                        <app-token-icon-and-text
+                          [metadata]="meta.get(vout.token_category)"
+                        ></app-token-icon-and-text>
                       </div>
                     </ng-container>
                   </td>
