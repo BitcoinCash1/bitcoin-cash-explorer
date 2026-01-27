@@ -595,18 +595,34 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
       });
     });
     // Only retrieve unique categories
+    const observables: Array<{ category: string; metadata$: Observable<any> }> =
+      [];
     uniqueCategories.forEach((category) => {
-      // If the category is already in the cache, skip it
+      // If the category is already in the cache, skip the HTTP call
       if (map.has(category)) {
         return;
       }
       // On top of that, we also have cache in the bcmr service
-      this.bcmrService.getBcmrMetadata(category).subscribe((metadata) => {
-        map.set(category, metadata);
+      observables.push({
+        category,
+        metadata$: this.bcmrService.getBcmrMetadata(category),
       });
     });
-    // emit the new map to the subject
-    this.bcmrMetadataSubject.next(map);
+
+    if (observables.length > 0) {
+      // Wait for all HTTP requests to complete
+      forkJoin(observables.map((obs) => obs.metadata$)).subscribe((results) => {
+        results.forEach((metadata, index) => {
+          const category = observables[index].category;
+          map.set(category, metadata);
+        });
+        // emit the new map to the subject only after all requests are done
+        this.bcmrMetadataSubject.next(map);
+      });
+    } else {
+      // No new categories to fetch, emit the current map
+      this.bcmrMetadataSubject.next(map);
+    }
   }
 
   resolveIconUrl(icon?: string): string | null {

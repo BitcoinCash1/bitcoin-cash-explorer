@@ -46,7 +46,7 @@
     "dev:ssr": "npm run generate-config && ng run mempool:serve-ssr",
     "serve:ssr": "npm run generate-config && node server.run.js",
     "build:ssr": "npm run build && ng run mempool:server:production && ./node_modules/typescript/bin/tsc server.run.ts",
-    "config:defaults:explorer": "node update-config.js TESTNET_ENABLED=false TESTNET4_ENABLED=false SIGNET_ENABLED=false ITEMS_PER_PAGE=25 BASE_MODULE=explorer MIN_BLOCK_SIZE_UNITS=32000000 BCMR_API=https://bcmr.paytaca.com/api && npm run generate-config",
+    "config:defaults:explorer": "node update-config.js TESTNET_ENABLED=false TESTNET4_ENABLED=false SIGNET_ENABLED=false ITEMS_PER_PAGE=25 BASE_MODULE=explorer MIN_BLOCK_SIZE_UNITS=32000000 BCMR_API=https://bcmr.flowee.cash && npm run generate-config",
     "prerender": "npm run ng -- run mempool:prerender",
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",

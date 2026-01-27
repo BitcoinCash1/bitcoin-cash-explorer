@@ -17,6 +17,16 @@ export interface Extensions {
     | { [key: string]: { [key: string]: string } };
 }
 
+// Sources array interface
+export interface SourceItem {
+  bcmr: string;
+  name: string;
+  timestamp?: string;
+  trust?: string;
+}
+
+export type Sources = SourceItem[];
+
 // Token information for chain's native currency
 export interface ChainToken {
   symbol: string;
@@ -30,9 +40,11 @@ export interface BcmrMetadata {
   description?: string;
   extensions?: Extensions;
   splitId?: string;
+  sources?: Sources;
   status?: 'active' | 'burned' | 'inactive';
   tags?: string[];
   token: ChainToken;
   uris?: URIs;
   is_nft?: boolean;
+  trust?: string; // high..?
 }
