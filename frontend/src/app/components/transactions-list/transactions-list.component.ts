@@ -755,7 +755,9 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
         tx.vin.length
       );
     }
-    if (tx.vin.length - limit <= 5) {
+    // Don't apply auto-show-all if there are lazy inputs (need explicit loading)
+    const hasLazyInputs = tx.vin.some(vin => vin.lazy);
+    if (!hasLazyInputs && tx.vin.length - limit <= 5) {
       limit = tx.vin.length;
     }
     return limit;
