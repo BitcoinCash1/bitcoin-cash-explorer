@@ -609,9 +609,9 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
         category, // For later reference
         metadata$: this.bcmrService.getBcmrMetadata(category).pipe(
           catchError((error) => {
-            console.info(
-              `Failed to fetch BCMR metadata for category ${category}: ${error.message}.`
-            );
+            // console.info(
+            //   `Failed to fetch BCMR metadata for category ${category}: ${error.message}.`
+            // );
             // Return null or a default value when the request fails
             return of(null as BcmrMetadata | null);
           })
