@@ -14,7 +14,7 @@ interface CacheEntry {
   providedIn: 'root',
 })
 export class BcmrService {
-  private cache: { [category: string]: CacheEntry } = {};
+  private cache = new Map<string, CacheEntry>();
   private readonly CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 
   constructor(
@@ -32,7 +32,7 @@ export class BcmrService {
     this.cleanExpiredCache();
 
     // Check cache
-    const cachedEntry = this.cache[category];
+    const cachedEntry = this.cache.get(category);
     if (cachedEntry) {
       return of(cachedEntry.data);
     }
@@ -61,10 +61,10 @@ export class BcmrService {
    * @param data BCMR metadata to cache
    */
   private setCache(category: string, data: BcmrMetadata): void {
-    this.cache[category] = {
+    this.cache.set(category, {
       data,
       expiry: Date.now() + this.CACHE_DURATION,
-    };
+    });
   }
 
   /**
@@ -72,9 +72,9 @@ export class BcmrService {
    */
   private cleanExpiredCache(): void {
     const now = Date.now();
-    for (const category of Object.keys(this.cache)) {
-      if (this.cache[category].expiry <= now) {
-        delete this.cache[category];
+    for (const category of this.cache.keys()) {
+      if (this.cache.get(category)?.expiry <= now) {
+        this.cache.delete(category);
       }
     }
   }

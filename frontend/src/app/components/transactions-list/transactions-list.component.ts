@@ -58,6 +58,10 @@ import { SighashFlag } from '@app/shared/transaction.utils';
 export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   network = '';
   showMoreIncrement = 1000;
+  private bcmrMetadataSubject = new BehaviorSubject<Map<string, BcmrMetadata>>(
+    new Map()
+  ); // key is the category (token id)
+  private readonly IPFS_GATEWAY = 'https://ipfs.io/ipfs/';
 
   @Input() transactions: Transaction[];
   @Input() cached: boolean = false;
@@ -105,7 +109,7 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   signaturesOverride: SignaturesMode = null;
   signaturesMode: SignaturesMode = 'interesting';
 
-  bcmrMetadata = new Map<string, BcmrMetadata>(); // key is the category (token id)
+  bcmrMetadata$ = this.bcmrMetadataSubject.asObservable();
 
   constructor(
     public stateService: StateService,
@@ -565,11 +569,16 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  /**
+   * Retrieves BCMR metadata for the given transaction or all transactions in the list.
+   * @param tx The transaction to retrieve BCMR metadata for. If not provided, all transactions (with a limit) in the list will be used.
+   */
   retrieveBcmrMetadata(tx?: Transaction): void {
     let transactions = this.transactions;
     if (tx) {
       transactions = [tx];
     }
+    const map = new Map(this.bcmrMetadataSubject.value);
     const uniqueCategories = new Set<string>();
     transactions.forEach((tx) => {
       // loop over the tx.vin until we hit the current limit of getVinLimit(tx)
@@ -588,14 +597,39 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     // Only retrieve unique categories
     uniqueCategories.forEach((category) => {
       // If the category is already in the cache, skip it
-      if (this.bcmrMetadata.has(category)) {
+      if (map.has(category)) {
         return;
       }
       // On top of that, we also have cache in the bcmr service
       this.bcmrService.getBcmrMetadata(category).subscribe((metadata) => {
-        this.bcmrMetadata.set(category, metadata);
+        map.set(category, metadata);
       });
     });
+    // emit the new map to the subject
+    this.bcmrMetadataSubject.next(map);
+  }
+
+  resolveIconUrl(icon?: string): string | null {
+    if (!icon) return null;
+    if (icon.startsWith('ipfs://')) {
+      return this.IPFS_GATEWAY + icon.slice('ipfs://'.length);
+    }
+    return icon; // http(s) already fine
+  }
+
+  formatTokenAmount(amount: number, decimals: number): string {
+    if (amount == null) return '0';
+    if (!decimals || decimals <= 0) return ''; // Do not return the amount if there are no decimals (since we are still waiting for the metadata)
+
+    const raw = typeof amount === 'number' ? amount.toString() : amount;
+
+    // Ensure string length >= decimals
+    const padded = raw.padStart(decimals + 1, '0');
+
+    const integerPart = padded.slice(0, -decimals);
+    const fractionalPart = padded.slice(-decimals);
+
+    return `${integerPart}.${fractionalPart}`;
   }
 
   // assume any address with 12 or more contiguous repeated substrings is fake

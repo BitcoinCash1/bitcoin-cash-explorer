@@ -138,7 +138,7 @@
                       </a>
                     </ng-template>
                   </td>
-                  @if (tx.vin[vindex].prevout?.token_category) {
+                  @if (tx.vin[vindex].token_category) {
                     <td class="token-td">
                       <span class="token" ngbTooltip="Cash Token">
                         <fa-icon [icon]="['fas', 'tag']"></fa-icon>
@@ -266,9 +266,21 @@
                         </ng-template>
                       </ng-container>
                     </div>
-                    <!-- in case there a  vin.token_category -->
                     <ng-container *ngIf="vin.token_category">
-                      <span class="text-muted">Token {{ vindex }} </span>
+                      <div *ngIf="bcmrMetadata$ | async as meta">
+                        <img
+                          *ngIf="
+                            resolveIconUrl(
+                              meta.get(vin.token_category)?.uris?.icon
+                            ) as iconUrl
+                          "
+                          class="token-icon"
+                          [src]="iconUrl"
+                          alt="{{ meta.get(vin.token_category)?.name }} icon"
+                          loading="lazy"
+                        />
+                        <span>{{ meta.get(vin.token_category)?.name }}</span>
+                      </div>
                     </ng-container>
                   </td>
                   <td
@@ -281,6 +293,24 @@
                       *ngIf="vin.prevout"
                       [satoshis]="vin.prevout.value"
                     ></app-amount>
+                    <ng-container *ngIf="vin.token_category">
+                      <div *ngIf="bcmrMetadata$ | async as meta">
+                        <span>{{
+                          formatTokenAmount(
+                            vin.token_amount,
+                            meta.get(vin.token_category)?.token?.decimals
+                          )
+                        }}</span>
+                        <span
+                          class="symbol"
+                          *ngIf="meta.get(vin.token_category)?.token?.symbol"
+                        >
+                          {{
+                            meta.get(vin.token_category)?.token?.symbol
+                          }}</span
+                        >
+                      </div>
+                    </ng-container>
                   </td>
                 </tr>
                 <tr *ngIf="(showDetails$ | async) === true">
@@ -622,6 +652,22 @@
                         vout.scriptpubkey_type | scriptpubkeyType
                       }}</ng-template>
                     </ng-template>
+                    <ng-container *ngIf="vout.token_category">
+                      <div *ngIf="bcmrMetadata$ | async as meta">
+                        <img
+                          *ngIf="
+                            resolveIconUrl(
+                              meta.get(vout.token_category)?.uris?.icon
+                            ) as iconUrl
+                          "
+                          class="token-icon"
+                          [src]="iconUrl"
+                          alt="{{ meta.get(vout.token_category)?.name }} icon"
+                          loading="lazy"
+                        />
+                        <span>{{ meta.get(vout.token_category)?.name }}</span>
+                      </div>
+                    </ng-container>
                   </td>
                   <td
                     class="text-right nowrap amount"
@@ -631,6 +677,24 @@
                       [blockConversion]="tx.price"
                       [satoshis]="vout.value"
                     ></app-amount>
+                    <ng-container *ngIf="vout.token_category">
+                      <div *ngIf="bcmrMetadata$ | async as meta">
+                        <span>{{
+                          formatTokenAmount(
+                            vout.token_amount,
+                            meta.get(vout.token_category)?.token?.decimals
+                          )
+                        }}</span>
+                        <span
+                          class="symbol"
+                          *ngIf="meta.get(vout.token_category)?.token?.symbol"
+                        >
+                          {{
+                            meta.get(vout.token_category)?.token?.symbol
+                          }}</span
+                        >
+                      </div>
+                    </ng-container>
                   </td>
                   <td class="arrow-td">
                     <span
