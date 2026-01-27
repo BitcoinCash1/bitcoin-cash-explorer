@@ -168,6 +168,12 @@ export class Sighash {
   }
 }
 
+/**
+ * Decode the sighash flag from a sighash hex value
+ *
+ * @param sighash Sighash flag (like a hex value)
+ * @returns Sighash flag as SighashValue (if it matches common sighash flags)
+ */
 export function decodeSighashFlag(sighash: number): SighashValue {
   if (
     (sighash >= 0x41 && sighash <= 0x67) ||
@@ -178,6 +184,13 @@ export function decodeSighashFlag(sighash: number): SighashValue {
   return (SighashFlag.ALL | SighashFlag.FORKID) as SighashValue;
 }
 
+/**
+ * Try to extract the DER signarure from a script ASM
+ *
+ * Do NOT use this for P2PKH in BCH, maybe P2SH might work.. most likely not either.
+ * @param script_asm Input script ASM
+ * @returns Array of signatures
+ */
 export function extractDERSignaturesASM(script_asm: string): SigInfo[] {
   if (!script_asm) {
     return [];
@@ -190,7 +203,6 @@ export function extractDERSignaturesASM(script_asm: string): SigInfo[] {
     // Look for OP_PUSHBYTES_N followed by a hex string
     if (ops[i].startsWith('OP_PUSHBYTES_')) {
       const hexData = ops[i + 1];
-      // TODO: Maybe its better in BCH to check just if its P2PKH
       if (isCanonicalDERSig(hexData)) {
         const sighash = decodeSighashFlag(parseInt(hexData.slice(-2), 16));
         signatures.push({
@@ -212,7 +224,17 @@ export function processInputSignatures(vin: Vin): SigInfo[] {
     case 'p2pk':
     case 'multisig':
     case 'p2pkh':
-      signatures = extractDERSignaturesASM(vin.scriptsig_asm);
+      // We might need to look better into this still, I currently just "made it work",
+      // Maybe something can still be improved or is incorrect.
+      if (vin.scriptsig_byte_code.length > 0) {
+        signatures.push({
+          signature: vin.scriptsig_byte_code.join(''),
+          sighash: decodeSighashFlag(
+            // First data line contains the sighash flag at the end
+            parseInt(vin.scriptsig_byte_code[0].slice(-2), 16)
+          ),
+        });
+      }
       break;
     case 'p2sh':
       {
