@@ -594,14 +594,14 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
       });
     });
     // Only retrieve unique categories
-    const observables: Array<{ category: string; metadata$: Observable<any> }> =
+    const observables: Array<{ category: string; metadata$: Observable<BcmrMetadata> }> =
       [];
     uniqueCategories.forEach((category) => {
       // If the category is already in the cache, skip the HTTP call
       if (map.has(category)) {
         return;
       }
-      // On top of that, we also have cache in the bcmr service
+      // Create a list of observables to retrieve the metadata for each category
       observables.push({
         category,
         metadata$: this.bcmrService.getBcmrMetadata(category),
