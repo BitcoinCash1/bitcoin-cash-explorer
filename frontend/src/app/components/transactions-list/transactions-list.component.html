@@ -977,6 +977,7 @@
             <app-amount
               [blockConversion]="tx.price"
               [satoshis]="getTotalTxInput(tx)"
+              ngbTooltip="Total Input"
             ></app-amount>
           </button>
         </div>
@@ -1023,6 +1024,7 @@
             <app-amount
               [blockConversion]="tx.price"
               [satoshis]="getTotalTxOutput(tx)"
+              ngbTooltip="Total Output"
             ></app-amount>
           </button>
           <ng-template #viewingAddress>
@@ -1039,6 +1041,7 @@
                 [blockConversion]="tx.price"
                 [satoshis]="tx['addressValue']"
                 [addPlus]="true"
+                ngbTooltip="Address Value"
               ></app-amount>
             </button>
           </ng-template>
