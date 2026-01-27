@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { BcmrMetadata } from '@app/interfaces/bcmr-api.interface';
-import { environment } from '@environments/environment';
+import { StateService } from '@app/services/state.service';
 
 interface CacheEntry {
   data: BcmrMetadata;
@@ -14,11 +14,13 @@ interface CacheEntry {
   providedIn: 'root',
 })
 export class BcmrService {
-  private bcmrBaseURL = environment.bcmrBaseURL;
   private cache: { [category: string]: CacheEntry } = {};
   private readonly CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
 
-  constructor(private httpClient: HttpClient) {}
+  constructor(
+    private httpClient: HttpClient,
+    private stateService: StateService
+  ) {}
 
   /**
    * Retrieve BCMR metadata details from a token id (from both FTs and NFTs).
@@ -36,10 +38,11 @@ export class BcmrService {
     }
 
     // If not in cache, fetch from API and cache the result
+    // also set responseType: 'json'
     const httpOptions = { headers: { 'User-Agent': 'BCHExplorer/3.3' } };
     return this.httpClient
       .get<BcmrMetadata>(
-        `${this.bcmrBaseURL}/tokens/${encodeURIComponent(category)}`,
+        `${this.stateService.env.BCMR_API}/tokens/${encodeURIComponent(category)}`,
         httpOptions
       )
       .pipe(

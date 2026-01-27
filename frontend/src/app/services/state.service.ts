@@ -101,6 +101,7 @@ export interface Env {
   PACKAGE_JSON_VERSION_MEMPOOL_SPACE?: string;
   STRATUM_ENABLED: boolean;
   SERVICES_API?: string;
+  BCMR_API: string;
   customize?: Customization;
   PROD_DOMAINS: string[];
 }
@@ -137,6 +138,7 @@ const defaultEnv: Env = {
   ADDITIONAL_CURRENCIES: false,
   STRATUM_ENABLED: false,
   SERVICES_API: 'https://bchexplorer.cash/api/v1/services',
+  BCMR_API: 'https://bcmr.paytaca.com/api',
   PROD_DOMAINS: [],
 };
 
