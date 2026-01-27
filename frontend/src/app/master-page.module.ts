@@ -111,15 +111,6 @@ const routes: Routes = [
           import('@components/block/block.module').then((m) => m.BlockModule),
       },
       {
-        path: 'token',
-        component: StartComponent,
-        data: { preload: true, networkSpecific: true },
-        loadChildren: () =>
-          import('@app/components/token/token.module').then(
-            (m) => m.TokenModule
-          ),
-      },
-      {
         path: 'docs',
         loadChildren: () =>
           import('@app/docs/docs.module').then((m) => m.DocsModule),
