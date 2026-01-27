@@ -607,22 +607,31 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
       // Create a list of observables to retrieve the metadata for each category
       observables.push({
         category, // For later reference
-        metadata$: this.bcmrService.getBcmrMetadata(category),
+        metadata$: this.bcmrService.getBcmrMetadata(category).pipe(
+          catchError((error) => {
+            console.warn(
+              `Failed to fetch BCMR metadata for category ${category}.`
+            );
+            // Return null or a default value when the request fails
+            return of(null as BcmrMetadata | null);
+          })
+        ),
       });
     });
 
     if (observables.length > 0) {
       // Wait for all HTTP requests to complete
-      forkJoin(observables.map((obs) => obs.metadata$))
-        .pipe(catchError(() => of([] as BcmrMetadata[])))
-        .subscribe((results) => {
-          results.forEach((metadata, index) => {
-            const category = observables[index].category;
+      forkJoin(observables.map((obs) => obs.metadata$)).subscribe((results) => {
+        results.forEach((metadata, index) => {
+          const category = observables[index].category;
+          // Only set the metadata if it's not null (i.e., request was successful)
+          if (metadata !== null) {
             map.set(category, metadata);
-          });
-          // Emit the new map to the subject only after all requests are done
-          this.bcmrMetadataSubject.next(map);
+          }
         });
+        // Emit the new map to the subject only after all requests are done
+        this.bcmrMetadataSubject.next(map);
+      });
     } else {
       // No new categories to fetch, emit the current map
       this.bcmrMetadataSubject.next(map);
@@ -756,7 +765,7 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
       );
     }
     // Don't apply auto-show-all if there are lazy inputs (need explicit loading)
-    const hasLazyInputs = tx.vin.some(vin => vin.lazy);
+    const hasLazyInputs = tx.vin.some((vin) => vin.lazy);
     if (!hasLazyInputs && tx.vin.length - limit <= 5) {
       limit = tx.vin.length;
     }
