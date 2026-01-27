@@ -144,7 +144,6 @@ import { FooterComponent } from '@components/footer/footer.component';
 import { StatusViewComponent } from '@components/status-view/status-view.component';
 import { ServerHealthComponent } from '@components/server-health/server-health.component';
 import { ServerStatusComponent } from '@components/server-health/server-status.component';
-import { TokenDetailsComponent } from '@components/token-details/token-details.component';
 import { FeesBoxComponent } from '@components/fees-box/fees-box.component';
 import { DifficultyComponent } from '@components/difficulty/difficulty.component';
 import { DifficultyTooltipComponent } from '@components/difficulty/difficulty-tooltip.component';
@@ -252,7 +251,6 @@ import { MempoolProgressBarComponent } from '@components/mempool-progress-bar/me
     StatusViewComponent,
     ServerHealthComponent,
     ServerStatusComponent,
-    TokenDetailsComponent,
     FeesBoxComponent,
     DifficultyComponent,
     DifficultyMiningComponent,
@@ -385,7 +383,6 @@ import { MempoolProgressBarComponent } from '@components/mempool-progress-bar/me
     StatusViewComponent,
     ServerHealthComponent,
     ServerStatusComponent,
-    TokenDetailsComponent,
     FeesBoxComponent,
     DifficultyComponent,
     DifficultyMiningComponent,

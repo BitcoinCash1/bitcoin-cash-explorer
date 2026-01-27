@@ -15,6 +15,7 @@ import { StateService } from '@app/services/state.service';
   standalone: false,
 })
 export class TokenDetailsComponent implements OnInit, OnDestroy {
+  private readonly IPFS_GATEWAY = 'https://ipfs.io/ipfs/';
   category: string;
   metadata: BcmrMetadata | null = null;
   isLoading = true;
@@ -101,8 +102,6 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
       status: this.metadata.status || 'unknown',
     };
   }
-
-  private readonly IPFS_GATEWAY = 'https://ipfs.io/ipfs/';
 
   resolveIconUrl(icon?: string): string | null {
     if (!icon) return null;
