@@ -104,9 +104,6 @@
   &.sighash-67 {
     --sigColor: gold;
   }
-  // &.sighash-someotherhexvalue {
-  //   --sigColor: cornflowerblue;
-  // }
   &.sighash-97 {
     --sigColor: darkviolet;
   }
@@ -116,9 +113,19 @@
   &.sighash-99 {
     --sigColor: var(--pink);
   }
+  &.sighash-193 {
+    --sigColor: cornflowerblue;
+  }
+  &.sighash-194 {
+    --sigColor: greenyellow;
+  }
+  &.sighash-195 {
+    --sigColor: orchid;
+  }
   &.sig-no-lock {
     --sigColor: var(--red);
   }
+
   color: var(--sigColor);
 
   &.sig-key {

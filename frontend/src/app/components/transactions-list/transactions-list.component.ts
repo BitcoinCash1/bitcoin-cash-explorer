@@ -613,16 +613,16 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
 
     if (observables.length > 0) {
       // Wait for all HTTP requests to complete
-      forkJoin(observables.map((obs) => obs.metadata$)).pipe(
-        catchError(() => of([] as BcmrMetadata[]))
-      ).subscribe((results) => {
-        results.forEach((metadata, index) => {
-          const category = observables[index].category;
-          map.set(category, metadata);
+      forkJoin(observables.map((obs) => obs.metadata$))
+        .pipe(catchError(() => of([] as BcmrMetadata[])))
+        .subscribe((results) => {
+          results.forEach((metadata, index) => {
+            const category = observables[index].category;
+            map.set(category, metadata);
+          });
+          // Emit the new map to the subject only after all requests are done
+          this.bcmrMetadataSubject.next(map);
         });
-        // Emit the new map to the subject only after all requests are done
-        this.bcmrMetadataSubject.next(map);
-      });
     } else {
       // No new categories to fetch, emit the current map
       this.bcmrMetadataSubject.next(map);
