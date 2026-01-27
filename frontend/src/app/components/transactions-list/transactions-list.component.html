@@ -130,6 +130,7 @@
                         [routerLink]="['/tx/' | relativeUrl, vin.txid]"
                         [fragment]="'vout=' + vin.vout"
                         class="red"
+                        ngbTooltip="Spent"
                       >
                         <fa-icon
                           [icon]="['fas', 'arrow-alt-circle-right']"
@@ -719,6 +720,7 @@
                           else spent
                         "
                         class="green"
+                        ngbTooltip="Unspent"
                       >
                         <fa-icon
                           [icon]="['fas', 'arrow-alt-circle-right']"
@@ -734,6 +736,7 @@
                           ]"
                           [fragment]="'vin=' + tx._outspends[vindex].vin"
                           class="red"
+                          ngbTooltip="Spent"
                         >
                           <fa-icon
                             [icon]="['fas', 'arrow-alt-circle-right']"
@@ -745,6 +748,7 @@
                             <fa-icon
                               [icon]="['fas', 'arrow-alt-circle-right']"
                               [fixedWidth]="true"
+                              ngbTooltip="Spent"
                             ></fa-icon>
                           </span>
                         </ng-template>
