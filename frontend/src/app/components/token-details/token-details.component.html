@@ -178,7 +178,7 @@
                       track uri.key
                     ) {
                       <div class="col-md-6 mb-2">
-                        <strong>{{ uri.key }}:</strong>
+                        <strong>{{ uri.key | titlecase }}:</strong>
                         <a
                           [href]="uri.value"
                           target="_blank"
