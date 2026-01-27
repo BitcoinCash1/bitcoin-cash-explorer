@@ -38,8 +38,10 @@ export class BcmrService {
     }
 
     // If not in cache, fetch from API and cache the result
-    // also set responseType: 'json'
-    const httpOptions = { headers: { 'User-Agent': 'BCHExplorer/3.3' } };
+    const httpOptions = {
+      headers: { Accept: 'application/json', 'User-Agent': 'BCHExplorer/3.3' },
+      responseType: 'json' as const,
+    };
     return this.httpClient
       .get<BcmrMetadata>(
         `${this.stateService.env.BCMR_API}/tokens/${encodeURIComponent(category)}`,

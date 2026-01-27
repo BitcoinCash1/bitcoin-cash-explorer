@@ -26,13 +26,13 @@ import {
   Vin,
   Vout,
 } from '@app/interfaces/backend-api.interface';
-import { BcmrMetadata } from '@app/interfaces/bcmr-api.interface';
-import { BcmrService } from '@app/services/bcmr.service';
+import { BcmrMetadata } from '../../interfaces/bcmr-api.interface';
 import { ElectrsApiService } from '@app/services/backend-api.service';
 import { map, tap, switchMap } from 'rxjs/operators';
 import { BlockExtended } from '@interfaces/node-api.interface';
 import { PriceService } from '@app/services/price.service';
 import { StorageService } from '@app/services/storage.service';
+import { BcmrService } from '@app/services/bcmr.service';
 import {
   ADDRESS_SIMILARITY_THRESHOLD,
   AddressMatch,
@@ -104,6 +104,8 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   signaturesPreference: SignaturesMode = null;
   signaturesOverride: SignaturesMode = null;
   signaturesMode: SignaturesMode = 'interesting';
+
+  bcmrMetadata = new Map<string, BcmrMetadata>(); // key is the category (token id)
 
   constructor(
     public stateService: StateService,
@@ -380,9 +382,7 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
           }
         }
         tx['_showSignatures'] = this.shouldShowSignatures(tx);
-        tx['_hasCashTokenVin'] = tx.vin.some(
-          (vin) => vin?.prevout?.token_category
-        );
+        tx['_hasCashTokenVin'] = tx.vin.some((vin) => vin?.token_category);
         tx['_hasCashTokenVout'] = tx.vout.some((vout) => vout?.token_category);
 
         tx.largeInput =
@@ -408,6 +408,8 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
         this.refreshOutspends$.next(txIds);
       }
     }
+
+    this.retrieveBcmrMetadata();
   }
 
   updateAddressSimilarities(): void {
@@ -563,6 +565,39 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
+  retrieveBcmrMetadata(tx?: Transaction): void {
+    let transactions = this.transactions;
+    if (tx) {
+      transactions = [tx];
+    }
+    const uniqueCategories = new Set<string>();
+    transactions.forEach((tx) => {
+      // loop over the tx.vin until we hit the current limit of getVinLimit(tx)
+      tx.vin.slice(0, this.getVinLimit(tx)).forEach((vin) => {
+        if (vin?.token_category) {
+          uniqueCategories.add(vin.token_category);
+        }
+      });
+      // loop ove the tx.vout until we hit the current limit of getVoutLimit(tx)
+      tx.vout.slice(0, this.getVoutLimit(tx)).forEach((vout) => {
+        if (vout?.token_category) {
+          uniqueCategories.add(vout.token_category);
+        }
+      });
+    });
+    // Only retrieve unique categories
+    uniqueCategories.forEach((category) => {
+      // If the category is already in the cache, skip it
+      if (this.bcmrMetadata.has(category)) {
+        return;
+      }
+      // On top of that, we also have cache in the bcmr service
+      this.bcmrService.getBcmrMetadata(category).subscribe((metadata) => {
+        this.bcmrMetadata.set(category, metadata);
+      });
+    });
+  }
+
   // assume any address with 12 or more contiguous repeated substrings is fake
   fakeScriptHashRegex = new RegExp(/(.+?)\1{11,}/);
   isFakeScripthash(vout: Vout): boolean {
@@ -645,10 +680,12 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   showMoreInputs(tx: Transaction): void {
     this.loadMoreInputs(tx);
     tx['@vinLimit'] = this.getVinLimit(tx, true);
+    this.retrieveBcmrMetadata(tx);
   }
 
   showMoreOutputs(tx: Transaction): void {
     tx['@voutLimit'] = this.getVoutLimit(tx, true);
+    this.retrieveBcmrMetadata(tx);
   }
 
   hasVinCashToken(tx: Transaction): boolean {
@@ -696,8 +733,6 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     }
     return limit;
   }
-
-  // this.bcmrService.getBcmrMetadata(category);
 
   toggleShowFullScript(vinIndex: number): void {
     this.showFullScript[vinIndex] = !this.showFullScript[vinIndex];

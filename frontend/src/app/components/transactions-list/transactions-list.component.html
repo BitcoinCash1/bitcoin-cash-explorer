@@ -266,6 +266,10 @@
                         </ng-template>
                       </ng-container>
                     </div>
+                    <!-- in case there a  vin.token_category -->
+                    <ng-container *ngIf="vin.token_category">
+                      <span class="text-muted">Token {{ vindex }} </span>
+                    </ng-container>
                   </td>
                   <td
                     class="text-right nowrap amount"
