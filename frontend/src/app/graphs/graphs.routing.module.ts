@@ -21,6 +21,7 @@ import { CustomDashboardComponent } from '@components/custom-dashboard/custom-da
 import { TreasuriesComponent } from '@components/treasuries/treasuries.component';
 import { AddressComponent } from '@components/address/address.component';
 import { WalletComponent } from '@components/wallet/wallet.component';
+import { TokenDetailsComponent } from '@components/token-details/token-details.component';
 
 const browserWindow = window || {};
 // @ts-ignore
@@ -62,6 +63,15 @@ const routes: Routes = [
         path: 'address/:id',
         children: [],
         component: AddressComponent,
+        data: {
+          ogImage: true,
+          networkSpecific: true,
+        },
+      },
+      {
+        path: 'token/:category',
+        children: [],
+        component: TokenDetailsComponent,
         data: {
           ogImage: true,
           networkSpecific: true,
