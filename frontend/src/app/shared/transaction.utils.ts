@@ -238,6 +238,7 @@ export function processInputSignatures(vin: Vin): SigInfo[] {
       break;
     case 'p2sh':
       {
+        // TODO: Pretty sure this is broken as well, at least not complete.
         signatures = [
           ...extractDERSignaturesASM(vin.scriptsig_asm),
           ...extractDERSignaturesASM(vin.inner_redeemscript_asm),
