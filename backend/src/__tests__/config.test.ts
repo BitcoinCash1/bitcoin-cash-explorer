@@ -8,7 +8,7 @@ describe('Mempool Backend Config', () => {
 
   test('should return defaults when no file is present', () => {
     jest.isolateModules(() => {
-      jest.mock('../../mempool-config.json', () => ({}), { virtual: true });
+      jest.mock('../../explorer-config.json', () => ({}), { virtual: true });
 
       const config = jest.requireActual('../config').default;
 
@@ -148,8 +148,8 @@ describe('Mempool Backend Config', () => {
 
   test('should override the default values with the passed values', () => {
     jest.isolateModules(() => {
-      const fixture = JSON.parse(fs.readFileSync(`${__dirname}/../__fixtures__/mempool-config.template.json`, 'utf8'));
-      jest.mock('../../mempool-config.json', () => fixture, { virtual: true });
+      const fixture = JSON.parse(fs.readFileSync(`${__dirname}/../__fixtures__/explorer-config.template.json`, 'utf8'));
+      jest.mock('../../explorer-config.json', () => fixture, { virtual: true });
 
       const config = jest.requireActual('../config').default;
 
@@ -182,7 +182,7 @@ describe('Mempool Backend Config', () => {
   test('should ensure the docker start.sh script has default values', () => {
     jest.isolateModules(() => {
       const startSh = fs.readFileSync(`${__dirname}/../../../docker/backend/start.sh`, 'utf-8');
-      const fixture = JSON.parse(fs.readFileSync(`${__dirname}/../__fixtures__/mempool-config.template.json`, 'utf8'));
+      const fixture = JSON.parse(fs.readFileSync(`${__dirname}/../__fixtures__/explorer-config.template.json`, 'utf8'));
 
       function parseJson(jsonObj, root?) {
         for (const [key, value] of Object.entries(jsonObj)) {
@@ -220,7 +220,7 @@ describe('Mempool Backend Config', () => {
             }
 
             //The string that actually replaces the values in the config file
-            const sedStr = 'sed -i "s!' + replaceStr + '!${' + replaceStr + '}!g" mempool-config.json';
+            const sedStr = 'sed -i "s!' + replaceStr + '!${' + replaceStr + '}!g" explorer-config.json';
             if (process.env.CI) {
               console.log(`looking for ${sedStr} in the start.sh script`);
             }
@@ -235,10 +235,10 @@ describe('Mempool Backend Config', () => {
     });
   });
 
-  test('should ensure that the mempool-config.json Docker template has all the keys', () => {
+  test('should ensure that the explorer-config.json Docker template has all the keys', () => {
     jest.isolateModules(() => {
-      const fixture = JSON.parse(fs.readFileSync(`${__dirname}/../__fixtures__/mempool-config.template.json`, 'utf8'));
-      const dockerJson = fs.readFileSync(`${__dirname}/../../../docker/backend/mempool-config.json`, 'utf-8');
+      const fixture = JSON.parse(fs.readFileSync(`${__dirname}/../__fixtures__/explorer-config.template.json`, 'utf8'));
+      const dockerJson = fs.readFileSync(`${__dirname}/../../../docker/backend/explorer-config.json`, 'utf-8');
 
       function parseJson(jsonObj, root?) {
         for (const [key, value] of Object.entries(jsonObj)) {

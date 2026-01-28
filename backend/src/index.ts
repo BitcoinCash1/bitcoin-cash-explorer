@@ -170,7 +170,7 @@ class Server {
       !poolsUpdater.currentSha
     ) {
       logger.err(
-        `Failed to retreive pools-v2.json sha, cannot run block indexing. Please make sure you've set valid urls in your mempool-config.json::MEMPOOL::POOLS_JSON_URL and mempool-config.json::MEMPOOL::POOLS_JSON_TREE_UR, aborting now`
+        `Failed to retreive pools-v2.json sha, cannot run block indexing. Please make sure you've set valid urls in your explorer-config.json::MEMPOOL::POOLS_JSON_URL and explorer-config.json::MEMPOOL::POOLS_JSON_TREE_UR, aborting now`
       );
       return process.exit(1);
     }
