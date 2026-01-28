@@ -1,0 +1,45 @@
+services:
+  web:
+    environment:
+      FRONTEND_HTTP_PORT: "8080"
+      BACKEND_MAINNET_HTTP_HOST: "api"
+    image: bitcoin-cash-explorer/frontend:latest
+    user: "1000:1000"
+    restart: on-failure
+    stop_grace_period: 1m
+    command: "./wait-for db:3306 --timeout=720 -- nginx -g 'daemon off;'"
+    ports:
+      - 80:8080
+  api:
+    environment:
+      MEMPOOL_BACKEND: "none"
+      CORE_RPC_HOST: "172.27.0.1"
+      CORE_RPC_PORT: "8332"
+      CORE_RPC_USERNAME: "explorer"
+      CORE_RPC_PASSWORD: "explorer"
+      DATABASE_ENABLED: "true"
+      DATABASE_HOST: "db"
+      DATABASE_DATABASE: "explorer"
+      DATABASE_USERNAME: "explorer"
+      DATABASE_PASSWORD: "admin"
+      STATISTICS_ENABLED: "true"
+    image: bitcoin-cash-explorer/backend:latest
+    user: "1000:1000"
+    restart: on-failure
+    stop_grace_period: 1m
+    command: "./wait-for-it.sh db:3306 --timeout=720 --strict -- ./start.sh"
+    volumes:
+      - ./data:/backend/cache
+  db:
+    environment:
+      MYSQL_DATABASE: "explorer"
+      MYSQL_USER: "explorer"
+      MYSQL_PASSWORD: "explorer"
+      MYSQL_ROOT_PASSWORD: "admin"
+      MARIADB_AUTO_UPGRADE: "1"
+    image: mariadb:12.2.1
+    user: "1000:1000"
+    restart: on-failure
+    stop_grace_period: 1m
+    volumes:
+      - ./mysql/data:/var/lib/mysql
