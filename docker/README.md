@@ -48,13 +48,13 @@ Now, run:
 docker-compose up
 ```
 
-Your Mempool instance should be running at http://localhost. The graphs will be populated as new transactions are detected.
+Your BCH Explorer instance should be running at http://localhost. The graphs will be populated as new transactions are detected.
 
 ## Configure with Bitcoin Cash Node + Electrum Server
 
 First, configure `bitcoind` as specified above, and make sure your Electrum Server is running and synced. See [this FAQ](https://bchexplorer.cash/docs/faq#address-lookup-issues) if you need help picking an Electrum Server implementation.
 
-Then, set the following variables in `docker-compose.yml` so Mempool can connect to your Electrum Server:
+Then, set the following variables in `docker-compose.yml` so BCH Explorer can connect to your Electrum Server:
 
 ```yaml
 api:
@@ -67,12 +67,12 @@ api:
 
 Eligible values for `MEMPOOL_BACKEND`:
 
-- "electrum" if you're using [romanz/electrs](https://github.com/romanz/electrs) or [cculianu/Fulcrum](https://github.com/cculianu/Fulcrum)
+- "electrum" if you're using [cculianu/Fulcrum](https://github.com/cculianu/Fulcrum)
 - "none" if you're not using any Electrum Server
 
 Of course, if your Docker host IP address is different, update accordingly.
 
-With `bitcoind` and Electrum Server set up, run Mempool with:
+With `bitcoind` (BCHN) and Electrum Server set up, run BCH Explorer with:
 
 ```bash
 docker-compose up
