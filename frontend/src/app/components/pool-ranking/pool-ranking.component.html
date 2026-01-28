@@ -270,7 +270,7 @@
       <thead>
         <tr>
           <th class="d-none d-md-table-cell" i18n="mining.rank">Rank</th>
-          <th class="pool" i18n="mining.pool-name">Pool</th>
+          <th class="pool text-left" i18n="mining.pool-name">Pool</th>
           <th
             class=""
             *ngIf="['24h', '3d', '1w'].includes(this.miningWindowPreference)"
@@ -315,7 +315,7 @@
         <tr *ngFor="let pool of miningStats.pools">
           <td class="d-none d-md-table-cell">{{ pool.rank }}</td>
           <td>
-            <div class="d-flex justify-content-center align-items-center">
+            <div class="d-flex align-items-center">
               <img
                 width="25"
                 height="25"
