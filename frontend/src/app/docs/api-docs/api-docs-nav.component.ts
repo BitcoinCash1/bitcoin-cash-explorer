@@ -1,7 +1,5 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { Env, StateService } from '@app/services/state.service';
-import { Subject, Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import {
   restApiDocsData,
   wsApiDocsData,
@@ -18,25 +16,18 @@ export class ApiDocsNavComponent implements OnInit {
   @Input() network: any;
   @Input() whichTab: string;
   @Output() navLinkClickEvent: EventEmitter<any> = new EventEmitter();
-  private destroy$: Subject<any> = new Subject<any>();
   env: Env;
   tabData: any[];
   auditEnabled: boolean;
   officialMempoolInstance: boolean;
-  isMempoolSpaceBuild: boolean;
-  runningElectrs: boolean;
+  isOfficialSiteBuild: boolean;
 
   constructor(private stateService: StateService) {}
 
   ngOnInit(): void {
     this.env = this.stateService.env;
     this.officialMempoolInstance = this.env.OFFICIAL_BCH_EXPLORER;
-    this.isMempoolSpaceBuild = this.stateService.isMempoolSpaceBuild;
-    this.stateService.backend$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((backend) => {
-        this.runningElectrs = false; // We do not provide esplora and electrs support
-      });
+    this.isOfficialSiteBuild = this.stateService.isOfficialSiteBuild;
     this.auditEnabled = this.env.AUDIT;
     if (this.whichTab === 'rest') {
       this.tabData = restApiDocsData;
@@ -50,10 +41,5 @@ export class ApiDocsNavComponent implements OnInit {
   navLinkClick(event, fragment) {
     event.preventDefault();
     this.navLinkClickEvent.emit({ event: event, fragment: fragment });
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 }

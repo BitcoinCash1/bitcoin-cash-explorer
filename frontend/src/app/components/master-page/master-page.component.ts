@@ -23,8 +23,7 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   connectionState$: Observable<number>;
   navCollapsed = false;
   isMobile = window.innerWidth <= 767.98;
-  officialMempoolSpace = this.stateService.env.OFFICIAL_BCH_EXPLORER;
-  officialMempoolSpaceBuild = this.stateService.isMempoolSpaceBuild;
+  isOfficialSiteBuild = this.stateService.isOfficialSiteBuild;
   urlLanguage: string;
   subdomain = '';
   networkPaths: { [network: string]: string };

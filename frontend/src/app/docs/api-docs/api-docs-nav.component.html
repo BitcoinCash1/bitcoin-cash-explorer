@@ -33,11 +33,7 @@
           item.options.hasOwnProperty('auditOnly') &&
           item.options.auditOnly &&
           auditEnabled) ||
-        !item.hasOwnProperty('options') ||
-        (item.hasOwnProperty('options') &&
-          item.options.hasOwnProperty('electrsOnly') &&
-          item.options.electrsOnly &&
-          runningElectrs))
+        !item.hasOwnProperty('options'))
     "
     (click)="navLinkClick($event, item.fragment)"
     >{{ item.title }}</a

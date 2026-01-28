@@ -143,7 +143,7 @@ const routes: Routes = [
   },
 ];
 
-if (window['isMempoolSpaceBuild']) {
+if (window['isOfficialSiteBuild']) {
   routes[0].children.push({
     path: 'faucet',
     canActivate: [

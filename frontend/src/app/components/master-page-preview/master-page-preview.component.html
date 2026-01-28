@@ -13,7 +13,7 @@
         }
         @if (!enterpriseInfo || enterpriseInfo.dualLogo) {
           <app-svg-images
-            *ngIf="!officialMempoolSpace"
+            *ngIf="!officialSite"
             name="mempoolSpace"
             viewBox="0 0 500 126"
             width="500"
@@ -22,7 +22,7 @@
             style="width: 200px; height: 50px"
           ></app-svg-images>
           <app-svg-images
-            *ngIf="officialMempoolSpace"
+            *ngIf="officialSite"
             name="officialMempoolSpace"
             style="width: 200px; height: 50px"
             width="500"

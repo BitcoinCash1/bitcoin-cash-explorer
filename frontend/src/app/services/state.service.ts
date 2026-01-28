@@ -148,7 +148,7 @@ const defaultEnv: Env = {
 export class StateService {
   referrer: string = '';
   isBrowser: boolean = isPlatformBrowser(this.platformId);
-  isMempoolSpaceBuild = window['isMempoolSpaceBuild'] ?? false;
+  isOfficialSiteBuild = window['isOfficialSiteBuild'] ?? false;
   isProdDomain: boolean;
   backend: 'electrum' | 'none' = 'electrum';
   network = '';

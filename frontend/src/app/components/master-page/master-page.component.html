@@ -262,7 +262,7 @@
             routerLinkActive="active"
             id="btn-faucet"
             *ngIf="
-              stateService.isMempoolSpaceBuild &&
+              stateService.isOfficialSiteBuild &&
               stateService.env.OFFICIAL_BCH_EXPLORER &&
               stateService.network === 'testnet4'
             "
@@ -285,7 +285,7 @@
             class="nav-item"
             routerLinkActive="active"
             id="btn-docs"
-            *ngIf="!officialMempoolSpaceBuild"
+            *ngIf="!isOfficialSiteBuild"
           >
             <a
               class="nav-link"

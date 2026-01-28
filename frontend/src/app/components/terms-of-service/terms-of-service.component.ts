@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { Env, StateService } from '@app/services/state.service';
 import { SeoService } from '@app/services/seo.service';
 import { OpenGraphService } from '@app/services/opengraph.service';
 
@@ -9,10 +8,7 @@ import { OpenGraphService } from '@app/services/opengraph.service';
   standalone: false,
 })
 export class TermsOfServiceComponent {
-  officialMempoolSpace = this.stateService.env.OFFICIAL_BCH_EXPLORER;
-
   constructor(
-    private stateService: StateService,
     private seoService: SeoService,
     private ogService: OpenGraphService
   ) {}

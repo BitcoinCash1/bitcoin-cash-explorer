@@ -240,7 +240,7 @@ const routes: Routes = [
   },
 ];
 
-if (!window['isMempoolSpaceBuild']) {
+if (!window['isOfficialSiteBuild']) {
   routes.push({
     path: '**',
     redirectTo: '',

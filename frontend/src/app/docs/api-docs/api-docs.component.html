@@ -136,11 +136,7 @@
               (item.hasOwnProperty('options') &&
                 item.options.hasOwnProperty('officialOnly') &&
                 item.options.officialOnly &&
-                officialMempoolInstance) ||
-              (item.hasOwnProperty('options') &&
-                item.options.hasOwnProperty('electrsOnly') &&
-                item.options.electrsOnly &&
-                runningElectrs)
+                officialMempoolInstance)
             "
           >
             <h3
@@ -329,28 +325,6 @@
               </div>
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-
-    <div id="electrs" *ngIf="whichTab === 'electrs'">
-      <div class="doc-content no-sidebar">
-        <div class="doc-item-container">
-          <p class="subtitle">Hostname</p>
-          <p>{{ plainHostname }}</p>
-          <p class="subtitle">Port</p>
-          <p>{{ electrsPort }}</p>
-          <p class="subtitle">SSL</p>
-          <p>Enabled</p>
-          <p
-            class="note"
-            *ngIf="network.val !== 'signet' && network.val !== 'testnet4'"
-          >
-            Electrum RPC interface for
-            <a href="/signet/docs/api/electrs">Bitcoin Cash Signet</a> and
-            <a href="/testnet4/docs/api/electrs">Bitcoin Cash Testnet4</a> is
-            publicly available.
-          </p>
         </div>
       </div>
     </div>

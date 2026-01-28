@@ -57,7 +57,7 @@
             </div>
           }
           <a
-            *ngIf="stateService.isMempoolSpaceBuild"
+            *ngIf="stateService.isOfficialSiteBuild"
             class="btn btn-purple sponsor d-none justify-content-center"
             [ngClass]="isServicesPage ? 'd-lg-flex' : 'd-md-flex'"
             [routerLink]="['/login']"
@@ -81,7 +81,7 @@
         }
 
         <a
-          *ngIf="stateService.isMempoolSpaceBuild"
+          *ngIf="stateService.isOfficialSiteBuild"
           class="btn btn-purple sponsor d-flex justify-content-center ml-auto mr-auto mt-0 mb-2"
           [ngClass]="isServicesPage ? 'd-lg-none' : 'd-md-none'"
           [routerLink]="['/login']"
@@ -202,7 +202,7 @@
       <div
         class="links"
         *ngIf="
-          officialMempoolSpace ||
+          officialSite ||
             env.TESTNET_ENABLED ||
             env.TESTNET4_ENABLED ||
             env.SIGNET_ENABLED;
@@ -212,7 +212,7 @@
         <p class="category" i18n="footer.networks">Networks</p>
         <p
           *ngIf="
-            (officialMempoolSpace || env.BASE_MODULE === 'explorer') &&
+            (officialSite || env.BASE_MODULE === 'explorer') &&
             currentNetwork !== '' &&
             currentNetwork !== 'mainnet'
           "
@@ -223,7 +223,7 @@
         </p>
         <p
           *ngIf="
-            (officialMempoolSpace || env.BASE_MODULE === 'explorer') &&
+            (officialSite || env.BASE_MODULE === 'explorer') &&
             currentNetwork !== 'testnet' &&
             env.TESTNET_ENABLED
           "
@@ -234,7 +234,7 @@
         </p>
         <p
           *ngIf="
-            (officialMempoolSpace || env.BASE_MODULE === 'explorer') &&
+            (officialSite || env.BASE_MODULE === 'explorer') &&
             currentNetwork !== 'testnet4' &&
             env.TESTNET4_ENABLED
           "
@@ -245,7 +245,7 @@
         </p>
         <p
           *ngIf="
-            (officialMempoolSpace || env.BASE_MODULE === 'explorer') &&
+            (officialSite || env.BASE_MODULE === 'explorer') &&
             currentNetwork !== 'signet' &&
             env.SIGNET_ENABLED
           "
@@ -447,7 +447,7 @@
       [style]="{ 'background-color': isServicesPage ? 'var(--bg)' : '' }"
     >
       <div class="col-sm-12">
-        <p *ngIf="officialMempoolSpace">
+        <p *ngIf="officialSite">
           <span
             >{{ (backendInfo$ | async)?.hostname }} (v{{
               (backendInfo$ | async)?.version
@@ -465,7 +465,7 @@
             }}]</span
           >
         </p>
-        <p *ngIf="!officialMempoolSpace">
+        <p *ngIf="!officialSite">
           v{{ packetJsonVersion }} [<a
             target="_blank"
             href="https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/mempool/commit/{{

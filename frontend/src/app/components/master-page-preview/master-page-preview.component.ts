@@ -13,7 +13,7 @@ import { EnterpriseService } from '@app/services/enterprise.service';
 export class MasterPagePreviewComponent implements OnInit {
   network$: Observable<string>;
   lightning$: Observable<boolean>;
-  officialMempoolSpace = this.stateService.env.OFFICIAL_BCH_EXPLORER;
+  officialSite = this.stateService.env.OFFICIAL_BCH_EXPLORER;
   urlLanguage: string;
   subdomain = '';
   enterpriseInfo: any;

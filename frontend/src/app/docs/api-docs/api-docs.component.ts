@@ -26,7 +26,6 @@ import { FaqTemplateDirective } from '@app/docs/faq-template/faq-template.compon
 export class ApiDocsComponent implements OnInit, AfterViewInit {
   private destroy$: Subject<any> = new Subject<any>();
   plainHostname = document.location.hostname;
-  electrsPort = 0;
   hostname = document.location.hostname;
   network$: Observable<string>;
   env: Env;
@@ -39,13 +38,11 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   wsDocs: any;
   screenWidth: number;
   officialMempoolInstance: boolean;
-  runningElectrs: boolean;
   auditEnabled: boolean;
   mobileViewport: boolean = false;
   showMobileEnterpriseUpsell: boolean = true;
   timeLtrSubscription: Subscription;
   timeLtr: boolean = this.stateService.timeLtr.value;
-  isMempoolSpaceBuild = this.stateService.isMempoolSpaceBuild;
 
   @ViewChildren(FaqTemplateDirective)
   faqTemplates: QueryList<FaqTemplateDirective>;
@@ -86,11 +83,6 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   ngOnInit(): void {
     this.env = this.stateService.env;
     this.officialMempoolInstance = this.env.OFFICIAL_BCH_EXPLORER;
-    this.stateService.backend$
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((backend) => {
-        this.runningElectrs = false; // We do not provide esplora and electrs support
-      });
     this.auditEnabled = this.env.AUDIT;
     this.network$ = merge(of(''), this.stateService.networkChanged$).pipe(
       tap((network: string) => {
@@ -114,27 +106,6 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
     this.faq = faqData;
     this.restDocs = restApiDocsData;
     this.wsDocs = wsApiDocsData;
-
-    this.network$.pipe(takeUntil(this.destroy$)).subscribe((network) => {
-      switch (network) {
-        case '':
-          this.electrsPort = 50002;
-          break;
-        case 'mainnet':
-          this.electrsPort = 50002;
-          break;
-        case 'testnet':
-          this.electrsPort = 60002;
-          break;
-        case 'testnet4':
-          this.electrsPort = 40002;
-          break;
-        case 'signet':
-          this.electrsPort = 60602;
-          break;
-      }
-    });
-
     this.timeLtrSubscription = this.stateService.timeLtr.subscribe((ltr) => {
       this.timeLtr = !!ltr;
     });

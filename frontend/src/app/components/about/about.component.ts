@@ -32,7 +32,7 @@ export class AboutComponent implements OnInit {
   backendInfo$: Observable<IBackendInfo>;
   frontendGitCommitHash = this.stateService.env.GIT_COMMIT_HASH;
   packetJsonVersion = this.stateService.env.PACKAGE_JSON_VERSION;
-  officialMempoolSpace = this.stateService.env.OFFICIAL_BCH_EXPLORER;
+  officialSite = this.stateService.env.OFFICIAL_BCH_EXPLORER;
   showNavigateToSponsor = false;
 
   profiles$: Observable<any>;
@@ -135,14 +135,15 @@ export class AboutComponent implements OnInit {
   }
 
   sponsor(): void {
-    if (
-      this.officialMempoolSpace &&
-      this.stateService.env.BASE_MODULE === 'explorer'
-    ) {
-      this.router.navigateByUrl('/enterprise');
-    } else {
-      this.showNavigateToSponsor = true;
-    }
+    // For now disable the Enterprise nav
+    // if (
+    //   this.officialSite &&
+    //   this.stateService.env.BASE_MODULE === 'explorer'
+    // ) {
+    //   this.router.navigateByUrl('/enterprise');
+    // } else {
+    //   this.showNavigateToSponsor = true;
+    // }
   }
 
   showSubtitles(language): boolean {

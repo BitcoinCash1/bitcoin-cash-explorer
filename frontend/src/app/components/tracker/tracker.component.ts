@@ -128,7 +128,7 @@ export class TrackerComponent implements OnInit, OnDestroy {
 
   enterpriseInfo: any;
   enterpriseInfo$: Subscription;
-  officialMempoolSpace = this.stateService.env.OFFICIAL_BCH_EXPLORER;
+  officialSite = this.stateService.env.OFFICIAL_BCH_EXPLORER;
 
   constructor(
     private route: ActivatedRoute,

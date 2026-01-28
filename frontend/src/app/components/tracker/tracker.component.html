@@ -19,7 +19,7 @@
         @if (!enterpriseInfo || enterpriseInfo.dualLogo) {
           <a [routerLink]="['/' | relativeUrl]">
             <app-svg-images
-              *ngIf="!officialMempoolSpace"
+              *ngIf="!officialSite"
               name="mempoolSpace"
               style="width: 144px; height: 36px"
               viewBox="0 0 500 126"
@@ -28,7 +28,7 @@
               class="mempool-logo"
             ></app-svg-images>
             <app-svg-images
-              *ngIf="officialMempoolSpace"
+              *ngIf="officialSite"
               name="officialMempoolSpace"
               style="width: 144px; height: 36px"
               width="500"
