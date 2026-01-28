@@ -30,7 +30,7 @@ export class ApiDocsNavComponent implements OnInit {
 
   ngOnInit(): void {
     this.env = this.stateService.env;
-    this.officialMempoolInstance = this.env.OFFICIAL_MEMPOOL_SPACE;
+    this.officialMempoolInstance = this.env.OFFICIAL_BCH_EXPLORER;
     this.isMempoolSpaceBuild = this.stateService.isMempoolSpaceBuild;
     this.stateService.backend$
       .pipe(takeUntil(this.destroy$))

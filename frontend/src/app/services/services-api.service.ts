@@ -143,7 +143,7 @@ export class ServicesApiServices {
   }
 
   getJWT$() {
-    if (!this.stateService.env.OFFICIAL_MEMPOOL_SPACE) {
+    if (!this.stateService.env.OFFICIAL_BCH_EXPLORER) {
       return of(null);
     }
     return this.httpClient.get<any>(

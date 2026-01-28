@@ -10,7 +10,7 @@ import { OpenGraphService } from '@app/services/opengraph.service';
   standalone: false,
 })
 export class PrivacyPolicyComponent {
-  officialMempoolSpace = this.stateService.env.OFFICIAL_MEMPOOL_SPACE;
+  officialMempoolSpace = this.stateService.env.OFFICIAL_BCH_EXPLORER;
 
   constructor(
     private stateService: StateService,

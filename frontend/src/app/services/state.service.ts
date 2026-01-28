@@ -74,7 +74,7 @@ export interface Env {
   SIGNET_ENABLED: boolean;
   ITEMS_PER_PAGE: number;
   KEEP_BLOCKS_AMOUNT: number;
-  OFFICIAL_MEMPOOL_SPACE: boolean;
+  OFFICIAL_BCH_EXPLORER: boolean;
   BASE_MODULE: string;
   ROOT_NETWORK: string;
   NGINX_PROTOCOL?: string;
@@ -84,7 +84,7 @@ export interface Env {
   MEMPOOL_BLOCKS_AMOUNT: number;
   GIT_COMMIT_HASH: string;
   PACKAGE_JSON_VERSION: string;
-  MEMPOOL_WEBSITE_URL: string;
+  WEBSITE_URL: string;
   MINING_DASHBOARD: boolean;
   AUDIT: boolean;
   MAINNET_BLOCK_AUDIT_START_HEIGHT: number;
@@ -115,7 +115,7 @@ const defaultEnv: Env = {
   ROOT_NETWORK: '',
   ITEMS_PER_PAGE: 10,
   KEEP_BLOCKS_AMOUNT: 8,
-  OFFICIAL_MEMPOOL_SPACE: false,
+  OFFICIAL_BCH_EXPLORER: false,
   NGINX_PROTOCOL: 'http',
   NGINX_HOSTNAME: '127.0.0.1',
   NGINX_PORT: '80',
@@ -123,7 +123,7 @@ const defaultEnv: Env = {
   MEMPOOL_BLOCKS_AMOUNT: 8,
   GIT_COMMIT_HASH: '',
   PACKAGE_JSON_VERSION: '',
-  MEMPOOL_WEBSITE_URL: 'https://bchexplorer.cash',
+  WEBSITE_URL: 'https://bchexplorer.cash',
   MINING_DASHBOARD: true,
   AUDIT: false,
   MAINNET_BLOCK_AUDIT_START_HEIGHT: 0,

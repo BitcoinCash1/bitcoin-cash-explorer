@@ -32,7 +32,7 @@ export class AboutComponent implements OnInit {
   backendInfo$: Observable<IBackendInfo>;
   frontendGitCommitHash = this.stateService.env.GIT_COMMIT_HASH;
   packetJsonVersion = this.stateService.env.PACKAGE_JSON_VERSION;
-  officialMempoolSpace = this.stateService.env.OFFICIAL_MEMPOOL_SPACE;
+  officialMempoolSpace = this.stateService.env.OFFICIAL_BCH_EXPLORER;
   showNavigateToSponsor = false;
 
   profiles$: Observable<any>;

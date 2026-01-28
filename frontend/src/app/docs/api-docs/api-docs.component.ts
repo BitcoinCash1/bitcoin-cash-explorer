@@ -85,7 +85,7 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.env = this.stateService.env;
-    this.officialMempoolInstance = this.env.OFFICIAL_MEMPOOL_SPACE;
+    this.officialMempoolInstance = this.env.OFFICIAL_BCH_EXPLORER;
     this.stateService.backend$
       .pipe(takeUntil(this.destroy$))
       .subscribe((backend) => {

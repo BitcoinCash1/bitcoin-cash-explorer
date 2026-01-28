@@ -33,7 +33,7 @@ export class GlobalFooterComponent implements OnInit, OnDestroy, OnChanges {
 
   private destroy$: Subject<any> = new Subject<any>();
   env: Env;
-  officialMempoolSpace = this.stateService.env.OFFICIAL_MEMPOOL_SPACE;
+  officialMempoolSpace = this.stateService.env.OFFICIAL_BCH_EXPLORER;
   mempoolSpaceBuild = window['isMempoolSpaceBuild'];
   backendInfo$: Observable<IBackendInfo>;
   servicesBackendInfo$: Observable<IBackendInfo>;
@@ -117,7 +117,7 @@ export class GlobalFooterComponent implements OnInit, OnDestroy, OnChanges {
       return (
         (this.env.BASE_MODULE === 'explorer'
           ? ''
-          : this.env.MEMPOOL_WEBSITE_URL + this.urlLanguage) +
+          : this.env.WEBSITE_URL + this.urlLanguage) +
           this.networkPaths[thisNetwork] || '/'
       );
     }

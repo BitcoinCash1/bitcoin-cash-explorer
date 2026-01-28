@@ -12,7 +12,7 @@
   "MEMPOOL_BLOCKS_AMOUNT": 8,
   "BASE_MODULE": "explorer",
   "ROOT_NETWORK": "",
-  "MEMPOOL_WEBSITE_URL": "https://bchexplorer.cash",
+  "WEBSITE_URL": "https://bchexplorer.cash",
   "MINING_DASHBOARD": true,
   "AUDIT": false,
   "MAINNET_BLOCK_AUDIT_START_HEIGHT": 0,

@@ -196,7 +196,7 @@ export function getTargetUrl(
     toNetwork === 'testnet4' ||
     toNetwork === 'signet'
   ) {
-    targetUrl = env.MEMPOOL_WEBSITE_URL;
+    targetUrl = env.WEBSITE_URL;
     targetUrl += toNetwork === 'mainnet' ? '' : `/${toNetwork}`;
     targetUrl += '/address/';
     targetUrl += address;

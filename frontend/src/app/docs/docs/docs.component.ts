@@ -32,7 +32,7 @@ export class DocsComponent implements OnInit {
     this.websocket.want(['blocks']);
     this.env = this.stateService.env;
     this.showFaqTab = this.env.BASE_MODULE === 'explorer' ? true : false;
-    this.showElectrsTab = this.stateService.env.OFFICIAL_MEMPOOL_SPACE;
+    this.showElectrsTab = this.stateService.env.OFFICIAL_BCH_EXPLORER;
 
     document.querySelector<HTMLElement>('html').style.scrollBehavior = 'smooth';
   }
