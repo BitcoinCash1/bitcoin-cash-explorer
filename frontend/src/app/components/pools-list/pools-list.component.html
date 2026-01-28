@@ -1,6 +1,14 @@
 <app-indexing-progress></app-indexing-progress>
 
 <div class="container-xl" *ngIf="!error; else errorTemplate">
+  <div
+    class="float-left"
+    style="display: flex; width: 100%; align-items: center"
+  >
+    <h1 i18n="master-page.pools">Mining Pools</h1>
+    <div *ngIf="isLoading" class="spinner-border" role="status"></div>
+  </div>
+
   <table
     class="table table-borderless"
     [alwaysCallback]="true"
