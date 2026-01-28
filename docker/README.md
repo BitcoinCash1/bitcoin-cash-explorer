@@ -7,6 +7,7 @@ If you are looking to use these Docker images to deploy your own instance of Mem
 See a video guide of this installation method by k3tan [on BitcoinTV.com](https://bitcointv.com/w/8fpAx6rf5CQ16mMhospwjg).
 
 Jump to a section in this doc:
+
 - [Configure with Bitcoin Cash Node Only](#configure-with-bitcoin-cash-node-only)
 - [Configure with Bitcoin Cash Node + Electrum Server](#configure-with-bitcoin-cash-node--electrum-server)
 - [Further Configuration](#further-configuration)
@@ -27,14 +28,14 @@ rpcpassword=explorer
 If you want to use different credentials, specify them in the `docker-compose.yml` file:
 
 ```yaml
-  api:
-    environment:
-      MEMPOOL_BACKEND: "none"
-      CORE_RPC_HOST: "172.27.0.1"
-      CORE_RPC_PORT: "8332"
-      CORE_RPC_USERNAME: "customuser"
-      CORE_RPC_PASSWORD: "custompassword"
-      CORE_RPC_TIMEOUT: "60000"
+api:
+  environment:
+    MEMPOOL_BACKEND: "none"
+    CORE_RPC_HOST: "172.27.0.1"
+    CORE_RPC_PORT: "8332"
+    CORE_RPC_USERNAME: "customuser"
+    CORE_RPC_PASSWORD: "custompassword"
+    CORE_RPC_TIMEOUT: "60000"
 ```
 
 The IP address in the example above refers to Docker's default gateway IP address so that the container can hit the `bitcoind` instance running on the host machine. If your setup is different, update it accordingly.
@@ -56,17 +57,18 @@ First, configure `bitcoind` as specified above, and make sure your Electrum Serv
 Then, set the following variables in `docker-compose.yml` so Mempool can connect to your Electrum Server:
 
 ```yaml
-  api:
-    environment:
-      MEMPOOL_BACKEND: "electrum"
-      ELECTRUM_HOST: "172.27.0.1"
-      ELECTRUM_PORT: "50002"
-      ELECTRUM_TLS_ENABLED: "false"
+api:
+  environment:
+    MEMPOOL_BACKEND: "electrum"
+    ELECTRUM_HOST: "172.27.0.1"
+    ELECTRUM_PORT: "50002"
+    ELECTRUM_TLS_ENABLED: "false"
 ```
 
 Eligible values for `MEMPOOL_BACKEND`:
-  - "electrum" if you're using [romanz/electrs](https://github.com/romanz/electrs) or [cculianu/Fulcrum](https://github.com/cculianu/Fulcrum)
-  - "none" if you're not using any Electrum Server
+
+- "electrum" if you're using [romanz/electrs](https://github.com/romanz/electrs) or [cculianu/Fulcrum](https://github.com/cculianu/Fulcrum)
+- "none" if you're not using any Electrum Server
 
 Of course, if your Docker host IP address is different, update accordingly.
 
@@ -80,11 +82,12 @@ docker-compose up
 
 Optionally, you can override any other backend settings from `explorer-config.json`.
 
-Below we list all settings from `explorer-config.json` and the corresponding overrides you can make in the `api` > `environment` section of `docker-compose.yml`. 
+Below we list all settings from `explorer-config.json` and the corresponding overrides you can make in the `api` > `environment` section of `docker-compose.yml`.
 
 <br/>
 
 `explorer-config.json`:
+
 ```json
   "MEMPOOL": {
     "NETWORK": "mainnet",
@@ -116,6 +119,7 @@ Below we list all settings from `explorer-config.json` and the corresponding ove
 ```
 
 Corresponding `docker-compose.yml` overrides:
+
 ```yaml
   api:
     environment:
@@ -143,12 +147,14 @@ Corresponding `docker-compose.yml` overrides:
       MEMPOOL_MAX_BLOCKS_BULK_QUERY: ""
       MEMPOOL_DISK_CACHE_BLOCK_INTERVAL: ""
       MEMPOOL_PRICE_UPDATES_PER_HOUR: ""
+      MEMPOOL_MAX_TRACKED_ADDRESSES: ""
       ...
 ```
 
 <br/>
 
 `explorer-config.json`:
+
 ```json
   "CORE_RPC": {
     "HOST": "127.0.0.1",
@@ -162,6 +168,7 @@ Corresponding `docker-compose.yml` overrides:
 ```
 
 Corresponding `docker-compose.yml` overrides:
+
 ```yaml
   api:
     environment:
@@ -178,6 +185,7 @@ Corresponding `docker-compose.yml` overrides:
 <br/>
 
 `explorer-config.json`:
+
 ```json
   "ELECTRUM": {
     "HOST": "127.0.0.1",
@@ -187,6 +195,7 @@ Corresponding `docker-compose.yml` overrides:
 ```
 
 Corresponding `docker-compose.yml` overrides:
+
 ```yaml
   api:
     environment:
@@ -199,6 +208,7 @@ Corresponding `docker-compose.yml` overrides:
 <br/>
 
 `explorer-config.json`:
+
 ```json
   "ESPLORA": {
     "REST_API_URL": "http://127.0.0.1:3000",
@@ -208,6 +218,7 @@ Corresponding `docker-compose.yml` overrides:
 ```
 
 Corresponding `docker-compose.yml` overrides:
+
 ```yaml
   api:
     environment:
@@ -220,6 +231,7 @@ Corresponding `docker-compose.yml` overrides:
 <br/>
 
 `explorer-config.json`:
+
 ```json
   "SECOND_CORE_RPC": {
     "HOST": "127.0.0.1",
@@ -233,6 +245,7 @@ Corresponding `docker-compose.yml` overrides:
 ```
 
 Corresponding `docker-compose.yml` overrides:
+
 ```yaml
   api:
     environment:
@@ -249,6 +262,7 @@ Corresponding `docker-compose.yml` overrides:
 <br/>
 
 `explorer-config.json`:
+
 ```json
   "DATABASE": {
     "ENABLED": true,
@@ -261,6 +275,7 @@ Corresponding `docker-compose.yml` overrides:
 ```
 
 Corresponding `docker-compose.yml` overrides:
+
 ```yaml
   api:
     environment:
@@ -277,6 +292,7 @@ Corresponding `docker-compose.yml` overrides:
 <br/>
 
 `explorer-config.json`:
+
 ```json
   "SYSLOG": {
     "ENABLED": true,
@@ -288,6 +304,7 @@ Corresponding `docker-compose.yml` overrides:
 ```
 
 Corresponding `docker-compose.yml` overrides:
+
 ```yaml
   api:
     environment:
@@ -302,6 +319,7 @@ Corresponding `docker-compose.yml` overrides:
 <br/>
 
 `explorer-config.json`:
+
 ```json
   "STATISTICS": {
     "ENABLED": true,
@@ -310,6 +328,7 @@ Corresponding `docker-compose.yml` overrides:
 ```
 
 Corresponding `docker-compose.yml` overrides:
+
 ```yaml
   api:
     environment:
@@ -321,6 +340,7 @@ Corresponding `docker-compose.yml` overrides:
 <br/>
 
 `explorer-config.json`:
+
 ```json
   "SOCKS5PROXY": {
     "ENABLED": false,
@@ -332,6 +352,7 @@ Corresponding `docker-compose.yml` overrides:
 ```
 
 Corresponding `docker-compose.yml` overrides:
+
 ```yaml
   api:
     environment:
