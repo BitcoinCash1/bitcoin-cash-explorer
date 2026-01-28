@@ -44,8 +44,8 @@ export async function query(path): Promise<object> {
   const axiosOptions: axiosOptions = {
     headers: {
       'User-Agent':
-        config.MEMPOOL.USER_AGENT === 'mempool'
-          ? `mempool/v${backendInfo.getBackendInfo().version}`
+        config.MEMPOOL.USER_AGENT === 'explorer'
+          ? `BCHExplorer/v${backendInfo.getBackendInfo().version}`
           : `${config.MEMPOOL.USER_AGENT}`,
     },
     timeout: config.SOCKS5PROXY.ENABLED ? 30000 : 10000,

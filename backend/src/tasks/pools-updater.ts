@@ -10,6 +10,8 @@ import { Common } from '../api/common';
 
 /**
  * Maintain the most recent version of pools-v2.json
+ *
+ * TODO: Use gitlab instead of github data for parsing the tree data (https://gitlab.melroy.org/api/v4/projects/199/repository/tree)
  */
 class PoolsUpdater {
   tag = 'PoolsUpdater';
@@ -51,13 +53,13 @@ class PoolsUpdater {
         this.currentSha = await this.getShaFromDb();
       }
 
-      const githubSha = await this.fetchPoolsSha(); // Fetch pools-v2.json sha from github
-      if (githubSha === null) {
+      const gitlabSha = await this.fetchPoolsSha(); // Fetch pools-v2.json sha from GitLab
+      if (gitlabSha === null) {
         return;
       }
 
-      logger.debug(`pools-v2.json sha | Current: ${this.currentSha} | Github: ${githubSha}`, this.tag);
-      if (this.currentSha !== null && this.currentSha === githubSha) {
+      logger.debug(`pools-v2.json sha | Current: ${this.currentSha} | GitLab: ${gitlabSha}`, this.tag);
+      if (this.currentSha !== null && this.currentSha === gitlabSha) {
         return;
       }
 
@@ -68,7 +70,7 @@ class PoolsUpdater {
         !process.env.npm_config_update_pools // We're not manually updating mining pool
       ) {
         logger.warn(
-          `Updated mining pools data is available (${githubSha}) but AUTOMATIC_POOLS_UPDATE is disabled`,
+          `Updated mining pools data is available (${gitlabSha}) but AUTOMATIC_POOLS_UPDATE is disabled`,
           this.tag
         );
         logger.info(
@@ -92,20 +94,20 @@ class PoolsUpdater {
 
       if (config.DATABASE.ENABLED === false) {
         // Don't run db operations
-        logger.info(`Mining pools-v2.json (${githubSha}) import completed (no database)`, this.tag);
+        logger.info(`Mining pools-v2.json (${gitlabSha}) import completed (no database)`, this.tag);
         return;
       }
 
       try {
         await DB.query('START TRANSACTION;');
-        await this.updateDBSha(githubSha);
+        await this.updateDBSha(gitlabSha);
         await poolsParser.migratePoolsJson();
         await DB.query('COMMIT;');
       } catch (e) {
         logger.err(`Could not migrate mining pools, rolling back. Exception: ${JSON.stringify(e)}`, this.tag);
         await DB.query('ROLLBACK;');
       }
-      logger.info(`Mining pools-v2.json (${githubSha}) import completed`, this.tag);
+      logger.info(`Mining pools-v2.json (${gitlabSha}) import completed`, this.tag);
     } catch (e) {
       // fast-forward lastRun to 10 minutes before the next scheduled update
       this.lastRun = now - Math.max(config.MEMPOOL.POOLS_UPDATE_DELAY - 600, 600);
@@ -116,15 +118,15 @@ class PoolsUpdater {
   /**
    * Fetch our latest pools-v2.json sha from the db
    */
-  private async updateDBSha(githubSha: string): Promise<void> {
-    this.currentSha = githubSha;
+  private async updateDBSha(gitlabSha: string): Promise<void> {
+    this.currentSha = gitlabSha;
     if (config.DATABASE.ENABLED === true) {
       try {
         await DB.query('DELETE FROM state where name="pools_json_sha"');
-        await DB.query(`INSERT INTO state VALUES('pools_json_sha', NULL, '${githubSha}')`);
+        await DB.query(`INSERT INTO state VALUES('pools_json_sha', NULL, '${gitlabSha}')`);
       } catch (e) {
         logger.err(
-          'Cannot save github pools-v2.json sha into the db. Reason: ' + (e instanceof Error ? e.message : e),
+          'Cannot save GitLab pools-v2.json sha into the db. Reason: ' + (e instanceof Error ? e.message : e),
           this.tag
         );
       }
@@ -145,11 +147,14 @@ class PoolsUpdater {
   }
 
   /**
-   * Fetch our latest pools-v2.json sha from github
+   * Fetch our latest pools-v2.json sha from GitLab v4 API end point
    */
   private async fetchPoolsSha(): Promise<string | null> {
     const response = await this.query(this.treeUrl);
 
+    // TODO: Change this, there is no "tree" in GitLab, just directly in the response:
+    // [{"id":"b9b910103f5b59726420f135c7f9a718172a2e30","name":"dupes.sh","type":"blob","path":"dupes.sh","mode":"100755"},{"id":"0245a9b9713016636034ee3ced5b7b2e8d0e8a61","name":"pools-v2.json","type":"blob","path":"pools-v2.json","mode":"100644"}]
+    // Lets try to use the id here.
     if (response !== undefined) {
       for (const file of response['tree']) {
         if (file['path'] === 'pools-v2.json') {
@@ -177,8 +182,8 @@ class PoolsUpdater {
     const axiosOptions: axiosOptions = {
       headers: {
         'User-Agent':
-          config.MEMPOOL.USER_AGENT === 'mempool'
-            ? `mempool/v${backendInfo.getBackendInfo().version}`
+          config.MEMPOOL.USER_AGENT === 'explorer'
+            ? `BCHExplorer/v${backendInfo.getBackendInfo().version}`
             : `${config.MEMPOOL.USER_AGENT}`,
       },
       timeout: config.SOCKS5PROXY.ENABLED ? 30000 : 10000,

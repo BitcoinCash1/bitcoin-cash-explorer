@@ -44,8 +44,8 @@ class SyncAssets {
             .get(url, {
               headers: {
                 'User-Agent':
-                  config.MEMPOOL.USER_AGENT === 'mempool'
-                    ? `mempool/v${backendInfo.getBackendInfo().version}`
+                  config.MEMPOOL.USER_AGENT === 'explorer'
+                    ? `BCHExplorer/v${backendInfo.getBackendInfo().version}`
                     : `${config.MEMPOOL.USER_AGENT}`,
               },
               httpAgent: agent,
@@ -67,8 +67,8 @@ class SyncAssets {
             .get(url, {
               headers: {
                 'User-Agent':
-                  config.MEMPOOL.USER_AGENT === 'mempool'
-                    ? `mempool/v${backendInfo.getBackendInfo().version}`
+                  config.MEMPOOL.USER_AGENT === 'explorer'
+                    ? `BCHExplorer/v${backendInfo.getBackendInfo().version}`
                     : `${config.MEMPOOL.USER_AGENT}`,
               },
               responseType: 'stream',
