@@ -1,4 +1,4 @@
-FROM node:22.14.0-bookworm-slim AS builder
+FROM node:24.13-bookworm-slim AS builder
 
 ARG commitHash
 ENV DOCKER_COMMIT_HASH=${commitHash}
@@ -13,7 +13,7 @@ RUN npm install --omit=dev --omit=optional
 
 RUN npm run build
 
-FROM nginx:1.27.0-alpine
+FROM nginx:1.29.4-alpine
 
 WORKDIR /patch
 
@@ -21,7 +21,7 @@ COPY --from=builder /build/entrypoint.sh .
 COPY --from=builder /build/wait-for .
 COPY --from=builder /build/dist/mempool /var/www/mempool
 COPY --from=builder /build/nginx.conf /etc/nginx/
-COPY --from=builder /build/nginx-mempool.conf /etc/nginx/conf.d/
+COPY --from=builder /build/nginx-explorer.conf /etc/nginx/conf.d/
 
 RUN chmod +x /patch/entrypoint.sh
 RUN chmod +x /patch/wait-for

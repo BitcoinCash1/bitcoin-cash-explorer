@@ -9,7 +9,7 @@ server.run.js
 # docker
 Dockerfile
 entrypoint.sh
-nginx-mempool.conf
+nginx-explorer.conf
 nginx.conf
 wait-for
 
