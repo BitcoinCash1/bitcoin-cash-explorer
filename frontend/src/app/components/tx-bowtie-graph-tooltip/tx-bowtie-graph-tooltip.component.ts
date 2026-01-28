@@ -10,7 +10,6 @@ import { Subscription, of, switchMap, tap } from 'rxjs';
 import { Price, PriceService } from '@app/services/price.service';
 import { StateService } from '@app/services/state.service';
 import { ApiService } from '@app/services/api.service';
-import { environment } from '@environments/environment';
 
 interface Xput {
   type: 'input' | 'output' | 'fee';
