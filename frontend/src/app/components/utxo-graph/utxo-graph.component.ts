@@ -384,9 +384,7 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
                   1,
                   'minute'
                 ).text
-              : utxo.status['accelerated']
-                ? 'Accelerated'
-                : 'Pending'
+              : 'Unconfirmed'
           }
           `;
         },
