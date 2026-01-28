@@ -30,20 +30,20 @@ $h5-font-size: 1.15rem !default;
 
 $pagination-bg: $body-bg;
 $pagination-border-color: $gray-800;
-$pagination-disabled-bg:           $fg;
+$pagination-disabled-bg: $fg;
 $pagination-disabled-border-color: $bg;
-$pagination-active-color:          $fg;
-$pagination-active-bg:             $tertiary;
-$pagination-hover-bg:              $hover-bg;
-$pagination-hover-border-color:     $bg;
-$pagination-disabled-bg:          $bg;
+$pagination-active-color: $fg;
+$pagination-active-bg: $tertiary;
+$pagination-hover-bg: $hover-bg;
+$pagination-hover-border-color: $bg;
+$pagination-disabled-bg: $bg;
 
 $custom-select-indicator-color: $fg;
 
-$link-color:                $info;
-$link-decoration:           none !default;
-$link-hover-color:          color.adjust($link-color, $lightness: -15%) !default;
-$link-hover-decoration:     underline !default;
+$link-color: $info;
+$link-decoration: none !default;
+$link-hover-color: color.adjust($link-color, $lightness: -15%) !default;
+$link-hover-decoration: underline !default;
 
 $dropdown-bg: $bg;
 $dropdown-link-color: $fg;
@@ -90,7 +90,6 @@ $dropdown-link-active-bg: $active-bg;
   background-color: #1c2031 !important;
   border: 1px solid #20263e !important;
 }
-
 
 input[type="radio"].form-control,
 input[type="checkbox"].form-control {
@@ -157,7 +156,8 @@ input[type="checkbox"].form-control {
   --search-button-shadow: #10a57b80;
 }
 
-html, body {
+html,
+body {
   height: 100%;
 }
 
@@ -192,8 +192,8 @@ main {
   word-wrap: break-word;
   background-color: var(--box-bg);
   background-clip: border-box;
-  border: 1px solid rgba(0,0,0,.125);
-  box-shadow: 0.125rem 0.125rem 0.25rem rgba(0,0,0,0.075);
+  border: 1px solid rgba(0, 0, 0, 0.125);
+  box-shadow: 0.125rem 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
 }
 
 .preview-box {
@@ -231,13 +231,16 @@ main {
   border-color: var(--tertiary);
 }
 
-.btn-purple:not(:disabled):not(.disabled):active, .btn-purple:not(:disabled):not(.disabled).active, .show > .btn-purple.dropdown-toggle {
+.btn-purple:not(:disabled):not(.disabled):active,
+.btn-purple:not(:disabled):not(.disabled).active,
+.show > .btn-purple.dropdown-toggle {
   color: #fff;
   background-color: var(--search-button);
   border-color: var(--search-button-border);
 }
 
-.btn-purple:focus, .btn-purple.focus {
+.btn-purple:focus,
+.btn-purple.focus {
   color: #fff;
   background-color: var(--search-button-focus);
   border-color: var(--search-button);
@@ -260,7 +263,7 @@ main {
 }
 
 .h2-match-table {
-  padding-left: .65rem;
+  padding-left: 0.65rem;
 }
 
 .skeleton-loader {
@@ -310,8 +313,8 @@ main {
 }
 
 .symbol {
-	color: var(--transparent-fg);
-	font-size: 12px;
+  color: var(--transparent-fg);
+  font-size: 12px;
 }
 
 .progress-text {
@@ -320,7 +323,8 @@ main {
   }
 }
 
-.block-size, .blocks-container {
+.block-size,
+.blocks-container {
   .symbol {
     font-size: 16px;
     color: #fff !important;
@@ -342,7 +346,8 @@ main {
   justify-content: space-between;
 }
 
-.title-address, .title-asset {
+.title-address,
+.title-asset {
   color: var(--fg);
   padding-bottom: 10px;
   display: flex;
@@ -365,7 +370,8 @@ main {
   white-space: nowrap;
 }
 
-.table-xs th, .table-xs td {
+.table-xs th,
+.table-xs td {
   padding: 0.1rem;
 }
 
@@ -444,7 +450,7 @@ html:lang(ru) .card-title {
 .fees-wrapper-tooltip-chart {
   background: rgba($active-bg, 0.95);
   border-radius: 4px;
-  box-shadow: 1px 1px 10px rgba(0,0,0,0.5);
+  box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.5);
   color: var(--tooltip-grey);
   display: flex;
   flex-direction: column;
@@ -725,7 +731,6 @@ html:lang(ru) .card-title {
   }
 }
 
-
 /* MEMPOOL CHARTS - end */
 
 .grow {
@@ -740,7 +745,9 @@ tr {
   white-space: nowrap;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   margin-bottom: 1rem;
 }
 
@@ -749,7 +756,7 @@ h1, h2, h3 {
     font-size: 2rem;
   }
   h2 {
-    font-size: 1.50rem;
+    font-size: 1.5rem;
   }
 }
 
@@ -781,15 +788,33 @@ h1, h2, h3 {
 }
 
 .progress-mempool {
-  background: repeating-linear-gradient(to right, var(--secondary), var(--secondary) 0%, var(--primary) 0%, var(--mainnet-alt) 100%);
+  background: repeating-linear-gradient(
+    to right,
+    var(--secondary),
+    var(--secondary) 0%,
+    var(--primary) 0%,
+    var(--mainnet-alt) 100%
+  );
 }
 
 .progress-mempool.testnet {
-  background: repeating-linear-gradient(to right, var(--secondary), var(--secondary) 0%, var(--testnet) 0%, var(--testnet-alt) 100%);
+  background: repeating-linear-gradient(
+    to right,
+    var(--secondary),
+    var(--secondary) 0%,
+    var(--testnet) 0%,
+    var(--testnet-alt) 100%
+  );
 }
 
 .progress-mempool.signet {
-  background: repeating-linear-gradient(to right, var(--secondary), var(--secondary) 0%, var(--signet) 0%, var(--signet-alt) 100%);
+  background: repeating-linear-gradient(
+    to right,
+    var(--secondary),
+    var(--secondary) 0%,
+    var(--signet) 0%,
+    var(--signet-alt) 100%
+  );
 }
 
 .progress-dark {
@@ -805,7 +830,13 @@ h1, h2, h3 {
 }
 
 .progress.progress-health {
-  background: repeating-linear-gradient(to right, var(--secondary), var(--secondary) 0%, var(--primary) 0%, $success 100%);
+  background: repeating-linear-gradient(
+    to right,
+    var(--secondary),
+    var(--secondary) 0%,
+    var(--primary) 0%,
+    $success 100%
+  );
   justify-content: flex-end;
 }
 
@@ -813,7 +844,8 @@ h1, h2, h3 {
   background: var(--secondary);
 }
 
-.mt-2-5, .my-2-5 {
+.mt-2-5,
+.my-2-5 {
   margin-top: 0.75rem !important;
 }
 
@@ -825,13 +857,13 @@ h1, h2, h3 {
   display: inline-flex;
   flex-direction: column;
   justify-content: space-between;
-  @media (min-width: 676px){
+  @media (min-width: 676px) {
     flex-direction: row;
   }
 }
 
 .flex {
-	display: flex;
+  display: flex;
 }
 
 th {
@@ -840,15 +872,33 @@ th {
 
 // ASM opcode colors
 
-.constants { color: #ff8c00 }
-.control { color: #87ceeb }
-.stack { color: #ffa500 }
-.splice { color: #46b5e2 }
-.logic { color: #46b5e2 }
-.arithmetic { color: #cae8d0 }
-.crypto { color: #fa3d3d }
-.locktime { color: #ff8c00 }
-.reserved { color: #ff8c00 }
+.constants {
+  color: #ff8c00;
+}
+.control {
+  color: #87ceeb;
+}
+.stack {
+  color: #ffa500;
+}
+.splice {
+  color: #46b5e2;
+}
+.logic {
+  color: #46b5e2;
+}
+.arithmetic {
+  color: #cae8d0;
+}
+.crypto {
+  color: #fa3d3d;
+}
+.locktime {
+  color: #ff8c00;
+}
+.reserved {
+  color: #ff8c00;
+}
 
 .shortable-address {
   font-family: monospace;
@@ -1040,7 +1090,7 @@ th {
   }
 
   .mr-1 {
-      @extend .ml-1;
+    @extend .ml-1;
   }
 
   .mr-2 {
@@ -1114,14 +1164,19 @@ th {
     }
   }
 
-  .container-graph, .full-container, .toggle-holder {
+  .container-graph,
+  .full-container,
+  .toggle-holder {
     @extend .container-graph;
     .formRadioGroup {
       @extend .formRadioGroup;
       direction: ltr;
     }
 
-    .card-header, h1, h2, h3 {
+    .card-header,
+    h1,
+    h2,
+    h3 {
       direction: rtl;
     }
   }
@@ -1182,7 +1237,7 @@ th {
   }
 
   .btn-audit {
-    margin-left: .5em;
+    margin-left: 0.5em;
   }
 
   .sidenav {
@@ -1208,56 +1263,56 @@ th {
 }
 
 .scriptmessage {
-	overflow: hidden;
-	display: inline-block;
-	text-overflow: ellipsis;
-	vertical-align: middle;
-	max-width: 50px;
-	width: auto;
+  overflow: hidden;
+  display: inline-block;
+  text-overflow: ellipsis;
+  vertical-align: middle;
+  max-width: 50px;
+  width: auto;
   text-align: left;
-	@media (min-width: 376px) {
-		max-width: 90px;
-	}
-	@media (min-width: 476px) {
-		max-width: 180px;
-	}
-	@media (min-width: 576px) {
-		max-width: 260px;
-	}
-	@media (min-width: 768px) {
+  @media (min-width: 376px) {
+    max-width: 90px;
+  }
+  @media (min-width: 476px) {
+    max-width: 180px;
+  }
+  @media (min-width: 576px) {
+    max-width: 260px;
+  }
+  @media (min-width: 768px) {
     max-width: 400px;
-	}
-	@media (min-width: 850px) {
+  }
+  @media (min-width: 850px) {
     max-width: 522px;
-	}
-	@media (min-width: 992px) {
-		max-width: 190px;
-	}
-	@media (min-width: 1200px) {
-		max-width: 250px;
-	}
+  }
+  @media (min-width: 992px) {
+    max-width: 190px;
+  }
+  @media (min-width: 1200px) {
+    max-width: 250px;
+  }
 }
 
 .scriptmessage.longer {
-	max-width: 230px;
-	@media (min-width: 376px) {
-		max-width: 290px;
-	}
-	@media (min-width: 476px) {
-		max-width: 380px;
-	}
-	@media (min-width: 576px) {
-		max-width: 470px;
-	}
-	@media (min-width: 768px) {
+  max-width: 230px;
+  @media (min-width: 376px) {
+    max-width: 290px;
+  }
+  @media (min-width: 476px) {
+    max-width: 380px;
+  }
+  @media (min-width: 576px) {
+    max-width: 470px;
+  }
+  @media (min-width: 768px) {
     max-width: 850px;
-	}
-	@media (min-width: 992px) {
-		max-width: 410px;
-	}
-	@media (min-width: 1200px) {
-		max-width: 480px;
-	}
+  }
+  @media (min-width: 992px) {
+    max-width: 410px;
+  }
+  @media (min-width: 1200px) {
+    max-width: 480px;
+  }
 }
 
 .tab-pane {
@@ -1272,7 +1327,9 @@ th {
       padding: 1rem 2rem;
       color: #fff;
       font-weight: bold;
-      &:focus, &:hover, &:active {
+      &:focus,
+      &:hover,
+      &:active {
         text-decoration: none;
         outline: none;
         box-shadow: none;
@@ -1297,7 +1354,6 @@ th {
     }
   }
 }
-
 
 .pagination-container {
   display: inline-block;
@@ -1344,7 +1400,7 @@ th {
     box-shadow: -10px -15px 75px rgba($highlight, 1);
   }
   50% {
-    box-shadow: -10px -15px 75px rgba($highlight, .3);
+    box-shadow: -10px -15px 75px rgba($highlight, 0.3);
   }
   100% {
     box-shadow: -10px -15px 75px rgba($highlight, 1);
@@ -1353,7 +1409,11 @@ th {
 
 .blink-bg {
   color: #fff;
-  background: repeating-linear-gradient($highlight-dark, $highlight-dark 0.163525%, $highlight-light 100%) !important;
+  background: repeating-linear-gradient(
+    $highlight-dark,
+    $highlight-dark 0.163525%,
+    $highlight-light 100%
+  ) !important;
   animation: shadowyBackground 1s infinite;
   box-shadow: -10px -15px 75px rgba($highlight, 1);
   transition: 100ms all ease-in;
@@ -1400,7 +1460,8 @@ app-global-footer {
 .dropdown-menu {
   background-color: var(--bg);
   color: var(--fg);
-  .dropdown-item:hover, .dropdown-item:focus {
+  .dropdown-item:hover,
+  .dropdown-item:focus {
     background-color: var(--active-bg);
     color: var(--fg);
   }
@@ -1434,7 +1495,7 @@ a {
 }
 
 .btn-small-height {
-	line-height: 1;
+  line-height: 1;
 }
 
 button {

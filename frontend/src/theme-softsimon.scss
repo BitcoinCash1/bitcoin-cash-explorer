@@ -26,13 +26,13 @@ $h5-font-size: 1.15rem !default;
 
 $pagination-bg: $body-bg;
 $pagination-border-color: $gray-800;
-$pagination-disabled-bg:           $fg;
+$pagination-disabled-bg: $fg;
 $pagination-disabled-border-color: $bg;
-$pagination-active-color:          $fg;
-$pagination-active-bg:             $tertiary;
-$pagination-hover-bg:              $hover-bg;
-$pagination-hover-border-color:     $bg;
-$pagination-disabled-bg:          $bg;
+$pagination-active-color: $fg;
+$pagination-active-bg: $tertiary;
+$pagination-hover-bg: $hover-bg;
+$pagination-hover-border-color: $bg;
+$pagination-disabled-bg: $bg;
 
 $custom-select-indicator-color: $fg;
 
@@ -41,10 +41,10 @@ $custom-select-indicator-color: $fg;
   border: 1px solid #20263e !important;
 }
 
-$link-color:                $info;
-$link-decoration:           none !default;
-$link-hover-color:          color.adjust($link-color, $lightness: -15%) !default;
-$link-hover-decoration:     underline !default;
+$link-color: $info;
+$link-decoration: none !default;
+$link-hover-color: color.adjust($link-color, $lightness: -15%) !default;
+$link-hover-decoration: underline !default;
 
 $dropdown-bg: $bg;
 $dropdown-link-color: $fg;
@@ -103,4 +103,3 @@ $dropdown-link-active-bg: $active-bg;
   --search-button-focus: #533180;
   --search-button-shadow: #7c58ab80;
 }
-

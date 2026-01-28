@@ -30,13 +30,13 @@ $h5-font-size: 1.15rem !default;
 
 $pagination-bg: $body-bg;
 $pagination-border-color: $gray-800;
-$pagination-disabled-bg:           $fg;
+$pagination-disabled-bg: $fg;
 $pagination-disabled-border-color: $bg;
-$pagination-active-color:          $fg;
-$pagination-active-bg:             $tertiary;
-$pagination-hover-bg:              $hover-bg;
-$pagination-hover-border-color:     $bg;
-$pagination-disabled-bg:          $bg;
+$pagination-active-color: $fg;
+$pagination-active-bg: $tertiary;
+$pagination-hover-bg: $hover-bg;
+$pagination-hover-border-color: $bg;
+$pagination-disabled-bg: $bg;
 
 $custom-select-indicator-color: $fg;
 
@@ -45,10 +45,10 @@ $custom-select-indicator-color: $fg;
   border: 1px solid #20263e !important;
 }
 
-$link-color:                $info;
-$link-decoration:           none !default;
-$link-hover-color:          color.adjust($link-color, $lightness: -15%) !default;
-$link-hover-decoration:     underline !default;
+$link-color: $info;
+$link-decoration: none !default;
+$link-hover-color: color.adjust($link-color, $lightness: -15%) !default;
+$link-hover-decoration: underline !default;
 
 $dropdown-bg: $bg;
 $dropdown-link-color: $fg;
@@ -91,7 +91,7 @@ $dropdown-link-active-bg: $active-bg;
 
   --mainnet-alt: #9339f4;
   --testnet-alt: #183550;
-  --signet-alt: #471850;  
+  --signet-alt: #471850;
 
   --green: #83fd00;
   --red: #ff3d00;
@@ -112,7 +112,7 @@ $dropdown-link-active-bg: $active-bg;
     box-shadow: -10px -15px 75px rgba($highlight, 1);
   }
   50% {
-    box-shadow: -10px -15px 75px rgba($highlight, .3);
+    box-shadow: -10px -15px 75px rgba($highlight, 0.3);
   }
   100% {
     box-shadow: -10px -15px 75px rgba($highlight, 1);
@@ -121,7 +121,11 @@ $dropdown-link-active-bg: $active-bg;
 
 .blink-bg {
   color: #fff;
-  background: repeating-linear-gradient($highlight-dark, $highlight-dark 0.163525%, $highlight-light 100%) !important;
+  background: repeating-linear-gradient(
+    $highlight-dark,
+    $highlight-dark 0.163525%,
+    $highlight-light 100%
+  ) !important;
   animation: shadowyBackground 1s infinite;
   box-shadow: -10px -15px 75px rgba($highlight, 1);
   transition: 100ms all ease-in;
