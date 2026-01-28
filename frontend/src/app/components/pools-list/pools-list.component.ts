@@ -24,6 +24,7 @@ export interface PoolData {
   avgFeeDelta: number | null;
   poolUniqueId: number;
   logo: string;
+  share?: number;
 }
 
 export interface PoolsResponse {
@@ -63,9 +64,11 @@ export class PoolsListComponent implements OnInit {
     this.pools$ = this.apiService.listPools$('all').pipe(
       map((response) => {
         const poolsResponse: PoolsResponse = response.body;
+        const totalBlocks = poolsResponse.blockCount;
         return poolsResponse.pools.map((pool) => ({
           ...pool,
           logo: `/resources/mining-pools/${pool.slug}.svg`,
+          share: totalBlocks > 0 ? (pool.blockCount / totalBlocks) * 100 : 0,
         }));
       }),
       tap(() => {

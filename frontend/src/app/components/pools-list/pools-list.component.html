@@ -22,8 +22,8 @@
         <th class="rank" i18n="pools.rank">Rank</th>
         <th class="pool" i18n="pools.pool">Pool</th>
         <th class="slug" i18n="pools.slug">Slug</th>
-        <th class="blocks text-right" i18n="pools.blocks">Blocks</th>
-        <th class="empty-blocks text-right" i18n="pools.empty-blocks">Empty</th>
+        <th class="blocks" i18n="pools.blocks">Blocks</th>
+        <th class="empty-blocks" i18n="pools.empty-blocks">Empty Blocks</th>
         <th class="link" i18n="pools.link">Link</th>
       </thead>
       <tbody [style]="isLoading ? 'opacity: 0.75' : ''">
@@ -54,11 +54,17 @@
           <td class="slug">
             <span class="badge badge-secondary">{{ pool.slug }}</span>
           </td>
-          <td class="blocks text-right">
-            {{ pool.blockCount | number }}
+          <td class="blocks">
+            {{ pool.blockCount
+            }}<span>&nbsp;({{ pool.share | number: "1.2-2" }}%)</span>
           </td>
-          <td class="empty-blocks text-right">
-            {{ pool.emptyBlocks | number }}
+          <td class="empty-blocks">
+            {{ pool.emptyBlocks
+            }}<span
+              >&nbsp;({{
+                (pool.emptyBlocks / pool.blockCount) * 100 | number: "1.2-2"
+              }}%)</span
+            >
           </td>
           <td class="link">
             <a
@@ -91,8 +97,8 @@
         <th class="rank" i18n="pools.rank">Rank</th>
         <th class="pool" i18n="pools.pool">Pool</th>
         <th class="slug" i18n="pools.slug">Slug</th>
-        <th class="blocks text-right" i18n="pools.blocks">Blocks</th>
-        <th class="empty-blocks text-right" i18n="pools.empty-blocks">Empty</th>
+        <th class="blocks" i18n="pools.blocks">Blocks</th>
+        <th class="empty-blocks" i18n="pools.empty-blocks">Empty Blocks</th>
         <th class="link" i18n="pools.link">Link</th>
       </thead>
       <tbody>

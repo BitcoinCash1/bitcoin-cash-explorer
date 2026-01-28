@@ -11,14 +11,16 @@
   width: 8%;
 }
 
-.slug {
-  @media (max-width: 875px) {
-    display: none;
-  }
+.pool {
+  width: 17%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
 }
 
-.blocks {
-  @media (max-width: 730px) {
+.slug {
+  @media (max-width: 875px) {
     display: none;
   }
 }
