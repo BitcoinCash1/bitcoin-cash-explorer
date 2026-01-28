@@ -270,8 +270,7 @@
       <thead>
         <tr>
           <th class="d-none d-md-table-cell" i18n="mining.rank">Rank</th>
-          <th class=""></th>
-          <th class="" i18n="mining.pool-name">Pool</th>
+          <th class="pool" i18n="mining.pool-name">Pool</th>
           <th
             class=""
             *ngIf="['24h', '3d', '1w'].includes(this.miningWindowPreference)"
@@ -315,19 +314,20 @@
       >
         <tr *ngFor="let pool of miningStats.pools">
           <td class="d-none d-md-table-cell">{{ pool.rank }}</td>
-          <td class="text-right">
-            <img
-              width="25"
-              height="25"
-              src="{{ pool.logo }}"
-              [alt]="pool.name + ' mining pool logo'"
-              onError="this.onerror=null; this.src = '/resources/mining-pools/default.svg'"
-            />
-          </td>
-          <td class="pool-name">
-            <a [routerLink]="['/mining/pool/' + pool.slug | relativeUrl]">{{
-              pool.name
-            }}</a>
+          <td>
+            <div class="d-flex justify-content-center align-items-center">
+              <img
+                width="25"
+                height="25"
+                src="{{ pool.logo }}"
+                [alt]="pool.name + ' mining pool logo'"
+                onError="this.onerror=null; this.src = '/resources/mining-pools/default.svg'"
+                class="mr-2"
+              />
+              <a [routerLink]="['/mining/pool/' + pool.slug | relativeUrl]">{{
+                pool.name
+              }}</a>
+            </div>
           </td>
           <td class="" *ngIf="'24h' === this.miningWindowPreference">
             {{ pool.lastEstimatedHashrate | number: "1.2-2" }}
@@ -392,7 +392,6 @@
         </tr>
         <tr style="border-top: 1px solid #555">
           <td class="d-none d-md-table-cell"></td>
-          <td class="text-right"></td>
           <td class=""><b i18n="mining.all-miners">All miners</b></td>
           <td class="" *ngIf="'24h' === this.miningWindowPreference">
             {{ miningStats.lastEstimatedHashrate | number: "1.2-2" }}

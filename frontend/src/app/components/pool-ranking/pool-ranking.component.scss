@@ -44,13 +44,15 @@
   }
 }
 
+.pool {
+  width: 20%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 120px;
+}
+
 @media (max-width: 430px) {
-  .pool-name {
-    max-width: 110px;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
   .health-column {
     display: none;
   }
