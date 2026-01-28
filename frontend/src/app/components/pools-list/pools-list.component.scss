@@ -12,6 +12,29 @@
   background-color: var(--secondary);
 }
 
+// Mobile responsive column hiding
+.rank {
+  width: 8%;
+}
+
+.slug {
+  @media (max-width: 875px) {
+    display: none;
+  }
+}
+
+.blocks {
+  @media (max-width: 730px) {
+    display: none;
+  }
+}
+
+.empty-blocks {
+  @media (max-width: 625px) {
+    display: none;
+  }
+}
+
 .coinbase {
   width: 20%;
   @media (max-width: 875px) {
