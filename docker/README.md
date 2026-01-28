@@ -102,7 +102,7 @@ Below we list all settings from `explorer-config.json` and the corresponding ove
     "RECOMMENDED_FEE_PERCENTILE": 50,
     "MIN_BLOCK_SIZE_UNITS": 32000000,
     "INITIAL_BLOCKS_AMOUNT": 8,
-    "MEMPOOL_BLOCKS_AMOUNT": 8,
+    "MEMPOOL_BLOCKS_AMOUNT": 1,
     "BLOCKS_SUMMARIES_INDEXING": false,
     "USE_SECOND_NODE_FOR_MINFEE": false,
     "EXTERNAL_ASSETS": [],
@@ -202,29 +202,6 @@ Corresponding `docker-compose.yml` overrides:
       ELECTRUM_HOST: ""
       ELECTRUM_PORT: ""
       ELECTRUM_TLS_ENABLED: ""
-      ...
-```
-
-<br/>
-
-`explorer-config.json`:
-
-```json
-  "ESPLORA": {
-    "REST_API_URL": "http://127.0.0.1:3000",
-    "UNIX_SOCKET_PATH": "/tmp/esplora-socket",
-    "RETRY_UNIX_SOCKET_AFTER": 30000
-  },
-```
-
-Corresponding `docker-compose.yml` overrides:
-
-```yaml
-  api:
-    environment:
-      ESPLORA_REST_API_URL: ""
-      ESPLORA_UNIX_SOCKET_PATH: ""
-      ESPLORA_RETRY_UNIX_SOCKET_AFTER: ""
       ...
 ```
 
