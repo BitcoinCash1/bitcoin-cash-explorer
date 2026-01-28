@@ -26,6 +26,32 @@
   border: 1px solid #ddd;
 }
 
+// Trust level badge colors
+.trust-absent {
+  background-color: #dc3545;
+  color: white;
+}
+
+.trust-marginal {
+  background-color: #da690d;
+  color: white;
+}
+
+.trust-good {
+  background-color: #faf610;
+  color: black;
+}
+
+.trust-high {
+  background-color: #0c9963;
+  color: white;
+}
+
+.trust-ultimate {
+  background-color: #22f00f;
+  color: black;
+}
+
 // Container styles matching pool component
 .container-xl {
   max-width: 1400px;

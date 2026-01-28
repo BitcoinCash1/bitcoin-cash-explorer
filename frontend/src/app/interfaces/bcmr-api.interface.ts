@@ -22,7 +22,7 @@ export interface SourceItem {
   bcmr: string;
   name: string;
   timestamp?: string;
-  trust?: string;
+  trust?: 'absent' | 'marginal' | 'good' | 'high' | 'ultimate';
 }
 
 export type Sources = SourceItem[];
@@ -46,5 +46,5 @@ export interface BcmrMetadata {
   token: ChainToken;
   uris?: URIs;
   is_nft?: boolean;
-  trust?: string; // high..?
+  trust?: 'absent' | 'marginal' | 'good' | 'high' | 'ultimate';
 }

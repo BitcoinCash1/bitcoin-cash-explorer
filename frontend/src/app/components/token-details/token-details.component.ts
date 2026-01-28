@@ -96,6 +96,7 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
       hasDescription: !!this.metadata.description,
       isNft: this.metadata.is_nft || false,
       status: this.metadata.status || 'unknown',
+      trust: this.metadata.trust || null,
     };
   }
 
@@ -115,6 +116,23 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
         return 'bg-danger';
       case 'inactive':
         return 'bg-warning';
+      default:
+        return 'bg-secondary';
+    }
+  }
+
+  getTrustClass(trust: string): string {
+    switch (trust.toLowerCase()) {
+      case 'absent':
+        return 'trust-absent';
+      case 'marginal':
+        return 'trust-marginal';
+      case 'good':
+        return 'trust-good';
+      case 'high':
+        return 'trust-high';
+      case 'ultimate':
+        return 'trust-ultimate';
       default:
         return 'bg-secondary';
     }

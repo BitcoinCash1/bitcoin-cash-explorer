@@ -117,6 +117,20 @@
                 </tr>
               }
 
+              <!-- Trust -->
+              @if (tokenInfo.trust) {
+                <tr>
+                  <td class="label">Trust</td>
+                  <td style="vertical-align: middle">
+                    <span
+                      class="badge"
+                      [class]="getTrustClass(tokenInfo.trust)"
+                      >{{ tokenInfo.trust | titlecase }}</span
+                    >
+                  </td>
+                </tr>
+              }
+
               <!-- Website -->
               @if (tokenInfo.hasWebsite) {
                 <tr>
