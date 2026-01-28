@@ -11,7 +11,6 @@ import { ApiService } from '@app/services/api.service';
 import { StateService } from '@app/services/state.service';
 import { SeoService } from '@app/services/seo.service';
 import { HttpErrorResponse } from '@angular/common/http';
-import { formatNumber } from '@angular/common';
 
 export interface PoolData {
   poolId: number;
