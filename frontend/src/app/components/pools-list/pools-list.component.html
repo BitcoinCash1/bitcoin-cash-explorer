@@ -1,0 +1,134 @@
+<app-indexing-progress></app-indexing-progress>
+
+<div class="container-xl" *ngIf="!error; else errorTemplate">
+  <div class="box">
+    <table
+      class="table table-borderless"
+      [alwaysCallback]="true"
+      infiniteScroll
+      [infiniteScrollDistance]="1.5"
+      [infiniteScrollUpDistance]="1.5"
+      [infiniteScrollThrottle]="50"
+    >
+      <ng-container *ngIf="pools$ | async as pools; else skeleton">
+        <thead *ngIf="pools.length > 0">
+          <th class="rank" i18n="pools.rank">Rank</th>
+          <th class="pool" i18n="pools.pool">Pool</th>
+          <th class="slug" i18n="pools.slug">Slug</th>
+          <th class="blocks text-right" i18n="pools.blocks">Blocks</th>
+          <th class="empty-blocks text-right" i18n="pools.empty-blocks">
+            Empty
+          </th>
+          <th class="link" i18n="pools.link">Link</th>
+        </thead>
+        <tbody [style]="isLoading ? 'opacity: 0.75' : ''">
+          <tr *ngFor="let pool of pools; let i = index; trackBy: trackByPool">
+            <td class="rank">
+              {{ pool.rank }}
+            </td>
+            <td class="pool">
+              <div class="d-flex align-items-center">
+                <img
+                  width="24"
+                  height="24"
+                  [src]="pool.logo"
+                  [alt]="pool.name + ' mining pool logo'"
+                  onError="this.onerror=null; this.src = '/resources/mining-pools/default.svg'"
+                  class="mr-2"
+                />
+                <div class="d-flex flex-column">
+                  <a
+                    [routerLink]="['/mining/pool' | relativeUrl, pool.slug]"
+                    class="text-decoration-none"
+                  >
+                    {{ pool.name }}
+                  </a>
+                  <small class="text-muted">ID: {{ pool.poolUniqueId }}</small>
+                </div>
+              </div>
+            </td>
+            <td class="slug">
+              <span class="badge badge-secondary">{{ pool.slug }}</span>
+            </td>
+            <td class="blocks text-right">
+              {{ pool.blockCount | number }}
+            </td>
+            <td class="empty-blocks text-right">
+              {{ pool.emptyBlocks | number }}
+            </td>
+            <td class="link">
+              <a
+                *ngIf="pool.link"
+                [href]="pool.link"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-sm btn-outline-primary"
+              >
+                Website
+                <span>&nbsp;</span>
+                <fa-icon
+                  [icon]="['fas', 'external-link-alt']"
+                  [fixedWidth]="true"
+                  style="
+                    vertical-align: text-top;
+                    font-size: 13px;
+                    color: var(--title-fg);
+                  "
+                ></fa-icon>
+              </a>
+              <span *ngIf="!pool.link" class="text-muted">-</span>
+            </td>
+          </tr>
+        </tbody>
+      </ng-container>
+
+      <ng-template #skeleton>
+        <thead>
+          <th class="rank" i18n="pools.rank">Rank</th>
+          <th class="pool" i18n="pools.pool">Pool</th>
+          <th class="slug" i18n="pools.slug">Slug</th>
+          <th class="blocks text-right" i18n="pools.blocks">Blocks</th>
+          <th class="empty-blocks text-right" i18n="pools.empty-blocks">
+            Empty
+          </th>
+          <th class="link" i18n="pools.link">Link</th>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of skeletonLines">
+            <td class="rank">
+              <span class="skeleton-loader"></span>
+            </td>
+            <td class="pool">
+              <div class="d-flex align-items-center">
+                <div
+                  class="skeleton-loader mr-2"
+                  style="width: 24px; height: 24px"
+                ></div>
+                <span class="skeleton-loader"></span>
+              </div>
+            </td>
+            <td class="slug">
+              <span class="skeleton-loader"></span>
+            </td>
+            <td class="blocks text-right">
+              <span class="skeleton-loader"></span>
+            </td>
+            <td class="empty-blocks text-right">
+              <span class="skeleton-loader"></span>
+            </td>
+            <td class="link">
+              <span class="skeleton-loader"></span>
+            </td>
+          </tr>
+        </tbody>
+      </ng-template>
+    </table>
+  </div>
+</div>
+
+<ng-template #errorTemplate>
+  <br />
+  <app-http-error [error]="error">
+    <span i18n="pool.error.loading-pool-data">Error loading pool data.</span>
+  </app-http-error>
+</ng-template>

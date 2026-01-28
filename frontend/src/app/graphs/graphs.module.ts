@@ -16,6 +16,7 @@ import { GraphsComponent } from '@components/graphs/graphs.component';
 import { StatisticsComponent } from '@components/statistics/statistics.component';
 import { MempoolBlockComponent } from '@components/mempool-block/mempool-block.component';
 import { PoolRankingComponent } from '@components/pool-ranking/pool-ranking.component';
+import { PoolsListComponent } from '@components/pools-list/pools-list.component';
 import { PoolComponent } from '@components/pool/pool.component';
 import { TokenDetailsComponent } from '@components/token-details/token-details.component';
 import { DashboardComponent } from '@app/dashboard/dashboard.component';
@@ -48,6 +49,7 @@ import { AsmStylerPipe } from '@app/shared/pipes/asm-styler/asm-styler.pipe';
     WalletPreviewComponent,
 
     MiningDashboardComponent,
+    PoolsListComponent,
     PoolComponent,
     TokenDetailsComponent,
     PoolRankingComponent,

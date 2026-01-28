@@ -13,6 +13,7 @@ import { HashrateChartPoolsComponent } from '@components/hashrates-chart-pools/h
 import { MempoolBlockComponent } from '@components/mempool-block/mempool-block.component';
 import { MiningDashboardComponent } from '@components/mining-dashboard/mining-dashboard.component';
 import { PoolRankingComponent } from '@components/pool-ranking/pool-ranking.component';
+import { PoolsListComponent } from '@components/pools-list/pools-list.component';
 import { PoolComponent } from '@components/pool/pool.component';
 import { StartComponent } from '@components/start/start.component';
 import { StatisticsComponent } from '@components/statistics/statistics.component';
@@ -32,6 +33,11 @@ const routes: Routes = [
   {
     path: '',
     children: [
+      {
+        path: 'mining/pools',
+        data: { networks: ['bitcoin'] },
+        component: PoolsListComponent,
+      },
       {
         path: 'mining/pool/:slug',
         data: { networks: ['bitcoin'] },

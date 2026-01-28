@@ -1,0 +1,92 @@
+import {
+  ChangeDetectionStrategy,
+  Component,
+  Inject,
+  LOCALE_ID,
+  OnInit,
+} from '@angular/core';
+import { Observable, of } from 'rxjs';
+import { catchError, map, share, tap } from 'rxjs/operators';
+import { ApiService } from '@app/services/api.service';
+import { StateService } from '@app/services/state.service';
+import { SeoService } from '@app/services/seo.service';
+import { HttpErrorResponse } from '@angular/common/http';
+import { formatNumber } from '@angular/common';
+
+export interface PoolData {
+  poolId: number;
+  name: string;
+  link: string;
+  blockCount: number;
+  rank: number;
+  emptyBlocks: number;
+  slug: string;
+  avgMatchRate: number | null;
+  avgFeeDelta: number | null;
+  poolUniqueId: number;
+  logo: string;
+}
+
+export interface PoolsResponse {
+  pools: PoolData[];
+  blockCount: number;
+  lastEstimatedHashrate: number;
+  lastEstimatedHashrate3d: number;
+  lastEstimatedHashrate1w: number;
+}
+
+@Component({
+  selector: 'app-pools-list',
+  templateUrl: './pools-list.component.html',
+  styleUrls: ['./pools-list.component.scss'],
+  standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class PoolsListComponent implements OnInit {
+  pools$: Observable<PoolData[]>;
+  isLoading = true;
+  error: HttpErrorResponse | null = null;
+  skeletonLines: number[] = [...Array(15).keys()];
+
+  constructor(
+    @Inject(LOCALE_ID) public locale: string,
+    private apiService: ApiService,
+    public stateService: StateService,
+    private seoService: SeoService
+  ) {}
+
+  ngOnInit(): void {
+    this.seoService.setTitle($localize`Mining Pools`);
+    this.seoService.setDescription(
+      $localize`Overview of the mining pools on Bitcoin Cash.`
+    );
+
+    this.pools$ = this.apiService.listPools$('all').pipe(
+      map((response) => {
+        const poolsResponse: PoolsResponse = response.body;
+        return poolsResponse.pools.map((pool) => ({
+          ...pool,
+          logo: `/resources/mining-pools/${pool.slug}.svg`,
+        }));
+      }),
+      tap(() => {
+        this.isLoading = false;
+      }),
+      catchError((error) => {
+        this.error = error;
+        this.isLoading = false;
+        this.seoService.logSoft404();
+        return of([]);
+      }),
+      share()
+    );
+  }
+
+  trackByPool(index: number, pool: PoolData): number {
+    return pool.poolId;
+  }
+
+  isMobile(): boolean {
+    return window.innerWidth <= 767.98;
+  }
+}

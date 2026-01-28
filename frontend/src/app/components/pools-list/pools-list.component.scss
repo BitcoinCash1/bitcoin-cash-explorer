@@ -1,0 +1,100 @@
+.container-xl {
+  max-width: 1400px;
+  padding-bottom: 100px;
+}
+
+// Add vertical alignment to all table cells
+.table td {
+  vertical-align: middle;
+}
+
+.progress {
+  background-color: var(--secondary);
+}
+
+.coinbase {
+  width: 20%;
+  @media (max-width: 875px) {
+    display: none;
+  }
+}
+
+.height {
+  width: 10%;
+}
+
+.timestamp {
+  @media (max-width: 875px) {
+    padding-left: 50px;
+  }
+  @media (max-width: 625px) {
+    display: none;
+  }
+}
+
+.mined {
+  width: 13%;
+}
+
+.size {
+  min-width: 80px;
+  width: 12%;
+  @media (max-width: 1000px) {
+    width: 15%;
+  }
+}
+
+.reward {
+  @media (max-width: 1035px) {
+    display: none;
+  }
+}
+
+.skeleton-loader {
+  max-width: 200px;
+}
+.skeleton-loader.data {
+  max-width: 70px;
+}
+
+.small-button {
+  height: 20px;
+  font-size: 10px;
+  padding-top: 0;
+  padding-bottom: 0;
+  outline: none;
+  box-shadow: none;
+}
+.small-button.mobile {
+  transform: translateY(-20px);
+  @media (min-width: 767.98px) {
+    transform: translateY(-17px);
+  }
+}
+
+.data-title {
+  color: var(--title-fg);
+  font-size: 14px;
+}
+
+.clip {
+  @media (max-width: 576px) {
+    max-width: 85px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.table-data tr {
+  background-color: transparent;
+}
+.table-data td {
+  text-align: left;
+  @media (max-width: 767.98px) {
+    text-align: center;
+  }
+}
+
+.taller-row {
+  height: 75px;
+}
