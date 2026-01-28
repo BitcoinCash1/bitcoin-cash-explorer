@@ -42,7 +42,7 @@
 // @Component({
 //   selector: 'ngx-bootstrap-multiselect',
 //   templateUrl: './ngx-bootstrap-multiselect.component.html',
-//   styleUrls: ['./ngx-bootstrap-multiselect.component.css'],
+//   styleUrls: ['./ngx-bootstrap-multiselect.component.scss'],
 //   providers: [MULTISELECT_VALUE_ACCESSOR, MultiSelectSearchFilter],
 //   standalone: false,
 //   changeDetection: ChangeDetectionStrategy.OnPush,
