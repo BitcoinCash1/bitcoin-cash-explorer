@@ -1,0 +1,112 @@
+image: node:lts
+
+stages:
+  - test
+  - build
+  - deploy
+
+cache:
+  key: ${CI_COMMIT_REF_SLUG}
+  paths:
+    - .npm/
+
+lint-format-test-backend:
+  stage: test
+  script:
+    - cd backend
+    - npm ci --cache .npm --prefer-offline
+    #- npm run lint
+    - npm run prettier:check
+    - npm run test
+
+build-backend:
+  stage: build
+  script:
+    - cd backend
+    - npm ci --cache .npm --prefer-offline --omit=dev
+    - npm run package
+    #- cp healthcheck.js ./package
+  artifacts:
+    name: "Backend Build"
+    paths:
+      - backend/package
+
+#test-frontend:
+#  stage: test
+#  image: cypress/browsers:22.15.0
+#  variables:
+#    ELECTRON_EXTRA_LAUNCH_ARGS: "--headless --disable-gpu --disable-software-rasterizer --no-sandbox"
+#  script:
+#    - cd frontend
+#    - npm ci --cache .npm --prefer-offline
+#    - npm run config:defaults:explorer
+#    - npm run cypress:run:ci
+
+lint-format-frontend:
+  stage: test
+  script:
+    - cd frontend
+    - npm ci --cache .npm --prefer-offline
+    - npm run config:defaults:explorer
+    #- npm run lint
+    - npm run prettier:check
+
+test-build-frontend:
+  stage: build
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE == "bitcoincash" && $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH'
+  script:
+    - cd frontend
+    - npm ci --cache .npm --prefer-offline --omit=dev
+    - npm run config:defaults:explorer
+    - npm run build
+
+docker-build:
+  stage: build
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE == "bitcoincash" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+  variables:
+    DOCKER_BUILDKIT: 1
+    COMPOSE_DOCKER_CLI_BUILD: 0
+  parallel:
+    matrix:
+      - SERVICE: ["frontend", "backend"]
+  tags:
+    - shell
+  before_script:
+    # Using the built-in variables by GitLab
+    #- echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+  script:
+    - docker/init.sh "$CI_COMMIT_TAG"
+    # --cache-from "type=local,src=/tmp/.buildx-cache" \
+    # --cache-to "type=local,dest=/tmp/.buildx-cache,mode=max" \
+    - |
+      docker buildx \
+        --build-arg commitHash="$CI_COMMIT_SHORT_SHA" \
+        --build-context rustgbt=./rust \
+        --build-context backend=./backend \
+        --tag $CI_REGISTRY_IMAGE/bch-explorer-$SERVICE:$TAG \
+        ./$SERVICE/
+    #- docker push $CI_REGISTRY_IMAGE/bch-explorer-$SERVICE:$TAG
+  after_script:
+    - docker logout
+
+# build-and-deploy-frontend:
+#   stage: build
+#   variables:
+#     NODE_ENV: production
+#   rules:
+#     - if: '$CI_PROJECT_NAMESPACE == "bitcoincash" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH'
+#   script:
+#     - cd frontend
+#     - npm ci --cache .npm --prefer-offline --omit=dev
+#     - npm run config:defaults:explorer
+#     - npm run build
+#   environment:
+#     name: production
+#     url: https://explorer.melroy.org
+#   artifacts:
+#     name: "Frontend Build"
+#     expire_in: 3 months
+#     paths:
+#       - frontend/dist/mempool/browser
