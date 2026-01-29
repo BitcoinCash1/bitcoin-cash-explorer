@@ -19,7 +19,7 @@ WORKDIR /patch
 
 COPY --from=builder /build/entrypoint.sh .
 COPY --from=builder /build/wait-for .
-COPY --from=builder /build/dist/mempool /var/www/mempool
+COPY --from=builder /build/dist/mempool /var/www/explorer
 COPY --from=builder /build/nginx.conf /etc/nginx/
 COPY --from=builder /build/nginx-explorer.conf /etc/nginx/conf.d/
 
@@ -31,7 +31,7 @@ RUN chown -R 1000:1000 /patch && chmod -R 755 /patch && \
         chown -R 1000:1000 /var/log/nginx && \
         chown -R 1000:1000 /etc/nginx/nginx.conf && \
         chown -R 1000:1000 /etc/nginx/conf.d && \
-        chown -R 1000:1000 /var/www/mempool
+        chown -R 1000:1000 /var/www/explorer
 
 RUN touch /var/run/nginx.pid && \
         chown -R 1000:1000 /var/run/nginx.pid

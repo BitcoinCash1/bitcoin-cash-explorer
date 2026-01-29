@@ -1,1 +1,17 @@
 Dockerfile
+.vscode
+coverage
+node_modules
+rust-gbt
+dist
+scripts
+cache
+src/__fixtures__
+src/__integration_tests__
+src/__tests__
+explorer-config.json
+README.md
+.editorconfig
+jest.*
+testSetup.*
+docker-compose.test.yml

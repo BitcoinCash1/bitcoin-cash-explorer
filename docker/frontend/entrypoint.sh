@@ -30,7 +30,7 @@ __NGINX_HOSTNAME__=${NGINX_HOSTNAME:=localhost}
 __NGINX_PORT__=${NGINX_PORT:=8999}
 __MIN_BLOCK_SIZE_UNITS__=${MIN_BLOCK_SIZE_UNITS:=32000000}
 __MEMPOOL_BLOCKS_AMOUNT__=${MEMPOOL_BLOCKS_AMOUNT:=8}
-__BASE_MODULE__=${BASE_MODULE:=mempool}
+__BASE_MODULE__=${BASE_MODULE:=explorer}
 __ROOT_NETWORK__=${ROOT_NETWORK:=}
 __WEBSITE_URL__=${WEBSITE_URL:=https://bchexplorer.cash}
 __MINING_DASHBOARD__=${MINING_DASHBOARD:=true}
@@ -68,7 +68,7 @@ export __HISTORICAL_PRICE__
 export __ADDITIONAL_CURRENCIES__
 export __STRATUM_ENABLED__
 
-folder=$(find /var/www/mempool -name "config.js" | xargs dirname)
+folder=$(find /var/www/explorer -name "config.js" | xargs dirname)
 echo ${folder}
 envsubst < ${folder}/config.template.js > ${folder}/config.js
 
