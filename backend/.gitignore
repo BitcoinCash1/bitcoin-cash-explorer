@@ -1,15 +1,13 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
-
 # production config and external assets
 !explorer-config.template.json
 !explorer-config.sample.json
 explorer-config.json
+explorer-config-template.json
 pools.json
 icons.json
 
 # docker
 Dockerfile
-GeoIP
 start.sh
 wait-for-it.sh
 

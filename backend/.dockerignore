@@ -4,8 +4,10 @@ coverage
 node_modules
 rust-gbt
 dist
+package
 scripts
 cache
+tmp
 src/__fixtures__
 src/__integration_tests__
 src/__tests__
