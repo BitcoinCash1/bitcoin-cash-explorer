@@ -4,7 +4,6 @@
         "version": 1,
         "locktime": 0,
         "size": 170,
-        "weight": 371,
         "fee": 11586,
         "vin": [
             {
@@ -43,6 +42,6 @@
         "adjustedSize": 92.75,
         "sigops": 0,
         "feePerSize": 124.91644204851752,
-        "adjustedfeePerSize": 124.91644204851752
+        "adjustedFeePerSize": 124.91644204851752
     }
 ]
