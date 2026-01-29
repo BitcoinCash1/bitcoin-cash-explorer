@@ -233,10 +233,10 @@ describe('Mempool Backend Config', () => {
     });
   });
 
-  test('should ensure that the explorer-config.json Docker template has all the keys', () => {
+  test('should ensure that the explorer-config-template.json Docker template has all the keys', () => {
     jest.isolateModules(() => {
       const fixture = JSON.parse(fs.readFileSync(`${__dirname}/../__fixtures__/explorer-config.template.json`, 'utf8'));
-      const dockerJson = fs.readFileSync(`${__dirname}/../../../docker/backend/explorer-config.json`, 'utf-8');
+      const dockerJson = fs.readFileSync(`${__dirname}/../../../docker/backend/explorer-config-template.json`, 'utf-8');
 
       function parseJson(jsonObj, root?) {
         for (const [key, value] of Object.entries(jsonObj)) {
