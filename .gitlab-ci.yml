@@ -1,4 +1,4 @@
-image: node:lts
+image: registry.melroy.org/melroy/docker-images/rust:1.93-node-24.13.0
 
 stages:
   - test
