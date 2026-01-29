@@ -1,16 +1,9 @@
-FROM rust:1.84-bookworm AS builder
+FROM registry.melroy.org/melroy/docker-images/rust:1.93-node-24.13.0 AS builder
 
 ARG commitHash
 ENV MEMPOOL_COMMIT_HASH=${commitHash}
 
 WORKDIR /build
-
-RUN apt-get update && \
-    apt-get install -y curl ca-certificates && \
-    curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && \
-    apt-get install -y nodejs=24.13.0-1nodesource1 build-essential python3 pkg-config && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
 
 COPY . .
 
@@ -24,14 +17,7 @@ RUN npm install --omit=dev --omit=optional
 WORKDIR /build
 RUN npm run package
 
-FROM rust:1.84-bookworm AS runtime
-
-RUN apt-get update && \
-    apt-get install -y curl ca-certificates && \
-    curl -fsSL https://deb.nodesource.com/setup_24.x | bash - && \
-    apt-get install -y nodejs=24.13.0-1nodesource1 && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+FROM registry.melroy.org/melroy/docker-images/rust:1.93-node-24.13.0 AS runtime
 
 WORKDIR /backend
 
