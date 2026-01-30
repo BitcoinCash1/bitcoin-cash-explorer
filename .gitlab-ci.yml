@@ -7,7 +7,7 @@ default:
       files:
         - backend/package-lock.json
     paths:
-      - .npm/
+      - backend/.npm/
 
 .cache_frontend_template: &cache_frontend_definition
   cache:
@@ -15,7 +15,7 @@ default:
       files:
         - frontend/package-lock.json
     paths:
-      - .npm/
+      - frontend/.npm/
 
 stages:
   - test
