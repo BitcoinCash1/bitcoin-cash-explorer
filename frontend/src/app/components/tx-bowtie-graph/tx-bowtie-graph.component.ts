@@ -192,7 +192,7 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
     });
 
     if (this.tx.fee) {
-      voutWithFee.unshift({ type: 'fee', value: this.tx.fee });
+      voutWithFee.unshift({ type: 'fee', value: this.tx.fee, displayValue: this.tx.fee });
     }
     const outputCount = voutWithFee.length;
 
