@@ -30,6 +30,9 @@ COPY --from=builder --chown=1000:1000 /build/explorer-config-template.json /buil
 # Rename template to explorer-config.json
 RUN mv explorer-config-template.json explorer-config.json
 
+HEALTHCHECK --interval=20s --timeout=16s --start-period=10s \
+  CMD node package/healthcheck.js
+
 USER 1000
 
 EXPOSE 8999
