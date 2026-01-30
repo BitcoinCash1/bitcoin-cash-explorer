@@ -7,7 +7,6 @@ default:
       files:
         - backend/package-lock.json
         - rust/gbt/Cargo.lock
-        - rust/gbt/rust-toolchain
     paths:
       # npm
       - backend/.npm/
