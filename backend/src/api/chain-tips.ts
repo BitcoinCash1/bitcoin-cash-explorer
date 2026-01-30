@@ -50,7 +50,7 @@ class ChainTips {
       const activeTipHeight =
         this.chainTips.find((tip) => tip.status === 'active')?.height || (await bitcoinApi.$getBlockHeightTip());
       let minIndexHeight = 0;
-      const indexedBlockAmount = Math.min(config.MEMPOOL.INDEXING_BLOCKS_AMOUNT, activeTipHeight);
+      const indexedBlockAmount = Math.min(config.EXPLORER.INDEXING_BLOCKS_AMOUNT, activeTipHeight);
       if (indexedBlockAmount > 0) {
         minIndexHeight = Math.max(0, activeTipHeight - indexedBlockAmount + 1);
       }
@@ -87,7 +87,7 @@ class ChainTips {
                   }
                 }
                 // make sure the cached canonical block at this height is correct & up to date
-                if (block.height >= activeTipHeight - config.MEMPOOL.INITIAL_BLOCKS_AMOUNT * 4) {
+                if (block.height >= activeTipHeight - config.EXPLORER.INITIAL_BLOCKS_AMOUNT * 4) {
                   const cachedBlocks = blocks.getBlocks();
                   for (const cachedBlock of cachedBlocks) {
                     if (cachedBlock.height === block.height) {

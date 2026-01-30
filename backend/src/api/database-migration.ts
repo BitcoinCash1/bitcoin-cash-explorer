@@ -105,7 +105,7 @@ class DatabaseMigration {
   private async $createMissingTablesAndIndexes(databaseSchemaVersion: number) {
     await this.$setStatisticsAddedIndexedFlag(databaseSchemaVersion);
 
-    const isBitcoin = ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK);
+    const isBitcoin = ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK);
 
     await this.$executeQuery(this.getCreateElementsTableQuery(), await this.$checkIfTableExists('elements_pegs'));
     await this.$executeQuery(this.getCreateStatisticsQuery(), await this.$checkIfTableExists('statistics'));
@@ -539,7 +539,7 @@ class DatabaseMigration {
       await this.updateToSchemaVersion(58);
     }
 
-    if (databaseSchemaVersion < 59 && (config.MEMPOOL.NETWORK === 'signet' || config.MEMPOOL.NETWORK === 'testnet')) {
+    if (databaseSchemaVersion < 59 && (config.EXPLORER.NETWORK === 'signet' || config.EXPLORER.NETWORK === 'testnet')) {
       // https://github.com/mempool/mempool/issues/3360
       await this.$executeQuery(`TRUNCATE prices`);
     }
@@ -598,7 +598,7 @@ class DatabaseMigration {
 
     await this.updateToSchemaVersion(68);
 
-    if (databaseSchemaVersion < 69 && config.MEMPOOL.NETWORK === 'mainnet') {
+    if (databaseSchemaVersion < 69 && config.EXPLORER.NETWORK === 'mainnet') {
       await this.$executeQuery(
         this.getCreateAccelerationsTableQuery(),
         await this.$checkIfTableExists('accelerations')
@@ -606,7 +606,7 @@ class DatabaseMigration {
       await this.updateToSchemaVersion(69);
     }
 
-    if (databaseSchemaVersion < 70 && config.MEMPOOL.NETWORK === 'mainnet') {
+    if (databaseSchemaVersion < 70 && config.EXPLORER.NETWORK === 'mainnet') {
       await this.$executeQuery('ALTER TABLE accelerations MODIFY COLUMN added DATETIME;');
       await this.updateToSchemaVersion(70);
     }
@@ -619,14 +619,14 @@ class DatabaseMigration {
       await this.updateToSchemaVersion(72);
     }
 
-    if (databaseSchemaVersion < 73 && config.MEMPOOL.NETWORK === 'mainnet') {
+    if (databaseSchemaVersion < 73 && config.EXPLORER.NETWORK === 'mainnet') {
       // Clear bad data
       await this.$executeQuery(`TRUNCATE accelerations`);
       this.uniqueLog(logger.notice, `'accelerations' table has been truncated`);
       await this.updateToSchemaVersion(73);
     }
 
-    if (databaseSchemaVersion < 74 && config.MEMPOOL.NETWORK === 'mainnet') {
+    if (databaseSchemaVersion < 74 && config.EXPLORER.NETWORK === 'mainnet') {
       await this.$executeQuery(`INSERT INTO state(name, number) VALUE ('last_acceleration_block', 0);`);
       await this.updateToSchemaVersion(74);
     }
@@ -673,7 +673,7 @@ class DatabaseMigration {
       await this.updateToSchemaVersion(76);
     }
 
-    if (databaseSchemaVersion < 77 && config.MEMPOOL.NETWORK === 'mainnet') {
+    if (databaseSchemaVersion < 77 && config.EXPLORER.NETWORK === 'mainnet') {
       await this.$executeQuery('ALTER TABLE `accelerations` ADD requested datetime DEFAULT NULL');
       await this.updateToSchemaVersion(77);
     }
@@ -683,7 +683,7 @@ class DatabaseMigration {
       await this.updateToSchemaVersion(78);
     }
 
-    if (databaseSchemaVersion < 79 && config.MEMPOOL.NETWORK === 'mainnet') {
+    if (databaseSchemaVersion < 79 && config.EXPLORER.NETWORK === 'mainnet') {
       // Clear bad data
       await this.$executeQuery(`TRUNCATE accelerations`);
       this.uniqueLog(logger.notice, `'accelerations' table has been truncated`);
@@ -707,7 +707,7 @@ class DatabaseMigration {
       await this.updateToSchemaVersion(81);
     }
 
-    if (databaseSchemaVersion < 82 && isBitcoin === true && config.MEMPOOL.NETWORK === 'mainnet') {
+    if (databaseSchemaVersion < 82 && isBitcoin === true && config.EXPLORER.NETWORK === 'mainnet') {
       await this.$fixBadV1AuditBlocks();
       await this.updateToSchemaVersion(82);
     }
@@ -1149,7 +1149,7 @@ class DatabaseMigration {
     // reindex mainnet Goggles flags for mined block templates above height 896070
     // (since the first annex transaction at height 896071)
     // (safe to make this conditional on the network since it doesn't change the database schema)
-    if (databaseSchemaVersion < 98 && config.MEMPOOL.NETWORK === 'mainnet') {
+    if (databaseSchemaVersion < 98 && config.EXPLORER.NETWORK === 'mainnet') {
       await this.$executeQuery('UPDATE blocks_summaries SET version = 0 WHERE height >= 896070;');
       await this.updateToSchemaVersion(98);
     }
@@ -1380,7 +1380,7 @@ class DatabaseMigration {
    */
   private getMigrationQueriesFromVersion(version: number): string[] {
     const queries: string[] = [];
-    const isBitcoin = ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK);
+    const isBitcoin = ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK);
 
     if (version < 1) {
       if (version > 0) {

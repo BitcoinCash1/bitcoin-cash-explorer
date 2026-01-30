@@ -231,8 +231,8 @@ export class Common {
     let TX_MAX_STANDARD_VERSION = 3;
     if (
       height != null &&
-      this.V3_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK] &&
-      height <= this.V3_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK]
+      this.V3_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK] &&
+      height <= this.V3_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK]
     ) {
       // V3 transactions were non-standard to spend before v28.x (scheduled for 2024/09/30 https://github.com/bitcoin/bitcoin/issues/29891)
       TX_MAX_STANDARD_VERSION = 2;
@@ -253,8 +253,8 @@ export class Common {
   static isNonStandardAnchor(vin: IPublicApi.Vin, height?: number): boolean {
     if (
       height != null &&
-      this.ANCHOR_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK] &&
-      height <= this.ANCHOR_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK] &&
+      this.ANCHOR_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK] &&
+      height <= this.ANCHOR_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK] &&
       vin.prevout?.scriptpubkey === '51024e73'
     ) {
       // anchor outputs were non-standard to spend before v28.x (scheduled for 2024/09/30 https://github.com/bitcoin/bitcoin/issues/29891)
@@ -274,8 +274,8 @@ export class Common {
     if (
       tx.fee === 0 &&
       (height == null ||
-        (this.EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK] &&
-          height >= this.EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK]))
+        (this.EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK] &&
+          height >= this.EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK]))
     ) {
       return true;
     }
@@ -293,8 +293,8 @@ export class Common {
   static isStandardOpReturn(bytes: number, outputs: number, height?: number): boolean {
     if (
       height == null ||
-      (this.OP_RETURN_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK] &&
-        height >= this.OP_RETURN_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK]) || // limits lifted
+      (this.OP_RETURN_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK] &&
+        height >= this.OP_RETURN_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK]) || // limits lifted
       // OR
       (bytes <= this.MAX_DATACARRIER_BYTES && outputs <= 1) // below old limits
     ) {
@@ -313,8 +313,8 @@ export class Common {
   static isNonStandardLegacySigops(tx: VerboseTransactionExtended, height?: number): boolean {
     if (
       height == null ||
-      (this.LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK] &&
-        height >= this.LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT[config.MEMPOOL.NETWORK])
+      (this.LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK] &&
+        height >= this.LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK])
     ) {
       if (!transactionUtils.checkSigopsBIP54(tx, MAX_TX_LEGACY_SIGOPS)) {
         return true;
@@ -612,22 +612,22 @@ export class Common {
 
   static indexingEnabled(): boolean {
     return (
-      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK) &&
+      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK) &&
       config.DATABASE.ENABLED === true &&
-      config.MEMPOOL.INDEXING_BLOCKS_AMOUNT !== 0
+      config.EXPLORER.INDEXING_BLOCKS_AMOUNT !== 0
     );
   }
 
   static blocksSummariesIndexingEnabled(): boolean {
-    return Common.indexingEnabled() && config.MEMPOOL.BLOCKS_SUMMARIES_INDEXING === true;
+    return Common.indexingEnabled() && config.EXPLORER.BLOCKS_SUMMARIES_INDEXING === true;
   }
 
   static auditIndexingEnabled(): boolean {
-    return Common.indexingEnabled() && config.MEMPOOL.AUDIT === true;
+    return Common.indexingEnabled() && config.EXPLORER.AUDIT === true;
   }
 
   static gogglesIndexingEnabled(): boolean {
-    return Common.blocksSummariesIndexingEnabled() && config.MEMPOOL.GOGGLES_INDEXING === true;
+    return Common.blocksSummariesIndexingEnabled() && config.EXPLORER.GOGGLES_INDEXING === true;
   }
 
   static setDateMidnight(date: Date): void {

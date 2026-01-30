@@ -10,10 +10,10 @@ import { Common } from './common';
 
 class DiskCache {
   private cacheSchemaVersion = 3;
-  private static TMP_FILE_NAME = config.MEMPOOL.CACHE_DIR + '/tmp-cache.json';
-  private static TMP_FILE_NAMES = config.MEMPOOL.CACHE_DIR + '/tmp-cache{number}.json';
-  private static FILE_NAME = config.MEMPOOL.CACHE_DIR + '/cache.json';
-  private static FILE_NAMES = config.MEMPOOL.CACHE_DIR + '/cache{number}.json';
+  private static TMP_FILE_NAME = config.EXPLORER.CACHE_DIR + '/tmp-cache.json';
+  private static TMP_FILE_NAMES = config.EXPLORER.CACHE_DIR + '/tmp-cache{number}.json';
+  private static FILE_NAME = config.EXPLORER.CACHE_DIR + '/cache.json';
+  private static FILE_NAMES = config.EXPLORER.CACHE_DIR + '/cache{number}.json';
   private static CHUNK_FILES = 25;
   private isWritingCache = false;
   private ignoreBlocksCache = false;
@@ -24,7 +24,7 @@ class DiskCache {
   };
 
   constructor() {
-    if (!cluster.isPrimary || !config.MEMPOOL.CACHE_ENABLED) {
+    if (!cluster.isPrimary || !config.EXPLORER.CACHE_ENABLED) {
       return;
     }
     process.on('SIGINT', (e) => {
@@ -34,7 +34,7 @@ class DiskCache {
   }
 
   async $saveCacheToDisk(sync = false): Promise<void> {
-    if (!cluster.isPrimary || !config.MEMPOOL.CACHE_ENABLED) {
+    if (!cluster.isPrimary || !config.EXPLORER.CACHE_ENABLED) {
       return;
     }
     if (this.isWritingCache) {
@@ -61,7 +61,7 @@ class DiskCache {
         fs.writeFileSync(
           DiskCache.TMP_FILE_NAME,
           JSON.stringify({
-            network: config.MEMPOOL.NETWORK,
+            network: config.EXPLORER.NETWORK,
             cacheSchemaVersion: this.cacheSchemaVersion,
             blocks: blocks.getBlocks(),
             blockSummaries: blocks.getBlockSummaries(),
@@ -93,7 +93,7 @@ class DiskCache {
         await fsPromises.writeFile(
           DiskCache.TMP_FILE_NAME,
           JSON.stringify({
-            network: config.MEMPOOL.NETWORK,
+            network: config.EXPLORER.NETWORK,
             cacheSchemaVersion: this.cacheSchemaVersion,
             blocks: blocks.getBlocks(),
             blockSummaries: blocks.getBlockSummaries(),
@@ -154,7 +154,7 @@ class DiskCache {
   }
 
   async $loadMempoolCache(): Promise<void> {
-    if (!config.MEMPOOL.CACHE_ENABLED || !fs.existsSync(DiskCache.FILE_NAME)) {
+    if (!config.EXPLORER.CACHE_ENABLED || !fs.existsSync(DiskCache.FILE_NAME)) {
       return;
     }
     try {
@@ -168,7 +168,7 @@ class DiskCache {
           logger.notice('Disk cache contains an outdated schema version. Clearing it and skipping the cache loading.');
           return this.wipeCache();
         }
-        if (data.network && data.network !== config.MEMPOOL.NETWORK) {
+        if (data.network && data.network !== config.EXPLORER.NETWORK) {
           logger.notice(
             'Disk cache contains data from a different network. Clearing it and skipping the cache loading.'
           );

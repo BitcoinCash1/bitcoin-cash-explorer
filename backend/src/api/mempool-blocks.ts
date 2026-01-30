@@ -27,8 +27,8 @@ class MempoolBlocks {
   private txSelectionWorker: Worker | null = null;
   private rustInitialized = false;
   private rustGbtGenerator: GbtGenerator = new GbtGenerator(
-    config.MEMPOOL.MIN_BLOCK_SIZE_UNITS,
-    config.MEMPOOL.MEMPOOL_BLOCKS_AMOUNT
+    config.EXPLORER.MIN_BLOCK_SIZE_UNITS,
+    config.EXPLORER.MEMPOOL_BLOCKS_AMOUNT
   );
 
   private nextUid = 1;
@@ -58,7 +58,7 @@ class MempoolBlocks {
   }
 
   public async updatePools$(): Promise<void> {
-    if (['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK) === false) {
+    if (['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK) === false) {
       this.pools = {};
       return;
     }
@@ -277,7 +277,10 @@ class MempoolBlocks {
 
   private resetRustGbt(): void {
     this.rustInitialized = false;
-    this.rustGbtGenerator = new GbtGenerator(config.MEMPOOL.MIN_BLOCK_SIZE_UNITS, config.MEMPOOL.MEMPOOL_BLOCKS_AMOUNT);
+    this.rustGbtGenerator = new GbtGenerator(
+      config.EXPLORER.MIN_BLOCK_SIZE_UNITS,
+      config.EXPLORER.MEMPOOL_BLOCKS_AMOUNT
+    );
   }
 
   public async $rustMakeBlockTemplates(
@@ -308,7 +311,7 @@ class MempoolBlocks {
     // run the block construction algorithm in a separate thread, and wait for a result
     const rustGbt = saveResults
       ? this.rustGbtGenerator
-      : new GbtGenerator(config.MEMPOOL.MIN_BLOCK_SIZE_UNITS, config.MEMPOOL.MEMPOOL_BLOCKS_AMOUNT);
+      : new GbtGenerator(config.EXPLORER.MIN_BLOCK_SIZE_UNITS, config.EXPLORER.MEMPOOL_BLOCKS_AMOUNT);
     try {
       const { blocks, blockSizes, rates, overflow } = this.convertNapiResultTxids(
         await rustGbt.make(transactions as RustThreadTransaction[], this.nextUid)
@@ -424,11 +427,11 @@ class MempoolBlocks {
       } else {
         stackSize = blocks[lastBlockIndex].reduce((total, tx) => total + (mempool[tx]?.size || 0), 0);
       }
-      hasBlockStack = stackSize > config.MEMPOOL.MIN_BLOCK_SIZE_UNITS;
+      hasBlockStack = stackSize > config.EXPLORER.MIN_BLOCK_SIZE_UNITS;
       feeStatsCalculator = new OnlineFeeStatsCalculator(stackSize, 0.5, [10, 20, 30, 40, 50, 60, 70, 80, 90]);
     }
 
-    const sizeLimit = config.MEMPOOL.MIN_BLOCK_SIZE_UNITS;
+    const sizeLimit = config.EXPLORER.MIN_BLOCK_SIZE_UNITS;
     // update this thread's mempool with the results
     let mempoolTx: VerboseMempoolTransactionExtended;
     const mempoolBlocks: MempoolBlockWithTransactions[] = [];
@@ -494,7 +497,7 @@ class MempoolBlocks {
       totalFees: totalFees,
       medianFee: Common.percentile(
         transactions.map((tx) => tx.feePerSize),
-        config.MEMPOOL.RECOMMENDED_FEE_PERCENTILE
+        config.EXPLORER.RECOMMENDED_FEE_PERCENTILE
       ),
       feeRange: Common.getFeesInRange(transactions, 8),
       transactionIds: transactionIds,

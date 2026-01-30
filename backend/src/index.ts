@@ -55,17 +55,17 @@ class Server {
   constructor() {
     this.app = express();
 
-    if (!config.MEMPOOL.SPAWN_CLUSTER_PROCS) {
+    if (!config.EXPLORER.SPAWN_CLUSTER_PROCS) {
       this.startServer();
       return;
     }
 
     if (cluster.isPrimary) {
       logger.notice(
-        `Mempool Server (Master) is running on port ${config.MEMPOOL.HTTP_PORT} (${backendInfo.getShortCommitHash()})`
+        `Mempool Server (Master) is running on port ${config.EXPLORER.HTTP_PORT} (${backendInfo.getShortCommitHash()})`
       );
 
-      const numCPUs = config.MEMPOOL.SPAWN_CLUSTER_PROCS;
+      const numCPUs = config.EXPLORER.SPAWN_CLUSTER_PROCS;
       for (let i = 0; i < numCPUs; i++) {
         const env = { workerId: i };
         const worker = cluster.fork(env);
@@ -153,7 +153,7 @@ class Server {
 
     this.server = http.createServer(this.app);
     this.wss = new WebSocket.Server({ server: this.server });
-    if (config.MEMPOOL.UNIX_SOCKET_PATH) {
+    if (config.EXPLORER.UNIX_SOCKET_PATH) {
       this.serverUnixSocket = http.createServer(this.app);
       this.wssUnixSocket = new WebSocket.Server({
         server: this.serverUnixSocket,
@@ -165,8 +165,8 @@ class Server {
     await poolsUpdater.updatePoolsJson(); // Needs to be done before loading the disk cache because we sometimes wipe it
     if (
       config.DATABASE.ENABLED === true &&
-      config.MEMPOOL.ENABLED &&
-      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK) &&
+      config.EXPLORER.ENABLED &&
+      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK) &&
       !poolsUpdater.currentSha
     ) {
       logger.err(
@@ -179,8 +179,8 @@ class Server {
     if (config.DATABASE.ENABLED) {
       await mempoolBlocks.updatePools$();
     }
-    if (config.MEMPOOL.ENABLED) {
-      if (config.MEMPOOL.CACHE_ENABLED) {
+    if (config.EXPLORER.ENABLED) {
+      if (config.EXPLORER.CACHE_ENABLED) {
         await diskCache.$loadMempoolCache();
       } else if (config.REDIS.ENABLED) {
         await redisCache.$loadCache();
@@ -198,7 +198,7 @@ class Server {
 
     this.setUpHttpApiRoutes();
 
-    if (config.MEMPOOL.ENABLED) {
+    if (config.EXPLORER.ENABLED) {
       this.runMainUpdateLoop();
     }
 
@@ -206,20 +206,20 @@ class Server {
       this.healthCheck();
     }, 2500);
 
-    this.server.listen(config.MEMPOOL.HTTP_PORT, () => {
+    this.server.listen(config.EXPLORER.HTTP_PORT, () => {
       if (worker) {
         logger.info(`Mempool Server worker #${process.pid} started`);
       } else {
-        logger.notice(`Mempool Server is running on port ${config.MEMPOOL.HTTP_PORT}`);
+        logger.notice(`Mempool Server is running on port ${config.EXPLORER.HTTP_PORT}`);
       }
     });
 
     if (this.serverUnixSocket) {
-      this.serverUnixSocket.listen(config.MEMPOOL.UNIX_SOCKET_PATH, () => {
+      this.serverUnixSocket.listen(config.EXPLORER.UNIX_SOCKET_PATH, () => {
         if (worker) {
           logger.info(`Mempool Server worker #${process.pid} started`);
         } else {
-          logger.notice(`Mempool Server is listening on ${config.MEMPOOL.UNIX_SOCKET_PATH}`);
+          logger.notice(`Mempool Server is listening on ${config.EXPLORER.UNIX_SOCKET_PATH}`);
         }
       });
     }
@@ -234,7 +234,7 @@ class Server {
         await memPool.$updateMemPoolInfo();
       } catch (e) {
         const msg = `updateMempoolInfo: ${e instanceof Error ? e.message : e}`;
-        if (config.MEMPOOL.USE_SECOND_NODE_FOR_MINFEE) {
+        if (config.EXPLORER.USE_SECOND_NODE_FOR_MINFEE) {
           logger.warn(msg);
         } else {
           logger.debug(msg);
@@ -244,7 +244,7 @@ class Server {
       const minFeeMempool = memPool.limitGBT ? await bitcoinSecondClient.getRawMemPool() : null;
       const minFeeTip = memPool.limitGBT ? await bitcoinSecondClient.getBlockCount() : -1;
       const numHandledBlocks = await blocks.$updateBlocks();
-      const pollRate = config.MEMPOOL.POLL_RATE_MS * (indexer.indexerIsRunning() ? 10 : 1);
+      const pollRate = config.EXPLORER.POLL_RATE_MS * (indexer.indexerIsRunning() ? 10 : 1);
       if (numHandledBlocks === 0) {
         await memPool.$updateMempool(newMempool, minFeeMempool, minFeeTip, pollRate);
       }
@@ -295,7 +295,7 @@ class Server {
     }
 
     websocketHandler.setupConnectionHandling();
-    if (config.MEMPOOL.ENABLED) {
+    if (config.EXPLORER.ENABLED) {
       statistics.setNewStatisticsEntryCallback(websocketHandler.handleNewStatistic.bind(websocketHandler));
       memPool.setAsyncMempoolChangedCallback(websocketHandler.$handleMempoolChange.bind(websocketHandler));
       blocks.setNewAsyncBlockCallback(websocketHandler.handleNewBlock.bind(websocketHandler));
@@ -312,20 +312,20 @@ class Server {
 
   setUpHttpApiRoutes(): void {
     bitcoinRoutes.initRoutes(this.app);
-    if (config.MEMPOOL.OFFICIAL) {
+    if (config.EXPLORER.OFFICIAL) {
       bitcoinCoreRoutes.initRoutes(this.app);
     }
     pricesRoutes.initRoutes(this.app);
-    if (config.STATISTICS.ENABLED && config.DATABASE.ENABLED && config.MEMPOOL.ENABLED) {
+    if (config.STATISTICS.ENABLED && config.DATABASE.ENABLED && config.EXPLORER.ENABLED) {
       statisticsRoutes.initRoutes(this.app);
     }
-    if (Common.indexingEnabled() && config.MEMPOOL.ENABLED) {
+    if (Common.indexingEnabled() && config.EXPLORER.ENABLED) {
       miningRoutes.initRoutes(this.app);
     }
     if (config.WALLETS.ENABLED) {
       servicesRoutes.initRoutes(this.app);
     }
-    if (!config.MEMPOOL.OFFICIAL) {
+    if (!config.EXPLORER.OFFICIAL) {
       aboutRoutes.initRoutes(this.app);
     }
   }

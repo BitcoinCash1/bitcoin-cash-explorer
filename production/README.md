@@ -1,5 +1,7 @@
 # Deploying an Production Instance
 
+**NOTE:** These instrunctions are out-dated and apply for mempool.space.
+
 These instructions are for setting up a serious production Mempool website for Bitcoin (mainnet, testnet, signet), Liquid (mainnet, testnet).
 
 Users should use [one of the other installation methods](../#installation-methods). 

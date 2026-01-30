@@ -13,29 +13,29 @@ import { handleError } from '../../utils/api';
 class MiningRoutes {
   public initRoutes(app: Application) {
     app
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/pools', this.$listPools)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/pools/:interval', this.$getPools)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/pool/:slug/hashrate', this.$getPoolHistoricalHashrate)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/pool/:slug/blocks', this.$getPoolBlocks)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/pool/:slug/blocks/:height', this.$getPoolBlocks)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/pool/:slug', this.$getPool)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/hashrate/pools/:interval', this.$getPoolsHistoricalHashrate)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/hashrate/:interval', this.$getHistoricalHashrate)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/difficulty-adjustments', this.$getDifficultyAdjustments)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/reward-stats/:blockCount', this.$getRewardStats)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/fees/:interval', this.$getHistoricalBlockFees)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/fees', this.$getBlockFeesTimespan)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/rewards/:interval', this.$getHistoricalBlockRewards)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/fee-rates/:interval', this.$getHistoricalBlockFeeRates)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/sizes/:interval', this.$getHistoricalBlockSize)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/difficulty-adjustments/:interval', this.$getDifficultyAdjustments)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/predictions/:interval', this.$getHistoricalBlocksHealth)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/audit/scores', this.$getBlockAuditScores)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/audit/scores/:height', this.$getBlockAuditScores)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/audit/score/:hash', this.$getBlockAuditScore)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/audit/:hash', this.$getBlockAudit)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mining/blocks/timestamp/:timestamp', this.$getHeightFromTimestamp)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'historical-price', this.$getHistoricalPrice);
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/pools', this.$listPools)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/pools/:interval', this.$getPools)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/pool/:slug/hashrate', this.$getPoolHistoricalHashrate)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/pool/:slug/blocks', this.$getPoolBlocks)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/pool/:slug/blocks/:height', this.$getPoolBlocks)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/pool/:slug', this.$getPool)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/hashrate/pools/:interval', this.$getPoolsHistoricalHashrate)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/hashrate/:interval', this.$getHistoricalHashrate)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/difficulty-adjustments', this.$getDifficultyAdjustments)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/reward-stats/:blockCount', this.$getRewardStats)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/fees/:interval', this.$getHistoricalBlockFees)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/fees', this.$getBlockFeesTimespan)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/rewards/:interval', this.$getHistoricalBlockRewards)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/fee-rates/:interval', this.$getHistoricalBlockFeeRates)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/sizes/:interval', this.$getHistoricalBlockSize)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/difficulty-adjustments/:interval', this.$getDifficultyAdjustments)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/predictions/:interval', this.$getHistoricalBlocksHealth)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/audit/scores', this.$getBlockAuditScores)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/audit/scores/:height', this.$getBlockAuditScores)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/audit/score/:hash', this.$getBlockAuditScore)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/audit/:hash', this.$getBlockAudit)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/timestamp/:timestamp', this.$getHeightFromTimestamp)
+      .get(config.EXPLORER.API_URL_PREFIX + 'historical-price', this.$getHistoricalPrice);
   }
 
   private async $getHistoricalPrice(req: Request, res: Response): Promise<void> {
@@ -43,7 +43,7 @@ class MiningRoutes {
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.setHeader('Expires', new Date(Date.now() + 1000 * 300).toUTCString());
-      if (['testnet', 'signet', 'liquidtestnet', 'testnet4'].includes(config.MEMPOOL.NETWORK)) {
+      if (['testnet', 'signet', 'liquidtestnet', 'testnet4'].includes(config.EXPLORER.NETWORK)) {
         handleError(req, res, 400, 'Prices are not available on testnets.');
         return;
       }

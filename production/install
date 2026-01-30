@@ -36,11 +36,6 @@ CERTBOT_INSTALL=ON
 
 # install 4 network daemons
 BITCOIN_INSTALL=ON
-ELEMENTS_INSTALL=ON
-CLN_INSTALL=ON
-
-# install CKPool
-CKPOOL_INSTALL=ON
 
 # configure 4 network instances
 BITCOIN_MAINNET_ENABLE=ON
@@ -48,19 +43,6 @@ BITCOIN_MAINNET_MINFEE_ENABLE=ON
 BITCOIN_TESTNET_ENABLE=ON
 BITCOIN_TESTNET4_ENABLE=ON
 BITCOIN_SIGNET_ENABLE=ON
-BITCOIN_MAINNET_LIGHTNING_ENABLE=ON
-BITCOIN_TESTNET_LIGHTNING_ENABLE=ON
-BITCOIN_SIGNET_LIGHTNING_ENABLE=ON
-ELEMENTS_LIQUID_ENABLE=ON
-ELEMENTS_LIQUIDTESTNET_ENABLE=ON
-
-# enable lightmode and disable compaction to fit on 1TB SSD drive
-BITCOIN_ELECTRS_INSTALL=ON
-BITCOIN_ELECTRS_LIGHT_MODE=ON
-BITCOIN_ELECTRS_COMPACTION=OFF
-ELEMENTS_ELECTRS_INSTALL=ON
-ELEMENTS_ELECTRS_LIGHT_MODE=ON
-ELEMENTS_ELECTRS_COMPACTION=OFF
 
 # automaitcally configure firewall
 FIREWALL_CONFIGURE=ON
@@ -116,87 +98,30 @@ BITCOIN_SIGNET_RPC_PORT=18332
 BITCOIN_SIGNET_RPC_USER=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
 BITCOIN_SIGNET_RPC_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
 
-# used for firewall configuration
-ELEMENTS_LIQUID_P2P_HOST=127.0.0.1
-ELEMENTS_LIQUID_P2P_PORT=7042
-# used for RPC communication
-ELEMENTS_LIQUID_RPC_HOST=127.0.0.1
-ELEMENTS_LIQUID_RPC_PORT=7041
-# generate random hex string
-ELEMENTS_RPC_USER=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
-ELEMENTS_RPC_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
+# set either socket or TCP host/port, not both
+#EXPLORER_MAINNET_HTTP_SOCK=/tmp/bitcoin.mainnet.mempool
+EXPLORER_MAINNET_HTTP_HOST=127.0.0.1
+EXPLORER_MAINNET_HTTP_PORT=8999
 
 # set either socket or TCP host/port, not both
-#ELECTRS_MAINNET_HTTP_SOCK=/tmp/bitcoin.mainnet.electrs
-ELECTRS_MAINNET_HTTP_HOST=127.0.0.1
-ELECTRS_MAINNET_HTTP_PORT=3000
+#EXPLORER_TESTNET_HTTP_SOCK=/tmp/bitcoin.testnet.mempool
+EXPLORER_TESTNET_HTTP_HOST=127.0.0.1
+EXPLORER_TESTNET_HTTP_PORT=8997
 
 # set either socket or TCP host/port, not both
-#ELECTRS_LIQUID_HTTP_SOCK=/tmp/elements.liquid.electrs
-ELECTRS_LIQUID_HTTP_HOST=127.0.0.1
-ELECTRS_LIQUID_HTTP_PORT=3001
+#EXPLORER_TESTNET4_HTTP_SOCK=/tmp/bitcoin.testnet.mempool
+EXPLORER_TESTNET4_HTTP_HOST=127.0.0.1
+EXPLORER_TESTNET4_HTTP_PORT=8990
 
 # set either socket or TCP host/port, not both
-#ELECTRS_TESTNET_HTTP_SOCK=/tmp/bitcoin.testnet.electrs
-ELECTRS_TESTNET_HTTP_HOST=127.0.0.1
-ELECTRS_TESTNET_HTTP_PORT=3002
+#EXPLORER_SIGNET_HTTP_SOCK=/tmp/bitcoin.bisq.mempool
+EXPLORER_SIGNET_HTTP_HOST=127.0.0.1
+EXPLORER_SIGNET_HTTP_PORT=8995
 
 # set either socket or TCP host/port, not both
-#ELECTRS_TESTNET4_HTTP_SOCK=/tmp/bitcoin.testnet4.electrs
-ELECTRS_TESTNET4_HTTP_HOST=127.0.0.1
-ELECTRS_TESTNET4_HTTP_PORT=3005
-
-# set either socket or TCP host/port, not both
-#ELECTRS_SIGNET_HTTP_SOCK=/tmp/bitcoin.testnet.electrs
-ELECTRS_SIGNET_HTTP_HOST=127.0.0.1
-ELECTRS_SIGNET_HTTP_PORT=3003
-
-# set either socket or TCP host/port, not both
-#ELECTRS_LIQUIDTESTNET_HTTP_SOCK=/tmp/bitcoin.testnet.electrs
-ELECTRS_LIQUIDTESTNET_HTTP_HOST=127.0.0.1
-ELECTRS_LIQUIDTESTNET_HTTP_PORT=3004
-
-# set either socket or TCP host/port, not both
-#MEMPOOL_MAINNET_HTTP_SOCK=/tmp/bitcoin.mainnet.mempool
-MEMPOOL_MAINNET_HTTP_HOST=127.0.0.1
-MEMPOOL_MAINNET_HTTP_PORT=8999
-
-# set either socket or TCP host/port, not both
-#MEMPOOL_LIQUID_HTTP_SOCK=/tmp/elements.liquid.mempool
-MEMPOOL_LIQUID_HTTP_HOST=127.0.0.1
-MEMPOOL_LIQUID_HTTP_PORT=8998
-
-# set either socket or TCP host/port, not both
-#MEMPOOL_TESTNET_HTTP_SOCK=/tmp/bitcoin.testnet.mempool
-MEMPOOL_TESTNET_HTTP_HOST=127.0.0.1
-MEMPOOL_TESTNET_HTTP_PORT=8997
-
-# set either socket or TCP host/port, not both
-#MEMPOOL_TESTNET4_HTTP_SOCK=/tmp/bitcoin.testnet.mempool
-MEMPOOL_TESTNET4_HTTP_HOST=127.0.0.1
-MEMPOOL_TESTNET4_HTTP_PORT=8990
-
-# set either socket or TCP host/port, not both
-#MEMPOOL_SIGNET_HTTP_SOCK=/tmp/bitcoin.bisq.mempool
-MEMPOOL_SIGNET_HTTP_HOST=127.0.0.1
-MEMPOOL_SIGNET_HTTP_PORT=8995
-
-# set either socket or TCP host/port, not both
-#MEMPOOL_LIQUIDTESTNET_HTTP_SOCK=/tmp/bitcoin.bisq.mempool
-MEMPOOL_LIQUIDTESTNET_HTTP_HOST=127.0.0.1
-MEMPOOL_LIQUIDTESTNET_HTTP_PORT=8994
-
-# set CKPool bitcoin mainnet port
-CKPOOL_MAINNET_STRATUM_HOST=127.0.0.1
-CKPOOL_MAINNET_STRATUM_PORT=3333
-
-# set CKPool bitcoin mainnet port
-CKPOOL_TESTNET_STRATUM_HOST=127.0.0.1
-CKPOOL_TESTNET_STRATUM_PORT=3334
-
-# set CKPool bitcoin mainnet port
-CKPOOL_TESTNET4_STRATUM_HOST=127.0.0.1
-CKPOOL_TESTNET4_STRATUM_PORT=3335
+#EXPLORER_LIQUIDTESTNET_HTTP_SOCK=/tmp/bitcoin.bisq.mempool
+EXPLORER_LIQUIDTESTNET_HTTP_HOST=127.0.0.1
+EXPLORER_LIQUIDTESTNET_HTTP_PORT=8994
 
 ##### OS options, should be automatically detected
 
@@ -215,7 +140,6 @@ case $OS in
         NGINX_ETC_FOLDER=/usr/local/etc/nginx
         NGINX_CONFIGURATION=/usr/local/etc/nginx/nginx.conf
         CERTBOT_PKG=py39-certbot
-        CLN_PKG=c-lightning
     ;;
 
     Debian)
@@ -248,33 +172,23 @@ MYSQL_USER=mysql
 MYSQL_GROUP=mysql
 
 # mempool mysql user/password
-MEMPOOL_MAINNET_USER='mempool'
-MEMPOOL_TESTNET_USER='mempool_testnet'
-MEMPOOL_TESTNET4_USER='mempool_testnet4'
-MEMPOOL_SIGNET_USER='mempool_signet'
-MEMPOOL_MAINNET_LIGHTNING_USER='mempool_mainnet_lightning'
-MEMPOOL_TESTNET_LIGHTNING_USER='mempool_testnet_lightning'
-MEMPOOL_SIGNET_LIGHTNING_USER='mempool_signet_lightning'
-MEMPOOL_LIQUID_USER='mempool_liquid'
-MEMPOOL_LIQUIDTESTNET_USER='mempool_liquidtestnet'
+EXPLORER_MAINNET_USER='mempool'
+EXPLORER_TESTNET_USER='mempool_testnet'
+EXPLORER_TESTNET4_USER='mempool_testnet4'
+EXPLORER_SIGNET_USER='mempool_signet'
 # generate random hex string
-MEMPOOL_MAINNET_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
-MEMPOOL_TESTNET_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
-MEMPOOL_TESTNET4_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
-MEMPOOL_SIGNET_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
-MEMPOOL_MAINNET_LIGHTNING_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
-MEMPOOL_TESTNET_LIGHTNING_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
-MEMPOOL_SIGNET_LIGHTNING_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
-MEMPOOL_LIQUID_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
-MEMPOOL_LIQUIDTESTNET_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
+EXPLORER_MAINNET_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
+EXPLORER_TESTNET_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
+EXPLORER_TESTNET4_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
+EXPLORER_SIGNET_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
 
 # mempool data folder and user/group
-MEMPOOL_HOME=/mempool
-MEMPOOL_USER=mempool
-MEMPOOL_GROUP=mempool
-MEMPOOL_MYSQL_CREDENTIALS="${MEMPOOL_HOME}/.mysql_credentials"
+EXPLORER_HOME=/mempool
+EXPLORER_USER=mempool
+EXPLORER_GROUP=mempool
+EXPLORER_MYSQL_CREDENTIALS="${EXPLORER_HOME}/.mysql_credentials"
 # name of Tor hidden service in torrc
-MEMPOOL_TOR_HS=mempool
+EXPLORER_TOR_HS=mempool
 
 # bitcoin user/group
 BITCOIN_USER=bitcoin
@@ -294,48 +208,6 @@ BITCOIN_TESTNET4_DATA=${BITCOIN_HOME}/testnet4
 # bitcoin signet data
 BITCOIN_SIGNET_DATA=${BITCOIN_HOME}/signet
 
-# bitcoin electrs source/binaries
-BITCOIN_ELECTRS_HOME=${BITCOIN_HOME}/electrs
-
-# electrs database root
-ELECTRS_DATA_ROOT=/electrs
-# bitcoin electrs data, needs about 350GB, and uses double that during compaction
-ELECTRS_MAINNET_ZPOOL=${ZPOOL}
-ELECTRS_MAINNET_DATA=${ELECTRS_DATA_ROOT}/mainnet
-# bitcoin testnet electrs database, only a few GB
-ELECTRS_TESTNET_ZPOOL=${ZPOOL}
-ELECTRS_TESTNET_DATA=${ELECTRS_DATA_ROOT}/testnet
-# bitcoin testnet4 electrs database, only a few GB
-ELECTRS_TESTNET4_ZPOOL=${ZPOOL}
-ELECTRS_TESTNET4_DATA=${ELECTRS_DATA_ROOT}/testnet4
-# bitcoin signet electrs database, only a few GB
-ELECTRS_SIGNET_ZPOOL=${ZPOOL}
-ELECTRS_SIGNET_DATA=${ELECTRS_DATA_ROOT}/signet
-# liquid electrs data, needs about 5GB
-ELECTRS_LIQUID_ZPOOL=${ZPOOL}
-ELECTRS_LIQUID_DATA=${ELECTRS_DATA_ROOT}/liquid
-# liquid electrs data, needs about 5GB
-ELECTRS_LIQUIDTESTNET_ZPOOL=${ZPOOL}
-ELECTRS_LIQUIDTESTNET_DATA=${ELECTRS_DATA_ROOT}/liquidtestnet
-
-# Core Lightning user/group
-CLN_USER=cln
-CLN_GROUP=cln
-# Core Lightning home folder
-CLN_HOME=/cln
-
-# liquid user/group
-ELEMENTS_USER=elements
-ELEMENTS_GROUP=elements
-# liquid home/data/blockchain folder, needs about 10GB
-ELEMENTS_HOME=/elements
-# electrs db top-level
-ELECTRS_HOME=/electrs
-# elements electrs source/binaries
-ELEMENTS_ELECTRS_HOME=${ELEMENTS_HOME}/electrs
-# tor HS folder
-LIQUID_TOR_HS=liquid
-
 # minfee user/group
 MINFEE_USER=minfee
 MINFEE_GROUP=minfee
@@ -344,10 +216,10 @@ MINFEE_HOME=/minfee
 
 ##### git repo settings, shouldn't need changing
 
-MEMPOOL_REPO_URL=https://github.com/mempool/mempool
-MEMPOOL_REPO_NAME=mempool
-MEMPOOL_REPO_BRANCH=master
-MEMPOOL_LATEST_RELEASE=master
+EXPLORER_REPO_URL=https://github.com/mempool/mempool
+EXPLORER_REPO_NAME=mempool
+EXPLORER_REPO_BRANCH=master
+EXPLORER_LATEST_RELEASE=master
 
 BITCOIN_REPO_URL=https://github.com/bitcoin/bitcoin
 BITCOIN_REPO_NAME=bitcoin
@@ -355,34 +227,6 @@ BITCOIN_REPO_BRANCH=master
 #BITCOIN_LATEST_RELEASE=$(curl -s https://api.github.com/repos/bitcoin/bitcoin/releases/latest|grep tag_name|head -1|cut -d '"' -f4)
 BITCOIN_LATEST_RELEASE=v30.0
 echo -n '.'
-
-CKPOOL_REPO_URL=https://github.com/mempool/ckpool
-CKPOOL_REPO_NAME=ckpool
-CKPOOL_REPO_BRANCH=master
-CKPOOL_LATEST_RELEASE=master
-echo -n '.'
-
-ELEMENTS_REPO_URL=https://github.com/ElementsProject/elements
-ELEMENTS_REPO_NAME=elements
-ELEMENTS_REPO_BRANCH=master
-#ELEMENTS_LATEST_RELEASE=$(curl -s https://api.github.com/repos/ElementsProject/elements/releases/latest|grep tag_name|head -1|cut -d '"' -f4)
-ELEMENTS_LATEST_RELEASE=elements-23.3.0
-echo -n '.'
-
-BITCOIN_ELECTRS_REPO_URL=https://github.com/mempool/electrs
-BITCOIN_ELECTRS_REPO_NAME=electrs
-BITCOIN_ELECTRS_REPO_BRANCH=mempool
-BITCOIN_ELECTRS_LATEST_RELEASE=mempool
-
-ELEMENTS_ELECTRS_REPO_URL=https://github.com/mempool/electrs
-ELEMENTS_ELECTRS_REPO_NAME=electrs
-ELEMENTS_ELECTRS_REPO_BRANCH=mempool
-ELEMENTS_ELECTRS_LATEST_RELEASE=mempool
-
-LIQUID_ASSET_REGISTRY_DB_URL=https://github.com/blockstream/asset_registry_db
-LIQUID_ASSET_REGISTRY_DB_NAME=asset_registry_db
-LIQUIDTESTNET_ASSET_REGISTRY_DB_URL=https://github.com/blockstream/asset_registry_testnet_db
-LIQUIDTESTNET_ASSET_REGISTRY_DB_NAME=asset_registry_testnet_db
 
 #######################
 ##### OS packages #####
@@ -538,23 +382,13 @@ zfsCreateFilesystems()
     zfs create -o "mountpoint=/backup" "${ZPOOL}/backup"
     zfs create -o "mountpoint=/var/cache/nginx" "${ZPOOL}/cache"
 
-    zfs create -o "mountpoint=${ELEMENTS_HOME}" "${ZPOOL}/elements"
     zfs create -o "mountpoint=${BITCOIN_HOME}" "${ZPOOL}/bitcoin"
     zfs create -o "mountpoint=${MINFEE_HOME}" "${ZPOOL}/minfee"
-    zfs create -o "mountpoint=${ELECTRS_HOME}" "${ZPOOL}/electrs"
-    zfs create -o "mountpoint=${MEMPOOL_HOME}" "${ZPOOL}/mempool"
+    zfs create -o "mountpoint=${EXPLORER_HOME}" "${ZPOOL}/mempool"
     zfs create -o "mountpoint=${MYSQL_HOME}" "${ZPOOL}/mysql" || true
 
-    zfs create -o "mountpoint=${BITCOIN_ELECTRS_HOME}" "${ZPOOL}/bitcoin/electrs"
-
-    zfs create -o "mountpoint=${ELEMENTS_HOME}/liquidv1" "${ZPOOL}/elements/liquidv1"
-    zfs create -o "mountpoint=${ELEMENTS_ELECTRS_HOME}" "${ZPOOL}/elements/electrs"
-
-    # create /bitcoin/socket with custom ACL for electrs unix sockets
+    # create /bitcoin/socket with custom ACL for (used to be for electrs) unix sockets
     zfs create -o "mountpoint=${BITCOIN_HOME}/socket" "${ZPOOL}/bitcoin/socket"
-
-    # create /elements/socket with custom ACL for electrs unix sockets
-    zfs create -o "mountpoint=${ELEMENTS_HOME}/socket" "${ZPOOL}/elements/socket"
 
     # Bitcoin Mainnet
     if [ "${BITCOIN_MAINNET_ENABLE}" = ON ];then
@@ -590,69 +424,11 @@ zfsCreateFilesystems()
             zfs create -o "mountpoint=${BITCOIN_SIGNET_DATA}/${folder}" "${ZPOOL}/bitcoin/signet/${folder}"
         done
     fi
-
-    # electrs mainnet data
-    if [ "${BITCOIN_MAINNET_ENABLE}" = ON ];then
-        zfs create -o "mountpoint=${ELECTRS_MAINNET_DATA}" "${ELECTRS_MAINNET_ZPOOL}/electrs/mainnet"
-        for folder in cache history txstore
-        do
-            zfs create -o "mountpoint=${ELECTRS_MAINNET_DATA}/newindex/${folder}" "${ELECTRS_MAINNET_ZPOOL}/electrs/mainnet/${folder}"
-        done
-    fi
-
-    # electrs testnet data
-    if [ "${BITCOIN_TESTNET_ENABLE}" = ON ];then
-        zfs create -o "mountpoint=${ELECTRS_TESTNET_DATA}" "${ELECTRS_TESTNET_ZPOOL}/electrs/testnet"
-        for folder in cache history txstore
-        do
-            zfs create -o "mountpoint=${ELECTRS_TESTNET_DATA}/newindex/${folder}" "${ELECTRS_TESTNET_ZPOOL}/electrs/testnet/${folder}"
-        done
-    fi
-
-    # electrs testnet4 data
-    if [ "${BITCOIN_TESTNET4_ENABLE}" = ON ];then
-        zfs create -o "mountpoint=${ELECTRS_TESTNET4_DATA}" "${ELECTRS_TESTNET4_ZPOOL}/electrs/testnet4"
-        for folder in cache history txstore
-        do
-            zfs create -o "mountpoint=${ELECTRS_TESTNET4_DATA}/newindex/${folder}" "${ELECTRS_TESTNET4_ZPOOL}/electrs/testnet4/${folder}"
-        done
-    fi
-
-    # electrs signet data
-    if [ "${BITCOIN_SIGNET_ENABLE}" = ON ];then
-        zfs create -o "mountpoint=${ELECTRS_SIGNET_DATA}" "${ELECTRS_SIGNET_ZPOOL}/electrs/signet"
-        for folder in cache history txstore
-        do
-            zfs create -o "mountpoint=${ELECTRS_SIGNET_DATA}/newindex/${folder}" "${ELECTRS_SIGNET_ZPOOL}/electrs/signet/${folder}"
-        done
-    fi
-
-    # electrs liquid data
-    if [ "${ELEMENTS_LIQUID_ENABLE}" = ON ];then
-        zfs create -o "mountpoint=${ELECTRS_LIQUID_DATA}" "${ELECTRS_LIQUID_ZPOOL}/electrs/liquid"
-        for folder in cache history txstore
-        do
-            zfs create -o "mountpoint=${ELECTRS_LIQUID_DATA}/newindex/${folder}" "${ELECTRS_LIQUID_ZPOOL}/electrs/liquid/${folder}"
-        done
-    fi
-
-    # electrs liquidtestnet data
-    if [ "${ELEMENTS_LIQUIDTESTNET_ENABLE}" = ON ];then
-        zfs create -o "mountpoint=${ELECTRS_LIQUIDTESTNET_DATA}" "${ELECTRS_LIQUIDTESTNET_ZPOOL}/electrs/liquidtestnet"
-        for folder in cache history txstore
-        do
-            zfs create -o "mountpoint=${ELECTRS_LIQUIDTESTNET_DATA}/newindex/${folder}" "${ELECTRS_LIQUIDTESTNET_ZPOOL}/electrs/liquidtestnet/${folder}"
-        done
-    fi
-
-    if [ "${CLN_INSTALL}" = ON ];then
-        zfs create -o "mountpoint=${CLN_HOME}" "${ZPOOL}/cln"
-    fi
 }
 
 ext4CreateDir()
 {
-    mkdir -p "/backup" "${ELEMENTS_HOME}" "${BITCOIN_HOME}" "${MINFEE_HOME}" "${ELECTRS_HOME}" "${MEMPOOL_HOME}" "${MYSQL_HOME}" "${BITCOIN_ELECTRS_HOME}" "${ELEMENTS_HOME}/liquidv1" "${ELEMENTS_ELECTRS_HOME}"
+    mkdir -p "/backup" "${BITCOIN_HOME}" "${MINFEE_HOME}" "${EXPLORER_HOME}" "${MYSQL_HOME}"
 
     # Bitcoin Mainnet
     if [ "${BITCOIN_MAINNET_ENABLE}" = ON ];then
@@ -687,64 +463,6 @@ ext4CreateDir()
         do
             mkdir -p "${BITCOIN_SIGNET_DATA}/${folder}"
         done
-    fi
-
-    # electrs mainnet data
-    if [ "${BITCOIN_MAINNET_ENABLE}" = ON ];then
-        mkdir -p "${ELECTRS_MAINNET_DATA}"
-        for folder in cache history txstore
-        do
-            mkdir -p "${ELECTRS_MAINNET_DATA}/newindex/${folder}"
-        done
-    fi
-
-    # electrs testnet data
-    if [ "${BITCOIN_TESTNET_ENABLE}" = ON ];then
-        mkdir -p "${ELECTRS_TESTNET_DATA}"
-        for folder in cache history txstore
-        do
-            mkdir -p "${ELECTRS_TESTNET_DATA}/newindex/${folder}"
-        done
-    fi
-
-    # electrs testnet4 data
-    if [ "${BITCOIN_TESTNET4_ENABLE}" = ON ];then
-        mkdir -p "${ELECTRS_TESTNET4_DATA}"
-        for folder in cache history txstore
-        do
-            mkdir -p "${ELECTRS_TESTNET4_DATA}/newindex/${folder}"
-        done
-    fi
-
-    # electrs signet data
-    if [ "${BITCOIN_SIGNET_ENABLE}" = ON ];then
-        mkdir -p "${ELECTRS_SIGNET_DATA}"
-        for folder in cache history txstore
-        do
-            mkdir -p "${ELECTRS_SIGNET_DATA}/newindex/${folder}"
-        done
-    fi
-
-    # electrs liquid data
-    if [ "${ELEMENTS_LIQUID_ENABLE}" = ON ];then
-        mkdir -p "${ELECTRS_LIQUID_DATA}"
-        for folder in cache history txstore
-        do
-            mkdir -p "${ELECTRS_LIQUID_DATA}/newindex/${folder}"
-        done
-    fi
-
-    # electrs liquidtestnet data
-    if [ "${ELEMENTS_LIQUIDTESTNET_ENABLE}" = ON ];then
-        mkdir -p "${ELECTRS_LIQUIDTESTNET_DATA}"
-        for folder in cache history txstore
-        do
-            mkdir -p "${ELECTRS_LIQUIDTESTNET_DATA}/newindex/${folder}"
-        done
-    fi
-
-    if [ "${CLN_INSTALL}" = ON ];then
-        mkdir -p "${CLN_HOME}"
     fi
 }
 
@@ -800,15 +518,9 @@ Tor:Enable Tor v3 HS Onion:ON
 CKPool:Enable CKPool Stratum Interface:ON
 Mainnet:Enable Bitcoin Mainnet:ON
 Mainnet-Minfee:Enable Bitcoin Mainnet Minfee:ON
-LN-Mainnet:Enable Bitcoin Mainnet Lightning:ON
-LN-Testnet:Enable Bitcoin Testnet Lightning:ON
-LN-Signet:Enable Bitcoin Signet Lightning:ON
 Testnet:Enable Bitcoin Testnet:ON
 Testnet4:Enable Bitcoin Testnet4:ON
 Signet:Enable Bitcoin Signet:ON
-Liquid:Enable Elements Liquid:ON
-Liquidtestnet:Enable Elements Liquidtestnet:ON
-CoreLN:Enable Core Lightning:ON
 Unfurl:Enable Unfurl:ON
 EOF
 
@@ -835,11 +547,6 @@ else
     TOR_INSTALL=OFF
 fi
 
-if grep CKPool $tempfile >/dev/null 2>&1;then
-    CKPOOL_INSTALL=ON
-else
-    CKPOOL_INSTALL=OFF
-fi
 
 if grep Mainnet $tempfile >/dev/null 2>&1;then
     BITCOIN_MAINNET_ENABLE=ON
@@ -877,59 +584,6 @@ else
     BITCOIN_INSTALL=OFF
 fi
 
-if grep LN-Mainnet $tempfile >/dev/null 2>&1;then
-    BITCOIN_MAINNET_LIGHTNING_ENABLE=ON
-else
-    BITCOIN_MAINNET_LIGHTNING_ENABLE=OFF
-fi
-
-if grep LN-Testnet $tempfile >/dev/null 2>&1;then
-    BITCOIN_TESTNET_LIGHTNING_ENABLE=ON
-else
-    BITCOIN_TESTNET_LIGHTNING_ENABLE=OFF
-fi
-
-if grep LN-Signet $tempfile >/dev/null 2>&1;then
-    BITCOIN_SIGNET_LIGHTNING_ENABLE=ON
-else
-    BITCOIN_SIGNET_LIGHTNING_ENABLE=OFF
-fi
-
-if grep Liquid $tempfile >/dev/null 2>&1;then
-    ELEMENTS_LIQUID_ENABLE=ON
-else
-    ELEMENTS_LIQUID_ENABLE=OFF
-fi
-
-if grep Liquidtestnet $tempfile >/dev/null 2>&1;then
-    ELEMENTS_LIQUIDTESTNET_ENABLE=ON
-else
-    ELEMENTS_LIQUIDTESTNET_ENABLE=OFF
-fi
-
-if [ "${ELEMENTS_LIQUID_ENABLE}" = ON -o "${ELEMENTS_LIQUIDTESTNET_ENABLE}" = ON ];then
-    ELEMENTS_INSTALL=ON
-else
-    ELEMENTS_INSTALL=OFF
-fi
-
-if grep CoreLN $tempfile >/dev/null 2>&1;then
-    CLN_INSTALL=ON
-else
-    CLN_INSTALL=OFF
-fi
-
-if [ "${BITCOIN_MAINNET_ENABLE}" = ON -o "${BITCOIN_TESTNET_ENABLE}" = ON -o "${BITCOIN_TESTNET4_ENABLE}" = ON -o "${BITCOIN_SIGNET_ENABLE}" = ON ];then
-    BITCOIN_ELECTRS_INSTALL=ON
-else
-    BITCOIN_ELECTRS_INSTALL=OFF
-fi
-
-if [ "${ELEMENTS_LIQUID_ENABLE}" = ON -o "${ELEMENTS_LIQUIDTESTNET_ENABLE}" = ON ];then
-    ELEMENTS_ELECTRS_INSTALL=ON
-else
-    ELEMENTS_ELECTRS_INSTALL=OFF
-fi
 
 ##################
 ## dialog part 2 #
@@ -952,38 +606,21 @@ fi
 #$DIALOG --ok-label "Submit" \
 #    --backtitle "$backtitle" "$@" \
 #    --form "Your fullnode will be installed as follows:" 0 0 0 \
-#    "BISQ_LATEST_RELEASE"               1 1 "${BISQ_LATEST_RELEASE}"                1 35 35 0 \
-#    "BISQ_REPO_BRANCH"                  2 1 "${BISQ_REPO_BRANCH}"                   2 35 35 0 \
-#    "BISQ_REPO_NAME"                    3 1 "${BISQ_REPO_NAME}"                     3 35 35 0 \
-#    "BISQ_REPO_URL"                     4 1 "${BISQ_REPO_URL}"                      4 35 35 0 \
-#    "BITCOIN_ELECTRS_LATEST_RELEASE"    5 1 "${BITCOIN_ELECTRS_LATEST_RELEASE}"    5 35 35 0 \
-#    "BITCOIN_ELECTRS_LIGHT_MODE"        6 1 "${BITCOIN_ELECTRS_LIGHT_MODE}"        6 35 35 0 \
-#    "BITCOIN_ELECTRS_REPO_BRANCH"       7 1 "${BITCOIN_ELECTRS_REPO_BRANCH}"       7 35 35 0 \
-#    "BITCOIN_ELECTRS_REPO_NAME"         8 1 "${BITCOIN_ELECTRS_REPO_NAME}"         8 35 35 0 \
-#    "BITCOIN_ELECTRS_REPO_URL"          9 1 "${BITCOIN_ELECTRS_REPO_URL}"          9 35 35 0 \
 #    "BITCOIN_LATEST_RELEASE"            10 1 "${BITCOIN_LATEST_RELEASE}"            10 35 35 0 \
 #    "BITCOIN_MAINNET_ENABLE"            11 1 "${BITCOIN_MAINNET_ENABLE}"            11 35 35 0 \
 #    "BITCOIN_REPO_BRANCH"               12 1 "${BITCOIN_REPO_BRANCH}"               12 35 35 0 \
 #    "BITCOIN_REPO_NAME"                 13 1 "${BITCOIN_REPO_NAME}"                 13 35 35 0 \
 #    "BITCOIN_REPO_URL"                  14 1 "${BITCOIN_REPO_URL}"                  14 35 35 0 \
 #    "BITCOIN_TESTNET_ENABLE"            15 1 "${BITCOIN_TESTNET_ENABLE}"            15 35 35 0 \
-#    "ELEMENTS_INSTALL"                  16 1 "${ELEMENTS_INSTALL}"                  16 35 35 0 \
-#    "ELEMENTS_LATEST_RELEASE"           17 1 "${ELEMENTS_LATEST_RELEASE}"           17 35 35 0 \
-#    "ELEMENTS_LIQUID_ENABLE"            18 1 "${ELEMENTS_LIQUID_ENABLE}"            18 35 35 0 \
-#    "ELEMENTS_REPO_BRANCH"              19 1 "${ELEMENTS_REPO_BRANCH}"              19 35 35 0 \
-#    "ELEMENTS_REPO_NAME"                20 1 "${ELEMENTS_REPO_NAME}"                20 35 35 0 \
-#    "ELEMENTS_REPO_URL"                 21 1 "${ELEMENTS_REPO_URL}"                 21 35 35 0 \
-#    "MEMPOOL_LATEST_RELEASE"            22 1 "${MEMPOOL_LATEST_RELEASE}"            22 35 35 0 \
-#    "MEMPOOL_LIQUID_HTTP_HOST"          23 1 "${MEMPOOL_LIQUID_HTTP_HOST}"          23 35 35 0 \
-#    "MEMPOOL_LIQUID_HTTP_PORT"          24 1 "${MEMPOOL_LIQUID_HTTP_PORT}"          24 35 35 0 \
-#    "MEMPOOL_MAINNET_HTTP_HOST"         25 1 "${MEMPOOL_MAINNET_HTTP_HOST}"         25 35 35 0 \
-#    "MEMPOOL_MAINNET_HTTP_PORT"         26 1 "${MEMPOOL_MAINNET_HTTP_PORT}"         26 35 35 0 \
-#    "MEMPOOL_REPO_BRANCH"               27 1 "${MEMPOOL_REPO_BRANCH}"               27 35 35 0 \
-#    "MEMPOOL_REPO_NAME"                 28 1 "${MEMPOOL_REPO_NAME}"                 28 35 35 0 \
-#    "MEMPOOL_REPO_URL"                  29 1 "${MEMPOOL_REPO_URL}"                  29 35 35 0 \
-#    "MEMPOOL_TESTNET_HTTP_HOST"         30 1 "${MEMPOOL_TESTNET_HTTP_HOST}"         30 35 35 0 \
-#    "MEMPOOL_TESTNET_HTTP_PORT"         31 1 "${MEMPOOL_TESTNET_HTTP_PORT}"         31 35 35 0 \
-#    "MEMPOOL_TOR_HS"                    32 1 "${MEMPOOL_TOR_HS}"                    32 35 35 0 \
+#    "EXPLORER_LATEST_RELEASE"            22 1 "${EXPLORER_LATEST_RELEASE}"            22 35 35 0 \
+#    "EXPLORER_MAINNET_HTTP_HOST"         25 1 "${EXPLORER_MAINNET_HTTP_HOST}"         25 35 35 0 \
+#    "EXPLORER_MAINNET_HTTP_PORT"         26 1 "${EXPLORER_MAINNET_HTTP_PORT}"         26 35 35 0 \
+#    "EXPLORER_REPO_BRANCH"               27 1 "${EXPLORER_REPO_BRANCH}"               27 35 35 0 \
+#    "EXPLORER_REPO_NAME"                 28 1 "${EXPLORER_REPO_NAME}"                 28 35 35 0 \
+#    "EXPLORER_REPO_URL"                  29 1 "${EXPLORER_REPO_URL}"                  29 35 35 0 \
+#    "EXPLORER_TESTNET_HTTP_HOST"         30 1 "${EXPLORER_TESTNET_HTTP_HOST}"         30 35 35 0 \
+#    "EXPLORER_TESTNET_HTTP_PORT"         31 1 "${EXPLORER_TESTNET_HTTP_PORT}"         31 35 35 0 \
+#    "EXPLORER_TOR_HS"                    32 1 "${EXPLORER_TOR_HS}"                    32 35 35 0 \
 #    "HOSTNAME"                          33 1 "${HOSTNAME}"                          33 35 35 0 \
 #    "TOR_INSTALL"                       34 1 "${TOR_INSTALL}"                       34 35 35 0 \
 #    "CERTBOT_INSTALL"                   35 1 "${CERTBOT_INSTALL}"                   35 35 35 0 \
@@ -1029,60 +666,60 @@ osPackageInstallAll
 ##########################
 
 echo "[*] Creating Mempool user with Tor access"
-osGroupCreate "${MEMPOOL_GROUP}"
-osUserCreate "${MEMPOOL_USER}" "${MEMPOOL_HOME}" "${MEMPOOL_GROUP}"
-osSudo "${ROOT_USER}" chsh -s `which zsh` "${MEMPOOL_USER}"
-id "${MEMPOOL_USER}"
+osGroupCreate "${EXPLORER_GROUP}"
+osUserCreate "${EXPLORER_USER}" "${EXPLORER_HOME}" "${EXPLORER_GROUP}"
+osSudo "${ROOT_USER}" chsh -s `which zsh` "${EXPLORER_USER}"
+id "${EXPLORER_USER}"
 
 echo "[*] Creating Mempool data folder"
-osSudo "${ROOT_USER}" mkdir -p "${MEMPOOL_HOME}"
-osSudo "${ROOT_USER}" chown -R "${MEMPOOL_USER}:${MEMPOOL_GROUP}" "${MEMPOOL_HOME}"
-osSudo "${ROOT_USER}" chown -R "${MEMPOOL_USER}:${MEMPOOL_GROUP}" /backup
-osSudo "${MEMPOOL_USER}" touch "${MEMPOOL_HOME}/.zshrc"
+osSudo "${ROOT_USER}" mkdir -p "${EXPLORER_HOME}"
+osSudo "${ROOT_USER}" chown -R "${EXPLORER_USER}:${EXPLORER_GROUP}" "${EXPLORER_HOME}"
+osSudo "${ROOT_USER}" chown -R "${EXPLORER_USER}:${EXPLORER_GROUP}" /backup
+osSudo "${EXPLORER_USER}" touch "${EXPLORER_HOME}/.zshrc"
 
-echo "[*] Cloning Mempool repo from ${MEMPOOL_REPO_URL}"
-osSudo "${MEMPOOL_USER}" git config --global pull.rebase true
-osSudo "${MEMPOOL_USER}" git config --global advice.detachedHead false
-osSudo "${MEMPOOL_USER}" git clone --branch "${MEMPOOL_REPO_BRANCH}" "${MEMPOOL_REPO_URL}" "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}"
-osSudo "${MEMPOOL_USER}" ln -s mempool/production/mempool-build-all upgrade
-osSudo "${MEMPOOL_USER}" ln -s mempool/production/mempool-kill-all stop
-osSudo "${MEMPOOL_USER}" ln -s mempool/production/mempool-start-all start
-osSudo "${MEMPOOL_USER}" ln -s mempool/production/mempool-reset-all reset
+echo "[*] Cloning Mempool repo from ${EXPLORER_REPO_URL}"
+osSudo "${EXPLORER_USER}" git config --global pull.rebase true
+osSudo "${EXPLORER_USER}" git config --global advice.detachedHead false
+osSudo "${EXPLORER_USER}" git clone --branch "${EXPLORER_REPO_BRANCH}" "${EXPLORER_REPO_URL}" "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}"
+osSudo "${EXPLORER_USER}" ln -s mempool/production/mempool-build-all upgrade
+osSudo "${EXPLORER_USER}" ln -s mempool/production/mempool-kill-all stop
+osSudo "${EXPLORER_USER}" ln -s mempool/production/mempool-start-all start
+osSudo "${EXPLORER_USER}" ln -s mempool/production/mempool-reset-all reset
 
 case $OS in
     FreeBSD)
         echo "[*] Installing syslog configuration"
         osSudo "${ROOT_USER}" mkdir -p /usr/local/etc/syslog.d
-        osSudo "${ROOT_USER}" install -c -m 755 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/mempool-logger" /usr/local/bin/mempool-logger
-        osSudo "${ROOT_USER}" install -c -m 644 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/syslog.conf" /usr/local/etc/syslog.d/mempool.conf
+        osSudo "${ROOT_USER}" install -c -m 755 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/mempool-logger" /usr/local/bin/mempool-logger
+        osSudo "${ROOT_USER}" install -c -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/syslog.conf" /usr/local/etc/syslog.d/mempool.conf
 
         echo "[*] Installing redis configuration"
-        osSudo "${ROOT_USER}" install -c -m 644 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/redis.conf" /usr/local/etc/redis.conf
+        osSudo "${ROOT_USER}" install -c -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/redis.conf" /usr/local/etc/redis.conf
 
         echo "[*] Installing newsyslog configuration"
         osSudo "${ROOT_USER}" mkdir -p /usr/local/etc/newsyslog.conf.d
-        osSudo "${ROOT_USER}" install -c -m 644 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/newsyslog-mempool-backend.conf" /usr/local/etc/newsyslog.conf.d/newsyslog-mempool-backend.conf
-        osSudo "${ROOT_USER}" install -c -m 644 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/newsyslog-mempool-nginx.conf" /usr/local/etc/newsyslog.conf.d/newsyslog-mempool-nginx.conf
+        osSudo "${ROOT_USER}" install -c -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/newsyslog-mempool-backend.conf" /usr/local/etc/newsyslog.conf.d/newsyslog-mempool-backend.conf
+        osSudo "${ROOT_USER}" install -c -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/newsyslog-mempool-nginx.conf" /usr/local/etc/newsyslog.conf.d/newsyslog-mempool-nginx.conf
 
         echo "[*] Creating log files"
         osSudo "${ROOT_USER}" newsyslog -C
     ;;
     Debian)
         echo "[*] Installing syslog configuration"
-        osSudo "${ROOT_USER}" install -c -m 644 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/linux/rsyslog.conf" /etc/rsyslog.d/10-mempool.conf
+        osSudo "${ROOT_USER}" install -c -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/linux/rsyslog.conf" /etc/rsyslog.d/10-mempool.conf
         osSudo "${ROOT_USER}" sed -i.orig -e 's/^\*\.\*;auth,authpriv\.none/*\.*;auth,authpriv\.none,local7\.none/' /etc/rsyslog.d/50-default.conf
     ;;
 esac
 
 echo "[*] Installing Mempool crontab"
-osSudo "${ROOT_USER}" crontab -u "${MEMPOOL_USER}" "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/mempool.crontab"
+osSudo "${ROOT_USER}" crontab -u "${EXPLORER_USER}" "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/mempool.crontab"
 
 echo "[*] Installing nvm.sh from GitHub"
-osSudo "${MEMPOOL_USER}" sh -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash'
+osSudo "${EXPLORER_USER}" sh -c 'curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash'
 
 echo "[*] Building NodeJS via nvm.sh"
-osSudo "${MEMPOOL_USER}" zsh -c 'source ~/.zshrc ; CC=gcc CXX=g++ nvm install v24.13.0 --shared-zlib'
-osSudo "${MEMPOOL_USER}" zsh -c 'source ~/.zshrc ; nvm alias default 24.13.0'
+osSudo "${EXPLORER_USER}" zsh -c 'source ~/.zshrc ; CC=gcc CXX=g++ nvm install v24.13.0 --shared-zlib'
+osSudo "${EXPLORER_USER}" zsh -c 'source ~/.zshrc ; nvm alias default 24.13.0'
 
 ####################
 # Tor installation #
@@ -1094,17 +731,8 @@ if [ "${TOR_INSTALL}" = ON ];then
     osPackageInstall "${TOR_PKG}"
 
     echo "[*] Installing Tor base configuration"
-    osSudo "${ROOT_USER}" install -c -m 644 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/torrc" "${TOR_CONFIGURATION}"
+    osSudo "${ROOT_USER}" install -c -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/torrc" "${TOR_CONFIGURATION}"
     osSudo "${ROOT_USER}" sed -i.orig "s!__TOR_RESOURCES__!${TOR_RESOURCES}!" "${TOR_CONFIGURATION}"
-
-    echo "[*] Adding Tor HS configuration for Liquid"
-    if [ "${ELEMENTS_LIQUID_ENABLE}" = "ON" ];then
-        if ! grep "${LIQUID_TOR_HS}" "${TOR_CONFIGURATION}" >/dev/null 2>&1;then
-            osSudo "${ROOT_USER}" /bin/sh -c "echo HiddenServiceDir ${TOR_RESOURCES}/${LIQUID_TOR_HS}/ >> ${TOR_CONFIGURATION}"
-            osSudo "${ROOT_USER}" /bin/sh -c "echo HiddenServicePort 80 127.0.0.1:83 >> ${TOR_CONFIGURATION}"
-            osSudo "${ROOT_USER}" /bin/sh -c "echo HiddenServiceVersion 3 >> ${TOR_CONFIGURATION}"
-        fi
-    fi
 
     case $OS in
         FreeBSD)
@@ -1177,10 +805,10 @@ if [ "${BITCOIN_INSTALL}" = ON ];then
     fi
 
     echo "[*] Installing Bitcoin configuration"
-    osSudo "${ROOT_USER}" install -c -o "${BITCOIN_USER}" -g "${BITCOIN_GROUP}" -m 644 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/bitcoin.conf" "${BITCOIN_HOME}/bitcoin.conf"
+    osSudo "${ROOT_USER}" install -c -o "${BITCOIN_USER}" -g "${BITCOIN_GROUP}" -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/bitcoin.conf" "${BITCOIN_HOME}/bitcoin.conf"
 
     echo "[*] Installing Bitcoin minfee configuration"
-    osSudo "${ROOT_USER}" install -c -o "${MINFEE_USER}" -g "${MINFEE_GROUP}" -m 644 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/bitcoin.minfee.conf" "${MINFEE_HOME}/bitcoin.conf"
+    osSudo "${ROOT_USER}" install -c -o "${MINFEE_USER}" -g "${MINFEE_GROUP}" -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/bitcoin.minfee.conf" "${MINFEE_HOME}/bitcoin.conf"
 
     echo "[*] Installing Bitcoin RPC credentials"
     osSudo "${ROOT_USER}" sed -i.orig "s/__BITCOIN_RPC_USER__/${BITCOIN_RPC_USER}/" "${BITCOIN_HOME}/bitcoin.conf"
@@ -1259,193 +887,6 @@ if [ "${CKPOOL_INSTALL}" = ON ]; then
     fi
 fi
 
-#########################
-# Elements installation #
-#########################
-
-if [ "${ELEMENTS_INSTALL}" = ON ];then
-
-    echo "[*] Creating Elements user with Tor access"
-    osGroupCreate "${ELEMENTS_GROUP}"
-    if [ "${TOR_INSTALL}" = ON ];then
-        osUserCreate "${ELEMENTS_USER}" "${ELEMENTS_HOME}" "${ELEMENTS_GROUP}" "${TOR_GROUP}"
-    else
-        osUserCreate "${ELEMENTS_USER}" "${ELEMENTS_HOME}" "${ELEMENTS_GROUP}"
-    fi
-    osSudo "${ROOT_USER}" chsh -s `which zsh` "${ELEMENTS_USER}"
-
-    echo "[*] Creating Elements data folder"
-    osSudo "${ROOT_USER}" mkdir -p "${ELEMENTS_HOME}"
-    osSudo "${ROOT_USER}" chown -R "${ELEMENTS_USER}:${ELEMENTS_GROUP}" "${ELEMENTS_HOME}"
-    osSudo "${ELEMENTS_USER}" touch "${ELEMENTS_HOME}/.zshrc"
-    osSudo "${ELEMENTS_USER}" ln -s . .elements
-
-    echo "[*] Cloning Elements repo from ${ELEMENTS_REPO_URL}"
-    osSudo "${ELEMENTS_USER}" git config --global advice.detachedHead false
-    osSudo "${ELEMENTS_USER}" git clone --branch "${ELEMENTS_REPO_BRANCH}" "${ELEMENTS_REPO_URL}" "${ELEMENTS_HOME}/${ELEMENTS_REPO_NAME}"
-
-    echo "[*] Checking out Elements ${ELEMENTS_LATEST_RELEASE}"
-    osSudo "${ELEMENTS_USER}" sh -c "cd ${ELEMENTS_HOME}/${ELEMENTS_REPO_NAME} && git checkout ${ELEMENTS_LATEST_RELEASE}"
-
-    echo "[*] Building Elements from source repo"
-    osSudo "${ELEMENTS_USER}" sh -c "cd ${ELEMENTS_REPO_NAME} && ./autogen.sh --quiet"
-    osSudo "${ELEMENTS_USER}" sh -c "cd ${ELEMENTS_REPO_NAME} && MAKE=gmake CC=cc CXX=c++ CPPFLAGS=-I/usr/local/include ./configure --with-gui=no --disable-wallet --disable-tests"
-    osSudo "${ELEMENTS_USER}" sh -c "cd ${ELEMENTS_REPO_NAME} && gmake -j${NPROC}"
-
-    echo "[*] Installing Elements binaries into OS"
-    osSudo "${ROOT_USER}" sh -c "cd ${ELEMENTS_HOME}/${ELEMENTS_REPO_NAME} && gmake install"
-
-    echo "[*] Installing Elements configuration"
-    osSudo "${ROOT_USER}" install -c -o "${ELEMENTS_USER}" -g "${ELEMENTS_GROUP}" -m 644 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/elements.conf" "${ELEMENTS_HOME}/elements.conf"
-
-    echo "[*] Configuring Elements Liquid RPC credentials in elements.conf"
-    osSudo "${ROOT_USER}" sed -i.orig "s/__BITCOIN_RPC_USER__/${BITCOIN_RPC_USER}/" "${ELEMENTS_HOME}/elements.conf"
-    osSudo "${ROOT_USER}" sed -i.orig "s/__BITCOIN_RPC_PASS__/${BITCOIN_RPC_PASS}/" "${ELEMENTS_HOME}/elements.conf"
-    osSudo "${ROOT_USER}" sed -i.orig "s/__ELEMENTS_RPC_USER__/${ELEMENTS_RPC_USER}/" "${ELEMENTS_HOME}/elements.conf"
-    osSudo "${ROOT_USER}" sed -i.orig "s/__ELEMENTS_RPC_PASS__/${ELEMENTS_RPC_PASS}/" "${ELEMENTS_HOME}/elements.conf"
-fi
-
-###################################
-# Bitcoin -> Electrs installation #
-###################################
-
-if [ "${BITCOIN_ELECTRS_INSTALL}" = ON ];then
-
-    echo "[*] Creating Bitcoin Electrs data folder"
-    osSudo "${ROOT_USER}" mkdir -p "${BITCOIN_ELECTRS_HOME}"
-    osSudo "${ROOT_USER}" chown -R "${BITCOIN_USER}:${BITCOIN_GROUP}" "${BITCOIN_ELECTRS_HOME}"
-    if [ "${BITCOIN_MAINNET_ENABLE}" = ON ];then
-        osSudo "${ROOT_USER}" chown -R "${BITCOIN_USER}:${BITCOIN_GROUP}" "${ELECTRS_MAINNET_DATA}"
-    fi
-    if [ "${BITCOIN_TESTNET_ENABLE}" = ON ];then
-        osSudo "${ROOT_USER}" chown -R "${BITCOIN_USER}:${BITCOIN_GROUP}" "${ELECTRS_TESTNET_DATA}"
-    fi
-    if [ "${BITCOIN_TESTNET4_ENABLE}" = ON ];then
-        osSudo "${ROOT_USER}" chown -R "${BITCOIN_USER}:${BITCOIN_GROUP}" "${ELECTRS_TESTNET4_DATA}"
-    fi
-    if [ "${BITCOIN_SIGNET_ENABLE}" = ON ];then
-        osSudo "${ROOT_USER}" chown -R "${BITCOIN_USER}:${BITCOIN_GROUP}" "${ELECTRS_SIGNET_DATA}"
-    fi
-
-    echo "[*] Cloning Bitcoin Electrs repo from ${BITCOIN_ELECTRS_REPO_URL}"
-    osSudo "${BITCOIN_USER}" git config --global advice.detachedHead false
-    osSudo "${BITCOIN_USER}" git clone --branch "${BITCOIN_ELECTRS_REPO_BRANCH}" "${BITCOIN_ELECTRS_REPO_URL}" "${BITCOIN_HOME}/${BITCOIN_ELECTRS_REPO_NAME}"
-
-    echo "[*] Checking out Electrs ${BITCOIN_ELECTRS_LATEST_RELEASE}"
-    osSudo "${BITCOIN_USER}" sh -c "cd ${BITCOIN_HOME}/${BITCOIN_ELECTRS_REPO_NAME} && git checkout ${BITCOIN_ELECTRS_LATEST_RELEASE}"
-
-    case $OS in
-        FreeBSD)
-           echo "[*] Installing Rust from pkg install"
-        ;;
-        Debian)
-           echo "[*] Installing Rust from rustup.rs"
-           osSudo "${BITCOIN_USER}" sh -c "cd ${BITCOIN_ELECTRS_HOME} && curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
-        ;;
-    esac
-
-    echo "[*] Building Bitcoin Electrs release binary"
-    osSudo "${BITCOIN_USER}" sh -c "cd ${BITCOIN_ELECTRS_HOME} && cargo run --release --bin electrs -- --version"
-fi
-
-##################################
-# Liquid -> Electrs installation #
-##################################
-
-if [ "${ELEMENTS_ELECTRS_INSTALL}" = ON ];then
-
-    echo "[*] Creating Liquid Electrs data folder"
-    osSudo "${ROOT_USER}" mkdir -p "${ELEMENTS_ELECTRS_HOME}"
-    osSudo "${ROOT_USER}" chown -R "${ELEMENTS_USER}:${ELEMENTS_GROUP}" "${ELEMENTS_HOME}"
-    osSudo "${ROOT_USER}" chown -R "${ELEMENTS_USER}:${ELEMENTS_GROUP}" "${ELEMENTS_ELECTRS_HOME}"
-    if [ "${ELEMENTS_LIQUID_ENABLE}" = ON ];then
-        osSudo "${ROOT_USER}" chown -R "${ELEMENTS_USER}:${ELEMENTS_GROUP}" "${ELECTRS_LIQUID_DATA}"
-    fi
-    if [ "${ELEMENTS_LIQUIDTESTNET_ENABLE}" = ON ];then
-        osSudo "${ROOT_USER}" chown -R "${ELEMENTS_USER}:${ELEMENTS_GROUP}" "${ELECTRS_LIQUIDTESTNET_DATA}"
-    fi
-
-    echo "[*] Cloning Liquid Electrs repo from ${ELEMENTS_ELECTRS_REPO_URL}"
-    osSudo "${ELEMENTS_USER}" git config --global advice.detachedHead false
-    osSudo "${ELEMENTS_USER}" git clone --branch "${ELEMENTS_ELECTRS_REPO_BRANCH}" "${ELEMENTS_ELECTRS_REPO_URL}" "${ELEMENTS_HOME}/${ELEMENTS_ELECTRS_REPO_NAME}"
-
-    echo "[*] Checking out Liquid Electrs ${ELEMENTS_ELECTRS_LATEST_RELEASE}"
-    osSudo "${ELEMENTS_USER}" sh -c "cd ${ELEMENTS_HOME}/${ELEMENTS_ELECTRS_REPO_NAME} && git checkout ${ELEMENTS_ELECTRS_LATEST_RELEASE}"
-
-    echo "[*] Cloning Liquid Asset Registry repo from ${LIQUID_ASSET_REGISTRY_DB_URL}"
-    osSudo "${ELEMENTS_USER}" git config --global advice.detachedHead false
-    osSudo "${ELEMENTS_USER}" git clone "${LIQUID_ASSET_REGISTRY_DB_URL}" "${ELEMENTS_HOME}/${LIQUID_ASSET_REGISTRY_DB_NAME}"
-
-    echo "[*] Cloning Liquid Asset Registry testnet repo from ${LIQUIDTESTNET_ASSET_REGISTRY_DB_URL}"
-    osSudo "${ELEMENTS_USER}" git config --global advice.detachedHead false
-    osSudo "${ELEMENTS_USER}" git clone "${LIQUIDTESTNET_ASSET_REGISTRY_DB_URL}" "${ELEMENTS_HOME}/${LIQUIDTESTNET_ASSET_REGISTRY_DB_NAME}"
-
-    echo "[*] Building Liquid Electrs release binary"
-    osSudo "${ELEMENTS_USER}" sh -c "cd ${ELEMENTS_ELECTRS_HOME} && cargo run --release --features liquid --bin electrs -- --network liquid --version" || true
-
-    case $OS in
-        FreeBSD)
-            echo "[*] Patching Liquid Electrs code for FreeBSD"
-            osSudo "${ELEMENTS_USER}" sh -c "cd \"${ELEMENTS_HOME}/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/sysconf-0.3.4\" && patch -p1 < \"${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/freebsd/sysconf.patch\""
-        ;;
-        Debian)
-        ;;
-    esac
-
-    echo "[*] Building Liquid Electrs release binary"
-    osSudo "${ELEMENTS_USER}" sh -c "cd ${ELEMENTS_ELECTRS_HOME} && cargo run --release --features liquid --bin electrs -- --network liquid --version" || true
-fi
-
-##############################
-# Core Lightning for Bitcoin #
-##############################
-
-if [ "${CLN_INSTALL}" = ON ];then
-
-echo "[*] Installing Core Lightning"
-case $OS in
-    FreeBSD)
-        echo "[*] Creating Core Lightning user"
-        osGroupCreate "${CLN_GROUP}"
-        osUserCreate "${CLN_USER}" "${CLN_HOME}" "${CLN_GROUP}"
-        osSudo "${ROOT_USER}" pw usermod ${MEMPOOL_USER} -G "${CLN_GROUP}"
-        osSudo "${ROOT_USER}" chsh -s `which zsh` "${CLN_USER}"
-        echo "export PATH=$PATH:$HOME/.local/bin" >> "${CLN_HOME}/.zshrc"
-        osSudo "${ROOT_USER}" mkdir -p "${CLN_HOME}/.lightning/bitcoin"
-        osSudo "${ROOT_USER}" mkdir -p "${CLN_HOME}/.lightning/signet"
-        osSudo "${ROOT_USER}" mkdir -p "${CLN_HOME}/.lightning/testnet"
-        osSudo "${ROOT_USER}" chmod 750 "${CLN_HOME}" "${CLN_HOME}/.lightning"
-        osSudo "${ROOT_USER}" chmod 750 "${CLN_HOME}" "${CLN_HOME}/.lightning/bitcoin"
-        osSudo "${ROOT_USER}" chmod 750 "${CLN_HOME}" "${CLN_HOME}/.lightning/signet"
-        osSudo "${ROOT_USER}" chmod 750 "${CLN_HOME}" "${CLN_HOME}/.lightning/testnet"
-        osSudo "${ROOT_USER}" chown -R "${CLN_USER}:${CLN_GROUP}" "${CLN_HOME}"
-        echo "[*] Creating symlink to .bitcoin folder"
-        osSudo "${CLN_USER}" ln -s "${BITCOIN_HOME}/.bitcoin" "${CLN_HOME}/.bitcoin"
-
-        echo "[*] Installing Core Lightning package"
-        osPackageInstall ${CLN_PKG}
-
-######## FIXME: this code doesn't work properly, needs fixing
-#
-#        crontab -l|head -3|sed -e s/...................//|zsh
-#
-#        echo "[*] Installing Core Lightning mainnet Cronjob"
-#        public_ipv4=$( ifconfig | grep 'inet ' | awk -F ' ' '{ print $2 }' | grep -v '^103\.165\.192\.' | grep -v '^127\.0\.0\.1' )
-#        public_ipv6=$( ifconfig | grep 'inet6' | awk -F ' ' '{ print $2 }' | grep -v '^2001:df6:7280::' | grep -v '^fe80::' | grep -v '^::1' )
-#
-#        crontab_cln+="@reboot sleep 10 ; screen -dmS main lightningd --rpc-file-mode 0660 --alias `hostname` --disable-ip-discovery --autolisten false --bind-addr $public_ipv4 --announce-addr $public_ipv4 --bind-addr $public_ipv6 --announce-addr $public_ipv6\n"
-#        crontab_cln+="@reboot sleep 10 ; screen -dmS tes lightningd --rpc-file-mode 0660 --alias `hostname` --network testnet --disable-ip-discovery --autolisten false --bind-addr $public_ipv4 --announce-addr $public_ipv4 --bind-addr $public_ipv6 --announce-addr $public_ipv6\n"
-#        crontab_cln+="@reboot sleep 10 ; screen -dmS sig lightningd --rpc-file-mode 0660 --alias `hostname` --network signet --disable-ip-discovery --autolisten false --bind-addr $public_ipv4 --announce-addr $public_ipv4 --bind-addr $public_ipv6 --announce-addr $public_ipv6 \n"
-#        crontab_cln+="@reboot sleep 20 ; /mempool/mempool.space/lightning-seeder >/dev/null 2>&1\n"
-#        crontab_cln+="1 * * * * /mempool/mempool.space/lightning-seeder >/dev/null 2>&1\n"
-#        echo "${crontab_cln}" | crontab -u "${CLN_USER}" -
-    ;;
-    Debian)
-    ;;
-esac
-
-fi
-
 ################################
 # Bitcoin instance for Mainnet #
 ################################
@@ -1455,11 +896,11 @@ if [ "${BITCOIN_MAINNET_ENABLE}" = ON ];then
     case $OS in
 
         FreeBSD)
-            osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 755 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/freebsd/rc.d/bitcoin" "${FREEBSD_SERVICE_HOME}"
+            osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 755 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/freebsd/rc.d/bitcoin" "${FREEBSD_SERVICE_HOME}"
         ;;
 
         Debian)
-            osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 644 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/linux/bitcoin.service" "${DEBIAN_SERVICE_HOME}"
+            osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/linux/bitcoin.service" "${DEBIAN_SERVICE_HOME}"
         ;;
     esac
 fi
@@ -1476,7 +917,7 @@ if [ "${BITCOIN_MAINNET_MINFEE_ENABLE}" = ON ];then
         ;;
 
         Debian)
-            osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 644 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/linux/bitcoin-minfee.service" "${DEBIAN_SERVICE_HOME}"
+            osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/linux/bitcoin-minfee.service" "${DEBIAN_SERVICE_HOME}"
         ;;
     esac
 fi
@@ -1493,7 +934,7 @@ if [ "${BITCOIN_TESTNET_ENABLE}" = ON ];then
         ;;
 
         Debian)
-            osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 644 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/linux/bitcoin-testnet.service" "${DEBIAN_SERVICE_HOME}"
+            osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/linux/bitcoin-testnet.service" "${DEBIAN_SERVICE_HOME}"
         ;;
     esac
 fi
@@ -1510,7 +951,7 @@ if [ "${BITCOIN_TESTNET4_ENABLE}" = ON ];then
         ;;
 
         Debian)
-            osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 644 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/linux/bitcoin-testnet4.service" "${DEBIAN_SERVICE_HOME}"
+            osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/linux/bitcoin-testnet4.service" "${DEBIAN_SERVICE_HOME}"
         ;;
     esac
 fi
@@ -1527,229 +968,50 @@ if [ "${BITCOIN_SIGNET_ENABLE}" = ON ];then
         ;;
 
         Debian)
-            osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 644 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/linux/bitcoin-signet.service" "${DEBIAN_SERVICE_HOME}"
+            osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/linux/bitcoin-signet.service" "${DEBIAN_SERVICE_HOME}"
         ;;
     esac
 fi
-
-###############################
-# Bitcoin instance for Liquid #
-###############################
-
-if [ "${ELEMENTS_LIQUID_ENABLE}" = ON ];then
-    echo "[*] Installing Bitcoin Liquid service"
-    case $OS in
-
-        FreeBSD)
-        ;;
-
-        Debian)
-            osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 644 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/linux/elements-liquid.service" "${DEBIAN_SERVICE_HOME}"
-        ;;
-    esac
-fi
-
-#######################################
-# Bitcoin instance for Liquid Testnet #
-#######################################
-
-if [ "${ELEMENTS_LIQUID_ENABLE}" = ON ];then
-    echo "[*] Installing Bitcoin Liquid service"
-    case $OS in
-
-        FreeBSD)
-        ;;
-
-        Debian)
-            osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 644 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/linux/elements-liquidtestnet.service" "${DEBIAN_SERVICE_HOME}"
-        ;;
-    esac
-fi
-
-########################################
-# Electrs instance for Bitcoin Mainnet #
-########################################
-if [ "${BITCOIN_MAINNET_ENABLE}" = ON ];then
-    echo "[*] FIXME: must only crontab enabled daemons"
-fi
-
-########################################
-# Electrs instance for Bitcoin Testnet #
-########################################
-
-if [ "${BITCOIN_TESTNET_ENABLE}" = ON ];then
-    echo "[*] FIXME: must only crontab enabled daemons"
-fi
-
-#########################################
-# Electrs instance for Bitcoin Testnet4 #
-#########################################
-
-if [ "${BITCOIN_TESTNET4_ENABLE}" = ON ];then
-    echo "[*] FIXME: must only crontab enabled daemons"
-fi
-
-#######################################
-# Electrs instance for Bitcoin Signet #
-#######################################
-
-if [ "${BITCOIN_SIGNET_ENABLE}" = ON ];then
-    echo "[*] FIXME: must only crontab enabled daemons"
-fi
-
-########################################
-# Electrs instance for Elements Liquid #
-########################################
-
-if [ "${ELEMENTS_LIQUID_ENABLE}" = ON ];then
-    echo "[*] Installing Elements crontab"
-    case $OS in
-        FreeBSD)
-            osSudo "${ROOT_USER}" crontab -u "${ELEMENTS_USER}" "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/elements.crontab"
-        ;;
-    esac
-fi
-
-################################################
-# Electrs instance for Elements Liquid Testnet #
-################################################
-
-if [ "${ELEMENTS_LIQUIDTESTNET_ENABLE}" = ON ];then
-    echo "[*] Installing Elements Liquid Testnet RPC credentials"
-    osSudo "${ROOT_USER}" sed -i.orig "s/__BITCOIN_RPC_USER__/${BITCOIN_RPC_USER}/" "${ELEMENTS_HOME}/elements.conf"
-    osSudo "${ROOT_USER}" sed -i.orig "s/__BITCOIN_RPC_PASS__/${BITCOIN_RPC_PASS}/" "${ELEMENTS_HOME}/elements.conf"
-    osSudo "${ROOT_USER}" sed -i.orig "s/__ELEMENTS_RPC_USER__/${ELEMENTS_RPC_USER}/" "${ELEMENTS_HOME}/elements.conf"
-    osSudo "${ROOT_USER}" sed -i.orig "s/__ELEMENTS_RPC_PASS__/${ELEMENTS_RPC_PASS}/" "${ELEMENTS_HOME}/elements.conf"
-fi
-
-################################
-# Install all Electrs Cronjobs #
-################################
-echo "[*] Installing crontabs"
-case $OS in
-    FreeBSD)
-        osSudo "${ROOT_USER}" crontab -u "${BITCOIN_USER}" "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/bitcoin.crontab"
-        osSudo "${ROOT_USER}" crontab -u "${MINFEE_USER}" "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/minfee.crontab"
-    ;;
-    Debian)
-        crontab_bitcoin=()
-        if [ "${BITCOIN_MAINNET_ENABLE}" = ON ];then
-            echo "[*] Installing Electrs Mainnet Cronjob"
-            crontab_bitcoin+="@reboot sleep 30 ; screen -dmS mainnet /bitcoin/electrs/start mainnet\n"
-        fi
-        if [ "${BITCOIN_TESTNET_ENABLE}" = ON ];then
-            echo "[*] Installing Electrs Testnet Cronjob"
-            crontab_bitcoin+="@reboot sleep 70 ; screen -dmS testnet /bitcoin/electrs/start testnet\n"
-        fi
-        if [ "${BITCOIN_TESTNET4_ENABLE}" = ON ];then
-            echo "[*] Installing Electrs Testnet4 Cronjob"
-            crontab_bitcoin+="@reboot sleep 110 ; screen -dmS testnet4 /bitcoin/electrs/start testnet4\n"
-        fi
-        if [ "${BITCOIN_SIGNET_ENABLE}" = ON ];then
-            echo "[*] Installing Electrs Signet Cronjob"
-            crontab_bitcoin+="@reboot sleep 90 ; screen -dmS signet /bitcoin/electrs/start signet\n"
-        fi
-        if [ "${BITCOIN_MAINNET_ENABLE}" = ON -o "${BITCOIN_TESTNET_ENABLE}" = ON -o "${BITCOIN_TESTNET4_ENABLE}" = ON -o "${BITCOIN_SIGNET_ENABLE}" = ON ];then
-            echo "${crontab_bitcoin}" | crontab -u "${BITCOIN_USER}" -
-        fi
-
-        crontab_elements=()
-        if [ "${ELEMENTS_LIQUID_ENABLE}" = ON ];then
-            echo "[*] Installing Liquid Asset Mainnet Cronjob"
-            crontab_elements+="6 * * * * cd $HOME/asset_registry_db && git pull origin master >/dev/null 2>&1\n"
-        fi
-        if [ "${ELEMENTS_LIQUIDTESTNET_ENABLE}" = ON ];then
-            echo "[*] Installing Liquid Asset Testnet Cronjob"
-            crontab_elements+="6 * * * * cd $HOME/asset_registry_testnet_db && git pull origin master >/dev/null 2>&1\n"
-        fi
-        if [ "${ELEMENTS_LIQUID_ENABLE}" = ON -o "${ELEMENTS_LIQUIDTESTNET_ENABLE}" = ON ];then
-            echo "${crontab_elements}" | crontab -u "${ELEMENTS_USER}" -
-        fi
-    ;;
-esac
 
 ##### Mempool -> Bitcoin Mainnet instance
 
 if [ "${BITCOIN_MAINNET_ENABLE}" = ON -o "${BITCOIN_TESTNET_ENABLE}" = ON -o "${BITCOIN_TESTNET4_ENABLE}" = ON -o "${BITCOIN_SIGNET_ENABLE}" = ON ];then
     echo "[*] Creating Mempool instance for Bitcoin Mainnet"
-    osSudo "${MEMPOOL_USER}" git config --global advice.detachedHead false
-    osSudo "${MEMPOOL_USER}" git clone --branch "${MEMPOOL_REPO_BRANCH}" "${MEMPOOL_REPO_URL}" "${MEMPOOL_HOME}/mainnet"
+    osSudo "${EXPLORER_USER}" git config --global advice.detachedHead false
+    osSudo "${EXPLORER_USER}" git clone --branch "${EXPLORER_REPO_BRANCH}" "${EXPLORER_REPO_URL}" "${EXPLORER_HOME}/mainnet"
 
-    echo "[*] Checking out Mempool ${MEMPOOL_LATEST_RELEASE} for Bitcoin Mainnet"
-    osSudo "${MEMPOOL_USER}" sh -c "cd ${MEMPOOL_HOME}/mainnet && git checkout ${MEMPOOL_LATEST_RELEASE}"
-fi
-
-if [ "${BITCOIN_MAINNET_LIGHTNING_ENABLE}" = ON ];then
-    echo "[*] Creating Mempool instance for Lightning Network on Bitcoin Mainnet"
-    osSudo "${MEMPOOL_USER}" git config --global advice.detachedHead false
-    osSudo "${MEMPOOL_USER}" git clone --branch "${MEMPOOL_REPO_BRANCH}" "${MEMPOOL_REPO_URL}" "${MEMPOOL_HOME}/mainnet-lightning"
-
-    echo "[*] Checking out Mempool ${MEMPOOL_LATEST_RELEASE} for Lightning Network on Bitcoin Mainnet"
-    osSudo "${MEMPOOL_USER}" sh -c "cd ${MEMPOOL_HOME}/mainnet-lightning && git checkout ${MEMPOOL_LATEST_RELEASE}"
+    echo "[*] Checking out Mempool ${EXPLORER_LATEST_RELEASE} for Bitcoin Mainnet"
+    osSudo "${EXPLORER_USER}" sh -c "cd ${EXPLORER_HOME}/mainnet && git checkout ${EXPLORER_LATEST_RELEASE}"
 fi
 
 if [ "${BITCOIN_TESTNET_ENABLE}" = ON ];then
     echo "[*] Creating Mempool instance for Bitcoin Testnet"
-    osSudo "${MEMPOOL_USER}" git config --global advice.detachedHead false
-    osSudo "${MEMPOOL_USER}" git clone --branch "${MEMPOOL_REPO_BRANCH}" "${MEMPOOL_REPO_URL}" "${MEMPOOL_HOME}/testnet"
+    osSudo "${EXPLORER_USER}" git config --global advice.detachedHead false
+    osSudo "${EXPLORER_USER}" git clone --branch "${EXPLORER_REPO_BRANCH}" "${EXPLORER_REPO_URL}" "${EXPLORER_HOME}/testnet"
 
-    echo "[*] Checking out Mempool ${MEMPOOL_LATEST_RELEASE} for Bitcoin Testnet"
-    osSudo "${MEMPOOL_USER}" sh -c "cd ${MEMPOOL_HOME}/testnet && git checkout ${MEMPOOL_LATEST_RELEASE}"
+    echo "[*] Checking out Mempool ${EXPLORER_LATEST_RELEASE} for Bitcoin Testnet"
+    osSudo "${EXPLORER_USER}" sh -c "cd ${EXPLORER_HOME}/testnet && git checkout ${EXPLORER_LATEST_RELEASE}"
 fi
 
 if [ "${BITCOIN_TESTNET4_ENABLE}" = ON ];then
     echo "[*] Creating Mempool instance for Bitcoin Testnet4"
-    osSudo "${MEMPOOL_USER}" git config --global advice.detachedHead false
-    osSudo "${MEMPOOL_USER}" git clone --branch "${MEMPOOL_REPO_BRANCH}" "${MEMPOOL_REPO_URL}" "${MEMPOOL_HOME}/testnet4"
+    osSudo "${EXPLORER_USER}" git config --global advice.detachedHead false
+    osSudo "${EXPLORER_USER}" git clone --branch "${EXPLORER_REPO_BRANCH}" "${EXPLORER_REPO_URL}" "${EXPLORER_HOME}/testnet4"
 
-    echo "[*] Checking out Mempool ${MEMPOOL_LATEST_RELEASE} for Bitcoin Testnet4"
-    osSudo "${MEMPOOL_USER}" sh -c "cd ${MEMPOOL_HOME}/testnet4 && git checkout ${MEMPOOL_LATEST_RELEASE}"
+    echo "[*] Checking out Mempool ${EXPLORER_LATEST_RELEASE} for Bitcoin Testnet4"
+    osSudo "${EXPLORER_USER}" sh -c "cd ${EXPLORER_HOME}/testnet4 && git checkout ${EXPLORER_LATEST_RELEASE}"
 fi
 
-if [ "${BITCOIN_TESTNET_LIGHTNING_ENABLE}" = ON ];then
-    echo "[*] Creating Mempool instance for Lightning Network on Bitcoin Testnet"
-    osSudo "${MEMPOOL_USER}" git config --global advice.detachedHead false
-    osSudo "${MEMPOOL_USER}" git clone --branch "${MEMPOOL_REPO_BRANCH}" "${MEMPOOL_REPO_URL}" "${MEMPOOL_HOME}/testnet-lightning"
-
-    echo "[*] Checking out Mempool ${MEMPOOL_LATEST_RELEASE} for Lightning Network on Bitcoin Testnet"
-    osSudo "${MEMPOOL_USER}" sh -c "cd ${MEMPOOL_HOME}/testnet-lightning && git checkout ${MEMPOOL_LATEST_RELEASE}"
-fi
 
 if [ "${BITCOIN_SIGNET_ENABLE}" = ON ];then
     echo "[*] Creating Mempool instance for Bitcoin Signet"
-    osSudo "${MEMPOOL_USER}" git config --global advice.detachedHead false
-    osSudo "${MEMPOOL_USER}" git clone --branch "${MEMPOOL_REPO_BRANCH}" "${MEMPOOL_REPO_URL}" "${MEMPOOL_HOME}/signet"
+    osSudo "${EXPLORER_USER}" git config --global advice.detachedHead false
+    osSudo "${EXPLORER_USER}" git clone --branch "${EXPLORER_REPO_BRANCH}" "${EXPLORER_REPO_URL}" "${EXPLORER_HOME}/signet"
 
-    echo "[*] Checking out Mempool ${MEMPOOL_LATEST_RELEASE} for Bitcoin Signet"
-    osSudo "${MEMPOOL_USER}" sh -c "cd ${MEMPOOL_HOME}/signet && git checkout ${MEMPOOL_LATEST_RELEASE}"
+    echo "[*] Checking out Mempool ${EXPLORER_LATEST_RELEASE} for Bitcoin Signet"
+    osSudo "${EXPLORER_USER}" sh -c "cd ${EXPLORER_HOME}/signet && git checkout ${EXPLORER_LATEST_RELEASE}"
 fi
 
-if [ "${BITCOIN_SIGNET_LIGHTNING_ENABLE}" = ON ];then
-    echo "[*] Creating Mempool instance for Lightning Network on Bitcoin Signet"
-    osSudo "${MEMPOOL_USER}" git config --global advice.detachedHead false
-    osSudo "${MEMPOOL_USER}" git clone --branch "${MEMPOOL_REPO_BRANCH}" "${MEMPOOL_REPO_URL}" "${MEMPOOL_HOME}/signet-lightning"
-
-    echo "[*] Checking out Mempool ${MEMPOOL_LATEST_RELEASE} for Lightning Network on Bitcoin Signet"
-    osSudo "${MEMPOOL_USER}" sh -c "cd ${MEMPOOL_HOME}/signet-lightning && git checkout ${MEMPOOL_LATEST_RELEASE}"
-fi
-
-if [ "${ELEMENTS_LIQUID_ENABLE}" = ON ];then
-    echo "[*] Creating Mempool instance for Liquid"
-    osSudo "${MEMPOOL_USER}" git config --global advice.detachedHead false
-    osSudo "${MEMPOOL_USER}" git clone --branch "${MEMPOOL_REPO_BRANCH}" "${MEMPOOL_REPO_URL}" "${MEMPOOL_HOME}/liquid"
-
-    echo "[*] Checking out Mempool ${MEMPOOL_LATEST_RELEASE} for Liquid"
-    osSudo "${MEMPOOL_USER}" sh -c "cd ${MEMPOOL_HOME}/liquid && git checkout ${MEMPOOL_LATEST_RELEASE}"
-fi
-
-if [ "${ELEMENTS_LIQUIDTESTNET_ENABLE}" = ON ];then
-    echo "[*] Creating Mempool instance for Liquid Testnet"
-    osSudo "${MEMPOOL_USER}" git config --global advice.detachedHead false
-    osSudo "${MEMPOOL_USER}" git clone --branch "${MEMPOOL_REPO_BRANCH}" "${MEMPOOL_REPO_URL}" "${MEMPOOL_HOME}/liquidtestnet"
-
-    echo "[*] Checking out Mempool ${MEMPOOL_LATEST_RELEASE} for Liquid Testnet"
-    osSudo "${MEMPOOL_USER}" sh -c "cd ${MEMPOOL_HOME}/liquidtestnet && git checkout ${MEMPOOL_LATEST_RELEASE}"
-fi
 
 ##### mariadb
 
@@ -1769,88 +1031,57 @@ sleep 10
 
 mysql << _EOF_
 create database if not exists mempool;
-grant all on mempool.* to '${MEMPOOL_MAINNET_USER}'@'localhost' identified by '${MEMPOOL_MAINNET_PASS}';
+grant all on mempool.* to '${EXPLORER_MAINNET_USER}'@'localhost' identified by '${EXPLORER_MAINNET_PASS}';
 
 create database if not exists mempool_testnet;
-grant all on mempool_testnet.* to '${MEMPOOL_TESTNET_USER}'@'localhost' identified by '${MEMPOOL_TESTNET_PASS}';
+grant all on mempool_testnet.* to '${EXPLORER_TESTNET_USER}'@'localhost' identified by '${EXPLORER_TESTNET_PASS}';
 
 create database if not exists mempool_testnet4;
-grant all on mempool_testnet4.* to '${MEMPOOL_TESTNET4_USER}'@'localhost' identified by '${MEMPOOL_TESTNET4_PASS}';
+grant all on mempool_testnet4.* to '${EXPLORER_TESTNET4_USER}'@'localhost' identified by '${EXPLORER_TESTNET4_PASS}';
 
 create database if not exists mempool_signet;
-grant all on mempool_signet.* to '${MEMPOOL_SIGNET_USER}'@'localhost' identified by '${MEMPOOL_SIGNET_PASS}';
-
-create database if not exists mempool_mainnet_lightning;
-grant all on mempool_mainnet_lightning.* to '${MEMPOOL_MAINNET_LIGHTNING_USER}'@'localhost' identified by '${MEMPOOL_MAINNET_LIGHTNING_PASS}';
-
-create database if not exists mempool_testnet_lightning;
-grant all on mempool_testnet_lightning.* to '${MEMPOOL_TESTNET_LIGHTNING_USER}'@'localhost' identified by '${MEMPOOL_TESTNET_LIGHTNING_PASS}';
-
-create database if not exists mempool_signet_lightning;
-grant all on mempool_signet_lightning.* to '${MEMPOOL_SIGNET_LIGHTNING_USER}'@'localhost' identified by '${MEMPOOL_SIGNET_LIGHTNING_PASS}';
-
-create database if not exists mempool_liquid;
-grant all on mempool_liquid.* to '${MEMPOOL_LIQUID_USER}'@'localhost' identified by '${MEMPOOL_LIQUID_PASS}';
-
-create database if not exists mempool_liquidtestnet;
-grant all on mempool_liquidtestnet.* to '${MEMPOOL_LIQUIDTESTNET_USER}'@'localhost' identified by '${MEMPOOL_LIQUIDTESTNET_PASS}';
+grant all on mempool_signet.* to '${EXPLORER_SIGNET_USER}'@'localhost' identified by '${EXPLORER_SIGNET_PASS}';
 
 _EOF_
 
 echo "[*] save MySQL credentials"
-cat > "${MEMPOOL_MYSQL_CREDENTIALS}" << _EOF_
-declare -x MEMPOOL_MAINNET_USER="${MEMPOOL_MAINNET_USER}"
-declare -x MEMPOOL_MAINNET_PASS="${MEMPOOL_MAINNET_PASS}"
-declare -x MEMPOOL_TESTNET_USER="${MEMPOOL_TESTNET_USER}"
-declare -x MEMPOOL_TESTNET_PASS="${MEMPOOL_TESTNET_PASS}"
-declare -x MEMPOOL_TESTNET4_USER="${MEMPOOL_TESTNET4_USER}"
-declare -x MEMPOOL_TESTNET4_PASS="${MEMPOOL_TESTNET4_PASS}"
-declare -x MEMPOOL_SIGNET_USER="${MEMPOOL_SIGNET_USER}"
-declare -x MEMPOOL_SIGNET_PASS="${MEMPOOL_SIGNET_PASS}"
-declare -x MEMPOOL_MAINNET_LIGHTNING_USER="${MEMPOOL_MAINNET_LIGHTNING_USER}"
-declare -x MEMPOOL_MAINNET_LIGHTNING_PASS="${MEMPOOL_MAINNET_LIGHTNING_PASS}"
-declare -x MEMPOOL_TESTNET_LIGHTNING_USER="${MEMPOOL_TESTNET_LIGHTNING_USER}"
-declare -x MEMPOOL_TESTNET_LIGHTNING_PASS="${MEMPOOL_TESTNET_LIGHTNING_PASS}"
-declare -x MEMPOOL_SIGNET_LIGHTNING_USER="${MEMPOOL_SIGNET_LIGHTNING_USER}"
-declare -x MEMPOOL_SIGNET_LIGHTNING_PASS="${MEMPOOL_SIGNET_LIGHTNING_PASS}"
-declare -x MEMPOOL_LIQUID_USER="${MEMPOOL_LIQUID_USER}"
-declare -x MEMPOOL_LIQUID_PASS="${MEMPOOL_LIQUID_PASS}"
-declare -x MEMPOOL_LIQUIDTESTNET_USER="${MEMPOOL_LIQUIDTESTNET_USER}"
-declare -x MEMPOOL_LIQUIDTESTNET_PASS="${MEMPOOL_LIQUIDTESTNET_PASS}"
+cat > "${EXPLORER_MYSQL_CREDENTIALS}" << _EOF_
+declare -x EXPLORER_MAINNET_USER="${EXPLORER_MAINNET_USER}"
+declare -x EXPLORER_MAINNET_PASS="${EXPLORER_MAINNET_PASS}"
+declare -x EXPLORER_TESTNET_USER="${EXPLORER_TESTNET_USER}"
+declare -x EXPLORER_TESTNET_PASS="${EXPLORER_TESTNET_PASS}"
+declare -x EXPLORER_TESTNET4_USER="${EXPLORER_TESTNET4_USER}"
+declare -x EXPLORER_TESTNET4_PASS="${EXPLORER_TESTNET4_PASS}"
+declare -x EXPLORER_SIGNET_USER="${EXPLORER_SIGNET_USER}"
+declare -x EXPLORER_SIGNET_PASS="${EXPLORER_SIGNET_PASS}"
 _EOF_
-chown "${MEMPOOL_USER}:${MEMPOOL_GROUP}" "${MEMPOOL_MYSQL_CREDENTIALS}"
+chown "${EXPLORER_USER}:${EXPLORER_GROUP}" "${EXPLORER_MYSQL_CREDENTIALS}"
 
 ##### nginx
 
 echo "[*] Adding Nginx configuration"
-osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 644 "${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/nginx/nginx.conf" "${NGINX_CONFIGURATION}"
-ln -s "${MEMPOOL_HOME}/mempool" "${NGINX_ETC_FOLDER}/mempool"
+osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/nginx/nginx.conf" "${NGINX_CONFIGURATION}"
+ln -s "${EXPLORER_HOME}/mempool" "${NGINX_ETC_FOLDER}/mempool"
 osSudo "${ROOT_USER}" sed -i.orig "s!__NGINX_USER__!${NGINX_USER}!" "${NGINX_CONFIGURATION}"
 osSudo "${ROOT_USER}" sed -i.orig "s!__NGINX_ETC_FOLDER__!${NGINX_ETC_FOLDER}!" "${NGINX_CONFIGURATION}"
 
 #if [ "${TOR_INSTALL}" = ON ];then
 #    echo "[*] Read tor v3 onion hostnames"
 #
-#    NGINX_MEMPOOL_ONION=$(cat "${TOR_RESOURCES}/mempool/hostname")
-#    osSudo "${ROOT_USER}" sed -i.orig "s!__NGINX_MEMPOOL_ONION__!${NGINX_MEMPOOL_ONION%.onion}!" "${NGINX_CONFIGURATION}"
+#    NGINX_EXPLORER_ONION=$(cat "${TOR_RESOURCES}/mempool/hostname")
+#    osSudo "${ROOT_USER}" sed -i.orig "s!__NGINX_EXPLORER_ONION__!${NGINX_EXPLORER_ONION%.onion}!" "${NGINX_CONFIGURATION}"
 #
-#    if [ "${ELEMENTS_LIQUID_ENABLE}" = "ON" ];then
-#        NGINX_LIQUID_ONION=$(cat "${TOR_RESOURCES}/liquid/hostname")
-#        osSudo "${ROOT_USER}" sed -i.orig "s!__NGINX_LIQUID_ONION__!${NGINX_LIQUID_ONIONi%.onion}!" "${NGINX_CONFIGURATION}"
-#    fi
 #
 #fi
 
 ##### OS systemd
 
-echo "[*] Setting permissions for electrs sockets"
+echo "[*] Setting permissions for bitcoind sockets"
 case $OS in
 
     FreeBSD)
         setfacl -m "user:bitcoin:full_set:f:allow,user:mempool:full_set:f:allow,user:www:full_set:f:allow,everyone@::f:allow" "${BITCOIN_HOME}/socket"
         chown "${BITCOIN_USER}:${BITCOIN_GROUP}" "${BITCOIN_HOME}/socket"
-        setfacl -m "user:elements:full_set:f:allow,user:mempool:full_set:f:allow,user:www:full_set:f:allow,everyone@::f:allow" "${ELEMENTS_HOME}/socket"
-        chown "${ELEMENTS_USER}:${ELEMENTS_GROUP}" "${ELEMENTS_HOME}/socket"
     ;;
 
     Debian)
@@ -1905,12 +1136,6 @@ EOF
         if [ "${BITCOIN_SIGNET_ENABLE}" = ON ];then
             osSudo "${ROOT_USER}" systemctl enable bitcoin-signet.service
         fi
-        if [ "${ELEMENTS_LIQUID_ENABLE}" = ON ];then
-            osSudo "${ROOT_USER}" systemctl enable elements-liquid.service
-        fi
-        if [ "${ELEMENTS_LIQUIDTESTNET_ENABLE}" = ON ];then
-            osSudo "${ROOT_USER}" systemctl enable elements-liquidtestnet.service
-        fi
     ;;
 esac
 
@@ -1939,7 +1164,7 @@ esac
 ##### Build Mempool
 
 echo "[*] Build Mempool"
-osSudo "${MEMPOOL_USER}" sh -c "cd ${MEMPOOL_HOME} && ./upgrade" || true
+osSudo "${EXPLORER_USER}" sh -c "cd ${EXPLORER_HOME} && ./upgrade" || true
 
 
 
@@ -1951,12 +1176,11 @@ osSudo "${MEMPOOL_USER}" sh -c "cd ${MEMPOOL_HOME} && ./upgrade" || true
 #
 #        FreeBSD)
 #            osSudo "${ROOT_USER}" service bitcoin onestart
-#            osSudo "${BITCOIN_USER}" sh -c "grep @reboot ${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/bitcoin.crontab|cut -d ';' -f2|zsh"
+#            osSudo "${BITCOIN_USER}" sh -c "grep @reboot ${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/bitcoin.crontab|cut -d ';' -f2|zsh"
 #        ;;
 #
 #        Debian)
 #            osSudo "${ROOT_USER}" systemctl start bitcoin
-#            osSudo "${ROOT_USER}" systemctl start electrs
 #            osSudo "${ROOT_USER}" journalctl --no-pager --unit bitcoin
 #        ;;
 #    esac
@@ -1972,26 +1196,9 @@ osSudo "${MEMPOOL_USER}" sh -c "cd ${MEMPOOL_HOME} && ./upgrade" || true
 #        Debian)
 #            echo "[*] Starting Bitcoin Testnet"
 #            osSudo "${ROOT_USER}" systemctl start bitcoin-testnet
-#            osSudo "${ROOT_USER}" systemctl start electrs-testnet
 #            osSudo "${ROOT_USER}" journalctl --no-pager --unit bitcoin-testnet
 #    esac
 #fi
-#if [ "${ELEMENTS_LIQUID_ENABLE}" = ON ];then
-#    case $OS in
-#
-#        FreeBSD)
-#            echo "[*] Starting Elements Liquid"
-#            osSudo "${ELEMENTS_USER}" sh -c "grep @reboot ${MEMPOOL_HOME}/${MEMPOOL_REPO_NAME}/production/elements.crontab|cut -d ';' -f2|zsh"
-#        ;;
-#
-#        Debian)
-#            echo "[*] Starting Elements Liquid"
-#            osSudo "${ROOT_USER}" systemctl start liquid
-#            osSudo "${ROOT_USER}" systemctl start electrs-liquid
-#            osSudo "${ROOT_USER}" journalctl --no-pager --unit liquid
-#    esac
-#fi
-
 #osSudo "${ROOT_USER}" tail "${BITCOIN_HOME}/debug.log"
 
 ##### OS notes
@@ -2012,7 +1219,6 @@ osSudo "${MEMPOOL_USER}" sh -c "cd ${MEMPOOL_HOME} && ./upgrade" || true
 #        osSudo "${ROOT_USER}" ufw default allow outgoing
 #        osSudo "${ROOT_USER}" ufw allow from any to any port ${BITCOIN_MAINNET_P2P_PORT} proto tcp
 #        osSudo "${ROOT_USER}" ufw allow from any to any port ${BITCOIN_TESTNET_P2P_PORT} proto tcp
-#        osSudo "${ROOT_USER}" ufw allow from any to any port ${ELEMENTS_LIQUID_P2P_PORT} proto tcp
 #    ;;
 #esac
 
@@ -2020,8 +1226,7 @@ osSudo "${MEMPOOL_USER}" sh -c "cd ${MEMPOOL_HOME} && ./upgrade" || true
 
 #if [ "${TOR_INSTALL}" = ON ];then
 #    echo "Your auto-generated Tor addresses are:"
-#    echo "${NGINX_MEMPOOL_ONION}"
-#    echo "${NGINX_LIQUID_ONION}"
+#    echo "${NGINX_EXPLORER_ONION}"
 #fi
 
 echo

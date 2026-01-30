@@ -708,7 +708,7 @@ class BlocksRepository {
 
       // stop at the last canonical block we're supposed to have indexed already
       let lastIndexedBlockHeight = minHeight;
-      const indexedBlockAmount = Math.min(config.MEMPOOL.INDEXING_BLOCKS_AMOUNT, tipHeight);
+      const indexedBlockAmount = Math.min(config.EXPLORER.INDEXING_BLOCKS_AMOUNT, tipHeight);
       if (indexedBlockAmount > 0) {
         lastIndexedBlockHeight = Math.max(0, tipHeight - indexedBlockAmount + 1);
       }
@@ -1179,7 +1179,7 @@ class BlocksRepository {
     extras.matchRate = null;
     extras.expectedFees = null;
     extras.expectedSize = null;
-    if (config.MEMPOOL.AUDIT) {
+    if (config.EXPLORER.AUDIT) {
       const auditScore = await BlocksAuditsRepository.$getBlockAuditScore(dbBlk.id);
       if (auditScore) {
         extras.matchRate = auditScore.matchRate;

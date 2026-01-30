@@ -26,7 +26,7 @@ class BackendInfo {
       hostname: os.hostname(),
       version: versionInfo.version,
       gitCommit: versionInfo.gitCommit,
-      backend: config.MEMPOOL.BACKEND,
+      backend: config.EXPLORER.BACKEND,
       coreVersion: '?',
       osVersion: `${os.type()} ${os.release()}`,
     };

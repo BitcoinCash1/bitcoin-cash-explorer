@@ -5,17 +5,17 @@ import { handleError } from '../../utils/api';
 class StatisticsRoutes {
   public initRoutes(app: Application) {
     app
-      .get(config.MEMPOOL.API_URL_PREFIX + 'statistics/2h', this.$getStatisticsByTime.bind(this, '2h'))
-      .get(config.MEMPOOL.API_URL_PREFIX + 'statistics/24h', this.$getStatisticsByTime.bind(this, '24h'))
-      .get(config.MEMPOOL.API_URL_PREFIX + 'statistics/1w', this.$getStatisticsByTime.bind(this, '1w'))
-      .get(config.MEMPOOL.API_URL_PREFIX + 'statistics/1m', this.$getStatisticsByTime.bind(this, '1m'))
-      .get(config.MEMPOOL.API_URL_PREFIX + 'statistics/3m', this.$getStatisticsByTime.bind(this, '3m'))
-      .get(config.MEMPOOL.API_URL_PREFIX + 'statistics/6m', this.$getStatisticsByTime.bind(this, '6m'))
-      .get(config.MEMPOOL.API_URL_PREFIX + 'statistics/1y', this.$getStatisticsByTime.bind(this, '1y'))
-      .get(config.MEMPOOL.API_URL_PREFIX + 'statistics/2y', this.$getStatisticsByTime.bind(this, '2y'))
-      .get(config.MEMPOOL.API_URL_PREFIX + 'statistics/3y', this.$getStatisticsByTime.bind(this, '3y'))
-      .get(config.MEMPOOL.API_URL_PREFIX + 'statistics/4y', this.$getStatisticsByTime.bind(this, '4y'))
-      .get(config.MEMPOOL.API_URL_PREFIX + 'statistics/all', this.$getStatisticsByTime.bind(this, 'all'));
+      .get(config.EXPLORER.API_URL_PREFIX + 'statistics/2h', this.$getStatisticsByTime.bind(this, '2h'))
+      .get(config.EXPLORER.API_URL_PREFIX + 'statistics/24h', this.$getStatisticsByTime.bind(this, '24h'))
+      .get(config.EXPLORER.API_URL_PREFIX + 'statistics/1w', this.$getStatisticsByTime.bind(this, '1w'))
+      .get(config.EXPLORER.API_URL_PREFIX + 'statistics/1m', this.$getStatisticsByTime.bind(this, '1m'))
+      .get(config.EXPLORER.API_URL_PREFIX + 'statistics/3m', this.$getStatisticsByTime.bind(this, '3m'))
+      .get(config.EXPLORER.API_URL_PREFIX + 'statistics/6m', this.$getStatisticsByTime.bind(this, '6m'))
+      .get(config.EXPLORER.API_URL_PREFIX + 'statistics/1y', this.$getStatisticsByTime.bind(this, '1y'))
+      .get(config.EXPLORER.API_URL_PREFIX + 'statistics/2y', this.$getStatisticsByTime.bind(this, '2y'))
+      .get(config.EXPLORER.API_URL_PREFIX + 'statistics/3y', this.$getStatisticsByTime.bind(this, '3y'))
+      .get(config.EXPLORER.API_URL_PREFIX + 'statistics/4y', this.$getStatisticsByTime.bind(this, '4y'))
+      .get(config.EXPLORER.API_URL_PREFIX + 'statistics/all', this.$getStatisticsByTime.bind(this, 'all'));
   }
 
   private async $getStatisticsByTime(

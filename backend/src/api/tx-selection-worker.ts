@@ -125,7 +125,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
       // Check if the package fits into this block
       if (
         blocks.length >= 7 ||
-        (blockSize + nextTx.ancestorSize < config.MEMPOOL.MIN_BLOCK_SIZE_UNITS &&
+        (blockSize + nextTx.ancestorSize < config.EXPLORER.MIN_BLOCK_SIZE_UNITS &&
           blockSigops + nextTx.ancestorSigops <= 80000)
       ) {
         const ancestors: AuditTransaction[] = Array.from(nextTx.ancestorMap.values());
@@ -173,7 +173,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
 
     // this block is full
     // TODO: Update for BCH
-    const exceededPackageTries = failures > 1000 && blockSize > config.MEMPOOL.MIN_BLOCK_SIZE_UNITS - 4000;
+    const exceededPackageTries = failures > 1000 && blockSize > config.EXPLORER.MIN_BLOCK_SIZE_UNITS - 4000;
     const queueEmpty = top >= mempoolArray.length && modified.isEmpty();
 
     if ((exceededPackageTries || queueEmpty) && blocks.length < 7) {

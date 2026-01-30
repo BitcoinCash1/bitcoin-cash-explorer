@@ -57,7 +57,7 @@ class Mempool {
   private mainLoopTimeout = 120000;
   private txPerSecondInterval: NodeJS.Timeout | null = null;
 
-  public limitGBT = config.MEMPOOL.USE_SECOND_NODE_FOR_MINFEE && config.MEMPOOL.LIMIT_GBT;
+  public limitGBT = config.EXPLORER.USE_SECOND_NODE_FOR_MINFEE && config.EXPLORER.LIMIT_GBT;
 
   constructor() {
     // Initialize mempoolInfo here to avoid circular dependency issues
@@ -148,7 +148,7 @@ class Mempool {
     this.mempoolCache = mempoolData;
     let count = 0;
     const redisTimer = Date.now();
-    if (config.MEMPOOL.CACHE_ENABLED && config.REDIS.ENABLED) {
+    if (config.EXPLORER.CACHE_ENABLED && config.REDIS.ENABLED) {
       logger.debug(`Migrating ${Object.keys(this.mempoolCache).length} transactions from disk cache to Redis cache`);
     }
     for (const txid of Object.keys(this.mempoolCache)) {
@@ -166,12 +166,12 @@ class Mempool {
         transactionUtils.addInnerScriptsToVin(vin);
       }
       count++;
-      if (config.MEMPOOL.CACHE_ENABLED && config.REDIS.ENABLED) {
+      if (config.EXPLORER.CACHE_ENABLED && config.REDIS.ENABLED) {
         await redisCache.$addTransaction(this.mempoolCache[txid]);
       }
       this.mempoolCache[txid].flags = Common.getTransactionFlags(this.mempoolCache[txid]);
     }
-    if (config.MEMPOOL.CACHE_ENABLED && config.REDIS.ENABLED) {
+    if (config.EXPLORER.CACHE_ENABLED && config.REDIS.ENABLED) {
       await redisCache.$flushTransactions();
       logger.debug(`Finished migrating cache transactions in ${((Date.now() - redisTimer) / 1000).toFixed(2)} seconds`);
     }
@@ -374,7 +374,7 @@ class Mempool {
           this.mempoolProtection = 2;
           logger.warn('Mempool clear protection ended, normal operation resumed.');
         },
-        1000 * 60 * config.MEMPOOL.CLEAR_PROTECTION_MINUTES
+        1000 * 60 * config.EXPLORER.CLEAR_PROTECTION_MINUTES
       );
     }
 
@@ -557,7 +557,7 @@ class Mempool {
   }
 
   private $getMempoolInfo() {
-    if (config.MEMPOOL.USE_SECOND_NODE_FOR_MINFEE) {
+    if (config.EXPLORER.USE_SECOND_NODE_FOR_MINFEE) {
       return Promise.all([bitcoinClient.getMempoolInfo(), bitcoinSecondClient.getMempoolInfo()]).then(
         ([mempoolInfo, secondMempoolInfo]) => {
           mempoolInfo.maxmempool = secondMempoolInfo.maxmempool;

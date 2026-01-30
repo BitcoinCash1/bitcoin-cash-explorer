@@ -5,7 +5,7 @@ import ElectrumApi from './electrum-api';
 import bitcoinClient from './bitcoin-client';
 
 function bitcoinApiFactory(): AbstractBitcoinApi {
-  switch (config.MEMPOOL.BACKEND) {
+  switch (config.EXPLORER.BACKEND) {
     case 'electrum':
       return new ElectrumApi(bitcoinClient);
     case 'none':

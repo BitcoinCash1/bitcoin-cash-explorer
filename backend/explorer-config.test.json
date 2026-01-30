@@ -1,5 +1,5 @@
 {
-  "MEMPOOL": {
+  "EXPLORER": {
     "OFFICIAL": false,
     "NETWORK": "mainnet",
     "BACKEND": "none",
@@ -91,8 +91,8 @@
     "PASSWORD": ""
   },
   "EXTERNAL_DATA_SERVER": {
-    "MEMPOOL_API": "https://bchexplorer.cash/api/v1",
-    "MEMPOOL_ONION": "http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/api/v1"
+    "EXPLORER_API": "https://bchexplorer.cash/api/v1",
+    "EXPLORER_ONION": "http://mempoolhqx4isw62xs7abwphsq7ldayuidyx2v2oethdhhj6mlo2r6ad.onion/api/v1"
   },
   "REDIS": {
     "ENABLED": false,
@@ -107,7 +107,7 @@
     "STATISTICS_START_TIME": 1481932800,
     "SERVERS": []
   },
-  "MEMPOOL_SERVICES": {
+  "MELROY_EXPLORER_SERVICES": {
     "API": "http://bchexplorer.cash/api/v1/services"
   },
   "STRATUM": {

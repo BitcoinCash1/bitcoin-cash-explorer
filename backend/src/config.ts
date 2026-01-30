@@ -3,7 +3,7 @@ const configFromFile = require(
 );
 
 interface IConfig {
-  MEMPOOL: {
+  EXPLORER: {
     ENABLED: boolean;
     OFFICIAL: boolean;
     NETWORK: 'mainnet' | 'testnet' | 'signet';
@@ -97,8 +97,8 @@ interface IConfig {
     PASSWORD: string;
   };
   EXTERNAL_DATA_SERVER: {
-    MEMPOOL_API: string;
-    MEMPOOL_ONION: string;
+    EXPLORER_API: string;
+    EXPLORER_ONION: string;
   };
   REPLICATION: {
     ENABLED: boolean;
@@ -108,7 +108,7 @@ interface IConfig {
     STATISTICS_START_TIME: number | string;
     SERVERS: string[];
   };
-  MEMPOOL_SERVICES: {
+  MELROY_EXPLORER_SERVICES: {
     API: string;
   };
   REDIS: {
@@ -133,7 +133,7 @@ interface IConfig {
 }
 
 const defaults: IConfig = {
-  MEMPOOL: {
+  EXPLORER: {
     ENABLED: true,
     OFFICIAL: false,
     NETWORK: 'mainnet',
@@ -227,8 +227,8 @@ const defaults: IConfig = {
     PASSWORD: '',
   },
   EXTERNAL_DATA_SERVER: {
-    MEMPOOL_API: 'https://bchexplorer.cash/api/v1',
-    MEMPOOL_ONION: 'http://upcomingtordomain.onion/api/v1',
+    EXPLORER_API: 'https://bchexplorer.cash/api/v1',
+    EXPLORER_ONION: 'http://upcomingtordomain.onion/api/v1',
   },
   REPLICATION: {
     ENABLED: false,
@@ -238,7 +238,7 @@ const defaults: IConfig = {
     STATISTICS_START_TIME: 1481932800,
     SERVERS: [],
   },
-  MEMPOOL_SERVICES: {
+  MELROY_EXPLORER_SERVICES: {
     API: '',
   },
   REDIS: {
@@ -263,7 +263,7 @@ const defaults: IConfig = {
 };
 
 class Config implements IConfig {
-  MEMPOOL: IConfig['MEMPOOL'];
+  EXPLORER: IConfig['EXPLORER'];
   ELECTRUM: IConfig['ELECTRUM'];
   CORE_RPC: IConfig['CORE_RPC'];
   SECOND_CORE_RPC: IConfig['SECOND_CORE_RPC'];
@@ -273,7 +273,7 @@ class Config implements IConfig {
   SOCKS5PROXY: IConfig['SOCKS5PROXY'];
   EXTERNAL_DATA_SERVER: IConfig['EXTERNAL_DATA_SERVER'];
   REPLICATION: IConfig['REPLICATION'];
-  MEMPOOL_SERVICES: IConfig['MEMPOOL_SERVICES'];
+  MELROY_EXPLORER_SERVICES: IConfig['MELROY_EXPLORER_SERVICES'];
   REDIS: IConfig['REDIS'];
   FIAT_PRICE: IConfig['FIAT_PRICE'];
   WALLETS: IConfig['WALLETS'];
@@ -281,7 +281,7 @@ class Config implements IConfig {
 
   constructor() {
     const configs = this.merge(configFromFile, defaults);
-    this.MEMPOOL = configs.MEMPOOL;
+    this.EXPLORER = configs.EXPLORER;
 
     this.ELECTRUM = configs.ELECTRUM;
     this.CORE_RPC = configs.CORE_RPC;
@@ -292,7 +292,7 @@ class Config implements IConfig {
     this.SOCKS5PROXY = configs.SOCKS5PROXY;
     this.EXTERNAL_DATA_SERVER = configs.EXTERNAL_DATA_SERVER;
     this.REPLICATION = configs.REPLICATION;
-    this.MEMPOOL_SERVICES = configs.MEMPOOL_SERVICES;
+    this.MELROY_EXPLORER_SERVICES = configs.MELROY_EXPLORER_SERVICES;
     this.REDIS = configs.REDIS;
     this.FIAT_PRICE = configs.FIAT_PRICE;
     this.WALLETS = configs.WALLETS;

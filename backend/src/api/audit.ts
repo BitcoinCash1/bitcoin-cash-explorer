@@ -135,7 +135,7 @@ class Audit {
     }
 
     // transactions missing from near the end of our template are probably not being censored
-    let overflowSizeRemaining = overflowSize - (config.MEMPOOL.MIN_BLOCK_SIZE_UNITS - totalSize);
+    let overflowSizeRemaining = overflowSize - (config.EXPLORER.MIN_BLOCK_SIZE_UNITS - totalSize);
     let maxOverflowRate = 0;
     let rateThreshold = 0;
     index = projectedBlocks[0].transactionIds.length - 1;

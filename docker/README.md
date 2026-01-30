@@ -2,7 +2,7 @@
 
 This directory contains the Dockerfiles used to build and release the official images, as well as a `docker-compose.yml` to configure environment variables and other settings.
 
-If you are looking to use these Docker images to deploy your own instance of Mempool, note that they only containerize Mempool's frontend and backend. You will still need to deploy and configure Bitcoin Cash Node and an Electrum Server separately, along with any other utilities specific to your use case (e.g., a reverse proxy, etc). Such configuration is mostly beyond the scope of the Mempool project, so please only proceed if you know what you're doing.
+If you are looking to use these Docker images to deploy your own instance of BCH Explorer, note that they only containerize BCH Explorer's frontend and backend. You will still need to deploy and configure Bitcoin Cash Node and an Electrum Server separately, along with any other utilities specific to your use case (e.g., a reverse proxy, etc). Such configuration is mostly beyond the scope of the BCH Explorer project, so please only proceed if you know what you're doing.
 
 See a video guide of this installation method by k3tan [on BitcoinTV.com](https://bitcointv.com/w/8fpAx6rf5CQ16mMhospwjg).
 
@@ -30,7 +30,7 @@ If you want to use different credentials, specify them in the `docker-compose.ym
 ```yaml
 api:
   environment:
-    MEMPOOL_BACKEND: "none"
+    EXPLORER_BACKEND: "none"
     CORE_RPC_HOST: "172.27.0.1"
     CORE_RPC_PORT: "8332"
     CORE_RPC_USERNAME: "customuser"
@@ -59,13 +59,13 @@ Then, set the following variables in `docker-compose.yml` so BCH Explorer can co
 ```yaml
 api:
   environment:
-    MEMPOOL_BACKEND: "electrum"
+    EXPLORER_BACKEND: "electrum"
     ELECTRUM_HOST: "172.27.0.1"
     ELECTRUM_PORT: "50002"
     ELECTRUM_TLS_ENABLED: "false"
 ```
 
-Eligible values for `MEMPOOL_BACKEND`:
+Eligible values for `EXPLORER_BACKEND`:
 
 - "electrum" if you're using [cculianu/Fulcrum](https://github.com/cculianu/Fulcrum)
 - "none" if you're not using any Electrum Server
@@ -89,7 +89,7 @@ Below we list all settings from `explorer-config.json` and the corresponding ove
 `explorer-config.json`:
 
 ```json
-  "MEMPOOL": {
+  "EXPLORER": {
     "NETWORK": "mainnet",
     "BACKEND": "electrum",
     "ENABLED": true,
@@ -123,31 +123,31 @@ Corresponding `docker-compose.yml` overrides:
 ```yaml
   api:
     environment:
-      MEMPOOL_NETWORK: ""
-      MEMPOOL_BACKEND: ""
+      EXPLORER_NETWORK: ""
+      EXPLORER_BACKEND: ""
       BACKEND_HTTP_PORT: ""
-      MEMPOOL_SPAWN_CLUSTER_PROCS: ""
-      MEMPOOL_API_URL_PREFIX: ""
-      MEMPOOL_POLL_RATE_MS: ""
-      MEMPOOL_CACHE_DIR: ""
-      MEMPOOL_CLEAR_PROTECTION_MINUTES: ""
-      MEMPOOL_RECOMMENDED_FEE_PERCENTILE: ""
-      MEMPOOL_MIN_BLOCK_SIZE_UNITS: ""
-      MEMPOOL_INITIAL_BLOCKS_AMOUNT: ""
-      MEMPOOL_MEMPOOL_BLOCKS_AMOUNT: ""
-      MEMPOOL_BLOCKS_SUMMARIES_INDEXING: ""
-      MEMPOOL_USE_SECOND_NODE_FOR_MINFEE: ""
-      MEMPOOL_EXTERNAL_ASSETS: ""
-      MEMPOOL_STDOUT_LOG_MIN_PRIORITY: ""
-      MEMPOOL_INDEXING_BLOCKS_AMOUNT: ""
-      MEMPOOL_AUTOMATIC_POOLS_UPDATE: ""
-      MEMPOOL_POOLS_JSON_URL: ""
-      MEMPOOL_POOLS_JSON_TREE_URL: ""
-      MEMPOOL_POOLS_UPDATE_DELAY: ""
-      MEMPOOL_MAX_BLOCKS_BULK_QUERY: ""
-      MEMPOOL_DISK_CACHE_BLOCK_INTERVAL: ""
-      MEMPOOL_PRICE_UPDATES_PER_HOUR: ""
-      MEMPOOL_MAX_TRACKED_ADDRESSES: ""
+      EXPLORER_SPAWN_CLUSTER_PROCS: ""
+      EXPLORER_API_URL_PREFIX: ""
+      EXPLORER_POLL_RATE_MS: ""
+      EXPLORER_CACHE_DIR: ""
+      EXPLORER_CLEAR_PROTECTION_MINUTES: ""
+      EXPLORER_RECOMMENDED_FEE_PERCENTILE: ""
+      EXPLORER_MIN_BLOCK_SIZE_UNITS: ""
+      EXPLORER_INITIAL_BLOCKS_AMOUNT: ""
+      EXPLORER_MEMPOOL_BLOCKS_AMOUNT: ""
+      EXPLORER_BLOCKS_SUMMARIES_INDEXING: ""
+      EXPLORER_USE_SECOND_NODE_FOR_MINFEE: ""
+      EXPLORER_EXTERNAL_ASSETS: ""
+      EXPLORER_STDOUT_LOG_MIN_PRIORITY: ""
+      EXPLORER_INDEXING_BLOCKS_AMOUNT: ""
+      EXPLORER_AUTOMATIC_POOLS_UPDATE: ""
+      EXPLORER_POOLS_JSON_URL: ""
+      EXPLORER_POOLS_JSON_TREE_URL: ""
+      EXPLORER_POOLS_UPDATE_DELAY: ""
+      EXPLORER_MAX_BLOCKS_BULK_QUERY: ""
+      EXPLORER_DISK_CACHE_BLOCK_INTERVAL: ""
+      EXPLORER_PRICE_UPDATES_PER_HOUR: ""
+      EXPLORER_MAX_TRACKED_ADDRESSES: ""
       ...
 ```
 

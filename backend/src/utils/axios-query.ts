@@ -17,16 +17,16 @@ export async function query(path, throwOnFail = false): Promise<object | undefin
   const axiosOptions: axiosOptions = {
     headers: {
       'User-Agent':
-        config.MEMPOOL.USER_AGENT === 'explorer'
+        config.EXPLORER.USER_AGENT === 'explorer'
           ? `BCHExplorer/v${backendInfo.getBackendInfo().version}`
-          : `${config.MEMPOOL.USER_AGENT}`,
+          : `${config.EXPLORER.USER_AGENT}`,
     },
     timeout: config.SOCKS5PROXY.ENABLED ? 30000 : 20000,
   };
   let retry = 0;
   let lastError: any = null;
 
-  while (retry < config.MEMPOOL.EXTERNAL_MAX_RETRY) {
+  while (retry < config.EXPLORER.EXTERNAL_MAX_RETRY) {
     try {
       if (config.SOCKS5PROXY.ENABLED) {
         const socksOptions: any = {
@@ -56,17 +56,17 @@ export async function query(path, throwOnFail = false): Promise<object | undefin
     } catch (e) {
       lastError = e;
       logger.warn(
-        `Could not connect to ${path} (Attempt ${retry + 1}/${config.MEMPOOL.EXTERNAL_MAX_RETRY}). Reason: ` +
+        `Could not connect to ${path} (Attempt ${retry + 1}/${config.EXPLORER.EXTERNAL_MAX_RETRY}). Reason: ` +
           (e instanceof Error ? e.message : e)
       );
       retry++;
     }
-    if (retry < config.MEMPOOL.EXTERNAL_MAX_RETRY) {
-      await setDelay(config.MEMPOOL.EXTERNAL_RETRY_INTERVAL);
+    if (retry < config.EXPLORER.EXTERNAL_MAX_RETRY) {
+      await setDelay(config.EXPLORER.EXTERNAL_RETRY_INTERVAL);
     }
   }
 
-  logger.err(`Could not connect to ${path}. All ${config.MEMPOOL.EXTERNAL_MAX_RETRY} attempts failed`);
+  logger.err(`Could not connect to ${path}. All ${config.EXPLORER.EXTERNAL_MAX_RETRY} attempts failed`);
 
   if (throwOnFail && lastError) {
     throw lastError;

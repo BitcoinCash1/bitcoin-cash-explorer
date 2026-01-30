@@ -85,8 +85,8 @@ class Logger {
   }
 
   private getNetwork(): string {
-    if (config.MEMPOOL.NETWORK && config.MEMPOOL.NETWORK !== 'mainnet') {
-      return config.MEMPOOL.NETWORK;
+    if (config.EXPLORER.NETWORK && config.EXPLORER.NETWORK !== 'mainnet') {
+      return config.EXPLORER.NETWORK;
     }
     return '';
   }
@@ -110,7 +110,7 @@ class Logger {
       }]: ${priority.toUpperCase()}${network} ${tag ? '[' + tag + '] ' : ''}${msg}`;
       this.syslog(syslogmsg);
     }
-    if (Logger.priorities[priority] > Logger.priorities[config.MEMPOOL.STDOUT_LOG_MIN_PRIORITY]) {
+    if (Logger.priorities[priority] > Logger.priorities[config.EXPLORER.STDOUT_LOG_MIN_PRIORITY]) {
       return;
     }
     if (priority === 'warning') {

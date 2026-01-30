@@ -28,64 +28,64 @@ const SCRIPT_HASH_REGEX = /^([a-f0-9]{2})+$/i;
 class BitcoinRoutes {
   public initRoutes(app: Application) {
     app
-      .get(config.MEMPOOL.API_URL_PREFIX + 'transaction-times', this.getTransactionTimes)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'difficulty-adjustment', this.getDifficultyChange)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'fees/recommended', this.getRecommendedFees)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'fees/precise', this.getPreciseRecommendedFees)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'fees/mempool-blocks', this.getMempoolBlocks)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'backend-info', this.getBackendInfo)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'init-data', this.getInitData)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'validate-address/:address', this.validateAddress)
-      .post(config.MEMPOOL.API_URL_PREFIX + 'tx/push', this.$postTransactionForm)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'blocks', this.getBlocks.bind(this))
-      .get(config.MEMPOOL.API_URL_PREFIX + 'blocks/:height', this.getBlocks.bind(this))
-      .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash', this.getBlock)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/summary', this.getStrippedBlockTransactions)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/tx/:txid/summary', this.getStrippedBlockTransaction)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/audit-summary', this.getBlockAuditSummary)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/tx/:txid/audit', this.$getBlockTxAuditSummary)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'blocks/tip/height', this.getBlockTipHeight)
-      .post(config.MEMPOOL.API_URL_PREFIX + 'psbt/addparents', this.postPsbtCompletion)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'blocks-bulk/:from', this.getBlocksByBulk.bind(this))
-      .get(config.MEMPOOL.API_URL_PREFIX + 'blocks-bulk/:from/:to', this.getBlocksByBulk.bind(this))
-      .get(config.MEMPOOL.API_URL_PREFIX + 'chain-tips', this.getChainTips.bind(this))
-      .get(config.MEMPOOL.API_URL_PREFIX + 'stale-tips', this.getStaleTips.bind(this))
-      .post(config.MEMPOOL.API_URL_PREFIX + 'prevouts', this.$getPrevouts) // TODO: Prevouts with Verbose (new end-point)
-      .post(config.MEMPOOL.API_URL_PREFIX + 'txs/package', this.$submitPackage)
+      .get(config.EXPLORER.API_URL_PREFIX + 'transaction-times', this.getTransactionTimes)
+      .get(config.EXPLORER.API_URL_PREFIX + 'difficulty-adjustment', this.getDifficultyChange)
+      .get(config.EXPLORER.API_URL_PREFIX + 'fees/recommended', this.getRecommendedFees)
+      .get(config.EXPLORER.API_URL_PREFIX + 'fees/precise', this.getPreciseRecommendedFees)
+      .get(config.EXPLORER.API_URL_PREFIX + 'fees/mempool-blocks', this.getMempoolBlocks)
+      .get(config.EXPLORER.API_URL_PREFIX + 'backend-info', this.getBackendInfo)
+      .get(config.EXPLORER.API_URL_PREFIX + 'init-data', this.getInitData)
+      .get(config.EXPLORER.API_URL_PREFIX + 'validate-address/:address', this.validateAddress)
+      .post(config.EXPLORER.API_URL_PREFIX + 'tx/push', this.$postTransactionForm)
+      .get(config.EXPLORER.API_URL_PREFIX + 'blocks', this.getBlocks.bind(this))
+      .get(config.EXPLORER.API_URL_PREFIX + 'blocks/:height', this.getBlocks.bind(this))
+      .get(config.EXPLORER.API_URL_PREFIX + 'block/:hash', this.getBlock)
+      .get(config.EXPLORER.API_URL_PREFIX + 'block/:hash/summary', this.getStrippedBlockTransactions)
+      .get(config.EXPLORER.API_URL_PREFIX + 'block/:hash/tx/:txid/summary', this.getStrippedBlockTransaction)
+      .get(config.EXPLORER.API_URL_PREFIX + 'block/:hash/audit-summary', this.getBlockAuditSummary)
+      .get(config.EXPLORER.API_URL_PREFIX + 'block/:hash/tx/:txid/audit', this.$getBlockTxAuditSummary)
+      .get(config.EXPLORER.API_URL_PREFIX + 'blocks/tip/height', this.getBlockTipHeight)
+      .post(config.EXPLORER.API_URL_PREFIX + 'psbt/addparents', this.postPsbtCompletion)
+      .get(config.EXPLORER.API_URL_PREFIX + 'blocks-bulk/:from', this.getBlocksByBulk.bind(this))
+      .get(config.EXPLORER.API_URL_PREFIX + 'blocks-bulk/:from/:to', this.getBlocksByBulk.bind(this))
+      .get(config.EXPLORER.API_URL_PREFIX + 'chain-tips', this.getChainTips.bind(this))
+      .get(config.EXPLORER.API_URL_PREFIX + 'stale-tips', this.getStaleTips.bind(this))
+      .post(config.EXPLORER.API_URL_PREFIX + 'prevouts', this.$getPrevouts) // TODO: Prevouts with Verbose (new end-point)
+      .post(config.EXPLORER.API_URL_PREFIX + 'txs/package', this.$submitPackage)
       // Internal routes
-      .get(config.MEMPOOL.API_URL_PREFIX + 'internal/blocks/definition/list', this.getBlockDefinitionHashes)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'internal/blocks/definition/current', this.getCurrentBlockDefinitionHash)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'internal/blocks/:definitionHash', this.getBlocksByDefinitionHash)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mempool', this.getMempool)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mempool/txids', this.getMempoolTxIds)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'mempool/recent', this.getRecentMempoolTransactions)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId', this.getTransaction) // TODO: tx with Verbose (new end-point)
-      .post(config.MEMPOOL.API_URL_PREFIX + 'tx', this.$postTransaction)
-      .post(config.MEMPOOL.API_URL_PREFIX + 'txs/test', this.$testTransactions)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/hex', this.getTransactionHex)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/status', this.getTransactionStatus)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/outspends', this.getTransactionOutspends)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'tx/:txId/merkle-proof', this.getTransactionMerkleProof)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'txs/outspends', this.$getBatchedOutspends)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/header', this.getBlockHeader)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'blocks/tip/hash', this.getBlockTipHash)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/raw', this.getRawBlock)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/txids', this.getTxIdsForBlock)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/txs', this.getBlockTransactions) // TODO: txs with Verbose (new end-point)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'block/:hash/txs/:index', this.getBlockTransactions) // TODO: txs with Verbose (new end-point)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'block-height/:height', this.getBlockHeight)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address', this.getAddress)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs', this.getAddressTransactions) // TODO: txs with Verbose (new end-point)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/summary', this.getAddressTransactionSummary) // TODO: Requires mempool/electrs backend atm.. I think we can also use fulcrum or bchn here.
-      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/chain', this.getAddressChainTransactions) // TODO: Requires mempool/electrs backend atm.. I think we can also use fulcrum or bchn here.
-      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/txs/mempool', this.getAddressMempoolTransactions) // TODO: txs mempool with Verbose (new end-point)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'address/:address/utxo', this.getAddressUtxo)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash', this.getScriptHash)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/txs', this.getScriptHashTransactions) // TODO: txs with Verbose (new end-point)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/txs/mempool', this.getScriptHashMempoolTransactions) // TODO: txs mempool with Verbose (new end-point)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/txs/summary', this.getScriptHashTransactionSummary) // TODO: Requires mempool/electrs backend atm.. I think we can also use fulcrum or bchn here.
-      .get(config.MEMPOOL.API_URL_PREFIX + 'scripthash/:scripthash/utxo', this.getScriptHashUtxo)
-      .get(config.MEMPOOL.API_URL_PREFIX + 'address-prefix/:prefix', this.getAddressPrefix);
+      .get(config.EXPLORER.API_URL_PREFIX + 'internal/blocks/definition/list', this.getBlockDefinitionHashes)
+      .get(config.EXPLORER.API_URL_PREFIX + 'internal/blocks/definition/current', this.getCurrentBlockDefinitionHash)
+      .get(config.EXPLORER.API_URL_PREFIX + 'internal/blocks/:definitionHash', this.getBlocksByDefinitionHash)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mempool', this.getMempool)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mempool/txids', this.getMempoolTxIds)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mempool/recent', this.getRecentMempoolTransactions)
+      .get(config.EXPLORER.API_URL_PREFIX + 'tx/:txId', this.getTransaction) // TODO: tx with Verbose (new end-point)
+      .post(config.EXPLORER.API_URL_PREFIX + 'tx', this.$postTransaction)
+      .post(config.EXPLORER.API_URL_PREFIX + 'txs/test', this.$testTransactions)
+      .get(config.EXPLORER.API_URL_PREFIX + 'tx/:txId/hex', this.getTransactionHex)
+      .get(config.EXPLORER.API_URL_PREFIX + 'tx/:txId/status', this.getTransactionStatus)
+      .get(config.EXPLORER.API_URL_PREFIX + 'tx/:txId/outspends', this.getTransactionOutspends)
+      .get(config.EXPLORER.API_URL_PREFIX + 'tx/:txId/merkle-proof', this.getTransactionMerkleProof)
+      .get(config.EXPLORER.API_URL_PREFIX + 'txs/outspends', this.$getBatchedOutspends)
+      .get(config.EXPLORER.API_URL_PREFIX + 'block/:hash/header', this.getBlockHeader)
+      .get(config.EXPLORER.API_URL_PREFIX + 'blocks/tip/hash', this.getBlockTipHash)
+      .get(config.EXPLORER.API_URL_PREFIX + 'block/:hash/raw', this.getRawBlock)
+      .get(config.EXPLORER.API_URL_PREFIX + 'block/:hash/txids', this.getTxIdsForBlock)
+      .get(config.EXPLORER.API_URL_PREFIX + 'block/:hash/txs', this.getBlockTransactions) // TODO: txs with Verbose (new end-point)
+      .get(config.EXPLORER.API_URL_PREFIX + 'block/:hash/txs/:index', this.getBlockTransactions) // TODO: txs with Verbose (new end-point)
+      .get(config.EXPLORER.API_URL_PREFIX + 'block-height/:height', this.getBlockHeight)
+      .get(config.EXPLORER.API_URL_PREFIX + 'address/:address', this.getAddress)
+      .get(config.EXPLORER.API_URL_PREFIX + 'address/:address/txs', this.getAddressTransactions) // TODO: txs with Verbose (new end-point)
+      .get(config.EXPLORER.API_URL_PREFIX + 'address/:address/txs/summary', this.getAddressTransactionSummary) // TODO: Requires mempool/electrs backend atm.. I think we can also use fulcrum or bchn here.
+      .get(config.EXPLORER.API_URL_PREFIX + 'address/:address/txs/chain', this.getAddressChainTransactions) // TODO: Requires mempool/electrs backend atm.. I think we can also use fulcrum or bchn here.
+      .get(config.EXPLORER.API_URL_PREFIX + 'address/:address/txs/mempool', this.getAddressMempoolTransactions) // TODO: txs mempool with Verbose (new end-point)
+      .get(config.EXPLORER.API_URL_PREFIX + 'address/:address/utxo', this.getAddressUtxo)
+      .get(config.EXPLORER.API_URL_PREFIX + 'scripthash/:scripthash', this.getScriptHash)
+      .get(config.EXPLORER.API_URL_PREFIX + 'scripthash/:scripthash/txs', this.getScriptHashTransactions) // TODO: txs with Verbose (new end-point)
+      .get(config.EXPLORER.API_URL_PREFIX + 'scripthash/:scripthash/txs/mempool', this.getScriptHashMempoolTransactions) // TODO: txs mempool with Verbose (new end-point)
+      .get(config.EXPLORER.API_URL_PREFIX + 'scripthash/:scripthash/txs/summary', this.getScriptHashTransactionSummary) // TODO: Requires mempool/electrs backend atm.. I think we can also use fulcrum or bchn here.
+      .get(config.EXPLORER.API_URL_PREFIX + 'scripthash/:scripthash/utxo', this.getScriptHashUtxo)
+      .get(config.EXPLORER.API_URL_PREFIX + 'address-prefix/:prefix', this.getAddressPrefix);
   }
 
   private getInitData(req: Request, res: Response) {
@@ -425,7 +425,7 @@ class BitcoinRoutes {
 
   private async getBlocks(req: Request, res: Response) {
     try {
-      if (['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK)) {
+      if (['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK)) {
         // Bitcoin
         const height = req.params.height === undefined ? undefined : parseInt(req.params.height, 10);
         res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
@@ -438,7 +438,7 @@ class BitcoinRoutes {
 
   private async getBlocksByBulk(req: Request, res: Response) {
     try {
-      if (config.MEMPOOL.MAX_BLOCKS_BULK_QUERY <= 0) {
+      if (config.EXPLORER.MAX_BLOCKS_BULK_QUERY <= 0) {
         handleError(
           req,
           res,
@@ -466,8 +466,8 @@ class BitcoinRoutes {
         handleError(req, res, 400, `Parameter 'to' must be a higher block height than 'from'`);
         return;
       }
-      if (to - from + 1 > config.MEMPOOL.MAX_BLOCKS_BULK_QUERY) {
-        handleError(req, res, 400, `You can only query ${config.MEMPOOL.MAX_BLOCKS_BULK_QUERY} blocks at once.`);
+      if (to - from + 1 > config.EXPLORER.MAX_BLOCKS_BULK_QUERY) {
+        handleError(req, res, 400, `You can only query ${config.EXPLORER.MAX_BLOCKS_BULK_QUERY} blocks at once.`);
         return;
       }
 
@@ -480,7 +480,7 @@ class BitcoinRoutes {
 
   private async getChainTips(req: Request, res: Response) {
     try {
-      if (['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK)) {
+      if (['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK)) {
         // Bitcoin
         res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
         const tips = await chainTips.getChainTips();
@@ -498,7 +498,7 @@ class BitcoinRoutes {
 
   private async getStaleTips(req: Request, res: Response) {
     try {
-      if (['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK)) {
+      if (['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK)) {
         // Bitcoin
         res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
         const tips = await chainTips.getStaleTips();
@@ -592,7 +592,7 @@ class BitcoinRoutes {
   }
 
   private async getAddress(req: Request, res: Response) {
-    if (config.MEMPOOL.BACKEND === 'none') {
+    if (config.EXPLORER.BACKEND === 'none') {
       handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
       return;
     }
@@ -618,7 +618,7 @@ class BitcoinRoutes {
   }
 
   private async getAddressTransactions(req: Request, res: Response): Promise<void> {
-    if (config.MEMPOOL.BACKEND === 'none') {
+    if (config.EXPLORER.BACKEND === 'none') {
       handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
       return;
     }
@@ -649,7 +649,7 @@ class BitcoinRoutes {
   }
 
   private async getAddressUtxo(req: Request, res: Response): Promise<void> {
-    if (config.MEMPOOL.BACKEND === 'none') {
+    if (config.EXPLORER.BACKEND === 'none') {
       handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
       return;
     }
@@ -680,7 +680,7 @@ class BitcoinRoutes {
   }
 
   private async getAddressChainTransactions(req: Request, res: Response): Promise<void> {
-    if (config.MEMPOOL.BACKEND === 'none') {
+    if (config.EXPLORER.BACKEND === 'none') {
       handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
       return;
     }
@@ -694,7 +694,7 @@ class BitcoinRoutes {
   }
 
   private async getAddressMempoolTransactions(req: Request, res: Response): Promise<void> {
-    if (config.MEMPOOL.BACKEND === 'none') {
+    if (config.EXPLORER.BACKEND === 'none') {
       handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
       return;
     }
@@ -721,7 +721,7 @@ class BitcoinRoutes {
   }
 
   private async getScriptHash(req: Request, res: Response) {
-    if (config.MEMPOOL.BACKEND === 'none') {
+    if (config.EXPLORER.BACKEND === 'none') {
       handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
       return;
     }
@@ -749,7 +749,7 @@ class BitcoinRoutes {
   }
 
   private async getScriptHashTransactions(req: Request, res: Response): Promise<void> {
-    if (config.MEMPOOL.BACKEND === 'none') {
+    if (config.EXPLORER.BACKEND === 'none') {
       handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
       return;
     }
@@ -782,7 +782,7 @@ class BitcoinRoutes {
   }
 
   private async getScriptHashMempoolTransactions(req: Request, res: Response): Promise<void> {
-    if (config.MEMPOOL.BACKEND === 'none') {
+    if (config.EXPLORER.BACKEND === 'none') {
       handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
       return;
     }
@@ -811,7 +811,7 @@ class BitcoinRoutes {
   }
 
   private async getScriptHashUtxo(req: Request, res: Response): Promise<void> {
-    if (config.MEMPOOL.BACKEND === 'none') {
+    if (config.EXPLORER.BACKEND === 'none') {
       handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
       return;
     }

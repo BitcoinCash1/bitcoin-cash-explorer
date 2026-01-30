@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 
-describe('Mempool Backend Config', () => {
+describe('BCH Explorer Backend Config', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     jest.resetModules();
@@ -12,7 +12,7 @@ describe('Mempool Backend Config', () => {
 
       const config = jest.requireActual('../config').default;
 
-      expect(config.MEMPOOL).toStrictEqual({
+      expect(config.EXPLORER).toStrictEqual({
         ENABLED: true,
         OFFICIAL: false,
         NETWORK: 'mainnet',
@@ -114,8 +114,8 @@ describe('Mempool Backend Config', () => {
       });
 
       expect(config.EXTERNAL_DATA_SERVER).toStrictEqual({
-        MEMPOOL_API: 'https://bchexplorer.cash/api/v1',
-        MEMPOOL_ONION: 'http://upcomingtordomain.onion/api/v1',
+        EXPLORER_API: 'https://bchexplorer.cash/api/v1',
+        EXPLORER_ONION: 'http://upcomingtordomain.onion/api/v1',
       });
 
       expect(config.REPLICATION).toStrictEqual({
@@ -153,7 +153,7 @@ describe('Mempool Backend Config', () => {
 
       const config = jest.requireActual('../config').default;
 
-      expect(config.MEMPOOL).toStrictEqual(fixture.MEMPOOL);
+      expect(config.EXPLORER).toStrictEqual(fixture.EXPLORER);
 
       expect(config.ELECTRUM).toStrictEqual(fixture.ELECTRUM);
 
@@ -171,7 +171,7 @@ describe('Mempool Backend Config', () => {
 
       expect(config.EXTERNAL_DATA_SERVER).toStrictEqual(fixture.EXTERNAL_DATA_SERVER);
 
-      expect(config.MEMPOOL_SERVICES).toStrictEqual(fixture.MEMPOOL_SERVICES);
+      expect(config.MELROY_EXPLORER_SERVICES).toStrictEqual(fixture.MELROY_EXPLORER_SERVICES);
 
       expect(config.REDIS).toStrictEqual(fixture.REDIS);
     });
@@ -185,22 +185,22 @@ describe('Mempool Backend Config', () => {
       function parseJson(jsonObj, root?) {
         for (const [key, value] of Object.entries(jsonObj)) {
           // We have a few cases where we can't follow the pattern
-          if (root === 'MEMPOOL' && key === 'HTTP_PORT') {
+          if (root === 'EXPLORER' && key === 'HTTP_PORT') {
             if (process.env.CI) {
-              console.log('skipping check for MEMPOOL_HTTP_PORT');
+              console.log('skipping check for EXPLORER_HTTP_PORT');
             }
             continue;
           }
 
           if (root) {
-            //The flattened string, i.e, __MEMPOOL_ENABLED__
+            //The flattened string, i.e, __EXPLORER_ENABLED__
             const replaceStr = `${root ? '__' + root + '_' : '__'}${key}__`;
 
-            //The string used as the environment variable, i.e, MEMPOOL_ENABLED
+            //The string used as the environment variable, i.e, EXPLORER_ENABLED
             const envVarStr = `${root ? root : ''}_${key}`;
 
             let defaultEntry;
-            //The string used as the default value, to be checked as a regex, i.e, __MEMPOOL_ENABLED__=${MEMPOOL_ENABLED:=(.*)}
+            //The string used as the default value, to be checked as a regex, i.e, __EXPLORER_ENABLED__=${EXPLORER_ENABLED:=(.*)}
             if (Array.isArray(value)) {
               defaultEntry = `${replaceStr}=\${${envVarStr}:=[]}`;
               if (process.env.CI) {

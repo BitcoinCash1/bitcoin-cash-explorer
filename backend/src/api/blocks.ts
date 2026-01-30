@@ -346,7 +346,7 @@ class Blocks {
       extras.totalInputAmt = null;
     }
 
-    if (['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK)) {
+    if (['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK)) {
       let pool: PoolTag;
       if (coinbaseTx !== undefined) {
         pool = await this.$findBlockMiner(coinbaseTx);
@@ -380,7 +380,7 @@ class Blocks {
       extras.matchRate = null;
       extras.expectedFees = null;
       extras.expectedSize = null;
-      if (config.MEMPOOL.AUDIT) {
+      if (config.EXPLORER.AUDIT) {
         const auditScore = await BlocksAuditsRepository.$getBlockAuditScore(block.id);
         if (auditScore != null) {
           extras.matchRate = auditScore.matchRate;
@@ -521,7 +521,7 @@ class Blocks {
     try {
       const blockchainInfo = await bitcoinClient.getBlockchainInfo();
       const currentBlockHeight = blockchainInfo.blocks;
-      let indexingBlockAmount = Math.min(config.MEMPOOL.INDEXING_BLOCKS_AMOUNT, currentBlockHeight);
+      let indexingBlockAmount = Math.min(config.EXPLORER.INDEXING_BLOCKS_AMOUNT, currentBlockHeight);
       if (indexingBlockAmount <= -1) {
         indexingBlockAmount = currentBlockHeight + 1;
       }
@@ -838,7 +838,7 @@ class Blocks {
       const blockchainInfo = await bitcoinClient.getBlockchainInfo();
       let currentBlockHeight = blockchainInfo.blocks;
 
-      let indexingBlockAmount = Math.min(config.MEMPOOL.INDEXING_BLOCKS_AMOUNT, blockchainInfo.blocks);
+      let indexingBlockAmount = Math.min(config.EXPLORER.INDEXING_BLOCKS_AMOUNT, blockchainInfo.blocks);
       if (indexingBlockAmount <= -1) {
         indexingBlockAmount = currentBlockHeight + 1;
       }
@@ -945,18 +945,18 @@ class Blocks {
     this.updateTimerProgress(timer, 'got block height tip');
 
     if (this.blocks.length === 0) {
-      this.currentBlockHeight = Math.max(blockHeightTip - config.MEMPOOL.INITIAL_BLOCKS_AMOUNT, -1);
+      this.currentBlockHeight = Math.max(blockHeightTip - config.EXPLORER.INITIAL_BLOCKS_AMOUNT, -1);
     } else {
       this.currentBlockHeight = this.blocks[this.blocks.length - 1].height;
     }
 
-    if (blockHeightTip - this.currentBlockHeight > config.MEMPOOL.INITIAL_BLOCKS_AMOUNT * 2) {
+    if (blockHeightTip - this.currentBlockHeight > config.EXPLORER.INITIAL_BLOCKS_AMOUNT * 2) {
       logger.info(
         `${blockHeightTip - this.currentBlockHeight} blocks since tip. Fast forwarding to the ${
-          config.MEMPOOL.INITIAL_BLOCKS_AMOUNT
+          config.EXPLORER.INITIAL_BLOCKS_AMOUNT
         } recent blocks`
       );
-      this.currentBlockHeight = blockHeightTip - config.MEMPOOL.INITIAL_BLOCKS_AMOUNT;
+      this.currentBlockHeight = blockHeightTip - config.EXPLORER.INITIAL_BLOCKS_AMOUNT;
       fastForwarded = true;
       logger.info(`Re-indexing skipped blocks and corresponding hashrates data`);
       indexer.reindex(); // Make sure to index the skipped blocks #1619
@@ -1112,21 +1112,21 @@ class Blocks {
       this.updateTimerProgress(timer, `async callbacks completed for ${this.currentBlockHeight}`);
 
       this.blocks.push(blockExtended);
-      if (this.blocks.length > config.MEMPOOL.INITIAL_BLOCKS_AMOUNT * 4) {
-        this.blocks = this.blocks.slice(-config.MEMPOOL.INITIAL_BLOCKS_AMOUNT * 4);
+      if (this.blocks.length > config.EXPLORER.INITIAL_BLOCKS_AMOUNT * 4) {
+        this.blocks = this.blocks.slice(-config.EXPLORER.INITIAL_BLOCKS_AMOUNT * 4);
       }
       this.blockSummaries.push(blockSummary);
-      if (this.blockSummaries.length > config.MEMPOOL.INITIAL_BLOCKS_AMOUNT * 4) {
-        this.blockSummaries = this.blockSummaries.slice(-config.MEMPOOL.INITIAL_BLOCKS_AMOUNT * 4);
+      if (this.blockSummaries.length > config.EXPLORER.INITIAL_BLOCKS_AMOUNT * 4) {
+        this.blockSummaries = this.blockSummaries.slice(-config.EXPLORER.INITIAL_BLOCKS_AMOUNT * 4);
       }
 
       if (this.newBlockCallbacks.length) {
         this.newBlockCallbacks.forEach((cb) => cb(blockExtended, txIds, transactions));
       }
       if (
-        config.MEMPOOL.CACHE_ENABLED &&
+        config.EXPLORER.CACHE_ENABLED &&
         !memPool.hasPriority() &&
-        block.height % config.MEMPOOL.DISK_CACHE_BLOCK_INTERVAL === 0
+        block.height % config.EXPLORER.DISK_CACHE_BLOCK_INTERVAL === 0
       ) {
         diskCache.$saveCacheToDisk();
       }
@@ -1228,7 +1228,7 @@ class Blocks {
       for (const cached of this.blocks) {
         cachedBlocksByHash[cached.id] = cached;
       }
-      while (currentBlock.height > 0 && newBlocks.length < config.MEMPOOL.INITIAL_BLOCKS_AMOUNT * 4) {
+      while (currentBlock.height > 0 && newBlocks.length < config.EXPLORER.INITIAL_BLOCKS_AMOUNT * 4) {
         const newBlock =
           cachedBlocksByHash[currentBlock.previousblockhash] ||
           (await blocksRepository.$getBlockByHash(currentBlock.previousblockhash));
@@ -1248,8 +1248,8 @@ class Blocks {
       this.updateTimerProgress(timer, `deleted stale block data`);
 
       this.blocks = newBlocks.reverse();
-      if (this.blocks.length > config.MEMPOOL.INITIAL_BLOCKS_AMOUNT * 4) {
-        this.blocks = this.blocks.slice(-config.MEMPOOL.INITIAL_BLOCKS_AMOUNT * 4);
+      if (this.blocks.length > config.EXPLORER.INITIAL_BLOCKS_AMOUNT * 4) {
+        this.blocks = this.blocks.slice(-config.EXPLORER.INITIAL_BLOCKS_AMOUNT * 4);
       }
       this.updateTimerProgress(timer, `connected new best chain from ${forkTail.height} to ${this.currentBlockHeight}`);
 
@@ -1318,7 +1318,7 @@ class Blocks {
     }
 
     // Not Bitcoin network, return the block as it from the bitcoin backend
-    if (['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK) === false) {
+    if (['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK) === false) {
       return await bitcoinCoreApi.$getBlock(hash);
     }
 
@@ -1541,7 +1541,7 @@ class Blocks {
 
   public async $getBlockAuditSummary(hash: string): Promise<BlockAudit | null> {
     if (
-      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK) &&
+      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK) &&
       Common.auditIndexingEnabled()
     ) {
       return BlocksAuditsRepository.$getBlockAudit(hash);
@@ -1552,7 +1552,7 @@ class Blocks {
 
   public async $getBlockTxAuditSummary(hash: string, txid: string): Promise<TransactionAudit | null> {
     if (
-      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK) &&
+      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK) &&
       Common.auditIndexingEnabled()
     ) {
       return BlocksAuditsRepository.$getBlockTxAudit(hash, txid);

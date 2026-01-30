@@ -1,5 +1,5 @@
 {
-  "MEMPOOL": {
+  "EXPLORER": {
     "OFFICIAL": false,
     "NETWORK": "mainnet",
     "BACKEND": "electrum",
@@ -91,8 +91,8 @@
     "PASSWORD": ""
   },
   "EXTERNAL_DATA_SERVER": {
-    "MEMPOOL_API": "https://bchexplorer.cash/api/v1",
-    "MEMPOOL_ONION": "http://someuniondomain.onion/api/v1"
+    "EXPLORER_API": "https://bchexplorer.cash/api/v1",
+    "EXPLORER_ONION": "http://someuniondomain.onion/api/v1"
   },
   "REDIS": {
     "ENABLED": false,
@@ -112,7 +112,7 @@
       "servers"
     ]
   },
-  "MEMPOOL_SERVICES": {
+  "MELROY_EXPLORER_SERVICES": {
     "API": "http://bchexplorer.cash/api/v1/services"
   },
   "STRATUM": {

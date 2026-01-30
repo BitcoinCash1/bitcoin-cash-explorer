@@ -1,7 +1,7 @@
 #!/bin/sh
-__MEMPOOL_BACKEND_MAINNET_HTTP_HOST__=${BACKEND_MAINNET_HTTP_HOST:=127.0.0.1}
-__MEMPOOL_BACKEND_MAINNET_HTTP_PORT__=${BACKEND_MAINNET_HTTP_PORT:=8999}
-__MEMPOOL_FRONTEND_HTTP_PORT__=${FRONTEND_HTTP_PORT:=8080}
+__EXPLORER__BACKEND_MAINNET_HTTP_HOST__=${BACKEND_MAINNET_HTTP_HOST:=127.0.0.1}
+__EXPLORER__BACKEND_MAINNET_HTTP_PORT__=${BACKEND_MAINNET_HTTP_PORT:=8999}
+__EXPLORER__FRONTEND_HTTP_PORT__=${FRONTEND_HTTP_PORT:=8080}
 
 __PROXIED_SERVICES__=${PROXIED_SERVICES:=false}
 __PROXIED_SERVICES_HOST__=${PROXIED_SERVICES_HOST:=https://bchexplorer.cash}
@@ -10,11 +10,11 @@ if [ "${__PROXIED_SERVICES__}" = "true" ]; then
   sed -i "s|proxy_pass https://bchexplorer.cash;|proxy_pass ${__PROXIED_SERVICES_HOST__};|g" /etc/nginx/conf.d/nginx-explorer.conf
 fi
 
-sed -i "s/__MEMPOOL_BACKEND_MAINNET_HTTP_HOST__/${__MEMPOOL_BACKEND_MAINNET_HTTP_HOST__}/g" /etc/nginx/conf.d/nginx-explorer.conf
-sed -i "s/__MEMPOOL_BACKEND_MAINNET_HTTP_PORT__/${__MEMPOOL_BACKEND_MAINNET_HTTP_PORT__}/g" /etc/nginx/conf.d/nginx-explorer.conf
+sed -i "s/__EXPLORER__BACKEND_MAINNET_HTTP_HOST__/${__EXPLORER__BACKEND_MAINNET_HTTP_HOST__}/g" /etc/nginx/conf.d/nginx-explorer.conf
+sed -i "s/__EXPLORER__BACKEND_MAINNET_HTTP_PORT__/${__EXPLORER__BACKEND_MAINNET_HTTP_PORT__}/g" /etc/nginx/conf.d/nginx-explorer.conf
 
 cp /etc/nginx/nginx.conf /patch/nginx.conf
-sed -i "s/__MEMPOOL_FRONTEND_HTTP_PORT__/${__MEMPOOL_FRONTEND_HTTP_PORT__}/g" /patch/nginx.conf
+sed -i "s/__EXPLORER__FRONTEND_HTTP_PORT__/${__EXPLORER__FRONTEND_HTTP_PORT__}/g" /patch/nginx.conf
 cat /patch/nginx.conf > /etc/nginx/nginx.conf
 
 # Runtime overrides - read env vars defined in docker compose
@@ -29,7 +29,7 @@ __NGINX_PROTOCOL__=${NGINX_PROTOCOL:=http}
 __NGINX_HOSTNAME__=${NGINX_HOSTNAME:=localhost}
 __NGINX_PORT__=${NGINX_PORT:=8999}
 __MIN_BLOCK_SIZE_UNITS__=${MIN_BLOCK_SIZE_UNITS:=32000000}
-__MEMPOOL_BLOCKS_AMOUNT__=${MEMPOOL_BLOCKS_AMOUNT:=8}
+__MEMPOOL_BLOCKS_AMOUNT__=${MEMPOOL_BLOCKS_AMOUNT:=1}
 __BASE_MODULE__=${BASE_MODULE:=explorer}
 __ROOT_NETWORK__=${ROOT_NETWORK:=}
 __WEBSITE_URL__=${WEBSITE_URL:=https://bchexplorer.cash}

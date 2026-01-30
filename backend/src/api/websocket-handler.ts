@@ -83,10 +83,10 @@ class WebsocketHandler {
   }
 
   private updateSocketData(): void {
-    const _blocks = blocks.getBlocks().slice(-config.MEMPOOL.INITIAL_BLOCKS_AMOUNT);
+    const _blocks = blocks.getBlocks().slice(-config.EXPLORER.INITIAL_BLOCKS_AMOUNT);
     const da = difficultyAdjustment.getDifficultyAdjustment();
     this.updateSocketDataFields({
-      backend: config.MEMPOOL.BACKEND,
+      backend: config.EXPLORER.BACKEND,
       mempoolInfo: memPool.getMempoolInfo(),
       bytesPerSecond: memPool.getBytesPerSecond(),
       blocks: _blocks,
@@ -259,9 +259,9 @@ class WebsocketHandler {
                   addressMap[address] = validAddress;
                 }
               }
-              if (Object.keys(addressMap).length > config.MEMPOOL.MAX_TRACKED_ADDRESSES) {
+              if (Object.keys(addressMap).length > config.EXPLORER.MAX_TRACKED_ADDRESSES) {
                 response['track-addresses-error'] =
-                  `"too many addresses requested, this connection supports tracking a maximum of ${config.MEMPOOL.MAX_TRACKED_ADDRESSES} addresses"`;
+                  `"too many addresses requested, this connection supports tracking a maximum of ${config.EXPLORER.MAX_TRACKED_ADDRESSES} addresses"`;
                 client['track-addresses'] = null;
               } else if (Object.keys(addressMap).length > 0) {
                 client['track-addresses'] = addressMap;
@@ -281,9 +281,9 @@ class WebsocketHandler {
                   spks.push(spk.toLowerCase());
                 }
               }
-              if (spks.length > config.MEMPOOL.MAX_TRACKED_ADDRESSES) {
+              if (spks.length > config.EXPLORER.MAX_TRACKED_ADDRESSES) {
                 response['track-scriptpubkeys-error'] =
-                  `"too many scriptpubkeys requested, this connection supports tracking a maximum of ${config.MEMPOOL.MAX_TRACKED_ADDRESSES} scriptpubkeys"`;
+                  `"too many scriptpubkeys requested, this connection supports tracking a maximum of ${config.EXPLORER.MAX_TRACKED_ADDRESSES} scriptpubkeys"`;
                 client['track-scriptpubkeys'] = null;
               } else if (spks.length) {
                 client['track-scriptpubkeys'] = spks;
@@ -526,7 +526,7 @@ class WebsocketHandler {
       removed = candidates?.removed || [];
     }
 
-    if (config.MEMPOOL.RUST_GBT) {
+    if (config.EXPLORER.RUST_GBT) {
       await mempoolBlocks.$rustUpdateBlockTemplates(transactionIds, newMempool, added, removed, candidates);
     } else {
       await mempoolBlocks.$updateBlockTemplates(transactionIds, newMempool, added, removed, candidates, true);
@@ -810,11 +810,11 @@ class WebsocketHandler {
 
     memPool.removeFromSpendMap(transactions);
 
-    if (config.MEMPOOL.AUDIT && memPool.isInSync()) {
+    if (config.EXPLORER.AUDIT && memPool.isInSync()) {
       let projectedBlocks;
       const auditMempool = _memPool;
 
-      if (config.MEMPOOL.RUST_GBT) {
+      if (config.EXPLORER.RUST_GBT) {
         const added = memPool.limitGBT ? candidates?.added || [] : [];
         const removed = memPool.limitGBT ? candidates?.removed || [] : [];
         projectedBlocks = await mempoolBlocks.$rustUpdateBlockTemplates(
@@ -912,7 +912,7 @@ class WebsocketHandler {
       transactionIds = Object.keys(memPool.getMempool());
     }
 
-    if (config.MEMPOOL.RUST_GBT) {
+    if (config.EXPLORER.RUST_GBT) {
       const added = memPool.limitGBT ? candidates?.added || [] : [];
       const removed = memPool.limitGBT ? candidates?.removed || [] : transactions;
       await mempoolBlocks.$rustUpdateBlockTemplates(transactionIds, _memPool, added, removed, candidates);
@@ -932,7 +932,7 @@ class WebsocketHandler {
     // update init data
     this.updateSocketDataFields({
       mempoolInfo: mempoolInfo,
-      blocks: [...blocks.getBlocks(), block].slice(-config.MEMPOOL.INITIAL_BLOCKS_AMOUNT),
+      blocks: [...blocks.getBlocks(), block].slice(-config.EXPLORER.INITIAL_BLOCKS_AMOUNT),
       'mempool-blocks': mBlocks,
       loadingIndicators: loadingIndicators.getLoadingIndicators(),
       da: da?.previousTime ? da : undefined,

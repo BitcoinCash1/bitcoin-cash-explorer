@@ -30,7 +30,7 @@ class RedisCache {
         socket: {
           path: config.REDIS.UNIX_SOCKET_PATH,
         },
-        database: NetworkDB[config.MEMPOOL.NETWORK],
+        database: NetworkDB[config.EXPLORER.NETWORK],
       };
       this.$ensureConnected();
       setInterval(() => {

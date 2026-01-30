@@ -1,6 +1,6 @@
 # BCH Explorer
 
-Bitcoin Cash Explorer is a fork of Mempool but tailored for Bitcoin Cash, a fully-featured mempool visualizer, explorer, and API service running at [bchexplorer.cash](https://bchexplorer.cash).
+Bitcoin Cash Explorer is a fork by Melroy van den Berg of Mempool, tailored for Bitcoin Cash. BCH Explorer is a fully-featured mempool visualizer, explorer, and API service running at [bchexplorer.cash](https://bchexplorer.cash).
 
 The BCH Explorer is created by Melroy van den Berg and is fully open source, under the same AGPL license.
 
@@ -14,7 +14,7 @@ In the near future, I will allow sponsorship options for this project, to suppor
 
 ---
 
-BCH Explorer can be self-hosted on a wide variety of your own hardware, ranging from a simple one-click installation on a Raspberry Pi full-node distro all the way to a robust production instance on a powerful FreeBSD server. 
+BCH Explorer can be self-hosted on a wide variety of your own hardware, ranging from a simple one-click installation on a Raspberry Pi full-node distro all the way to a robust production instance on a powerful FreeBSD server.
 
 Most people should use a <a href="#one-click-installation">one-click install method</a>.
 
@@ -23,13 +23,16 @@ Other install methods are meant for developers and others with experience managi
 We do **not** offer any paid Enterprise versions, everything is open-source and you will need to host it yourself, if you wish to run your own instance and having fun!
 
 <a id="one-click-installation"></a>
+
 ## One-Click Installation
 
-BCH Explorer can be conveniently installed on the following full-node distros: 
-- [Umbrel](https://github.com/getumbrel/umbrel)
+~~BCH Explorer can be conveniently installed on the following full-node distros:~~
+
+<!-- - [Umbrel](https://github.com/getumbrel/umbrel)
 - [StartOS](https://github.com/Start9Labs/start-os)
 - [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin/blob/a1eacce6768ca4894f365af8f79be5bbd594e1c3/examples/configuration.nix#L129)
-<!-- - [myNode](https://github.com/mynodebtc/mynode) -->
+- [myNode](https://github.com/mynodebtc/mynode)
+-->
 
 No matter which option you pick, you'll be able to get your own fully-sovereign instance of BCH Explorer up quickly without needing to fiddle with any settings.
 

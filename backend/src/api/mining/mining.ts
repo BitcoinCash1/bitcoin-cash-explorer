@@ -436,7 +436,7 @@ class Mining {
       }
 
       // Add genesis block manually
-      if (config.MEMPOOL.INDEXING_BLOCKS_AMOUNT === -1 && !indexedTimestamp.includes(genesisTimestamp / 1000)) {
+      if (config.EXPLORER.INDEXING_BLOCKS_AMOUNT === -1 && !indexedTimestamp.includes(genesisTimestamp / 1000)) {
         hashrates.push({
           hashrateTimestamp: genesisTimestamp / 1000,
           avgHashrate: await bitcoinClient.getNetworkHashPs(1, 1),
@@ -490,7 +490,7 @@ class Mining {
     let currentBits = genesisData.bits;
     let totalIndexed = 0;
 
-    if (config.MEMPOOL.INDEXING_BLOCKS_AMOUNT === -1 && indexedHeights[0] !== true) {
+    if (config.EXPLORER.INDEXING_BLOCKS_AMOUNT === -1 && indexedHeights[0] !== true) {
       await DifficultyAdjustmentsRepository.$saveAdjustments({
         time: genesisData.timestamp,
         height: 0,
@@ -576,7 +576,7 @@ class Mining {
 
       for (const block of blocksWithoutPrices) {
         // Quick optimisation, out mtgox feed only goes back to 2010-07-19 02:00:00, so skip the first 68951 blocks
-        if (['mainnet', 'testnet'].includes(config.MEMPOOL.NETWORK) && block.height < 68951) {
+        if (['mainnet', 'testnet'].includes(config.EXPLORER.NETWORK) && block.height < 68951) {
           blocksPrices.push({
             height: block.height,
             priceId: prices[0].id,

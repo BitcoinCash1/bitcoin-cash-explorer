@@ -9,7 +9,7 @@ const PATH = './';
 
 class SyncAssets {
   public async syncAssets$() {
-    for (const url of config.MEMPOOL.EXTERNAL_ASSETS) {
+    for (const url of config.EXPLORER.EXTERNAL_ASSETS) {
       try {
         await this.downloadFile$(url);
       } catch (e) {
@@ -44,9 +44,9 @@ class SyncAssets {
             .get(url, {
               headers: {
                 'User-Agent':
-                  config.MEMPOOL.USER_AGENT === 'explorer'
+                  config.EXPLORER.USER_AGENT === 'explorer'
                     ? `BCHExplorer/v${backendInfo.getBackendInfo().version}`
-                    : `${config.MEMPOOL.USER_AGENT}`,
+                    : `${config.EXPLORER.USER_AGENT}`,
               },
               httpAgent: agent,
               httpsAgent: agent,
@@ -67,9 +67,9 @@ class SyncAssets {
             .get(url, {
               headers: {
                 'User-Agent':
-                  config.MEMPOOL.USER_AGENT === 'explorer'
+                  config.EXPLORER.USER_AGENT === 'explorer'
                     ? `BCHExplorer/v${backendInfo.getBackendInfo().version}`
-                    : `${config.MEMPOOL.USER_AGENT}`,
+                    : `${config.EXPLORER.USER_AGENT}`,
               },
               responseType: 'stream',
               timeout: 30000,

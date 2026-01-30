@@ -179,7 +179,7 @@ class DifficultyAdjustmentApi {
       nowSeconds,
       blockHeight,
       previousRetarget,
-      config.MEMPOOL.NETWORK,
+      config.EXPLORER.NETWORK,
       latestBlock.timestamp
     );
   }

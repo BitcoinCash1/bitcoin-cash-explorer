@@ -2,7 +2,7 @@
   "EXPLORER": {
     "OFFICIAL": true,
     "NETWORK": "mainnet",
-    "BACKEND": "electrum",
+    "BACKEND": "esplora",
     "HTTP_PORT": 8999,
     "CACHE_ENABLED": false,
     "MINED_BLOCKS_CACHE": 144,
@@ -37,18 +37,66 @@
     "USERNAME": "__BITCOIN_RPC_USER__",
     "PASSWORD": "__BITCOIN_RPC_PASS__"
   },
-  "ELECTRUM": {
-    "HOST": "127.0.0.1",
-    "PORT": 50001,
-    "TLS_ENABLED": false
+  "ESPLORA": {
+    "UNIX_SOCKET_PATH": "/bitcoin/socket/esplora-bitcoin-mainnet",
+    "FALLBACK": [
+      "http://node201.hnl.mempool.space:3000",
+      "http://node202.hnl.mempool.space:3000",
+      "http://node203.hnl.mempool.space:3000",
+      "http://node204.hnl.mempool.space:3000",
+      "http://node201.sv1.mempool.space:3000",
+      "http://node202.sv1.mempool.space:3000",
+      "http://node203.sv1.mempool.space:3000",
+      "http://node204.sv1.mempool.space:3000",
+      "http://node205.sv1.mempool.space:3000",
+      "http://node206.sv1.mempool.space:3000",
+      "http://node201.fra.mempool.space:3000",
+      "http://node202.fra.mempool.space:3000",
+      "http://node203.fra.mempool.space:3000",
+      "http://node204.fra.mempool.space:3000",
+      "http://node205.fra.mempool.space:3000",
+      "http://node206.fra.mempool.space:3000",
+      "http://node207.fra.mempool.space:3000",
+      "http://node208.fra.mempool.space:3000",
+      "http://node209.fra.mempool.space:3000",
+      "http://node210.fra.mempool.space:3000",
+      "http://node211.fra.mempool.space:3000",
+      "http://node212.fra.mempool.space:3000",
+      "http://node213.fra.mempool.space:3000",
+      "http://node214.fra.mempool.space:3000",
+      "http://node201.tk7.mempool.space:3000",
+      "http://node202.tk7.mempool.space:3000",
+      "http://node203.tk7.mempool.space:3000",
+      "http://node204.tk7.mempool.space:3000",
+      "http://node205.tk7.mempool.space:3000",
+      "http://node206.tk7.mempool.space:3000",
+      "http://node201.va1.mempool.space:3000",
+      "http://node202.va1.mempool.space:3000",
+      "http://node203.va1.mempool.space:3000",
+      "http://node204.va1.mempool.space:3000",
+      "http://node205.va1.mempool.space:3000",
+      "http://node206.va1.mempool.space:3000",
+      "http://node207.va1.mempool.space:3000",
+      "http://node208.va1.mempool.space:3000",
+      "http://node209.va1.mempool.space:3000",
+      "http://node210.va1.mempool.space:3000",
+      "http://node211.va1.mempool.space:3000",
+      "http://node212.va1.mempool.space:3000",
+      "http://node213.va1.mempool.space:3000",
+      "http://node214.va1.mempool.space:3000",
+      "http://node201.sg1.mempool.space:3000",
+      "http://node202.sg1.mempool.space:3000",
+      "http://node203.sg1.mempool.space:3000",
+      "http://node204.sg1.mempool.space:3000"
+    ]
   },
   "DATABASE": {
     "ENABLED": true,
     "HOST": "127.0.0.1",
     "SOCKET": "/var/run/mysql/mysql.sock",
-    "USERNAME": "__EXPLORER_MAINNET_USER__",
-    "PASSWORD": "__EXPLORER_MAINNET_PASS__",
-    "DATABASE": "explorer"
+    "USERNAME": "__EXPLORER__MAINNET_USER__",
+    "PASSWORD": "__EXPLORER__MAINNET_PASS__",
+    "DATABASE": "mempool"
   },
   "STATISTICS": {
     "ENABLED": true,
@@ -113,7 +161,7 @@
   },
   "REDIS": {
     "ENABLED": true,
-    "UNIX_SOCKET_PATH": "/tmp/valkey.sock",
+    "UNIX_SOCKET_PATH": "/tmp/redis.sock",
     "BATCH_QUERY_BASE_SIZE": 5000
   },
   "MELROY_EXPLORER_SERVICES": {

@@ -18,8 +18,8 @@ class PoolsUpdater {
 
   lastRun = 0;
   currentSha: string | null = null;
-  poolsUrl: string = config.MEMPOOL.POOLS_JSON_URL;
-  treeUrl: string = config.MEMPOOL.POOLS_JSON_TREE_URL;
+  poolsUrl: string = config.EXPLORER.POOLS_JSON_URL;
+  treeUrl: string = config.EXPLORER.POOLS_JSON_TREE_URL;
 
   public async $startService(): Promise<void> {
     while (true) {
@@ -34,14 +34,14 @@ class PoolsUpdater {
 
   public async updatePoolsJson(): Promise<void> {
     if (
-      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK) === false ||
-      config.MEMPOOL.ENABLED === false
+      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK) === false ||
+      config.EXPLORER.ENABLED === false
     ) {
       return;
     }
 
     const now = new Date().getTime() / 1000;
-    if (now - this.lastRun < config.MEMPOOL.POOLS_UPDATE_DELAY) {
+    if (now - this.lastRun < config.EXPLORER.POOLS_UPDATE_DELAY) {
       // Execute the PoolsUpdate only once a week, or upon restart
       return;
     }
@@ -66,7 +66,7 @@ class PoolsUpdater {
       // See backend README for more details about the mining pools update process
       if (
         this.currentSha !== null && // If we don't have any mining pool, download it at least once
-        config.MEMPOOL.AUTOMATIC_POOLS_UPDATE !== true && // Automatic pools update is disabled
+        config.EXPLORER.AUTOMATIC_POOLS_UPDATE !== true && // Automatic pools update is disabled
         !process.env.npm_config_update_pools // We're not manually updating mining pool
       ) {
         logger.warn(
@@ -110,7 +110,7 @@ class PoolsUpdater {
       logger.info(`Mining pools-v2.json (${gitlabSha}) import completed`, this.tag);
     } catch (e) {
       // fast-forward lastRun to 10 minutes before the next scheduled update
-      this.lastRun = now - Math.max(config.MEMPOOL.POOLS_UPDATE_DELAY - 600, 600);
+      this.lastRun = now - Math.max(config.EXPLORER.POOLS_UPDATE_DELAY - 600, 600);
       logger.err(`PoolsUpdater failed. Will try again in 10 minutes. Exception: ${JSON.stringify(e)}`, this.tag);
     }
   }
@@ -182,15 +182,15 @@ class PoolsUpdater {
     const axiosOptions: axiosOptions = {
       headers: {
         'User-Agent':
-          config.MEMPOOL.USER_AGENT === 'explorer'
+          config.EXPLORER.USER_AGENT === 'explorer'
             ? `BCHExplorer/v${backendInfo.getBackendInfo().version}`
-            : `${config.MEMPOOL.USER_AGENT}`,
+            : `${config.EXPLORER.USER_AGENT}`,
       },
       timeout: config.SOCKS5PROXY.ENABLED ? 30000 : 10000,
     };
     let retry = 0;
 
-    while (retry < config.MEMPOOL.EXTERNAL_MAX_RETRY) {
+    while (retry < config.EXPLORER.EXTERNAL_MAX_RETRY) {
       try {
         if (config.SOCKS5PROXY.ENABLED) {
           const socksOptions: any = {
@@ -221,7 +221,7 @@ class PoolsUpdater {
         logger.err('Could not connect to Github. Reason: ' + (e instanceof Error ? e.message : e), this.tag);
         retry++;
       }
-      await setDelay(config.MEMPOOL.EXTERNAL_RETRY_INTERVAL);
+      await setDelay(config.EXPLORER.EXTERNAL_RETRY_INTERVAL);
     }
     return undefined;
   }

@@ -44,7 +44,7 @@ class PriceUpdater {
   private additionalCurrenciesHistoryInserted = false;
   private additionalCurrenciesHistoryRunning = false;
   private lastFailedHistoricalRun = 0;
-  private timeBetweenUpdatesMs = 360_0000 / config.MEMPOOL.PRICE_UPDATES_PER_HOUR;
+  private timeBetweenUpdatesMs = 360_0000 / config.EXPLORER.PRICE_UPDATES_PER_HOUR;
   private cyclePosition = -1;
   private firstRun = true;
   private lastTime = -1;
@@ -157,7 +157,7 @@ class PriceUpdater {
   }
 
   public async $run(): Promise<void> {
-    if (['testnet', 'signet', 'testnet4'].includes(config.MEMPOOL.NETWORK)) {
+    if (['testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK)) {
       // Coins have no value on testnet/signet, so we want to always show 0
       return;
     }
@@ -237,13 +237,13 @@ class PriceUpdater {
 
   private setCyclePosition(): void {
     const millisecondsSinceBeginningOfHour = this.getMillisecondsSinceBeginningOfHour();
-    for (let i = 0; i < config.MEMPOOL.PRICE_UPDATES_PER_HOUR; i++) {
+    for (let i = 0; i < config.EXPLORER.PRICE_UPDATES_PER_HOUR; i++) {
       if (this.timeBetweenUpdatesMs * i > millisecondsSinceBeginningOfHour) {
         this.cyclePosition = i;
         return;
       }
     }
-    this.cyclePosition = config.MEMPOOL.PRICE_UPDATES_PER_HOUR;
+    this.cyclePosition = config.EXPLORER.PRICE_UPDATES_PER_HOUR;
   }
 
   /**
