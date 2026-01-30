@@ -54,17 +54,17 @@ export class BcmrService {
     const apiURL = this.stateService.env.BCMR_API;
 
     // If not in cache, fetch from API and cache the result
-    // const httpOptions = {
-    //   headers: { Accept: 'application/json', 'User-Agent': 'BCHExplorer/3.3' },
-    //   responseType: 'json' as const,
-    // };
+    const httpOptions = {
+      headers: { Accept: 'application/json', 'User-Agent': 'BCHExplorer/3.3' },
+      responseType: 'json' as const,
+    };
     // Slightly different end-points between different BCMR services
     const path = apiURL.includes('bcmr.paytaca.com') ? 'tokens/' : '';
     const extension = apiURL.includes('bcmr.flowee.cash') ? '.json' : '';
     return this.httpClient
       .get<BcmrMetadata>(
-        `${apiURL}/${path}${encodeURIComponent(category)}${extension}`
-        //httpOptions
+        `${apiURL}/${path}${encodeURIComponent(category)}${extension}`,
+        httpOptions
       )
       .pipe(
         tap((data) => {
