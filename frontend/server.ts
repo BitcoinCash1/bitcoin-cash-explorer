@@ -16,7 +16,7 @@ import { ResizeObserver } from './shims';
 
 const commonEngine = new CommonEngine();
 
-const template = fs.readFileSync(path.join(process.cwd(), 'dist/mempool/browser/en-US/', 'index.html')).toString();
+const template = fs.readFileSync(path.join(process.cwd(), 'dist/explorer/browser/en-US/', 'index.html')).toString();
 const win = domino.createWindow(template);
 
 // @ts-ignore
@@ -58,7 +58,7 @@ global['localStorage'] = {
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(locale: string): express.Express {
   const server = express();
-  const distFolder = join(process.cwd(), `dist/mempool/browser/${locale}`);
+  const distFolder = join(process.cwd(), `dist/explorer/browser/${locale}`);
   const indexHtml = join(distFolder, 'index.html');
 
   server.set('view engine', 'html');

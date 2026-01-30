@@ -6,7 +6,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "mempool": {
+    "explorer": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -160,7 +160,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/mempool/browser",
+            "outputPath": "dist/explorer/browser",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -203,16 +203,11 @@
             "sourceMap": true,
             "optimization": false,
             "namedChunks": true,
-            "allowedCommonJsDependencies": [
-              "qrcode"
-            ]
+            "allowedCommonJsDependencies": ["qrcode"]
           },
           "configurations": {
             "production": {
-              "assets": [
-                "src/favicon.ico",
-                "src/robots.txt"
-              ],
+              "assets": ["src/favicon.ico", "src/robots.txt"],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -251,11 +246,11 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "buildTarget": "mempool:build"
+            "buildTarget": "explorer:build"
           },
           "configurations": {
             "production": {
-              "buildTarget": "mempool:build:production"
+              "buildTarget": "explorer:build:production"
             },
             "local": {
               "proxyConfig": "proxy.conf.local.js",
@@ -282,26 +277,26 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "buildTarget": "mempool:build"
+            "buildTarget": "explorer:build"
           }
         },
         "e2e": {
           "builder": "@cypress/schematic:cypress",
           "options": {
-            "devServerTarget": "mempool:serve:local-prod",
+            "devServerTarget": "explorer:serve:local-prod",
             "watch": true,
             "headless": false
           },
           "configurations": {
             "production": {
-              "devServerTarget": "mempool:serve:production"
+              "devServerTarget": "explorer:serve:production"
             }
           }
         },
         "server": {
           "builder": "@angular-devkit/build-angular:server",
           "options": {
-            "outputPath": "dist/mempool/server",
+            "outputPath": "dist/explorer/server",
             "main": "server.ts",
             "tsConfig": "tsconfig.server.json"
           },
@@ -323,26 +318,22 @@
         "serve-ssr": {
           "builder": "@angular-devkit/build-angular:ssr-dev-server",
           "options": {
-            "browserTarget": "mempool:build",
-            "serverTarget": "mempool:server"
+            "browserTarget": "explorer:build",
+            "serverTarget": "explorer:server"
           },
           "configurations": {
             "production": {
-              "browserTarget": "mempool:build:production",
-              "serverTarget": "mempool:server:production",
-              "optimization": false,
-              "sourceMap": true
+              "browserTarget": "explorer:build:production",
+              "serverTarget": "explorer:server:production"
             }
           }
         },
         "prerender": {
           "builder": "@angular-devkit/build-angular:prerender",
           "options": {
-            "browserTarget": "mempool:build:production",
-            "serverTarget": "mempool:server:production",
-            "routes": [
-              "/"
-            ]
+            "browserTarget": "explorer:build:production",
+            "serverTarget": "explorer:server:production",
+            "routes": ["/"]
           },
           "configurations": {
             "production": {}
@@ -351,11 +342,11 @@
         "cypress-run": {
           "builder": "@cypress/schematic:cypress",
           "options": {
-            "devServerTarget": "mempool:serve"
+            "devServerTarget": "explorer:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "mempool:serve:production"
+              "devServerTarget": "explorer:serve:production"
             }
           }
         },

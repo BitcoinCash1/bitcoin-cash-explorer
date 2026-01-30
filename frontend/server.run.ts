@@ -8,7 +8,7 @@ import * as path from 'path';
 const {readFileSync, existsSync} = require('fs');
 const {createProxyMiddleware} = require('http-proxy-middleware');
 
-const template = fs.readFileSync(path.join(process.cwd(), 'dist/mempool/browser/en-US/', 'index.html')).toString();
+const template = fs.readFileSync(path.join(process.cwd(), 'dist/explorer/browser/en-US/', 'index.html')).toString();
 const win = domino.createWindow(template);
 
 // @ts-ignore
@@ -49,8 +49,8 @@ function getActiveLocales() {
     ...Object.keys(angularConfig.projects.mempool.i18n.locales),
   ];
 
-  return supportedLocales.filter(locale => locale === 'en-US' && existsSync(`./dist/mempool/server/${locale}`));
-  // return supportedLocales.filter(locale => existsSync(`./dist/mempool/server/${locale}`));
+  return supportedLocales.filter(locale => locale === 'en-US' && existsSync(`./dist/explorer/server/${locale}`));
+  // return supportedLocales.filter(locale => existsSync(`./dist/explorer/server/${locale}`));
 }
 
 function app() {
@@ -75,14 +75,14 @@ function app() {
   // map / and /en to en-US
   const defaultLocale = 'en-US';
   console.log(`serving default locale: ${defaultLocale}`);
-  const appServerModule = require(`./dist/mempool/server/${defaultLocale}/main.js`);
+  const appServerModule = require(`./dist/explorer/server/${defaultLocale}/main.js`);
   server.use('/', appServerModule.app(defaultLocale));
   server.use('/en', appServerModule.app(defaultLocale));
 
   // map each locale to its localized main.js
   getActiveLocales().forEach(locale => {
     console.log('serving locale:', locale);
-    const appServerModule = require(`./dist/mempool/server/${locale}/main.js`);
+    const appServerModule = require(`./dist/explorer/server/${locale}/main.js`);
 
     // map everything to itself
     server.use(`/${locale}`, appServerModule.app(locale));

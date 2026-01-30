@@ -19,7 +19,7 @@ WORKDIR /patch
 
 COPY --from=builder /build/entrypoint.sh .
 COPY --from=builder /build/wait-for .
-COPY --from=builder /build/dist/mempool /var/www/explorer
+COPY --from=builder /build/dist/explorer /var/www/explorer
 COPY --from=builder /build/nginx.conf /etc/nginx/
 COPY --from=builder /build/nginx-explorer.conf /etc/nginx/conf.d/
 
