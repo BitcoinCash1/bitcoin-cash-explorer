@@ -1,17 +1,30 @@
-image: registry.melroy.org/melroy/docker-images/rust:1.93-node-24.13.0
+default:
+  image: registry.melroy.org/melroy/docker-images/rust:1.93-node-24.13.0
+
+.cache_backend_template: &cache_backend_definition
+  cache:
+    key:
+      files:
+        - backend/package-lock.json
+    paths:
+      - .npm/
+
+.cache_frontend_template: &cache_frontend_definition
+  cache:
+    key:
+      files:
+        - frontend/package-lock.json
+    paths:
+      - .npm/
 
 stages:
   - test
   - build
   - deploy
 
-cache:
-  key: ${CI_COMMIT_REF_SLUG}
-  paths:
-    - .npm/
-
 lint-format-test-backend:
   stage: test
+  <<: *cache_backend_definition
   script:
     - cd backend
     - npm ci --cache .npm --prefer-offline
@@ -19,21 +32,10 @@ lint-format-test-backend:
     - npm run prettier:check
     - npm run test
 
-build-backend:
-  stage: build
-  script:
-    - cd backend
-    - npm ci --cache .npm --prefer-offline --omit=dev
-    - npm run package
-  artifacts:
-    name: "Backend Build"
-    expire_in: 1 week
-    paths:
-      - backend/package
-
 #test-frontend:
 #  stage: test
 #  image: cypress/browsers:22.15.0
+#  <<: *cache_frontend_definition
 #  variables:
 #    ELECTRON_EXTRA_LAUNCH_ARGS: "--headless --disable-gpu --disable-software-rasterizer --no-sandbox"
 #  script:
@@ -44,6 +46,7 @@ build-backend:
 
 lint-format-frontend:
   stage: test
+  <<: *cache_frontend_definition
   script:
     - cd frontend
     - npm ci --cache .npm --prefer-offline
@@ -51,8 +54,26 @@ lint-format-frontend:
     #- npm run lint
     - npm run prettier:check
 
-test-build-frontend:
+build-backend:
   stage: build
+  variables:
+    NODE_ENV: production
+  <<: *cache_backend_definition
+  script:
+    - cd backend
+    - npm ci --cache .npm --prefer-offline --omit=dev
+    - npm run package
+  artifacts:
+    name: "Backend Build"
+    expire_in: 1 week
+    paths:
+      - backend/package
+
+build-frontend:
+  stage: build
+  variables:
+    NODE_ENV: production
+  <<: *cache_frontend_definition
   script:
     - cd frontend
     - npm ci --cache .npm --prefer-offline --omit=dev
@@ -88,22 +109,19 @@ docker-build-deploy:
         ./$SERVICE/
     - docker push $CI_REGISTRY_IMAGE/bch-explorer-$SERVICE:$CI_COMMIT_TAG
 
-# build-and-deploy-frontend:
-#   stage: build
-#   variables:
-#     NODE_ENV: production
-#   rules:
-#     - if: '$CI_PROJECT_NAMESPACE == "bitcoincash" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_TAG'
-#   script:
-#     - cd frontend
-#     - npm ci --cache .npm --prefer-offline --omit=dev
-#     - npm run config:defaults:explorer
-#     - npm run build
-#   environment:
-#     name: production
-#     url: https://explorer.melroy.org
-#   artifacts:
-#     name: "Frontend Build"
-#     expire_in: 3 months
-#     paths:
-#       - frontend/dist/mempool/browser
+# Deploy frontend via Artifactory Deployer: https://gitlab.melroy.org/melroy/gitlab-artifact-deployer-go
+deploy-frontend:
+  stage: build
+  needs:
+    - job: build-frontend
+      artifacts: true
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE == "bitcoincash" && $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH && $CI_COMMIT_TAG'
+  environment:
+    name: production
+    url: https://bchexplorer.cash
+  artifacts:
+    name: "Frontend Build"
+    expire_in: 3 months
+    paths:
+      - frontend/dist/explorer/browser
