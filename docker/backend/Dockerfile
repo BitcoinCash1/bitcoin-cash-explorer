@@ -2,6 +2,7 @@ FROM registry.melroy.org/melroy/docker-images/rust:1.93-node-24.13.0 AS builder
 
 ARG commitHash
 ENV MEMPOOL_COMMIT_HASH=${commitHash}
+ENV NODE_ENV=production
 
 WORKDIR /build
 
@@ -17,6 +18,9 @@ RUN npm install --omit=dev --omit=optional
 RUN npm run package
 
 FROM registry.melroy.org/melroy/docker-images/rust:1.93-node-24.13.0 AS runtime
+
+ENV NODE_OPTIONS=--max-old-space-size=16384
+ENV NODE_ENV=production
 
 WORKDIR /backend
 

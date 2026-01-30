@@ -3,6 +3,7 @@ FROM node:24.13-trixie-slim AS builder
 ARG commitHash
 ENV DOCKER_COMMIT_HASH=${commitHash}
 ENV CYPRESS_INSTALL_BINARY=0
+ENV NODE_ENV=production
 
 WORKDIR /build
 COPY . .
