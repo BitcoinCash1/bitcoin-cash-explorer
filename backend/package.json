@@ -2,8 +2,9 @@
   "name": "explorer-backend",
   "version": "3.3",
   "description": "Bitcoin Cash Explorer mempool visualizer and blockchain explorer backend",
-  "license": "GNU Affero General Public License v3.0",
+  "license": "AGPL-3.0-or-later",
   "homepage": "https://bchexplorer.cash",
+  "author": "Melroy van den Berg <melroy@melroy.org> (https://melroy.org)",
   "repository": {
     "type": "git",
     "url": "git+https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer"
@@ -22,7 +23,7 @@
   ],
   "main": "index.ts",
   "scripts": {
-    "tsc": "./node_modules/typescript/bin/tsc -p tsconfig.build.json",
+    "tsc": "tsc -p tsconfig.build.json",
     "build": "npm run tsc && npm run create-resources",
     "clean": "rm -rf ./dist/ ./node_modules/ ./package/ ./rust-gbt/",
     "create-resources": "cp ./src/tasks/price-feeds/mtgox-weekly.json ./dist/tasks && node dist/api/fetch-version.js",
