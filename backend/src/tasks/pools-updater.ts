@@ -10,8 +10,6 @@ import { Common } from '../api/common';
 
 /**
  * Maintain the most recent version of pools-v2.json
- *
- * TODO: Use gitlab instead of github data for parsing the tree data (https://gitlab.melroy.org/api/v4/projects/199/repository/tree)
  */
 class PoolsUpdater {
   tag = 'PoolsUpdater';
@@ -152,13 +150,10 @@ class PoolsUpdater {
   private async fetchPoolsSha(): Promise<string | null> {
     const response = await this.query(this.treeUrl);
 
-    // TODO: Change this, there is no "tree" in GitLab, just directly in the response:
-    // [{"id":"b9b910103f5b59726420f135c7f9a718172a2e30","name":"dupes.sh","type":"blob","path":"dupes.sh","mode":"100755"},{"id":"0245a9b9713016636034ee3ced5b7b2e8d0e8a61","name":"pools-v2.json","type":"blob","path":"pools-v2.json","mode":"100644"}]
-    // Lets try to use the id here.
     if (response !== undefined) {
-      for (const file of response['tree']) {
-        if (file['path'] === 'pools-v2.json') {
-          return file['sha'];
+      for (const file of response) {
+        if (file['name'] === 'pools-v2.json') {
+          return file['id']; // id is the sha
         }
       }
     }
