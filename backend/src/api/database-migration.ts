@@ -4,7 +4,7 @@ import logger from '../logger';
 import { Common } from './common';
 
 class DatabaseMigration {
-  private static currentVersion = 106;
+  private static currentVersion = 107;
   private queryTimeout = 3600_000;
   private statisticsAddedIndexed = false;
   private uniqueLogs: string[] = [];
@@ -107,7 +107,6 @@ class DatabaseMigration {
 
     const isBitcoin = ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK);
 
-    await this.$executeQuery(this.getCreateElementsTableQuery(), await this.$checkIfTableExists('elements_pegs'));
     await this.$executeQuery(this.getCreateStatisticsQuery(), await this.$checkIfTableExists('statistics'));
     if (databaseSchemaVersion < 2 && this.statisticsAddedIndexed === false) {
       await this.$executeQuery(`CREATE INDEX added ON statistics (added);`);
@@ -782,11 +781,15 @@ class DatabaseMigration {
       await this.updateToSchemaVersion(91);
     }
 
-    // elements_pegs indexes
-    await this.updateToSchemaVersion(92);
+    if (databaseSchemaVersion < 92) {
+      // elements_pegs indexes
+      await this.updateToSchemaVersion(92);
+    }
 
-    // federation_txos indexes
-    await this.updateToSchemaVersion(93);
+    if (databaseSchemaVersion < 93) {
+      // federation_txos indexes
+      await this.updateToSchemaVersion(93);
+    }
 
     // Unify database schema for all mempool netwoks
     // versions above 94 should not use network-specific flags
@@ -1103,14 +1106,14 @@ class DatabaseMigration {
       // Version 71
 
       // Version 92
-      await this.$executeQuery(`
-        ALTER TABLE \`elements_pegs\`
-          ADD INDEX \`block\` (\`block\`),
-          ADD INDEX \`datetime\` (\`datetime\`),
-          ADD INDEX \`amount\` (\`amount\`),
-          ADD INDEX \`bitcoinaddress\` (\`bitcoinaddress\`),
-          ADD INDEX \`bitcointxid\` (\`bitcointxid\`)
-      `);
+      // await this.$executeQuery(`
+      //   ALTER TABLE \`elements_pegs\`
+      //     ADD INDEX \`block\` (\`block\`),
+      //     ADD INDEX \`datetime\` (\`datetime\`),
+      //     ADD INDEX \`amount\` (\`amount\`),
+      //     ADD INDEX \`bitcoinaddress\` (\`bitcoinaddress\`),
+      //     ADD INDEX \`bitcointxid\` (\`bitcointxid\`)
+      // `);
 
       // Version 93
       await this.updateToSchemaVersion(94);
@@ -1268,6 +1271,13 @@ class DatabaseMigration {
       await this.$executeQuery('ALTER TABLE `blocks` ADD COLUMN `abla_next_block_size_limit` bigint(20) DEFAULT NULL');
       await this.updateToSchemaVersion(106);
     }
+
+    if (databaseSchemaVersion < 107) {
+      // Clean-up state table
+      await this.$executeQuery(`DELETE FROM state WHERE name = 'last_acceleration_block'`);
+      await this.$executeQuery(`DELETE FROM state WHERE name = 'last_elements_block'`);
+      await this.updateToSchemaVersion(107);
+    }
   }
 
   /**
@@ -1344,7 +1354,7 @@ class DatabaseMigration {
 
     // Set initial values
     await this.$executeQuery(`INSERT INTO state VALUES('schema_version', 0, NULL);`);
-    await this.$executeQuery(`INSERT INTO state VALUES('last_elements_block', 0, NULL);`);
+    // await this.$executeQuery(`INSERT INTO state VALUES('last_elements_block', 0, NULL);`);
   }
 
   /**
@@ -1510,20 +1520,6 @@ class DatabaseMigration {
       vsize_1800 int(11) NOT NULL,
       vsize_2000 int(11) NOT NULL,
       CONSTRAINT PRIMARY KEY (id)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
-  }
-
-  private getCreateElementsTableQuery(): string {
-    return `CREATE TABLE IF NOT EXISTS elements_pegs (
-      block int(11) NOT NULL,
-      datetime int(11) NOT NULL,
-      amount bigint(20) NOT NULL,
-      txid varchar(65) NOT NULL,
-      txindex int(11) NOT NULL,
-      bitcoinaddress varchar(100) NOT NULL,
-      bitcointxid varchar(65) NOT NULL,
-      bitcoinindex int(11) NOT NULL,
-      final_tx int(11) NOT NULL
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
   }
 
