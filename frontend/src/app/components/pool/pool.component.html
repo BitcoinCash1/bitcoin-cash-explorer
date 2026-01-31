@@ -138,6 +138,54 @@
                   </div>
                 </td>
               </tr>
+              <!-- Website button -->
+              <tr *ngIf="!isMobile()">
+                <td class="label" i18n="mining.link">Link</td>
+                <td>
+                  <a
+                    *ngIf="poolStats.pool.link"
+                    [href]="poolStats.pool.link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn btn-sm btn-primary"
+                  >
+                    Website
+                    <span>&nbsp;</span>
+                    <fa-icon
+                      [icon]="['fas', 'external-link-alt']"
+                      [fixedWidth]="true"
+                      style="
+                        vertical-align: text-top;
+                        font-size: 13px;
+                        color: var(--title-fg);
+                      "
+                    ></fa-icon>
+                  </a>
+                </td>
+              </tr>
+              <tr *ngIf="isMobile()">
+                <td colspan="2" class="text-center">
+                  <a
+                    *ngIf="poolStats.pool.link"
+                    [href]="poolStats.pool.link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="btn btn-sm btn-primary"
+                  >
+                    Website
+                    <span>&nbsp;</span>
+                    <fa-icon
+                      [icon]="['fas', 'external-link-alt']"
+                      [fixedWidth]="true"
+                      style="
+                        vertical-align: text-top;
+                        font-size: 13px;
+                        color: var(--title-fg);
+                      "
+                    ></fa-icon>
+                  </a>
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
