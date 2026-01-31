@@ -539,8 +539,7 @@ class DatabaseMigration {
 
     if (databaseSchemaVersion < 59 && (config.EXPLORER.NETWORK === 'signet' || config.EXPLORER.NETWORK === 'testnet')) {
       // https://github.com/mempool/mempool/issues/3360
-      // Lets not truncate our prices
-      //await this.$executeQuery(`TRUNCATE prices`);
+      await this.$executeQuery(`TRUNCATE prices`);
     }
 
     if (databaseSchemaVersion < 60) {
