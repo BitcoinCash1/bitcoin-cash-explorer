@@ -4,7 +4,7 @@ import {
   OnChanges,
   Input,
 } from '@angular/core';
-import { Transaction } from '@app/interfaces/backend-api.interface';
+import { Transaction, Vin } from '@app/interfaces/backend-api.interface';
 
 @Component({
   selector: 'app-tx-features',
@@ -17,11 +17,15 @@ export class TxFeaturesComponent implements OnChanges {
   @Input() tx: Transaction;
 
   isCheap: boolean;
+  hasCashToken: boolean;
 
   ngOnChanges() {
     if (!this.tx) {
       return;
     }
     this.isCheap = this.tx.feePerSize < 10.0;
+    this.hasCashToken =
+      this.tx.vin.some((v: Vin) => v.token_category) ||
+      this.tx.vin.some((v: Vin) => v.token_category);
   }
 }

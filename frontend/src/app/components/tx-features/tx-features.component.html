@@ -7,3 +7,13 @@
   i18n="tx-features.tag.cheap|Cheap"
   >Cheap</span
 >
+
+<span
+  *ngIf="hasCashToken"
+  class="badge badge-success mr-1"
+  i18n-ngbTooltip="Transaction contains CashTokens"
+  ngbTooltip="This transaction contains CashToken(s)"
+  placement="bottom"
+  i18n="tx-features.tag.token|Token"
+  >CashToken</span
+>
