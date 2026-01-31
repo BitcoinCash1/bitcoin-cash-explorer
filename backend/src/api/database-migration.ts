@@ -613,8 +613,8 @@ class DatabaseMigration {
     await this.updateToSchemaVersion(71);
 
     if (databaseSchemaVersion < 72 && isBitcoin === true) {
-      // reindex Goggles flags for mined block templates above height 832000
-      await this.$executeQuery('UPDATE blocks_summaries SET version = 0 WHERE height >= 832000;');
+      // reindex Goggles flags for mined block templates above height 936288
+      await this.$executeQuery('UPDATE blocks_summaries SET version = 0 WHERE height >= 936288;');
       await this.updateToSchemaVersion(72);
     }
 
