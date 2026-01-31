@@ -7,7 +7,7 @@ import diskCache from './disk-cache';
 import mining from './mining/mining';
 import transactionUtils from './transaction-utils';
 import BlocksRepository from '../repositories/BlocksRepository';
-import redisCache from './redis-cache';
+import redisCache from './valkey-cache';
 import blocks from './blocks';
 
 class PoolsParser {

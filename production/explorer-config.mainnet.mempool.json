@@ -159,9 +159,9 @@
       "node204.sg1.mempool.space"
     ]
   },
-  "REDIS": {
+  "VALKEY": {
     "ENABLED": true,
-    "UNIX_SOCKET_PATH": "/tmp/redis.sock",
+    "UNIX_SOCKET_PATH": "/tmp/valkey.sock",
     "BATCH_QUERY_BASE_SIZE": 5000
   },
   "MELROY_EXPLORER_SERVICES": {

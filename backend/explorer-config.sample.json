@@ -25,8 +25,8 @@
     "USER_AGENT": "explorer",
     "STDOUT_LOG_MIN_PRIORITY": "debug",
     "AUTOMATIC_POOLS_UPDATE": false,
-    "POOLS_JSON_URL": "https://raw.githubusercontent.com/mempool/mining-pools/master/pools-v2.json",
-    "POOLS_JSON_TREE_URL": "https://api.github.com/repos/mempool/mining-pools/git/trees/master",
+    "POOLS_JSON_URL": "https://gitlab.melroy.org/bitcoincash/mining-pools/-/raw/main/pools-v2.json",
+    "POOLS_JSON_TREE_URL": "https://gitlab.melroy.org/api/v4/projects/199/repository/tree",
     "POOLS_UPDATE_DELAY": 604800,
     "AUDIT": false,
     "RUST_GBT": true,
@@ -94,9 +94,9 @@
     "EXPLORER_API": "https://bchexplorer.cash/api/v1",
     "EXPLORER_ONION": "http://someuniondomain.onion/api/v1"
   },
-  "REDIS": {
+  "VALKEY": {
     "ENABLED": false,
-    "UNIX_SOCKET_PATH": "/tmp/redis.sock",
+    "UNIX_SOCKET_PATH": "/tmp/valkey.sock",
     "BATCH_QUERY_BASE_SIZE": 5000
   },
   "REPLICATION": {

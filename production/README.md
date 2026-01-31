@@ -167,76 +167,10 @@ bind=127.0.0.1:38333
 rpcbind=127.0.0.1:38332
 ```
 
-### Elements
+### Fulcrum
 
-Build [Elements Core](https://github.com/ElementsProject/elements) from source:
-```
-./autogen.sh
-MAKE=gmake CC=cc CXX=c++ CPPFLAGS=-I/usr/local/include \
-  ./configure --with-gui=no --disable-wallet
-gmake -j19
-gmake install
-```
+*TODO*
 
-Configure your `elements.conf` like this:
-```
-server=1
-daemon=1
-listen=1
-rpcuser=foo
-rpcpassword=bar
-mainchainrpchost=127.0.0.1
-mainchainrpcuser=foo
-mainchainrpcpassword=bar
-txindex=1
-
-[liquidv1]
-validatepegin=1
-mainchainrpcport=8332
-
-[liquidtestnet]
-validatepegin=0
-anyonecanspendaremine=0
-initialfreecoins=2100000000000000
-con_dyna_deploy_start=0
-con_max_block_sig_size=150
-checkblockindex=0
-fallbackfee=0.00000100
-con_has_parent_chain=0
-parentgenesisblockhash=NULL
-pubkeyprefix=36
-scriptprefix=19
-blindedprefix=23
-bech32_hrp=tex
-blech32_hrp=tlq
-pchmessagestart=410edd62
-dynamic_epoch_length=1000
-signblockscript=51210217e403ddb181872c32a0cd468c710040b2f53d8cac69f18dad07985ee37e9a7151ae
-evbparams=dynafed:0:::
-addnode=liquid-testnet.blockstream.com:18892
-addnode=liquidtestnet.com:18891
-addnode=liquid.network:18444
-```
-
-Start `elementsd` and wait for it to sync the Liquid blockchain.
-
-### Electrs
-
-Install [Electrs](https://github.com/mempool/electrs) from source:
-```
-git clone https://github.com/mempool/electrs
-cd electrs
-git checkout mempool
-```
-
-You'll need one instance per network. Build and run them one at a time:
-```
-./electrs-start-mainnet
-./electrs-start-testnet
-./electrs-start-signet
-./electrs-start-liquid
-./electrs-start-liquidtestnet
-```
 
 ### MariaDB
 
@@ -254,7 +188,6 @@ grant all on mempool_liquid.* to 'mempool_liquid'@'localhost' identified by 'mem
 create database mempool_liquidtestnet;
 grant all on mempool_liquidtestnet.* to 'mempool_liquidtestnet'@'localhost' identified by 'mempool_liquidtestnet';
 ```
-
 
 ### Mempool
 

@@ -30,7 +30,7 @@ import chainTips from './api/chain-tips';
 import { AxiosError } from 'axios';
 import v8 from 'v8';
 import { formatBytes, getBytesUnit } from './utils/format';
-import redisCache from './api/redis-cache';
+import redisCache from './api/valkey-cache';
 import bitcoinCoreRoutes from './api/bitcoin/bitcoin-core.routes';
 import bitcoinSecondClient from './api/bitcoin/bitcoin-second-client';
 import aboutRoutes from './api/about.routes';
@@ -182,7 +182,7 @@ class Server {
     if (config.EXPLORER.ENABLED) {
       if (config.EXPLORER.CACHE_ENABLED) {
         await diskCache.$loadMempoolCache();
-      } else if (config.REDIS.ENABLED) {
+      } else if (config.VALKEY.ENABLED) {
         await redisCache.$loadCache();
       }
     }

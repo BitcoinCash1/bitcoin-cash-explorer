@@ -39,8 +39,8 @@ describe('BCH Explorer Backend Config', () => {
         EXTERNAL_RETRY_INTERVAL: 0,
         USER_AGENT: 'explorer',
         STDOUT_LOG_MIN_PRIORITY: 'debug',
-        POOLS_JSON_TREE_URL: 'https://api.github.com/repos/mempool/mining-pools/git/trees/master',
-        POOLS_JSON_URL: 'https://raw.githubusercontent.com/mempool/mining-pools/master/pools-v2.json',
+        POOLS_JSON_TREE_URL: 'https://gitlab.melroy.org/api/v4/projects/199/repository/tree',
+        POOLS_JSON_URL: 'https://gitlab.melroy.org/bitcoincash/mining-pools/-/raw/main/pools-v2.json',
         POOLS_UPDATE_DELAY: 604800,
         AUDIT: false,
         RUST_GBT: true,
@@ -127,7 +127,7 @@ describe('BCH Explorer Backend Config', () => {
         SERVERS: [],
       });
 
-      expect(config.REDIS).toStrictEqual({
+      expect(config.VALKEY).toStrictEqual({
         ENABLED: false,
         UNIX_SOCKET_PATH: '',
         BATCH_QUERY_BASE_SIZE: 5000,
@@ -173,7 +173,7 @@ describe('BCH Explorer Backend Config', () => {
 
       expect(config.MELROY_EXPLORER_SERVICES).toStrictEqual(fixture.MELROY_EXPLORER_SERVICES);
 
-      expect(config.REDIS).toStrictEqual(fixture.REDIS);
+      expect(config.VALKEY).toStrictEqual(fixture.VALKEY);
     });
   });
 

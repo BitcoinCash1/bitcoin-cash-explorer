@@ -13,7 +13,7 @@ import { IBitcoinApi } from './bitcoin/bitcoin-api.interface';
 import loadingIndicators from './loading-indicators';
 import bitcoinClient from './bitcoin/bitcoin-client';
 import bitcoinSecondClient from './bitcoin/bitcoin-second-client';
-import redisCache from './redis-cache';
+import redisCache from './valkey-cache';
 import blocks from './blocks';
 
 class Mempool {
@@ -148,7 +148,7 @@ class Mempool {
     this.mempoolCache = mempoolData;
     let count = 0;
     const redisTimer = Date.now();
-    if (config.EXPLORER.CACHE_ENABLED && config.REDIS.ENABLED) {
+    if (config.EXPLORER.CACHE_ENABLED && config.VALKEY.ENABLED) {
       logger.debug(`Migrating ${Object.keys(this.mempoolCache).length} transactions from disk cache to Redis cache`);
     }
     for (const txid of Object.keys(this.mempoolCache)) {
@@ -166,12 +166,12 @@ class Mempool {
         transactionUtils.addInnerScriptsToVin(vin);
       }
       count++;
-      if (config.EXPLORER.CACHE_ENABLED && config.REDIS.ENABLED) {
+      if (config.EXPLORER.CACHE_ENABLED && config.VALKEY.ENABLED) {
         await redisCache.$addTransaction(this.mempoolCache[txid]);
       }
       this.mempoolCache[txid].flags = Common.getTransactionFlags(this.mempoolCache[txid]);
     }
-    if (config.EXPLORER.CACHE_ENABLED && config.REDIS.ENABLED) {
+    if (config.EXPLORER.CACHE_ENABLED && config.VALKEY.ENABLED) {
       await redisCache.$flushTransactions();
       logger.debug(`Finished migrating cache transactions in ${((Date.now() - redisTimer) / 1000).toFixed(2)} seconds`);
     }
@@ -324,7 +324,7 @@ class Mempool {
           hasChange = true;
           newTransactions.push(transaction);
 
-          if (config.REDIS.ENABLED) {
+          if (config.VALKEY.ENABLED) {
             await redisCache.$addTransaction(transaction);
           }
         }
@@ -435,7 +435,7 @@ class Mempool {
     }
 
     // Update Redis cache
-    if (config.REDIS.ENABLED) {
+    if (config.VALKEY.ENABLED) {
       await redisCache.$flushTransactions();
       await redisCache.$removeTransactions(deletedTransactions.map((tx) => tx.txid));
     }

@@ -12,7 +12,7 @@ enum NetworkDB {
   signet,
 }
 
-class RedisCache {
+class ValkeyCache {
   private client;
   private connected = false;
   private schemaVersion = 1;
@@ -25,10 +25,10 @@ class RedisCache {
   private ignoreBlocksCache = false;
 
   constructor() {
-    if (config.REDIS.ENABLED) {
+    if (config.VALKEY.ENABLED) {
       this.redisConfig = {
         socket: {
-          path: config.REDIS.UNIX_SOCKET_PATH,
+          path: config.VALKEY.UNIX_SOCKET_PATH,
         },
         database: NetworkDB[config.EXPLORER.NETWORK],
       };
@@ -40,7 +40,7 @@ class RedisCache {
   }
 
   private async $ensureConnected(): Promise<boolean> {
-    if (!this.connected && config.REDIS.ENABLED) {
+    if (!this.connected && config.VALKEY.ENABLED) {
       try {
         this.client = createClient(this.redisConfig);
         this.client.on('error', async (e) => {
@@ -92,7 +92,7 @@ class RedisCache {
   }
 
   async $updateBlocks(blocks: BlockExtended[]): Promise<void> {
-    if (!config.REDIS.ENABLED) {
+    if (!config.VALKEY.ENABLED) {
       return;
     }
     if (!this.connected) {
@@ -108,7 +108,7 @@ class RedisCache {
   }
 
   async $updateBlockSummaries(summaries: BlockSummary[]): Promise<void> {
-    if (!config.REDIS.ENABLED) {
+    if (!config.VALKEY.ENABLED) {
       return;
     }
     if (!this.connected) {
@@ -124,7 +124,7 @@ class RedisCache {
   }
 
   async $addTransaction(tx: VerboseMempoolTransactionExtended): Promise<void> {
-    if (!config.REDIS.ENABLED) {
+    if (!config.VALKEY.ENABLED) {
       return;
     }
     this.cacheQueue.push(tx);
@@ -136,7 +136,7 @@ class RedisCache {
   }
 
   async $flushTransactions(): Promise<void> {
-    if (!config.REDIS.ENABLED) {
+    if (!config.VALKEY.ENABLED) {
       return;
     }
     if (!this.cacheQueue.length) {
@@ -174,7 +174,7 @@ class RedisCache {
   }
 
   async $removeTransactions(transactions: string[]): Promise<void> {
-    if (!config.REDIS.ENABLED) {
+    if (!config.VALKEY.ENABLED) {
       return;
     }
     const toRemove = this.removeQueue.concat(transactions);
@@ -182,7 +182,7 @@ class RedisCache {
     let failed: string[] = [];
     let numRemoved = 0;
     if (this.connected) {
-      const sliceLength = config.REDIS.BATCH_QUERY_BASE_SIZE;
+      const sliceLength = config.VALKEY.BATCH_QUERY_BASE_SIZE;
       for (let i = 0; i < Math.ceil(toRemove.length / sliceLength); i++) {
         const slice = toRemove.slice(i * sliceLength, (i + 1) * sliceLength);
         try {
@@ -204,7 +204,7 @@ class RedisCache {
   }
 
   async $getBlocks(): Promise<BlockExtended[]> {
-    if (!config.REDIS.ENABLED) {
+    if (!config.VALKEY.ENABLED) {
       return [];
     }
     if (!this.connected) {
@@ -221,7 +221,7 @@ class RedisCache {
   }
 
   async $getBlockSummaries(): Promise<BlockSummary[]> {
-    if (!config.REDIS.ENABLED) {
+    if (!config.VALKEY.ENABLED) {
       return [];
     }
     if (!this.connected) {
@@ -238,7 +238,7 @@ class RedisCache {
   }
 
   async $getMempool(): Promise<{ [txid: string]: VerboseMempoolTransactionExtended }> {
-    if (!config.REDIS.ENABLED) {
+    if (!config.VALKEY.ENABLED) {
       return {};
     }
     if (!this.connected) {
@@ -261,7 +261,7 @@ class RedisCache {
   }
 
   async $loadCache(): Promise<void> {
-    if (!config.REDIS.ENABLED) {
+    if (!config.VALKEY.ENABLED) {
       return;
     }
     logger.info('Restoring mempool and blocks data from Redis cache');
@@ -337,4 +337,4 @@ class RedisCache {
   }
 }
 
-export default new RedisCache();
+export default new ValkeyCache();

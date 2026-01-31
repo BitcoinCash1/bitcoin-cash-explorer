@@ -111,7 +111,7 @@ interface IConfig {
   MELROY_EXPLORER_SERVICES: {
     API: string;
   };
-  REDIS: {
+  VALKEY: {
     ENABLED: boolean;
     UNIX_SOCKET_PATH: string;
     BATCH_QUERY_BASE_SIZE: number;
@@ -160,8 +160,8 @@ const defaults: IConfig = {
     USER_AGENT: 'explorer',
     STDOUT_LOG_MIN_PRIORITY: 'debug',
     AUTOMATIC_POOLS_UPDATE: false,
-    POOLS_JSON_URL: 'https://raw.githubusercontent.com/mempool/mining-pools/master/pools-v2.json',
-    POOLS_JSON_TREE_URL: 'https://api.github.com/repos/mempool/mining-pools/git/trees/master',
+    POOLS_JSON_URL: 'https://gitlab.melroy.org/bitcoincash/mining-pools/-/raw/main/pools-v2.json',
+    POOLS_JSON_TREE_URL: 'https://gitlab.melroy.org/api/v4/projects/199/repository/tree',
     POOLS_UPDATE_DELAY: 604800, // in seconds, default is one week
     AUDIT: false,
     RUST_GBT: true,
@@ -241,7 +241,7 @@ const defaults: IConfig = {
   MELROY_EXPLORER_SERVICES: {
     API: '',
   },
-  REDIS: {
+  VALKEY: {
     ENABLED: false,
     UNIX_SOCKET_PATH: '',
     BATCH_QUERY_BASE_SIZE: 5000,
@@ -274,7 +274,7 @@ class Config implements IConfig {
   EXTERNAL_DATA_SERVER: IConfig['EXTERNAL_DATA_SERVER'];
   REPLICATION: IConfig['REPLICATION'];
   MELROY_EXPLORER_SERVICES: IConfig['MELROY_EXPLORER_SERVICES'];
-  REDIS: IConfig['REDIS'];
+  VALKEY: IConfig['VALKEY'];
   FIAT_PRICE: IConfig['FIAT_PRICE'];
   WALLETS: IConfig['WALLETS'];
   STRATUM: IConfig['STRATUM'];
@@ -293,7 +293,7 @@ class Config implements IConfig {
     this.EXTERNAL_DATA_SERVER = configs.EXTERNAL_DATA_SERVER;
     this.REPLICATION = configs.REPLICATION;
     this.MELROY_EXPLORER_SERVICES = configs.MELROY_EXPLORER_SERVICES;
-    this.REDIS = configs.REDIS;
+    this.VALKEY = configs.VALKEY;
     this.FIAT_PRICE = configs.FIAT_PRICE;
     this.WALLETS = configs.WALLETS;
     this.STRATUM = configs.STRATUM;

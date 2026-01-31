@@ -693,8 +693,8 @@ case $OS in
         osSudo "${ROOT_USER}" install -c -m 755 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/mempool-logger" /usr/local/bin/mempool-logger
         osSudo "${ROOT_USER}" install -c -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/syslog.conf" /usr/local/etc/syslog.d/mempool.conf
 
-        echo "[*] Installing redis configuration"
-        osSudo "${ROOT_USER}" install -c -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/redis.conf" /usr/local/etc/redis.conf
+        echo "[*] Installing valkey configuration"
+        osSudo "${ROOT_USER}" install -c -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/valkey.conf" /usr/local/etc/valkey.conf
 
         echo "[*] Installing newsyslog configuration"
         osSudo "${ROOT_USER}" mkdir -p /usr/local/etc/newsyslog.conf.d

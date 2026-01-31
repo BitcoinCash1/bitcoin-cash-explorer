@@ -107,9 +107,9 @@
   "MELROY_EXPLORER_SERVICES": {
     "API": "__MELROY_EXPLORER_SERVICES_API__"
   },
-  "REDIS": {
+  "VALKEY": {
     "ENABLED": false,
-    "UNIX_SOCKET_PATH": "/tmp/redis.sock",
+    "UNIX_SOCKET_PATH": "/tmp/valkey.sock",
     "BATCH_QUERY_BASE_SIZE": 5000
   },
   "FIAT_PRICE": {

@@ -27,8 +27,8 @@ __EXPLORER_EXTERNAL_RETRY_INTERVAL__=${EXPLORER_EXTERNAL_RETRY_INTERVAL:=0}
 __EXPLORER_USER_AGENT__=${EXPLORER_USER_AGENT:=explorer}
 __EXPLORER_STDOUT_LOG_MIN_PRIORITY__=${EXPLORER_STDOUT_LOG_MIN_PRIORITY:=info}
 __EXPLORER_AUTOMATIC_POOLS_UPDATE__=${EXPLORER_AUTOMATIC_POOLS_UPDATE:=true}
-__EXPLORER_POOLS_JSON_URL__=${EXPLORER_POOLS_JSON_URL:=https://raw.githubusercontent.com/mempool/mining-pools/master/pools-v2.json}
-__EXPLORER_POOLS_JSON_TREE_URL__=${EXPLORER_POOLS_JSON_TREE_URL:=https://api.github.com/repos/mempool/mining-pools/git/trees/master}
+__EXPLORER_POOLS_JSON_URL__=${EXPLORER_POOLS_JSON_URL:=https://gitlab.melroy.org/bitcoincash/mining-pools/-/raw/main/pools-v2.json}
+__EXPLORER_POOLS_JSON_TREE_URL__=${EXPLORER_POOLS_JSON_TREE_URL:=https://gitlab.melroy.org/api/v4/projects/199/repository/tree}
 __EXPLORER_POOLS_UPDATE_DELAY__=${EXPLORER_POOLS_UPDATE_DELAY:=604800}
 __EXPLORER_AUDIT__=${EXPLORER_AUDIT:=false}
 __EXPLORER_RUST_GBT__=${EXPLORER_RUST_GBT:=true}
@@ -113,10 +113,10 @@ __MELROY_EXPLORER_SERVICES_API__=${MELROY_EXPLORER_SERVICES_API:="https://bchexp
 __STRATUM_ENABLED__=${STRATUM_ENABLED:=false}
 __STRATUM_API__=${STRATUM_API:="http://localhost:1234"}
 
-# REDIS
-__REDIS_ENABLED__=${REDIS_ENABLED:=false}
-__REDIS_UNIX_SOCKET_PATH__=${REDIS_UNIX_SOCKET_PATH:=""}
-__REDIS_BATCH_QUERY_BASE_SIZE__=${REDIS_BATCH_QUERY_BASE_SIZE:=5000}
+# VALKEY
+__VALKEY_ENABLED__=${VALKEY_ENABLED:=false}
+__VALKEY_UNIX_SOCKET_PATH__=${VALKEY_UNIX_SOCKET_PATH:=""}
+__VALKEY_BATCH_QUERY_BASE_SIZE__=${VALKEY_BATCH_QUERY_BASE_SIZE:=5000}
 
 # FIAT_PRICE
 __FIAT_PRICE_ENABLED__=${FIAT_PRICE_ENABLED:=true}
@@ -229,10 +229,10 @@ sed -i "s!__MELROY_EXPLORER_SERVICES_API__!${__MELROY_EXPLORER_SERVICES_API__}!g
 sed -i "s!__STRATUM_ENABLED__!${__STRATUM_ENABLED__}!g" explorer-config.json
 sed -i "s!__STRATUM_API__!${__STRATUM_API__}!g" explorer-config.json
 
-# REDIS
-sed -i "s!__REDIS_ENABLED__!${__REDIS_ENABLED__}!g" explorer-config.json
-sed -i "s!__REDIS_UNIX_SOCKET_PATH__!${__REDIS_UNIX_SOCKET_PATH__}!g" explorer-config.json
-sed -i "s!__REDIS_BATCH_QUERY_BASE_SIZE__!${__REDIS_BATCH_QUERY_BASE_SIZE__}!g" explorer-config.json
+# VALKEY
+sed -i "s!__VALKEY_ENABLED__!${__VALKEY_ENABLED__}!g" explorer-config.json
+sed -i "s!__VALKEY_UNIX_SOCKET_PATH__!${__VALKEY_UNIX_SOCKET_PATH__}!g" explorer-config.json
+sed -i "s!__VALKEY_BATCH_QUERY_BASE_SIZE__!${__VALKEY_BATCH_QUERY_BASE_SIZE__}!g" explorer-config.json
 
 # FIAT_PRICE
 sed -i "s!__FIAT_PRICE_ENABLED__!${__FIAT_PRICE_ENABLED__}!g" explorer-config.json
