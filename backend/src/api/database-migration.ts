@@ -279,65 +279,40 @@ class DatabaseMigration {
     }
 
     if (databaseSchemaVersion < 25) {
-      await this.$executeQuery(
-        this.getCreateLightningStatisticsQuery(),
-        await this.$checkIfTableExists('lightning_stats')
-      );
-      await this.$executeQuery(this.getCreateNodesQuery(), await this.$checkIfTableExists('nodes'));
-      await this.$executeQuery(this.getCreateChannelsQuery(), await this.$checkIfTableExists('channels'));
-      await this.$executeQuery(this.getCreateNodesStatsQuery(), await this.$checkIfTableExists('node_stats'));
+      // await this.$executeQuery(
+      //   this.getCreateLightningStatisticsQuery(),
+      //   await this.$checkIfTableExists('lightning_stats')
+      // );
+      // await this.$executeQuery(this.getCreateNodesQuery(), await this.$checkIfTableExists('nodes'));
+      // await this.$executeQuery(this.getCreateChannelsQuery(), await this.$checkIfTableExists('channels'));
+      // await this.$executeQuery(this.getCreateNodesStatsQuery(), await this.$checkIfTableExists('node_stats'));
       await this.updateToSchemaVersion(25);
     }
 
     if (databaseSchemaVersion < 26) {
-      await this.$executeQuery(`TRUNCATE lightning_stats`);
-      await this.$executeQuery('ALTER TABLE `lightning_stats` ADD tor_nodes int(11) NOT NULL DEFAULT "0"');
-      await this.$executeQuery('ALTER TABLE `lightning_stats` ADD clearnet_nodes int(11) NOT NULL DEFAULT "0"');
-      await this.$executeQuery('ALTER TABLE `lightning_stats` ADD unannounced_nodes int(11) NOT NULL DEFAULT "0"');
       await this.updateToSchemaVersion(26);
     }
 
     if (databaseSchemaVersion < 27) {
-      await this.$executeQuery(
-        'ALTER TABLE `lightning_stats` ADD avg_capacity bigint(20) unsigned NOT NULL DEFAULT "0"'
-      );
-      await this.$executeQuery('ALTER TABLE `lightning_stats` ADD avg_fee_rate int(11) unsigned NOT NULL DEFAULT "0"');
-      await this.$executeQuery(
-        'ALTER TABLE `lightning_stats` ADD avg_base_fee_mtokens bigint(20) unsigned NOT NULL DEFAULT "0"'
-      );
-      await this.$executeQuery(
-        'ALTER TABLE `lightning_stats` ADD med_capacity bigint(20) unsigned NOT NULL DEFAULT "0"'
-      );
-      await this.$executeQuery('ALTER TABLE `lightning_stats` ADD med_fee_rate int(11) unsigned NOT NULL DEFAULT "0"');
-      await this.$executeQuery(
-        'ALTER TABLE `lightning_stats` ADD med_base_fee_mtokens bigint(20) unsigned NOT NULL DEFAULT "0"'
-      );
       await this.updateToSchemaVersion(27);
     }
 
     if (databaseSchemaVersion < 28) {
-      await this.$executeQuery(`TRUNCATE lightning_stats`);
-      await this.$executeQuery(`TRUNCATE node_stats`);
-      await this.$executeQuery(`ALTER TABLE lightning_stats MODIFY added DATE`);
+      // await this.$executeQuery(`TRUNCATE lightning_stats`);
+      // await this.$executeQuery(`TRUNCATE node_stats`);
+      // await this.$executeQuery(`ALTER TABLE lightning_stats MODIFY added DATE`);
       await this.updateToSchemaVersion(28);
     }
 
     if (databaseSchemaVersion < 29) {
-      await this.$executeQuery(this.getCreateGeoNamesTableQuery(), await this.$checkIfTableExists('geo_names'));
-      await this.$executeQuery('ALTER TABLE `nodes` ADD as_number int(11) unsigned NULL DEFAULT NULL');
-      await this.$executeQuery('ALTER TABLE `nodes` ADD city_id int(11) unsigned NULL DEFAULT NULL');
-      await this.$executeQuery('ALTER TABLE `nodes` ADD country_id int(11) unsigned NULL DEFAULT NULL');
-      await this.$executeQuery('ALTER TABLE `nodes` ADD accuracy_radius int(11) unsigned NULL DEFAULT NULL');
-      await this.$executeQuery('ALTER TABLE `nodes` ADD subdivision_id int(11) unsigned NULL DEFAULT NULL');
-      await this.$executeQuery('ALTER TABLE `nodes` ADD longitude double NULL DEFAULT NULL');
-      await this.$executeQuery('ALTER TABLE `nodes` ADD latitude double NULL DEFAULT NULL');
+      // await this.$executeQuery(this.getCreateGeoNamesTableQuery(), await this.$checkIfTableExists('geo_names'));
       await this.updateToSchemaVersion(29);
     }
 
     if (databaseSchemaVersion < 30) {
-      await this.$executeQuery(
-        'ALTER TABLE `geo_names` CHANGE `type` `type` enum("city","country","division","continent","as_organization") NOT NULL'
-      );
+      // await this.$executeQuery(
+      //   'ALTER TABLE `geo_names` CHANGE `type` `type` enum("city","country","division","continent","as_organization") NOT NULL'
+      // );
       await this.updateToSchemaVersion(30);
     }
 
@@ -355,72 +330,49 @@ class DatabaseMigration {
     }
 
     if (databaseSchemaVersion < 33) {
-      await this.$executeQuery(
-        'ALTER TABLE `geo_names` CHANGE `type` `type` enum("city","country","division","continent","as_organization", "country_iso_code") NOT NULL'
-      );
+      // await this.$executeQuery(
+      //   'ALTER TABLE `geo_names` CHANGE `type` `type` enum("city","country","division","continent","as_organization", "country_iso_code") NOT NULL'
+      // );
       await this.updateToSchemaVersion(33);
     }
 
     if (databaseSchemaVersion < 34) {
-      await this.$executeQuery('ALTER TABLE `lightning_stats` ADD clearnet_tor_nodes int(11) NOT NULL DEFAULT "0"');
       await this.updateToSchemaVersion(34);
     }
 
     if (databaseSchemaVersion < 35) {
-      await this.$executeQuery('DELETE from `lightning_stats` WHERE added > "2021-09-19"');
-      await this.$executeQuery('ALTER TABLE `lightning_stats` ADD CONSTRAINT added_unique UNIQUE (added);');
       await this.updateToSchemaVersion(35);
     }
 
     if (databaseSchemaVersion < 36) {
-      await this.$executeQuery('ALTER TABLE `nodes` ADD status TINYINT NOT NULL DEFAULT "1"');
       await this.updateToSchemaVersion(36);
     }
 
     if (databaseSchemaVersion < 37) {
-      await this.$executeQuery(
-        this.getCreateLNNodesSocketsTableQuery(),
-        await this.$checkIfTableExists('nodes_sockets')
-      );
       await this.updateToSchemaVersion(37);
     }
 
     if (databaseSchemaVersion < 38) {
-      await this.$executeQuery(`TRUNCATE lightning_stats`);
-      await this.$executeQuery(`TRUNCATE node_stats`);
-      await this.$executeQuery('ALTER TABLE `lightning_stats` CHANGE `added` `added` timestamp NULL');
-      await this.$executeQuery('ALTER TABLE `node_stats` CHANGE `added` `added` timestamp NULL');
       await this.updateToSchemaVersion(38);
     }
 
     if (databaseSchemaVersion < 39) {
-      await this.$executeQuery('ALTER TABLE `nodes` ADD alias_search TEXT NULL DEFAULT NULL AFTER `alias`');
-      await this.$executeQuery('ALTER TABLE nodes ADD FULLTEXT(alias_search)');
       await this.updateToSchemaVersion(39);
     }
 
     if (databaseSchemaVersion < 40) {
-      await this.$executeQuery('ALTER TABLE `nodes` ADD capacity bigint(20) unsigned DEFAULT NULL');
-      await this.$executeQuery('ALTER TABLE `nodes` ADD channels int(11) unsigned DEFAULT NULL');
-      await this.$executeQuery('ALTER TABLE `nodes` ADD INDEX `capacity` (`capacity`);');
       await this.updateToSchemaVersion(40);
     }
 
     if (databaseSchemaVersion < 41) {
-      await this.$executeQuery('UPDATE channels SET closing_reason = NULL WHERE closing_reason = 1');
       await this.updateToSchemaVersion(41);
     }
 
     if (databaseSchemaVersion < 42) {
-      await this.$executeQuery('ALTER TABLE `channels` ADD closing_resolved tinyint(1) DEFAULT 0');
       await this.updateToSchemaVersion(42);
     }
 
     if (databaseSchemaVersion < 43) {
-      await this.$executeQuery(
-        this.getCreateLNNodeRecordsTableQuery(),
-        await this.$checkIfTableExists('nodes_records')
-      );
       await this.updateToSchemaVersion(43);
     }
 
@@ -440,23 +392,11 @@ class DatabaseMigration {
     }
 
     if (databaseSchemaVersion < 47) {
-      await this.$executeQuery('ALTER TABLE `blocks` ADD cpfp_indexed tinyint(1) DEFAULT 0');
-      await this.$executeQuery(this.getCreateCPFPTableQuery(), await this.$checkIfTableExists('cpfp_clusters'));
-      await this.$executeQuery(this.getCreateTransactionsTableQuery(), await this.$checkIfTableExists('transactions'));
+      // await this.$executeQuery(this.getCreateTransactionsTableQuery(), await this.$checkIfTableExists('transactions'));
       await this.updateToSchemaVersion(47);
     }
 
     if (databaseSchemaVersion < 48) {
-      await this.$executeQuery('ALTER TABLE `channels` ADD source_checked tinyint(1) DEFAULT 0');
-      await this.$executeQuery('ALTER TABLE `channels` ADD closing_fee bigint(20) unsigned DEFAULT 0');
-      await this.$executeQuery('ALTER TABLE `channels` ADD node1_funding_balance bigint(20) unsigned DEFAULT 0');
-      await this.$executeQuery('ALTER TABLE `channels` ADD node2_funding_balance bigint(20) unsigned DEFAULT 0');
-      await this.$executeQuery('ALTER TABLE `channels` ADD node1_closing_balance bigint(20) unsigned DEFAULT 0');
-      await this.$executeQuery('ALTER TABLE `channels` ADD node2_closing_balance bigint(20) unsigned DEFAULT 0');
-      await this.$executeQuery('ALTER TABLE `channels` ADD funding_ratio float unsigned DEFAULT NULL');
-      await this.$executeQuery('ALTER TABLE `channels` ADD closed_by varchar(66) DEFAULT NULL');
-      await this.$executeQuery('ALTER TABLE `channels` ADD single_funded tinyint(1) DEFAULT 0');
-      await this.$executeQuery('ALTER TABLE `channels` ADD outputs JSON DEFAULT "[]"');
       await this.updateToSchemaVersion(48);
     }
 
@@ -466,31 +406,23 @@ class DatabaseMigration {
     }
 
     if (databaseSchemaVersion < 50) {
-      await this.$executeQuery('ALTER TABLE `blocks` DROP COLUMN `cpfp_indexed`');
       await this.updateToSchemaVersion(50);
     }
 
     if (databaseSchemaVersion < 51) {
-      await this.$executeQuery('ALTER TABLE `cpfp_clusters` ADD INDEX `height` (`height`)');
       await this.updateToSchemaVersion(51);
     }
 
     if (databaseSchemaVersion < 52) {
-      await this.$executeQuery(
-        this.getCreateCompactCPFPTableQuery(),
-        await this.$checkIfTableExists('compact_cpfp_clusters')
-      );
-      await this.$executeQuery(
-        this.getCreateCompactTransactionsTableQuery(),
-        await this.$checkIfTableExists('compact_transactions')
-      );
-      try {
-        await this.$executeQuery('DROP TABLE IF EXISTS `transactions`');
-        await this.$executeQuery('DROP TABLE IF EXISTS `cpfp_clusters`');
-        await this.updateToSchemaVersion(52);
-      } catch (e) {
-        logger.warn('' + (e instanceof Error ? e.message : e));
-      }
+      // await this.$executeQuery(
+      //   this.getCreateCompactCPFPTableQuery(),
+      //   await this.$checkIfTableExists('compact_cpfp_clusters')
+      // );
+      // await this.$executeQuery(
+      //   this.getCreateCompactTransactionsTableQuery(),
+      //   await this.$checkIfTableExists('compact_transactions')
+      // );
+      await this.updateToSchemaVersion(52);
     }
 
     if (databaseSchemaVersion < 53) {
@@ -528,7 +460,6 @@ class DatabaseMigration {
     }
 
     if (databaseSchemaVersion < 57) {
-      await this.$executeQuery(`ALTER TABLE nodes MODIFY updated_at datetime NULL`);
       await this.updateToSchemaVersion(57);
     }
 
@@ -572,7 +503,6 @@ class DatabaseMigration {
     }
 
     if (databaseSchemaVersion < 64) {
-      await this.$executeQuery('ALTER TABLE `nodes` ADD features text NULL');
       await this.updateToSchemaVersion(64);
     }
 
@@ -597,15 +527,15 @@ class DatabaseMigration {
     await this.updateToSchemaVersion(68);
 
     if (databaseSchemaVersion < 69 && config.EXPLORER.NETWORK === 'mainnet') {
-      await this.$executeQuery(
-        this.getCreateAccelerationsTableQuery(),
-        await this.$checkIfTableExists('accelerations')
-      );
+      // await this.$executeQuery(
+      //   this.getCreateAccelerationsTableQuery(),
+      //   await this.$checkIfTableExists('accelerations')
+      // );
       await this.updateToSchemaVersion(69);
     }
 
     if (databaseSchemaVersion < 70 && config.EXPLORER.NETWORK === 'mainnet') {
-      await this.$executeQuery('ALTER TABLE accelerations MODIFY COLUMN added DATETIME;');
+      // await this.$executeQuery('ALTER TABLE accelerations MODIFY COLUMN added DATETIME;');
       await this.updateToSchemaVersion(70);
     }
 
@@ -619,8 +549,8 @@ class DatabaseMigration {
 
     if (databaseSchemaVersion < 73 && config.EXPLORER.NETWORK === 'mainnet') {
       // Clear bad data
-      await this.$executeQuery(`TRUNCATE accelerations`);
-      this.uniqueLog(logger.notice, `'accelerations' table has been truncated`);
+      // await this.$executeQuery(`TRUNCATE accelerations`);
+      // this.uniqueLog(logger.notice, `'accelerations' table has been truncated`);
       await this.updateToSchemaVersion(73);
     }
 
@@ -669,7 +599,7 @@ class DatabaseMigration {
     }
 
     if (databaseSchemaVersion < 77 && config.EXPLORER.NETWORK === 'mainnet') {
-      await this.$executeQuery('ALTER TABLE `accelerations` ADD requested datetime DEFAULT NULL');
+      // await this.$executeQuery('ALTER TABLE `accelerations` ADD requested datetime DEFAULT NULL');
       await this.updateToSchemaVersion(77);
     }
 
@@ -680,8 +610,8 @@ class DatabaseMigration {
 
     if (databaseSchemaVersion < 79 && config.EXPLORER.NETWORK === 'mainnet') {
       // Clear bad data
-      await this.$executeQuery(`TRUNCATE accelerations`);
-      this.uniqueLog(logger.notice, `'accelerations' table has been truncated`);
+      // await this.$executeQuery(`TRUNCATE accelerations`);
+      // this.uniqueLog(logger.notice, `'accelerations' table has been truncated`);
       await this.$executeQuery(`
         UPDATE state
         SET number = 0
@@ -724,44 +654,27 @@ class DatabaseMigration {
 
     // lightning channels indexes
     if (databaseSchemaVersion < 85) {
-      await this.$executeQuery(`
-        ALTER TABLE \`channels\`
-          ADD INDEX \`created\` (\`created\`),
-          ADD INDEX \`capacity\` (\`capacity\`),
-          ADD INDEX \`closing_reason\` (\`closing_reason\`),
-          ADD INDEX \`closing_resolved\` (\`closing_resolved\`)
-      `);
       await this.updateToSchemaVersion(85);
     }
 
     // lightning nodes indexes
     if (databaseSchemaVersion < 86) {
-      await this.$executeQuery(`
-        ALTER TABLE \`nodes\`
-          ADD INDEX \`status\` (\`status\`),
-          ADD INDEX \`channels\` (\`channels\`),
-          ADD INDEX \`country_id\` (\`country_id\`),
-          ADD INDEX \`as_number\` (\`as_number\`),
-          ADD INDEX \`first_seen\` (\`first_seen\`)
-      `);
       await this.updateToSchemaVersion(86);
     }
 
     // lightning node sockets indexes
     if (databaseSchemaVersion < 87) {
-      await this.$executeQuery('ALTER TABLE `nodes_sockets` ADD INDEX `type` (`type`)');
       await this.updateToSchemaVersion(87);
     }
 
     // lightning stats indexes
     if (databaseSchemaVersion < 88) {
-      await this.$executeQuery('ALTER TABLE `lightning_stats` ADD INDEX `added` (`added`)');
       await this.updateToSchemaVersion(88);
     }
 
     // geo names indexes
     if (databaseSchemaVersion < 89) {
-      await this.$executeQuery('ALTER TABLE `geo_names` ADD INDEX `names` (`names`)');
+      // await this.$executeQuery('ALTER TABLE `geo_names` ADD INDEX `names` (`names`)');
       await this.updateToSchemaVersion(89);
     }
 
@@ -778,32 +691,17 @@ class DatabaseMigration {
     }
 
     if (databaseSchemaVersion < 92) {
-      // elements_pegs indexes
       await this.updateToSchemaVersion(92);
     }
 
     if (databaseSchemaVersion < 93) {
-      // federation_txos indexes
       await this.updateToSchemaVersion(93);
     }
 
     // Unify database schema for all mempool netwoks
     // versions above 94 should not use network-specific flags
     if (databaseSchemaVersion < 94) {
-      // Skipp all the liquid specific migrations (we do not use liquid)
-      // Version 68
-      // Version 71
-
-      // Version 92
-      // await this.$executeQuery(`
-      //   ALTER TABLE \`elements_pegs\`
-      //     ADD INDEX \`block\` (\`block\`),
-      //     ADD INDEX \`datetime\` (\`datetime\`),
-      //     ADD INDEX \`amount\` (\`amount\`),
-      //     ADD INDEX \`bitcoinaddress\` (\`bitcoinaddress\`),
-      //     ADD INDEX \`bitcointxid\` (\`bitcointxid\`)
-      // `);
-
+      // Skip all the liquid specific migrations (we do not use liquid)
       // Version 93
       await this.updateToSchemaVersion(94);
     }
@@ -1211,32 +1109,6 @@ class DatabaseMigration {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
   }
 
-  private getCreateFederationAddressesTableQuery(): string {
-    return `CREATE TABLE IF NOT EXISTS federation_addresses (
-      bitcoinaddress varchar(100) NOT NULL,
-      PRIMARY KEY (bitcoinaddress)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
-  }
-
-  private getCreateFederationTxosTableQuery(): string {
-    return `CREATE TABLE IF NOT EXISTS federation_txos (
-      txid varchar(65) NOT NULL,
-      txindex int(11) NOT NULL,
-      bitcoinaddress varchar(100) NOT NULL,
-      amount bigint(20) unsigned NOT NULL,
-      blocknumber int(11) unsigned NOT NULL,
-      blocktime int(11) unsigned NOT NULL,
-      unspent tinyint(1) NOT NULL,
-      lastblockupdate int(11) unsigned NOT NULL,
-      lasttimeupdate int(11) unsigned NOT NULL,
-      pegtxid varchar(65) NOT NULL,
-      pegindex int(11) NOT NULL,
-      pegblocktime int(11) unsigned NOT NULL,
-      PRIMARY KEY (txid, txindex),
-      FOREIGN KEY (bitcoinaddress) REFERENCES federation_addresses (bitcoinaddress)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
-  }
-
   private getCreatePoolsTableQuery(): string {
     return `CREATE TABLE IF NOT EXISTS pools (
       id int(11) NOT NULL AUTO_INCREMENT,
@@ -1339,82 +1211,6 @@ class DatabaseMigration {
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
   }
 
-  private getCreateLightningStatisticsQuery(): string {
-    return `CREATE TABLE IF NOT EXISTS lightning_stats (
-      id int(11) NOT NULL AUTO_INCREMENT,
-      added datetime NOT NULL,
-      channel_count int(11) NOT NULL,
-      node_count int(11) NOT NULL,
-      total_capacity double unsigned NOT NULL,
-      PRIMARY KEY (id)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
-  }
-
-  private getCreateNodesQuery(): string {
-    return `CREATE TABLE IF NOT EXISTS nodes (
-      public_key varchar(66) NOT NULL,
-      first_seen datetime NOT NULL,
-      updated_at datetime NOT NULL,
-      alias varchar(200) CHARACTER SET utf8mb4 NOT NULL,
-      color varchar(200) NOT NULL,
-      sockets text DEFAULT NULL,
-      PRIMARY KEY (public_key),
-      KEY alias (alias(10))
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
-  }
-
-  private getCreateChannelsQuery(): string {
-    return `CREATE TABLE IF NOT EXISTS channels (
-      id bigint(11) unsigned NOT NULL,
-      short_id varchar(15) NOT NULL DEFAULT '',
-      capacity bigint(20) unsigned NOT NULL,
-      transaction_id varchar(64) NOT NULL,
-      transaction_vout int(11) NOT NULL,
-      updated_at datetime DEFAULT NULL,
-      created datetime DEFAULT NULL,
-      status int(11) NOT NULL DEFAULT 0,
-      closing_transaction_id varchar(64) DEFAULT NULL,
-      closing_date datetime DEFAULT NULL,
-      closing_reason int(11) DEFAULT NULL,
-      node1_public_key varchar(66) NOT NULL,
-      node1_base_fee_mtokens bigint(20) unsigned DEFAULT NULL,
-      node1_cltv_delta int(11) DEFAULT NULL,
-      node1_fee_rate bigint(11) DEFAULT NULL,
-      node1_is_disabled tinyint(1) DEFAULT NULL,
-      node1_max_htlc_mtokens bigint(20) unsigned DEFAULT NULL,
-      node1_min_htlc_mtokens bigint(20) DEFAULT NULL,
-      node1_updated_at datetime DEFAULT NULL,
-      node2_public_key varchar(66) NOT NULL,
-      node2_base_fee_mtokens bigint(20) unsigned DEFAULT NULL,
-      node2_cltv_delta int(11) DEFAULT NULL,
-      node2_fee_rate bigint(11) DEFAULT NULL,
-      node2_is_disabled tinyint(1) DEFAULT NULL,
-      node2_max_htlc_mtokens bigint(20) unsigned DEFAULT NULL,
-      node2_min_htlc_mtokens bigint(20) unsigned DEFAULT NULL,
-      node2_updated_at datetime DEFAULT NULL,
-      PRIMARY KEY (id),
-      KEY node1_public_key (node1_public_key),
-      KEY node2_public_key (node2_public_key),
-      KEY status (status),
-      KEY short_id (short_id),
-      KEY transaction_id (transaction_id),
-      KEY closing_transaction_id (closing_transaction_id)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
-  }
-
-  private getCreateNodesStatsQuery(): string {
-    return `CREATE TABLE IF NOT EXISTS node_stats (
-      id int(11) unsigned NOT NULL AUTO_INCREMENT,
-      public_key varchar(66) NOT NULL DEFAULT '',
-      added date NOT NULL,
-      capacity bigint(20) unsigned NOT NULL DEFAULT 0,
-      channels int(11) unsigned NOT NULL DEFAULT 0,
-      PRIMARY KEY (id),
-      UNIQUE KEY added (added,public_key),
-      KEY public_key (public_key)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
-  }
-
   private getCreateBlocksAuditsTableQuery(): string {
     return `CREATE TABLE IF NOT EXISTS blocks_audits (
       time timestamp NOT NULL,
@@ -1428,15 +1224,15 @@ class DatabaseMigration {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
   }
 
-  private getCreateGeoNamesTableQuery(): string {
-    return `CREATE TABLE geo_names (
-      id int(11) unsigned NOT NULL,
-      type enum('city','country','division','continent') NOT NULL,
-      names text DEFAULT NULL,
-      UNIQUE KEY id (id,type),
-      KEY id_2 (id)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
-  }
+  // private getCreateGeoNamesTableQuery(): string {
+  //   return `CREATE TABLE geo_names (
+  //     id int(11) unsigned NOT NULL,
+  //     type enum('city','country','division','continent') NOT NULL,
+  //     names text DEFAULT NULL,
+  //     UNIQUE KEY id (id,type),
+  //     KEY id_2 (id)
+  //   ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
+  // }
 
   private getCreateBlocksPricesTableQuery(): string {
     return `CREATE TABLE IF NOT EXISTS blocks_prices (
@@ -1444,84 +1240,6 @@ class DatabaseMigration {
       price_id int(10) unsigned NOT NULL,
       PRIMARY KEY (height),
       INDEX (price_id)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
-  }
-
-  private getCreateLNNodesSocketsTableQuery(): string {
-    return `CREATE TABLE IF NOT EXISTS nodes_sockets (
-      public_key varchar(66) NOT NULL,
-      socket varchar(100) NOT NULL,
-      type enum('ipv4', 'ipv6', 'torv2', 'torv3', 'i2p', 'dns', 'websocket') NULL,
-      UNIQUE KEY public_key_socket (public_key, socket),
-      INDEX (public_key)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
-  }
-
-  private getCreateLNNodeRecordsTableQuery(): string {
-    return `CREATE TABLE IF NOT EXISTS nodes_records (
-      public_key varchar(66) NOT NULL,
-      type int(10) unsigned NOT NULL,
-      payload blob NOT NULL,
-      UNIQUE KEY public_key_type (public_key, type),
-      INDEX (public_key),
-      FOREIGN KEY (public_key)
-        REFERENCES nodes (public_key)
-        ON DELETE CASCADE
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
-  }
-
-  private getCreateCPFPTableQuery(): string {
-    return `CREATE TABLE IF NOT EXISTS cpfp_clusters (
-      root varchar(65) NOT NULL,
-      height int(10) NOT NULL,
-      txs JSON DEFAULT NULL,
-      fee_rate double unsigned NOT NULL,
-      PRIMARY KEY (root)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
-  }
-
-  private getCreateTransactionsTableQuery(): string {
-    return `CREATE TABLE IF NOT EXISTS transactions (
-      txid varchar(65) NOT NULL,
-      cluster varchar(65) DEFAULT NULL,
-      PRIMARY KEY (txid),
-      FOREIGN KEY (cluster) REFERENCES cpfp_clusters (root) ON DELETE SET NULL
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
-  }
-
-  private getCreateCompactCPFPTableQuery(): string {
-    return `CREATE TABLE IF NOT EXISTS compact_cpfp_clusters (
-      root binary(32) NOT NULL,
-      height int(10) NOT NULL,
-      txs BLOB DEFAULT NULL,
-      fee_rate float unsigned,
-      PRIMARY KEY (root),
-      INDEX (height)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
-  }
-
-  private getCreateCompactTransactionsTableQuery(): string {
-    return `CREATE TABLE IF NOT EXISTS compact_transactions (
-      txid binary(32) NOT NULL,
-      cluster binary(32) DEFAULT NULL,
-      PRIMARY KEY (txid)
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
-  }
-
-  private getCreateAccelerationsTableQuery(): string {
-    return `CREATE TABLE IF NOT EXISTS accelerations (
-      txid varchar(65) NOT NULL,
-      added datetime NOT NULL,
-      height int(10) NOT NULL,
-      pool smallint unsigned NULL,
-      effective_vsize int(10) NOT NULL,
-      effective_fee bigint(20) unsigned NOT NULL,
-      boost_rate float unsigned,
-      boost_cost bigint(20) unsigned NOT NULL,
-      PRIMARY KEY (txid),
-      INDEX (added),
-      INDEX (height),
-      INDEX (pool)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
   }
 
