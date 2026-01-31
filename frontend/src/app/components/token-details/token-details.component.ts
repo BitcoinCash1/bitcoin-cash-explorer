@@ -108,6 +108,15 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
     return icon; // http(s) already fine
   }
 
+  improveKeyName(key?: string): string | null {
+    if (!key) return null;
+    // Rename Twitter to X
+    if (key.startsWith('twitter')) {
+      return 'X';
+    }
+    return key;
+  }
+
   getStatusClass(status: string): string {
     switch (status.toLowerCase()) {
       case 'active':
