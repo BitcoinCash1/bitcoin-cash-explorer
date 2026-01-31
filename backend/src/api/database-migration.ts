@@ -789,7 +789,7 @@ class DatabaseMigration {
 
     if (databaseSchemaVersion < 106) {
       // Remove BTC columns from blocks table (eg. weight and segwit_*)
-      await this.$executeQuery('ALTER TABLE `blocks` DROP COLUMN `weight`');
+      // await this.$executeQuery('ALTER TABLE `blocks` DROP COLUMN `weight`');
       await this.$executeQuery('ALTER TABLE `blocks` DROP COLUMN `segwit_total_size`');
       await this.$executeQuery('ALTER TABLE `blocks` DROP COLUMN `segwit_total_weight`');
       await this.$executeQuery('ALTER TABLE `blocks` DROP COLUMN `segwit_total_txs`');
