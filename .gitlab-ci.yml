@@ -108,8 +108,7 @@ docker-build-deploy:
   tags:
     - shell
   before_script:
-    # Using the built-in variables by GitLab
-    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+    - echo "$CI_DEPLOY_PASSWORD" | docker login -u "$CI_DEPLOY_USER" --password-stdin "$CI_REGISTRY"
   script:
     - docker/init.sh "$CI_COMMIT_TAG"
 
