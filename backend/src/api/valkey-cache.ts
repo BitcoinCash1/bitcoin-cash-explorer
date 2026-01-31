@@ -16,7 +16,7 @@ class ValkeyCache {
   private client;
   private connected = false;
   private schemaVersion = 1;
-  private redisConfig: any;
+  private valkeyConfig: any;
 
   private pauseFlush = false;
   private cacheQueue: VerboseMempoolTransactionExtended[] = [];
@@ -26,7 +26,7 @@ class ValkeyCache {
 
   constructor() {
     if (config.VALKEY.ENABLED) {
-      this.redisConfig = {
+      this.valkeyConfig = {
         socket: {
           path: config.VALKEY.UNIX_SOCKET_PATH,
         },
@@ -42,9 +42,9 @@ class ValkeyCache {
   private async $ensureConnected(): Promise<boolean> {
     if (!this.connected && config.VALKEY.ENABLED) {
       try {
-        this.client = createClient(this.redisConfig);
+        this.client = createClient(this.valkeyConfig);
         this.client.on('error', async (e) => {
-          logger.err(`Error in Redis client: ${e instanceof Error ? e.message : e}`);
+          logger.err(`Error in Valkey client: ${e instanceof Error ? e.message : e}`);
           this.connected = false;
           await this.client.disconnect();
         });
@@ -55,21 +55,21 @@ class ValkeyCache {
             if (version !== this.schemaVersion) {
               // schema changed
               // perform migrations or flush DB if necessary
-              logger.info(`Redis schema version changed from ${version} to ${this.schemaVersion}`);
+              logger.info(`Valkey schema version changed from ${version} to ${this.schemaVersion}`);
               await this.client.set('schema_version', this.schemaVersion);
             }
-            logger.info(`Redis client connected`);
+            logger.info(`Valkey client connected`);
             return true;
           } catch (e) {
             this.connected = false;
-            logger.warn('Failed to connect to Redis');
+            logger.warn('Failed to connect to Valkey');
             return false;
           }
         });
         await this.$onConnected();
         return true;
       } catch (e) {
-        logger.warn('Error connecting to Redis: ' + (e instanceof Error ? e.message : e));
+        logger.warn('Error connecting to Valkey: ' + (e instanceof Error ? e.message : e));
         return false;
       }
     } else {
@@ -78,7 +78,7 @@ class ValkeyCache {
         await this.client.get('schema_version');
         return true;
       } catch (e) {
-        logger.warn('Lost connection to Redis: ' + (e instanceof Error ? e.message : e));
+        logger.warn('Lost connection to Valkey: ' + (e instanceof Error ? e.message : e));
         logger.warn('Attempting to reconnect in 10 seconds');
         this.connected = false;
         return false;
@@ -96,14 +96,14 @@ class ValkeyCache {
       return;
     }
     if (!this.connected) {
-      logger.warn(`Failed to update blocks in Redis cache: Redis is not connected`);
+      logger.warn(`Failed to update blocks in Valkey cache: Valkey is not connected`);
       return;
     }
     try {
       await this.client.set('blocks', JSON.stringify(blocks));
-      logger.debug(`Saved latest blocks to Redis cache`);
+      logger.debug(`Saved latest blocks to Valkey cache`);
     } catch (e) {
-      logger.warn(`Failed to update blocks in Redis cache: ${e instanceof Error ? e.message : e}`);
+      logger.warn(`Failed to update blocks in Valkey cache: ${e instanceof Error ? e.message : e}`);
     }
   }
 
@@ -112,14 +112,14 @@ class ValkeyCache {
       return;
     }
     if (!this.connected) {
-      logger.warn(`Failed to update block summaries in Redis cache: Redis is not connected`);
+      logger.warn(`Failed to update block summaries in Valkey cache: Valkey is not connected`);
       return;
     }
     try {
       await this.client.set('block-summaries', JSON.stringify(summaries));
-      logger.debug(`Saved latest block summaries to Redis cache`);
+      logger.debug(`Saved latest block summaries to Valkey cache`);
     } catch (e) {
-      logger.warn(`Failed to update block summaries in Redis cache: ${e instanceof Error ? e.message : e}`);
+      logger.warn(`Failed to update block summaries in Valkey cache: ${e instanceof Error ? e.message : e}`);
     }
   }
 
@@ -143,7 +143,7 @@ class ValkeyCache {
       return;
     }
     if (!this.connected) {
-      logger.warn(`Failed to add ${this.cacheQueue.length} transactions to Redis cache: Redis not connected`);
+      logger.warn(`Failed to add ${this.cacheQueue.length} transactions to Valkey cache: Valkey not connected`);
       return;
     }
 
@@ -166,9 +166,9 @@ class ValkeyCache {
       await this.client.MSET(msetData);
       // successful, remove transactions from cache queue
       this.cacheQueue = this.cacheQueue.slice(toAdd.length);
-      logger.debug(`Saved ${toAdd.length} transactions to Redis cache, ${this.cacheQueue.length} left in queue`);
+      logger.debug(`Saved ${toAdd.length} transactions to Valkey cache, ${this.cacheQueue.length} left in queue`);
     } catch (e) {
-      logger.warn(`Failed to add ${toAdd.length} transactions to Redis cache: ${e instanceof Error ? e.message : e}`);
+      logger.warn(`Failed to add ${toAdd.length} transactions to Valkey cache: ${e instanceof Error ? e.message : e}`);
       this.pauseFlush = true;
     }
   }
@@ -188,10 +188,10 @@ class ValkeyCache {
         try {
           await this.client.unlink(slice.map((txid) => `mempool:tx:${txid}`));
           numRemoved += sliceLength;
-          logger.debug(`Deleted ${slice.length} transactions from the Redis cache`);
+          logger.debug(`Deleted ${slice.length} transactions from the Valkey cache`);
         } catch (e) {
           logger.warn(
-            `Failed to remove ${slice.length} transactions from Redis cache: ${e instanceof Error ? e.message : e}`
+            `Failed to remove ${slice.length} transactions from Valkey cache: ${e instanceof Error ? e.message : e}`
           );
           failed = failed.concat(slice);
         }
@@ -208,14 +208,14 @@ class ValkeyCache {
       return [];
     }
     if (!this.connected) {
-      logger.warn(`Failed to retrieve blocks from Redis cache: Redis is not connected`);
+      logger.warn(`Failed to retrieve blocks from Valkey cache: Valkey is not connected`);
       return [];
     }
     try {
       const json = await this.client.get('blocks');
       return JSON.parse(json);
     } catch (e) {
-      logger.warn(`Failed to retrieve blocks from Redis cache: ${e instanceof Error ? e.message : e}`);
+      logger.warn(`Failed to retrieve blocks from Valkey cache: ${e instanceof Error ? e.message : e}`);
       return [];
     }
   }
@@ -225,14 +225,14 @@ class ValkeyCache {
       return [];
     }
     if (!this.connected) {
-      logger.warn(`Failed to retrieve blocks from Redis cache: Redis is not connected`);
+      logger.warn(`Failed to retrieve blocks from Valkey cache: Valkey is not connected`);
       return [];
     }
     try {
       const json = await this.client.get('block-summaries');
       return JSON.parse(json);
     } catch (e) {
-      logger.warn(`Failed to retrieve blocks from Redis cache: ${e instanceof Error ? e.message : e}`);
+      logger.warn(`Failed to retrieve blocks from Valkey cache: ${e instanceof Error ? e.message : e}`);
       return [];
     }
   }
@@ -242,7 +242,7 @@ class ValkeyCache {
       return {};
     }
     if (!this.connected) {
-      logger.warn(`Failed to retrieve mempool from Redis cache: Redis is not connected`);
+      logger.warn(`Failed to retrieve mempool from Valkey cache: Valkey is not connected`);
       return {};
     }
     const start = Date.now();
@@ -252,10 +252,10 @@ class ValkeyCache {
       for (const tx of mempoolList) {
         mempool[tx.key] = tx.value;
       }
-      logger.info(`Loaded mempool from Redis cache in ${Date.now() - start} ms`);
+      logger.info(`Loaded mempool from Valkey cache in ${Date.now() - start} ms`);
       return mempool || {};
     } catch (e) {
-      logger.warn(`Failed to retrieve mempool from Redis cache: ${e instanceof Error ? e.message : e}`);
+      logger.warn(`Failed to retrieve mempool from Valkey cache: ${e instanceof Error ? e.message : e}`);
     }
     return {};
   }
@@ -264,7 +264,7 @@ class ValkeyCache {
     if (!config.VALKEY.ENABLED) {
       return;
     }
-    logger.info('Restoring mempool and blocks data from Redis cache');
+    logger.info('Restoring mempool and blocks data from Valkey cache');
 
     // Load mempool
     const loadedMempool = await this.$getMempool();
@@ -298,7 +298,7 @@ class ValkeyCache {
   }
 
   private async scanKeys<T>(pattern): Promise<{ key: string; value: T }[]> {
-    logger.info(`loading Redis entries for ${pattern}`);
+    logger.info(`loading Valkey entries for ${pattern}`);
     let keys: string[] = [];
     const result: { key: string; value: T }[] = [];
     const patternLength = pattern.length - 1;
@@ -314,7 +314,7 @@ class ValkeyCache {
           count++;
         }
       }
-      logger.info(`loaded ${count} entries from Redis cache`);
+      logger.info(`loaded ${count} entries from Valkey cache`);
     };
     for await (const key of this.client.scanIterator({
       MATCH: pattern,

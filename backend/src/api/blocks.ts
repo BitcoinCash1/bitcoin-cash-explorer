@@ -36,7 +36,7 @@ import PricesRepository from '../repositories/PricesRepository';
 import priceUpdater from '../tasks/price-updater';
 import chainTips from './chain-tips';
 import websocketHandler from './websocket-handler';
-import redisCache from './valkey-cache';
+import valkeyCache from './valkey-cache';
 import { calcBitsDifference } from './difficulty-adjustment';
 import { parseDATUMTemplateCreator } from '../utils/bitcoin-script';
 import database from '../database';
@@ -1131,11 +1131,11 @@ class Blocks {
         diskCache.$saveCacheToDisk();
       }
 
-      // Update Redis cache
+      // Update Valkey cache
       if (config.VALKEY.ENABLED) {
-        await redisCache.$updateBlocks(this.blocks);
-        await redisCache.$updateBlockSummaries(this.blockSummaries);
-        await redisCache.$removeTransactions(txIds);
+        await valkeyCache.$updateBlocks(this.blocks);
+        await valkeyCache.$updateBlockSummaries(this.blockSummaries);
+        await valkeyCache.$removeTransactions(txIds);
       }
 
       handledBlocks++;

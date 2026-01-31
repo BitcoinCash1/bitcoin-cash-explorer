@@ -13,7 +13,7 @@ import { IBitcoinApi } from './bitcoin/bitcoin-api.interface';
 import loadingIndicators from './loading-indicators';
 import bitcoinClient from './bitcoin/bitcoin-client';
 import bitcoinSecondClient from './bitcoin/bitcoin-second-client';
-import redisCache from './valkey-cache';
+import valkeyCache from './valkey-cache';
 import blocks from './blocks';
 
 class Mempool {
@@ -147,9 +147,9 @@ class Mempool {
   public async $setMempool(mempoolData: { [txId: string]: VerboseMempoolTransactionExtended }) {
     this.mempoolCache = mempoolData;
     let count = 0;
-    const redisTimer = Date.now();
+    const valkeyTimer = Date.now();
     if (config.EXPLORER.CACHE_ENABLED && config.VALKEY.ENABLED) {
-      logger.debug(`Migrating ${Object.keys(this.mempoolCache).length} transactions from disk cache to Redis cache`);
+      logger.debug(`Migrating ${Object.keys(this.mempoolCache).length} transactions from disk cache to Valkey cache`);
     }
     for (const txid of Object.keys(this.mempoolCache)) {
       if (
@@ -167,13 +167,15 @@ class Mempool {
       }
       count++;
       if (config.EXPLORER.CACHE_ENABLED && config.VALKEY.ENABLED) {
-        await redisCache.$addTransaction(this.mempoolCache[txid]);
+        await valkeyCache.$addTransaction(this.mempoolCache[txid]);
       }
       this.mempoolCache[txid].flags = Common.getTransactionFlags(this.mempoolCache[txid]);
     }
     if (config.EXPLORER.CACHE_ENABLED && config.VALKEY.ENABLED) {
-      await redisCache.$flushTransactions();
-      logger.debug(`Finished migrating cache transactions in ${((Date.now() - redisTimer) / 1000).toFixed(2)} seconds`);
+      await valkeyCache.$flushTransactions();
+      logger.debug(
+        `Finished migrating cache transactions in ${((Date.now() - valkeyTimer) / 1000).toFixed(2)} seconds`
+      );
     }
     if (this.mempoolChangedCallback) {
       this.mempoolChangedCallback(this.mempoolCache, [], []);
@@ -325,7 +327,7 @@ class Mempool {
           newTransactions.push(transaction);
 
           if (config.VALKEY.ENABLED) {
-            await redisCache.$addTransaction(transaction);
+            await valkeyCache.$addTransaction(transaction);
           }
         }
 
@@ -434,10 +436,10 @@ class Mempool {
       loadingIndicators.setProgress('mempool', 100);
     }
 
-    // Update Redis cache
+    // Update Valkey cache
     if (config.VALKEY.ENABLED) {
-      await redisCache.$flushTransactions();
-      await redisCache.$removeTransactions(deletedTransactions.map((tx) => tx.txid));
+      await valkeyCache.$flushTransactions();
+      await valkeyCache.$removeTransactions(deletedTransactions.map((tx) => tx.txid));
     }
 
     const end = new Date().getTime();
