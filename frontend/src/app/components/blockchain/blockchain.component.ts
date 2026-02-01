@@ -55,7 +55,7 @@ export class BlockchainComponent implements OnInit, OnDestroy, OnChanges {
   ) {}
 
   ngOnInit(): void {
-    this.onResize();
+    this.onResizeorPageIndex();
     this.network = this.stateService.network;
     this.timeLtrSubscription = this.stateService.timeLtr.subscribe((ltr) => {
       this.timeLtr = !!ltr;
@@ -147,15 +147,19 @@ export class BlockchainComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.containerWidth) {
-      this.onResize();
+    if (changes.containerWidth || changes.pageIndex) {
+      this.onResizeorPageIndex();
     }
   }
 
-  onResize(): void {
+  onResizeorPageIndex(): void {
     const width = this.containerWidth || window.innerWidth;
     if (width >= 768) {
-      this.dividerOffset = 420;
+      if (this.pageIndex > 0) {
+        this.dividerOffset = width * 0.5;
+      } else {
+        this.dividerOffset = 420;
+      }
     } else {
       this.dividerOffset = width * 0.5;
     }
