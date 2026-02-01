@@ -33,7 +33,7 @@ export class EnterpriseService {
       this.fetchSubdomainInfo();
       this.disableSubnetworks();
     } else {
-      this.insertMatomo();
+      // this.insertMatomo();
     }
   }
 
@@ -50,7 +50,7 @@ export class EnterpriseService {
   fetchSubdomainInfo(): void {
     if (this.stateService.env.customize?.branding) {
       const info = this.stateService.env.customize?.branding;
-      this.insertMatomo(info.site_id);
+      // this.insertMatomo(info.site_id);
       this.seoService.setEnterpriseTitle(info.title, true);
       this.info$.next(this.processEnterpriseInfo(info));
     } else {
