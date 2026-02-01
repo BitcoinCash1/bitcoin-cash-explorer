@@ -30,7 +30,7 @@ if (configContent && configContent.CUSTOMIZATION) {
     customConfig = readConfig(configContent.CUSTOMIZATION);
     customConfigContent = JSON.parse(customConfig);
   } catch {
-    console.log(`failed to load customization config from ${configContent.CUSTOMIZATION}`);
+    console.error(`failed to load customization config from ${configContent.CUSTOMIZATION}`);
   }
 }
 
@@ -42,7 +42,7 @@ try {
   fs.copyFileSync(indexFilePath, 'src/index.html');
   console.log('Copied ' + indexFilePath + ' to src/index.html');
 } catch (e) {
-  console.log('Error copying the index file');
+  console.error('Error copying the index file');
   throw new Error(e);
 }
 
@@ -51,6 +51,7 @@ try {
   packetJsonVersion = JSON.parse(packageJson).version;
   console.log(`BCH explorer version ${packetJsonVersion}`);
 } catch (e) {
+  console.error('Error reading package.json');
   throw new Error(e);
 }
 
@@ -71,11 +72,11 @@ if (process.env.DOCKER_COMMIT_HASH) {
       gitCommitHash = output ? output : '?';
       console.log(`BCH explorer revision ${gitCommitHash}`);
     } else if (gitRevParse.error.code === 'ENOENT') {
-      console.log('git not found, cannot parse git hash');
+      console.error('git not found, cannot parse git hash');
       gitCommitHash = '?';
     }
   } catch (e) {
-    console.log('Could not load git commit info: ' + e.message);
+    console.error('Could not load git commit info: ' + e.message);
     gitCommitHash = '?';
   }
 }
@@ -107,6 +108,7 @@ function writeConfig(path, config) {
   try {
     fs.writeFileSync(path, config, 'utf8');
   } catch (e) {
+    console.error('Error writing config file');
     throw new Error(e);
   }
 }
@@ -115,6 +117,7 @@ function writeConfigTemplate(path, config) {
   try {
     fs.writeFileSync(path, config, 'utf8');
   } catch (e) {
+    console.error('Error writing config template file');
     throw new Error(e);
   }
 }
