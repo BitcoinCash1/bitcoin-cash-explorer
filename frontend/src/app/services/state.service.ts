@@ -98,7 +98,6 @@ export interface Env {
   HISTORICAL_PRICE: boolean;
   ADDITIONAL_CURRENCIES: boolean;
   GIT_COMMIT_HASH_MEMPOOL_SPACE?: string;
-  PACKAGE_JSON_VERSION_MEMPOOL_SPACE?: string;
   STRATUM_ENABLED: boolean;
   SERVICES_API?: string;
   BCMR_API: string;
