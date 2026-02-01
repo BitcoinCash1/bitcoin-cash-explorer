@@ -16,6 +16,12 @@ footer p {
   margin-bottom: 0.25rem;
 }
 
+footer code {
+  word-wrap: anywhere;
+  text-wrap: wrap;
+  overflow-wrap: anywhere;
+}
+
 footer .row.main {
   padding: 0; // 40px 0 24px 0
   max-width: 1140px;
