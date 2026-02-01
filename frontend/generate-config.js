@@ -64,6 +64,8 @@ for (const setting in configContent) {
 
 if (process.env.DOCKER_COMMIT_HASH) {
   gitCommitHash = process.env.DOCKER_COMMIT_HASH;
+} else if (process.env.CI_COMMIT_SHORT_SHA) {
+  gitCommitHash = process.env.CI_COMMIT_SHORT_SHA;
 } else {
   try {
     const gitRevParse = spawnSync('git', ['rev-parse', '--short', 'HEAD']);
