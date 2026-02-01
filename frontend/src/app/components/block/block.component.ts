@@ -1052,20 +1052,14 @@ export class BlockComponent implements OnInit, OnDestroy {
     }
   }
 
-  pageChange(page: number, target: HTMLElement) {
+  pageChange(page: number, target: HTMLElement, delay: number = 0) {
     const start = (page - 1) * this.itemsPerPage;
     this.isLoadingTransactions = true;
     this.transactions = null;
     this.transactionsError = null;
 
     // Scroll to target with header offset
-    const headerOffset = 70;
-    const elementPosition = target.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-    window.scrollTo({
-      top: offsetPosition,
-      behavior: 'smooth',
-    });
+    this.scrollToTopTarget(target);
 
     this.electrsApiService
       .getBlockTransactions$(this.block.id, start)
@@ -1079,15 +1073,26 @@ export class BlockComponent implements OnInit, OnDestroy {
         this.transactions = transactions;
         this.isLoadingTransactions = false;
 
-        // Scroll to target with header offset
-        const elementPosition = target.getBoundingClientRect().top;
-        const offsetPosition =
-          elementPosition + window.pageYOffset - headerOffset;
-        window.scrollTo({
-          top: offsetPosition,
-          behavior: 'smooth',
-        });
+        if (delay) {
+          // Scroll to target with delay
+          setTimeout(() => {
+            this.scrollToTopTarget(target);
+          }, delay);
+        } else {
+          this.scrollToTopTarget(target);
+        }
       });
+  }
+
+  scrollToTopTarget(target: HTMLElement): void {
+    const headerOffset = 70;
+    const elementPosition = target.getBoundingClientRect().top;
+    // With a small offset to account for the site header
+    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth',
+    });
   }
 
   setAuditAvailable(available: boolean): void {
