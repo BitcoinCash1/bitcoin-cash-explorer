@@ -98,7 +98,7 @@
           Included in block
         </td>
         <td>
-          <a [routerLink]="['/block' | relativeUrl, tx.status.block_height]">
+          <a [routerLink]="['/block' | relativeUrl, tx.status.block_hash]">
             {{ tx.status.block_height }}
           </a>
         </td>
