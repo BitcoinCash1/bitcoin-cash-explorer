@@ -453,7 +453,7 @@
               (backendInfo$ | async)?.version
             }}) [<a
               target="_blank"
-              href="https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/mempool/commit/{{
+              href="https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/-/commit/{{
                 (backendInfo$ | async)?.gitCommit | slice: 0 : 8
               }}"
               >{{ (backendInfo$ | async)?.gitCommit | slice: 0 : 8 }}</a
@@ -468,7 +468,7 @@
         <p *ngIf="!officialSite">
           v{{ packetJsonVersion }} [<a
             target="_blank"
-            href="https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/mempool/commit/{{
+            href="https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/-/commit/{{
               frontendGitCommitHash
             }}"
             >{{ frontendGitCommitHash }}</a
