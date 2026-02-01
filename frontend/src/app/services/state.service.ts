@@ -83,7 +83,9 @@ export interface Env {
   MIN_BLOCK_SIZE_UNITS: number;
   MEMPOOL_BLOCKS_AMOUNT: number;
   GIT_COMMIT_HASH: string;
+  GIT_COMMIT_HASH_MEMPOOL_SPACE?: string; // In case of multiple servers deployments
   PACKAGE_JSON_VERSION: string;
+  PACKAGE_JSON_VERSION_MEMPOOL_SPACE?: string; // in case of multiple servers deployments
   WEBSITE_URL: string;
   MINING_DASHBOARD: boolean;
   AUDIT: boolean;
@@ -97,7 +99,6 @@ export interface Env {
   SIGNET_TX_FIRST_SEEN_START_HEIGHT: number;
   HISTORICAL_PRICE: boolean;
   ADDITIONAL_CURRENCIES: boolean;
-  GIT_COMMIT_HASH_MEMPOOL_SPACE?: string;
   STRATUM_ENABLED: boolean;
   SERVICES_API?: string;
   BCMR_API: string;
