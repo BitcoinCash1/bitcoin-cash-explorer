@@ -58,6 +58,7 @@ class PoolsUpdater {
 
       logger.debug(`pools-v2.json sha | Current: ${this.currentSha} | GitLab: ${gitlabSha}`, this.tag);
       if (this.currentSha !== null && this.currentSha === gitlabSha) {
+        logger.info('No new mining pools data available, skip update', this.tag);
         return;
       }
 
