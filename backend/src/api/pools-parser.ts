@@ -195,7 +195,7 @@ class PoolsParser {
    * @param pool local id of existing pool to reindex
    */
   private async $reindexBlocksForPool(poolId: number): Promise<void> {
-    let firstKnownBlockPool = 130635; // https://mempool.space/block/0000000000000a067d94ff753eec72830f1205ad3a4c216a08a80c832e551a52
+    let firstKnownBlockPool = 130635; // https://bchexplorer.cash/block/00000000000009c4cdccbc49e72552a732fbbcad97391207d4606186e9e6d899
     if (config.EXPLORER.NETWORK === 'testnet') {
       firstKnownBlockPool = 21106; // https://mempool.space/testnet/block/0000000070b701a5b6a1b965f6a38e0472e70b2bb31b973e4638dec400877581
     } else if (['signet', 'testnet4'].includes(config.EXPLORER.NETWORK)) {
