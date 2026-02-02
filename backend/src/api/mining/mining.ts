@@ -436,7 +436,7 @@ class Mining {
       }
 
       // Add genesis block manually
-      if (config.EXPLORER.INDEXING_BLOCKS_AMOUNT === -1 && !indexedTimestamp.includes(genesisTimestamp / 1000)) {
+      if (!indexedTimestamp.includes(genesisTimestamp / 1000)) {
         hashrates.push({
           hashrateTimestamp: genesisTimestamp / 1000,
           avgHashrate: await bitcoinClient.getNetworkHashPs(1, 1),
@@ -593,7 +593,6 @@ class Mining {
       const weeklyHashrates: any[] = [];
       let weeklyNewlyIndexed = 0;
       let weeklyTotalProcessed = 0;
-      const weeklyStartedAt = new Date().getTime() / 1000;
       let weeklyTimer = new Date().getTime() / 1000;
       let weeklyIndexedThisRun = 0;
 
