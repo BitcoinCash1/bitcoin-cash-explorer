@@ -479,7 +479,6 @@ class Mining {
       const genesisData = await this.getGenesisData();
       const genesisTimestamp = genesisData.timestamp * 1000; // Convert to milliseconds
       const toTimestamp = now.getTime();
-      const fromTimestamp = genesisTimestamp;
 
       logger.info(
         `Reindexing hashrates from ${new Date(genesisTimestamp).toUTCString()} (genesis) to ${now.toUTCString()}`,
@@ -504,11 +503,11 @@ class Mining {
       let dailyIndexedThisRun = 0;
 
       // Calculate total days to process for progress tracking
-      const totalDays = Math.ceil((toTimestamp - fromTimestamp) / 86400000);
+      const totalDays = Math.ceil((toTimestamp - genesisTimestamp) / 86400000);
 
-      // Process daily hashrates from today back to 1 year ago
+      // Process daily hashrates from today back to genesis (but skip genesis itself)
       let currentDayTo = toTimestamp;
-      while (currentDayTo > fromTimestamp) {
+      while (currentDayTo > genesisTimestamp) {
         const currentDayFrom = currentDayTo - 86400000;
         dailyTotalProcessed++;
 
@@ -565,6 +564,19 @@ class Mining {
         currentDayTo -= 86400000;
       }
 
+      // Add genesis block manually
+      if (config.EXPLORER.INDEXING_BLOCKS_AMOUNT === -1 && !existingDailyTimestamps.includes(genesisTimestamp / 1000)) {
+        dailyHashrates.push({
+          hashrateTimestamp: genesisTimestamp / 1000,
+          avgHashrate: await bitcoinClient.getNetworkHashPs(1, 1),
+          poolId: 0,
+          share: 1,
+          type: 'daily',
+        });
+        dailyIndexedThisRun++;
+        logger.debug('Added genesis block daily hashrate entry', logger.tags.mining);
+      }
+
       // Save remaining daily hashrates
       if (dailyHashrates.length > 0) {
         await HashratesRepository.$saveHashrates(dailyHashrates);
@@ -588,9 +600,9 @@ class Mining {
       // Calculate total weeks to process
       const totalWeeks = Math.ceil(totalDays / 7);
 
-      // Process weekly hashrates from today back to 1 year ago
+      // Process weekly hashrates from today back to genesis (but skip genesis itself)
       let currentWeekTo = toTimestamp;
-      while (currentWeekTo > fromTimestamp) {
+      while (currentWeekTo > genesisTimestamp) {
         const currentWeekFrom = currentWeekTo - 604800000; // 7 days
         weeklyTotalProcessed++;
 
