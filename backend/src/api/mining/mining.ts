@@ -467,6 +467,228 @@ class Mining {
   }
 
   /**
+   * Force reindex daily and weekly hashrate data from genesis block to today
+   * WARNING: This will take a VERY long time to complete!
+   */
+  public async $generateAllHashrateHistoryAlways(): Promise<void> {
+    logger.info('Starting forced hashrate reindex from genesis block to today', logger.tags.mining);
+
+    try {
+      // Calculate time range: from genesis block to now
+      const now = new Date();
+      const genesisData = await this.getGenesisData();
+      const genesisTimestamp = genesisData.timestamp * 1000; // Convert to milliseconds
+      const toTimestamp = now.getTime();
+      const fromTimestamp = genesisTimestamp;
+
+      logger.info(
+        `Reindexing hashrates from ${new Date(genesisTimestamp).toUTCString()} (genesis) to ${now.toUTCString()}`,
+        logger.tags.mining
+      );
+
+      // Get existing hashrates to avoid duplicates
+      const existingDailyTimestamps = (await HashratesRepository.$getRawNetworkDailyHashrate(null)).map(
+        (hashrate) => hashrate.timestamp
+      );
+      const existingWeeklyTimestamps = await HashratesRepository.$getWeeklyHashrateTimestamps();
+
+      // === DAILY HASHRATE REINDEXING ===
+      logger.info('Starting daily hashrate reindexing', logger.tags.mining);
+      loadingIndicators.setProgress('daily-hashrate-indexing', 0);
+
+      const dailyHashrates: any[] = [];
+      let dailyNewlyIndexed = 0;
+      let dailyTotalProcessed = 0;
+      const dailyStartedAt = new Date().getTime() / 1000;
+      let dailyTimer = new Date().getTime() / 1000;
+      let dailyIndexedThisRun = 0;
+
+      // Calculate total days to process for progress tracking
+      const totalDays = Math.ceil((toTimestamp - fromTimestamp) / 86400000);
+
+      // Process daily hashrates from today back to 1 year ago
+      let currentDayTo = toTimestamp;
+      while (currentDayTo > fromTimestamp) {
+        const currentDayFrom = currentDayTo - 86400000;
+        dailyTotalProcessed++;
+
+        // Skip if already indexed
+        if (existingDailyTimestamps.includes(currentDayTo / 1000)) {
+          currentDayTo -= 86400000;
+          continue;
+        }
+
+        // Get block stats for this day
+        const blockStats: any = await BlocksRepository.$blockCountBetweenTimestamp(
+          null,
+          currentDayFrom / 1000,
+          currentDayTo / 1000
+        );
+
+        if (blockStats.blockCount > 0) {
+          const lastBlockHashrate = await bitcoinClient.getNetworkHashPs(
+            blockStats.blockCount,
+            blockStats.lastBlockHeight
+          );
+
+          dailyHashrates.push({
+            hashrateTimestamp: currentDayTo / 1000,
+            avgHashrate: lastBlockHashrate,
+            poolId: 0,
+            share: 1,
+            type: 'daily',
+          });
+
+          dailyIndexedThisRun++;
+        }
+
+        // Save in batches
+        if (dailyHashrates.length > 10) {
+          await HashratesRepository.$saveHashrates(dailyHashrates);
+          dailyNewlyIndexed += dailyHashrates.length;
+          dailyHashrates.length = 0;
+        }
+
+        // Progress logging
+        const elapsedSeconds = Math.max(1, Math.round(new Date().getTime() / 1000 - dailyTimer));
+        if (elapsedSeconds > 1) {
+          const progress = Math.round((dailyTotalProcessed / totalDays) * 100);
+          logger.debug(
+            `Daily reindex: ${progress}% (${dailyTotalProcessed}/${totalDays} days) | ${dailyIndexedThisRun} new this batch`,
+            logger.tags.mining
+          );
+          dailyTimer = new Date().getTime() / 1000;
+          dailyIndexedThisRun = 0;
+          loadingIndicators.setProgress('daily-hashrate-indexing', progress);
+        }
+
+        currentDayTo -= 86400000;
+      }
+
+      // Save remaining daily hashrates
+      if (dailyHashrates.length > 0) {
+        await HashratesRepository.$saveHashrates(dailyHashrates);
+        dailyNewlyIndexed += dailyHashrates.length;
+      }
+
+      logger.info(`Daily hashrate reindexing completed: indexed ${dailyNewlyIndexed} new days`, logger.tags.mining);
+      loadingIndicators.setProgress('daily-hashrate-indexing', 100);
+
+      // === WEEKLY HASHRATE REINDEXING ===
+      logger.info('Starting weekly hashrate reindexing', logger.tags.mining);
+      loadingIndicators.setProgress('weekly-hashrate-indexing', 0);
+
+      const weeklyHashrates: any[] = [];
+      let weeklyNewlyIndexed = 0;
+      let weeklyTotalProcessed = 0;
+      const weeklyStartedAt = new Date().getTime() / 1000;
+      let weeklyTimer = new Date().getTime() / 1000;
+      let weeklyIndexedThisRun = 0;
+
+      // Calculate total weeks to process
+      const totalWeeks = Math.ceil(totalDays / 7);
+
+      // Process weekly hashrates from today back to 1 year ago
+      let currentWeekTo = toTimestamp;
+      while (currentWeekTo > fromTimestamp) {
+        const currentWeekFrom = currentWeekTo - 604800000; // 7 days
+        weeklyTotalProcessed++;
+
+        // Skip if already indexed
+        if (existingWeeklyTimestamps.includes(currentWeekTo / 1000)) {
+          currentWeekTo -= 604800000;
+          continue;
+        }
+
+        // Get block stats for this week
+        const blockStats: any = await BlocksRepository.$blockCountBetweenTimestamp(
+          null,
+          currentWeekFrom / 1000,
+          currentWeekTo / 1000
+        );
+
+        if (blockStats.blockCount > 0) {
+          const lastBlockHashrate = await bitcoinClient.getNetworkHashPs(
+            blockStats.blockCount,
+            blockStats.lastBlockHeight
+          );
+
+          // Get pool distribution for this week
+          let pools = await PoolsRepository.$getPoolsInfoBetween(currentWeekFrom / 1000, currentWeekTo / 1000);
+          const totalBlocks = pools.reduce((acc, pool) => acc + pool.blockCount, 0);
+
+          if (totalBlocks > 0) {
+            pools = pools.map((pool: any) => {
+              pool.hashrate = (pool.blockCount / totalBlocks) * lastBlockHashrate;
+              pool.share = pool.blockCount / totalBlocks;
+              return pool;
+            });
+
+            for (const pool of pools) {
+              weeklyHashrates.push({
+                hashrateTimestamp: currentWeekTo / 1000,
+                avgHashrate: pool['hashrate'],
+                poolId: pool.poolId,
+                share: pool['share'],
+                type: 'weekly',
+              });
+            }
+
+            weeklyIndexedThisRun++;
+          }
+        }
+
+        // Save in batches
+        if (weeklyHashrates.length > 10) {
+          await HashratesRepository.$saveHashrates(weeklyHashrates);
+          weeklyNewlyIndexed += weeklyHashrates.length;
+          weeklyHashrates.length = 0;
+        }
+
+        // Progress logging
+        const elapsedSeconds = Math.max(1, Math.round(new Date().getTime() / 1000 - weeklyTimer));
+        if (elapsedSeconds > 1) {
+          const progress = Math.round((weeklyTotalProcessed / totalWeeks) * 100);
+          logger.debug(
+            `Weekly reindex: ${progress}% (${weeklyTotalProcessed}/${totalWeeks} weeks) | ${weeklyIndexedThisRun} new this batch`,
+            logger.tags.mining
+          );
+          weeklyTimer = new Date().getTime() / 1000;
+          weeklyIndexedThisRun = 0;
+          loadingIndicators.setProgress('weekly-hashrate-indexing', progress);
+        }
+
+        currentWeekTo -= 604800000;
+      }
+
+      // Save remaining weekly hashrates
+      if (weeklyHashrates.length > 0) {
+        await HashratesRepository.$saveHashrates(weeklyHashrates);
+        weeklyNewlyIndexed += weeklyHashrates.length;
+      }
+
+      logger.info(
+        `Weekly hashrate reindexing completed: indexed ${weeklyNewlyIndexed} new entries`,
+        logger.tags.mining
+      );
+      loadingIndicators.setProgress('weekly-hashrate-indexing', 100);
+
+      // Summary
+      const totalTime = Math.round(new Date().getTime() / 1000 - dailyStartedAt);
+      logger.info(
+        `Forced hashrate reindexing completed in ${totalTime}s. Daily: ${dailyNewlyIndexed} new, Weekly: ${weeklyNewlyIndexed} new`,
+        logger.tags.mining
+      );
+    } catch (e) {
+      logger.err(
+        `Forced hashrate reindexing failed. Reason: ${e instanceof Error ? e.message : e}`,
+        logger.tags.mining
+      );
+      throw e;
+    }
+  }
+
+  /**
    * Index difficulty adjustments
    */
   public async $indexDifficultyAdjustments(): Promise<void> {

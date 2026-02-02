@@ -35,7 +35,8 @@ class MiningRoutes {
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/audit/score/:hash', this.$getBlockAuditScore)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/audit/:hash', this.$getBlockAudit)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/timestamp/:timestamp', this.$getHeightFromTimestamp)
-      .get(config.EXPLORER.API_URL_PREFIX + 'historical-price', this.$getHistoricalPrice);
+      .get(config.EXPLORER.API_URL_PREFIX + 'historical-price', this.$getHistoricalPrice)
+      .get(config.EXPLORER.API_URL_PREFIX + 'internal/mining/hashrate/reindex', this.$reindexAllHashrate);
   }
 
   private async $getHistoricalPrice(req: Request, res: Response): Promise<void> {
@@ -376,6 +377,33 @@ class MiningRoutes {
       res.json(audit || 'null');
     } catch (e) {
       handleError(req, res, 500, 'Failed to get block audit score');
+    }
+  }
+  private async $reindexAllHashrate(req: Request, res: Response): Promise<void> {
+    try {
+      logger.info('Internal API: Triggering forced hashrate reindex from 1 year ago');
+
+      // Run forced reindexing in background
+      setImmediate(async () => {
+        try {
+          await mining.$generateAllHashrateHistoryAlways();
+          logger.info('Internal API: Forced hashrate reindexing completed successfully');
+        } catch (e) {
+          logger.err(
+            `Internal API: Background forced hashrate reindexing failed: ${e instanceof Error ? e.message : e}`
+          );
+        }
+      });
+
+      res.json({
+        message: 'Forced hashrate reindexing requested (1 year range)',
+        timestamp: new Date().toISOString(),
+        status: 'started',
+        note: 'This will reindex both daily and weekly hashrates from 1 year ago to today',
+      });
+    } catch (e) {
+      logger.err(`Internal API: Failed to trigger forced hashrate reindex: ${e instanceof Error ? e.message : e}`);
+      handleError(req, res, 500, 'Failed to trigger forced hashrate reindex');
     }
   }
 }
