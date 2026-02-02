@@ -233,7 +233,8 @@ class PoolsParser {
     logger.info(`${changed} blocks assigned to a new pool`, logger.tags.mining);
 
     // Re-index hashrates later
-    // mining.reindexHashrateRequested = true; // disabled for now, since this will clean up the whole hashrates table
+    // mining.reindexHashrateRequested = true;
+    // disabled for now, since this will clean up the whole hashrates table (but reindexing is done much later on the day)
   }
 }
 
