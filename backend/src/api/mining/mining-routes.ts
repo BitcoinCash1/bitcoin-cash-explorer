@@ -396,10 +396,10 @@ class MiningRoutes {
       });
 
       res.json({
-        message: 'Forced hashrate reindexing requested (1 year range)',
+        message: 'Forced hashrate reindexing requested (genesis block to today)',
         timestamp: new Date().toISOString(),
         status: 'started',
-        note: 'This will reindex both daily and weekly hashrates from 1 year ago to today',
+        note: 'This will reindex both daily and weekly hashrates from the genesis block to today',
       });
     } catch (e) {
       logger.err(`Internal API: Failed to trigger forced hashrate reindex: ${e instanceof Error ? e.message : e}`);
