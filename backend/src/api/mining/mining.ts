@@ -467,8 +467,8 @@ class Mining {
   }
 
   /**
-   * Force reindex daily and weekly hashrate data from genesis block to today
-   * WARNING: This will take a VERY long time to complete!
+   * Force re-index daily and weekly hashrate data from genesis block to today.
+   * Note: This might take some time to complete or might do quite some backend calls and DB inserts.
    */
   public async $generateAllHashrateHistoryAlways(): Promise<void> {
     logger.info('Starting forced hashrate reindex from genesis block to today', logger.tags.mining);
