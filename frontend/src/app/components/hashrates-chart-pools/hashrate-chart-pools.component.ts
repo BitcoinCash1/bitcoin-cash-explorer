@@ -249,7 +249,7 @@ export class HashrateChartPoolsComponent implements OnInit {
         right: this.right,
         left: this.left,
         bottom: 70,
-        top: this.isMobile() ? 10 : 50,
+        top: this.isMobile() ? 10 : 70,
       },
       tooltip: {
         show: !this.isMobile(),
@@ -297,6 +297,7 @@ export class HashrateChartPoolsComponent implements OnInit {
           ? undefined
           : {
               data: data.legends,
+              top: -5,
             },
       yAxis:
         data.series.length === 0
