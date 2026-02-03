@@ -436,7 +436,7 @@ class Mining {
       }
 
       // Add genesis block manually
-      if (!indexedTimestamp.includes(genesisTimestamp / 1000)) {
+      if (config.EXPLORER.INDEXING_BLOCKS_AMOUNT === -1 && !indexedTimestamp.includes(genesisTimestamp / 1000)) {
         hashrates.push({
           hashrateTimestamp: genesisTimestamp / 1000,
           avgHashrate: await bitcoinClient.getNetworkHashPs(1, 1),
@@ -565,7 +565,7 @@ class Mining {
       }
 
       // Add genesis block manually
-      if (config.EXPLORER.INDEXING_BLOCKS_AMOUNT === -1 && !existingDailyTimestamps.includes(genesisTimestamp / 1000)) {
+      if (!existingDailyTimestamps.includes(genesisTimestamp / 1000)) {
         dailyHashrates.push({
           hashrateTimestamp: genesisTimestamp / 1000,
           avgHashrate: await bitcoinClient.getNetworkHashPs(1, 1),
