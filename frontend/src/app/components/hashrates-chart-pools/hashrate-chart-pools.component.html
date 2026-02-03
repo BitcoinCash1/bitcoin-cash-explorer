@@ -21,7 +21,38 @@
       <div class="btn-group btn-group-toggle" name="radioBasic">
         <label
           class="btn btn-purple btn-sm"
-          *ngIf="stats.blockCount >= 25920"
+          *ngIf="stats.blockCount >= 200"
+          [class.active]="radioGroupForm.get('dateSpan').value === '1m'"
+        >
+          <input
+            type="radio"
+            [value]="'1m'"
+            fragment="1m"
+            [routerLink]="['/graphs/mining/pools-dominance' | relativeUrl]"
+            [attr.data-cy]="'1m'"
+            formControlName="dateSpan"
+          />
+          1M
+        </label>
+
+        <label
+          class="btn btn-purple btn-sm"
+          *ngIf="stats.blockCount >= 1200"
+          [class.active]="radioGroupForm.get('dateSpan').value === '3m'"
+        >
+          <input
+            type="radio"
+            [value]="'3m'"
+            fragment="3m"
+            [routerLink]="['/graphs/mining/pools-dominance' | relativeUrl]"
+            [attr.data-cy]="'3m'"
+            formControlName="dateSpan"
+          />
+          3M
+        </label>
+        <label
+          class="btn btn-purple btn-sm"
+          *ngIf="stats.blockCount >= 20000"
           [class.active]="radioGroupForm.get('dateSpan').value === '6m'"
         >
           <input
@@ -78,6 +109,21 @@
             formControlName="dateSpan"
           />
           3Y
+        </label>
+        <label
+          class="btn btn-purple btn-sm"
+          *ngIf="stats.blockCount >= 210240"
+          [class.active]="radioGroupForm.get('dateSpan').value === '4y'"
+        >
+          <input
+            type="radio"
+            [value]="'4y'"
+            fragment="4y"
+            [routerLink]="['/graphs/mining/pools-dominance' | relativeUrl]"
+            [attr.data-cy]="'4y'"
+            formControlName="dateSpan"
+          />
+          4Y
         </label>
         <label
           class="btn btn-purple btn-sm"
