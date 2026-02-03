@@ -149,6 +149,20 @@
         </label>
         <label
           class="btn btn-purple btn-sm"
+          *ngIf="stats.blockCount >= 210240"
+          [class.active]="radioGroupForm.get('dateSpan').value === '4y'"
+        >
+          <input
+            type="radio"
+            [value]="'4y'"
+            fragment="4y"
+            [routerLink]="['/graphs/mining/block-fees-subsidy' | relativeUrl]"
+            formControlName="dateSpan"
+          />
+          4Y
+        </label>
+        <label
+          class="btn btn-purple btn-sm"
           [class.active]="radioGroupForm.get('dateSpan').value === 'all'"
         >
           <input
