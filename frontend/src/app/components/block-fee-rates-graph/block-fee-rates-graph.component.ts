@@ -114,6 +114,7 @@ export class BlockFeeRatesGraphComponent implements OnInit {
             '1y',
             '2y',
             '3y',
+            '4y',
             'all',
           ].indexOf(fragment) > -1
         ) {
