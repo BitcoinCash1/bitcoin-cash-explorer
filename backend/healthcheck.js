@@ -3,7 +3,7 @@ const net = require("net");
 const tls = require("tls");
 
 const configFromFile = require(
-  process.env.EXPLORER_CONFIG_FILE ? process.env.EXPLORER_CONFIG_FILE : './explorer-config.json'
+  process.env.EXPLORER_CONFIG_FILE ? process.env.EXPLORER_CONFIG_FILE : '../explorer-config.json'
 );
 
 function checkElectrumConnection(timeoutMs = 2000) {
