@@ -134,7 +134,7 @@ class Mining {
       poolsStatistics['lastEstimatedHashrate1w'] = await bitcoinClient.getNetworkHashPs(totalBlock1w);
     } catch (e) {
       poolsStatistics['lastEstimatedHashrate'] = 0;
-      logger.debug('Bitcoin Core is not available, using zeroed value for current hashrate', logger.tags.mining);
+      logger.debug('Bitcoin Cash Node is not available, using zeroed value for current hashrate', logger.tags.mining);
     }
 
     return poolsStatistics;
@@ -165,7 +165,7 @@ class Mining {
     try {
       currentEstimatedHashrate = await bitcoinClient.getNetworkHashPs(totalBlock24h);
     } catch (e) {
-      logger.debug('Bitcoin Core is not available, using zeroed value for current hashrate', logger.tags.mining);
+      logger.debug('Bitcoin Cash Node is not available, using zeroed value for current hashrate', logger.tags.mining);
     }
 
     return {

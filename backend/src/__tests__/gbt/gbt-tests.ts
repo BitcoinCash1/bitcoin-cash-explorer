@@ -8,12 +8,12 @@ const vectorUidMap: Map<number, string> = new Map(testVector.map((x) => [x[0], x
 const vectorTxidMap: Map<string, number> = new Map(testVector.map((x) => [x[1], x[0]]));
 // Note that this test buffer is specially constructed
 // such that uids are assigned in numerical txid order
-// so that ties break the same way as in Core's implementation
+// so that ties break the same way as in Cash Node's implementation
 const vectorBuffer = fs.readFileSync(path.join(__dirname, './', './test-data/test-buffer.bin'));
 
 describe('Rust GBT', () => {
   // TODO: Implement getBlockTemplate test for BCHN and then fix this test
-  xtest('should produce the same template as getBlockTemplate from Bitcoin Core', async () => {
+  xtest('should produce the same template as getBlockTemplate from Bitcoin Cash Node', async () => {
     const rustGbt = new GbtGenerator(4_000_000, 8);
     const { mempool, maxUid } = mempoolFromArrayBuffer(vectorBuffer.buffer);
     const result = await rustGbt.make(mempool, maxUid);

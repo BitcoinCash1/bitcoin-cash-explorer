@@ -288,7 +288,8 @@ export function mempoolComparator(a: GraphTx, b: GraphTx): number {
 }
 
 /*
- * Build a block using an approximation of the transaction selection algorithm from Bitcoin Core
+ * Build a block using an approximation of the transaction selection algorithm from Bitcoin Cash Node
+ * TODO: Update for BCH.
  * (see BlockAssembler in https://github.com/bitcoin/bitcoin/blob/master/src/node/miner.cpp)
  */
 export function makeBlockTemplate(

@@ -29,7 +29,8 @@ if (parentPort) {
 }
 
 /*
- * Build projected mempool blocks using an approximation of the transaction selection algorithm from Bitcoin Core
+ * Build projected mempool blocks using an approximation of the transaction selection algorithm from Bitcoin Cash Node
+ * TODO: change for BCH,
  * (see BlockAssembler in https://github.com/bitcoin/bitcoin/blob/master/src/node/miner.cpp)
  *
  * All this code below needs to be adapted to match BCH.

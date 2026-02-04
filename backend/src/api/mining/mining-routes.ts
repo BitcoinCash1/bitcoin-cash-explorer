@@ -178,7 +178,7 @@ class MiningRoutes {
       currentHashrate = await bitcoinClient.getNetworkHashPs(1008);
       currentDifficulty = await bitcoinClient.getDifficulty();
     } catch (e) {
-      logger.debug('Bitcoin Core is not available, using zeroed value for current hashrate and difficulty');
+      logger.debug('Bitcoin Cash Node is not available, using zeroed value for current hashrate and difficulty');
     }
 
     try {
