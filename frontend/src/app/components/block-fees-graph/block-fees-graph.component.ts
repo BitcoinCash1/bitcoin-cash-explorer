@@ -89,7 +89,9 @@ export class BlockFeesGraphComponent implements OnInit {
     this.radioGroupForm.controls.dateSpan.setValue(this.miningWindowPreference);
 
     this.route.fragment.subscribe((fragment) => {
-      if (['1m', '3m', '6m', '1y', '2y', '3y', 'all'].indexOf(fragment) > -1) {
+      if (
+        ['1m', '3m', '6m', '1y', '2y', '3y', '4y', 'all'].indexOf(fragment) > -1
+      ) {
         this.radioGroupForm.controls.dateSpan.setValue(fragment, {
           emitEvent: false,
         });
