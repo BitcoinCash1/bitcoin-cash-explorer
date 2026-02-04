@@ -185,7 +185,7 @@ function checkBackendItself(timeoutMs = 2000) {
 
 void (async () => {
   try {
-    const timeout = 2000;
+    const timeout = 2000; // Same timeout as the --timeout=20s in docker file
     const electrum = await checkElectrumConnection(timeout);
     console.log(
       `Electrum OK (${electrum.tls ? "TLS" : "TCP"}) ${electrum.host}:${electrum.port} server=${electrum.server} protocol=${electrum.protocol}`
