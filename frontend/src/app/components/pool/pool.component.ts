@@ -195,13 +195,23 @@ export class PoolComponent implements OnInit {
 
   prepareChartOptions(hashrate, share) {
     let title: object;
-    if (hashrate.length <= 1) {
+    if (hashrate.length < 1) {
       title = {
         textStyle: {
           color: 'grey',
           fontSize: 15,
         },
         text: $localize`Not enough data yet`,
+        left: 'center',
+        top: 'center',
+      };
+    } else if (hashrate.length === 1) {
+      title = {
+        textStyle: {
+          color: 'orange',
+          fontSize: 15,
+        },
+        text: $localize`Limited data available`,
         left: 'center',
         top: 'center',
       };
@@ -269,7 +279,7 @@ export class PoolComponent implements OnInit {
         }.bind(this),
       },
       xAxis:
-        hashrate.length <= 1
+        hashrate.length < 1
           ? undefined
           : {
               type: 'time',
@@ -302,7 +312,7 @@ export class PoolComponent implements OnInit {
         ],
       },
       yAxis:
-        hashrate.length <= 1
+        hashrate.length < 1
           ? undefined
           : [
               {
@@ -336,33 +346,61 @@ export class PoolComponent implements OnInit {
               },
             ],
       series:
-        hashrate.length <= 1
+        hashrate.length <= 0
           ? undefined
-          : [
-              {
-                zlevel: 1,
-                name: $localize`:@@79a9dc5b1caca3cbeb1733a19515edacc5fc7920:Hashrate`,
-                showSymbol: false,
-                symbol: 'none',
-                data: hashrate,
-                type: 'line',
-                lineStyle: {
-                  width: 2,
+          : hashrate.length === 1
+            ? [
+                {
+                  zlevel: 1,
+                  name: $localize`:@@79a9dc5b1caca3cbeb1733a19515edacc5fc7920:Hashrate`,
+                  showSymbol: true,
+                  symbol: 'circle',
+                  symbolSize: 8,
+                  data: hashrate,
+                  type: 'line',
+                  lineStyle: {
+                    width: 0,
+                  },
                 },
-              },
-              {
-                zlevel: 0,
-                name: $localize`:mining.pool-dominance:Pool Dominance`,
-                showSymbol: false,
-                symbol: 'none',
-                data: share,
-                type: 'line',
-                yAxisIndex: 1,
-                lineStyle: {
-                  width: 2,
+                {
+                  zlevel: 0,
+                  name: $localize`:mining.pool-dominance:Pool Dominance`,
+                  showSymbol: true,
+                  symbol: 'circle',
+                  symbolSize: 8,
+                  data: share,
+                  type: 'line',
+                  yAxisIndex: 1,
+                  lineStyle: {
+                    width: 0,
+                  },
                 },
-              },
-            ],
+              ]
+            : [
+                {
+                  zlevel: 1,
+                  name: $localize`:@@79a9dc5b1caca3cbeb1733a19515edacc5fc7920:Hashrate`,
+                  showSymbol: false,
+                  symbol: 'none',
+                  data: hashrate,
+                  type: 'line',
+                  lineStyle: {
+                    width: 2,
+                  },
+                },
+                {
+                  zlevel: 0,
+                  name: $localize`:mining.pool-dominance:Pool Dominance`,
+                  showSymbol: false,
+                  symbol: 'none',
+                  data: share,
+                  type: 'line',
+                  yAxisIndex: 1,
+                  lineStyle: {
+                    width: 2,
+                  },
+                },
+              ],
       dataZoom:
         hashrate.length <= 1
           ? undefined
