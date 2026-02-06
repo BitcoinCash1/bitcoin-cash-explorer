@@ -619,53 +619,6 @@
   </p>
 </ng-template>
 
-<ng-template type="how-big-is-mempool-used-by-mempool-space">
-  <p>
-    bchexplorer.cash uses multiple Bitcoin Cash nodes to obtain data: some with
-    the default 320MB mempool memory limit (call these Small Nodes) and others
-    with a much larger mempool memory limit (call these Big Nodes).
-  </p>
-  <p>
-    Many nodes on the Bitcoin Cash network are configured to run with the
-    default 320MB mempool memory setting. When all 320MB of memory are used up,
-    such nodes will reject transactions below a certain threshold feerate.
-    Running Small Nodes allows bchexplorer.cash to tell you what this threshold
-    feerate is—this is the "Purging" feerate that shows on the front page when
-    mempools are full, which you can use to be reasonably sure that your
-    transaction will be widely propagated.
-  </p>
-  <p>
-    Big Node mempools are so big that they don't need to reject (or purge)
-    transactions. Such nodes allow for bchexplorer.cash to provide you with
-    information on any pending transaction it has received—no matter how
-    congested the mempool is, and no matter how low-feerate or low-priority the
-    transaction is.
-  </p>
-</ng-template>
-
-<ng-template type="what-is-memory-usage">
-  <p>
-    Memory usage on the front page refers to the real-time amount of system
-    memory used by a Bitcoin Cash node's mempool. This memory usage number is
-    always higher than the total size of all pending transactions in the mempool
-    due to indexes, pointers, and other overhead used by Bitcoin Cash Node for
-    storage and processing.
-  </p>
-  <p>
-    bchexplorer.cash shows the memory usage of a Bitcoin Cash node that has a
-    very high mempool memory limit. As a result, when mempools fill up, you may
-    notice memory usage on bchexplorer.cash go beyond 320MB. This is not a
-    mistake—this memory usage figure is high because it's for a Bitcoin Cash
-    node that isn't rejecting (or evicting) transactions. Consider it to be
-    another data point to give you an idea of how congested the mempool is
-    relative to the default memory limit of 320MB.
-  </p>
-  <p>
-    A Bitcoin Cash node running the default 320MB mempool memory limit, like
-    most Raspberry Pi nodes, will never go past 320MB of memory usage.
-  </p>
-</ng-template>
-
 <ng-template type="why-empty-blocks">
   <p>
     When a new block is found, mining pools often send miners new block
@@ -767,6 +720,53 @@
     This approach allows Bitcoin Cash to maintain low fees and reliable
     transaction confirmation times even as adoption grows, making it suitable
     for global payment applications.
+  </p>
+</ng-template>
+
+<ng-template type="how-big-is-mempool-used-by-bch-explorer">
+  <p>
+    bchexplorer.cash uses multiple Bitcoin Cash nodes to obtain data: some with
+    the default 320MB mempool memory limit (call these Small Nodes) and others
+    with a much larger mempool memory limit (call these Big Nodes).
+  </p>
+  <p>
+    Many nodes on the Bitcoin Cash network are configured to run with the
+    default 320MB mempool memory setting. When all 320MB of memory are used up,
+    such nodes will reject transactions below a certain threshold feerate.
+    Running Small Nodes allows bchexplorer.cash to tell you what this threshold
+    feerate is—this is the "Purging" feerate that shows on the front page when
+    mempools are full, which you can use to be reasonably sure that your
+    transaction will be widely propagated.
+  </p>
+  <p>
+    Big Node mempools are so big that they don't need to reject (or purge)
+    transactions. Such nodes allow for bchexplorer.cash to provide you with
+    information on any pending transaction it has received—no matter how
+    congested the mempool is, and no matter how low-feerate or low-priority the
+    transaction is.
+  </p>
+</ng-template>
+
+<ng-template type="what-is-memory-usage">
+  <p>
+    Memory usage on the front page refers to the real-time amount of system
+    memory used by a Bitcoin Cash node's mempool. This memory usage number is
+    always higher than the total size of all pending transactions in the mempool
+    due to indexes, pointers, and other overhead used by Bitcoin Cash Node for
+    storage and processing.
+  </p>
+  <p>
+    bchexplorer.cash shows the memory usage of a Bitcoin Cash node that has a
+    very high mempool memory limit. As a result, when mempools fill up, you may
+    notice memory usage on bchexplorer.cash go beyond 320MB. This is not a
+    mistake—this memory usage figure is high because it's for a Bitcoin Cash
+    node that isn't rejecting (or evicting) transactions. Consider it to be
+    another data point to give you an idea of how congested the mempool is
+    relative to the default memory limit of 320MB.
+  </p>
+  <p>
+    A Bitcoin Cash node running the default 320MB mempool memory limit, like
+    most Raspberry Pi nodes, will never go past 320MB of memory usage.
   </p>
 </ng-template>
 
