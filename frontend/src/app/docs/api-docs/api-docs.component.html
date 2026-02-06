@@ -478,7 +478,7 @@
 
 <ng-template type="how-to-get-transaction-confirmed-quickly">
   <p>
-    To get your transaction confirmed quicker, you can set a higher fee rate.
+    To get your transaction confirmed quicker, you can set a higher feerate.
   </p>
   <p>
     Due to its increased block capacity, Bitcoin Cash maintains high throughput
@@ -558,13 +558,19 @@
       feerate and the median feerate of the
       <a [routerLink]="['/mempool-block/2' | relativeUrl]"
         >third mempool block</a
-      >. Consider using this feerate if you want confirmation soon but don't
-      need it particularly quickly.
+      >. Consider using this feerate if you want confirmation soon, and your
+      transaction will already very likely be mined in the next block. On small
+      amount transactions you can even trust on
+      <a
+        [routerLink]="['/docs/faq' | relativeUrl]"
+        fragment="what-is-zero-confirmation"
+        >0-conf</a
+      >.
     </li>
     <li>
       <b>No Priority.</b> This figure is either 2x the minimum feerate, or the
-      Low Priority feerate (whichever is lower). Consider using this feerate if
-      you are in no rush and don't mind if confirmation takes a while.
+      Low Priority feerate (whichever is lower). You are still very likl to your
+      transaction confirmed in the next block.
     </li>
   </ul>
   <p>
@@ -1164,13 +1170,13 @@
     all of the same rules and constraints as real mined blocks.
   </p>
   <p>
-    Those constraints can sometimes cause transactions with lower fee rates to
-    be included "ahead" of transactions with higher rates.
+    Those constraints can sometimes cause transactions with lower feerates to be
+    included "ahead" of transactions with higher rates.
   </p>
   <p>
     For example, if one projected block has a very small amount of space left,
-    it might be able to fit one more tiny low fee rate transaction, while larger
-    higher fee rate transactions have to wait for the following block.
+    it might be able to fit one more tiny low feerate transaction, while larger
+    higher feerate transactions have to wait for the following block.
   </p>
   <p>
     A similar effect can occur when there are a large number of transactions
