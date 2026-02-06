@@ -7004,6 +7004,13 @@ export const faqData = [
     type: 'endpoint',
     category: 'advanced',
     showConditions: bitcoinNetworks,
+    fragment: 'what-are-cashtokens',
+    title: 'What are CashTokens?',
+  },
+  {
+    type: 'endpoint',
+    category: 'advanced',
+    showConditions: bitcoinNetworks,
     fragment: 'what-is-abla',
     title: 'What is ABLA?',
   },
