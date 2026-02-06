@@ -58,9 +58,18 @@
             <tbody>
               <!-- Repeat the name  -->
               <tr>
-                <td class="label">Name</td>
+                <td class="label">Token name</td>
                 <td style="vertical-align: middle">
                   {{ tokenInfo.name }}
+                  <a
+                    class="info-link"
+                    [routerLink]="['/docs/faq' | relativeUrl]"
+                    fragment="what-are-cashtokens"
+                    ><fa-icon
+                      [icon]="['fas', 'info-circle']"
+                      [fixedWidth]="true"
+                    ></fa-icon
+                  ></a>
                 </td>
               </tr>
 
