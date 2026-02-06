@@ -478,17 +478,38 @@
 
 <ng-template type="how-to-get-transaction-confirmed-quickly">
   <p>
-    To get your transaction confirmed quicker, you will need to increase its
-    feerate.
+    To get your transaction confirmed quicker, you can set a higher fee rate.
+  </p>
+  <p>
+    Due to its increased block capacity, Bitcoin Cash maintains high throughput
+    during periods of peak demand. Meaning your transaction will most likely
+    end-up in the next block.
+  </p>
+
+  <p>
+    Furthermore, Bitcoin Cash has
+    <a
+      [routerLink]="['/docs/faq' | relativeUrl]"
+      fragment="what-is-zero-confirmation"
+      >zero confirmation (0-conf)</a
+    >. This means that transactions are immediately available for spending, even
+    before they are confirmed in a block. And allow for near-instant peer to
+    peer payments by merchants or for e-commerce. Small transactions are safe to
+    spend immediately without waiting for confirmation.
   </p>
 </ng-template>
 
 <ng-template type="how-prevent-stuck-transaction">
   <p>
-    You must use an adequate transaction fee commensurate with how quickly you
-    need the transaction to be confirmed. See BCH Explorer's fee estimates on
-    the
-    <a [routerLink]="['/' | relativeUrl]">front page</a>.
+    Bitcoin Cash has big blocks with enough space to handle a lot of
+    transactions even during high traffic. So, your transaction will most likely
+    confirm within the next block and will never get stuck in the mempool.
+  </p>
+
+  <p>
+    You can look at the BCH Explorer's fee estimates on the
+    <a [routerLink]="['/' | relativeUrl]">front page</a>. If you want to have an
+    idea how high you need to set your sat/B.
   </p>
 </ng-template>
 
@@ -701,6 +722,21 @@
     <strong>Learn More:</strong> Visit
     <a href="https://cashtokens.org/" target="_blank">cashtokens.org</a> for
     detailed documentation and technical specifications.
+  </p>
+</ng-template>
+
+<ng-template type="what-is-zero-confirmation">
+  <p>
+    Zero-confirmation (0-conf) transactions are Bitcoin Cash transactions that
+    are processed and confirmed almost instantly, without waiting for the block
+    confirmation process. This allows for near-instant payment processing like
+    in-store purchases or online transactions where speed is important.
+  </p>
+  <p>
+    Bitcoin Cash has <strong>no</strong> RBF, CPFP or accelerators, meaning zero
+    confirmations are safe enough for small amounts. While small BCH amounts are
+    safe for 0-conf, we advise on multiple confirmations for (very) large BCH
+    amounts.
   </p>
 </ng-template>
 
@@ -1158,11 +1194,6 @@
   </p>
 </ng-template>
 
-<ng-template type="host-my-own-instance-raspberry-pi">
-  We support one-click installation on a number of Raspberry Pi full-node
-  distros including Umbrel, RaspiBlitz, MyNode, RoninDojo, and StartOS.
-</ng-template>
-
 <ng-template type="host-my-own-instance-server">
   <p>
     You can manually install BCH Explorer on your own server, but this requires
@@ -1175,13 +1206,7 @@
     >.
   </p>
   <p>
-    For casual users, we strongly suggest installing BCH Explorer using one of
-    the
-    <a
-      href="https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer#one-click-installation"
-      target="_blank"
-      >1-click install methods</a
-    >.
+    BCH Explorer can also run on a Raspberry Pi or other single-board computers.
   </p>
 </ng-template>
 

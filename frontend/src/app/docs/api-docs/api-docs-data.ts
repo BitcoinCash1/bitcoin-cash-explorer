@@ -7011,6 +7011,13 @@ export const faqData = [
     type: 'endpoint',
     category: 'advanced',
     showConditions: bitcoinNetworks,
+    fragment: 'what-is-zero-confirmation',
+    title: 'What is 0-conf?',
+  },
+  {
+    type: 'endpoint',
+    category: 'advanced',
+    showConditions: bitcoinNetworks,
     fragment: 'what-is-abla',
     title: 'What is ABLA?',
   },
@@ -7079,13 +7086,6 @@ export const faqData = [
     showConditions: bitcoinNetworks,
     fragment: 'who-runs-this-website',
     title: 'Who runs this website?',
-  },
-  {
-    type: 'endpoint',
-    category: 'self-hosting',
-    showConditions: bitcoinNetworks,
-    fragment: 'host-my-own-instance-raspberry-pi',
-    title: 'How can I host my own instance on a Raspberry Pi?',
   },
   {
     type: 'endpoint',
