@@ -137,6 +137,9 @@
                           tokenInfo.decimals
                         )
                       }}
+                      <span class="symbol" *ngIf="tokenInfo.symbol">
+                        {{ tokenInfo.symbol }}
+                      </span>
                     </td>
                   </tr>
                 }
