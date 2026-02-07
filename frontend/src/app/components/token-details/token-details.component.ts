@@ -85,10 +85,7 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
       category: this.category,
       name: this.metadata.name || 'Unknown',
       symbol: this.metadata.token?.symbol || 'N/A',
-      decimals:
-        this.metadata.token?.decimals !== undefined
-          ? this.metadata.token.decimals
-          : 'N/A',
+      decimals: this.metadata.token?.decimals ?? 0,
       description: this.metadata.description || 'No description available',
       uris: this.metadata.uris || {},
       hasIcon: !!this.metadata.uris?.icon,
@@ -117,6 +114,36 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
       return 'X';
     }
     return key;
+  }
+
+  formatTokenAmount(amount: number, decimals?: number): string {
+    if (amount == null) return '0';
+    if (!decimals || decimals <= 0) {
+      // Add commas to integer part while preserving decimal part,
+      // but we won't use decimals input since that is either 0 or less
+      const amountStr = amount.toString();
+      const [integerPart, decimalPart] = amountStr.split('.');
+      const formattedInteger = integerPart.replace(
+        /\B(?=(\d{3})+(?!\d))/g,
+        ','
+      );
+      return decimalPart
+        ? `${formattedInteger}.${decimalPart}`
+        : formattedInteger;
+    }
+
+    const raw = typeof amount === 'number' ? amount.toString() : amount;
+
+    // Ensure string length >= decimals
+    const padded = raw.padStart(decimals + 1, '0');
+
+    const integerPart = padded.slice(0, -decimals);
+    const fractionalPart = padded.slice(-decimals);
+
+    // Add commas to integer part
+    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    return `${formattedInteger}.${fractionalPart}`;
   }
 
   getStatusClass(status: string): string {

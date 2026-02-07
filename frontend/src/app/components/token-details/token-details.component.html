@@ -86,7 +86,7 @@
               }
 
               <!-- Decimals -->
-              @if (tokenInfo.decimals !== "N/A") {
+              @if (tokenInfo.decimals !== 0) {
                 <tr>
                   <td class="label">Decimals</td>
                   <td style="vertical-align: middle">
@@ -131,7 +131,12 @@
                   <tr>
                     <td class="label">Genesis Supply</td>
                     <td style="vertical-align: middle">
-                      {{ tokenInfo.genesis.ft_minted | number }}
+                      {{
+                        formatTokenAmount(
+                          tokenInfo.genesis.ft_minted,
+                          tokenInfo.decimals
+                        )
+                      }}
                     </td>
                   </tr>
                 }
