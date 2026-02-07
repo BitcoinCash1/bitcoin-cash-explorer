@@ -28,6 +28,7 @@ import { ThemeService } from '@app/services/theme.service';
 import { TimeService } from '@app/services/time.service';
 import { FiatShortenerPipe } from '@app/shared/pipes/fiat-shortener.pipe';
 import { FiatCurrencyPipe } from '@app/shared/pipes/fiat-currency.pipe';
+import { LimitToPipe } from '@app/shared/pipes/limit-to-pipe/limit-to.pipe';
 import { ShortenStringPipe } from '@app/shared/pipes/shorten-string-pipe/shorten-string.pipe';
 import { CapAddressPipe } from '@app/shared/pipes/cap-address-pipe/cap-address-pipe';
 import { AppPreloadingStrategy } from '@app/app.preloading-strategy';
@@ -48,6 +49,7 @@ const providers = [
   LanguageService,
   ThemeService,
   TimeService,
+  LimitToPipe,
   ShortenStringPipe,
   FiatShortenerPipe,
   FiatCurrencyPipe,

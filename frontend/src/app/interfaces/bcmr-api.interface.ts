@@ -27,6 +27,13 @@ export interface SourceItem {
 
 export type Sources = SourceItem[];
 
+// Genesis information interface
+export interface Genesis {
+  ft_minted?: number;
+  is_nft: boolean;
+  txid: string;
+}
+
 // Token information for chain's native currency
 export interface ChainToken {
   symbol: string;
@@ -39,12 +46,12 @@ export interface BcmrMetadata {
   name: string;
   description?: string;
   extensions?: Extensions;
-  splitId?: string;
-  sources?: Sources;
+  genesis?: Genesis; // Used by Flowee
+  sources?: Sources; // Used by Flowee
   status?: 'active' | 'burned' | 'inactive';
-  tags?: string[];
   token: ChainToken;
   uris?: URIs;
-  is_nft?: boolean;
-  trust?: 'absent' | 'marginal' | 'good' | 'high' | 'ultimate';
+  is_nft?: boolean; // Only used by Paytaca API
+  nft_type?: string; // Only used by Paytaca API
+  trust?: 'absent' | 'marginal' | 'good' | 'high' | 'ultimate'; // Used by Flowee
 }

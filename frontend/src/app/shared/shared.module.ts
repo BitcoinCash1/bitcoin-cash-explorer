@@ -90,6 +90,7 @@ import {
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { MenuComponent } from '@components/menu/menu.component';
 import { PreviewTitleComponent } from '@components/master-page-preview/preview-title.component';
+import { LimitToPipe } from '@app/shared/pipes/limit-to-pipe/limit-to.pipe';
 import { ShortenStringPipe } from '@app/shared/pipes/shorten-string-pipe/shorten-string.pipe';
 import { CeilPipe } from '@app/shared/pipes/math-ceil/math-ceil.pipe';
 import { Hex2asciiPipe } from '@app/shared/pipes/hex2ascii/hex2ascii.pipe';
@@ -221,6 +222,7 @@ import { MempoolProgressBarComponent } from '@components/mempool-progress-bar/me
     AbsolutePipe,
     BytesPipe,
     CeilPipe,
+    LimitToPipe,
     ShortenStringPipe,
     CapAddressPipe,
     Decimal2HexPipe,
@@ -321,6 +323,7 @@ import { MempoolProgressBarComponent } from '@components/mempool-progress-bar/me
     BytesPipe,
     RelativeUrlPipe,
     NoSanitizePipe,
+    LimitToPipe,
     ShortenStringPipe,
     CapAddressPipe,
     AmountShortenerPipe,
@@ -359,6 +362,7 @@ import { MempoolProgressBarComponent } from '@components/mempool-progress-bar/me
     FiatCurrencyPipe,
     HttpErrorPipe,
     CeilPipe,
+    LimitToPipe,
     ShortenStringPipe,
     CapAddressPipe,
     Decimal2HexPipe,
