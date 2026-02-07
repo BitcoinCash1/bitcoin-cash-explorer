@@ -95,6 +95,8 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
       hasWebsite: !!this.metadata.uris?.web,
       hasDescription: !!this.metadata.description,
       isNft: this.metadata.is_nft || false,
+      nftType: this.metadata.nft_type || null,
+      genesis: this.metadata.genesis || null,
       status: this.metadata.status || 'unknown',
       trust: this.metadata.trust || null,
     };

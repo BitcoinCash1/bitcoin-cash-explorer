@@ -104,6 +104,43 @@
                   </td>
                 </tr>
               }
+
+              <!-- Genesis -->
+              @if (tokenInfo.genesis) {
+                @if (tokenInfo.genesis.txid) {
+                  <tr>
+                    <td class="label">Genesis TX</td>
+                    <td style="vertical-align: middle">
+                      <a
+                        [routerLink]="['/tx' | relativeUrl, tokenInfo.genesis.txid]"
+                        style="text-decoration: none"
+                      >
+                        <app-truncate
+                          [text]="tokenInfo.genesis.txid"
+                          [lastChars]="12"
+                          [maxWidth]="300"
+                        ></app-truncate>
+                      </a>
+                    </td>
+                  </tr>
+                }
+                @if (tokenInfo.genesis.ft_minted) {
+                  <tr>
+                    <td class="label">Genesis Supply</td>
+                    <td style="vertical-align: middle">
+                      {{ tokenInfo.genesis.ft_minted | number }}
+                    </td>
+                  </tr>
+                }
+                @if (tokenInfo.genesis.is_nft !== undefined) {
+                  <tr>
+                    <td class="label">Genesis NFT</td>
+                    <td style="vertical-align: middle">
+                      {{ tokenInfo.genesis.is_nft ? 'Yes' : 'No' }}
+                    </td>
+                  </tr>
+                }
+              }
             </tbody>
           </table>
         </div>
