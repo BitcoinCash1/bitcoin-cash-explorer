@@ -650,7 +650,10 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     const integerPart = padded.slice(0, -decimals);
     const fractionalPart = padded.slice(-decimals);
 
-    return `${integerPart}.${fractionalPart}`;
+    // Add commas to integer part
+    const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    return `${formattedInteger}.${fractionalPart}`;
   }
 
   // assume any address with 12 or more contiguous repeated substrings is fake
