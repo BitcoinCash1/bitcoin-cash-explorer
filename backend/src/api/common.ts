@@ -189,19 +189,19 @@ export class Common {
   // Individual versioned standardness rules
   // TODO: Update for BCH.
   static V2_STANDARDNESS_ACTIVATION_HEIGHT = {
-    testnet4: 42_000,
-    chipnet: 2_900_000,
-    scalenet: 211_000,
-    '': 863_500,
+    testnet4: 209_919,
+    chipnet: 209_919,
+    scalenet: 209_919,
+    '': 209_919,
   };
   static isNonStandardVersion(tx: VerboseTransactionExtended, height?: number): boolean {
-    let TX_MAX_STANDARD_VERSION = 3;
+    let TX_MAX_STANDARD_VERSION = 2;
     if (
       height != null &&
       this.V2_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK] &&
       height <= this.V2_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK]
     ) {
-      TX_MAX_STANDARD_VERSION = 2;
+      TX_MAX_STANDARD_VERSION = 1;
     }
 
     if (tx.version > TX_MAX_STANDARD_VERSION) {
