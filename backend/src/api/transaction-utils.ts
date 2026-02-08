@@ -2,7 +2,6 @@ import {
   VerboseTransactionExtended,
   VerboseMempoolTransactionExtended,
   TransactionExtended,
-  MempoolTransactionExtended,
   TransactionMinerInfo,
   VoutStrippedToScriptPubkey,
 } from '../mempool.interfaces';

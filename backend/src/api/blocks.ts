@@ -346,7 +346,7 @@ class Blocks {
       extras.totalInputAmt = null;
     }
 
-    if (['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK)) {
+    if (['mainnet', 'testnet4', 'chipnet', 'scalenet'].includes(config.EXPLORER.NETWORK)) {
       let pool: PoolTag;
       if (coinbaseTx !== undefined) {
         pool = await this.$findBlockMiner(coinbaseTx);
@@ -1318,7 +1318,7 @@ class Blocks {
     }
 
     // Not Bitcoin network, return the block as it from the bitcoin backend
-    if (['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK) === false) {
+    if (['mainnet', 'testnet4', 'chipnet', 'scalenet'].includes(config.EXPLORER.NETWORK) === false) {
       return await bitcoinCoreApi.$getBlock(hash);
     }
 
@@ -1541,7 +1541,7 @@ class Blocks {
 
   public async $getBlockAuditSummary(hash: string): Promise<BlockAudit | null> {
     if (
-      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK) &&
+      ['mainnet', 'testnet4', 'chipnet', 'scalenet'].includes(config.EXPLORER.NETWORK) &&
       Common.auditIndexingEnabled()
     ) {
       return BlocksAuditsRepository.$getBlockAudit(hash);
@@ -1552,7 +1552,7 @@ class Blocks {
 
   public async $getBlockTxAuditSummary(hash: string, txid: string): Promise<TransactionAudit | null> {
     if (
-      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK) &&
+      ['mainnet', 'testnet4', 'chipnet', 'scalenet'].includes(config.EXPLORER.NETWORK) &&
       Common.auditIndexingEnabled()
     ) {
       return BlocksAuditsRepository.$getBlockTxAudit(hash, txid);

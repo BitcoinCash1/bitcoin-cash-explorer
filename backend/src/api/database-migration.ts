@@ -468,7 +468,12 @@ class DatabaseMigration {
       await this.updateToSchemaVersion(58);
     }
 
-    if (databaseSchemaVersion < 59 && (config.EXPLORER.NETWORK === 'signet' || config.EXPLORER.NETWORK === 'testnet')) {
+    if (
+      databaseSchemaVersion < 59 &&
+      (config.EXPLORER.NETWORK === 'chipnet' ||
+        config.EXPLORER.NETWORK === 'scalenet' ||
+        config.EXPLORER.NETWORK === 'testnet4')
+    ) {
       // https://github.com/mempool/mempool/issues/3360
       await this.$executeQuery(`TRUNCATE prices`);
     }

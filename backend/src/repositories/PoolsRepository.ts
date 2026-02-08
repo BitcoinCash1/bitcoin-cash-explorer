@@ -104,7 +104,7 @@ class PoolsRepository {
       if (parse) {
         rows[0].regexes = JSON.parse(rows[0].regexes);
       }
-      if (['testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK)) {
+      if (['testnet4', 'chipnet', 'scalenet'].includes(config.EXPLORER.NETWORK)) {
         rows[0].addresses = []; // pools-v2.json only contains mainnet addresses
       } else if (parse) {
         rows[0].addresses = JSON.parse(rows[0].addresses);
@@ -136,7 +136,7 @@ class PoolsRepository {
       if (parse) {
         rows[0].regexes = JSON.parse(rows[0].regexes);
       }
-      if (['testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK)) {
+      if (['testnet4', 'chipnet', 'scalenet'].includes(config.EXPLORER.NETWORK)) {
         rows[0].addresses = []; // pools.json only contains mainnet addresses
       } else if (parse) {
         rows[0].addresses = JSON.parse(rows[0].addresses);

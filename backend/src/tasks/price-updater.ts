@@ -157,8 +157,8 @@ class PriceUpdater {
   }
 
   public async $run(): Promise<void> {
-    if (['testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK)) {
-      // Coins have no value on testnet/signet, so we want to always show 0
+    if (['testnet4', 'chipnet', 'scalenet'].includes(config.EXPLORER.NETWORK)) {
+      // Coins have no value on testnet/chipnet/scalenet, so we want to always show 0
       return;
     }
 

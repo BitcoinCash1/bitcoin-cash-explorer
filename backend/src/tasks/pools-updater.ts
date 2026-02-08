@@ -32,7 +32,7 @@ class PoolsUpdater {
 
   public async updatePoolsJson(): Promise<void> {
     if (
-      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK) === false ||
+      ['mainnet', 'testnet4', 'chipnet', 'scalenet'].includes(config.EXPLORER.NETWORK) === false ||
       config.EXPLORER.ENABLED === false
     ) {
       return;

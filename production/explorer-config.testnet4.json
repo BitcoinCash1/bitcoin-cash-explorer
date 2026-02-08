@@ -1,8 +1,8 @@
 {
   "EXPLORER": {
     "OFFICIAL": true,
-    "NETWORK": "testnet",
-    "BACKEND": "esplora",
+    "NETWORK": "testnet4",
+    "BACKEND": "electrum",
     "HTTP_PORT": 8990,
     "MINED_BLOCKS_CACHE": 144,
     "SPAWN_CLUSTER_PROCS": 0,
@@ -25,52 +25,11 @@
     "USERNAME": "__BITCOIN_RPC_USER__",
     "PASSWORD": "__BITCOIN_RPC_PASS__"
   },
-  "ESPLORA": {
-    "UNIX_SOCKET_PATH": "/bitcoin/socket/esplora-bitcoin-testnet4",
-    "FALLBACK": [
-      "http://node201.hnl.mempool.space:3005",
-      "http://node202.hnl.mempool.space:3005",
-      "http://node203.hnl.mempool.space:3005",
-      "http://node204.hnl.mempool.space:3005",
-      "http://node201.sg1.mempool.space:3005",
-      "http://node202.sg1.mempool.space:3005",
-      "http://node203.sg1.mempool.space:3005",
-      "http://node204.sg1.mempool.space:3005",
-      "http://node201.va1.mempool.space:3005",
-      "http://node202.va1.mempool.space:3005",
-      "http://node203.va1.mempool.space:3005",
-      "http://node204.va1.mempool.space:3005",
-      "http://node205.va1.mempool.space:3005",
-      "http://node206.va1.mempool.space:3005",
-      "http://node207.va1.mempool.space:3005",
-      "http://node208.va1.mempool.space:3005",
-      "http://node209.va1.mempool.space:3005",
-      "http://node210.va1.mempool.space:3005",
-      "http://node211.va1.mempool.space:3005",
-      "http://node212.va1.mempool.space:3005",
-      "http://node213.va1.mempool.space:3005",
-      "http://node214.va1.mempool.space:3005",
-      "http://node201.fra.mempool.space:3005",
-      "http://node202.fra.mempool.space:3005",
-      "http://node203.fra.mempool.space:3005",
-      "http://node204.fra.mempool.space:3005",
-      "http://node205.fra.mempool.space:3005",
-      "http://node206.fra.mempool.space:3005",
-      "http://node207.fra.mempool.space:3005",
-      "http://node208.fra.mempool.space:3005",
-      "http://node209.fra.mempool.space:3005",
-      "http://node210.fra.mempool.space:3005",
-      "http://node211.fra.mempool.space:3005",
-      "http://node212.fra.mempool.space:3005",
-      "http://node213.fra.mempool.space:3005",
-      "http://node214.fra.mempool.space:3005",
-      "http://node201.tk7.mempool.space:3005",
-      "http://node202.tk7.mempool.space:3005",
-      "http://node203.tk7.mempool.space:3005",
-      "http://node204.tk7.mempool.space:3005",
-      "http://node205.tk7.mempool.space:3005",
-      "http://node206.tk7.mempool.space:3005"
-    ]
+  "ELECTRUM": {
+    "HOST": "127.0.0.1",
+    "PORT": 50005,
+    "//": "What about running electrum for testnet4?",
+    "TLS_ENABLED": false
   },
   "DATABASE": {
     "ENABLED": true,
@@ -78,7 +37,7 @@
     "SOCKET": "/var/run/mysql/mysql.sock",
     "USERNAME": "__EXPLORER__TESTNET4_USER__",
     "PASSWORD": "__EXPLORER__TESTNET4_PASS__",
-    "DATABASE": "mempool_testnet4"
+    "DATABASE": "explorer_testnet4"
   },
   "STATISTICS": {
     "ENABLED": true,

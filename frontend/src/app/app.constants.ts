@@ -196,7 +196,7 @@ export const specialBlocks = {
   '0': {
     labelEvent: 'Genesis',
     labelEventCompleted: 'The Genesis of Bitcoin',
-    networks: ['mainnet', 'testnet', 'testnet4'],
+    networks: ['mainnet', 'testnet4', 'chipnet'],
   },
   '124721': {
     labelEvent: 'First miner burn',
@@ -213,7 +213,7 @@ export const specialBlocks = {
   '210000': {
     labelEvent: "Bitcoin's 1st Halving",
     labelEventCompleted: 'Block Subsidy has halved to 25 BTC per block',
-    networks: ['mainnet', 'testnet', 'testnet4'],
+    networks: ['mainnet', 'testnet4', 'chipnet'],
   },
   '409008': {
     labelEvent: 'Biggest fee',
@@ -224,7 +224,7 @@ export const specialBlocks = {
   '420000': {
     labelEvent: "Bitcoin's 2nd Halving",
     labelEventCompleted: 'Block Subsidy has halved to 12.5 BTC per block',
-    networks: ['mainnet', 'testnet', 'testnet4'],
+    networks: ['mainnet', 'testnet4', 'chipnet'],
   },
   '478559': {
     labelEvent:
@@ -284,7 +284,7 @@ export const specialBlocks = {
   '630000': {
     labelEvent: "Bitcoin Cash's 3rd Halving",
     labelEventCompleted: 'Block Subsidy has halved to 6.25 BCH per block',
-    networks: ['mainnet', 'testnet', 'testnet4'],
+    networks: ['mainnet', 'testnet4', 'chipnet'],
   },
   '635259': {
     labelEvent: 'May 2020 Upgrade',
@@ -319,7 +319,7 @@ export const specialBlocks = {
   '840000': {
     labelEvent: "Bitcoin Cash's 4th Halving",
     labelEventCompleted: 'Block Subsidy has halved to 3.125 BCH per block',
-    networks: ['mainnet', 'testnet', 'testnet4'],
+    networks: ['mainnet', 'testnet4', 'chipnet'],
   },
   '845891': {
     labelEvent: 'May 2024 Upgrade',
@@ -336,57 +336,57 @@ export const specialBlocks = {
   '1050000': {
     labelEvent: "Bitcoin Cash's 5th Halving",
     labelEventCompleted: 'Block Subsidy has halved to 1.5625 BCH per block',
-    networks: ['mainnet', 'testnet', 'testnet4'],
+    networks: ['mainnet', 'testnet4', 'chipnet'],
   },
   '1260000': {
     labelEvent: "Bitcoin Cash's 6th Halving",
     labelEventCompleted: 'Block Subsidy has halved to 0.78125 BCH per block',
-    networks: ['mainnet', 'testnet', 'testnet4'],
+    networks: ['mainnet', 'testnet4', 'chipnet'],
   },
   '1470000': {
     labelEvent: "Bitcoin Cash's 7th Halving",
     labelEventCompleted: 'Block Subsidy has halved to 0.390625 BCH per block',
-    networks: ['mainnet', 'testnet', 'testnet4'],
+    networks: ['mainnet', 'testnet4', 'chipnet'],
   },
   '1680000': {
     labelEvent: "Bitcoin Cash's 8th Halving",
     labelEventCompleted: 'Block Subsidy has halved to 0.1953125 BCH per block',
-    networks: ['mainnet', 'testnet', 'testnet4'],
+    networks: ['mainnet', 'testnet4', 'chipnet'],
   },
   '1890000': {
     labelEvent: "Bitcoin Cash's 9th Halving",
     labelEventCompleted: 'Block Subsidy has halved to 0.09765625 BCH per block',
-    networks: ['mainnet', 'testnet', 'testnet4'],
+    networks: ['mainnet', 'testnet4', 'chipnet'],
   },
   '2100000': {
     labelEvent: "Bitcoin Cash's 10th Halving",
     labelEventCompleted: 'Block Subsidy has halved to 0.04882812 BCH per block',
-    networks: ['mainnet', 'testnet', 'testnet4'],
+    networks: ['mainnet', 'testnet4', 'chipnet'],
   },
   '2310000': {
     labelEvent: "Bitcoin Cash's 11th Halving",
     labelEventCompleted: 'Block Subsidy has halved to 0.02441406 BCH per block',
-    networks: ['mainnet', 'testnet', 'testnet4'],
+    networks: ['mainnet', 'testnet4', 'chipnet'],
   },
   '2520000': {
     labelEvent: "Bitcoin Cash's 12th Halving",
     labelEventCompleted: 'Block Subsidy has halved to 0.01220703 BCH per block',
-    networks: ['mainnet', 'testnet', 'testnet4'],
+    networks: ['mainnet', 'testnet4', 'chipnet'],
   },
   '2730000': {
     labelEvent: "Bitcoin Cash's 13th Halving",
     labelEventCompleted: 'Block Subsidy has halved to 0.00610351 BCH per block',
-    networks: ['mainnet', 'testnet', 'testnet4'],
+    networks: ['mainnet', 'testnet4', 'chipnet'],
   },
   '2940000': {
     labelEvent: "Bitcoin Cash's 14th Halving",
     labelEventCompleted: 'Block Subsidy has halved to 0.00305175 BCH per block',
-    networks: ['mainnet', 'testnet', 'testnet4'],
+    networks: ['mainnet', 'testnet4', 'chipnet'],
   },
   '3150000': {
     labelEvent: "Bitcoin Cash's 15th Halving",
     labelEventCompleted: 'Block Subsidy has halved to 0.00152587 BCH per block',
-    networks: ['mainnet', 'testnet', 'testnet4'],
+    networks: ['mainnet', 'testnet4', 'chipnet'],
   },
 };
 

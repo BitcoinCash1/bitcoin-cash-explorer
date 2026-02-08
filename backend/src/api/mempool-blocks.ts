@@ -58,7 +58,7 @@ class MempoolBlocks {
   }
 
   public async updatePools$(): Promise<void> {
-    if (['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK) === false) {
+    if (['mainnet', 'testnet4', 'chipnet', 'scalenet'].includes(config.EXPLORER.NETWORK) === false) {
       this.pools = {};
       return;
     }
