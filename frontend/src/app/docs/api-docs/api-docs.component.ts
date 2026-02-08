@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { Env, StateService } from '@app/services/state.service';
 import { Observable, merge, of, Subject, Subscription } from 'rxjs';
-import { tap, takeUntil } from 'rxjs/operators';
+import { tap } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 import {
   faqData,
