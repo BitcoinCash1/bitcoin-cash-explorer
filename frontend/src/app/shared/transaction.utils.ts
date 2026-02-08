@@ -779,9 +779,7 @@ export function getTransactionFlags(
 function getDustThreshold(scriptpubkey: string): number {
   let dustSize = scriptpubkey.length / 2;
   dustSize += getVarIntLength(dustSize);
-  // the 148 mentioned above
-  dustSize += 32 + 4 + 1 + 107 + 4;
-
+  dustSize += 148; // See description above
   return DUST_RELAY_TX_FEE * dustSize;
 }
 

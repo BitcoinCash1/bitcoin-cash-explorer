@@ -17,14 +17,14 @@ import { getVarIntLength, opcodes, parseMultisigScript } from '../utils/bitcoin-
 import { IPublicApi } from './bitcoin/public-api.interface';
 
 // Bitcoin Cash Node default policy settings
-const MAX_STANDARD_TX_SIZE = 32_000_000; // Min. tx size
+const MAX_STANDARD_TX_SIZE = 32_000_000; // Max. tx size (actually min.) without ABLA taken into account
 const MAX_BLOCK_SIGOPS_COST = 80_000;
 const MAX_STANDARD_TX_SIGOPS_COST = MAX_BLOCK_SIGOPS_COST / 5;
 const MAX_P2SH_SIGOPS = 15;
 const MAX_STANDARD_SCRIPTSIG_SIZE = 1650;
 const DUST_RELAY_TX_FEE = 3;
 const DEFAULT_PERMIT_BAREMULTISIG = true;
-const MAX_TX_LEGACY_SIGOPS = 2_500 * 4; // witness-adjusted sigops
+const MAX_TX_LEGACY_SIGOPS = 20_000; // Before 2020-MAY-15 upgrade
 const MAX_TX_BYTES = 1_000_000;
 const MAX_SCRIPT_SIZE = 1650;
 const VALID_VERSIONS = new Set([1, 2]);
@@ -146,12 +146,6 @@ export class Common {
       if (['nonstandard', 'provably_unspendable', 'empty'].includes(vout.scriptpubkey_type)) {
         // (non-standard output type)
         return true;
-      } else if (vout.scriptpubkey_type === 'unknown') {
-        // undefined segwit version/length combinations are actually standard in outputs
-        // https://github.com/bitcoin/bitcoin/blob/2c79abc7ad4850e9e3ba32a04c530155cda7f980/src/script/interpreter.cpp#L1950-L1951
-        if (vout.scriptpubkey.startsWith('00') || !this.isWitnessProgram(vout.scriptpubkey)) {
-          return true;
-        }
       } else if (vout.scriptpubkey_type === 'multisig') {
         if (!DEFAULT_PERMIT_BAREMULTISIG) {
           // bare-multisig
@@ -172,14 +166,8 @@ export class Common {
         let dustSize = vout.scriptpubkey.length / 2;
         // add varint length overhead
         dustSize += getVarIntLength(dustSize);
-        // add value size
-        dustSize += 8;
-        if (Common.isWitnessProgram(vout.scriptpubkey)) {
-          dustSize += 67;
-        } else {
-          dustSize += 148;
-        }
-        if (vout.value < dustSize * DUST_RELAY_TX_FEE) {
+        dustSize += 148;
+        if (vout.value < DUST_RELAY_TX_FEE * dustSize) {
           // under minimum output size
           return !Common.isStandardEphemeralDust(tx, height);
         }
@@ -198,43 +186,21 @@ export class Common {
     return false;
   }
 
-  // A witness program is any valid scriptpubkey that consists of a 1-byte push opcode
-  // followed by a data push between 2 and 40 bytes.
-  // https://github.com/bitcoin/bitcoin/blob/2c79abc7ad4850e9e3ba32a04c530155cda7f980/src/script/script.cpp#L224-L240
-  static isWitnessProgram(scriptpubkey: string): false | { version: number; program: string } {
-    if (scriptpubkey.length < 8 || scriptpubkey.length > 84) {
-      return false;
-    }
-    const version = parseInt(scriptpubkey.slice(0, 2), 16);
-    if ((version !== 0 && version < 0x51) || version > 0x60) {
-      return false;
-    }
-    const push = parseInt(scriptpubkey.slice(2, 4), 16);
-    if (push + 2 === scriptpubkey.length / 2) {
-      return {
-        version: version ? version - 0x50 : 0,
-        program: scriptpubkey.slice(4),
-      };
-    }
-    return false;
-  }
-
   // Individual versioned standardness rules
-
-  static V3_STANDARDNESS_ACTIVATION_HEIGHT = {
+  // TODO: Update for BCH.
+  static V2_STANDARDNESS_ACTIVATION_HEIGHT = {
     testnet4: 42_000,
-    testnet: 2_900_000,
-    signet: 211_000,
+    chipnet: 2_900_000,
+    scalenet: 211_000,
     '': 863_500,
   };
   static isNonStandardVersion(tx: VerboseTransactionExtended, height?: number): boolean {
     let TX_MAX_STANDARD_VERSION = 3;
     if (
       height != null &&
-      this.V3_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK] &&
-      height <= this.V3_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK]
+      this.V2_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK] &&
+      height <= this.V2_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK]
     ) {
-      // V3 transactions were non-standard to spend before v28.x (scheduled for 2024/09/30 https://github.com/bitcoin/bitcoin/issues/29891)
       TX_MAX_STANDARD_VERSION = 2;
     }
 
@@ -244,10 +210,11 @@ export class Common {
     return false;
   }
 
+  // TODO: Update for BCH.
   static ANCHOR_STANDARDNESS_ACTIVATION_HEIGHT = {
     testnet4: 42_000,
-    testnet: 2_900_000,
-    signet: 211_000,
+    chipnet: 2_900_000,
+    scalenet: 211_000,
     '': 863_500,
   };
   static isNonStandardAnchor(vin: IPublicApi.Vin, height?: number): boolean {
@@ -264,10 +231,11 @@ export class Common {
   }
 
   // Ephemeral dust is a new concept that allows a single dust output in a transaction, provided the transaction is zero fee
+  // TODO: Update for BCH.
   static EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT = {
     testnet4: 90_500,
-    testnet: 4_550_000,
-    signet: 260_000,
+    chipnet: 4_550_000,
+    scalenet: 260_000,
     '': 905_000,
   };
   static isStandardEphemeralDust(tx: VerboseTransactionExtended, height?: number): boolean {
@@ -283,10 +251,11 @@ export class Common {
   }
 
   // OP_RETURN size & count limits were lifted in v28.3/v29.2/v30.0
+  // TODO: Update for BCH.
   static OP_RETURN_STANDARDNESS_ACTIVATION_HEIGHT = {
     testnet4: 108_000,
-    testnet: 4_750_000,
-    signet: 276_500,
+    chipnet: 4_750_000,
+    scalenet: 276_500,
     '': 921_000,
   };
   static MAX_DATACARRIER_BYTES = 83;
@@ -303,18 +272,18 @@ export class Common {
     return false;
   }
 
-  // New legacy sigops limit started to be enforced in v30.0
-  static LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT = {
-    testnet4: 108_000,
-    testnet: 4_750_000,
-    signet: 276_500,
-    '': 921_000,
+  // Old SigOps limit removal (is now replaced by SigChecks)
+  static LEGACY_SIGOPS_REMOVAL_ACTIVATION_HEIGHT = {
+    testnet4: 63_5259,
+    chipnet: 63_5259,
+    scalenet: 63_5259,
+    '': 63_5259,
   };
   static isNonStandardLegacySigops(tx: VerboseTransactionExtended, height?: number): boolean {
     if (
       height == null ||
-      (this.LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK] &&
-        height >= this.LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK])
+      (this.LEGACY_SIGOPS_REMOVAL_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK] &&
+        height <= this.LEGACY_SIGOPS_REMOVAL_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK])
     ) {
       if (!transactionUtils.checkSigopsBIP54(tx, MAX_TX_LEGACY_SIGOPS)) {
         return true;
@@ -612,7 +581,7 @@ export class Common {
 
   static indexingEnabled(): boolean {
     return (
-      ['mainnet', 'testnet', 'signet', 'testnet4'].includes(config.EXPLORER.NETWORK) &&
+      ['mainnet', 'testnet4', 'chipnet', 'scalenet'].includes(config.EXPLORER.NETWORK) &&
       config.DATABASE.ENABLED === true &&
       config.EXPLORER.INDEXING_BLOCKS_AMOUNT !== 0
     );
