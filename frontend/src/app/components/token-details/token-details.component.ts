@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { BcmrService } from '@app/services/bcmr.service';
 import { BcmrMetadata } from '@app/interfaces/bcmr-api.interface';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { SeoService } from '@app/services/seo.service';

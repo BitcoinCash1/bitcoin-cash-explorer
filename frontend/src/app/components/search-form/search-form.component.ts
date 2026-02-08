@@ -211,6 +211,7 @@ export class SearchFormComponent implements OnInit {
         const matchesTxId =
           this.regexTransaction.test(searchText) &&
           !this.regexBlockhash.test(searchText);
+        const matchesTokenCategory = matchesTxId;
         const matchesBlockHash = this.regexBlockhash.test(searchText);
         const matchesAddress =
           !matchesTxId && this.regexAddress.test(searchText);
@@ -248,6 +249,7 @@ export class SearchFormComponent implements OnInit {
           dateTime: matchesDateTime,
           unixTimestamp: matchesUnixTimestamp,
           txId: matchesTxId,
+          tokenCategory: matchesTokenCategory,
           blockHash: matchesBlockHash,
           address: matchesAddress,
           publicKey: publicKey,
@@ -274,7 +276,12 @@ export class SearchFormComponent implements OnInit {
 
   selectedResult(result: any): void {
     if (typeof result === 'string') {
-      this.search(result);
+      // Result is a prefixed with "token-"" to ensure we are not going to the txid instead (via the this.search method)
+      if (result.startsWith('token-')) {
+        this.navigate('/token/', result.replace('token-', ''));
+      } else {
+        this.search(result);
+      }
     } else if (
       typeof result === 'number' &&
       result <= this.stateService.latestBlockHeight
@@ -338,7 +345,7 @@ export class SearchFormComponent implements OnInit {
             this.navigate('/block/', data.hash);
           },
           (error) => {
-            console.log(error);
+            console.error(error);
             this.isSearching = false;
           }
         );

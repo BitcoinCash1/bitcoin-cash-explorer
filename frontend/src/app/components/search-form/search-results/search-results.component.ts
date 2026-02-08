@@ -39,6 +39,9 @@ export class SearchResultsComponent implements OnChanges {
         ...this.results.addresses,
         ...this.results.pools,
         ...this.results.otherNetworks,
+        ...(this.results.tokenCategory
+          ? ['token-' + this.results.searchText]
+          : []), // Prefix with token- to avoid conflicts with transactions (txid)
       ];
     }
   }

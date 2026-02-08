@@ -5,7 +5,8 @@
     !results.hashQuickMatch &&
     !results.otherNetworks.length &&
     !results.addresses.length &&
-    !results.pools.length
+    !results.pools.length &&
+    !results.tokenCategory
   "
 >
   <ng-template [ngIf]="results.blockHeight">
@@ -61,6 +62,38 @@
     <button
       (click)="clickItem(0)"
       [class.active]="0 === activeIdx"
+      type="button"
+      role="option"
+      class="dropdown-item"
+    >
+      <ng-container
+        *ngTemplateOutlet="
+          goTo;
+          context: { $implicit: results.searchText | shortenString: 13 }
+        "
+      ></ng-container>
+    </button>
+  </ng-template>
+  <ng-template [ngIf]="results.tokenCategory">
+    <div class="card-title" i18n="search.bitcoin-cashtoken">
+      {{ networkName }} CashToken
+    </div>
+    <button
+      (click)="
+        clickItem(
+          results.hashQuickMatch +
+            results.addresses.length +
+            results.pools.length +
+            results.otherNetworks.length
+        )
+      "
+      [class.active]="
+        results.hashQuickMatch +
+          results.addresses.length +
+          results.pools.length +
+          results.otherNetworks.length ===
+        activeIdx
+      "
       type="button"
       role="option"
       class="dropdown-item"
