@@ -168,8 +168,7 @@ export class Common {
         dustSize += getVarIntLength(dustSize);
         dustSize += 148;
         if (vout.value < DUST_RELAY_TX_FEE * dustSize) {
-          // under minimum output size
-          return !Common.isStandardEphemeralDust(tx, height);
+          // TODO: Update for BCH. BCH also doesn't have Ephemeral dust
         }
       }
     }
@@ -225,26 +224,6 @@ export class Common {
       vin.prevout?.scriptpubkey === '51024e73'
     ) {
       // anchor outputs were non-standard to spend before v28.x (scheduled for 2024/09/30 https://github.com/bitcoin/bitcoin/issues/29891)
-      return true;
-    }
-    return false;
-  }
-
-  // Ephemeral dust is a new concept that allows a single dust output in a transaction, provided the transaction is zero fee
-  // TODO: Update for BCH.
-  static EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT = {
-    testnet4: 90_500,
-    chipnet: 4_550_000,
-    scalenet: 260_000,
-    '': 905_000,
-  };
-  static isStandardEphemeralDust(tx: VerboseTransactionExtended, height?: number): boolean {
-    if (
-      tx.fee === 0 &&
-      (height == null ||
-        (this.EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK] &&
-          height >= this.EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT[config.EXPLORER.NETWORK]))
-    ) {
       return true;
     }
     return false;

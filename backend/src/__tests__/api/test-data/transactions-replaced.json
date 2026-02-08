@@ -50,7 +50,6 @@
             }
         ],
         "size": 350,
-        "weight": 1400,
         "fee": 8750,
         "status": {
             "confirmed": false
@@ -110,7 +109,6 @@
             }
         ],
         "size": 225,
-        "weight": 573,
         "fee": 584,
         "status": {
             "confirmed": false

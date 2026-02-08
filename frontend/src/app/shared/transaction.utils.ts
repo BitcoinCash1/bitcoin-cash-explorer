@@ -434,8 +434,7 @@ export function isNonStandard(
       vout.scriptpubkey_type !== 'op_return' &&
       isDustOutput(vout.value, vout.scriptpubkey)
     ) {
-      // under minimum output size
-      return !isStandardEphemeralDust(tx, height, network);
+      // TODO: Update for BCH. BCH also doesn't have Ephemeral dust
     }
   }
 
@@ -502,29 +501,6 @@ function isNonStandardAnchor(
     vin.prevout?.scriptpubkey === '51024e73'
   ) {
     // anchor outputs were non-standard to spend before v28.x (scheduled for 2024/09/30 https://github.com/bitcoin/bitcoin/issues/29891)
-    return true;
-  }
-  return false;
-}
-
-// Ephemeral dust is a new concept that allows a single dust output in a transaction, provided the transaction is zero fee
-const EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT = {
-  testnet4: 90_500,
-  testnet: 4_550_000,
-  signet: 260_000,
-  '': 905_000,
-};
-function isStandardEphemeralDust(
-  tx: Transaction,
-  height?: number,
-  network?: string
-): boolean {
-  if (
-    tx.fee === 0 &&
-    (height == null ||
-      (EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT[network] &&
-        height >= EPHEMERAL_DUST_STANDARDNESS_ACTIVATION_HEIGHT[network]))
-  ) {
     return true;
   }
   return false;

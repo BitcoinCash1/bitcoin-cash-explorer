@@ -37,7 +37,6 @@
             }
         ],
         "size": 224,
-        "weight": 572,
         "fee": 584,
         "status": {
             "confirmed": false
@@ -208,7 +207,6 @@
             }
         ],
         "size": 1375,
-        "weight": 2605,
         "fee": 691,
         "status": {
             "confirmed": false
@@ -270,7 +268,6 @@
             }
         ],
         "size": 240,
-        "weight": 633,
         "sigops": 1,
         "fee": 4000,
         "status": {
@@ -500,7 +497,6 @@
             }
         ],
         "size": 3500,
-        "weight": 8186,
         "sigops": 115,
         "fee": 71294,
         "status": {
