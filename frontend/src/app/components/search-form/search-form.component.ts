@@ -276,7 +276,7 @@ export class SearchFormComponent implements OnInit {
 
   selectedResult(result: any): void {
     if (typeof result === 'string') {
-      // Result is a prefixed with "token-"" to ensure we are not going to the txid instead (via the this.search method)
+      // Result is a prefixed with "token-" to ensure we are not going to the transaction (/tx/) instead
       if (result.startsWith('token-')) {
         this.navigate('/token/', result.replace('token-', ''));
       } else {
