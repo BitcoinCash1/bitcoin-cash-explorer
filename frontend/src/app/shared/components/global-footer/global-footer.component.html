@@ -27,7 +27,12 @@
         </div>
         <p class="explore-tagline-mobile">
           &copy; Created by:
-          <a target="_blank" href="https://melroy.org">Melroy van den Berg</a>
+          <a
+            target="_blank"
+            href="https://melroy.org"
+            aria-label="Visit creator website"
+            >Melroy van den Berg</a
+          >
         </p>
         <div
           class="site-options language-selector d-flex justify-content-center align-items-center"
@@ -61,6 +66,7 @@
             class="btn btn-purple sponsor d-none justify-content-center"
             [ngClass]="isServicesPage ? 'd-lg-flex' : 'd-md-flex'"
             [routerLink]="['/login']"
+            aria-label="Sign in to your account"
           >
             <span *ngIf="user" i18n="shared.my-account" class="nowrap"
               >My Account</span
@@ -85,6 +91,7 @@
           class="btn btn-purple sponsor d-flex justify-content-center ml-auto mr-auto mt-0 mb-2"
           [ngClass]="isServicesPage ? 'd-lg-none' : 'd-md-none'"
           [routerLink]="['/login']"
+          aria-label="Sign in to your account"
         >
           <span *ngIf="user" i18n="shared.my-account" class="nowrap"
             >My Account</span
@@ -95,7 +102,12 @@
         </a>
         <p class="explore-tagline-desktop">
           &copy; Created by:
-          <a target="_blank" href="https://melroy.org">Melroy van den Berg</a>
+          <a
+            target="_blank"
+            href="https://melroy.org"
+            aria-label="Visit creator website"
+            >Melroy van den Berg</a
+          >
         </p>
       </div>
     </div>
@@ -306,6 +318,7 @@
           href="https://t.me/bchexplorer"
           target="_blank"
           title="BCH Explorer on Telegram"
+          aria-label="BCH Explorer on Telegram"
           ><svg
             style="width: 32px"
             width="32"
@@ -337,6 +350,7 @@
           href="https://x.com/bchexplorer"
           target="_blank"
           title="BCH Explorer on X"
+          aria-label="BCH Explorer on X"
           ><svg
             width="23"
             height="23"
@@ -354,6 +368,7 @@
           href="https://matrix.to/#/#bchexplorer:melroy.org"
           target="_blank"
           title="BCH Explorer on Matrix chat"
+          aria-label="BCH Explorer on Matrix chat"
           ><svg
             fill="#fff"
             role="img"
@@ -370,6 +385,7 @@
           href="https://mastodon.melroy.org/@bchexplorer"
           target="_blank"
           title="BCH Explorer on Mastodon"
+          aria-label="BCH Explorer on Mastodon"
           ><svg
             role="img"
             style="width: 28px"
@@ -389,6 +405,7 @@
           href="https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer"
           title="Source Code on GitLab"
           target="_blank"
+          aria-label="Source Code on GitLab"
           ><svg
             xmlns="http://www.w3.org/2000/svg"
             style="width: 42px"
