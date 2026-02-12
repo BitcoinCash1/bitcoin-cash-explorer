@@ -32,6 +32,7 @@
           i18n-ngbTooltip="Next Block"
           ngbTooltip="Next Block"
           placement="bottom"
+          aria-label="Navigate to next block"
         >
           <fa-icon [icon]="['fas', 'angle-left']" [fixedWidth]="true"></fa-icon>
         </a>
@@ -55,6 +56,7 @@
           i18n-ngbTooltip="Previous Block"
           ngbTooltip="Previous Block"
           placement="bottom"
+          aria-label="Navigate to previous block"
         >
           <fa-icon
             [icon]="['fas', 'angle-right']"
@@ -131,6 +133,7 @@
                     class="info-link"
                     [routerLink]="['/docs/faq' | relativeUrl]"
                     fragment="what-is-block-health"
+                    aria-label="Learn about block health"
                     ><fa-icon
                       [icon]="['fas', 'info-circle']"
                       [fixedWidth]="true"
@@ -561,6 +564,7 @@
               class="info-link"
               [routerLink]="['/docs/faq' | relativeUrl]"
               fragment="how-do-block-audits-work"
+              aria-label="Learn about block audits"
               ><fa-icon
                 [icon]="['fas', 'info-circle']"
                 [fixedWidth]="true"
@@ -637,6 +641,7 @@
                         [routerLink]="['/docs/faq/' | relativeUrl]"
                         fragment="what-is-abla"
                         title="What is ABLA?"
+                        aria-label="Learn about ABLA (Adjusted Block Size Limit Algorithm)"
                       >
                         <fa-icon
                           [icon]="['fas', 'info-circle']"
@@ -660,6 +665,7 @@
                         [routerLink]="['/docs/faq/' | relativeUrl]"
                         fragment="what-is-abla"
                         title="What is ABLA?"
+                        aria-label="Learn about ABLA (Adjusted Block Size Limit Algorithm)"
                       >
                         <fa-icon
                           [icon]="['fas', 'info-circle']"
@@ -704,6 +710,7 @@
                       href="{{
                         network === '' ? '' : '/' + network
                       }}/api/block/{{ block.id }}/header"
+                      aria-label="View block header hex in new window"
                       ><fa-icon
                         [icon]="['fas', 'external-link-alt']"
                         [fixedWidth]="true"

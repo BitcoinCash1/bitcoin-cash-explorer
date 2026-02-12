@@ -30,6 +30,7 @@
         [ngClass]="{ 'dual-logos': enterpriseInfo?.dualLogo }"
         [routerLink]="['/' | relativeUrl]"
         (click)="brandClick($event)"
+        aria-label="Bitcoin Cash Explorer - Home"
       >
         <ng-container
           *ngIf="{ val: connectionState$ | async } as connectionState"
@@ -67,6 +68,7 @@
         }"
         [routerLink]="['/' | relativeUrl]"
         (click)="brandClick($event)"
+        aria-label="Bitcoin Cash Explorer - Home"
       >
         <ng-container
           *ngIf="{ val: connectionState$ | async } as connectionState"
@@ -197,6 +199,7 @@
               class="nav-link"
               [routerLink]="['/' | relativeUrl]"
               (click)="collapse()"
+              aria-label="Home"
             >
               <div class="svg-wrapper">
                 <app-svg-images
@@ -218,6 +221,7 @@
               class="nav-link"
               [routerLink]="['/mining' | relativeUrl]"
               (click)="collapse()"
+              aria-label="Mining Dashboard"
             >
               <div class="svg-wrapper">
                 <app-svg-images
@@ -233,6 +237,7 @@
               class="nav-link"
               [routerLink]="['/blocks' | relativeUrl]"
               (click)="collapse()"
+              aria-label="Block list"
             >
               <div class="svg-wrapper">
                 <app-svg-images
@@ -248,6 +253,7 @@
               class="nav-link"
               [routerLink]="['/graphs' | relativeUrl]"
               (click)="collapse()"
+              aria-label="Graphs"
             >
               <div class="svg-wrapper">
                 <app-svg-images
@@ -272,6 +278,7 @@
               class="nav-link"
               [routerLink]="['/faucet' | relativeUrl]"
               (click)="collapse()"
+              aria-label="Faucet"
             >
               <div class="svg-wrapper">
                 <app-svg-images
@@ -292,6 +299,7 @@
               class="nav-link"
               [routerLink]="['/docs' | relativeUrl]"
               (click)="collapse()"
+              aria-label="Documentation"
             >
               <div class="svg-wrapper">
                 <app-svg-images
@@ -303,7 +311,7 @@
             </a>
           </li>
           <li class="nav-item" routerLinkActive="active" id="btn-about">
-            <a class="nav-link" [routerLink]="['/about']" (click)="collapse()">
+            <a class="nav-link" [routerLink]="['/about']" (click)="collapse()" aria-label="About">
               <div class="svg-wrapper">
                 <app-svg-images
                   name="nav-info-circle"
