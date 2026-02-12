@@ -36,13 +36,21 @@
         </ng-container>
       </div>
       <div id="divider" [hidden]="pageIndex > 0">
-        <button class="block-display-toggle" (click)="toggleBlockDisplayMode()" aria-label="Toggle block display mode">
+        <button
+          class="block-display-toggle"
+          (click)="toggleBlockDisplayMode()"
+          aria-label="Toggle block display mode"
+        >
           <fa-icon
             [icon]="['fas', 'exchange-alt']"
             [fixedWidth]="true"
           ></fa-icon>
         </button>
-        <button class="time-toggle" (click)="toggleTimeDirection()" aria-label="Toggle time direction">
+        <button
+          class="time-toggle"
+          (click)="toggleTimeDirection()"
+          aria-label="Toggle time direction"
+        >
           <fa-icon
             [icon]="['fas', 'exchange-alt']"
             [fixedWidth]="true"

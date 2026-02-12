@@ -1,9 +1,9 @@
 <div [formGroup]="amountForm" class="text-small text-center">
   <select
-    formControlName="mode"
+    formControlName="amountMode"
     class="custom-select custom-select-sm form-control-secondary form-control mx-auto"
     style="width: 70px"
-    (change)="changeMode()"
+    (change)="changeAmountMode()"
   >
     <option value="bch" i18n="shared.bch|BCH">BCH</option>
     <option value="sats" i18n="shared.sats">sats</option>
