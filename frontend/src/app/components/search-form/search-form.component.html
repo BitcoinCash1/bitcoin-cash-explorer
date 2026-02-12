@@ -28,6 +28,7 @@
         [disabled]="isSearching"
         type="submit"
         class="btn btn-block btn-purple"
+        aria-label="Search"
       >
         <fa-icon
           *ngIf="!(isTypeaheading$ | async); else searchLoading"

@@ -11,6 +11,7 @@
               class="btn p-0 pl-2"
               style="margin: 0 0 4px 0px"
               (click)="onSaveChart('mempool')"
+              aria-label="Download mempool chart"
             >
               <fa-icon
                 [icon]="['fas', 'download']"
@@ -200,6 +201,7 @@
                   id="dropdownFees"
                   ngbDropdownAnchor
                   (click)="myDrop.toggle()"
+                  aria-label="Filter fees"
                 >
                   <fa-icon
                     [icon]="['fas', 'filter']"
@@ -250,7 +252,7 @@
                 </div>
               </div>
 
-              <button (click)="invertGraph()" class="btn btn btn-purple btn-sm">
+              <button (click)="invertGraph()" class="btn btn btn-purple btn-sm" aria-label="Invert graph">
                 <fa-icon
                   [icon]="['fas', 'exchange-alt']"
                   [rotate]="90"
@@ -293,6 +295,7 @@
                 class="btn p-0 pl-2"
                 style="margin: 0 0 4px 0px"
                 (click)="onSaveChart('incoming')"
+                aria-label="Download transaction bytes chart"
               >
                 <fa-icon
                   [icon]="['fas', 'download']"

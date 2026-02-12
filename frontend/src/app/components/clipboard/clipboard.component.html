@@ -5,6 +5,7 @@
     [disabled]="text === ''"
     style="box-shadow: none"
     (click)="copyText()"
+    aria-label="Copy text to clipboard"
   >
     <span style="position: relative; top: -2px; left: 1px">
       <app-svg-images
@@ -28,6 +29,7 @@
       class="btn btn-sm btn-link pt-0 {{ leftPadding ? 'padding' : '' }}"
       style="box-shadow: none"
       (click)="copyText()"
+      aria-label="Copy text to clipboard"
     >
       <app-svg-images
         name="clippy"
