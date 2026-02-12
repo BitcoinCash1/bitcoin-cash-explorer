@@ -1196,8 +1196,6 @@ User-agent: allenai.org
 Disallow:/
 User-agent: anthropic-ai
 Disallow:/
-User-agent: archive.org_bot
-Disallow:/
 User-agent: arquivo-web-crawler
 Disallow:/
 User-agent: arquivo.pt
