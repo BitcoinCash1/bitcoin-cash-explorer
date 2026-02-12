@@ -4,6 +4,7 @@
     class="custom-select custom-select-sm form-control-secondary form-control mx-auto"
     style="width: 85px"
     (change)="changeFiat()"
+    aria-label="Select fiat currency"
   >
     <option *ngFor="let currency of currencies" [value]="currency[1].code">
       {{ currency[1].code }}

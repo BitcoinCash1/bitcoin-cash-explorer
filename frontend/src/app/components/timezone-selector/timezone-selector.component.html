@@ -8,6 +8,7 @@
     class="custom-select custom-select-sm form-control-secondary form-control mx-auto"
     style="width: 110px"
     (change)="changeMode()"
+    aria-label="Select timezone"
   >
     <option value="local">
       UTC{{ localTimezoneOffset !== "+0" ? localTimezoneOffset : "" }}
