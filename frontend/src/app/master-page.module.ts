@@ -6,7 +6,6 @@ import {
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
 } from '@angular/router';
-import { MasterPageComponent } from '@components/master-page/master-page.component';
 import { SharedModule } from '@app/shared/shared.module';
 
 import { StartComponent } from '@components/start/start.component';
@@ -30,7 +29,10 @@ const browserWindowEnv = browserWindow.__env || {};
 const routes: Routes = [
   {
     path: '',
-    component: MasterPageComponent,
+    loadComponent: () =>
+      import('@components/master-page/master-page.component').then(
+        (m) => m.MasterPageComponent
+      ),
     children: [
       {
         path: 'mining/blocks',
@@ -190,10 +192,9 @@ if (
   exports: [RouterModule],
 })
 export class MasterPageRoutingModule {}
-
 @NgModule({
-  imports: [CommonModule, MasterPageRoutingModule, SharedModule],
-  declarations: [MasterPageComponent],
-  exports: [MasterPageComponent],
+  imports: [MasterPageRoutingModule],
+  declarations: [],
+  exports: [],
 })
 export class MasterPageModule {}
