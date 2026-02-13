@@ -1,13 +1,10 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import {
   Routes,
   RouterModule,
   ActivatedRouteSnapshot,
   RouterStateSnapshot,
 } from '@angular/router';
-import { SharedModule } from '@app/shared/shared.module';
-
 import { StartComponent } from '@components/start/start.component';
 import { PushTransactionComponent } from '@components/push-transaction/push-transaction.component';
 import { TestTransactionsComponent } from '@components/test-transactions/test-transactions.component';
@@ -192,9 +189,3 @@ if (
   exports: [RouterModule],
 })
 export class MasterPageRoutingModule {}
-@NgModule({
-  imports: [MasterPageRoutingModule],
-  declarations: [],
-  exports: [],
-})
-export class MasterPageModule {}

@@ -1,6 +1,4 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { AppPreloadingStrategy } from '@app/app.preloading-strategy';
+import { Routes } from '@angular/router';
 import { BlockViewComponent } from '@components/block-view/block-view.component';
 import { EightBlocksComponent } from '@components/eight-blocks/eight-blocks.component';
 import { MempoolBlockViewComponent } from '@components/mempool-block-view/mempool-block-view.component';
@@ -25,7 +23,9 @@ export const routes: Routes = [
       {
         path: '',
         loadChildren: () =>
-          import('@app/master-page.module').then((m) => m.MasterPageModule),
+          import('@app/master-page.module').then(
+            (m) => m.MasterPageRoutingModule
+          ),
         data: { preload: true },
       },
       {
@@ -70,7 +70,9 @@ export const routes: Routes = [
       {
         path: '',
         loadChildren: () =>
-          import('@app/master-page.module').then((m) => m.MasterPageModule),
+          import('@app/master-page.module').then(
+            (m) => m.MasterPageRoutingModule
+          ),
         data: { preload: true },
       },
       {
@@ -120,7 +122,9 @@ export const routes: Routes = [
       {
         path: '',
         loadChildren: () =>
-          import('@app/master-page.module').then((m) => m.MasterPageModule),
+          import('@app/master-page.module').then(
+            (m) => m.MasterPageRoutingModule
+          ),
         data: { preload: true },
       },
       {
@@ -167,7 +171,7 @@ export const routes: Routes = [
   {
     path: '',
     loadChildren: () =>
-      import('@app/master-page.module').then((m) => m.MasterPageModule),
+      import('@app/master-page.module').then((m) => m.MasterPageRoutingModule),
     data: { preload: true },
   },
   {
@@ -243,15 +247,3 @@ export const routes: Routes = [
     redirectTo: '',
   },
 ];
-
-// @NgModule({
-//   imports: [
-//     RouterModule.forRoot(routes, {
-//       initialNavigation: 'enabledNonBlocking',
-//       scrollPositionRestoration: 'enabled',
-//       anchorScrolling: 'enabled',
-//       preloadingStrategy: AppPreloadingStrategy,
-//     }),
-//   ],
-// })
-// export class AppRoutingModule {}
