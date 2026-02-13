@@ -79,7 +79,7 @@ export class DifficultyTooltipComponent implements OnChanges {
     }
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize(): void {
     this.isMobile = window.innerWidth <= 767.98;
   }

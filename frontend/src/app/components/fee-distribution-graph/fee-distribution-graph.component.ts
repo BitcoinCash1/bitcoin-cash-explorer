@@ -222,7 +222,7 @@ export class FeeDistributionGraphComponent
     };
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize(): void {
     const isSmallScreen = window.innerWidth < 450;
     if (this.smallScreen !== isSmallScreen) {
