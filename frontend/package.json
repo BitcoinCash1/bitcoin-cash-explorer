@@ -57,6 +57,7 @@
   },
   "dependencies": {
     "@angular/animations": "^20.3.16",
+    "@angular/build": "^20.3.16",
     "@angular/cli": "^20.3.14",
     "@angular/common": "^20.3.16",
     "@angular/compiler": "^20.3.16",
@@ -89,7 +90,6 @@
     "zone.js": "~0.15.1"
   },
   "devDependencies": {
-    "@angular/build": "^20.3.16",
     "@angular/compiler-cli": "^20.3.16",
     "@angular/language-service": "^20.3.16",
     "@types/express": "^5.0.1",
