@@ -10,7 +10,7 @@ COPY . .
 RUN apt-get update
 RUN apt-get install -y build-essential rsync
 RUN cp explorer-frontend-config.sample.json explorer-frontend-config.json
-RUN npm install --omit=dev --omit=optional
+RUN npm install --omit=optional
 
 RUN npm run build
 
