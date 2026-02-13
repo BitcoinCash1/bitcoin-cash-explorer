@@ -9,7 +9,7 @@ import { StatusViewComponent } from '@components/status-view/status-view.compone
 import { AddressGroupComponent } from '@components/address-group/address-group.component';
 import { TrackerGuard } from '@app/route-guards';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: 'testnet',
     children: [
@@ -238,23 +238,20 @@ const routes: Routes = [
       import('@app/bitcoin-graphs.module').then((m) => m.BitcoinGraphsModule),
     data: { preload: true },
   },
-];
-
-if (!window['isOfficialSiteBuild']) {
-  routes.push({
+  {
     path: '**',
     redirectTo: '',
-  });
-}
+  },
+];
 
-@NgModule({
-  imports: [
-    RouterModule.forRoot(routes, {
-      initialNavigation: 'enabledNonBlocking',
-      scrollPositionRestoration: 'enabled',
-      anchorScrolling: 'enabled',
-      preloadingStrategy: AppPreloadingStrategy,
-    }),
-  ],
-})
-export class AppRoutingModule {}
+// @NgModule({
+//   imports: [
+//     RouterModule.forRoot(routes, {
+//       initialNavigation: 'enabledNonBlocking',
+//       scrollPositionRestoration: 'enabled',
+//       anchorScrolling: 'enabled',
+//       preloadingStrategy: AppPreloadingStrategy,
+//     }),
+//   ],
+// })
+// export class AppRoutingModule {}

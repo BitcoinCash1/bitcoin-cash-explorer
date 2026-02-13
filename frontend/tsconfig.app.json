@@ -1,8 +1,10 @@
 {
-  "extends": "./tsconfig.base.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": [],
+    "types": [
+      "node"
+    ],
     "paths": {
       "@app/*": ["src/app/*"],
       "@components/*": ["src/app/components/*"],
@@ -10,6 +12,10 @@
       "@interfaces/*": ["src/app/interfaces/*"]
     }
   },
-  "files": ["src/main.ts", "src/polyfills.ts"],
+  "files": [
+    "src/main.ts",
+    "src/polyfills.ts",
+    "src/main.server.ts"
+  ],
   "include": ["src/**/*.ts", "src/**/*.d.ts"]
 }

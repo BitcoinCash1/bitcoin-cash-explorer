@@ -6,9 +6,9 @@ import {
   withInterceptorsFromDi,
 } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule } from '@angular/router';
 import { ZONE_SERVICE } from '@app/injection-tokens';
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from '@components/app/app.component';
+import { App } from '@app/app';
 import { ElectrsApiService } from '@app/services/backend-api.service';
 import { StateService } from '@app/services/state.service';
 import { CacheService } from '@app/services/cache.service';
@@ -34,6 +34,7 @@ import { CapAddressPipe } from '@app/shared/pipes/cap-address-pipe/cap-address-p
 import { AppPreloadingStrategy } from '@app/app.preloading-strategy';
 import { ServicesApiServices } from '@app/services/services-api.service';
 import { DatePipe } from '@angular/common';
+import { routes } from '@app/app.routes';
 
 const providers = [
   ElectrsApiService,
@@ -62,13 +63,18 @@ const providers = [
 ];
 
 @NgModule({
-  declarations: [AppComponent],
-  bootstrap: [AppComponent],
+  declarations: [App],
+  bootstrap: [App],
   imports: [
     BrowserModule,
-    AppRoutingModule,
     BrowserAnimationsModule,
     SharedModule,
+    RouterModule.forRoot(routes, {
+      initialNavigation: 'enabledNonBlocking',
+      scrollPositionRestoration: 'enabled',
+      anchorScrolling: 'enabled',
+      preloadingStrategy: AppPreloadingStrategy,
+    }),
   ],
   providers: [
     provideHttpClient(withInterceptorsFromDi()),

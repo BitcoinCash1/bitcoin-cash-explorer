@@ -1,10 +1,10 @@
 {
-  "extends": "./tsconfig.base.json",
+  "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
     "types": ["node", "@angular/localize"]
   },
-  "files": ["src/test.ts", "src/polyfills.ts"],
+  "files": ["src/test.ts"],
   "exclude": ["./cypress.config.ts", "node_modules", "dist", "cypress"],
   "include": ["src/**/*.spec.ts", "src/**/*.d.ts"]
 }
