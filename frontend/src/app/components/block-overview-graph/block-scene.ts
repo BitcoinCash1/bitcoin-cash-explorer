@@ -999,6 +999,7 @@ class BlockLayout {
         }
       }
     }
+    return null;
   }
 
   // insert only if the tx fits into a fee-appropriate position

@@ -408,6 +408,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                   if (this.displayMode === 'percentage') {
                     return 100;
                   }
+                  return undefined;
                 },
                 splitLine: {
                   lineStyle: {

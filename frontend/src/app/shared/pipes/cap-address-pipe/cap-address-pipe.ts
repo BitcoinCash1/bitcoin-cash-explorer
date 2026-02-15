@@ -7,7 +7,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 export class CapAddressPipe implements PipeTransform {
   transform(str: string, cap: number, leftover: number) {
     if (!str) {
-      return;
+      return undefined;
     }
     if (str.length <= cap) {
       return str;

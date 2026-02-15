@@ -317,7 +317,7 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
             const r = datum[4] as number;
             if (r * scale < 2) {
               // skip items too small to render cleanly
-              return;
+              return undefined;
             }
 
             const valueStr = renderSats(utxo.value, this.stateService.network);

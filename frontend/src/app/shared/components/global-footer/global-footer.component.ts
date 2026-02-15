@@ -124,5 +124,6 @@ export class GlobalFooterComponent implements OnInit, OnDestroy, OnChanges {
           this.networkPaths[thisNetwork] || '/'
       );
     }
+    return undefined;
   }
 }

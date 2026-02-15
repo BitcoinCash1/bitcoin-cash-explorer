@@ -177,7 +177,7 @@ export class HashrateChartPoolsComponent implements OnInit {
         return (lastHashrates[b]?.share || 0) - (lastHashrates[a]?.share || 0);
       } else {
         // tiebreak by pool name
-        b < a;
+        return b < a ? -1 : 1;
       }
     });
 

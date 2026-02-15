@@ -40,9 +40,6 @@ export class CodeTemplateComponent implements OnInit {
 
   npmGithubLink() {
     let npmLink = `https://github.com/mempool/mempool.js`;
-    if (this.network === 'liquid' || this.network === 'liquidtestnet') {
-      npmLink = `https://github.com/mempool/mempool.js/tree/main/npm-liquid-js`;
-    }
     return npmLink;
   }
 
@@ -53,12 +50,8 @@ export class CodeTemplateComponent implements OnInit {
 
   normalizeHostsESModule(codeText: string) {
     if (this.env.BASE_MODULE === 'explorer') {
-      if (['liquid'].includes(this.network)) {
-        codeText = codeText.replace('%{0}', this.network);
-      } else {
-        codeText = codeText.replace('%{0}', 'bitcoin');
-      }
-      if (['', 'main', 'liquid', 'liquidtestnet'].includes(this.network)) {
+      codeText = codeText.replace('%{0}', 'bitcoin');
+      if (['', 'main'].includes(this.network)) {
         codeText = codeText.replace(
           'mempoolJS();',
           `mempoolJS({
@@ -80,12 +73,8 @@ export class CodeTemplateComponent implements OnInit {
 
   normalizeHostsCommonJS(codeText: string) {
     if (this.env.BASE_MODULE === 'explorer') {
-      if (['liquid'].includes(this.network)) {
-        codeText = codeText.replace('%{0}', this.network);
-      } else {
-        codeText = codeText.replace('%{0}', 'bitcoin');
-      }
-      if (['', 'main', 'liquid'].includes(this.network)) {
+      codeText = codeText.replace('%{0}', 'bitcoin');
+      if (['', 'main'].includes(this.network)) {
         codeText = codeText.replace(
           'mempoolJS();',
           `mempoolJS({
@@ -134,12 +123,6 @@ export class CodeTemplateComponent implements OnInit {
           code.codeSampleSignet.esModule
         );
       }
-      if (this.network === 'liquid' || this.network === 'liquidtestnet') {
-        codeText = this.replaceJSPlaceholder(
-          codeText,
-          code.codeSampleLiquid.esModule
-        );
-      }
 
       let importText = `import mempoolJS from "@mempool/mempool.js";`;
 
@@ -151,6 +134,7 @@ const init = async () => {
 
 init();`;
     }
+    return undefined;
   }
 
   wrapCommonJS(code: any) {
@@ -180,12 +164,6 @@ init();`;
         codeText = this.replaceJSPlaceholder(
           codeText,
           code.codeSampleSignet.esModule
-        );
-      }
-      if (this.network === 'liquid' || this.network === 'liquidtestnet') {
-        codeText = this.replaceJSPlaceholder(
-          codeText,
-          code.codeSampleLiquid.esModule
         );
       }
 
@@ -218,6 +196,7 @@ init();`;
   </body>
 </html>`;
     }
+    return undefined;
   }
 
   wrapImportTemplate() {
@@ -250,18 +229,6 @@ yarn add @mempool/mempool.js`;
           code.codeSampleSignet
         );
       }
-      if (this.network === 'liquid') {
-        return this.replaceCurlPlaceholder(
-          code.codeTemplate.curl,
-          code.codeSampleLiquid
-        );
-      }
-      if (this.network === 'liquidtestnet') {
-        return this.replaceCurlPlaceholder(
-          code.codeTemplate.curl,
-          code.codeSampleLiquidTestnet
-        );
-      }
       if (this.network === '' || this.network === 'main') {
         return this.replaceCurlPlaceholder(
           code.codeTemplate.curl,
@@ -269,6 +236,7 @@ yarn add @mempool/mempool.js`;
         );
       }
     }
+    return undefined;
   }
 
   wrapResponse(code: any) {
@@ -283,12 +251,6 @@ yarn add @mempool/mempool.js`;
     }
     if (this.network === 'signet') {
       return code.codeSampleSignet.response;
-    }
-    if (this.network === 'liquid') {
-      return code.codeSampleLiquid.response;
-    }
-    if (this.network === 'liquidtestnet') {
-      return code.codeSampleLiquidTestnet.response;
     }
     return code.codeSampleMainnet.response;
   }

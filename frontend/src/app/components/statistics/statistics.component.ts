@@ -156,6 +156,7 @@ export class StatisticsComponent implements OnInit {
           if (this.radioGroupForm.controls.dateSpan.value === 'all') {
             return this.apiService.listAllTimeStatistics$();
           }
+          return this.apiService.list2HStatistics$();
         })
       )
       .subscribe((mempoolStats: any) => {

@@ -182,6 +182,7 @@ export function needBaseModuleChange(
       toNetwork !== 'signet'
     );
   }
+  return false;
 }
 
 export function getTargetUrl(

@@ -523,7 +523,7 @@ export class BlockOverviewGraphComponent
 
   compileShader(src, type): WebGLShader {
     if (!this.gl) {
-      return;
+      return null;
     }
     const shader = this.gl.createShader(type);
 
@@ -543,7 +543,7 @@ export class BlockOverviewGraphComponent
 
   buildShaderProgram(shaderInfo): WebGLProgram {
     if (!this.gl) {
-      return;
+      return null;
     }
     const program = this.gl.createProgram();
 

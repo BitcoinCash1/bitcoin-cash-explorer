@@ -129,6 +129,7 @@ export function convertRegion(input, to: 'name' | 'abbreviated'): string {
       }
     }
   }
+  return '';
 }
 
 export function haversineDistance(

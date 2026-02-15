@@ -34,7 +34,7 @@ export class FastVertexArray {
 
   insert(sprite: TxSprite): number {
     if (this.destroyed) {
-      return;
+      return undefined;
     }
     this.count++;
 
@@ -82,7 +82,7 @@ export class FastVertexArray {
 
   getData(index: number): Float32Array {
     if (this.destroyed) {
-      return;
+      return null;
     }
     return this.data.subarray(index, this.stride);
   }

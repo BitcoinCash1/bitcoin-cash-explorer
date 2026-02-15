@@ -248,18 +248,18 @@ export function detectScriptTemplate(
   if (multisig) {
     return ScriptTemplates.multisig(multisig.m, multisig.n);
   }
-  return;
+  return undefined;
 }
 
 /** Returns the last push of a script as a number, the push can be OP_0, OP_PUSHNUM_<1-16>, or OP_PUSHBYTES_<1-75> */
 function popScriptNumberOperand(ops: string[]): number | undefined {
   if (!ops.length) {
-    return;
+    return undefined;
   }
 
   const token = ops.pop();
   if (!token) {
-    return;
+    return undefined;
   }
 
   if (token === 'OP_0') {
@@ -269,7 +269,7 @@ function popScriptNumberOperand(ops: string[]): number | undefined {
   if (token.startsWith('OP_PUSHNUM_')) {
     const digits = token.match(/[0-9]+/);
     if (!digits) {
-      return;
+      return undefined;
     }
     return parseInt(digits[0], 10);
   }
@@ -278,7 +278,7 @@ function popScriptNumberOperand(ops: string[]): number | undefined {
     const pushOp = ops.pop();
     const pushBytes = pushOp?.match(/^OP_PUSHBYTES_(\d+)$/);
     if (!pushBytes) {
-      return;
+      return undefined;
     }
 
     const byteCount = parseInt(pushBytes[1], 10);
@@ -287,7 +287,7 @@ function popScriptNumberOperand(ops: string[]): number | undefined {
       !/^[0-9a-fA-F]+$/.test(token) ||
       token.length !== byteCount * 2
     ) {
-      return;
+      return undefined;
     }
 
     let value = 0;
@@ -295,14 +295,14 @@ function popScriptNumberOperand(ops: string[]): number | undefined {
       const byteHex = token.slice(i * 2, i * 2 + 2);
       const byte = parseInt(byteHex, 16);
       if (Number.isNaN(byte)) {
-        return;
+        return undefined;
       }
       value |= byte << (8 * i);
     }
     return value;
   }
 
-  return;
+  return undefined;
 }
 
 /** extracts m and n from a multisig script (asm), returns nothing if it is not a multisig script */
@@ -310,35 +310,35 @@ export function parseMultisigScript(
   script: string
 ): undefined | { m: number; n: number } {
   if (!script) {
-    return;
+    return undefined;
   }
   const ops = script.split(' ');
   if (ops.length < 3 || ops.pop() !== 'OP_CHECKMULTISIG') {
-    return;
+    return undefined;
   }
   const n = popScriptNumberOperand(ops);
   if (n === undefined) {
-    return;
+    return undefined;
   }
   if (ops.length < n * 2 + 1) {
-    return;
+    return undefined;
   }
   // pop n public keys
   for (let i = 0; i < n; i++) {
     if (!/^0((2|3)\w{64}|4\w{128})$/.test(ops.pop() || '')) {
-      return;
+      return undefined;
     }
     if (!/^OP_PUSHBYTES_(33|65)$/.test(ops.pop() || '')) {
-      return;
+      return undefined;
     }
   }
   const m = popScriptNumberOperand(ops);
   if (m === undefined) {
-    return;
+    return undefined;
   }
 
   if (ops.length) {
-    return;
+    return undefined;
   }
 
   return { m, n };
@@ -348,13 +348,13 @@ export function parseTapscriptMultisig(
   script: string
 ): undefined | { m: number; n: number } {
   if (!script) {
-    return;
+    return undefined;
   }
 
   const ops = script.split(' ');
   // At minimum, 2 pubkey group (3 tokens) + m push + final opcode = 8 tokens
   if (ops.length < 8) {
-    return;
+    return undefined;
   }
 
   const finalOp = ops.pop();
@@ -368,12 +368,12 @@ export function parseTapscriptMultisig(
       'OP_EQUALVERIFY',
     ].includes(finalOp)
   ) {
-    return;
+    return undefined;
   }
 
   let m = popScriptNumberOperand(ops);
   if (m === undefined) {
-    return;
+    return undefined;
   }
 
   if (finalOp === 'OP_GREATERTHAN') {
@@ -381,11 +381,11 @@ export function parseTapscriptMultisig(
   }
 
   if (ops.length % 3 !== 0) {
-    return;
+    return undefined;
   }
   const n = ops.length / 3;
   if (n < 1) {
-    return;
+    return undefined;
   }
 
   for (let i = 0; i < n; i++) {
@@ -394,19 +394,19 @@ export function parseTapscriptMultisig(
     const sigOp = ops.shift();
 
     if (push !== 'OP_PUSHBYTES_32') {
-      return;
+      return undefined;
     }
     if (!/^[0-9a-fA-F]{64}$/.test(pubkey)) {
-      return;
+      return undefined;
     }
     // OP_CHECKSIGADD is taproot, BCH doesn't have OP_CHECKSIGADD
     if (sigOp !== (i === 0 ? 'OP_CHECKSIG' : 'OP_CHECKSIGADD')) {
-      return;
+      return undefined;
     }
   }
 
   if (ops.length) {
-    return;
+    return undefined;
   }
 
   return { m, n };
@@ -416,17 +416,17 @@ export function parseTapscriptUnanimousMultisig(
   script: string
 ): undefined | number {
   if (!script) {
-    return;
+    return undefined;
   }
 
   const ops = script.split(' ');
   // At minimum, 2 pubkey group (3 tokens) = 6 tokens
   if (ops.length < 6) {
-    return;
+    return undefined;
   }
 
   if (ops.length % 3 !== 0) {
-    return;
+    return undefined;
   }
 
   const n = ops.length / 3;
@@ -437,25 +437,25 @@ export function parseTapscriptUnanimousMultisig(
     const sigOp = ops.shift();
 
     if (pushOp !== 'OP_PUSHBYTES_32') {
-      return;
+      return undefined;
     }
     if (!/^[0-9a-fA-F]{64}$/.test(pubkey)) {
-      return;
+      return undefined;
     }
     if (i < n - 1) {
       if (sigOp !== 'OP_CHECKSIGVERIFY') {
-        return;
+        return undefined;
       }
     } else {
       // Last opcode can be either CHECKSIG or CHECKSIGVERIFY
       if (!(sigOp === 'OP_CHECKSIGVERIFY' || sigOp === 'OP_CHECKSIG')) {
-        return;
+        return undefined;
       }
     }
   }
 
   if (ops.length) {
-    return;
+    return undefined;
   }
 
   return n;

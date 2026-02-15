@@ -220,6 +220,7 @@ export class PushTransactionComponent implements OnInit {
         return false;
       }
     }
+    return false;
   }
 
   private base64UrlToU8Array(base64Url: string): Uint8Array {

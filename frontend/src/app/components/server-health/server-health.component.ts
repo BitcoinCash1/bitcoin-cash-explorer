@@ -161,6 +161,7 @@ export class ServerHealthComponent implements OnInit {
       const match = subver.match(/:(\d+\.\d+\.\d+)/);
       return match ? match[1] : null;
     }
+    return undefined;
   }
 
   private parseOsVersion(osVersion: string): string | undefined {
@@ -168,6 +169,7 @@ export class ServerHealthComponent implements OnInit {
       const match = osVersion.match(/(\d+)\.(\d+)(?:\.(\d+))?/);
       return match ? `${match[1]}.${match[2]}.${match[3] ?? 0}` : null;
     }
+    return undefined;
   }
 
   public shortenVersion(version: string): string {
