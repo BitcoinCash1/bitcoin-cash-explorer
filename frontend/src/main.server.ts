@@ -1,10 +1,11 @@
-import '@angular/localize/init';
-import { enableProdMode } from '@angular/core';
-import { environment } from './environments/environment';
+import { provideZoneChangeDetection } from '@angular/core';
+import { BootstrapContext } from '@angular/platform-browser';
+import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { AppModule } from './app/app.module';
 
-if (environment.production) {
-  enableProdMode();
-}
+const bootstrap = (context: BootstrapContext) =>
+  platformBrowserDynamic().bootstrapModule(AppModule, {
+    applicationProviders: [provideZoneChangeDetection()],
+  });
 
-export { AppServerModule } from './app/app.module.server';
-export { renderModule } from '@angular/platform-server';
+export default bootstrap;

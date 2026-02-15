@@ -1,6 +1,4 @@
-import { NgModule } from '@angular/core';
-import { Routes, RouterModule } from '@angular/router';
-import { AppPreloadingStrategy } from '@app/app.preloading-strategy';
+import { Routes } from '@angular/router';
 import { BlockViewComponent } from '@components/block-view/block-view.component';
 import { EightBlocksComponent } from '@components/eight-blocks/eight-blocks.component';
 import { MempoolBlockViewComponent } from '@components/mempool-block-view/mempool-block-view.component';
@@ -9,7 +7,7 @@ import { StatusViewComponent } from '@components/status-view/status-view.compone
 import { AddressGroupComponent } from '@components/address-group/address-group.component';
 import { TrackerGuard } from '@app/route-guards';
 
-const routes: Routes = [
+export const routes: Routes = [
   {
     path: 'testnet',
     children: [
@@ -25,7 +23,9 @@ const routes: Routes = [
       {
         path: '',
         loadChildren: () =>
-          import('@app/master-page.module').then((m) => m.MasterPageModule),
+          import('@app/master-page.module').then(
+            (m) => m.MasterPageRoutingModule
+          ),
         data: { preload: true },
       },
       {
@@ -70,7 +70,9 @@ const routes: Routes = [
       {
         path: '',
         loadChildren: () =>
-          import('@app/master-page.module').then((m) => m.MasterPageModule),
+          import('@app/master-page.module').then(
+            (m) => m.MasterPageRoutingModule
+          ),
         data: { preload: true },
       },
       {
@@ -120,7 +122,9 @@ const routes: Routes = [
       {
         path: '',
         loadChildren: () =>
-          import('@app/master-page.module').then((m) => m.MasterPageModule),
+          import('@app/master-page.module').then(
+            (m) => m.MasterPageRoutingModule
+          ),
         data: { preload: true },
       },
       {
@@ -167,7 +171,7 @@ const routes: Routes = [
   {
     path: '',
     loadChildren: () =>
-      import('@app/master-page.module').then((m) => m.MasterPageModule),
+      import('@app/master-page.module').then((m) => m.MasterPageRoutingModule),
     data: { preload: true },
   },
   {
@@ -238,23 +242,8 @@ const routes: Routes = [
       import('@app/bitcoin-graphs.module').then((m) => m.BitcoinGraphsModule),
     data: { preload: true },
   },
-];
-
-if (!window['isOfficialSiteBuild']) {
-  routes.push({
+  {
     path: '**',
     redirectTo: '',
-  });
-}
-
-@NgModule({
-  imports: [
-    RouterModule.forRoot(routes, {
-      initialNavigation: 'enabledNonBlocking',
-      scrollPositionRestoration: 'enabled',
-      anchorScrolling: 'enabled',
-      preloadingStrategy: AppPreloadingStrategy,
-    }),
-  ],
-})
-export class AppRoutingModule {}
+  },
+];

@@ -1,6 +1,6 @@
 // See also: https://documentation.cash/protocol/blockchain/script.html#operation-codes-opcodes
 // Below are the decimal numbers (NOT the hex values)
-const opcodes = {
+const opcodes: Record<string, number> = {
   OP_FALSE: 0,
   OP_0: 0,
   OP_PUSHDATA1: 76,

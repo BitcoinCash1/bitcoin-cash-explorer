@@ -15,7 +15,7 @@ If you want to quickly improve the UI, fix typos, or make other updates that don
 
 Get the latest BCH Explorer code:
 
-```
+```sh
 git clone git@gitlab.melroy.org:bitcoincash/bitcoin-cash-explorer.git
 cd bitcoin-cash-explorer/frontend
 ```
@@ -26,7 +26,7 @@ The same frontend codebase is used for https://bchexplorer.cash.
 
 Configure the frontend for the site you want by running the corresponding command:
 
-```
+```sh
 $ npm run config:defaults:explorer
 ```
 
@@ -36,7 +36,7 @@ _Make sure to use Node.js 22.x and npm 9.x or newer._
 
 Install project dependencies and run the frontend server:
 
-```
+```sh
 $ npm install
 $ npm run serve:local-prod
 ```
@@ -49,13 +49,13 @@ After making your changes, you can run our end-to-end automation suite and check
 
 Headless:
 
-```
+```sh
 $ npm run config:defaults:explorer && npm run cypress:run
 ```
 
 Interactive:
 
-```
+```sh
 $ npm run config:defaults:explorer && npm run cypress:open
 ```
 
@@ -73,7 +73,7 @@ _Make sure to use Node.js 20.x and npm 9.x or newer._
 
 Build the frontend:
 
-```
+```sh
 cd frontend
 npm install
 npm run build
@@ -85,7 +85,15 @@ npm run build
 
 To run your local BCH Explorer frontend with your local BCH Explorer backend:
 
+First run only once, which will retrieve the image resources:
+
+```sh
+npm run sync-assets-dev
 ```
+
+Then run:
+
+```sh
 npm run serve
 ```
 
@@ -94,6 +102,19 @@ npm run serve
 The `npm run build` command from step 1 above should have generated a `dist` directory. Put the contents of `dist/` onto your web server.
 
 You will probably want to set up a reverse proxy, TLS, etc. There are sample nginx configuration files in the top level of the repository for reference, but note that support for such tasks is outside the scope of this project.
+
+### SSR
+
+*Note:* Server-side rendering can be supported but it is not enabled by default nor tested. I don't use SSR at all (hence `outputMode` is set to `static` in `angular.json`).
+
+Running SSR would also require changes to `angular.json`:
+
+```json
+    "outputMode": "server",
+    "ssr": {
+      "entry": "src/server.ts"
+    }
+```
 
 ## Translations: Transifex Project
 

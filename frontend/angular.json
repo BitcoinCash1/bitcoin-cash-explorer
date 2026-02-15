@@ -155,13 +155,15 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/explorer/browser",
             "index": "src/index.html",
-            "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": [
+              "zone.js",
+              "@angular/localize/init"
+            ],
             "tsConfig": "tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
               "src/resources",
@@ -194,23 +196,14 @@
               },
               "node_modules/@fortawesome/fontawesome-svg-core/styles.css"
             ],
-            "vendorChunk": true,
-            "extractLicenses": false,
-            "buildOptimizer": false,
-            "sourceMap": true,
-            "optimization": false,
-            "namedChunks": true,
-            "allowedCommonJsDependencies": ["qrcode"]
+            "allowedCommonJsDependencies": [
+              "qrcode"
+            ],
+            "browser": "src/main.ts",
+            "outputMode": "static"
           },
           "configurations": {
             "production": {
-              "assets": ["src/favicon.ico", "src/robots.txt"],
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
               "optimization": {
                 "scripts": true,
                 "styles": {
@@ -223,25 +216,37 @@
               "sourceMap": false,
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "budgets": [
                 {
                   "type": "initial",
                   "maximumWarning": "2mb",
-                  "maximumError": "5mb"
+                  "maximumError": "3mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+                  "maximumWarning": "7kB",
+                  "maximumError": "12kB"
+                }
+              ]
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "outputHashing": "none",
+              "namedChunks": true,
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.development.ts"
                 }
               ]
             }
           },
-          "defaultConfiguration": ""
+          "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular/build:dev-server",
           "options": {
             "buildTarget": "explorer:build"
           },
@@ -249,30 +254,41 @@
             "production": {
               "buildTarget": "explorer:build:production"
             },
+            "development": {
+              "buildTarget": "explorer:build:development"
+            },
             "local": {
+              "buildTarget": "explorer:build:development",
               "proxyConfig": "proxy.conf.local.js",
               "verbose": true
             },
             "mixed": {
+              "buildTarget": "explorer:build:development",
               "proxyConfig": "proxy.conf.mixed.js",
               "verbose": true
             },
             "local-prod": {
+              "buildTarget": "explorer:build:production",
               "proxyConfig": "proxy.conf.js",
               "disableHostCheck": true,
               "host": "0.0.0.0",
               "verbose": false
             },
             "parameterized": {
+              "buildTarget": "explorer:build:development",
               "proxyConfig": "proxy.conf.parameterized.js",
               "disableHostCheck": true,
               "host": "0.0.0.0",
               "verbose": false
             }
-          }
+          },
+          "defaultConfiguration": "development"
+        },
+        "test": {
+          "builder": "@angular/build:unit-test"
         },
         "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n",
+          "builder": "@angular/build:extract-i18n",
           "options": {
             "buildTarget": "explorer:build"
           }
@@ -288,52 +304,6 @@
             "production": {
               "devServerTarget": "explorer:serve:production"
             }
-          }
-        },
-        "server": {
-          "builder": "@angular-devkit/build-angular:server",
-          "options": {
-            "outputPath": "dist/explorer/server",
-            "main": "server.ts",
-            "tsConfig": "tsconfig.server.json"
-          },
-          "configurations": {
-            "production": {
-              "outputHashing": "media",
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.prod.ts"
-                }
-              ],
-              "sourceMap": false,
-              "localize": true,
-              "optimization": false
-            }
-          }
-        },
-        "serve-ssr": {
-          "builder": "@angular-devkit/build-angular:ssr-dev-server",
-          "options": {
-            "browserTarget": "explorer:build",
-            "serverTarget": "explorer:server"
-          },
-          "configurations": {
-            "production": {
-              "browserTarget": "explorer:build:production",
-              "serverTarget": "explorer:server:production"
-            }
-          }
-        },
-        "prerender": {
-          "builder": "@angular-devkit/build-angular:prerender",
-          "options": {
-            "browserTarget": "explorer:build:production",
-            "serverTarget": "explorer:server:production",
-            "routes": ["/"]
-          },
-          "configurations": {
-            "production": {}
           }
         },
         "cypress-run": {
@@ -358,6 +328,7 @@
     }
   },
   "cli": {
+    "packageManager":"npm",
     "analytics": false
   }
 }

@@ -1,18 +1,20 @@
 import { Component, OnInit, OnDestroy, Input, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 import { Env, StateService } from '@app/services/state.service';
 import { Observable, merge, of, Subscription } from 'rxjs';
 import { LanguageService } from '@app/services/language.service';
 import { EnterpriseService } from '@app/services/enterprise.service';
 import { NavigationService } from '@app/services/navigation.service';
 import { MenuComponent } from '@components/menu/menu.component';
+import { SharedModule } from '@app/shared/shared.module';
 // import { StorageService } from '@app/services/storage.service';
 
 @Component({
   selector: 'app-master-page',
   templateUrl: './master-page.component.html',
   styleUrls: ['./master-page.component.scss'],
-  standalone: false,
+  imports: [CommonModule, SharedModule],
 })
 export class MasterPageComponent implements OnInit, OnDestroy {
   @Input() headerVisible = true;
@@ -23,7 +25,7 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   connectionState$: Observable<number>;
   navCollapsed = false;
   isMobile = window.innerWidth <= 767.98;
-  isOfficialSiteBuild = this.stateService.isOfficialSiteBuild;
+  isOfficialSiteBuild: boolean;
   urlLanguage: string;
   subdomain = '';
   networkPaths: { [network: string]: string };
@@ -50,6 +52,7 @@ export class MasterPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.env = this.stateService.env;
+    this.isOfficialSiteBuild = this.stateService.isOfficialSiteBuild;
     this.connectionState$ = this.stateService.connectionState$;
     this.network$ = merge(of(''), this.stateService.networkChanged$);
     this.urlLanguage = this.languageService.getLanguageForUrl();

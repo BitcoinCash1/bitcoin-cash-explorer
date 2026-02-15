@@ -189,7 +189,10 @@ export class PushTransactionComponent implements OnInit {
         const rawCheck = this.base64UrlToU8Array(fragmentParams.get('c'));
 
         // check checksum
-        const hashTx = await crypto.subtle.digest('SHA-256', rawTx);
+        const hashTx = await crypto.subtle.digest(
+          'SHA-256',
+          rawTx.buffer as ArrayBuffer
+        );
         if (
           this.u8ArrayToHex(new Uint8Array(hashTx.slice(24))) !==
           this.u8ArrayToHex(rawCheck)

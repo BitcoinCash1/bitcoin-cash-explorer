@@ -70,7 +70,7 @@ build-backend:
   interruptible: true
   script:
     - cd backend
-    - npm ci --cache .npm --prefer-offline --omit=dev
+    - npm ci --cache .npm --prefer-offline --omit=dev --omit=optional
     - npm run package
   artifacts:
     name: "Backend Build"
@@ -86,7 +86,7 @@ build-frontend:
   interruptible: true
   script:
     - cd frontend
-    - npm ci --cache .npm --prefer-offline --omit=dev
+    - npm ci --cache .npm --prefer-offline --omit=optional
     - npm run config:defaults:explorer
     - npm run build
   artifacts:

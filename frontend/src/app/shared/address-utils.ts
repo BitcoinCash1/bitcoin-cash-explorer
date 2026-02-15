@@ -1,4 +1,3 @@
-import '@angular/localize/init';
 import { ScriptInfo } from '@app/shared/script.utils';
 import { Vin, Vout } from '@app/interfaces/backend-api.interface';
 import {

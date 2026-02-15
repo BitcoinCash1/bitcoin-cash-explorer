@@ -9,25 +9,21 @@ import {
 } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { StateService } from '@app/services/state.service';
-import { OpenGraphService } from '@app/services/opengraph.service';
 import { NgbTooltipConfig } from '@ng-bootstrap/ng-bootstrap';
-import { ThemeService } from '@app/services/theme.service';
 import { SeoService } from '@app/services/seo.service';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  templateUrl: './app.html',
+  styleUrls: ['./app.scss'],
   standalone: false,
   providers: [NgbTooltipConfig],
 })
-export class AppComponent implements OnInit {
+export class App implements OnInit {
   constructor(
     public router: Router,
     private stateService: StateService,
-    private openGraphService: OpenGraphService,
     private seoService: SeoService,
-    private themeService: ThemeService,
     private location: Location,
     tooltipConfig: NgbTooltipConfig,
     @Inject(LOCALE_ID) private locale: string
