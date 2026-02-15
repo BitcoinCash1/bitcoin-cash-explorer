@@ -72,7 +72,7 @@ export class BlockHealthGraphComponent implements OnInit {
     private router: Router
   ) {
     this.radioGroupForm = this.formBuilder.group({ dateSpan: '1y' });
-    this.radioGroupForm.controls.dateSpan.setValue('1y');
+    this.radioGroupForm.controls['dateSpan'].setValue('1y');
   }
 
   ngOnInit(): void {
@@ -86,7 +86,9 @@ export class BlockHealthGraphComponent implements OnInit {
     this.radioGroupForm = this.formBuilder.group({
       dateSpan: this.miningWindowPreference,
     });
-    this.radioGroupForm.controls.dateSpan.setValue(this.miningWindowPreference);
+    this.radioGroupForm.controls['dateSpan'].setValue(
+      this.miningWindowPreference
+    );
 
     this.route.fragment.subscribe((fragment) => {
       if (
@@ -94,7 +96,7 @@ export class BlockHealthGraphComponent implements OnInit {
           fragment
         ) > -1
       ) {
-        this.radioGroupForm.controls.dateSpan.setValue(fragment, {
+        this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
           emitEvent: false,
         });
       }
@@ -103,7 +105,7 @@ export class BlockHealthGraphComponent implements OnInit {
     this.statsObservable$ = this.radioGroupForm
       .get('dateSpan')
       .valueChanges.pipe(
-        startWith(this.radioGroupForm.controls.dateSpan.value),
+        startWith(this.radioGroupForm.controls['dateSpan'].value),
         switchMap((timespan) => {
           this.storageService.setValue('miningWindowPreference', timespan);
           this.timespan = timespan;

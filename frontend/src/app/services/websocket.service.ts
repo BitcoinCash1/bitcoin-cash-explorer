@@ -491,8 +491,8 @@ export class WebsocketService {
     if (response.loadingIndicators) {
       this.stateService.loadingIndicators$.next(response.loadingIndicators);
       if (
-        response.loadingIndicators.mempool != null &&
-        response.loadingIndicators.mempool < 100
+        response.loadingIndicators['mempool'] != null &&
+        response.loadingIndicators['mempool'] < 100
       ) {
         this.stateService.isLoadingMempool$.next(true);
       } else {

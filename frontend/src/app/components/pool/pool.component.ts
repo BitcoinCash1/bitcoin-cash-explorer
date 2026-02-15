@@ -89,7 +89,7 @@ export class PoolComponent implements OnInit {
 
   ngOnInit(): void {
     this.slugSubscription = this.route.params
-      .pipe(map((params) => params.slug))
+      .pipe(map((params) => params['slug']))
       .subscribe((slug) => {
         this.isLoading = true;
         this.blocks = [];

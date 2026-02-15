@@ -115,7 +115,7 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
     if (!this.utxos) {
       return;
     }
-    if (changes.utxos) {
+    if (changes['utxos']) {
       this.prepareChartOptions(this.utxos);
     }
   }

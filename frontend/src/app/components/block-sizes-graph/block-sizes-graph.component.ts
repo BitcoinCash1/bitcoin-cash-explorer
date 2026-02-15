@@ -79,7 +79,9 @@ export class BlockSizesGraphComponent implements OnInit {
     this.radioGroupForm = this.formBuilder.group({
       dateSpan: this.miningWindowPreference,
     });
-    this.radioGroupForm.controls.dateSpan.setValue(this.miningWindowPreference);
+    this.radioGroupForm.controls['dateSpan'].setValue(
+      this.miningWindowPreference
+    );
 
     this.route.fragment.subscribe((fragment) => {
       if (
@@ -97,7 +99,7 @@ export class BlockSizesGraphComponent implements OnInit {
           'all',
         ].indexOf(fragment) > -1
       ) {
-        this.radioGroupForm.controls.dateSpan.setValue(fragment, {
+        this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
           emitEvent: false,
         });
       }
@@ -106,7 +108,7 @@ export class BlockSizesGraphComponent implements OnInit {
     this.blockSizesObservable$ = this.radioGroupForm
       .get('dateSpan')
       .valueChanges.pipe(
-        startWith(this.radioGroupForm.controls.dateSpan.value),
+        startWith(this.radioGroupForm.controls['dateSpan'].value),
         switchMap((timespan) => {
           this.timespan = timespan;
           if (!firstRun) {

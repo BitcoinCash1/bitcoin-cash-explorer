@@ -339,7 +339,7 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.blockWidth && this.blockWidth) {
+    if (changes['blockWidth'] && this.blockWidth) {
       this.blockPadding = 0.24 * this.blockWidth;
       this.containerOffset = 0.32 * this.blockWidth;
       this.blockOffset = this.blockWidth + this.blockPadding;

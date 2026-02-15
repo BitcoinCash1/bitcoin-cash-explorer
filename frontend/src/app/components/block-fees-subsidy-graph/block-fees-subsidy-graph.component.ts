@@ -89,7 +89,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
     private cd: ChangeDetectorRef
   ) {
     this.radioGroupForm = this.formBuilder.group({ dateSpan: '1y' });
-    this.radioGroupForm.controls.dateSpan.setValue('1y');
+    this.radioGroupForm.controls['dateSpan'].setValue('1y');
 
     this.subsidies = this.initSubsidies();
   }
@@ -106,7 +106,9 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
     this.radioGroupForm = this.formBuilder.group({
       dateSpan: this.miningWindowPreference,
     });
-    this.radioGroupForm.controls.dateSpan.setValue(this.miningWindowPreference);
+    this.radioGroupForm.controls['dateSpan'].setValue(
+      this.miningWindowPreference
+    );
 
     this.route.fragment.subscribe((fragment) => {
       if (
@@ -124,7 +126,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
           'all',
         ].indexOf(fragment) > -1
       ) {
-        this.radioGroupForm.controls.dateSpan.setValue(fragment, {
+        this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
           emitEvent: false,
         });
       }
@@ -133,7 +135,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
     this.statsObservable$ = this.radioGroupForm
       .get('dateSpan')
       .valueChanges.pipe(
-        startWith(this.radioGroupForm.controls.dateSpan.value),
+        startWith(this.radioGroupForm.controls['dateSpan'].value),
         switchMap((timespan) => {
           this.isLoading = true;
           this.storageService.setValue('miningWindowPreference', timespan);

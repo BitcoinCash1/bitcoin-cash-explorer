@@ -61,7 +61,11 @@ export class TreasuriesPieComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.walletSummaries$ || changes.selectedWallets || changes.mode) {
+    if (
+      changes['walletSummaries$'] ||
+      changes['selectedWallets'] ||
+      changes['mode']
+    ) {
       if (this.subscription) {
         this.subscription.unsubscribe();
       }

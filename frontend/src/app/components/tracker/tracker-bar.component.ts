@@ -63,7 +63,7 @@ export class TrackerBarComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.stage) {
+    if (changes['stage']) {
       this.setStage();
     }
   }

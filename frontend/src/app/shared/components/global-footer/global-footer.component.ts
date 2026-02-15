@@ -94,7 +94,7 @@ export class GlobalFooterComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.user) {
+    if (changes['user']) {
       this.user = this.storageService.getAuth();
     }
   }

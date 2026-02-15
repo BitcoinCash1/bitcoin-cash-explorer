@@ -149,7 +149,7 @@ export class BlockchainComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.containerWidth || changes.pageIndex) {
+    if (changes['containerWidth'] || changes['pageIndex']) {
       this.onResizeorPageIndex();
     }
   }

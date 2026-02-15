@@ -37,7 +37,7 @@ export class CalculatorComponent implements OnInit {
 
     this.lastFiatPrice$ = this.stateService.conversions$
       .asObservable()
-      .pipe(map((conversions) => conversions.time));
+      .pipe(map((conversions) => conversions['time']));
 
     let currency;
     this.price$ = this.currency$.pipe(

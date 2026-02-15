@@ -641,9 +641,9 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
 
     this.queryParamsSubscription = this.route.queryParams.subscribe(
       (params) => {
-        if (params.showFlow === 'false') {
+        if (params['showFlow'] === 'false') {
           this.overrideFlowPreference = false;
-        } else if (params.showFlow === 'true') {
+        } else if (params['showFlow'] === 'true') {
           this.overrideFlowPreference = true;
         } else {
           this.overrideFlowPreference = null;

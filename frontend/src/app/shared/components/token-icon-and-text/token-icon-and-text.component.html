@@ -6,7 +6,7 @@
     title="{{ metadata?.name || category }}"
   >
     <img
-      *ngIf="resolveIconUrl(metadata?.uris?.icon) as iconUrl"
+      *ngIf="resolveIconUrl(metadata?.uris?.['icon']) as iconUrl"
       class="token-icon"
       [src]="iconUrl"
       alt="{{ metadata?.name }} icon"

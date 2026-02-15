@@ -246,7 +246,7 @@ export function detectScriptTemplate(
 ): ScriptTemplate | undefined {
   const multisig = parseMultisigScript(script_asm);
   if (multisig) {
-    return ScriptTemplates.multisig(multisig.m, multisig.n);
+    return ScriptTemplates['multisig'](multisig.m, multisig.n);
   }
   return undefined;
 }

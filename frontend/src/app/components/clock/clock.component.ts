@@ -55,9 +55,9 @@ export class ClockComponent implements OnInit {
     private cd: ChangeDetectorRef
   ) {
     this.route.queryParams.subscribe((params) => {
-      this.hideStats = params && params.stats === 'false';
-      this.limitWidth = Number.parseInt(params.width) || null;
-      this.limitHeight = Number.parseInt(params.height) || null;
+      this.hideStats = params && params['stats'] === 'false';
+      this.limitWidth = Number.parseInt(params['width']) || null;
+      this.limitHeight = Number.parseInt(params['height']) || null;
     });
   }
 

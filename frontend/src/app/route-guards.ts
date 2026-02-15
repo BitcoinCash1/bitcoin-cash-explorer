@@ -13,9 +13,9 @@ class GuardService {
 
   trackerGuard(route: Route, segments: UrlSegment[]): boolean {
     const preferredRoute =
-      this.router.currentNavigation()?.extractedUrl.queryParams?.mode;
+      this.router.currentNavigation()?.extractedUrl.queryParams?.['mode'];
     const path =
-      this.router.currentNavigation()?.extractedUrl.root.children.primary
+      this.router.currentNavigation()?.extractedUrl.root.children['primary']
         .segments;
     return (
       (preferredRoute === 'status' ||

@@ -49,102 +49,106 @@ export class PoolPreviewComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.poolStats$ = this.route.params.pipe(map((params) => params.slug)).pipe(
-      switchMap((slug: any) => {
-        this.isLoading = true;
-        this.imageLoaded = false;
-        this.slug = slug;
-        this.ogSession = this.openGraphService.waitFor(
-          'pool-hash-' + this.slug
-        );
-        this.ogSession = this.openGraphService.waitFor(
-          'pool-stats-' + this.slug
-        );
-        this.ogSession = this.openGraphService.waitFor(
-          'pool-chart-' + this.slug
-        );
-        this.ogSession = this.openGraphService.waitFor('pool-img-' + this.slug);
-        return this.apiService.getPoolHashrate$(this.slug).pipe(
-          switchMap((data) => {
-            this.isLoading = false;
-            this.prepareChartOptions(
-              data.map((val) => [val.timestamp * 1000, val.avgHashrate])
-            );
-            this.openGraphService.waitOver({
-              event: 'pool-hash-' + this.slug,
-              sessionId: this.ogSession,
-            });
-            return [slug];
-          }),
-          catchError(() => {
-            this.isLoading = false;
-            this.seoService.logSoft404();
-            this.openGraphService.fail({
-              event: 'pool-hash-' + this.slug,
-              sessionId: this.ogSession,
-            });
-            return of([slug]);
-          })
-        );
-      }),
-      switchMap((slug) => {
-        return this.apiService.getPoolStats$(slug).pipe(
-          catchError(() => {
-            this.isLoading = false;
-            this.seoService.logSoft404();
-            this.openGraphService.fail({
-              event: 'pool-stats-' + this.slug,
-              sessionId: this.ogSession,
-            });
-            return of(null);
-          })
-        );
-      }),
-      map((poolStats) => {
-        if (poolStats == null) {
-          return null;
-        }
+    this.poolStats$ = this.route.params
+      .pipe(map((params) => params['slug']))
+      .pipe(
+        switchMap((slug: any) => {
+          this.isLoading = true;
+          this.imageLoaded = false;
+          this.slug = slug;
+          this.ogSession = this.openGraphService.waitFor(
+            'pool-hash-' + this.slug
+          );
+          this.ogSession = this.openGraphService.waitFor(
+            'pool-stats-' + this.slug
+          );
+          this.ogSession = this.openGraphService.waitFor(
+            'pool-chart-' + this.slug
+          );
+          this.ogSession = this.openGraphService.waitFor(
+            'pool-img-' + this.slug
+          );
+          return this.apiService.getPoolHashrate$(this.slug).pipe(
+            switchMap((data) => {
+              this.isLoading = false;
+              this.prepareChartOptions(
+                data.map((val) => [val.timestamp * 1000, val.avgHashrate])
+              );
+              this.openGraphService.waitOver({
+                event: 'pool-hash-' + this.slug,
+                sessionId: this.ogSession,
+              });
+              return [slug];
+            }),
+            catchError(() => {
+              this.isLoading = false;
+              this.seoService.logSoft404();
+              this.openGraphService.fail({
+                event: 'pool-hash-' + this.slug,
+                sessionId: this.ogSession,
+              });
+              return of([slug]);
+            })
+          );
+        }),
+        switchMap((slug) => {
+          return this.apiService.getPoolStats$(slug).pipe(
+            catchError(() => {
+              this.isLoading = false;
+              this.seoService.logSoft404();
+              this.openGraphService.fail({
+                event: 'pool-stats-' + this.slug,
+                sessionId: this.ogSession,
+              });
+              return of(null);
+            })
+          );
+        }),
+        map((poolStats) => {
+          if (poolStats == null) {
+            return null;
+          }
 
-        this.seoService.setTitle(poolStats.pool.name);
-        this.seoService.setDescription(
-          $localize`:@@meta.description.mining.pool:See mining pool stats for ${poolStats.pool.name}\: most recent mined blocks, hashrate over time, total block reward to date, known coinbase addresses, and more.`
-        );
-        let regexes = '"';
-        for (const regex of poolStats.pool.regexes) {
-          regexes += regex + '", "';
-        }
-        poolStats.pool.regexes = regexes.slice(0, -3);
+          this.seoService.setTitle(poolStats.pool.name);
+          this.seoService.setDescription(
+            $localize`:@@meta.description.mining.pool:See mining pool stats for ${poolStats.pool.name}\: most recent mined blocks, hashrate over time, total block reward to date, known coinbase addresses, and more.`
+          );
+          let regexes = '"';
+          for (const regex of poolStats.pool.regexes) {
+            regexes += regex + '", "';
+          }
+          poolStats.pool.regexes = regexes.slice(0, -3);
 
-        this.openGraphService.waitOver({
-          event: 'pool-stats-' + this.slug,
-          sessionId: this.ogSession,
-        });
-
-        const logoSrc =
-          `/resources/mining-pools/` + poolStats.pool.slug + '.svg';
-        if (logoSrc === this.lastImgSrc) {
           this.openGraphService.waitOver({
-            event: 'pool-img-' + this.slug,
+            event: 'pool-stats-' + this.slug,
             sessionId: this.ogSession,
           });
-        }
-        this.lastImgSrc = logoSrc;
-        return Object.assign(
-          {
-            logo: logoSrc,
-          },
-          poolStats
-        );
-      }),
-      catchError(() => {
-        this.isLoading = false;
-        this.openGraphService.fail({
-          event: 'pool-stats-' + this.slug,
-          sessionId: this.ogSession,
-        });
-        return of(null);
-      })
-    );
+
+          const logoSrc =
+            `/resources/mining-pools/` + poolStats.pool.slug + '.svg';
+          if (logoSrc === this.lastImgSrc) {
+            this.openGraphService.waitOver({
+              event: 'pool-img-' + this.slug,
+              sessionId: this.ogSession,
+            });
+          }
+          this.lastImgSrc = logoSrc;
+          return Object.assign(
+            {
+              logo: logoSrc,
+            },
+            poolStats
+          );
+        }),
+        catchError(() => {
+          this.isLoading = false;
+          this.openGraphService.fail({
+            event: 'pool-stats-' + this.slug,
+            sessionId: this.ogSession,
+          });
+          return of(null);
+        })
+      );
   }
 
   prepareChartOptions(data) {

@@ -200,7 +200,7 @@ export class CustomDashboardComponent
     this.network$ = merge(of(''), this.stateService.networkChanged$);
     this.mempoolLoadingStatus$ = this.stateService.loadingIndicators$.pipe(
       map((indicators) =>
-        indicators.mempool !== undefined ? indicators.mempool : 100
+        indicators['mempool'] !== undefined ? indicators['mempool'] : 100
       )
     );
 
@@ -381,13 +381,13 @@ export class CustomDashboardComponent
     if (
       this.stateService.env.customize &&
       this.stateService.env.customize.dashboard.widgets.some(
-        (w) => w.props?.address
+        (w) => w.props?.['address']
       )
     ) {
       let addressString =
         this.stateService.env.customize.dashboard.widgets.find(
-          (w) => w.props?.address
-        ).props.address;
+          (w) => w.props?.['address']
+        ).props['address'];
       addressString =
         /^[A-Z]{2,5}1[AC-HJ-NP-Z02-9]{8,100}|04[a-fA-F0-9]{128}|(02|03)[a-fA-F0-9]{64}$/.test(
           addressString
@@ -474,12 +474,12 @@ export class CustomDashboardComponent
     if (
       this.stateService.env.customize &&
       this.stateService.env.customize.dashboard.widgets.some(
-        (w) => w.props?.wallet
+        (w) => w.props?.['wallet']
       )
     ) {
       const walletName = this.stateService.env.customize.dashboard.widgets.find(
-        (w) => w.props?.wallet
-      ).props.wallet;
+        (w) => w.props?.['wallet']
+      ).props['wallet'];
       this.websocketService.startTrackingWallet(walletName);
 
       this.walletSummary$ = this.apiService.getWallet$(walletName).pipe(

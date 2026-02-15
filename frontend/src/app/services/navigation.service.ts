@@ -67,8 +67,8 @@ export class NavigationService {
     let route = root;
     while (route) {
       if (
-        route.data.onlySubnet &&
-        !route.data.onlySubnet.includes(this.stateService.network)
+        route.data['onlySubnet'] &&
+        !route.data['onlySubnet'].includes(this.stateService.network)
       ) {
         this.router.navigate([this.relativeUrlPipe.transform('')]);
         return false;
@@ -95,7 +95,7 @@ export class NavigationService {
     ) {
       // 'networkSpecific' paths may correspond to valid routes on other networks, but aren't directly compatible
       // (e.g. we shouldn't link a mainnet transaction page to the same txid on testnet or liquid)
-      if (route.data?.networkSpecific) {
+      if (route.data?.['networkSpecific']) {
         this.networks.forEach((network) => {
           if (networkPaths[network] == null) {
             networkPaths[network] = path;
@@ -103,10 +103,10 @@ export class NavigationService {
         });
       }
       // null or empty networks list is shorthand for "compatible with every network"
-      if (route.data?.networks?.length) {
+      if (route.data?.['networks']?.length) {
         // if the list is non-empty, only those networks are compatible
         this.networks.forEach((network) => {
-          if (!route.data.networks.includes(network)) {
+          if (!route.data['networks'].includes(network)) {
             if (networkPaths[network] == null) {
               networkPaths[network] = path;
             }

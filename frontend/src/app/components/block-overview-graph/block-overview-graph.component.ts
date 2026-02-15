@@ -843,13 +843,13 @@ export class BlockOverviewGraphComponent
           return gradient === 'age'
             ? ageColorFunction(
                 tx,
-                defaultColors.fee,
+                defaultColors['fee'],
                 defaultAuditColors,
                 this.relativeTime || Date.now() / 1000
               )
             : defaultColorFunction(
                 tx,
-                defaultColors.fee,
+                defaultColors['fee'],
                 defaultAuditColors,
                 this.relativeTime || Date.now() / 1000
               );
@@ -857,13 +857,13 @@ export class BlockOverviewGraphComponent
           return gradient === 'age'
             ? ageColorFunction(
                 tx,
-                contrastColors.fee,
+                contrastColors['fee'],
                 contrastAuditColors,
                 this.relativeTime || Date.now() / 1000
               )
             : contrastColorFunction(
                 tx,
-                contrastColors.fee,
+                contrastColors['fee'],
                 contrastAuditColors,
                 this.relativeTime || Date.now() / 1000
               );
@@ -877,7 +877,7 @@ export class BlockOverviewGraphComponent
             ? { r: 1, g: 1, b: 1, a: 0.05 }
             : defaultColorFunction(
                 tx,
-                defaultColors.unmatchedfee,
+                defaultColors['unmatchedfee'],
                 unmatchedAuditColors,
                 this.relativeTime || Date.now() / 1000
               );
@@ -886,7 +886,7 @@ export class BlockOverviewGraphComponent
             ? { r: 1, g: 1, b: 1, a: 0.05 }
             : contrastColorFunction(
                 tx,
-                contrastColors.unmatchedfee,
+                contrastColors['unmatchedfee'],
                 unmatchedContrastAuditColors,
                 this.relativeTime || Date.now() / 1000
               );

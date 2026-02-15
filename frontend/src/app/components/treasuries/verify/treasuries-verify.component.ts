@@ -79,7 +79,7 @@ export class TreasuriesVerifyProgressComponent implements OnInit, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.treasuries || changes.walletStats) {
+    if (changes['treasuries'] || changes['walletStats']) {
       this.init();
     }
   }

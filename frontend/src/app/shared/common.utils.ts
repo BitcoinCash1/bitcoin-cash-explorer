@@ -246,13 +246,13 @@ export function sleep$(ms: number): Promise<void> {
 
 export function handleDemoRedirect(route: ActivatedRoute, router: Router) {
   route.queryParams.subscribe((params) => {
-    if (params.next) {
+    if (params['next']) {
       const path = ['/', '/mining'];
-      const index = path.indexOf(params.next);
+      const index = path.indexOf(params['next']);
       if (index >= 0) {
         const nextPath = path[(index + 1) % path.length];
         setTimeout(() => {
-          window.location.replace(`${params.next}?next=${nextPath}`);
+          window.location.replace(`${params['next']}?next=${nextPath}`);
         }, 15000);
       }
     }

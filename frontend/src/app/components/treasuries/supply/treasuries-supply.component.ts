@@ -73,7 +73,11 @@ export class TreasuriesSupplyComponent implements OnInit, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.walletSummaries$ || changes.treasuries || changes.walletStats) {
+    if (
+      changes['walletSummaries$'] ||
+      changes['treasuries'] ||
+      changes['walletStats']
+    ) {
       this.init();
     }
   }

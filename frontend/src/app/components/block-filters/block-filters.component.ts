@@ -72,10 +72,10 @@ export class BlockFiltersComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.cssWidth) {
+    if (changes['cssWidth']) {
       this.cd.markForCheck();
     }
-    if (changes.excludeFilters) {
+    if (changes['excludeFilters']) {
       this.disabledFilters = {};
       this.excludeFilters.forEach((filter) => {
         this.disabledFilters[filter] = true;

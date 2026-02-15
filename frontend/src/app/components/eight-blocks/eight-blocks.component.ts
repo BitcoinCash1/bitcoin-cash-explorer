@@ -117,25 +117,25 @@ export class EightBlocksComponent implements OnInit, OnDestroy {
 
     this.queryParamsSubscription = this.route.queryParams.subscribe(
       (params) => {
-        this.numBlocks = Number.isInteger(Number(params.numBlocks))
-          ? Number(params.numBlocks)
+        this.numBlocks = Number.isInteger(Number(params['numBlocks']))
+          ? Number(params['numBlocks'])
           : 8;
         this.blockIndices = [...Array(this.numBlocks).keys()];
-        this.autofit = params.autofit !== 'false';
-        this.padding = Number.isInteger(Number(params.padding))
-          ? Number(params.padding)
+        this.autofit = params['autofit'] !== 'false';
+        this.padding = Number.isInteger(Number(params['padding']))
+          ? Number(params['padding'])
           : 10;
-        this.blockWidth = Number.isInteger(Number(params.blockWidth))
-          ? Number(params.blockWidth)
+        this.blockWidth = Number.isInteger(Number(params['blockWidth']))
+          ? Number(params['blockWidth'])
           : 540;
-        this.wrapBlocks = params.wrap !== 'false';
-        this.stagger = Number.isInteger(Number(params.stagger))
-          ? Number(params.stagger)
+        this.wrapBlocks = params['wrap'] !== 'false';
+        this.stagger = Number.isInteger(Number(params['stagger']))
+          ? Number(params['stagger'])
           : 0;
         this.animationDuration = Number.isInteger(
-          Number(params.animationDuration)
+          Number(params['animationDuration'])
         )
-          ? Number(params.animationDuration)
+          ? Number(params['animationDuration'])
           : 2000;
         this.animationOffset = this.padding * 2;
 
@@ -156,7 +156,7 @@ export class EightBlocksComponent implements OnInit, OnDestroy {
           padding: (this.padding || 0) + 'px 0px',
         };
 
-        if (params.test === 'true') {
+        if (params['test'] === 'true') {
           if (this.blocksSubscription) {
             this.blocksSubscription.unsubscribe();
           }

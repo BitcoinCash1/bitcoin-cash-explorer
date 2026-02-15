@@ -500,12 +500,12 @@ export class BlockComponent implements OnInit, OnDestroy {
     this.queryParamsSubscription = this.route.queryParams.subscribe(
       (params) => {
         this.currentQueryParams = params;
-        if (params.showDetails === 'true') {
+        if (params['showDetails'] === 'true') {
           this.showDetails = true;
         } else {
           this.showDetails = false;
         }
-        switch (params.view) {
+        switch (params['view']) {
           case 'stale':
             this.mode = 'stale';
             break;

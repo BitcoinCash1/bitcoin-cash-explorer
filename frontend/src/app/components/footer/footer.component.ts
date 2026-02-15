@@ -40,7 +40,7 @@ export class FooterComponent implements OnInit {
     this.isLoadingWebSocket$ = this.stateService.isLoadingWebSocket$;
     this.mempoolLoadingStatus$ = this.stateService.loadingIndicators$.pipe(
       map((indicators) =>
-        indicators.mempool !== undefined ? indicators.mempool : 100
+        indicators['mempool'] !== undefined ? indicators['mempool'] : 100
       )
     );
 

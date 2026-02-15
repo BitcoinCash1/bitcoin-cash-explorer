@@ -84,13 +84,15 @@ export class BlockRewardsGraphComponent implements OnInit {
     this.radioGroupForm = this.formBuilder.group({
       dateSpan: this.miningWindowPreference,
     });
-    this.radioGroupForm.controls.dateSpan.setValue(this.miningWindowPreference);
+    this.radioGroupForm.controls['dateSpan'].setValue(
+      this.miningWindowPreference
+    );
 
     this.route.fragment.subscribe((fragment) => {
       if (
         ['1m', '3m', '6m', '1y', '2y', '3y', '4y', 'all'].indexOf(fragment) > -1
       ) {
-        this.radioGroupForm.controls.dateSpan.setValue(fragment, {
+        this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
           emitEvent: false,
         });
       }
@@ -99,7 +101,7 @@ export class BlockRewardsGraphComponent implements OnInit {
     this.statsObservable$ = this.radioGroupForm
       .get('dateSpan')
       .valueChanges.pipe(
-        startWith(this.radioGroupForm.controls.dateSpan.value),
+        startWith(this.radioGroupForm.controls['dateSpan'].value),
         switchMap((timespan) => {
           this.storageService.setValue('miningWindowPreference', timespan);
           this.timespan = timespan;

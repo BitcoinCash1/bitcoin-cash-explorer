@@ -28,7 +28,7 @@ export class AutofocusDirective implements OnInit, OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    const ssAutofocusChange = changes.ssAutofocus;
+    const ssAutofocusChange = changes['ssAutofocus'];
 
     if (ssAutofocusChange && !ssAutofocusChange.isFirstChange()) {
       this.focus();

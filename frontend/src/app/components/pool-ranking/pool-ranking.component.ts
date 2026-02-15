@@ -78,7 +78,9 @@ export class PoolRankingComponent implements OnInit {
     this.radioGroupForm = this.formBuilder.group({
       dateSpan: this.miningWindowPreference,
     });
-    this.radioGroupForm.controls.dateSpan.setValue(this.miningWindowPreference);
+    this.radioGroupForm.controls['dateSpan'].setValue(
+      this.miningWindowPreference
+    );
 
     this.indexingAvailable =
       this.stateService.env.BASE_MODULE === 'explorer' &&
@@ -91,7 +93,7 @@ export class PoolRankingComponent implements OnInit {
           fragment
         ) > -1
       ) {
-        this.radioGroupForm.controls.dateSpan.setValue(fragment, {
+        this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
           emitEvent: false,
         });
       }
@@ -99,7 +101,7 @@ export class PoolRankingComponent implements OnInit {
 
     this.miningStatsObservable$ = merge(
       this.radioGroupForm.get('dateSpan').valueChanges.pipe(
-        startWith(this.radioGroupForm.controls.dateSpan.value), // (trigger when the page loads)
+        startWith(this.radioGroupForm.controls['dateSpan'].value), // (trigger when the page loads)
         tap((value) => {
           this.isLoading = true;
           this.timespan = value;

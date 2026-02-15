@@ -169,7 +169,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.network$ = merge(of(''), this.stateService.networkChanged$);
     this.mempoolLoadingStatus$ = this.stateService.loadingIndicators$.pipe(
       map((indicators) =>
-        indicators.mempool !== undefined ? indicators.mempool : 100
+        indicators['mempool'] !== undefined ? indicators['mempool'] : 100
       )
     );
 

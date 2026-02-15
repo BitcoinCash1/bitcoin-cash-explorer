@@ -116,14 +116,14 @@ export class AddressGraphComponent implements OnChanges, OnDestroy {
     if (!this.addressSummary$ && (!this.address || !this.stats)) {
       return;
     }
-    if (changes.defaultFiat) {
+    if (changes['defaultFiat']) {
       this.selected['Fiat'] = !!this.defaultFiat;
     }
     if (
-      changes.address ||
-      changes.isPubkey ||
-      changes.addressSummary$ ||
-      changes.stats
+      changes['address'] ||
+      changes['isPubkey'] ||
+      changes['addressSummary$'] ||
+      changes['stats']
     ) {
       if (this.subscription) {
         this.subscription.unsubscribe();

@@ -139,7 +139,7 @@ export function defaultColorFunction(
     audit: Color[];
     marginal: Color[];
     baseLevel: (tx: TxView, rate: number, time: number) => number;
-  } = defaultColors.fee,
+  } = defaultColors['fee'],
   auditColors: { [status: string]: Color } = defaultAuditColors,
   relativeTime?: number
 ): Color {
@@ -158,13 +158,13 @@ export function defaultColorFunction(
   // Block audit
   switch (tx.status) {
     case 'censored':
-      return auditColors.censored;
+      return auditColors['censored'];
     case 'missing':
     case 'sigop':
     case 'fresh':
-      return auditColors.missing;
+      return auditColors['missing'];
     case 'added':
-      return auditColors.added;
+      return auditColors['added'];
     case 'selected':
       return (
         colors.marginal[levelIndex] ||
@@ -181,9 +181,9 @@ export function defaultColorFunction(
       }
     case 'unmatched':
       if (tx.context === 'stale') {
-        return auditColors.censored;
+        return auditColors['censored'];
       } else {
-        return auditColors.added;
+        return auditColors['added'];
       }
     default:
       return levelColor;
@@ -197,7 +197,7 @@ export function contrastColorFunction(
     audit: Color[];
     marginal: Color[];
     baseLevel: (tx: TxView, rate: number, time: number) => number;
-  } = contrastColors.fee,
+  } = contrastColors['fee'],
   auditColors: { [status: string]: Color } = contrastAuditColors,
   relativeTime?: number
 ): Color {
@@ -211,7 +211,7 @@ export function ageColorFunction(
     audit: Color[];
     marginal: Color[];
     baseLevel: (tx: TxView, rate: number, time: number) => number;
-  } = defaultColors.fee,
+  } = defaultColors['fee'],
   auditColors: { [status: string]: Color } = defaultAuditColors,
   relativeTime?: number,
   theme?: string

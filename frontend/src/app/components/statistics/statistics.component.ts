@@ -106,54 +106,54 @@ export class StatisticsComponent implements OnInit {
           'all',
         ].indexOf(fragment) > -1
       ) {
-        this.radioGroupForm.controls.dateSpan.setValue(fragment, {
+        this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
           emitEvent: false,
         });
       } else {
-        this.radioGroupForm.controls.dateSpan.setValue('2h', {
+        this.radioGroupForm.controls['dateSpan'].setValue('2h', {
           emitEvent: false,
         });
       }
     });
 
-    merge(of(''), this.radioGroupForm.controls.dateSpan.valueChanges)
+    merge(of(''), this.radioGroupForm.controls['dateSpan'].valueChanges)
       .pipe(
         switchMap(() => {
-          this.timespan = this.radioGroupForm.controls.dateSpan.value;
+          this.timespan = this.radioGroupForm.controls['dateSpan'].value;
           this.isLoading = true;
-          if (this.radioGroupForm.controls.dateSpan.value === '2h') {
+          if (this.radioGroupForm.controls['dateSpan'].value === '2h') {
             this.websocketService.want(['blocks', 'live-2h-chart']);
             return this.apiService.list2HStatistics$();
           }
           this.websocketService.want(['blocks']);
-          if (this.radioGroupForm.controls.dateSpan.value === '24h') {
+          if (this.radioGroupForm.controls['dateSpan'].value === '24h') {
             return this.apiService.list24HStatistics$();
           }
-          if (this.radioGroupForm.controls.dateSpan.value === '1w') {
+          if (this.radioGroupForm.controls['dateSpan'].value === '1w') {
             return this.apiService.list1WStatistics$();
           }
-          if (this.radioGroupForm.controls.dateSpan.value === '1m') {
+          if (this.radioGroupForm.controls['dateSpan'].value === '1m') {
             return this.apiService.list1MStatistics$();
           }
-          if (this.radioGroupForm.controls.dateSpan.value === '3m') {
+          if (this.radioGroupForm.controls['dateSpan'].value === '3m') {
             return this.apiService.list3MStatistics$();
           }
-          if (this.radioGroupForm.controls.dateSpan.value === '6m') {
+          if (this.radioGroupForm.controls['dateSpan'].value === '6m') {
             return this.apiService.list6MStatistics$();
           }
-          if (this.radioGroupForm.controls.dateSpan.value === '1y') {
+          if (this.radioGroupForm.controls['dateSpan'].value === '1y') {
             return this.apiService.list1YStatistics$();
           }
-          if (this.radioGroupForm.controls.dateSpan.value === '2y') {
+          if (this.radioGroupForm.controls['dateSpan'].value === '2y') {
             return this.apiService.list2YStatistics$();
           }
-          if (this.radioGroupForm.controls.dateSpan.value === '3y') {
+          if (this.radioGroupForm.controls['dateSpan'].value === '3y') {
             return this.apiService.list3YStatistics$();
           }
-          if (this.radioGroupForm.controls.dateSpan.value === '4y') {
+          if (this.radioGroupForm.controls['dateSpan'].value === '4y') {
             return this.apiService.list4YStatistics$();
           }
-          if (this.radioGroupForm.controls.dateSpan.value === 'all') {
+          if (this.radioGroupForm.controls['dateSpan'].value === 'all') {
             return this.apiService.listAllTimeStatistics$();
           }
           return this.apiService.list2HStatistics$();
@@ -233,7 +233,7 @@ export class StatisticsComponent implements OnInit {
   saveGraphPreference() {
     this.storageService.setValue(
       'graphWindowPreference',
-      this.radioGroupForm.controls.dateSpan.value
+      this.radioGroupForm.controls['dateSpan'].value
     );
   }
 

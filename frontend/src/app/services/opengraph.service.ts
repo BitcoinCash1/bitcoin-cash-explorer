@@ -43,7 +43,7 @@ export class OpenGraphService {
         switchMap((route) => route.data)
       )
       .subscribe((data) => {
-        if (data.ogImage) {
+        if (data['ogImage']) {
           this.setOgImage();
         } else {
           this.clearOgImage();

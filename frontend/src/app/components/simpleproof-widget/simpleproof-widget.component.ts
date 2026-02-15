@@ -59,10 +59,10 @@ export class SimpleProofWidgetComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.widget) {
+    if (changes['widget']) {
       this.itemsPerPage = this.widget ? 6 : 15;
     }
-    if (changes.key) {
+    if (changes['key']) {
       this.loadVerifications();
     }
   }

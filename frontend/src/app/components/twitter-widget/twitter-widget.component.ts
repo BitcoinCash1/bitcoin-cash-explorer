@@ -36,7 +36,7 @@ export class TwitterWidgetComponent implements OnChanges {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes.handle) {
+    if (changes['handle']) {
       this.setIframeSrc();
     }
   }

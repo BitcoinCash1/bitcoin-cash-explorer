@@ -99,7 +99,11 @@ export class TreasuriesGraphComponent implements OnInit, OnChanges, OnDestroy {
     this.adjustedRight = +this.right;
     this.adjustedLeft = +this.left;
 
-    if (changes.walletSummaries$ || changes.selectedWallets || changes.period) {
+    if (
+      changes['walletSummaries$'] ||
+      changes['selectedWallets'] ||
+      changes['period']
+    ) {
       if (this.subscription) {
         this.subscription.unsubscribe();
       }

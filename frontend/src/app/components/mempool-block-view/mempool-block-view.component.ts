@@ -81,7 +81,7 @@ export class MempoolBlockViewComponent implements OnInit, OnDestroy {
 
     this.queryParamsSubscription = this.route.queryParams.subscribe(
       (params) => {
-        this.autofit = params.autofit === 'true';
+        this.autofit = params['autofit'] === 'true';
         if (this.autofit) {
           this.onResize();
         }

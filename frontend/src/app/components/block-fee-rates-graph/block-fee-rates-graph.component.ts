@@ -80,7 +80,7 @@ export class BlockFeeRatesGraphComponent implements OnInit {
     private cd: ChangeDetectorRef
   ) {
     this.radioGroupForm = this.formBuilder.group({ dateSpan: '1y' });
-    this.radioGroupForm.controls.dateSpan.setValue('1y');
+    this.radioGroupForm.controls['dateSpan'].setValue('1y');
   }
 
   ngOnInit(): void {
@@ -99,7 +99,9 @@ export class BlockFeeRatesGraphComponent implements OnInit {
     this.radioGroupForm = this.formBuilder.group({
       dateSpan: this.miningWindowPreference,
     });
-    this.radioGroupForm.controls.dateSpan.setValue(this.miningWindowPreference);
+    this.radioGroupForm.controls['dateSpan'].setValue(
+      this.miningWindowPreference
+    );
 
     if (!this.widget) {
       this.route.fragment.subscribe((fragment) => {
@@ -118,7 +120,7 @@ export class BlockFeeRatesGraphComponent implements OnInit {
             'all',
           ].indexOf(fragment) > -1
         ) {
-          this.radioGroupForm.controls.dateSpan.setValue(fragment, {
+          this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
             emitEvent: false,
           });
         }
@@ -149,7 +151,7 @@ export class BlockFeeRatesGraphComponent implements OnInit {
         : this.radioGroupForm
             .get('dateSpan')
             .valueChanges.pipe(
-              startWith(this.radioGroupForm.controls.dateSpan.value)
+              startWith(this.radioGroupForm.controls['dateSpan'].value)
             ),
     ]).pipe(
       switchMap(([timespan]) => {
