@@ -1,112 +1,131 @@
 # Deploying an Production Instance
 
-**NOTE:** These instrunctions are out-dated and apply for mempool.space.
+These instructions are for setting up a serious production BCH Explorer for Bitcoin Cash (mainnet, testnet, signet).
 
-These instructions are for setting up a serious production Mempool website for Bitcoin (mainnet, testnet, signet), Liquid (mainnet, testnet).
-
-Users should use [one of the other installation methods](../#installation-methods). 
+<!-- Users should use [one of the other installation methods](../#installation-methods). -->
 
 ### Server Hardware
 
-Mempool v3 is powered by [mempool/electrs](https://github.com/mempool/electrs), which is a beast. 
+BCH Explorer (bchexplorer.cash) is powered by [Fulcrum v2](https://github.com/cculianu/Fulcrum), which is a beast.
 
-I recommend a beefy server:
+I do recommend a beefy server:
 
-* 20-core CPU (more is better)
-* 64GB RAM (more is better)
-* 4TB SSD (NVMe is better)
+- 12-core CPU (more is better)
+- 32GB RAM (more is better)
+- 4TB SSD (NVMe is better)
 
 ### HDD vs SSD vs NVMe
 
 If you don't have a fast SSD or NVMe-backed disk, that's fine—go online and buy some fast new NVMe drives. When they arrive, install them, throw away your old HDDs, and then proceed with the rest of this guide.
 
-## FreeBSD 13
+## Ubuntu Server
 
-The mempool.space site is powered by FreeBSD with ZFS root and ARC cache for maximum performance. Linux probably works fine too, but why settle?
+The Bch Explorer (bchexplorer.cash) is running on Ubuntu Server 24.04 LTS.
+
+Although it is possible to run the explorer on a FreeBSD with ZFS root and ARC cache as well.
 
 ### Filesystem
 
-For maximum performance, I use 2x 2TB NVMe SSDs in a RAID 0 using ZFS with lots of RAM for the ARC L2 cache.
-```
-% zpool list -v
-NAME        SIZE  ALLOC   FREE  CKPOINT  EXPANDSZ   FRAG    CAP  DEDUP    HEALTH  ALTROOT
-nvm        3.62T  1.25T  2.38T        -         -     2%    34%  1.00x    ONLINE  -
-  nvd0p3   1.81T   629G  1.20T        -         -     2%  33.9%      -  ONLINE
-  nvd1p3   1.81T   646G  1.18T        -         -     2%  34.8%      -  ONLINE
+I'm using a Proxmox instance with 2x 1TB NVMe WD_Black SN850 (in software RAID 1) for the VM storage.
+
+And I use a dedicated 1x 4TB SSD Crucial MX500 NVMe disk for the storage of both the Bitcoin Cash blockchain and the Fulcrum v2 database.
+
+For maximum performance, you could use 2x 2TB NVMe SSDs in a RAID 0 using ZFS with lots of RAM for the ARC L2 cache.
+
+Below is an example of the filesystem layout on my Proxmox instance running Debian Linux:
+
+```sh
+NAME                              FSTYPE            FSVER    LABEL       UUID                                   FSAVAIL FSUSE% MOUNTPOINTS
+sda                                                                                                                            
+└─sda1                            ext4              1.0                  d735981d-599b-4ebd-8818-d467567d03ee                  
+sdb                                                                                                                            
+├─sdb1                                                                                                                         
+├─sdb2                            vfat              FAT32                5322-BE17                                             
+└─sdb3                            linux_raid_member 1.2      pve:2       5206d460-2cdb-457c-03c3-1a4e90eb5787                  
+  └─md2                           LVM2_member       LVM2 001             EIldm3-urYS-aNRq-M5Z9-Fq0k-7735-AjCNQ0                
+    ├─pve-swap                    swap              1                    b4ae2e49-687e-401f-a330-62061abfc2a3                  [SWAP]
+    └─pve-root                    ext4              1.0                  41a5882a-9e0d-495a-b426-cc25f07d28ea    700,5G    19% /
+sdc                                                                                                                            
+├─sdc1                                                                                                                         
+├─sdc2                            vfat              FAT32                5322-BE17                              1013,2M     1% /boot/efi
+└─sdc3                            linux_raid_member 1.2      pve:2       5206d460-2cdb-457c-03c3-1a4e90eb5787                  
+  └─md2                           LVM2_member       LVM2 001             EIldm3-urYS-aNRq-M5Z9-Fq0k-7735-AjCNQ0                
+    ├─pve-swap                    swap              1                    b4ae2e49-687e-401f-a330-62061abfc2a3                  [SWAP]
+    └─pve-root                    ext4              1.0                  41a5882a-9e0d-495a-b426-cc25f07d28ea    700,5G    19% /
+nvme3n1                                                                                                                        
+└─nvme3n1p1                       linux_raid_member 1.2      server:data bd5fca6c-99e2-0681-47d2-d1607df645c5                  
+nvme2n1                                                                                                                        
+└─nvme2n1p1                       linux_raid_member 1.2      server:data bd5fca6c-99e2-0681-47d2-d1607df645c5                  
+nvme0n1                                                                                                                        
+└─nvme0n1p1                       linux_raid_member 1.2      pve:lvmdata 251a7c75-4e3a-62b0-eaa4-d48fcd8fd697                  
+  └─md127                         LVM2_member       LVM2 001             UZRvRF-6UR3-Gd7i-2xHy-WRkv-3ahP-snteKb                
+    ├─vmdata-vmstore_tmeta                                                                                                     
+    │ └─vmdata-vmstore-tpool                                                                                                   
+    │   ├─vmdata-vmstore                                                                                                       
+    │   └─vmdata-vm--100--disk--0                                                                                              
+    └─vmdata-vmstore_tdata                                                                                                     
+      └─vmdata-vmstore-tpool                                                                                                   
+        ├─vmdata-vmstore                                                                                                       
+        └─vmdata-vm--100--disk--0                                                                                              
+nvme1n1                                                                                                                        
+└─nvme1n1p1                       linux_raid_member 1.2      pve:lvmdata 251a7c75-4e3a-62b0-eaa4-d48fcd8fd697                  
+  └─md127                         LVM2_member       LVM2 001             UZRvRF-6UR3-Gd7i-2xHy-WRkv-3ahP-snteKb                
+    ├─vmdata-vmstore_tmeta                                                                                                     
+    │ └─vmdata-vmstore-tpool                                                                                                   
+    │   ├─vmdata-vmstore                                                                                                       
+    │   └─vmdata-vm--100--disk--0                                                                                              
+    └─vmdata-vmstore_tdata                                                                                                     
+      └─vmdata-vmstore-tpool                                                                                                   
+        ├─vmdata-vmstore                                                                                                       
+        └─vmdata-vm--100--disk--0  
 ```
 
-For maximum flexibility of configuration, I recommend separate partitions for each data folder:
-```
+For maximum flexibility of configuration, you could use separate partitions for each data folder, if you wish (below is an example of `show system storage` command in FreeBDS):
+
+```sh
 Filesystem                             Size    Used   Avail Capacity  Mounted on
 nvm/bitcoin                          766G    648M    765G     0%    /bitcoin
 nvm/bitcoin/blocks                   1.1T    375G    765G    33%    /bitcoin/blocks
 nvm/bitcoin/chainstate               770G    4.5G    765G     1%    /bitcoin/chainstate
-nvm/bitcoin/electrs                  772G    7.3G    765G     1%    /bitcoin/electrs
 nvm/bitcoin/indexes                  799G     34G    765G     4%    /bitcoin/indexes
 nvm/bitcoin/testnet3                 765G    5.0M    765G     0%    /bitcoin/testnet3
-nvm/bitcoin/testnet3/blocks          786G     21G    765G     3%    /bitcoin/testnet3/blocks
-nvm/bitcoin/testnet3/chainstate      766G    1.1G    765G     0%    /bitcoin/testnet3/chainstate
-nvm/bitcoin/testnet3/indexes         768G    2.9G    765G     0%    /bitcoin/testnet3/indexes
-nvm/electrs                          765G    128K    765G     0%    /electrs
-nvm/electrs/liquid                   765G    104K    765G     0%    /electrs/liquid
-nvm/electrs/liquid/cache             765G    7.8M    765G     0%    /electrs/liquid/newindex/cache
-nvm/electrs/liquid/history           766G    886M    765G     0%    /electrs/liquid/newindex/history
-nvm/electrs/liquid/txstore           775G     10G    765G     1%    /electrs/liquid/newindex/txstore
-nvm/electrs/liquidtestnet            765G    112K    765G     0%    /electrs/liquidtestnet
-nvm/electrs/liquidtestnet/cache      765G     96K    765G     0%    /electrs/liquidtestnet/newindex/cache
-nvm/electrs/liquidtestnet/history    765G     96K    765G     0%    /electrs/liquidtestnet/newindex/history
-nvm/electrs/liquidtestnet/txstore    765G     96K    765G     0%    /electrs/liquidtestnet/newindex/txstore
-nvm/electrs/mainnet                  765G    112K    765G     0%    /electrs/mainnet
-nvm/electrs/mainnet/cache            765G    4.4M    765G     0%    /electrs/mainnet/newindex/cache
-nvm/electrs/mainnet/history          1.0T    300G    765G    28%    /electrs/mainnet/newindex/history
-nvm/electrs/mainnet/txstore          1.3T    530G    765G    41%    /electrs/mainnet/newindex/txstore
-nvm/electrs/signet                   766G    522M    765G     0%    /electrs/signet
-nvm/electrs/testnet                  765G    104K    765G     0%    /electrs/testnet
-nvm/electrs/testnet/cache            765G    1.6M    765G     0%    /electrs/testnet/newindex/cache
-nvm/electrs/testnet/history          784G     19G    765G     2%    /electrs/testnet/newindex/history
-nvm/electrs/testnet/txstore          803G     38G    765G     5%    /electrs/testnet/newindex/txstore
-nvm/elements                         766G    927M    765G     0%    /elements
-nvm/elements/electrs                 766G    716M    765G     0%    /elements/electrs
-nvm/elements/liquidv1                777G     11G    765G     1%    /elements/liquidv1
 nvm/mempool                          789G     24G    765G     3%    /mempool
 nvm/mysql                            766G    648M    765G     0%    /mysql
-tmpfs                                1.0G    1.3M    1.0G     0%    /var/cache/nginx
-```
-
-### Build Dependencies
-
-You'll probably need these:
-```
-pkg install -y zsh sudo git screen curl wget neovim rsync nginx openssl openssh-portable py38-pip py38-certbot-nginx boost-libs autoconf automake gmake gcc libevent libtool pkgconf mariadb105-server mariadb105-client
+tmpfs                                1.0G    1.3M    1.0G     0%    /var/cache/angie
 ```
 
 ### Node.js + npm
 
-Build Node.js v22.14.0 and npm v9 from source using `nvm`:
+If you wish to use BCH Explorer outside of a Docker container, you will need to install Node.js.
+
+Use latest Node.js (LTS) from NodeSource:
+
+```sh
+curl -fsSL https://deb.nodesource.com/setup_24.x | sudo bash -
+sudo apt-get install -y nodejs
 ```
+
+Or you use `nvm` to select a pre-built version of Node.js:
+
+```sh
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | zsh
 source $HOME/.zshrc
-nvm install v22.14.0 --shared-zlib
+nvm install v24.14.0 --shared-zlib
 nvm alias default node
-```
-
-### Rust
-
-Build Rust from latest source:
-```
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
 ### Tor
 
-Install Tor add Bitcoin to the `_tor` group:
-```
-pkg install -y tor
-pw user mod bitcoin -G _tor
+Optionally, you can install Tor add Bitcoin to the `_tor` group:
+
+```sh
+sudo apt-get install -y tor
+sudo usermod -a -G _tor bitcoin
 ```
 
 Then configure `/usr/local/etc/tor/torrc` as follows:
-```
+
+```sh
 RunAsDaemon 1
 SOCKSPort 9050
 ControlPort 9051
@@ -118,24 +137,70 @@ CookieAuthFile /var/db/tor/control_auth_cookie
 DataDirectory /var/db/tor
 DataDirectoryGroupReadable 1
 
-HiddenServiceDir /var/db/tor/mempool
+HiddenServiceDir /var/db/tor/explorer
 HiddenServicePort 80 127.0.0.1:81
 HiddenServiceVersion 3
-
-HiddenServiceDir /var/db/tor/liquid
-HiddenServicePort 80 127.0.0.1:83
-HiddenServiceVersion 3
 ```
 
-### Bitcoin
+### Bitcoin Cash Node
 
-Build [Bitcoin Core](https://github.com/bitcoin/bitcoin) from source. Alternatively, install the OS packages:
+Download the Bitcoin Cash Node (BCHM) from the [official website](https://github.com/bitcoin-cash-node/bitcoin-cash-node/releases) or better yet use the [Ubuntu PPA](https://bitcoincashnode.org/download/ubuntu).
+
+```sh
+sudo add-apt-repository ppa:bitcoin-cash-node/ppa
+sudo apt-get update
+sudo apt-get install bitcoind 
 ```
-pkg install -y bitcoin-daemon bitcoin-utils
-```
+
+Then see the [bitcoind.service](./bitcoind.service) file for the systemd service file, where I also set the `-datadir` parameter (see the service file for more details).
 
 Configure your `bitcoin.conf` like this:
+
+```sh
+# Disable listening, this has nothing to do with the RPC calls.
+listen=0
+
+# Limit the number of connections to the node, this has nothing to do with the RPC calls.
+maxconnections=6
+# Max upload target (in MB), reducing the bandwidth usage.
+# This option has nothing to do with the RPC calls.
+maxuploadtarget=20
+
+# Transaction index (full index)
+txindex=1
+
+# Enable coin stats index as well (for gettxoutsetinfo RPC calls)
+coinstatsindex=1
+
+# Enable server RPC commands
+server=1
+
+# To bind to all interfaces, use 0.0.0.0 (default)
+rpcbind=0.0.0.0
+
+# Note: you can have multiple lines of rpcallowip
+# Limit to localhost ideally for security reasons
+rpcallowip=127.0.0.1
+# In case of Docker setup that uses IPV6 allow all IPv6 addresses
+rpcallowip=::/0
+
+#rpcport=8332 (default port)
+
+# Setup authentication
+rpcauth=username:hashedpassword
+
+# RPC options
+rpcworkqueue=1024
+# Increase the number of threads to handle RPC calls
+rpcthreads=10
+rpcservertimeout=60
+
+# Fulcrum options
+# Set zmqpubhashblock to listen on port 8433 for better performance
+zmqpubhashblock=tcp://0.0.0.0:8433
 ```
+
+<!-- 
 datadir=/bitcoin
 server=1
 txindex=1
@@ -165,63 +230,105 @@ rpcbind=127.0.0.1:18332
 daemon=1
 bind=127.0.0.1:38333
 rpcbind=127.0.0.1:38332
-```
+-->
 
 ### Fulcrum
 
-*TODO*
+Fulcrum has a configuration file `fulcrum.conf` that you can use to configure the node.
 
+```sh
+# Database directory
+datadir = /media/my_extra_drive_mount_point/fulcrum/
+
+# Bitcoin daemon RPC host:port
+rpc = 127.0.0.1:8433
+
+# RPC Username 
+rpcuser = username
+
+# RPC Password
+rpcpassword = secret
+
+# TCP bind
+tcp = 0.0.0.0:50001
+
+# Admin RPC bind (if you wish to have admin RPC service running)
+admin = 8000
+
+# Syslog mode (optional)
+syslog = true
+
+# Peer discovery
+peering = false
+
+# BitcoinD number of clients
+# See the bitcoind.conf rpcthreads option.
+bitcoind_clients = 10
+
+# Max history
+# Warning: this might impact the performance of your server.
+# However, recently BCH many more transactions due to CashTokens, so you might want to increase this value from the default value.
+max_history = 300000
+
+# Work queue threads
+# Max. number of worker threads.
+worker_threads = 8
+```
 
 ### MariaDB
 
-Import the historical mempool fee database snapshot:
-```
+Prepare MariaDB (open-source fork of MySQL) for the BCH Explorer.
+
+```sh
 mysql -u root
-create database mempool;
-grant all on mempool.* to 'mempool'@'localhost' identified by 'mempool';
-create database mempool_testnet;
-grant all on mempool_testnet.* to 'mempool_testnet'@'localhost' identified by 'mempool_testnet';
-create database mempool_signet;
-grant all on mempool_signet.* to 'mempool_signet'@'localhost' identified by 'mempool_signet';
-create database mempool_liquid;
-grant all on mempool_liquid.* to 'mempool_liquid'@'localhost' identified by 'mempool_liquid';
-create database mempool_liquidtestnet;
-grant all on mempool_liquidtestnet.* to 'mempool_liquidtestnet'@'localhost' identified by 'mempool_liquidtestnet';
+create database explorer;
+grant all on explorer.* to 'explorer'@'localhost' identified by 'explorer';
+
+#create database explorer_testnet;
+#grant all on explorer_testnet.* to 'explorer_testnet'@'localhost' identified by 'explorer_testnet';
+#create database explorer_signet;
 ```
 
-### Mempool
+### BCH Explorer
 
-After all 3 electrs instances are fully indexed, install your 3 Mempool nodes:
+Currently I deploy the BCH backend using Docker. Using the [docker compose](../docker/docker-compose.yml).
+
+And I deploy the frontend directly to Nginx/Angie, since the frontend is a static Angular site, which is building also [during the CI/CD process](../.gitlab-ci.yml).
+
+<!-- After all 3 ~~electrs~~ Fulcrum instances are fully indexed, install your 3 BCH Explorer nodes:
+
 ```
 ./mempool-install-all
 ./mempool-upgrade-all
 ```
 
-Finally, start your 3 Mempool backends:
+Finally, start your 3 BCH Explorer backends:
+
 ```
 ./mempool-start-all
 ```
+-->
 
-### Nginx
+### Angie / Nginx
 
-Get an SSL certificate using `certbot`:
-```
-certbot --nginx -d mempool.ninja
-```
+In case you use Nginx, get an SSL certificate using `certbot`:
 
-Make a symlink from `/usr/local/etc/nginx/mempool` to `/mempool/mempool`, copy the `nginx.conf`, and edit as necessary. You probably only need to edit the top-level `nginx.conf` file.
-```
-cd /usr/local/etc/nginx
-ln -s /mempool/mempool
-cp /mempool/mempool/nginx.conf .
-vi nginx.conf
+```sh
+certbot --nginx -d bchexplorer.cash
 ```
 
-Restart `nginx`:
-```
-service nginx restart
+However, Angie has built-in certificate management, so you can use it as well.
+
+In case of Docker backend you can configure the upstream mainnet backend to just use: `127.0.0.1:8999`:
+
+```conf
+upstream bch-explorer-mainnet {
+    server 127.0.0.1:8999 fail_timeout=10s max_fails=10 weight=99999;
+
+    keepalive 8;
+}
 ```
 
-### Done
+The [`keepalive`](https://en.angie.software/angie/docs/configuration/modules/http/http_upstream/#keepalive) directive is used to keep the connection open for a period of time, so that the backend can reuse the connection for multiple requests. The `weight` directive is used to assign a weight to the backend, which is used to determine the load balancing, the higher the weight, the more requests are sent to the backend (in case you run multiple backends it will round-robin the requests based on the weight).
 
-If everything went well, your site should look like the one at https://mempool.space/.
+More information see: [Upstream docs](https://en.angie.software/angie/docs/configuration/modules/stream/stream_upstream/).
