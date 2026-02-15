@@ -98,11 +98,8 @@ export class BlockComponent implements OnInit, OnDestroy {
   overviewError: any = null;
   webGlEnabled = true;
   auditParamEnabled: boolean = false;
-  auditSupported: boolean =
-    this.stateService.env.AUDIT &&
-    this.stateService.env.BASE_MODULE === 'explorer' &&
-    this.stateService.env.MINING_DASHBOARD === true;
-  auditModeEnabled: boolean = !this.stateService.hideAudit.value;
+  auditSupported: boolean;
+  auditModeEnabled: boolean;
   auditAvailable = true;
   showAudit: boolean;
   isMobile = window.innerWidth <= 767.98;
@@ -157,6 +154,11 @@ export class BlockComponent implements OnInit, OnDestroy {
     private cd: ChangeDetectorRef,
     private preloadService: PreloadService
   ) {
+    this.auditSupported =
+      this.stateService.env.AUDIT &&
+      this.stateService.env.BASE_MODULE === 'explorer' &&
+      this.stateService.env.MINING_DASHBOARD === true;
+    this.auditModeEnabled = !this.stateService.hideAudit.value;
     this.webGlEnabled = this.stateService.isBrowser && detectWebGL();
   }
 

@@ -121,14 +121,11 @@ export class TrackerComponent implements OnInit, OnDestroy {
   hasEffectiveFeeRate: boolean;
   accelerateCtaType: 'alert' | 'button' = 'button';
   paymentReceiptUrl: string | null = null;
-  auditEnabled: boolean =
-    this.stateService.env.AUDIT &&
-    this.stateService.env.BASE_MODULE === 'explorer' &&
-    this.stateService.env.MINING_DASHBOARD === true;
+  auditEnabled: boolean;
 
   enterpriseInfo: any;
   enterpriseInfo$: Subscription;
-  officialSite = this.stateService.env.OFFICIAL_BCH_EXPLORER;
+  officialSite: boolean;
 
   constructor(
     private route: ActivatedRoute,
@@ -149,6 +146,12 @@ export class TrackerComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.auditEnabled =
+      this.stateService.env.AUDIT &&
+      this.stateService.env.BASE_MODULE === 'explorer' &&
+      this.stateService.env.MINING_DASHBOARD === true;
+    this.officialSite = this.stateService.env.OFFICIAL_BCH_EXPLORER;
+
     this.onResize();
 
     this.miningService.getMiningStats('1w').subscribe((stats) => {

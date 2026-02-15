@@ -140,7 +140,7 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
   inOutLimit: number = 150;
   maxInOut: number = 0;
   flowPrefSubscription: Subscription;
-  hideFlow: boolean = this.stateService.hideFlow.value;
+  hideFlow: boolean;
   overrideFlowPreference: boolean = null;
   flowEnabled: boolean;
   tooltipPosition: { x: number; y: number };
@@ -150,10 +150,7 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
   duplicateTxBlocks: [number, number] | undefined;
   hasEffectiveFeeRate: boolean;
   accelerateCtaType: 'alert' | 'button' = 'button';
-  auditEnabled: boolean =
-    this.stateService.env.AUDIT &&
-    this.stateService.env.BASE_MODULE === 'explorer' &&
-    this.stateService.env.MINING_DASHBOARD === true;
+  auditEnabled: boolean;
 
   graphContainer: ElementRef;
   @ViewChild('graphContainer')
@@ -187,6 +184,12 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.hideFlow = this.stateService.hideFlow.value;
+    this.auditEnabled =
+      this.stateService.env.AUDIT &&
+      this.stateService.env.BASE_MODULE === 'explorer' &&
+      this.stateService.env.MINING_DASHBOARD === true;
+
     this.enterpriseService.page();
 
     this.miningService.getMiningStats('1m').subscribe((stats) => {

@@ -42,7 +42,7 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   mobileViewport: boolean = false;
   showMobileEnterpriseUpsell: boolean = true;
   timeLtrSubscription: Subscription;
-  timeLtr: boolean = this.stateService.timeLtr.value;
+  timeLtr: boolean;
 
   @ViewChildren(FaqTemplateDirective)
   faqTemplates: QueryList<FaqTemplateDirective>;
@@ -51,7 +51,9 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   constructor(
     private stateService: StateService,
     private route: ActivatedRoute
-  ) {}
+  ) {
+    this.timeLtr = this.stateService.timeLtr.value;
+  }
 
   ngAfterContentChecked() {
     if (this.faqTemplates) {

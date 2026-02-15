@@ -33,7 +33,7 @@ export class BlockchainComponent implements OnInit, OnDestroy, OnChanges {
 
   network: string;
   timeLtrSubscription: Subscription;
-  timeLtr: boolean = this.stateService.timeLtr.value;
+  timeLtr: boolean;
   ltrTransitionEnabled = false;
   flipping = false;
   connectionStateSubscription: Subscription;
@@ -52,7 +52,9 @@ export class BlockchainComponent implements OnInit, OnDestroy, OnChanges {
     public stateService: StateService,
     public StorageService: StorageService,
     private cd: ChangeDetectorRef
-  ) {}
+  ) {
+    this.timeLtr = this.stateService.timeLtr.value;
+  }
 
   ngOnInit(): void {
     this.onResizeorPageIndex();

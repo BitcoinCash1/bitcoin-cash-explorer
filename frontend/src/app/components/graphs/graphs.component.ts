@@ -11,7 +11,7 @@ import { handleDemoRedirect } from '@app/shared/common.utils';
   standalone: false,
 })
 export class GraphsComponent implements OnInit {
-  isMainnet = this.stateService.isMainnet();
+  isMainnet: boolean;
 
   constructor(
     public stateService: StateService,
@@ -21,6 +21,7 @@ export class GraphsComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.isMainnet = this.stateService.isMainnet();
     this.websocketService.want(['blocks']);
     handleDemoRedirect(this.route, this.router);
   }

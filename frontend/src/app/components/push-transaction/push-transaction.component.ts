@@ -31,7 +31,7 @@ export class PushTransactionComponent implements OnInit {
   results: TxResult[] = [];
   isLoadingPackage = false;
 
-  network = this.stateService.network;
+  network: string;
 
   constructor(
     private formBuilder: UntypedFormBuilder,
@@ -45,6 +45,8 @@ export class PushTransactionComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.network = this.stateService.network;
+
     this.pushTxForm = this.formBuilder.group({
       txHash: ['', Validators.required],
     });

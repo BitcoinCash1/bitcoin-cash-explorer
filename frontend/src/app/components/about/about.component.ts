@@ -1,11 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
   Inject,
   LOCALE_ID,
   OnInit,
-  ViewChild,
 } from '@angular/core';
 import { WebsocketService } from '@app/services/websocket.service';
 import { SeoService } from '@app/services/seo.service';
@@ -15,7 +13,6 @@ import { Observable } from 'rxjs';
 import { ApiService } from '@app/services/api.service';
 import { IBackendInfo } from '@interfaces/websocket.interface';
 import { Router, ActivatedRoute } from '@angular/router';
-import { map, share, tap } from 'rxjs/operators';
 import { ITranslators } from '@interfaces/node-api.interface';
 import { DOCUMENT } from '@angular/common';
 import { EnterpriseService } from '@app/services/enterprise.service';
@@ -28,11 +25,11 @@ import { EnterpriseService } from '@app/services/enterprise.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AboutComponent implements OnInit {
-  @ViewChild('promoVideo') promoVideo: ElementRef;
+  // @ViewChild('promoVideo') promoVideo: ElementRef;
   backendInfo$: Observable<IBackendInfo>;
-  frontendGitCommitHash = this.stateService.env.GIT_COMMIT_HASH;
-  packetJsonVersion = this.stateService.env.PACKAGE_JSON_VERSION;
-  officialSite = this.stateService.env.OFFICIAL_BCH_EXPLORER;
+  frontendGitCommitHash: string;
+  packetJsonVersion: string;
+  officialSite: boolean;
   showNavigateToSponsor = false;
 
   profiles$: Observable<any>;
@@ -51,7 +48,11 @@ export class AboutComponent implements OnInit {
     private route: ActivatedRoute,
     @Inject(LOCALE_ID) public locale: string,
     @Inject(DOCUMENT) private document: Document
-  ) {}
+  ) {
+    this.frontendGitCommitHash = this.stateService.env.GIT_COMMIT_HASH;
+    this.packetJsonVersion = this.stateService.env.PACKAGE_JSON_VERSION;
+    this.officialSite = this.stateService.env.OFFICIAL_BCH_EXPLORER;
+  }
 
   ngOnInit() {
     this.backendInfo$ = this.stateService.backendInfo$;
@@ -150,9 +151,9 @@ export class AboutComponent implements OnInit {
     return this.locale.startsWith(language) && !this.locale.startsWith('en');
   }
 
-  unmutePromoVideo(): void {
-    this.promoVideo.nativeElement.muted = false;
-  }
+  // unmutePromoVideo(): void {
+  //   this.promoVideo.nativeElement.muted = false;
+  // }
 
   onSponsorClick(e): boolean {
     this.enterpriseService.goal(5);

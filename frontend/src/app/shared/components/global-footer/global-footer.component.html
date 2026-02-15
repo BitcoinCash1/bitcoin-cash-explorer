@@ -464,24 +464,35 @@
       [style]="{ 'background-color': isServicesPage ? 'var(--bg)' : '' }"
     >
       <div class="col-sm-12">
-        <p *ngIf="officialSite">
-          <span
-            >{{ (backendInfo$ | async)?.hostname }} (v{{
-              (backendInfo$ | async)?.version
-            }}) [<a
-              target="_blank"
-              href="https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/-/commit/{{
-                (backendInfo$ | async)?.gitCommit | slice: 0 : 8
-              }}"
-              >{{ (backendInfo$ | async)?.gitCommit | slice: 0 : 8 }}</a
-            >]</span
-          >
-          <span *ngIf="stateService.env.GIT_COMMIT_HASH_MEMPOOL_SPACE"
-            >[{{
-              (servicesBackendInfo$ | async)?.gitCommit | slice: 0 : 8
-            }}]</span
-          >
-        </p>
+        <ng-container *ngIf="officialSite">
+          <p *ngIf="backendInfo$ | async as backend; else officialFallback">
+            <span
+              >{{ backend.hostname }} (v{{ backend.version }}) [<a
+                target="_blank"
+                href="https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/-/commit/{{
+                  backend.gitCommit | slice: 0 : 8
+                }}"
+                >{{ backend.gitCommit | slice: 0 : 8 }}</a
+              >]</span
+            >
+            <span *ngIf="stateService.env.GIT_COMMIT_HASH_MEMPOOL_SPACE"
+              >[{{
+                (servicesBackendInfo$ | async)?.gitCommit | slice: 0 : 8
+              }}]</span
+            >
+          </p>
+          <ng-template #officialFallback>
+            <p>
+              v{{ packetJsonVersion }} [<a
+                target="_blank"
+                href="https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/-/commit/{{
+                  frontendGitCommitHash
+                }}"
+                >{{ frontendGitCommitHash }}</a
+              >]
+            </p>
+          </ng-template>
+        </ng-container>
         <p *ngIf="!officialSite">
           v{{ packetJsonVersion }} [<a
             target="_blank"

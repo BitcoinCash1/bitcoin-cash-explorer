@@ -30,7 +30,7 @@ export class ClockchainComponent implements OnInit, OnChanges, OnDestroy {
 
   network: string;
   timeLtrSubscription: Subscription;
-  timeLtr: boolean = this.stateService.timeLtr.value;
+  timeLtr: boolean;
   ltrTransitionEnabled = false;
   connectionStateSubscription: Subscription;
   loadingTip: boolean = true;
@@ -39,7 +39,9 @@ export class ClockchainComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
     public stateService: StateService,
     private cd: ChangeDetectorRef
-  ) {}
+  ) {
+    this.timeLtr = this.stateService.timeLtr.value;
+  }
 
   ngOnInit() {
     this.ngOnChanges();

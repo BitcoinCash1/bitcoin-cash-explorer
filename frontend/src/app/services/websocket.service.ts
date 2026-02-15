@@ -3,11 +3,10 @@ import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { WebsocketResponse } from '@interfaces/websocket.interface';
 import { StateService } from '@app/services/state.service';
 import { Transaction } from '@app/interfaces/backend-api.interface';
-import { firstValueFrom, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 import { ApiService } from '@app/services/api.service';
 import { take } from 'rxjs/operators';
 import { TransferState, makeStateKey } from '@angular/core';
-import { CacheService } from '@app/services/cache.service';
 import { uncompressDeltaChange, uncompressTx } from '@app/shared/common.utils';
 
 const OFFLINE_RETRY_AFTER_MS = 2000;
@@ -53,8 +52,7 @@ export class WebsocketService {
   constructor(
     private stateService: StateService,
     private apiService: ApiService,
-    private transferState: TransferState,
-    private cacheService: CacheService
+    private transferState: TransferState
   ) {
     if (!this.stateService.isBrowser) {
       // @ts-ignore

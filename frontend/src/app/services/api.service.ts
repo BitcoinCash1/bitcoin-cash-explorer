@@ -30,9 +30,7 @@ import {
   tap,
 } from 'rxjs';
 import { StateService } from '@app/services/state.service';
-import { Transaction } from '@app/interfaces/backend-api.interface';
 import { Conversion } from '@app/services/price.service';
-import { StorageService } from '@app/services/storage.service';
 import { WebsocketResponse } from '@interfaces/websocket.interface';
 import { TxAuditStatus } from '@components/transaction/transaction.component';
 
@@ -52,8 +50,7 @@ export class ApiService {
 
   constructor(
     private httpClient: HttpClient,
-    private stateService: StateService,
-    private storageService: StorageService
+    private stateService: StateService
   ) {
     this.apiBaseUrl = ''; // use relative URL by default
     if (!stateService.isBrowser) {

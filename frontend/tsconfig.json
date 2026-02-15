@@ -13,7 +13,6 @@
     "experimentalDecorators": true,
     "importHelpers": true,
     "esModuleInterop": true,
-    "sourceMap": true,
     "declaration": false,
     "moduleResolution": "bundler",
     "typeRoots": ["node_modules/@types"],
@@ -25,8 +24,7 @@
     "fullTemplateTypeCheck": true,
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
-    "strictTemplates": true,
-    "useDefineForClassFields": false
+    "strictTemplates": true
   },
   "files": [],
   "references": [

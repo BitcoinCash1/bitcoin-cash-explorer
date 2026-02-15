@@ -10,31 +10,8 @@ import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pip
 })
 export class NavigationService {
   subnetPaths = new BehaviorSubject<Record<string, string>>({});
-  networkModules = {
-    bitcoin: {
-      subnets: [
-        { name: 'mainnet', path: '' },
-        {
-          name: 'testnet',
-          path:
-            this.stateService.env.ROOT_NETWORK === 'testnet' ? '/' : '/testnet',
-        },
-        {
-          name: 'testnet4',
-          path:
-            this.stateService.env.ROOT_NETWORK === 'testnet4'
-              ? '/'
-              : '/testnet4',
-        },
-        {
-          name: 'signet',
-          path:
-            this.stateService.env.ROOT_NETWORK === 'signet' ? '/' : '/signet',
-        },
-      ],
-    },
-  };
-  networks = Object.keys(this.networkModules);
+  networkModules: Record<string, { subnets: { name: string; path: string }[] }>;
+  networks: string[];
   initialLoad = true;
 
   constructor(
@@ -42,6 +19,34 @@ export class NavigationService {
     private router: Router,
     private relativeUrlPipe: RelativeUrlPipe
   ) {
+    this.networkModules = {
+      bitcoin: {
+        subnets: [
+          { name: 'mainnet', path: '' },
+          {
+            name: 'testnet',
+            path:
+              this.stateService.env.ROOT_NETWORK === 'testnet'
+                ? '/'
+                : '/testnet',
+          },
+          {
+            name: 'testnet4',
+            path:
+              this.stateService.env.ROOT_NETWORK === 'testnet4'
+                ? '/'
+                : '/testnet4',
+          },
+          {
+            name: 'signet',
+            path:
+              this.stateService.env.ROOT_NETWORK === 'signet' ? '/' : '/signet',
+          },
+        ],
+      },
+    };
+    this.networks = Object.keys(this.networkModules);
+
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),

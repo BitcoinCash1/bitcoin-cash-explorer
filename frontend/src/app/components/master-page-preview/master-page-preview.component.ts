@@ -13,7 +13,7 @@ import { EnterpriseService } from '@app/services/enterprise.service';
 export class MasterPagePreviewComponent implements OnInit {
   network$: Observable<string>;
   lightning$: Observable<boolean>;
-  officialSite = this.stateService.env.OFFICIAL_BCH_EXPLORER;
+  officialSite: boolean;
   urlLanguage: string;
   subdomain = '';
   enterpriseInfo: any;
@@ -26,6 +26,7 @@ export class MasterPagePreviewComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.officialSite = this.stateService.env.OFFICIAL_BCH_EXPLORER;
     this.network$ = merge(of(''), this.stateService.networkChanged$);
     this.urlLanguage = this.languageService.getLanguageForUrl();
     this.subdomain = this.enterpriseService.getSubdomain();

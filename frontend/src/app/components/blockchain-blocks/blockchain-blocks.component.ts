@@ -45,7 +45,7 @@ export class BlockchainBlocksComponent implements OnInit, OnChanges, OnDestroy {
   network = '';
   blocks: BlockchainBlock[] = [];
   dynamicBlocksAmount: number = 8;
-  emptyBlocks: BlockExtended[] = this.mountEmptyBlocks();
+  emptyBlocks: BlockExtended[] = [];
   markHeight: number;
   chainTip: number;
   pendingMarkBlock: { animate: boolean; newBlockFromLeft: boolean };
@@ -95,6 +95,8 @@ export class BlockchainBlocksComponent implements OnInit, OnChanges, OnDestroy {
       8,
       this.stateService.env.KEEP_BLOCKS_AMOUNT
     );
+
+    this.emptyBlocks = this.mountEmptyBlocks();
 
     this.blockDisplayMode = this.stateService.blockDisplayMode$.value as
       | 'size'

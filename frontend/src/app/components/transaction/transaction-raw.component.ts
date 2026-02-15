@@ -76,7 +76,7 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
   inOutLimit: number = 150;
   maxInOut: number = 0;
   flowPrefSubscription: Subscription;
-  hideFlow: boolean = this.stateService.hideFlow.value;
+  hideFlow: boolean;
   flowEnabled: boolean;
   filters: Filter[] = [];
   mempoolBlocksSubscription: Subscription;
@@ -95,6 +95,8 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.hideFlow = this.stateService.hideFlow.value;
+
     this.seoService.setTitle(
       $localize`:@@d7f92e6fe26fba6fff568cbdae5db4a5c8c6a55c:Preview Transaction`
     );

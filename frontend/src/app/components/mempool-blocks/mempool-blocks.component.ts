@@ -60,7 +60,7 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
 
   specialBlocks = specialBlocks;
   mempoolBlocks: MempoolBlock[] = [];
-  mempoolEmptyBlocks: MempoolBlock[] = this.mountEmptyBlocks();
+  mempoolEmptyBlocks: MempoolBlock[] = [];
   mempoolBlocks$: Observable<MempoolBlock[]>;
   difficultyAdjustments$: Observable<DifficultyAdjustment>;
   loadingBlocks$: Observable<boolean>;
@@ -120,6 +120,7 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
   ) {}
 
   ngOnInit() {
+    this.mempoolEmptyBlocks = this.mountEmptyBlocks();
     this.chainTip = this.stateService.latestBlockHeight;
 
     const width =

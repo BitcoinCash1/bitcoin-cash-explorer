@@ -21,12 +21,14 @@ import { isPlatformBrowser } from '@angular/common';
 
 @Injectable()
 export class HttpCacheInterceptor implements HttpInterceptor {
-  isBrowser: boolean = isPlatformBrowser(this.platformId);
+  isBrowser: boolean;
 
   constructor(
     private transferState: TransferState,
     @Inject(PLATFORM_ID) private platformId: any
-  ) {}
+  ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
+  }
 
   intercept(
     request: HttpRequest<any>,

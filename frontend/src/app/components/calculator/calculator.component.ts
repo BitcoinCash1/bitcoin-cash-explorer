@@ -16,7 +16,7 @@ export class CalculatorComponent implements OnInit {
   satoshis = 10000;
   form: FormGroup;
 
-  currency$ = this.stateService.fiatCurrency$;
+  currency$: Observable<string>;
   price$: Observable<number>;
   lastFiatPrice$: Observable<number>;
 
@@ -27,6 +27,8 @@ export class CalculatorComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.currency$ = this.stateService.fiatCurrency$;
+
     this.form = this.formBuilder.group({
       fiat: [0],
       bitcoin: [0],

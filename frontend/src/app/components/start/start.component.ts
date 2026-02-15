@@ -36,7 +36,7 @@ export class StartComponent implements OnInit, AfterViewChecked, OnDestroy {
   mouseDragStartX: number;
   blockchainScrollLeftInit: number;
   timeLtrSubscription: Subscription;
-  timeLtr: boolean = this.stateService.timeLtr.value;
+  timeLtr: boolean;
   chainTipSubscription: Subscription;
   chainTip: number = -1;
   tipIsSet: boolean = false;
@@ -80,6 +80,7 @@ export class StartComponent implements OnInit, AfterViewChecked, OnDestroy {
     private router: Router,
     private route: ActivatedRoute
   ) {
+    this.timeLtr = this.stateService.timeLtr.value;
     this.isiOS = ['iPhone', 'iPod', 'iPad'].includes(
       (navigator as any)?.userAgentData?.platform || navigator.platform
     );

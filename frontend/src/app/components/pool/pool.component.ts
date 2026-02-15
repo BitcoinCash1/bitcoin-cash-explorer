@@ -47,7 +47,7 @@ export class PoolComponent implements OnInit {
   @Input() left: number | string = 75;
 
   gfg = true;
-  stratumEnabled = this.stateService.env.STRATUM_ENABLED;
+  stratumEnabled: boolean;
 
   formatNumber = formatNumber;
   Math = Math;
@@ -83,6 +83,7 @@ export class PoolComponent implements OnInit {
     private seoService: SeoService,
     public amountShortenerPipe: AmountShortenerPipe
   ) {
+    this.stratumEnabled = this.stateService.env.STRATUM_ENABLED;
     this.auditAvailable = this.stateService.env.AUDIT;
   }
 

@@ -147,7 +147,7 @@ const defaultEnv: Env = {
 })
 export class StateService {
   referrer: string = '';
-  isBrowser: boolean = isPlatformBrowser(this.platformId);
+  isBrowser: boolean;
   isOfficialSiteBuild = window['isOfficialSiteBuild'] ?? false;
   isProdDomain: boolean;
   backend: 'electrum' | 'none' = 'electrum';
@@ -245,6 +245,7 @@ export class StateService {
     private router: Router,
     private storageService: StorageService
   ) {
+    this.isBrowser = isPlatformBrowser(this.platformId);
     this.referrer = window.document.referrer;
 
     const browserWindow = window || {};
