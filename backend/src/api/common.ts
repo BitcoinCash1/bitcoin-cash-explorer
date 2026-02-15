@@ -118,7 +118,8 @@ export class Common {
       // scriptsig-not-pushonly
       if (vin.scriptsig_asm?.length) {
         for (const op of vin.scriptsig_asm.split(' ')) {
-          if (opcodes[op] && opcodes[op] > opcodes['OP_16']) {
+          const opCode = parseInt(op, 16);
+          if (!isNaN(opCode) && opcodes[opCode] && opcodes[opCode] > opcodes[81]) {
             return true;
           }
         }
@@ -300,8 +301,8 @@ export class Common {
     // }
     const reusedInputAddresses: { [address: string]: number } = {};
     const reusedOutputAddresses: { [address: string]: number } = {};
-    const inValues = {};
-    const outValues = {};
+    const inValues: { [key: number]: number } = {};
+    const outValues: { [key: number]: number } = {};
     for (const vin of tx.vin) {
       if (vin.prevout?.scriptpubkey_type) {
         // Only switch between BCH supported types
