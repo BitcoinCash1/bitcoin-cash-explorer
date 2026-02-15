@@ -1,6 +1,6 @@
 # Deploying an Production Instance
 
-These instructions are for setting up a serious production BCH Explorer for Bitcoin Cash (mainnet, testnet, signet).
+These instructions are for setting up a serious production BCH Explorer for Bitcoin Cash (mainnet, testnet3).
 
 <!-- Users should use [one of the other installation methods](../#installation-methods). -->
 
@@ -225,11 +225,6 @@ whitelist=bloomfilter@127.0.0.1
 daemon=1
 bind=127.0.0.1:18333
 rpcbind=127.0.0.1:18332
-
-[signet]
-daemon=1
-bind=127.0.0.1:38333
-rpcbind=127.0.0.1:38332
 -->
 
 ### Fulcrum
@@ -286,7 +281,6 @@ grant all on explorer.* to 'explorer'@'localhost' identified by 'explorer';
 
 #create database explorer_testnet;
 #grant all on explorer_testnet.* to 'explorer_testnet'@'localhost' identified by 'explorer_testnet';
-#create database explorer_signet;
 ```
 
 ### BCH Explorer
