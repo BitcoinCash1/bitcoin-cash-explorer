@@ -251,19 +251,18 @@ When a `coinbase tag` or `coinbase address` change is detected, pool assignments
 
 ### Re-index tables
 
-You can manually force the nodejs backend to drop all data from a specified set of tables for future re-index. This is mostly useful for the mining dashboard and the lightning explorer.
+You can manually force the nodejs backend to drop all data from a specified set of tables for future re-index. This is mostly useful for the mining dashboard.
 
-Use the `--reindex` command to specify a list of comma separated table which will be truncated at start. Note that a 5 seconds delay will be observed before truncating tables in order to give you a chance to cancel (CTRL+C) in case of misuse of the command.
+Use the `--reindex-blocks` command to truncate the `blocks`, `hashrates`, `difficulty_adjustments`, and `pools` tables. Note that a 5 seconds delay will be observed before truncating tables in order to give you a chance to cancel (CTRL+C) in case of misuse of the command.
 
 Usage:
 
-```
-npm run start --reindex=blocks,hashrates
+```sh
+npm run start --reindex-blocks
 ```
 
 Example output:
 
-```
-Feb 13 14:55:27 [63246] WARN: <lightning> Indexed data for "hashrates" tables will be erased in 5 seconds (using '--reindex')
-Feb 13 14:55:32 [63246] NOTICE: <lightning> Table hashrates has been truncated
+```sh
+Feb 13 14:55:27 [63246] WARN: Truncating pools, blocks, hashrates and difficulty_adjustments tables for re-indexing (using '--reindex-blocks'). You can cancel this command within 5 seconds
 ```
