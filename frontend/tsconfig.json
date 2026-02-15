@@ -15,14 +15,15 @@
     "esModuleInterop": true,
     "sourceMap": true,
     "declaration": false,
-    "module": "preserve",
     "moduleResolution": "bundler",
+    "typeRoots": ["node_modules/@types"],
     "target": "ES2022",
-    "typeRoots": ["node_modules/@types"]
+    "module": "preserve"
   },
   "exclude": ["./cypress.config.ts", "node_modules", "cypress"],
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
+    "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictTemplates": true,
     "useDefineForClassFields": false
