@@ -406,6 +406,7 @@ export class BlockFeeRatesGraphComponent implements OnInit {
         this.widget || data.series.length === 0
           ? undefined
           : {
+              top: 0,
               padding: [10, 75],
               data: data.legends,
               selected: JSON.parse(

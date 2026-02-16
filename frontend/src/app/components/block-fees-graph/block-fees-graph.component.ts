@@ -232,6 +232,7 @@ export class BlockFeesGraphComponent implements OnInit {
         data.blockFees.length === 0
           ? undefined
           : {
+              top: 0,
               data: [
                 {
                   name: 'Fees BCH',

@@ -224,6 +224,7 @@ export class BlockSizesGraphComponent implements OnInit {
         data.sizes.length === 0
           ? undefined
           : {
+              top: 0,
               padding: 10,
               data: [
                 {

@@ -366,6 +366,7 @@ export class HashrateChartComponent implements OnInit {
         this.widget || data.hashrates.length === 0
           ? undefined
           : {
+              top: 0,
               data: [
                 {
                   name: $localize`:@@79a9dc5b1caca3cbeb1733a19515edacc5fc7920:Hashrate`,
