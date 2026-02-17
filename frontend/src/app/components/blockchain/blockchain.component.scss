@@ -118,3 +118,11 @@
     direction: rtl;
   }
 }
+
+.blockchain-wrapper {
+  cursor: grab;
+}
+
+.blockchain-wrapper:active {
+  cursor: grabbing;
+}
