@@ -18,6 +18,7 @@ class PoolsUpdater {
   currentSha: string | null = null;
   poolsUrl: string = config.EXPLORER.POOLS_JSON_URL;
   treeUrl: string = config.EXPLORER.POOLS_JSON_TREE_URL;
+  poolsSource: string = config.EXPLORER.POOLS_SOURCE || 'gitlab';
 
   public async $startService(): Promise<void> {
     while (true) {
@@ -51,13 +52,19 @@ class PoolsUpdater {
         this.currentSha = await this.getShaFromDb();
       }
 
-      const gitlabSha = await this.fetchPoolsSha(); // Fetch pools-v2.json sha from GitLab
-      if (gitlabSha === null) {
+      let sha: string | null = null;
+      if (this.poolsSource === 'gitlab') {
+        sha = await this.fetchGitLabPoolsSha(); // Fetch pools-v2.json sha from GitLab
+      } else {
+        sha = await this.fetchGitHubPoolsSha(); // Fetch pools-v2.json sha from GitHub
+      }
+
+      if (sha === null) {
         return;
       }
 
-      logger.debug(`pools-v2.json sha | Current: ${this.currentSha} | GitLab: ${gitlabSha}`, this.tag);
-      if (this.currentSha !== null && this.currentSha === gitlabSha) {
+      logger.debug(`pools-v2.json sha | Current: ${this.currentSha} | ${this.poolsSource}: ${sha}`, this.tag);
+      if (this.currentSha !== null && this.currentSha === sha) {
         logger.info('No new mining pools data available, skip update', this.tag);
         return;
       }
@@ -68,10 +75,7 @@ class PoolsUpdater {
         config.EXPLORER.AUTOMATIC_POOLS_UPDATE !== true && // Automatic pools update is disabled
         !process.env.npm_config_update_pools // We're not manually updating mining pool
       ) {
-        logger.warn(
-          `Updated mining pools data is available (${gitlabSha}) but AUTOMATIC_POOLS_UPDATE is disabled`,
-          this.tag
-        );
+        logger.warn(`Updated mining pools data is available (${sha}) but AUTOMATIC_POOLS_UPDATE is disabled`, this.tag);
         logger.info(
           `You can update your mining pools using the --update-pools command flag. You may want to clear your nginx cache as well if applicable`,
           this.tag
@@ -93,20 +97,20 @@ class PoolsUpdater {
 
       if (config.DATABASE.ENABLED === false) {
         // Don't run db operations
-        logger.info(`Mining pools-v2.json (${gitlabSha}) import completed (no database)`, this.tag);
+        logger.info(`Mining pools-v2.json (${sha}) import completed (no database)`, this.tag);
         return;
       }
 
       try {
         await DB.query('START TRANSACTION;');
-        await this.updateDBSha(gitlabSha);
+        await this.updateDBSha(sha);
         await poolsParser.migratePoolsJson();
         await DB.query('COMMIT;');
       } catch (e) {
         logger.err(`Could not migrate mining pools, rolling back. Exception: ${JSON.stringify(e)}`, this.tag);
         await DB.query('ROLLBACK;');
       }
-      logger.info(`Mining pools-v2.json (${gitlabSha}) import completed`, this.tag);
+      logger.info(`Mining pools-v2.json (${sha}) import completed`, this.tag);
     } catch (e) {
       // fast-forward lastRun to 10 minutes before the next scheduled update
       this.lastRun = now - Math.max(config.EXPLORER.POOLS_UPDATE_DELAY - 600, 600);
@@ -115,14 +119,14 @@ class PoolsUpdater {
   }
 
   /**
-   * Fetch our latest pools-v2.json sha from the db
+   * Update our latest pools-v2.json sha in the db
    */
-  private async updateDBSha(gitlabSha: string): Promise<void> {
-    this.currentSha = gitlabSha;
+  private async updateDBSha(sha: string): Promise<void> {
+    this.currentSha = sha;
     if (config.DATABASE.ENABLED === true) {
       try {
         await DB.query('DELETE FROM state where name="pools_json_sha"');
-        await DB.query(`INSERT INTO state VALUES('pools_json_sha', NULL, '${gitlabSha}')`);
+        await DB.query(`INSERT INTO state VALUES('pools_json_sha', NULL, '${sha}')`);
       } catch (e) {
         logger.err(
           'Cannot save GitLab pools-v2.json sha into the db. Reason: ' + (e instanceof Error ? e.message : e),
@@ -148,13 +152,31 @@ class PoolsUpdater {
   /**
    * Fetch our latest pools-v2.json sha from GitLab v4 API end point
    */
-  private async fetchPoolsSha(): Promise<string | null> {
+  private async fetchGitLabPoolsSha(): Promise<string | null> {
     const response = await this.query(this.treeUrl);
 
     if (response !== undefined) {
       for (const file of response) {
         if (file['name'] === 'pools-v2.json') {
           return file['id']; // id is the sha
+        }
+      }
+    }
+
+    logger.err(`Cannot find "pools-v2.json" in git tree (${this.treeUrl})`, this.tag);
+    return null;
+  }
+
+  /**
+   * Fetch our latest pools-v2.json sha from GitHub
+   */
+  private async fetchGitHubPoolsSha(): Promise<string | null> {
+    const response = await this.query(this.treeUrl);
+
+    if (response !== undefined) {
+      for (const file of response['tree']) {
+        if (file['path'] === 'pools-v2.json') {
+          return file['sha'];
         }
       }
     }

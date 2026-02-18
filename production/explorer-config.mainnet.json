@@ -15,6 +15,7 @@
     "GOGGLES_INDEXING": true,
     "AUTOMATIC_POOLS_UPDATE": true,
     "POOLS_UPDATE_DELAY": 3600,
+    "POOLS_SOURCE": "gitlab",
     "AUDIT": true,
     "RUST_GBT": true,
     "USE_SECOND_NODE_FOR_MINFEE": true,

@@ -30,6 +30,7 @@ __EXPLORER_AUTOMATIC_POOLS_UPDATE__=${EXPLORER_AUTOMATIC_POOLS_UPDATE:=true}
 __EXPLORER_POOLS_JSON_URL__=${EXPLORER_POOLS_JSON_URL:=https://gitlab.melroy.org/bitcoincash/mining-pools/-/raw/main/pools-v2.json}
 __EXPLORER_POOLS_JSON_TREE_URL__=${EXPLORER_POOLS_JSON_TREE_URL:=https://gitlab.melroy.org/api/v4/projects/199/repository/tree}
 __EXPLORER_POOLS_UPDATE_DELAY__=${EXPLORER_POOLS_UPDATE_DELAY:=604800}
+__EXPLORER_POOLS_SOURCE__=${EXPLORER_POOLS_SOURCE:=gitlab}
 __EXPLORER_AUDIT__=${EXPLORER_AUDIT:=false}
 __EXPLORER_RUST_GBT__=${EXPLORER_RUST_GBT:=true}
 __EXPLORER_LIMIT_GBT__=${EXPLORER_LIMIT_GBT:=false}
@@ -154,6 +155,7 @@ sed -i "s!__EXPLORER_AUTOMATIC_POOLS_UPDATE__!${__EXPLORER_AUTOMATIC_POOLS_UPDAT
 sed -i "s!__EXPLORER_POOLS_JSON_URL__!${__EXPLORER_POOLS_JSON_URL__}!g" explorer-config.json
 sed -i "s!__EXPLORER_POOLS_JSON_TREE_URL__!${__EXPLORER_POOLS_JSON_TREE_URL__}!g" explorer-config.json
 sed -i "s!__EXPLORER_POOLS_UPDATE_DELAY__!${__EXPLORER_POOLS_UPDATE_DELAY__}!g" explorer-config.json
+sed -i "s!__EXPLORER_POOLS_SOURCE__!${__EXPLORER_POOLS_SOURCE__}!g" explorer-config.json
 sed -i "s!__EXPLORER_AUDIT__!${__EXPLORER_AUDIT__}!g" explorer-config.json
 sed -i "s!__EXPLORER_RUST_GBT__!${__EXPLORER_RUST_GBT__}!g" explorer-config.json
 sed -i "s!__EXPLORER_LIMIT_GBT__!${__EXPLORER_LIMIT_GBT__}!g" explorer-config.json

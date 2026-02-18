@@ -42,6 +42,7 @@ describe('BCH Explorer Backend Config', () => {
         POOLS_JSON_TREE_URL: 'https://gitlab.melroy.org/api/v4/projects/199/repository/tree',
         POOLS_JSON_URL: 'https://gitlab.melroy.org/bitcoincash/mining-pools/-/raw/main/pools-v2.json',
         POOLS_UPDATE_DELAY: 604800,
+        POOLS_SOURCE: 'gitlab',
         AUDIT: false,
         RUST_GBT: true,
         LIMIT_GBT: false,

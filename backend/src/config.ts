@@ -33,6 +33,7 @@ interface IConfig {
     POOLS_JSON_URL: string;
     POOLS_JSON_TREE_URL: string;
     POOLS_UPDATE_DELAY: number;
+    POOLS_SOURCE: 'gitlab' | 'github';
     AUDIT: boolean;
     RUST_GBT: boolean;
     LIMIT_GBT: boolean;
@@ -163,6 +164,7 @@ const defaults: IConfig = {
     POOLS_JSON_URL: 'https://gitlab.melroy.org/bitcoincash/mining-pools/-/raw/main/pools-v2.json',
     POOLS_JSON_TREE_URL: 'https://gitlab.melroy.org/api/v4/projects/199/repository/tree',
     POOLS_UPDATE_DELAY: 604800, // in seconds, default is one week
+    POOLS_SOURCE: 'gitlab',
     AUDIT: false,
     RUST_GBT: true,
     LIMIT_GBT: false,

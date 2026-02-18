@@ -112,6 +112,7 @@ Below we list all settings from `explorer-config.json` and the corresponding ove
     "POOLS_JSON_URL": "https://gitlab.melroy.org/bitcoincash/mining-pools/-/raw/main/pools-v2.json",
     "POOLS_JSON_TREE_URL": "https://gitlab.melroy.org/api/v4/projects/199/repository/tree",
     "POOLS_UPDATE_DELAY": 604800,
+    "POOLS_SOURCE": "gitlab",
     "MAX_BLOCKS_BULK_QUERY": 0,
     "DISK_CACHE_BLOCK_INTERVAL": 6,
     "PRICE_UPDATES_PER_HOUR": 1
@@ -144,6 +145,7 @@ Corresponding `docker-compose.yml` overrides:
       EXPLORER_POOLS_JSON_URL: ""
       EXPLORER_POOLS_JSON_TREE_URL: ""
       EXPLORER_POOLS_UPDATE_DELAY: ""
+      EXPLORER_POOLS_SOURCE: ""
       EXPLORER_MAX_BLOCKS_BULK_QUERY: ""
       EXPLORER_DISK_CACHE_BLOCK_INTERVAL: ""
       EXPLORER_PRICE_UPDATES_PER_HOUR: ""
