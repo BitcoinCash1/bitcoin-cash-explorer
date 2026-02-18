@@ -60,6 +60,7 @@ class PoolsUpdater {
       }
 
       if (sha === null) {
+        logger.warn(`Failed to fetch pools-v2.json sha from ${this.poolsSource}`, this.tag);
         return;
       }
 
