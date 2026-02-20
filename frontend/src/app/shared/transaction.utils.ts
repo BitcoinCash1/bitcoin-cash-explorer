@@ -238,11 +238,17 @@ export function processInputSignatures(vin: Vin): SigInfo[] {
       break;
     case 'p2sh':
       {
-        // TODO: Pretty sure this is broken as well, at least not complete.
-        signatures = [
-          ...extractDERSignaturesASM(vin.scriptsig_asm),
-          ...extractDERSignaturesASM(vin.inner_redeemscript_asm),
-        ];
+        if (vin.scriptsig_byte_code.length > 0) {
+          signatures.push({
+            signature: vin.scriptsig_byte_code.join(''),
+            sighash: SighashFlag.ALL | SighashFlag.UTXOS | SighashFlag.FORKID, // hard coded for now
+          });
+        }
+        // Old BTC stuff
+        // signatures = [
+        //   ...extractDERSignaturesASM(vin.scriptsig_asm),
+        //   ...extractDERSignaturesASM(vin.inner_redeemscript_asm),
+        // ];
       }
       break;
     default:
