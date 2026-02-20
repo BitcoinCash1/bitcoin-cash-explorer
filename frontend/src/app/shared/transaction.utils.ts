@@ -240,7 +240,7 @@ export function processInputSignatures(vin: Vin): SigInfo[] {
       {
         if (vin.scriptsig_byte_code.length > 0) {
           signatures.push({
-            signature: vin.scriptsig_byte_code.join(''),
+            signature: vin.scriptsig_byte_code.join(''), // BCH is using Schnorr signature algorithm
             sighash: SighashFlag.ALL | SighashFlag.UTXOS | SighashFlag.FORKID, // hard coded for now
           });
         }
