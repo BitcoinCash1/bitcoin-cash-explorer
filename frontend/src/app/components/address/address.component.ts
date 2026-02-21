@@ -17,7 +17,10 @@ import { of, merge, Subscription, Observable, forkJoin } from 'rxjs';
 import { SeoService } from '@app/services/seo.service';
 import { seoDescriptionNetwork } from '@app/shared/common.utils';
 import { AddressInformation } from '@interfaces/node-api.interface';
-import { AddressTypeInfo, convertToTokenAddress } from '@app/shared/address-utils';
+import {
+  AddressTypeInfo,
+  convertToTokenAddress,
+} from '@app/shared/address-utils';
 
 class AddressStats implements ChainStats {
   address: string;

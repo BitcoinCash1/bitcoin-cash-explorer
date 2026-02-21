@@ -438,16 +438,25 @@ export function normalizeBchAddress(address: string): string {
 
 // CashAddr constants
 // Note: CashAddr uses the same base32 alphabet as bech32
+// Source: https://github.com/ealmansi/cashaddrjs/blob/master/src/base32.js
 const CASHADDR_ALPHABET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
 
 // CashAddr polymod uses 40-bit arithmetic — must use BigInt to avoid JS overflow
-const CASHADDR_GENERATORS = [0x98f2bc8e61n, 0x79b76d99e2n, 0xf33e5fb3c4n, 0xae2eabe2a8n, 0x1e4f43e470n];
+// Source: https://github.com/ealmansi/cashaddrjs/blob/master/src/cashaddr.js
+const CASHADDR_GENERATORS = [
+  0x98f2bc8e61n,
+  0x79b76d99e2n,
+  0xf33e5fb3c4n,
+  0xae2eabe2a8n,
+  0x1e4f43e470n,
+];
 
+// Source: https://github.com/ealmansi/cashaddrjs/blob/master/src/cashaddr.js
 function cashAddrPolymod(v: number[]): bigint {
   let c = 1n;
   for (const d of v) {
     const topBits = c >> 35n;
-    c = (c & 0x07ffffffffn) << 5n ^ BigInt(d);
+    c = ((c & 0x07ffffffffn) << 5n) ^ BigInt(d);
     for (let j = 0; j < 5; j++) {
       if ((topBits >> BigInt(j)) & 1n) {
         c ^= CASHADDR_GENERATORS[j];
@@ -457,6 +466,7 @@ function cashAddrPolymod(v: number[]): bigint {
   return c ^ 1n;
 }
 
+// Source: https://github.com/ealmansi/cashaddrjs/blob/master/src/cashaddr.js
 function maskCashAddrPrefix(prefix: string): number[] {
   const result: number[] = [];
   for (let i = 0; i < prefix.length; i++) {
@@ -505,6 +515,7 @@ function fromWords(words: number[]) {
 }
 
 // CashAddr encoding/decoding for Bitcoin Cash
+// Based on: https://github.com/bitcoincashorg/bitcoincash.org/blob/master/spec/cashaddr.md
 function cashaddrDecode(address: string): {
   prefix: string;
   version: number;
@@ -537,11 +548,7 @@ function cashaddrDecode(address: string): {
   }
 
   // Validate checksum using the CashAddr polymod
-  const checksumInput = [
-    ...maskCashAddrPrefix(prefix),
-    0,
-    ...words,
-  ];
+  const checksumInput = [...maskCashAddrPrefix(prefix), 0, ...words];
   if (cashAddrPolymod(checksumInput) !== 0n) {
     throw new Error('Invalid CashAddr checksum');
   }
@@ -563,7 +570,12 @@ function cashaddrDecode(address: string): {
   return { prefix, version, hash };
 }
 
-function cashaddrEncode(prefix: string, version: number, hash: Uint8Array): string {
+// Based on: https://github.com/bitcoincashorg/bitcoincash.org/blob/master/spec/cashaddr.md
+function cashaddrEncode(
+  prefix: string,
+  version: number,
+  hash: Uint8Array
+): string {
   const payloadData = Uint8Array.from([version, ...hash]);
   const payloadWords = convertBits(Array.from(payloadData), 8, 5, true);
 
@@ -571,7 +583,14 @@ function cashaddrEncode(prefix: string, version: number, hash: Uint8Array): stri
     ...maskCashAddrPrefix(prefix),
     0,
     ...payloadWords,
-    0, 0, 0, 0, 0, 0, 0, 0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
   ];
   let checksum = cashAddrPolymod(checksumInput);
   const checksumWords: number[] = [];
@@ -589,6 +608,7 @@ function cashaddrEncode(prefix: string, version: number, hash: Uint8Array): stri
   return `${prefix}:${result}`;
 }
 
+// Based on: https://github.com/paytaca/bitcoincash-explorer/blob/eb0d613dd245a93624914536340db6bd04cf3e4b/app/utils/addressFormat.ts
 export function convertToTokenAddress(address: string): string | null {
   try {
     const decoded = cashaddrDecode(address);
