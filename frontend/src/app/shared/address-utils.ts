@@ -89,7 +89,7 @@ export function detectAddressType(
       cashaddrInput = address;
     }
   } else if (cashaddrRegex.test(address)) {
-    cashaddrInput = 'bitcoincash:' + address;
+    cashaddrInput = networkConfig.bch + address;
   }
 
   if (cashaddrInput !== null) {
@@ -361,30 +361,27 @@ export function compareAddressInfo(
   if (!['p2pkh', 'p2sh'].includes(a.type)) {
     return { status: 'incomparable' };
   }
-  const isBase58 = a.type === 'p2pkh' || a.type === 'p2sh';
   const isCashAddr =
     ['p2pkh', 'p2sh'].includes(a.type) && cashaddrRegex.test(a.address);
+  const isLegacyBase58 = !isCashAddr;
 
   const left = fuzzyPrefixMatch(a.address, b.address);
   const right = fuzzyPrefixMatch(a.address, b.address, true);
   // depending on address type, some number of matching prefix characters are guaranteed
   let prefixScore: number;
-  if (isBase58) {
+  if (isLegacyBase58) {
     prefixScore = 1;
-  } else if (isCashAddr) {
-    // For CashAddr, check if there's a prefix
+  } else {
+    // CashAddr: account for the 'bitcoincash:' (or 'bchtest:') prefix + first type character
     const bchPrefix = ADDRESS_PREFIXES[a.network || 'mainnet']?.bch;
     prefixScore = (a.address.startsWith(bchPrefix) ? bchPrefix.length : 0) + 1;
-  } else {
-    prefixScore =
-      (ADDRESS_PREFIXES[a.network || 'mainnet']?.bech32?.length || 0) + 1;
   }
 
   // add the two scores together
   const totalScore = left.score + right.score - prefixScore;
 
-  // adjust for the size of the alphabet (58 vs 32 vs 32 for CashAddr)
-  const alphabetSize = isBase58 ? 58 : isCashAddr ? 32 : 32;
+  // adjust for the size of the alphabet (58 for legacy base58, 32 for CashAddr base32)
+  const alphabetSize = isLegacyBase58 ? 58 : 32;
   const normalizedScore = Math.pow(alphabetSize, totalScore);
 
   return {
@@ -897,13 +894,9 @@ export function addressToScriptPubKey(
   }
 
   if (type === 'p2pkh' || type === 'p2sh') {
-    // Check if it's a CashAddr address (BCH format)
-    if (
-      cashaddrRegex.test(address) ||
-      address.includes('bitcoincash:') ||
-      address.includes('bchtest:') ||
-      address.includes('bchreg:')
-    ) {
+    // Check if it's a CashAddr address (BCH base32 format)
+    const bchPrefix = ADDRESS_PREFIXES[network || 'mainnet']?.bch;
+    if (cashaddrRegex.test(address) || (bchPrefix && address.startsWith(bchPrefix))) {
       return { scriptPubKey: cashaddrToSpk(address), type };
     }
     // Fall back to base58 for legacy addresses

@@ -28,6 +28,7 @@
         ></app-clipboard>
       </app-truncate>
       <div
+        *ngIf="addressTypeInfo?.type === 'p2pkh' || addressTypeInfo?.type === 'p2sh'"
         class="btn-group btn-group-toggle address-toggle"
         data-toggle="buttons"
       >
