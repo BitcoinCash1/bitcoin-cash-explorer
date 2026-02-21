@@ -81,32 +81,31 @@ export function detectAddressType(
     return 'unknown';
   }
 
-  // Check for BCH addresses first (with prefix)
+  // Check for BCH CashAddr addresses (with or without prefix)
+  let cashaddrInput: string | null = null;
   if (address.startsWith(networkConfig.bch)) {
     const suffix = address.slice(networkConfig.bch.length);
     if (cashaddrRegex.test(suffix)) {
-      // For BCH, we need to determine if it's P2PKH or P2SH based on the first character
-      // CashAddr format: first character indicates type
-      const firstChar = suffix.charAt(0);
-      if (['q', 'Q'].includes(firstChar)) {
-        return 'p2pkh';
-      } else if (['p', 'P'].includes(firstChar)) {
-        return 'p2sh';
-      }
+      cashaddrInput = address;
+    }
+  } else if (cashaddrRegex.test(address)) {
+    cashaddrInput = 'bitcoincash:' + address;
+  }
+
+  if (cashaddrInput !== null) {
+    try {
+      const decoded = cashaddrDecode(cashaddrInput);
+      const typeBits = (decoded.version >>> 3) & 0x0f;
+      // typeBits 0 = p2pkh, 2 = p2pkh-with-tokens
+      if (typeBits === 0 || typeBits === 2) return 'p2pkh';
+      // typeBits 1 = p2sh, 3 = p2sh-with-tokens
+      if (typeBits === 1 || typeBits === 3) return 'p2sh';
+    } catch {
+      // fall through to unknown
     }
   }
 
-  // Check for BCH addresses without prefix
-  if (cashaddrRegex.test(address)) {
-    const firstChar = address.charAt(0);
-    if (['q', 'Q'].includes(firstChar)) {
-      return 'p2pkh';
-    } else if (['p', 'P'].includes(firstChar)) {
-      return 'p2sh';
-    }
-  }
-
-  // normal address types
+  // Legacy address types
   const firstChar = address.substring(0, 1);
   if (
     networkConfig.base58.pubkey.includes(firstChar) &&
@@ -122,7 +121,7 @@ export function detectAddressType(
     return 'p2sh';
   }
 
-  // p2pk
+  // Legacy p2pk
   if (pubkeyRegex.test(address)) {
     return 'p2pk';
   }
@@ -633,40 +632,29 @@ export function convertToTokenAddress(address: string): string | null {
   }
 }
 
-function cashaddrToSpk(address: string, network: string): string | null {
+/**
+ * Cash Address to Script Public key (SPK)
+ * @param address
+ * @returns SPK
+ */
+function cashaddrToSpk(address: string): string | null {
   try {
     const decoded = cashaddrDecode(address);
-
-    // For CashAddr, we determine type from the address format
-    // P2PKH addresses start with 'q', P2SH addresses start with 'p'
-    const addressPart = address.includes(':') ? address.split(':')[1] : address;
-    const firstChar = addressPart.charAt(0).toLowerCase();
-
-    const actualType = ['q'].includes(firstChar)
-      ? 0
-      : ['p'].includes(firstChar)
-        ? 1
-        : null;
-
-    if (actualType === null) {
-      return null; // Unsupported address type
-    }
-
+    const typeBits = (decoded.version >>> 3) & 0x0f;
     const hashHex = uint8ArrayToHexString(decoded.hash);
 
-    // P2PKH (type = 0)
-    if (actualType === 0) {
+    // typeBits 0 = p2pkh, 2 = p2pkh-with-tokens — same scriptPubKey
+    if (typeBits === 0 || typeBits === 2) {
       return '76a914' + hashHex + '88ac';
     }
 
-    // P2SH (type = 1)
-    if (actualType === 1) {
+    // typeBits 1 = p2sh, 3 = p2sh-with-tokens — same scriptPubKey
+    if (typeBits === 1 || typeBits === 3) {
       return 'a914' + hashHex + '87';
     }
 
     return null;
   } catch (e) {
-    // Invalid CashAddr address
     return null;
   }
 }
@@ -916,7 +904,7 @@ export function addressToScriptPubKey(
       address.includes('bchtest:') ||
       address.includes('bchreg:')
     ) {
-      return { scriptPubKey: cashaddrToSpk(address, network), type };
+      return { scriptPubKey: cashaddrToSpk(address), type };
     }
     // Fall back to base58 for legacy addresses
     return { scriptPubKey: base58ToSpk(address, network), type };
