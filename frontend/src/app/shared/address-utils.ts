@@ -896,7 +896,10 @@ export function addressToScriptPubKey(
   if (type === 'p2pkh' || type === 'p2sh') {
     // Check if it's a CashAddr address (BCH base32 format)
     const bchPrefix = ADDRESS_PREFIXES[network || 'mainnet']?.bch;
-    if (cashaddrRegex.test(address) || (bchPrefix && address.startsWith(bchPrefix))) {
+    if (
+      cashaddrRegex.test(address) ||
+      (bchPrefix && address.startsWith(bchPrefix))
+    ) {
       return { scriptPubKey: cashaddrToSpk(address), type };
     }
     // Fall back to base58 for legacy addresses

@@ -85,8 +85,7 @@ h1 {
 }
 
 .tx-link {
-  display: flex;
-  align-items: center;
+  display: block;
   height: 100%;
   top: 9px;
   position: relative;
@@ -123,6 +122,9 @@ h1 {
 }
 
 .address-toggle {
-  margin-left: 0.5rem;
-  flex-shrink: 0;
+  margin-left: auto;
+  align-self: flex-start;
+  @media (max-width: 575.98px) {
+    margin-left: 0;
+  }
 }

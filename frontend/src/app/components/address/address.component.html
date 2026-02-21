@@ -27,38 +27,40 @@
           [size]="isMobile ? 'large' : 'normal'"
         ></app-clipboard>
       </app-truncate>
-      <div
-        *ngIf="addressTypeInfo?.type === 'p2pkh' || addressTypeInfo?.type === 'p2sh'"
-        class="btn-group btn-group-toggle address-toggle"
-        data-toggle="buttons"
+    </div>
+    <div
+      *ngIf="
+        addressTypeInfo?.type === 'p2pkh' || addressTypeInfo?.type === 'p2sh'
+      "
+      class="btn-group btn-group-toggle address-toggle"
+      data-toggle="buttons"
+    >
+      <label
+        class="btn btn-sm btn-outline-primary"
+        [class.active]="addressType === 'bch'"
       >
-        <label
-          class="btn btn-sm btn-outline-primary"
-          [class.active]="addressType === 'bch'"
-        >
-          <input
-            type="radio"
-            name="addressType"
-            value="bch"
-            [checked]="addressType === 'bch'"
-            (click)="updateDisplayAddress('bch')"
-          />
-          BCH Address
-        </label>
-        <label
-          class="btn btn-sm btn-outline-primary"
-          [class.active]="addressType === 'token'"
-        >
-          <input
-            type="radio"
-            name="addressType"
-            value="token"
-            [checked]="addressType === 'token'"
-            (click)="updateDisplayAddress('token')"
-          />
-          Token Address
-        </label>
-      </div>
+        <input
+          type="radio"
+          name="addressType"
+          value="bch"
+          [checked]="addressType === 'bch'"
+          (click)="updateDisplayAddress('bch')"
+        />
+        BCH Address
+      </label>
+      <label
+        class="btn btn-sm btn-outline-primary"
+        [class.active]="addressType === 'token'"
+      >
+        <input
+          type="radio"
+          name="addressType"
+          value="token"
+          [checked]="addressType === 'token'"
+          (click)="updateDisplayAddress('token')"
+        />
+        Token Address
+      </label>
     </div>
   </div>
 
