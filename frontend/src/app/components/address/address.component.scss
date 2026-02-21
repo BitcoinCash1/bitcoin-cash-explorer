@@ -123,8 +123,10 @@ h1 {
 
 .address-toggle {
   margin-left: auto;
-  align-self: flex-start;
+  margin-top: 10px;
+  display: block;
   @media (max-width: 575.98px) {
     margin-left: 0;
+    display: inline-flex;
   }
 }
