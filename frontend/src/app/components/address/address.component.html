@@ -27,6 +27,37 @@
           [size]="isMobile ? 'large' : 'normal'"
         ></app-clipboard>
       </app-truncate>
+      <div
+        class="btn-group btn-group-toggle address-toggle"
+        data-toggle="buttons"
+      >
+        <label
+          class="btn btn-sm btn-outline-primary"
+          [class.active]="addressType === 'bch'"
+        >
+          <input
+            type="radio"
+            name="addressType"
+            value="bch"
+            [checked]="addressType === 'bch'"
+            (change)="addressType = 'bch'"
+          />
+          BCH Address
+        </label>
+        <label
+          class="btn btn-sm btn-outline-primary"
+          [class.active]="addressType === 'token'"
+        >
+          <input
+            type="radio"
+            name="addressType"
+            value="token"
+            [checked]="addressType === 'token'"
+            (change)="addressType = 'token'"
+          />
+          Token Address
+        </label>
+      </div>
     </div>
   </div>
 

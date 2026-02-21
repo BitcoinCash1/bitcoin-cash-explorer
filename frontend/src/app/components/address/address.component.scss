@@ -1,3 +1,7 @@
+.title-address {
+  padding-bottom: 15px;
+}
+
 .qr-wrapper {
   position: absolute;
   top: 30px;
@@ -81,7 +85,8 @@ h1 {
 }
 
 .tx-link {
-  display: block;
+  display: flex;
+  align-items: center;
   height: 100%;
   top: 9px;
   position: relative;
@@ -115,4 +120,9 @@ h1 {
 
 .inactive {
   color: var(--transparent-fg);
+}
+
+.address-toggle {
+  margin-left: 0.5rem;
+  flex-shrink: 0;
 }

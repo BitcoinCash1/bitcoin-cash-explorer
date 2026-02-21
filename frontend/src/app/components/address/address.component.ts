@@ -118,6 +118,7 @@ export class AddressComponent implements OnInit, OnDestroy {
 
   isMobile: boolean;
   showQR: boolean = false;
+  addressType: 'bch' | 'token' = 'bch';
 
   address: Address;
   addressString: string;
