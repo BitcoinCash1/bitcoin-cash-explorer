@@ -17,7 +17,7 @@ import { of, merge, Subscription, Observable, forkJoin } from 'rxjs';
 import { SeoService } from '@app/services/seo.service';
 import { seoDescriptionNetwork } from '@app/shared/common.utils';
 import { AddressInformation } from '@interfaces/node-api.interface';
-import { AddressTypeInfo } from '@app/shared/address-utils';
+import { AddressTypeInfo, convertToTokenAddress } from '@app/shared/address-utils';
 
 class AddressStats implements ChainStats {
   address: string;
@@ -119,6 +119,7 @@ export class AddressComponent implements OnInit, OnDestroy {
   isMobile: boolean;
   showQR: boolean = false;
   addressType: 'bch' | 'token' = 'bch';
+  displayAddress: string;
 
   address: Address;
   addressString: string;
@@ -200,6 +201,8 @@ export class AddressComponent implements OnInit, OnDestroy {
           ) {
             this.addressString = this.addressString.toLowerCase();
           }
+          this.addressType = 'bch';
+          this.displayAddress = this.addressString;
           this.seoService.setTitle(
             $localize`:@@address.component.browser-title:Address: ${this.addressString}:INTERPOLATION:`
           );
@@ -587,6 +590,16 @@ export class AddressComponent implements OnInit, OnDestroy {
       (!this.transactions[0].status?.confirmed ||
         this.transactions[0].status.block_time > this.now - 60 * 60 * 24 * 30)
     );
+  }
+
+  updateDisplayAddress(type: 'bch' | 'token'): void {
+    this.addressType = type;
+    if (type === 'token') {
+      const tokenAddr = convertToTokenAddress(this.addressString);
+      this.displayAddress = tokenAddr || this.addressString;
+    } else {
+      this.displayAddress = this.addressString;
+    }
   }
 
   @HostListener('window:resize')

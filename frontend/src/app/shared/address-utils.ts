@@ -437,7 +437,33 @@ export function normalizeBchAddress(address: string): string {
 }
 
 // CashAddr constants
-const CASHADDR_ALPHABET = '023456789acdefghjklmnpqrstuvwxyz';
+// Note: CashAddr uses the same base32 alphabet as bech32
+const CASHADDR_ALPHABET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
+
+// CashAddr polymod uses 40-bit arithmetic — must use BigInt to avoid JS overflow
+const CASHADDR_GENERATORS = [0x98f2bc8e61n, 0x79b76d99e2n, 0xf33e5fb3c4n, 0xae2eabe2a8n, 0x1e4f43e470n];
+
+function cashAddrPolymod(v: number[]): bigint {
+  let c = 1n;
+  for (const d of v) {
+    const topBits = c >> 35n;
+    c = (c & 0x07ffffffffn) << 5n ^ BigInt(d);
+    for (let j = 0; j < 5; j++) {
+      if ((topBits >> BigInt(j)) & 1n) {
+        c ^= CASHADDR_GENERATORS[j];
+      }
+    }
+  }
+  return c ^ 1n;
+}
+
+function maskCashAddrPrefix(prefix: string): number[] {
+  const result: number[] = [];
+  for (let i = 0; i < prefix.length; i++) {
+    result.push(prefix.charCodeAt(i) & 0x1f);
+  }
+  return result;
+}
 
 // Helper functions
 function uint8ArrayToHexString(uint8Array: Uint8Array): string {
@@ -510,33 +536,21 @@ function cashaddrDecode(address: string): {
     words.push(index);
   }
 
+  // Validate checksum using the CashAddr polymod
+  const checksumInput = [
+    ...maskCashAddrPrefix(prefix),
+    0,
+    ...words,
+  ];
+  if (cashAddrPolymod(checksumInput) !== 0n) {
+    throw new Error('Invalid CashAddr checksum');
+  }
+
   // Remove checksum (last 8 characters)
   const dataWords = words.slice(0, -8);
 
   // Convert from 5-bit to 8-bit
-  let data: Uint8Array;
-
-  try {
-    data = fromWords(dataWords);
-  } catch (e) {
-    // Manual 5-bit to 8-bit conversion as fallback
-    let acc = 0;
-    let bits = 0;
-    const ret = [];
-
-    for (let i = 0; i < dataWords.length; ++i) {
-      const value = dataWords[i];
-      acc = (acc << 5) | value;
-      bits += 5;
-
-      while (bits >= 8) {
-        bits -= 8;
-        ret.push((acc >> bits) & 0xff);
-      }
-    }
-
-    data = new Uint8Array(ret);
-  }
+  const data = new Uint8Array(convertBits(dataWords, 5, 8, false));
 
   // Extract version byte and hash
   if (data.length < 1) {
@@ -547,6 +561,56 @@ function cashaddrDecode(address: string): {
   const hash = data.slice(1);
 
   return { prefix, version, hash };
+}
+
+function cashaddrEncode(prefix: string, version: number, hash: Uint8Array): string {
+  const payloadData = Uint8Array.from([version, ...hash]);
+  const payloadWords = convertBits(Array.from(payloadData), 8, 5, true);
+
+  const checksumInput = [
+    ...maskCashAddrPrefix(prefix),
+    0,
+    ...payloadWords,
+    0, 0, 0, 0, 0, 0, 0, 0,
+  ];
+  let checksum = cashAddrPolymod(checksumInput);
+  const checksumWords: number[] = [];
+  for (let i = 0; i < 8; ++i) {
+    checksumWords.push(Number(checksum & 31n));
+    checksum >>= 5n;
+  }
+  checksumWords.reverse();
+
+  const allWords = [...payloadWords, ...checksumWords];
+  let result = '';
+  for (let i = 0; i < allWords.length; i++) {
+    result += CASHADDR_ALPHABET.charAt(allWords[i]);
+  }
+  return `${prefix}:${result}`;
+}
+
+export function convertToTokenAddress(address: string): string | null {
+  try {
+    const decoded = cashaddrDecode(address);
+    const typeBits = (decoded.version >>> 3) & 0x0f;
+    const lengthBits = decoded.version & 0x07;
+
+    let tokenTypeBits: number;
+    if (typeBits === 0) {
+      tokenTypeBits = 2;
+    } else if (typeBits === 1) {
+      tokenTypeBits = 3;
+    } else {
+      return null;
+    }
+
+    const tokenVersion = (tokenTypeBits << 3) | lengthBits;
+    const hadPrefix = address.includes(':');
+    const encoded = cashaddrEncode(decoded.prefix, tokenVersion, decoded.hash);
+    return hadPrefix ? encoded : encoded.split(':')[1];
+  } catch (e) {
+    return null;
+  }
 }
 
 function cashaddrToSpk(address: string, network: string): string | null {

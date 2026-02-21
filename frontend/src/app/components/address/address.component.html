@@ -3,7 +3,7 @@
     <h1 i18n="shared.address">Address</h1>
     <div class="tx-link">
       <app-truncate
-        [text]="addressString"
+        [text]="displayAddress"
         [lastChars]="8"
         [link]="['/address/' | relativeUrl, addressString]"
       >
@@ -19,11 +19,11 @@
             [style.font-size]="isMobile ? '18px' : '12px'"
           ></fa-icon>
           <div class="qr-wrapper" [hidden]="!showQR">
-            <app-qrcode [size]="200" [data]="addressString"></app-qrcode>
+            <app-qrcode [size]="200" [data]="displayAddress"></app-qrcode>
           </div>
         </span>
         <app-clipboard
-          [text]="addressString"
+          [text]="displayAddress"
           [size]="isMobile ? 'large' : 'normal'"
         ></app-clipboard>
       </app-truncate>
@@ -40,7 +40,7 @@
             name="addressType"
             value="bch"
             [checked]="addressType === 'bch'"
-            (change)="addressType = 'bch'"
+            (click)="updateDisplayAddress('bch')"
           />
           BCH Address
         </label>
@@ -53,7 +53,7 @@
             name="addressType"
             value="token"
             [checked]="addressType === 'token'"
-            (change)="addressType = 'token'"
+            (click)="updateDisplayAddress('token')"
           />
           Token Address
         </label>
