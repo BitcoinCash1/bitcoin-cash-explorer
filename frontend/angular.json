@@ -270,14 +270,12 @@
             "local-prod": {
               "buildTarget": "explorer:build:production",
               "proxyConfig": "proxy.conf.js",
-              "disableHostCheck": true,
               "host": "0.0.0.0",
               "verbose": false
             },
             "parameterized": {
               "buildTarget": "explorer:build:development",
               "proxyConfig": "proxy.conf.parameterized.js",
-              "disableHostCheck": true,
               "host": "0.0.0.0",
               "verbose": false
             }
