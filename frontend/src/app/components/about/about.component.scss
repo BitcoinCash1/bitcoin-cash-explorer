@@ -253,41 +253,6 @@
       margin-bottom: 25px;
     }
   }
-
-  .footer-links {
-    display: flex;
-    flex-direction: column;
-    a {
-      display: inline-block;
-      margin: 15px auto 0px;
-      &:last-child {
-        margin: 20px auto 30px;
-      }
-    }
-    .social-icons {
-      a {
-        margin: 45px 10px;
-      }
-      .bitcointv svg {
-        width: 36px;
-        height: auto;
-        vertical-align: bottom;
-        margin-bottom: 2px;
-        margin-left: 5px;
-      }
-      .bitcointv svg:hover {
-        opacity: 0.75;
-      }
-    }
-  }
-
-  .footer-version {
-    font-size: 12px;
-  }
-}
-
-.no-about-margin {
-  height: 10px;
 }
 
 .community-integrations-sponsor {
