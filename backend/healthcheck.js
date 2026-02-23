@@ -125,6 +125,42 @@ function checkBchnConnection(timeoutMs = 2000) {
   });
 }
 
+function checkValkeyConnection(timeoutMs = 2000) {
+  const socketPath = configFromFile.VALKEY.UNIX_SOCKET_PATH;
+
+  return new Promise((resolve, reject) => {
+    const socket = net.connect({ path: socketPath });
+
+    const fail = (err) => {
+      try {
+        socket.destroy();
+      } catch (_) {}
+      reject(err);
+    };
+
+    socket.setTimeout(timeoutMs, () => fail(new Error("Valkey timeout")));
+    socket.once("error", (err) => fail(new Error(`Valkey connection error: ${err.message}`)));
+
+    socket.once("connect", () => {
+      socket.write("PING\r\n");
+    });
+
+    let buffer = "";
+    socket.on("data", (chunk) => {
+      buffer += chunk.toString("utf8");
+      if (buffer.includes("\r\n")) {
+        const line = buffer.trim();
+        if (line === "+PONG") {
+          socket.end();
+          resolve({ socketPath });
+        } else {
+          fail(new Error(`Valkey unexpected response: ${line}`));
+        }
+      }
+    });
+  });
+}
+
 function checkBackendItself(timeoutMs = 2000) {
   return new Promise((resolve, reject) => {
     const options = {
@@ -186,15 +222,22 @@ function checkBackendItself(timeoutMs = 2000) {
 void (async () => {
   try {
     const timeout = 2000; // Same timeout as the --timeout=20s in docker file
-    const electrum = await checkElectrumConnection(timeout);
-    console.log(
-      `Electrum OK (${electrum.tls ? "TLS" : "TCP"}) ${electrum.host}:${electrum.port} server=${electrum.server} protocol=${electrum.protocol}`
-    );
+    if (configFromFile.EXPLORER.BACKEND === "electrum") {
+      const electrum = await checkElectrumConnection(timeout);
+      console.log(
+        `Electrum OK (${electrum.tls ? "TLS" : "TCP"}) ${electrum.host}:${electrum.port} server=${electrum.server} protocol=${electrum.protocol}`
+      );
+    }
 
     const bchn = await checkBchnConnection(timeout);
     console.log(
       `BCHN OK ${bchn.host}:${bchn.port} chain=${bchn.chain} blocks=${bchn.blocks} headers=${bchn.headers}`
     );
+
+    if (configFromFile.VALKEY.ENABLED) {
+      const valkey = await checkValkeyConnection(timeout);
+      console.log(`Valkey OK socket=${valkey.socketPath}`);
+    }
 
     const backend = await checkBackendItself(timeout);
     console.log(
