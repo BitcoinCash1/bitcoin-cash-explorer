@@ -1,20 +1,20 @@
 # BCH Explorer
 
-Bitcoin Cash Explorer is a fork by Melroy van den Berg of Mempool, tailored for Bitcoin Cash. BCH Explorer is a fully-featured mempool visualizer, explorer, and API service running at [bchexplorer.cash](https://bchexplorer.cash).
+Bitcoin Cash Explorer is a Bitcoin Cash-focused explorer, developed by Melroy van den Berg. It provides a comprehensive mempool visualizer, blockchain explorer, and API service, which powers [bchexplorer.cash](https://bchexplorer.cash).
 
-The BCH Explorer is created by Melroy van den Berg and is fully open source, under the same AGPL license.
+Created and maintained by Melroy van den Berg, the BCH Explorer is fully open source under the AGPL license.
 
-If you wish to support my work on this BCH Explorer project, you can donate to my Bitcoin Cash Address: `bitcoincash:qzqmakefvntudp0fv7sunt5fjxdswlxv2yhezq7pdl` or use other donation options available on [my personal website](https://melroy.org/donate.html).
+To support the continued development of this project, you can donate via Bitcoin Cash to: `bitcoincash:qzqmakefvntudp0fv7sunt5fjxdswlxv2yhezq7pdl`. Additional donation options are available on [my personal website](https://melroy.org/donate.html).
 
-In the near future, I will allow sponsorship options for this project, to support the development of this project in the future. Which would make it possible for me to continue working on this project for the years to come and extend the BCH Explorer with BCH-specific features and capabilities.
+Looking ahead, I plan to introduce sponsorship opportunities to ensure the long-term sustainability of this project. This support will enable continued development and the addition of Bitcoin Cash-specific features and capabilities.
 
 # Installation Methods
 
-**Note:** Currently we are not yet listed on all these various "one-click installation" methods. For now, use the <a href="#advanced-installation-methods">Advanced Installation Methods</a>.
+**Note:** Currently we are not yet listed on any of these "one-click installation" methods. For now, use the <a href="#advanced-installation-methods">Advanced Installation Methods</a>.
 
 ---
 
-BCH Explorer can be self-hosted on a wide variety of your own hardware, ranging from a simple one-click installation on a Raspberry Pi full-node distro all the way to a robust production instance on a powerful FreeBSD server.
+BCH Explorer can be self-hosted on a wide variety of your own hardware, ranging from a simple one-click installation on a Raspberry Pi full-node distro all the way to a robust production instance on a powerful Linux or FreeBSD server.
 
 Most people should use a <a href="#one-click-installation">one-click install method</a>.
 
