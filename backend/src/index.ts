@@ -179,11 +179,11 @@ class Server {
     if (config.DATABASE.ENABLED) {
       await mempoolBlocks.updatePools$();
     }
-    if (config.EXPLORER.ENABLED) {
-      if (config.EXPLORER.CACHE_ENABLED) {
-        await diskCache.$loadMempoolCache();
-      } else if (config.VALKEY.ENABLED) {
+    if (config.EXPLORER.ENABLED && config.EXPLORER.CACHE_ENABLED) {
+      if (config.VALKEY.ENABLED) {
         await valkeyCache.$loadCache();
+      } else {
+        await diskCache.$loadMempoolCache();
       }
     }
 

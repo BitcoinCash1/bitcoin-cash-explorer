@@ -317,11 +317,13 @@ class ValkeyCache {
       }
       logger.info(`loaded ${count} entries from Valkey cache`);
     };
+    // Run in batches
     for await (const key of this.client.scanIterator({
       MATCH: pattern,
       COUNT: 100,
     })) {
-      keys.push(key);
+      const batch = Array.isArray(key) ? key : [key];
+      keys.push(...batch);
       if (keys.length >= 10000) {
         await processValues(keys);
         keys = [];
