@@ -97,7 +97,7 @@
   },
   "VALKEY": {
     "ENABLED": false,
-    "UNIX_SOCKET_PATH": "/tmp/valkey.sock",
+    "UNIX_SOCKET_PATH": "/var/run/valkey/valkey.sock",
     "BATCH_QUERY_BASE_SIZE": 5000
   },
   "REPLICATION": {
