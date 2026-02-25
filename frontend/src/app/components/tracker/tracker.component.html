@@ -2,41 +2,17 @@
   <div class="mobile-container">
     <div class="panel">
       <div class="nav-header">
-        @if (enterpriseInfo) {
-          <a [routerLink]="['/' | relativeUrl]">
-            <img
-              [src]="enterpriseInfo.logoUrl"
-              [alt]="enterpriseInfo.title"
-              class="subdomain_logo"
-              [class.custom_logo]="!enterpriseInfo?.dualLogo"
-              [class.rounded]="enterpriseInfo.rounded_corner"
-            />
-          </a>
-          @if (enterpriseInfo.dualLogo) {
-            <div class="vertical-line"></div>
-          }
-        }
-        @if (!enterpriseInfo || enterpriseInfo.dualLogo) {
-          <a [routerLink]="['/' | relativeUrl]">
-            <app-svg-images
-              *ngIf="!officialSite"
-              name="mempoolSpace"
-              style="width: 144px; height: 36px"
-              viewBox="0 0 500 126"
-              width="500"
-              height="126"
-              class="mempool-logo"
-            ></app-svg-images>
-            <app-svg-images
-              *ngIf="officialSite"
-              name="officialMempoolSpace"
-              style="width: 144px; height: 36px"
-              width="500"
-              height="126"
-              viewBox="0 0 500 126"
-            ></app-svg-images>
-          </a>
-        }
+        <a [routerLink]="['/' | relativeUrl]">
+          <!-- TODO: Smaller logo for mobile -->
+          <app-svg-images
+            name="bchExplorer"
+            style="width: 144px; height: 36px"
+            width="235"
+            height="40"
+            viewBox="0 0 678 112"
+            class="bch-explorer-logo"
+          ></app-svg-images>
+        </a>
         @if (!enterpriseInfo || !enterpriseInfo.dualLogo) {
           <div [ngSwitch]="network" class="network-label">
             <span *ngSwitchCase="'signet'" class="network signet"
@@ -73,7 +49,7 @@
               ></app-svg-images
             ></span>
             <span *ngSwitchDefault class="network mainnet"
-              ><span class="name">Bitcoin</span
+              ><span class="name">Bitcoin Cash</span
               ><app-svg-images
                 name="bitcoin"
                 width="35"
