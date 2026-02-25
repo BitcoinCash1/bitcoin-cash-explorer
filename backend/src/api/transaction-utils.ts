@@ -196,10 +196,10 @@ class TransactionUtils {
         inner_redeemscript_asm: v.inner_redeemscript_asm,
         scriptsig_byte_code: v.scriptsig_byte_code,
         scriptpubkey_byte_code_pattern: v.scriptpubkey_byte_code_pattern,
-        token_category: v.token_category,
-        token_amount: v.token_amount,
-        token_nft_capability: v.token_nft_capability,
-        token_nft_commitment: v.token_nft_commitment,
+        ...(v.token_category !== undefined && { token_category: v.token_category }),
+        ...(v.token_amount !== undefined && { token_amount: v.token_amount }),
+        ...(v.token_nft_capability !== undefined && { token_nft_capability: v.token_nft_capability }),
+        ...(v.token_nft_commitment !== undefined && { token_nft_commitment: v.token_nft_commitment }),
         sequence: v.sequence,
         prevout: v.prevout
           ? {
@@ -207,10 +207,14 @@ class TransactionUtils {
               scriptpubkey_asm: v.prevout.scriptpubkey_asm,
               scriptpubkey_type: v.prevout.scriptpubkey_type,
               scriptpubkey_address: v.prevout.scriptpubkey_address,
-              token_category: v.prevout.token_category,
-              token_amount: v.prevout.token_amount,
-              token_nft_capability: v.prevout.token_nft_capability,
-              token_nft_commitment: v.prevout.token_nft_commitment,
+              ...(v.prevout.token_category !== undefined && { token_category: v.prevout.token_category }),
+              ...(v.prevout.token_amount !== undefined && { token_amount: v.prevout.token_amount }),
+              ...(v.prevout.token_nft_capability !== undefined && {
+                token_nft_capability: v.prevout.token_nft_capability,
+              }),
+              ...(v.prevout.token_nft_commitment !== undefined && {
+                token_nft_commitment: v.prevout.token_nft_commitment,
+              }),
               value: v.prevout.value,
             }
           : null,
@@ -225,10 +229,10 @@ class TransactionUtils {
         scriptpubkey_type: v.scriptpubkey_type,
         scriptpubkey_address: v.scriptpubkey_address,
         value: v.value,
-        token_category: v.token_category,
-        token_amount: v.token_amount,
-        token_nft_capability: v.token_nft_capability,
-        token_nft_commitment: v.token_nft_commitment,
+        ...(v.token_category !== undefined && { token_category: v.token_category }),
+        ...(v.token_amount !== undefined && { token_amount: v.token_amount }),
+        ...(v.token_nft_capability !== undefined && { token_nft_capability: v.token_nft_capability }),
+        ...(v.token_nft_commitment !== undefined && { token_nft_commitment: v.token_nft_commitment }),
       })
     );
 

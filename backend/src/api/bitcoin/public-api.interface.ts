@@ -48,10 +48,10 @@ export namespace IPublicApi {
     inner_redeemscript_asm: string;
     scriptsig_byte_code: string[]; // script data in hex
     scriptpubkey_byte_code_pattern: string; // in hex
-    token_category: string;
-    token_amount: number;
-    token_nft_capability: string; // "none", "mutable", "minting"
-    token_nft_commitment: string; // in hex
+    token_category?: string;
+    token_amount?: number;
+    token_nft_capability?: string; // "none", "mutable", "minting"
+    token_nft_commitment?: string; // in hex
     sequence: any;
     prevout: Vout | null;
     // Custom
@@ -63,10 +63,10 @@ export namespace IPublicApi {
     scriptpubkey_asm: string;
     scriptpubkey_type: string;
     scriptpubkey_address?: string;
-    token_category: string;
-    token_amount: number;
-    token_nft_capability: string; // "none", "mutable", "minting"
-    token_nft_commitment: string; // in hex
+    token_category?: string;
+    token_amount?: number;
+    token_nft_capability?: string; // "none", "mutable", "minting"
+    token_nft_commitment?: string; // in hex
     value: number;
   }
 
@@ -86,10 +86,10 @@ export namespace IPublicApi {
     scriptpubkey_byte_code_pattern: string; // in hex
     scriptpubkey_byte_code: string[]; // script data in hex
     scriptpubkey_address?: string;
-    token_category: string;
-    token_amount: number;
-    token_nft_capability: string; // "none", "mutable", "minting"
-    token_nft_commitment: string; // in hex
+    token_category?: string;
+    token_amount?: number;
+    token_nft_capability?: string; // "none", "mutable", "minting"
+    token_nft_commitment?: string; // in hex
     sequence: any;
     prevout: VerboseVout | null;
     // Custom
@@ -103,10 +103,10 @@ export namespace IPublicApi {
     scriptpubkey_address?: string;
     scriptpubkey_byte_code_pattern: string; // in hex
     scriptpubkey_byte_code: string[]; // script data in hex
-    token_category: string;
-    token_amount: number;
-    token_nft_capability: string; // "none", "mutable", "minting"
-    token_nft_commitment: string; // in hex
+    token_category?: string;
+    token_amount?: number;
+    token_nft_capability?: string; // "none", "mutable", "minting"
+    token_nft_commitment?: string; // in hex
     value: number;
   }
 

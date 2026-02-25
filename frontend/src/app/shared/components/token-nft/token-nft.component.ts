@@ -7,6 +7,6 @@ import { Component, Input } from '@angular/core';
   standalone: false,
 })
 export class TokenNftComponent {
-  @Input() token_nft_capability: string;
-  @Input() token_nft_commitment: string;
+  @Input() token_nft_capability: string | null | undefined;
+  @Input() token_nft_commitment: string | null | undefined;
 }

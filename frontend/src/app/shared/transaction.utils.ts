@@ -918,10 +918,10 @@ function fromBuffer(
     // const scriptpubkey_address = '';
     const scriptpubkey_byte_code_pattern = '';
     // const scriptpubkey_byte_code: string[] = [];
-    const token_category = '';
-    const token_amount = 0;
-    const token_nft_capability = '';
-    const token_nft_commitment = '';
+    // const token_category = '';
+    // const token_amount = 0;
+    // const token_nft_capability = '';
+    // const token_nft_commitment = '';
     tx.vin.push({
       value,
       txid,
@@ -938,10 +938,6 @@ function fromBuffer(
       // scriptpubkey_address,
       scriptpubkey_byte_code_pattern,
       // scriptpubkey_byte_code,
-      token_category,
-      token_amount,
-      token_nft_capability,
-      token_nft_commitment,
       sequence,
       prevout: null,
     });
@@ -964,10 +960,10 @@ function fromBuffer(
     // Q: Is this even all stored in a raw transaction hex?
     // const scriptpubkey_byte_code_pattern = '';
     // const scriptpubkey_byte_code: string[] = [];
-    const token_category = '';
-    const token_amount = 0;
-    const token_nft_capability = '';
-    const token_nft_commitment = '';
+    // const token_category = '';
+    // const token_amount = 0;
+    // const token_nft_capability = '';
+    // const token_nft_commitment = '';
     tx.vout.push({
       value,
       scriptpubkey,
@@ -976,10 +972,6 @@ function fromBuffer(
       scriptpubkey_address,
       // scriptpubkey_byte_code_pattern,
       // scriptpubkey_byte_code,
-      token_category,
-      token_amount,
-      token_nft_capability,
-      token_nft_commitment,
     });
   }
 

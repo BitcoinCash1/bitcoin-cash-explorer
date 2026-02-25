@@ -67,10 +67,10 @@ export interface Vin {
   inner_redeemscript_asm: string;
   scriptsig_byte_code: string[]; // script data in hex
   scriptpubkey_byte_code_pattern: string; // in hex
-  token_category: string;
-  token_amount: number;
-  token_nft_capability: string;
-  token_nft_commitment: string; // in hex
+  token_category?: string;
+  token_amount?: number;
+  token_nft_capability?: string;
+  token_nft_commitment?: string; // in hex
   sequence: any;
   prevout: Vout | null;
   // Custom
@@ -82,10 +82,10 @@ export interface Vout {
   scriptpubkey_asm: string;
   scriptpubkey_type: string;
   scriptpubkey_address?: string;
-  token_category: string;
-  token_amount: number;
-  token_nft_capability: string;
-  token_nft_commitment: string; // in hex
+  token_category?: string;
+  token_amount?: number;
+  token_nft_capability?: string;
+  token_nft_commitment?: string; // in hex
   value: number;
 }
 
@@ -105,10 +105,10 @@ export interface VerboseVin {
   scriptpubkey_byte_code_pattern: string; // in hex
   scriptpubkey_byte_code: string[]; // script data in hex
   scriptpubkey_address?: string;
-  token_category: string;
-  token_amount: number;
-  token_nft_capability: string;
-  token_nft_commitment: string; // in hex
+  token_category?: string;
+  token_amount?: number;
+  token_nft_capability?: string;
+  token_nft_commitment?: string; // in hex
   sequence: any;
   prevout: Vout | null;
   // Custom
@@ -122,10 +122,10 @@ export interface VerboseVout {
   scriptpubkey_address?: string;
   scriptpubkey_byte_code_pattern: string; // in hex
   scriptpubkey_byte_code: string[]; // script data in hex
-  token_category: string;
-  token_amount: number;
-  token_nft_capability: string;
-  token_nft_commitment: string; // in hex
+  token_category?: string;
+  token_amount?: number;
+  token_nft_capability?: string;
+  token_nft_commitment?: string; // in hex
   value: number;
 }
 

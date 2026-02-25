@@ -343,10 +343,10 @@ class BitcoinApi implements AbstractBitcoinApi {
         scriptpubkey_byte_code_pattern: vin.scriptPubKey?.byteCodePattern?.pattern || '',
         scriptpubkey_byte_code: vin.scriptPubKey?.byteCodePattern?.data || [],
         sequence: vin.sequence,
-        token_category: vin.tokenData?.category || '',
-        token_amount: vin.tokenData?.amount || 0,
-        token_nft_capability: vin.tokenData?.nft?.capability || '',
-        token_nft_commitment: vin.tokenData?.nft?.commitment || '',
+        ...(vin.tokenData?.category !== undefined && { token_category: vin.tokenData.category }),
+        ...(vin.tokenData?.amount !== undefined && { token_amount: vin.tokenData.amount }),
+        ...(vin.tokenData?.nft?.capability !== undefined && { token_nft_capability: vin.tokenData.nft.capability }),
+        ...(vin.tokenData?.nft?.commitment !== undefined && { token_nft_commitment: vin.tokenData.nft.commitment }),
       })
     );
 
@@ -359,10 +359,10 @@ class BitcoinApi implements AbstractBitcoinApi {
         scriptpubkey_type: this.translateScriptPubKeyType(vout.scriptPubKey.type),
         scriptpubkey_byte_code_pattern: vout.scriptPubKey?.byteCodePattern?.pattern || '',
         scriptpubkey_byte_code: vout.scriptPubKey?.byteCodePattern?.data || [],
-        token_category: vout.tokenData?.category || '',
-        token_amount: vout.tokenData?.amount || 0,
-        token_nft_capability: vout.tokenData?.nft?.capability || '',
-        token_nft_commitment: vout.tokenData?.nft?.commitment || '',
+        ...(vout.tokenData?.category !== undefined && { token_category: vout.tokenData.category }),
+        ...(vout.tokenData?.amount !== undefined && { token_amount: vout.tokenData.amount }),
+        ...(vout.tokenData?.nft?.capability !== undefined && { token_nft_capability: vout.tokenData.nft.capability }),
+        ...(vout.tokenData?.nft?.commitment !== undefined && { token_nft_commitment: vout.tokenData.nft.commitment }),
       })
     );
 

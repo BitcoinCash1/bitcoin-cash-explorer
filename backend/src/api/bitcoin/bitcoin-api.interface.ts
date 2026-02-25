@@ -162,7 +162,8 @@ export namespace IBitcoinApi {
       //  (json object)
       category: string; // token id
       amount: number; // fungible amount
-      nft: {
+      // (optional json object)
+      nft?: {
         capability: string; // one of "none", "mutable", "minting"
         commitment: string; // NFT commitment
       };
@@ -191,7 +192,8 @@ export namespace IBitcoinApi {
       //  (json object)
       category: string; // token id
       amount: number; // fungible amount
-      nft: {
+      // (optional json object)
+      nft?: {
         capability: string; // one of "none", "mutable", "minting"
         commitment: string; // NFT commitment
       };

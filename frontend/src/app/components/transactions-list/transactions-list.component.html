@@ -437,24 +437,42 @@
                             </td>
                           </tr>
                         </ng-template>
-                        <ng-template [ngIf]="vin.token_category">
-                          <tr>
-                            <td i18n="transactions-list.cash-token-category">
-                              Cash Token Category
-                            </td>
-                            <td style="text-align: left">
-                              {{ vin.token_category }}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td i18n="transactions-list.cash-token-amount">
-                              Cash Token Amount
-                            </td>
-                            <td style="text-align: left">
-                              {{ vin.token_amount }}
-                            </td>
-                          </tr>
-                        </ng-template>
+                        <tr *ngIf="vin.token_category">
+                          <td i18n="transactions-list.cash-token-category">
+                            CashToken Category
+                          </td>
+                          <td style="text-align: left">
+                            {{ vin.token_category }}
+                          </td>
+                        </tr>
+                        <tr *ngIf="vin.token_amount">
+                          <td i18n="transactions-list.cash-token-amount">
+                            CashToken Amount
+                          </td>
+                          <td style="text-align: left">
+                            {{ vin.token_amount }}
+                          </td>
+                        </tr>
+                        <tr *ngIf="vin.token_nft_capability">
+                          <td
+                            i18n="transactions-list.cash-token-nft-capability"
+                          >
+                            NFT Capability
+                          </td>
+                          <td style="text-align: left">
+                            {{ vin.token_nft_capability }}
+                          </td>
+                        </tr>
+                        <tr *ngIf="vin.token_nft_commitment">
+                          <td
+                            i18n="transactions-list.cash-token-nft-commitment"
+                          >
+                            NFT Commitment
+                          </td>
+                          <td style="text-align: left">
+                            {{ vin.token_nft_commitment }}
+                          </td>
+                        </tr>
                       </tbody>
                     </table>
                   </td>
@@ -922,24 +940,42 @@
                             {{ vout.scriptpubkey_type.toUpperCase() }}
                           </td>
                         </tr>
-                        <ng-template [ngIf]="vout.token_category">
-                          <tr>
-                            <td i18n="transactions-list.cash-token-category">
-                              Cash Token Category
-                            </td>
-                            <td style="text-align: left">
-                              {{ vout.token_category }}
-                            </td>
-                          </tr>
-                          <tr>
-                            <td i18n="transactions-list.cash-token-amount">
-                              Cash Token Amount
-                            </td>
-                            <td style="text-align: left">
-                              {{ vout.token_amount }}
-                            </td>
-                          </tr>
-                        </ng-template>
+                        <tr *ngIf="vout.token_category">
+                          <td i18n="transactions-list.cash-token-category">
+                            CashToken Category
+                          </td>
+                          <td style="text-align: left">
+                            {{ vout.token_category }}
+                          </td>
+                        </tr>
+                        <tr *ngIf="vout.token_amount">
+                          <td i18n="transactions-list.cash-token-amount">
+                            CashToken Amount
+                          </td>
+                          <td style="text-align: left">
+                            {{ vout.token_amount }}
+                          </td>
+                        </tr>
+                        <tr *ngIf="vout.token_nft_capability">
+                          <td
+                            i18n="transactions-list.cash-token-nft-capability"
+                          >
+                            NFT Capability
+                          </td>
+                          <td style="text-align: left">
+                            {{ vout.token_nft_capability }}
+                          </td>
+                        </tr>
+                        <tr *ngIf="vout.token_nft_commitment">
+                          <td
+                            i18n="transactions-list.cash-token-nft-commitment"
+                          >
+                            NFT Commitment
+                          </td>
+                          <td style="text-align: left">
+                            {{ vout.token_nft_commitment }}
+                          </td>
+                        </tr>
                       </tbody>
                     </table>
                   </td>
