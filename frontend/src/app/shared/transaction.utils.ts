@@ -920,6 +920,8 @@ function fromBuffer(
     // const scriptpubkey_byte_code: string[] = [];
     const token_category = '';
     const token_amount = 0;
+    const token_nft_capability = '';
+    const token_nft_commitment = '';
     tx.vin.push({
       value,
       txid,
@@ -938,6 +940,8 @@ function fromBuffer(
       // scriptpubkey_byte_code,
       token_category,
       token_amount,
+      token_nft_capability,
+      token_nft_commitment,
       sequence,
       prevout: null,
     });
@@ -962,6 +966,8 @@ function fromBuffer(
     // const scriptpubkey_byte_code: string[] = [];
     const token_category = '';
     const token_amount = 0;
+    const token_nft_capability = '';
+    const token_nft_commitment = '';
     tx.vout.push({
       value,
       scriptpubkey,
@@ -972,6 +978,8 @@ function fromBuffer(
       // scriptpubkey_byte_code,
       token_category,
       token_amount,
+      token_nft_capability,
+      token_nft_commitment,
     });
   }
 

@@ -345,6 +345,8 @@ class BitcoinApi implements AbstractBitcoinApi {
         sequence: vin.sequence,
         token_category: vin.tokenData?.category || '',
         token_amount: vin.tokenData?.amount || 0,
+        token_nft_capability: vin.tokenData?.nft?.capability || '',
+        token_nft_commitment: vin.tokenData?.nft?.commitment || '',
       })
     );
 
@@ -359,6 +361,8 @@ class BitcoinApi implements AbstractBitcoinApi {
         scriptpubkey_byte_code: vout.scriptPubKey?.byteCodePattern?.data || [],
         token_category: vout.tokenData?.category || '',
         token_amount: vout.tokenData?.amount || 0,
+        token_nft_capability: vout.tokenData?.nft?.capability || '',
+        token_nft_commitment: vout.tokenData?.nft?.commitment || '',
       })
     );
 

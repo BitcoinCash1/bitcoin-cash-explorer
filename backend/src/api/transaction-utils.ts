@@ -198,6 +198,8 @@ class TransactionUtils {
         scriptpubkey_byte_code_pattern: v.scriptpubkey_byte_code_pattern,
         token_category: v.token_category,
         token_amount: v.token_amount,
+        token_nft_capability: v.token_nft_capability,
+        token_nft_commitment: v.token_nft_commitment,
         sequence: v.sequence,
         prevout: v.prevout
           ? {
@@ -207,6 +209,8 @@ class TransactionUtils {
               scriptpubkey_address: v.prevout.scriptpubkey_address,
               token_category: v.prevout.token_category,
               token_amount: v.prevout.token_amount,
+              token_nft_capability: v.prevout.token_nft_capability,
+              token_nft_commitment: v.prevout.token_nft_commitment,
               value: v.prevout.value,
             }
           : null,
@@ -223,6 +227,8 @@ class TransactionUtils {
         value: v.value,
         token_category: v.token_category,
         token_amount: v.token_amount,
+        token_nft_capability: v.token_nft_capability,
+        token_nft_commitment: v.token_nft_commitment,
       })
     );
 

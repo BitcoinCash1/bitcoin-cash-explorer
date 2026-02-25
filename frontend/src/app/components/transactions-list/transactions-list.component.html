@@ -281,6 +281,10 @@
                           [metadata]="meta.get(vin.token_category)"
                           [category]="vin.token_category"
                         ></app-token-icon-and-text>
+                        <app-token-nft
+                          [token_nft_capability]="vin.token_nft_capability"
+                          [token_nft_commitment]="vin.token_nft_commitment"
+                        ></app-token-nft>
                       </div>
                     </ng-container>
                   </td>
@@ -659,6 +663,10 @@
                           [metadata]="meta.get(vout.token_category)"
                           [category]="vout.token_category"
                         ></app-token-icon-and-text>
+                        <app-token-nft
+                          [token_nft_capability]="vout.token_nft_capability"
+                          [token_nft_commitment]="vout.token_nft_commitment"
+                        ></app-token-nft>
                       </div>
                     </ng-container>
                   </td>

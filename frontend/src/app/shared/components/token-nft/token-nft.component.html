@@ -1,0 +1,16 @@
+@if (token_nft_capability && token_nft_commitment) {
+  <span
+    *ngIf="token_nft_capability !== ''"
+    class="badge badge-secondary ml-2"
+    aria-label="NFT capability"
+    title="NFT capability"
+    >{{ token_nft_capability }}</span
+  >
+  <span
+    *ngIf="token_nft_commitment !== ''"
+    class="badge badge-secondary ml-2"
+    aria-label="NFT commitment"
+    title="NFT commitment"
+    >{{ token_nft_commitment }}</span
+  >
+}

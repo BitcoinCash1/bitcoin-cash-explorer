@@ -171,6 +171,7 @@ import { AddressTypeComponent } from '@app/shared/components/address-type/addres
 import { AddressTextComponent } from '@app/shared/components/address-text/address-text.component';
 import { TruncateComponent } from '@app/shared/components/truncate/truncate.component';
 import { TokenIconAndTextComponent } from '@app/shared/components/token-icon-and-text/token-icon-and-text.component';
+import { TokenNftComponent } from '@app/shared/components/token-nft/token-nft.component';
 import { SearchResultsComponent } from '@components/search-form/search-results/search-results.component';
 import { TimestampComponent } from '@app/shared/components/timestamp/timestamp.component';
 import { ConfirmationsComponent } from '@app/shared/components/confirmations/confirmations.component';
@@ -279,6 +280,7 @@ import { MempoolProgressBarComponent } from '@components/mempool-progress-bar/me
     AddressTextComponent,
     TruncateComponent,
     TokenIconAndTextComponent,
+    TokenNftComponent,
     SearchResultsComponent,
     TimestampComponent,
     ConfirmationsComponent,
@@ -413,6 +415,7 @@ import { MempoolProgressBarComponent } from '@components/mempool-progress-bar/me
     AddressTextComponent,
     TruncateComponent,
     TokenIconAndTextComponent,
+    TokenNftComponent,
     SearchResultsComponent,
     TimestampComponent,
     ConfirmationsComponent,
