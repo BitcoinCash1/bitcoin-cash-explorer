@@ -1310,6 +1310,168 @@ function encodePsbt(
   return new Uint8Array(result);
 }
 
+export type TxCheck = (tx: Transaction) => CheckResult;
+export type CheckResult = {
+  passed: boolean;
+  label: string;
+};
+
+export const TX_CHECKS = {
+  fee:
+    (expected: number): TxCheck =>
+    (tx) => {
+      const feeKnown = tx.fee !== undefined;
+      const passed = feeKnown && tx.fee === expected;
+      let label: string;
+      if (!feeKnown) {
+        label = `Can't calculate tx fee, expected ${expected} sats`;
+      } else if (passed) {
+        label = `Fee: ${expected} sats`;
+      } else {
+        label = `Fee: ${tx.fee} sats, expected ${expected} sats`;
+      }
+      return { label, passed };
+    },
+  input:
+    (index: number, expected: Pick<Vin, 'txid' | 'vout'>): TxCheck =>
+    (tx) => {
+      const input = tx.vin[index];
+      if (!input) {
+        return { label: `Input #${index} is missing`, passed: false };
+      }
+
+      const passed =
+        input.txid === expected.txid && input.vout === expected.vout;
+      let label = `Input #${index}: ${input.txid.slice(0, 20)}...:${input.vout}`;
+      if (!passed) {
+        label += `, expected ${expected.txid.slice(0, 20)}...:${expected.vout}`;
+      }
+      return { label, passed };
+    },
+  outputValue:
+    (index: number, expected: number): TxCheck =>
+    (tx) => {
+      const output = tx.vout[index];
+      if (!output) {
+        return { label: `Output #${index} is missing`, passed: false };
+      }
+
+      const passed = output.value === expected;
+      let label = `Output #${index} value: ${output.value} sats`;
+      if (!passed) {
+        label += `, expected ${expected} sats`;
+      }
+      return { passed, label };
+    },
+  outputScriptPubKey:
+    (index: number, expected: string): TxCheck =>
+    (tx) => {
+      const output = tx.vout[index];
+      if (!output) {
+        return { label: `Output #${index} is missing`, passed: false };
+      }
+
+      const passed = output.scriptpubkey === expected;
+      let label = `Output #${index} scriptPubKey: ${output.scriptpubkey.slice(0, 20)}...`;
+      if (!passed) {
+        label += `, expected ${expected.slice(0, 20)}...`;
+      }
+      return { passed, label };
+    },
+  outputScriptPubKeyAsm:
+    (index: number, expected: string): TxCheck =>
+    (tx) => {
+      const output = tx.vout[index];
+      if (!output) {
+        return { label: `Output #${index} is missing`, passed: false };
+      }
+
+      const passed = output.scriptpubkey_asm === expected;
+      let label = `Output #${index} scriptPubKey: ${output.scriptpubkey_asm.slice(0, 20)}...`;
+      if (!passed) {
+        label += `, expected ${expected.slice(0, 20)}...`;
+      }
+      return { passed, label };
+    },
+  outputAddress:
+    (index: number, expected: string): TxCheck =>
+    (tx) => {
+      const output = tx.vout[index];
+      if (!output) {
+        return { label: `Output #${index} is missing`, passed: false };
+      }
+
+      const passed = output.scriptpubkey_address === expected;
+      let label = `Output #${index} address: ${output.scriptpubkey_address}`;
+      if (!passed) {
+        label += `, expected ${expected}`;
+      }
+      return { passed, label };
+    },
+  sequence:
+    (index: number, expected: number): TxCheck =>
+    (tx) => {
+      const input = tx.vin[index];
+      if (!input) {
+        return { label: `Input #${index} is missing`, passed: false };
+      }
+
+      const passed = input.sequence === expected;
+      let label = `Input #${index} sequence: 0x${input.sequence.toString(16).padStart(8, '0')}`;
+      if (!passed) {
+        label += `, expected 0x${expected.toString(16).padStart(8, '0')}`;
+      }
+      return { label, passed };
+    },
+  locktime:
+    (expected: number): TxCheck =>
+    (tx) => {
+      const locktime = tx.locktime;
+      const passed = locktime === expected;
+      let label = `Locktime: ${locktime}`;
+      if (!passed) {
+        label += `, expected ${expected}`;
+      }
+      return { passed, label };
+    },
+  version:
+    (expected: number): TxCheck =>
+    (tx) => {
+      const version = tx.version;
+      const passed = version === expected;
+      let label = `Version: ${version}`;
+      if (!passed) {
+        label += `, expected ${expected}`;
+      }
+      return { passed, label };
+    },
+  inputSignature:
+    (index: number, expected: SighashValue[]): TxCheck =>
+    (tx) => {
+      const input = tx.vin[index];
+      const signatures = processInputSignatures(input);
+      const sighashes = Array.from(
+        new Set(signatures.map((sigInfo) => sigInfo.sighash))
+      );
+      const passed =
+        signatures.length > 0 &&
+        sighashes.every((sighash) => expected.includes(sighash));
+      const actualSighash = sighashes
+        .map((sighash) => SighashLabels[sighash] || `UNKNOWN(${sighash})`)
+        .join(' or ');
+
+      let label = `Input #${index}:`;
+      if (signatures.length === 0) {
+        label += ' no signatures found';
+      } else if (passed) {
+        label += ` signed with ${actualSighash}`;
+      } else {
+        label += ` signed with ${actualSighash}, expected ${expected.map((s) => SighashLabels[s]).join(' or ')}`;
+      }
+      return { label, passed };
+    },
+};
+
 export function decodeRawTransaction(
   input: string,
   network: string
