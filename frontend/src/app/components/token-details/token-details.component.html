@@ -253,13 +253,13 @@
                           >{{ improveKeyName(uri.key) | titlecase }}:</strong
                         >
                         <a
-                          [href]="uri.value"
+                          [href]="improveUri(uri.value)"
                           target="_blank"
                           rel="noopener noreferrer"
                           style="text-decoration: none"
                           class="ms-2"
                         >
-                          {{ uri.value | limitTo: 40 }}
+                          {{ improveUri(uri.value) | limitTo: 40 }}
                           <span>&nbsp;</span>
                           <fa-icon
                             [icon]="['fas', 'external-link-alt']"

@@ -128,6 +128,15 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
     return icon; // http(s) already fine
   }
 
+  improveUri(uri?: string): string | null {
+    if (!uri) return null;
+    // Rename Twitter to X
+    if (uri.includes('twitter.com')) {
+      return uri.replace('twitter.com', 'x.com');
+    }
+    return uri;
+  }
+
   improveKeyName(key?: string): string | null {
     if (!key) return null;
     // Rename Twitter to X
