@@ -29,7 +29,7 @@ export type Sources = SourceItem[];
 
 // Genesis information interface
 export interface Genesis {
-  ft_minted?: number;
+  ft_minted?: string;
   is_nft: boolean;
   txid: string;
 }

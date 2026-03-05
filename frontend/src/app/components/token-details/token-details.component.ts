@@ -1,12 +1,33 @@
 import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { BcmrService } from '@app/services/bcmr.service';
-import { BcmrMetadata } from '@app/interfaces/bcmr-api.interface';
+import {
+  BcmrMetadata,
+  URIs,
+  Genesis,
+} from '@app/interfaces/bcmr-api.interface';
 import { Subscription } from 'rxjs';
 import { switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { SeoService } from '@app/services/seo.service';
 import { StateService } from '@app/services/state.service';
+
+interface TokenInfo {
+  category: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  description: string;
+  uris: URIs;
+  hasIcon: boolean;
+  hasWebsite: boolean;
+  hasDescription: boolean;
+  isNft: boolean;
+  nftType: string | null;
+  genesis: Genesis | null;
+  status: 'active' | 'burned' | 'inactive' | 'unknown';
+  trust: 'absent' | 'marginal' | 'good' | 'high' | 'ultimate' | null;
+}
 
 @Component({
   selector: 'app-token-details',
@@ -76,7 +97,7 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
     this.isMobile = window.innerWidth < 768;
   }
 
-  getTokenInfo(): any {
+  getTokenInfo(): TokenInfo | null {
     if (!this.metadata || !this.category) {
       return null;
     }
