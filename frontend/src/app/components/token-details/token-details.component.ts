@@ -116,26 +116,20 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
     return key;
   }
 
-  formatTokenAmount(amount: number, decimals?: number): string {
-    if (amount == null) return '0';
-    if (!decimals || decimals <= 0) {
-      // Add commas to integer part while preserving decimal part,
-      // but we won't use decimals input since that is either 0 or less
-      const amountStr = amount.toString();
-      const [integerPart, decimalPart] = amountStr.split('.');
-      const formattedInteger = integerPart.replace(
-        /\B(?=(\d{3})+(?!\d))/g,
-        ','
-      );
-      return decimalPart
-        ? `${formattedInteger}.${decimalPart}`
-        : formattedInteger;
+  formatTokenAmount(amount: string, decimals?: number): string {
+    if (amount == null) return '';
+    if (typeof decimals === 'undefined' || decimals == null || decimals < 0)
+      return ''; // That sounds like invalid data, return empty string
+    if (decimals === 0) {
+      // Decimal is zero, add commas to the amount
+      return amount.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    if (amount === '0') {
+      return ''; // Don't show if its zero
     }
 
-    const raw = typeof amount === 'number' ? amount.toString() : amount;
-
     // Ensure string length >= decimals
-    const padded = raw.padStart(decimals + 1, '0');
+    const padded = amount.padStart(decimals + 1, '0');
 
     const integerPart = padded.slice(0, -decimals);
     const fractionalPart = padded.slice(-decimals);

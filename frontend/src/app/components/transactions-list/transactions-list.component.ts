@@ -638,14 +638,20 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     }
   }
 
-  formatTokenAmount(amount: number, decimals: number): string {
-    if (amount == null) return '0';
-    if (!decimals || decimals <= 0) return ''; // Do not return the amount if there are no decimals (since we are still waiting for the metadata)
-
-    const raw = typeof amount === 'number' ? amount.toString() : amount;
+  formatTokenAmount(amount: string, decimals?: number): string {
+    if (amount == null) return '';
+    if (typeof decimals === 'undefined' || decimals == null || decimals < 0)
+      return ''; // That sounds like invalid data, return empty string
+    if (decimals === 0) {
+      // Decimal is zero, add commas to the amount
+      return amount.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    }
+    if (amount === '0') {
+      return ''; // Don't show if its zero
+    }
 
     // Ensure string length >= decimals
-    const padded = raw.padStart(decimals + 1, '0');
+    const padded = amount.padStart(decimals + 1, '0');
 
     const integerPart = padded.slice(0, -decimals);
     const fractionalPart = padded.slice(-decimals);

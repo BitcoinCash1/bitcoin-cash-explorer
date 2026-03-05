@@ -161,7 +161,7 @@ export namespace IBitcoinApi {
     tokenData?: {
       //  (json object)
       category: string; // token id
-      amount: number; // fungible amount
+      amount: string; // fungible amount
       // (optional json object)
       nft?: {
         capability: string; // one of "none", "mutable", "minting"
@@ -191,7 +191,7 @@ export namespace IBitcoinApi {
     tokenData?: {
       //  (json object)
       category: string; // token id
-      amount: number; // fungible amount
+      amount: string; // fungible amount
       // (optional json object)
       nft?: {
         capability: string; // one of "none", "mutable", "minting"

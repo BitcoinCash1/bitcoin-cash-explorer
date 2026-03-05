@@ -49,7 +49,7 @@ export namespace IPublicApi {
     scriptsig_byte_code: string[]; // script data in hex
     scriptpubkey_byte_code_pattern: string; // in hex
     token_category?: string;
-    token_amount?: number;
+    token_amount?: string;
     token_nft_capability?: string; // "none", "mutable", "minting"
     token_nft_commitment?: string; // in hex
     sequence: any;
@@ -64,7 +64,7 @@ export namespace IPublicApi {
     scriptpubkey_type: string;
     scriptpubkey_address?: string;
     token_category?: string;
-    token_amount?: number;
+    token_amount?: string;
     token_nft_capability?: string; // "none", "mutable", "minting"
     token_nft_commitment?: string; // in hex
     value: number;
@@ -87,7 +87,7 @@ export namespace IPublicApi {
     scriptpubkey_byte_code: string[]; // script data in hex
     scriptpubkey_address?: string;
     token_category?: string;
-    token_amount?: number;
+    token_amount?: string;
     token_nft_capability?: string; // "none", "mutable", "minting"
     token_nft_commitment?: string; // in hex
     sequence: any;
@@ -104,7 +104,7 @@ export namespace IPublicApi {
     scriptpubkey_byte_code_pattern: string; // in hex
     scriptpubkey_byte_code: string[]; // script data in hex
     token_category?: string;
-    token_amount?: number;
+    token_amount?: string;
     token_nft_capability?: string; // "none", "mutable", "minting"
     token_nft_commitment?: string; // in hex
     value: number;
