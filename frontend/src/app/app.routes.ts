@@ -161,13 +161,14 @@ export const routes: Routes = [
       import('@app/bitcoin-graphs.module').then((m) => m.BitcoinGraphsModule),
     data: { preload: true },
   },
-  {
-    path: 'tx',
-    canMatch: [TrackerGuard],
-    runGuardsAndResolvers: 'always',
-    loadChildren: () =>
-      import('@components/tracker/tracker.module').then((m) => m.TrackerModule),
-  },
+  // I don't like the tracker component (on mobile)
+  // {
+  //   path: 'tx',
+  //   canMatch: [TrackerGuard],
+  //   runGuardsAndResolvers: 'always',
+  //   loadChildren: () =>
+  //     import('@components/tracker/tracker.module').then((m) => m.TrackerModule),
+  // },
   {
     path: '',
     loadChildren: () =>

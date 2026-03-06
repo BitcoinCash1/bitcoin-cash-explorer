@@ -14,13 +14,9 @@ import {
   switchMap,
   filter,
   catchError,
-  retryWhen,
-  delay,
-  mergeMap,
   tap,
   map,
   startWith,
-  retry,
 } from 'rxjs/operators';
 import { Transaction } from '@app/interfaces/backend-api.interface';
 import {
@@ -29,10 +25,8 @@ import {
   Subscription,
   Observable,
   Subject,
-  throwError,
   combineLatest,
   BehaviorSubject,
-  timer,
 } from 'rxjs';
 import { StateService } from '@app/services/state.service';
 import { CacheService } from '@app/services/cache.service';
