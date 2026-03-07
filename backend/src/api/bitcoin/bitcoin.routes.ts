@@ -605,6 +605,10 @@ class BitcoinRoutes {
       const addressData = await bitcoinApi.$getAddress(req.params.address);
       res.json(addressData);
     } catch (e) {
+      if (e instanceof Error && e.message === 'Invalid Bitcoin Cash address') {
+        res.status(400).send(e.message);
+        return;
+      }
       if (
         e instanceof Error &&
         e.message &&
@@ -636,6 +640,10 @@ class BitcoinRoutes {
       const nonVerboseTransactions = transactionUtils.stripVerbosityFromTransactions(transactions);
       res.json(nonVerboseTransactions);
     } catch (e) {
+      if (e instanceof Error && e.message === 'Invalid Bitcoin Cash address') {
+        res.status(400).send(e.message);
+        return;
+      }
       if (
         e instanceof Error &&
         e.message &&
@@ -662,6 +670,10 @@ class BitcoinRoutes {
       const addressData = await bitcoinApi.$getAddressUtxos(req.params.address);
       res.json(addressData);
     } catch (e) {
+      if (e instanceof Error && e.message === 'Invalid Bitcoin Cash address') {
+        res.status(400).send(e.message);
+        return;
+      }
       if (
         e instanceof Error &&
         e.message &&
@@ -708,6 +720,10 @@ class BitcoinRoutes {
       const nonVerboseTransactions = transactionUtils.stripVerbosityFromTransactions(transactions);
       res.json(nonVerboseTransactions);
     } catch (e) {
+      if (e instanceof Error && e.message === 'Invalid Bitcoin Cash address') {
+        res.status(400).send(e.message);
+        return;
+      }
       if (
         e instanceof Error &&
         e.message &&
