@@ -7,12 +7,150 @@ import {
 } from '../mempool.interfaces';
 import { IPublicApi } from './bitcoin/public-api.interface';
 import bitcoinApi, { bitcoinCoreApi } from './bitcoin/bitcoin-api-factory';
-import * as bitcoinjs from 'bitcoinjs-lib';
 import logger from '../logger';
 import pLimit from '../utils/p-limit';
 
 class TransactionUtils {
   constructor() {}
+
+  // Inversed the opcodes object from https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/-/blob/main/backend/src/utils/bitcoin-script.ts?ref_type=heads
+  private static opcodes: Record<number, string> = {
+    0: 'OP_0',
+    76: 'OP_PUSHDATA1',
+    77: 'OP_PUSHDATA2',
+    78: 'OP_PUSHDATA4',
+    79: 'OP_PUSHNUM_NEG1',
+    80: 'OP_RESERVED',
+    81: 'OP_PUSHNUM_1',
+    82: 'OP_PUSHNUM_2',
+    83: 'OP_PUSHNUM_3',
+    84: 'OP_PUSHNUM_4',
+    85: 'OP_PUSHNUM_5',
+    86: 'OP_PUSHNUM_6',
+    87: 'OP_PUSHNUM_7',
+    88: 'OP_PUSHNUM_8',
+    89: 'OP_PUSHNUM_9',
+    90: 'OP_PUSHNUM_10',
+    91: 'OP_PUSHNUM_11',
+    92: 'OP_PUSHNUM_12',
+    93: 'OP_PUSHNUM_13',
+    94: 'OP_PUSHNUM_14',
+    95: 'OP_PUSHNUM_15',
+    96: 'OP_PUSHNUM_16',
+    97: 'OP_NOP',
+    98: 'OP_VER',
+    99: 'OP_IF',
+    100: 'OP_NOTIF',
+    101: 'OP_VERIF',
+    102: 'OP_VERNOTIF',
+    103: 'OP_ELSE',
+    104: 'OP_ENDIF',
+    105: 'OP_VERIFY',
+    106: 'OP_RETURN',
+    107: 'OP_TOALTSTACK',
+    108: 'OP_FROMALTSTACK',
+    109: 'OP_2DROP',
+    110: 'OP_2DUP',
+    111: 'OP_3DUP',
+    112: 'OP_2OVER',
+    113: 'OP_2ROT',
+    114: 'OP_2SWAP',
+    115: 'OP_IFDUP',
+    116: 'OP_DEPTH',
+    117: 'OP_DROP',
+    118: 'OP_DUP',
+    119: 'OP_NIP',
+    120: 'OP_OVER',
+    121: 'OP_PICK',
+    122: 'OP_ROLL',
+    123: 'OP_ROT',
+    124: 'OP_SWAP',
+    125: 'OP_TUCK',
+    126: 'OP_CAT',
+    127: 'OP_SUBSTR',
+    128: 'OP_LEFT',
+    129: 'OP_RIGHT',
+    130: 'OP_SIZE',
+    188: 'OP_REVERSEBYTES',
+    131: 'OP_INVERT',
+    132: 'OP_AND',
+    133: 'OP_OR',
+    134: 'OP_XOR',
+    135: 'OP_EQUAL',
+    136: 'OP_EQUALVERIFY',
+    137: 'OP_RESERVED1',
+    138: 'OP_RESERVED2',
+    139: 'OP_1ADD',
+    140: 'OP_1SUB',
+    141: 'OP_2MUL',
+    142: 'OP_2DIV',
+    143: 'OP_NEGATE',
+    144: 'OP_ABS',
+    145: 'OP_NOT',
+    146: 'OP_0NOTEQUAL',
+    147: 'OP_ADD',
+    148: 'OP_SUB',
+    149: 'OP_MUL',
+    150: 'OP_DIV',
+    151: 'OP_MOD',
+    152: 'OP_LSHIFT',
+    153: 'OP_RSHIFT',
+    154: 'OP_BOOLAND',
+    155: 'OP_BOOLOR',
+    156: 'OP_NUMEQUAL',
+    157: 'OP_NUMEQUALVERIFY',
+    158: 'OP_NUMNOTEQUAL',
+    159: 'OP_LESSTHAN',
+    160: 'OP_GREATERTHAN',
+    161: 'OP_LESSTHANOREQUAL',
+    162: 'OP_GREATERTHANOREQUAL',
+    163: 'OP_MIN',
+    164: 'OP_MAX',
+    165: 'OP_WITHIN',
+    166: 'OP_RIPEMD160',
+    167: 'OP_SHA1',
+    168: 'OP_SHA256',
+    169: 'OP_HASH160',
+    170: 'OP_HASH256',
+    171: 'OP_CODESEPARATOR',
+    172: 'OP_CHECKSIG',
+    173: 'OP_CHECKSIGVERIFY',
+    174: 'OP_CHECKMULTISIG',
+    175: 'OP_CHECKMULTISIGVERIFY',
+    176: 'OP_NOP1',
+    177: 'OP_CHECKLOCKTIMEVERIFY',
+    178: 'OP_CHECKSEQUENCEVERIFY',
+    179: 'OP_NOP4',
+    180: 'OP_NOP5',
+    181: 'OP_NOP6',
+    182: 'OP_NOP7',
+    183: 'OP_NOP8',
+    184: 'OP_NOP9',
+    185: 'OP_NOP10',
+    192: 'OP_INPUTINDEX',
+    193: 'OP_ACTIVEBYTECODE',
+    194: 'OP_TXVERSION',
+    195: 'OP_TXINPUTCOUNT',
+    196: 'OP_TXOUTPUTCOUNT',
+    197: 'OP_TXLOCKTIME',
+    198: 'OP_UTXOVALUE',
+    199: 'OP_UTXOBYTECODE',
+    200: 'OP_OUTPOINTTXHASH',
+    201: 'OP_OUTPOINTINDEX',
+    202: 'OP_INPUTBYTECODE',
+    203: 'OP_INPUTSEQUENCENUMBER',
+    204: 'OP_OUTPUTVALUE',
+    205: 'OP_OUTPUTBYTECODE',
+    206: 'OP_UTXOTOKENCATEGORY',
+    207: 'OP_UTXOTOKENCOMMITMENT',
+    208: 'OP_UTXOTOKENAMOUNT',
+    209: 'OP_OUTPUTTOKENCATEGORY',
+    210: 'OP_OUTPUTTOKENCOMMITMENT',
+    211: 'OP_OUTPUTTOKENAMOUNT',
+    253: 'OP_PUBKEYHASH',
+    254: 'OP_PUBKEY',
+    255: 'OP_INVALIDOPCODE',
+  };
 
   public stripCoinbaseTransaction(tx: VerboseTransactionExtended): TransactionMinerInfo {
     return {
@@ -371,9 +509,96 @@ class TransactionUtils {
       const redeemScript = vin.scriptsig_asm.split(' ').reverse()[0];
       vin.inner_redeemscript_asm = this.convertScriptSigAsm(redeemScript);
     }
-
-    // No checks of witness, that is not supported by BCH
   }
+
+  /*private static singleChunkIsBuffer(buf: Buffer | number): buf is Buffer {
+    return Buffer.isBuffer(buf);
+  }
+
+  private static asMinimalOP(buffer: Buffer): number | undefined {
+    if (buffer.length === 0) return 0; // OP_0
+    if (buffer.length !== 1) return undefined;
+    if (buffer[0] >= 1 && buffer[0] <= 16) return 80 + buffer[0]; // OP_RESERVED + N = OP_N
+    if (buffer[0] === 0x81) return 79; // OP_1NEGATE
+    return undefined;
+  }
+
+  private static decompile(buffer: Buffer): (Buffer | number)[] | null {
+    const chunks: (Buffer | number)[] = [];
+    let i = 0;
+
+    while (i < buffer.length) {
+      const opcode = buffer[i];
+
+      if (opcode > 0x00 && opcode <= 0x4e) {
+        let dataLength: number;
+        let sizeBytes = 1;
+
+        if (opcode <= 0x4b) {
+          dataLength = opcode;
+        } else if (opcode === 0x4c) {
+          // OP_PUSHDATA1
+          if (i + 1 >= buffer.length) return null;
+          dataLength = buffer.readUInt8(i + 1);
+          sizeBytes = 2;
+        } else if (opcode === 0x4d) {
+          // OP_PUSHDATA2
+          if (i + 2 >= buffer.length) return null;
+          dataLength = buffer.readUInt16LE(i + 1);
+          sizeBytes = 3;
+        } else {
+          // 0x4e - OP_PUSHDATA4
+          if (i + 4 >= buffer.length) return null;
+          dataLength = buffer.readUInt32LE(i + 1);
+          sizeBytes = 5;
+        }
+
+        i += sizeBytes;
+
+        if (i + dataLength > buffer.length) return null;
+
+        const data = buffer.subarray(i, i + dataLength);
+        i += dataLength;
+
+        const op = this.asMinimalOP(data);
+        if (op !== undefined) {
+          chunks.push(op);
+        } else {
+          chunks.push(data);
+        }
+      } else {
+        chunks.push(opcode);
+        i += 1;
+      }
+    }
+
+    return chunks;
+  }
+
+  private static scriptToASM(chunks: Buffer | (Buffer | number)[]): string {
+    let decompiled: (Buffer | number)[] | null;
+
+    if (Buffer.isBuffer(chunks)) {
+      decompiled = this.decompile(chunks);
+    } else {
+      decompiled = chunks;
+    }
+
+    if (!decompiled) {
+      throw new Error('Could not convert invalid chunks to ASM');
+    }
+
+    return decompiled
+      .map((chunk) => {
+        if (this.singleChunkIsBuffer(chunk)) {
+          const op = this.asMinimalOP(chunk);
+          if (op === undefined) return chunk.toString('hex');
+          chunk = op;
+        }
+        return this.opcodes[chunk as number];
+      })
+      .join(' ');
+  }*/
 
   public convertScriptSigAsm(hex: string): string {
     const buf = Buffer.from(hex, 'hex');
@@ -422,7 +647,7 @@ class TransactionUtils {
         } else if (op === 0xb2) {
           b.push('OP_CSV');
         } else {
-          const opcode = bitcoinjs.script.toASM([op]);
+          const opcode = TransactionUtils.opcodes[op];
           if (opcode && op < 0xfd) {
             if (/^OP_(\d+)$/.test(opcode)) {
               b.push(opcode.replace(/^OP_(\d+)$/, 'OP_PUSHNUM_$1'));
