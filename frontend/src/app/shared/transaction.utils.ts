@@ -812,13 +812,17 @@ function convertScriptSigAsm(hex: string): string {
       i += data.length;
     } else {
       if (op === 0x00) {
+        // Could be either 'OP_0' or 'OP_FALSE'
         b.push('OP_0');
       } else if (op === 0x4f) {
-        b.push('OP_PUSHNUM_NEG1');
+        // This is 'OP_1NEGATE'
+        b.push('OP_PUSHNUM_NEG1'); // Rename to OP_PUSHNUM_NEG1
       } else if (op === 0xb1) {
-        b.push('OP_CLTV');
+        // This is 'OP_CHECKLOCKTIMEVERIFY'
+        b.push('OP_CLTV'); // Rename to OP_CLTV
       } else if (op === 0xb2) {
-        b.push('OP_CSV');
+        // This is 'OP_CHECKSEQUENCEVERIFY'
+        b.push('OP_CSV'); // Rename to OP_CSV
       } else {
         const opcode = opcodes[op];
         if (opcode) {

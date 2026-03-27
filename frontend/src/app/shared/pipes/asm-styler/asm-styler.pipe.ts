@@ -140,26 +140,6 @@ export class AsmStylerPipe implements PipeTransform {
       case 'RETURN_189':
       case 'RETURN_190':
       case 'RETURN_191':
-      case 'RETURN_192':
-      case 'RETURN_193':
-      case 'RETURN_194':
-      case 'RETURN_195':
-      case 'RETURN_196':
-      case 'RETURN_197':
-      case 'RETURN_198':
-      case 'RETURN_199':
-      case 'RETURN_200':
-      case 'RETURN_201':
-      case 'RETURN_202':
-      case 'RETURN_203':
-      case 'RETURN_204':
-      case 'RETURN_205':
-      case 'RETURN_206':
-      case 'RETURN_207':
-      case 'RETURN_208':
-      case 'RETURN_209':
-      case 'RETURN_210':
-      case 'RETURN_211':
       case 'RETURN_212':
       case 'RETURN_213':
       case 'RETURN_214':
@@ -231,9 +211,12 @@ export class AsmStylerPipe implements PipeTransform {
 
       case 'CAT':
       case 'SUBSTR':
+      case 'NUM2BIN':
+      case 'BIN2NUM':
       case 'LEFT':
       case 'RIGHT':
       case 'SIZE':
+      case 'REVERSEBYTES':
         style = 'splice';
         break;
 
@@ -287,12 +270,37 @@ export class AsmStylerPipe implements PipeTransform {
       case 'CHECKMULTISIG':
       case 'CHECKMULTISIGVERIFY':
       case 'CHECKSIGADD':
+      case 'CHECKDATASIG':
+      case 'CHECKDATASIGVERIFY':
         style = 'crypto';
         break;
 
       case 'CLTV':
       case 'CSV':
         style = 'locktime';
+        break;
+
+      case 'INPUTINDEX':
+      case 'ACTIVEBYTECODE':
+      case 'TXVERSION':
+      case 'TXINPUTCOUNT':
+      case 'TXOUTPUTCOUNT':
+      case 'TXLOCKTIME':
+      case 'UTXOVALUE':
+      case 'UTXOBYTECODE':
+      case 'OUTPOINTTXHASH':
+      case 'OUTPOINTINDEX':
+      case 'INPUTBYTECODE':
+      case 'INPUTSEQUENCENUMBER':
+      case 'OUTPUTVALUE':
+      case 'OUTPUTBYTECODE':
+      case 'UTXOTOKENCATEGORY':
+      case 'UTXOTOKENCOMMITMENT':
+      case 'UTXOTOKENAMOUNT':
+      case 'OUTPUTTOKENCATEGORY':
+      case 'OUTPUTTOKENCOMMITMENT':
+      case 'OUTPUTTOKENAMOUNT':
+        style = 'introspection';
         break;
 
       case 'RESERVED':
