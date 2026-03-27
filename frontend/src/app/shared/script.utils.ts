@@ -161,7 +161,7 @@ const opcodes = {
   OP_INVALIDOPCODE: 255,
 };
 // add unused opcodes
-for (let i = 187; i <= 255; i++) {
+for (let i = 212; i <= 252; i++) {
   opcodes[`OP_RETURN_${i}`] = i;
 }
 
