@@ -4,7 +4,7 @@
   <div *ngIf="widget">
     <div
       class="pool-distribution"
-      *ngIf="statsObservable$ | async as stats; else loadingStats"
+      *ngIf="priceObservable$ | async as price; else loadingPrice"
     >
       <div class="item">
         <h5 class="card-title" i18n="price-chart.bitcoin-price">
@@ -19,12 +19,12 @@
         <p
           class="card-text"
           [ngClass]="{
-            'text-success': stats.percentChange > 0,
-            'text-danger': stats.percentChange < 0,
+            'text-success': price.percentChange > 0,
+            'text-danger': price.percentChange < 0,
           }"
         >
-          {{ stats.percentChange > 0 ? "+" : ""
-          }}{{ stats.percentChange | number: "1.2-2" }}%
+          {{ price.percentChange > 0 ? "+" : ""
+          }}{{ price.percentChange | number: "1.2-2" }}%
         </p>
       </div>
     </div>
@@ -46,12 +46,11 @@
     <form
       [formGroup]="radioGroupForm"
       class="formRadioGroup"
-      *ngIf="statsObservable$ | async as stats"
+      *ngIf="priceObservable$ | async as price"
     >
       <div class="btn-group btn-group-toggle" name="radioBasic">
         <label
           class="btn btn-purple btn-sm"
-          *ngIf="stats.blockCount >= 4320"
           [class.active]="radioGroupForm.get('dateSpan').value === '1m'"
         >
           <input
@@ -65,7 +64,6 @@
         </label>
         <label
           class="btn btn-purple btn-sm"
-          *ngIf="stats.blockCount >= 12960"
           [class.active]="radioGroupForm.get('dateSpan').value === '3m'"
         >
           <input
@@ -79,7 +77,6 @@
         </label>
         <label
           class="btn btn-purple btn-sm"
-          *ngIf="stats.blockCount >= 25920"
           [class.active]="radioGroupForm.get('dateSpan').value === '6m'"
         >
           <input
@@ -93,7 +90,6 @@
         </label>
         <label
           class="btn btn-purple btn-sm"
-          *ngIf="stats.blockCount >= 52560"
           [class.active]="radioGroupForm.get('dateSpan').value === '1y'"
         >
           <input
@@ -107,7 +103,6 @@
         </label>
         <label
           class="btn btn-purple btn-sm"
-          *ngIf="stats.blockCount >= 105120"
           [class.active]="radioGroupForm.get('dateSpan').value === '2y'"
         >
           <input
@@ -121,7 +116,6 @@
         </label>
         <label
           class="btn btn-purple btn-sm"
-          *ngIf="stats.blockCount >= 157680"
           [class.active]="radioGroupForm.get('dateSpan').value === '3y'"
         >
           <input
@@ -170,7 +164,7 @@
   </div>
 </div>
 
-<ng-template #loadingStats>
+<ng-template #loadingPrice>
   <div class="pool-distribution">
     <div class="item">
       <h5 class="card-title" i18n="price-chart.bitcoin-price">Bitcoin Price</h5>
