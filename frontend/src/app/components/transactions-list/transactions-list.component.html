@@ -374,7 +374,7 @@
                               {{ vin.scriptsig }}
                             </td>
                           </tr>
-                          <tr *ngIf="vin.scriptsig_byte_code?.length">
+                          <!-- <tr *ngIf="vin.scriptsig_byte_code?.length">
                             <td
                               i18n="
                                 transactions-list.scriptsig.byte.code|ScriptSig
@@ -399,7 +399,7 @@
                                 {{ byte }}
                               }
                             </td>
-                          </tr>
+                          </tr>-->
                         </ng-template>
                         <tr *ngIf="vin.inner_redeemscript_asm">
                           <td i18n="transactions-list.p2sh-redeem-script">
