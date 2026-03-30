@@ -235,8 +235,8 @@ main {
 .btn-purple:not(:disabled):not(.disabled).active,
 .show > .btn-purple.dropdown-toggle {
   color: #fff;
-  background-color: var(--search-button);
-  border-color: var(--search-button-border);
+  background-color: var(--search-button-shadow);
+  border-color: #045f45;
 }
 
 .btn-purple:focus,
@@ -250,7 +250,7 @@ main {
 .btn-purple:hover {
   color: #fff;
   background-color: var(--search-button-focus);
-  border-color: var(--search-button);
+  border-color: #2b7963;
 }
 
 .form-control.form-control-secondary {
