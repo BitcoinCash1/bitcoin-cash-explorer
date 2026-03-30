@@ -3,7 +3,7 @@
 <div [class]="widget === false ? 'full-container' : ''">
   <div *ngIf="widget">
     <div
-      class="pool-distribution"
+      class="price-widget"
       *ngIf="priceObservable$ | async as price; else loadingPrice"
     >
       <div class="item">
@@ -33,6 +33,18 @@
   <div class="card-header mb-0 mb-md-4" [style]="widget ? 'display:none' : ''">
     <div class="d-flex d-md-block align-items-baseline">
       <span i18n="price-chart.title">Bitcoin Cash Price</span>
+      <span *ngIf="priceObservable$ | async as price">
+        ⎯ {{ price.latestPrice | currency: this.currency }} (<span
+          class="card-text"
+          [ngClass]="{
+            'text-success': price.percentChange > 0,
+            'text-danger': price.percentChange < 0,
+          }"
+        >
+          {{ price.percentChange > 0 ? "+" : ""
+          }}{{ price.percentChange | number: "1.2-2" }}% </span
+        >)
+      </span>
       <button
         class="btn p-0 pl-2"
         style="margin: 0 0 4px 0px"
@@ -165,7 +177,7 @@
 </div>
 
 <ng-template #loadingPrice>
-  <div class="pool-distribution">
+  <div class="price-widget">
     <div class="item">
       <h5 class="card-title" i18n="price-chart.bitcoin-price">Bitcoin Price</h5>
       <p class="card-text">
