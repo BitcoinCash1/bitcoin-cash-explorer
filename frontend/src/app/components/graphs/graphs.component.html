@@ -1,4 +1,10 @@
-<div *ngIf="stateService.env.MINING_DASHBOARD" class="mb-3 d-flex menu">
+<div
+  *ngIf="
+    stateService.env.MINING_DASHBOARD ||
+    (stateService.env.HISTORICAL_PRICE && isMainnet)
+  "
+  class="mb-3 d-flex menu"
+>
   <a
     routerLinkActive="active"
     class="btn btn-purple w-50"
@@ -82,6 +88,17 @@
       >
     </div>
   </div>
+
+  @if (isMainnet) {
+    @if (stateService.env.HISTORICAL_PRICE) {
+      <a
+        routerLinkActive="active"
+        class="btn btn-purple w-50"
+        [routerLink]="['/graphs/price' | relativeUrl]"
+        >Price</a
+      >
+    }
+  }
 </div>
 
 <router-outlet></router-outlet>
