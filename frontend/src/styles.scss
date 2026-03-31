@@ -236,7 +236,7 @@ main {
 .show > .btn-purple.dropdown-toggle {
   color: #fff;
   background-color: var(--search-button-shadow);
-  border-color: #045f45;
+  border-color: #054e3980;
 }
 
 .btn-purple:focus,
@@ -244,13 +244,13 @@ main {
   color: #fff;
   background-color: var(--search-button-focus);
   border-color: var(--search-button);
-  box-shadow: 0 0 0 0.2rem var(--search-button-shadow);
+  box-shadow: 0 0 0 0.08rem #07584180;
 }
 
 .btn-purple:hover {
   color: #fff;
   background-color: var(--search-button-focus);
-  border-color: #2b7963;
+  border-color: #21816680;
 }
 
 .form-control.form-control-secondary {
@@ -1494,6 +1494,14 @@ a {
   color: var(--fg);
   background-color: var(--primary);
   border-color: var(--primary);
+}
+
+.btn-group {
+  // Restore margin from bootstrap button-group.scss
+  > .btn:not(:first-child),
+  > .btn-group:not(:first-child) {
+    margin-left: 0 !important;
+  }
 }
 
 .btn-small-height {
