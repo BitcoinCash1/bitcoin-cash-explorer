@@ -86,7 +86,7 @@ class PoolsParser {
           // Pool has been renamed
           const newSlug = pool.name.replace(/[^a-z0-9]/gi, '').toLowerCase();
           logger.warn(
-            `Renaming ${poolDB.name} mining pool to ${pool.name}. Slug has been updated. Maybe you want to make a redirection from 'https://mempool.space/mining/pool/${poolDB.slug}' to 'https://mempool.space/mining/pool/${newSlug}`
+            `Renaming ${poolDB.name} mining pool to ${pool.name}. Slug has been updated. Maybe you want to make a redirection from 'https://bchexplorer.cash/mining/pool/${poolDB.slug}' to 'https://bchexplorer.cash/mining/pool/${newSlug}`
           );
           await PoolsRepository.$renameMiningPool(poolDB.id, newSlug, pool.name);
           clearCache = true;
