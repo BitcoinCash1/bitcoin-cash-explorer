@@ -97,7 +97,21 @@ export class PriceChartComponent implements OnInit {
     );
 
     this.route.fragment.subscribe((fragment) => {
-      if (['1m', '3m', '6m', '1y', '2y', '3y', 'all'].indexOf(fragment) > -1) {
+      if (
+        [
+          '24h',
+          '3d',
+          '1w',
+          '1m',
+          '3m',
+          '6m',
+          '1y',
+          '2y',
+          '3y',
+          '4y',
+          'all',
+        ].indexOf(fragment) > -1
+      ) {
         this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
           emitEvent: false,
         });
@@ -116,7 +130,13 @@ export class PriceChartComponent implements OnInit {
         this.currency = currency;
         const now = new Date();
         let startTimestamp = 0;
-        if (timespan === '1m') {
+        if (timespan === '24h') {
+          startTimestamp = now.getTime() - 24 * 60 * 60 * 1000;
+        } else if (timespan === '3d') {
+          startTimestamp = now.getTime() - 3 * 24 * 60 * 60 * 1000;
+        } else if (timespan === '1w') {
+          startTimestamp = now.getTime() - 7 * 24 * 60 * 60 * 1000;
+        } else if (timespan === '1m') {
           startTimestamp = Date.UTC(
             now.getUTCFullYear(),
             now.getUTCMonth() - 1,
@@ -149,6 +169,12 @@ export class PriceChartComponent implements OnInit {
         } else if (timespan === '3y') {
           startTimestamp = Date.UTC(
             now.getUTCFullYear() - 3,
+            now.getUTCMonth(),
+            now.getUTCDate()
+          );
+        } else if (timespan === '4y') {
+          startTimestamp = Date.UTC(
+            now.getUTCFullYear() - 4,
             now.getUTCMonth(),
             now.getUTCDate()
           );

@@ -89,9 +89,19 @@ export class PoolRankingComponent implements OnInit {
 
     this.route.fragment.subscribe((fragment) => {
       if (
-        ['24h', '3d', '1w', '1m', '3m', '6m', '1y', '2y', '3y', 'all'].indexOf(
-          fragment
-        ) > -1
+        [
+          '24h',
+          '3d',
+          '1w',
+          '1m',
+          '3m',
+          '6m',
+          '1y',
+          '2y',
+          '3y',
+          '4y',
+          'all',
+        ].indexOf(fragment) > -1
       ) {
         this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
           emitEvent: false,

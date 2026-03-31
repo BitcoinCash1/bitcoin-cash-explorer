@@ -49,6 +49,34 @@
         <label
           class="btn btn-purple btn-sm"
           *ngIf="stats.blockCount >= 200"
+          [class.active]="radioGroupForm.get('dateSpan').value === '1w'"
+        >
+          <input
+            type="radio"
+            [value]="'1w'"
+            fragment="1w"
+            [routerLink]="['/graphs/mining/hashrate-difficulty' | relativeUrl]"
+            formControlName="dateSpan"
+          />
+          1W
+        </label>
+        <label
+          class="btn btn-purple btn-sm"
+          *ngIf="stats.blockCount >= 200"
+          [class.active]="radioGroupForm.get('dateSpan').value === '1m'"
+        >
+          <input
+            type="radio"
+            [value]="'1m'"
+            fragment="1m"
+            [routerLink]="['/graphs/mining/hashrate-difficulty' | relativeUrl]"
+            formControlName="dateSpan"
+          />
+          1M
+        </label>
+        <label
+          class="btn btn-purple btn-sm"
+          *ngIf="stats.blockCount >= 200"
           [class.active]="radioGroupForm.get('dateSpan').value === '3m'"
         >
           <input
