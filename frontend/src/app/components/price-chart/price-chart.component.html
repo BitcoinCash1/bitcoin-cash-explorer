@@ -40,11 +40,10 @@
             'text-success': price.percentChange > 0,
             'text-danger': price.percentChange < 0,
           }"
-        >
-          {{ price.percentChange > 0 ? "+" : ""
-          }}{{ price.percentChange | number: "1.2-2" }}% </span
-        >)
-      </span>
+          >{{ price.percentChange > 0 ? "+" : ""
+          }}{{ price.percentChange | number: "1.2-2" }}%</span
+        >)</span
+      >
       <button
         class="btn p-0 pl-2"
         style="margin: 0 0 4px 0px"
