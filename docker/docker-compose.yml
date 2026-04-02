@@ -1,38 +1,43 @@
 services:
-  web:
+  explorer-web:
     environment:
       FRONTEND_HTTP_PORT: "8080"
-      BACKEND_MAINNET_HTTP_HOST: "api"
+      BACKEND_MAINNET_HTTP_HOST: "explorer-api"
     image: registry.melroy.org/bitcoincash/bitcoin-cash-explorer/explorer-frontend:3.3
-    user: "1000:1000"
+    user: 1000:1000
+    container_name: explorer-web
     restart: always
     stop_grace_period: 1m
     networks:
       - bch_explorer_external_network
-    command: "./wait-for db:3306 --timeout=720 -- nginx -g 'daemon off;'"
+    command: "./wait-for explorer-db:3306 --timeout=720 -- nginx -g 'daemon off;'"
     ports:
       - 80:8080
 
-  api:
+  explorer-api:
     environment:
       EXPLORER_BACKEND: "electrum"
+      EXPLORER_NETWORK: "mainnet"
+      EXPLORER_INDEXING_BLOCKS_AMOUNT: "-1"
       CORE_RPC_HOST: "172.27.0.1"
       CORE_RPC_PORT: "8332"
       CORE_RPC_USERNAME: "explorer"
       CORE_RPC_PASSWORD: "explorer"
+      ELECTRUM_HOST: "172.27.0.1"
       DATABASE_ENABLED: "true"
-      DATABASE_HOST: "db"
+      DATABASE_HOST: "explorer-db"
       DATABASE_DATABASE: "explorer"
       DATABASE_USERNAME: "explorer"
       DATABASE_PASSWORD: "admin"
       STATISTICS_ENABLED: "true"
     image: registry.melroy.org/bitcoincash/bitcoin-cash-explorer/explorer-backend:3.3
-    user: "1000:1000"
+    user: 1000:1000
+    container_name: explorer-api
     restart: always
     stop_grace_period: 1m
     networks:
       - bch_explorer_external_network
-    command: "./wait-for-it.sh db:3306 --timeout=720 --strict -- ./start.sh"
+    command: "./wait-for-it.sh explorer-db:3306 --timeout=720 --strict -- ./start.sh"
     volumes:
       - ./data:/backend/cache
     ulimits:
@@ -40,7 +45,7 @@ services:
         soft: 165535
         hard: 500000
 
-  db:
+  explorer-db:
     environment:
       MYSQL_DATABASE: "explorer"
       MYSQL_USER: "explorer"
@@ -48,7 +53,8 @@ services:
       MYSQL_ROOT_PASSWORD: "admin"
       MARIADB_AUTO_UPGRADE: "1"
     image: mariadb:12.2.1
-    user: "1000:1000"
+    user: 1000:1000
+    container_name: explorer-db
     restart: always
     stop_grace_period: 1m
     networks:
