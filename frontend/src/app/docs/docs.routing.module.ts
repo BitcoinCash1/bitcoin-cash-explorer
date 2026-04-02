@@ -23,7 +23,7 @@ const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'api/faq',
+    redirectTo: 'faq',
   },
 ];
 
