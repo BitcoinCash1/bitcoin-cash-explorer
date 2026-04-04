@@ -10,7 +10,7 @@
         src="{{ poolStats['logo'] }}"
         [alt]="poolStats.pool.name + ' mining pool logo'"
         onError="this.onerror=null; this.src = '/resources/mining-pools/default.svg'"
-        class="mr-3"
+        class="me-3"
       />
       <h1 class="m-0 pt-1 pt-md-0">{{ poolStats.pool.name }}</h1>
     </div>
@@ -106,7 +106,7 @@
                     <button
                       *ngIf="poolStats.pool.addresses.length >= 2"
                       type="button"
-                      class="btn btn-sm btn-success float-right small-button mobile"
+                      class="btn btn-sm btn-success float-end small-button mobile"
                       (click)="collapse.toggle()"
                       [attr.aria-expanded]="!gfg"
                       aria-controls="collapseExample"
@@ -255,12 +255,12 @@
                       >
                         <span
                           class="health-badge badge"
-                          [class.badge-success]="poolStats.avgBlockHealth >= 99"
-                          [class.badge-warning]="
+                          [class.bg-success]="poolStats.avgBlockHealth >= 99"
+                          [class.bg-warning]="
                             poolStats.avgBlockHealth >= 75 &&
                             poolStats.avgBlockHealth < 99
                           "
-                          [class.badge-danger]="poolStats.avgBlockHealth < 75"
+                          [class.bg-danger]="poolStats.avgBlockHealth < 75"
                           *ngIf="
                             poolStats.avgBlockHealth != null;
                             else nullHealth
@@ -269,7 +269,7 @@
                         >
                         <ng-template #nullHealth>
                           <span
-                            class="health-badge badge badge-secondary"
+                            class="health-badge badge bg-secondary"
                             i18n="unknown"
                             >Unknown</span
                           >
@@ -666,25 +666,25 @@
         <th class="height" i18n="latest-blocks.height">Height</th>
         <th class="timestamp" i18n="latest-blocks.timestamp">Timestamp</th>
         <th class="mined" i18n="latest-blocks.mined">Mined</th>
-        <th class="coinbase text-left" i18n="latest-blocks.coinbasetag">
+        <th class="coinbase text-start" i18n="latest-blocks.coinbasetag">
           Coinbase tag
         </th>
         <th
           *ngIf="auditAvailable"
-          class="health text-right"
+          class="health text-end"
           i18n="latest-blocks.health"
         >
           Health
         </th>
-        <th class="reward text-right" i18n="latest-blocks.reward">Reward</th>
+        <th class="reward text-end" i18n="latest-blocks.reward">Reward</th>
         <th
           *ngIf="!auditAvailable"
-          class="fees text-right"
+          class="fees text-end"
           i18n="latest-blocks.fees"
         >
           Fees
         </th>
-        <th class="txs text-right" i18n="dashboard.txs">TXs</th>
+        <th class="txs text-end" i18n="dashboard.txs">TXs</th>
         <th class="size" i18n="latest-blocks.size">Size</th>
       </thead>
       <tbody [style]="isLoading ? 'opacity: 0.75' : ''">
@@ -710,18 +710,18 @@
             ></app-time>
           </td>
           <td class="coinbase">
-            <span class="badge badge-secondary scriptmessage longer">
+            <span class="badge bg-secondary scriptmessage longer">
               {{ block.extras.coinbaseRaw | hex2ascii }}
             </span>
           </td>
-          <td *ngIf="auditAvailable" class="health text-right">
+          <td *ngIf="auditAvailable" class="health text-end">
             <a
               class="health-badge badge"
-              [class.badge-success]="block.extras.matchRate >= 99"
-              [class.badge-warning]="
+              [class.bg-success]="block.extras.matchRate >= 99"
+              [class.bg-warning]="
                 block.extras.matchRate >= 75 && block.extras.matchRate < 99
               "
-              [class.badge-danger]="block.extras.matchRate < 75"
+              [class.bg-danger]="block.extras.matchRate < 75"
               [routerLink]="
                 block.extras.matchRate != null
                   ? ['/block/' | relativeUrl, block.id]
@@ -732,12 +732,12 @@
               >{{ block.extras.matchRate }}%</a
             >
             <ng-template #nullHealth>
-              <span class="health-badge badge badge-secondary" i18n="unknown"
+              <span class="health-badge badge bg-secondary" i18n="unknown"
                 >Unknown</span
               >
             </ng-template>
           </td>
-          <td class="reward text-right">
+          <td class="reward text-end">
             <app-amount
               [satoshis]="block.extras.reward"
               digitsInfo="1.2-2"
@@ -745,7 +745,7 @@
               [ignoreViewMode]="true"
             ></app-amount>
           </td>
-          <td *ngIf="!auditAvailable" class="fees text-right">
+          <td *ngIf="!auditAvailable" class="fees text-end">
             <app-amount
               [satoshis]="block.extras.totalFees"
               digitsInfo="1.3-5"
@@ -753,7 +753,7 @@
               [ignoreViewMode]="true"
             ></app-amount>
           </td>
-          <td class="txs text-right">
+          <td class="txs text-end">
             {{ block.tx_count | number }}
           </td>
           <td class="size">
@@ -782,12 +782,12 @@
         <th class="height" i18n="latest-blocks.height">Height</th>
         <th class="timestamp" i18n="latest-blocks.timestamp">Timestamp</th>
         <th class="mined" i18n="latest-blocks.mined">Mined</th>
-        <th class="coinbase text-left" i18n="latest-blocks.coinbasetag">
+        <th class="coinbase text-start" i18n="latest-blocks.coinbasetag">
           Coinbase tag
         </th>
-        <th class="reward text-right" i18n="latest-blocks.reward">Reward</th>
-        <th class="fees text-right" i18n="latest-blocks.fees">Fees</th>
-        <th class="txs text-right" i18n="dashboard.txs">TXs</th>
+        <th class="reward text-end" i18n="latest-blocks.reward">Reward</th>
+        <th class="fees text-end" i18n="latest-blocks.fees">Fees</th>
+        <th class="txs text-end" i18n="dashboard.txs">TXs</th>
         <th class="size" i18n="latest-blocks.size">Size</th>
       </thead>
       <tbody>
@@ -804,16 +804,16 @@
           <td class="coinbase">
             <span class="skeleton-loader"></span>
           </td>
-          <td class="reward text-right">
+          <td class="reward text-end">
             <span class="skeleton-loader"></span>
           </td>
-          <td class="fees text-right">
+          <td class="fees text-end">
             <span class="skeleton-loader"></span>
           </td>
-          <td class="txs text-right">
+          <td class="txs text-end">
             <span class="skeleton-loader"></span>
           </td>
-          <td class="size text-right">
+          <td class="size text-end">
             <span class="skeleton-loader"></span>
           </td>
         </tr>
@@ -826,7 +826,7 @@
 <ng-template #loadingMain>
   <div>
     <div class="mb-3" style="display: flex; position: relative">
-      <div class="skeleton-loader mr-3" style="width: 50px; height: 50px"></div>
+      <div class="skeleton-loader me-3" style="width: 50px; height: 50px"></div>
       <h1 class="m-0 pt-1 pt-md-0">
         <div
           class="skeleton-loader"

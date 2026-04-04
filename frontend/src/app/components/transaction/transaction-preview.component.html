@@ -11,13 +11,13 @@
     <app-tx-features [tx]="tx"></app-tx-features>
     <!-- <span
       *ngIf="myspecialcheck"
-      class="badge badge-primary ml-1 mr-1"
+      class="badge bg-primary ms-1 me-1"
     >
       my bagde
     </span>-->
   </div>
   <div class="top-data row">
-    <span class="field col-sm-4 text-left">
+    <span class="field col-sm-4 text-start">
       <app-amount [satoshis]="totalValue"></app-amount>
     </span>
     <span class="field col-sm-4 text-center"
@@ -27,7 +27,7 @@
         }}</ng-container
       ></span
     >
-    <span class="field col-sm-4 text-right"
+    <span class="field col-sm-4 text-end"
       ><span class="label" i18n="transaction.fee|Transaction fee">Fee</span>
       {{ tx.fee | number }}
       <span class="symbol" i18n="shared.sats">sats</span></span

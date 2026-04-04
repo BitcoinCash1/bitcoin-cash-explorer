@@ -7,9 +7,7 @@
     <div class="row justify-content-center">
       <form [formGroup]="form">
         <div class="input-group input-group-lg mb-1">
-          <div class="input-group-prepend">
-            <span class="input-group-text">{{ currency$ | async }}</span>
-          </div>
+          <span class="input-group-text">{{ currency$ | async }}</span>
           <input
             type="text"
             inputmode="numeric"
@@ -21,14 +19,12 @@
           <app-clipboard
             [button]="true"
             [text]="form.get('fiat').value"
-            [class]="'btn btn-lg btn-secondary ml-1'"
+            [class]="'btn btn-lg btn-secondary ms-1'"
           ></app-clipboard>
         </div>
 
         <div class="input-group input-group-lg mb-1">
-          <div class="input-group-prepend">
-            <span class="input-group-text">BCH</span>
-          </div>
+          <span class="input-group-text">BCH</span>
           <input
             type="text"
             inputmode="numeric"
@@ -40,14 +36,12 @@
           <app-clipboard
             [button]="true"
             [text]="form.get('bitcoin').value"
-            [class]="'btn btn-lg btn-secondary ml-1'"
+            [class]="'btn btn-lg btn-secondary ms-1'"
           ></app-clipboard>
         </div>
 
         <div class="input-group input-group-lg mb-1">
-          <div class="input-group-prepend">
-            <span class="input-group-text" i18n="shared.sats">sats</span>
-          </div>
+          <span class="input-group-text" i18n="shared.sats">sats</span>
           <input
             type="text"
             inputmode="numeric"
@@ -59,7 +53,7 @@
           <app-clipboard
             [button]="true"
             [text]="form.get('satoshis').value"
-            [class]="'btn btn-lg btn-secondary ml-1'"
+            [class]="'btn btn-lg btn-secondary ms-1'"
           ></app-clipboard>
         </div>
       </form>

@@ -98,9 +98,9 @@
 
   &.none-mode {
     .filter-tag {
-      border: solid 1px var(--danger);
+      border: solid 1px var(--red);
       &.selected {
-        background-color: var(--danger);
+        background-color: var(--red);
       }
     }
   }
@@ -138,9 +138,9 @@
       }
     }
     &.red {
-      border: solid 1px var(--danger);
+      border: solid 1px var(--red);
       &.active {
-        background: var(--danger);
+        background: var(--red);
       }
     }
     &.yellow {

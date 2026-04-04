@@ -20,7 +20,7 @@
       <button
         [disabled]="isLoading"
         type="submit"
-        class="btn btn-success mr-2"
+        class="btn btn-success me-2"
         i18n="shared.preview|Preview"
       >
         Preview
@@ -165,13 +165,13 @@
 
     <ng-container *ngIf="flowEnabled; else flowPlaceholder">
       <br />
-      <div class="title float-left">
+      <div class="title float-start">
         <h2 id="flow" i18n="transaction.flow|Transaction flow">Flow</h2>
       </div>
 
       <button
         type="button"
-        class="btn btn-outline-info flow-toggle btn-sm float-right"
+        class="btn btn-outline-info flow-toggle btn-sm float-end"
         (click)="toggleGraph()"
         i18n="hide-diagram"
       >
@@ -261,7 +261,7 @@
       [forceSignaturesMode]="isCoinbase ? 'none' : 'all'"
     ></app-transactions-list>
 
-    <div class="title text-left">
+    <div class="title text-start">
       <h2 i18n="transaction.details|Transaction Details">Details</h2>
     </div>
     <div class="box">

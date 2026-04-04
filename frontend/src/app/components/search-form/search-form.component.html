@@ -5,7 +5,7 @@
   novalidate
 >
   <div class="d-flex">
-    <div class="search-box-container mr-2">
+    <div class="search-box-container me-2">
       <input
         #searchInput
         (focus)="focus$.next($any($event).target.value)"
@@ -27,7 +27,7 @@
       <button
         [disabled]="isSearching"
         type="submit"
-        class="btn btn-block btn-purple"
+        class="btn search-submit btn-purple"
         aria-label="Search"
       >
         <fa-icon

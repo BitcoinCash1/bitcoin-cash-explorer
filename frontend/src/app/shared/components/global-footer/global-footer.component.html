@@ -78,7 +78,7 @@
         </div>
         @if (!env.customize?.theme) {
           <div
-            class="selector d-flex justify-content-center ml-auto mr-auto mt-0"
+            class="selector d-flex justify-content-center ms-auto me-auto mt-0"
             [ngClass]="isServicesPage ? 'd-lg-none' : 'd-md-none'"
           >
             <app-amount-selector class="add-margin"></app-amount-selector>
@@ -88,7 +88,7 @@
 
         <a
           *ngIf="stateService.isOfficialSiteBuild"
-          class="btn btn-purple sponsor d-flex justify-content-center ml-auto mr-auto mt-0 mb-2"
+          class="btn btn-purple sponsor d-flex justify-content-center ms-auto me-auto mt-0 mb-2"
           [ngClass]="isServicesPage ? 'd-lg-none' : 'd-md-none'"
           [routerLink]="['/login']"
           aria-label="Sign in to your account"

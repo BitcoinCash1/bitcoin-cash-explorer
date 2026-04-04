@@ -3,7 +3,7 @@
     <div class="d-flex d-md-block align-items-baseline">
       <span i18n="mining.block-sizes">Block Sizes</span>
       <button
-        class="btn p-0 pl-2"
+        class="btn p-0 ps-2"
         style="margin: 0 0 4px 0px"
         (click)="onSaveChart()"
         aria-label="Download chart"
@@ -17,160 +17,137 @@
       class="formRadioGroup"
       *ngIf="blockSizesObservable$ | async as stats"
     >
-      <div class="btn-group btn-group-toggle" name="radioBasic">
-        <label
-          class="btn btn-purple btn-sm"
-          *ngIf="stats.blockCount >= 144"
-          [class.active]="radioGroupForm.get('dateSpan').value === '24h'"
-        >
+      <div class="btn-group" role="group" name="radioBasic">
+        <ng-container *ngIf="stats.blockCount >= 144">
           <input
             type="radio"
+            class="btn-check"
+            id="blocksizes-24h"
             [value]="'24h'"
             fragment="24h"
             [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
-          24h
-        </label>
-        <label
-          class="btn btn-purple btn-sm"
-          *ngIf="stats.blockCount >= 432"
-          [class.active]="radioGroupForm.get('dateSpan').value === '3d'"
-        >
+          <label class="btn btn-purple btn-sm" for="blocksizes-24h">24h</label>
+        </ng-container>
+        <ng-container *ngIf="stats.blockCount >= 432">
           <input
             type="radio"
+            class="btn-check"
+            id="blocksizes-3d"
             [value]="'3d'"
             fragment="3d"
             [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
-          3D
-        </label>
-        <label
-          class="btn btn-purple btn-sm"
-          *ngIf="stats.blockCount >= 1008"
-          [class.active]="radioGroupForm.get('dateSpan').value === '1w'"
-        >
+          <label class="btn btn-purple btn-sm" for="blocksizes-3d">3D</label>
+        </ng-container>
+        <ng-container *ngIf="stats.blockCount >= 1008">
           <input
             type="radio"
+            class="btn-check"
+            id="blocksizes-1w"
             [value]="'1w'"
             fragment="1w"
             [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
-          1W
-        </label>
-        <label
-          class="btn btn-purple btn-sm"
-          *ngIf="stats.blockCount >= 4320"
-          [class.active]="radioGroupForm.get('dateSpan').value === '1m'"
-        >
+          <label class="btn btn-purple btn-sm" for="blocksizes-1w">1W</label>
+        </ng-container>
+        <ng-container *ngIf="stats.blockCount >= 4320">
           <input
             type="radio"
+            class="btn-check"
+            id="blocksizes-1m"
             [value]="'1m'"
             fragment="1m"
             [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
-          1M
-        </label>
-        <label
-          class="btn btn-purple btn-sm"
-          *ngIf="stats.blockCount >= 12960"
-          [class.active]="radioGroupForm.get('dateSpan').value === '3m'"
-        >
+          <label class="btn btn-purple btn-sm" for="blocksizes-1m">1M</label>
+        </ng-container>
+        <ng-container *ngIf="stats.blockCount >= 12960">
           <input
             type="radio"
+            class="btn-check"
+            id="blocksizes-3m"
             [value]="'3m'"
             fragment="3m"
             [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
-          3M
-        </label>
-        <label
-          class="btn btn-purple btn-sm"
-          *ngIf="stats.blockCount >= 25920"
-          [class.active]="radioGroupForm.get('dateSpan').value === '6m'"
-        >
+          <label class="btn btn-purple btn-sm" for="blocksizes-3m">3M</label>
+        </ng-container>
+        <ng-container *ngIf="stats.blockCount >= 25920">
           <input
             type="radio"
+            class="btn-check"
+            id="blocksizes-6m"
             [value]="'6m'"
             fragment="6m"
             [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
-          6M
-        </label>
-        <label
-          class="btn btn-purple btn-sm"
-          *ngIf="stats.blockCount >= 52560"
-          [class.active]="radioGroupForm.get('dateSpan').value === '1y'"
-        >
+          <label class="btn btn-purple btn-sm" for="blocksizes-6m">6M</label>
+        </ng-container>
+        <ng-container *ngIf="stats.blockCount >= 52560">
           <input
             type="radio"
+            class="btn-check"
+            id="blocksizes-1y"
             [value]="'1y'"
             fragment="1y"
             [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
-          1Y
-        </label>
-        <label
-          class="btn btn-purple btn-sm"
-          *ngIf="stats.blockCount >= 105120"
-          [class.active]="radioGroupForm.get('dateSpan').value === '2y'"
-        >
+          <label class="btn btn-purple btn-sm" for="blocksizes-1y">1Y</label>
+        </ng-container>
+        <ng-container *ngIf="stats.blockCount >= 105120">
           <input
             type="radio"
+            class="btn-check"
+            id="blocksizes-2y"
             [value]="'2y'"
             fragment="2y"
             [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
-          2Y
-        </label>
-        <label
-          class="btn btn-purple btn-sm"
-          *ngIf="stats.blockCount >= 157680"
-          [class.active]="radioGroupForm.get('dateSpan').value === '3y'"
-        >
+          <label class="btn btn-purple btn-sm" for="blocksizes-2y">2Y</label>
+        </ng-container>
+        <ng-container *ngIf="stats.blockCount >= 157680">
           <input
             type="radio"
+            class="btn-check"
+            id="blocksizes-3y"
             [value]="'3y'"
             fragment="3y"
             [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
-          3Y
-        </label>
-        <label
-          class="btn btn-purple btn-sm"
-          *ngIf="stats.blockCount >= 210240"
-          [class.active]="radioGroupForm.get('dateSpan').value === '4y'"
-        >
+          <label class="btn btn-purple btn-sm" for="blocksizes-3y">3Y</label>
+        </ng-container>
+        <ng-container *ngIf="stats.blockCount >= 210240">
           <input
             type="radio"
+            class="btn-check"
+            id="blocksizes-4y"
             [value]="'4y'"
             fragment="4y"
             [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
             formControlName="dateSpan"
           />
-          4Y
-        </label>
-        <label
-          class="btn btn-purple btn-sm"
-          [class.active]="radioGroupForm.get('dateSpan').value === 'all'"
-        >
-          <input
-            type="radio"
-            [value]="'all'"
-            fragment="all"
-            [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
-            formControlName="dateSpan"
-          />
-          ALL
-        </label>
+          <label class="btn btn-purple btn-sm" for="blocksizes-4y">4Y</label>
+        </ng-container>
+        <input
+          type="radio"
+          class="btn-check"
+          id="blocksizes-all"
+          [value]="'all'"
+          fragment="all"
+          [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
+          formControlName="dateSpan"
+        />
+        <label class="btn btn-purple btn-sm" for="blocksizes-all">ALL</label>
       </div>
     </form>
   </div>

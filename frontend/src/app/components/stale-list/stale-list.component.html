@@ -26,12 +26,12 @@
   <div class="clearfix"></div>
 
   <div
-    class="float-left"
+    class="float-start"
     style="display: flex; width: 100%; align-items: center"
   >
     <h1 i18n="page.recent-stale-chain-tips">Recent Stale Chain Tips</h1>
-    <span class="badge badge-pill badge-warning beta" i18n="beta">beta</span>
-    <div *ngIf="isLoading" class="spinner-border ml-3" role="status"></div>
+    <span class="badge rounded-pill bg-warning beta" i18n="beta">beta</span>
+    <div *ngIf="isLoading" class="spinner-border ms-3" role="status"></div>
   </div>
 
   <div class="clearfix"></div>
@@ -56,33 +56,31 @@
             <span class="type" [ngSwitch]="chainTip.status">
               <span
                 *ngSwitchCase="'headers-only'"
-                class="badge badge-info"
+                class="badge bg-info"
                 i18n="chain-tips.headers-only"
                 >Headers Only</span
               >
               <span
                 *ngSwitchCase="'valid-headers'"
-                class="badge badge-info"
+                class="badge bg-info"
                 i18n="chain-tips.valid-headers"
                 >Valid Headers</span
               >
               <span
                 *ngSwitchCase="'valid-fork'"
-                class="badge badge-info"
+                class="badge bg-info"
                 i18n="chain-tips.valid-fork"
                 >Valid Fork</span
               >
               <span
                 *ngSwitchCase="'invalid'"
-                class="badge badge-info"
+                class="badge bg-info"
                 i18n="chain-tips.invalid"
                 >Invalid</span
               >
               <span *ngSwitchDefault>{{ chainTip.status }}</span>
             </span>
-            <span
-              class="badge badge-secondary depth-badge"
-              i18n="chain-tips.depth"
+            <span class="badge bg-secondary depth-badge" i18n="chain-tips.depth"
               >Depth {{ chainTip.branchlen + 1 }}</span
             >
           </span>
@@ -91,7 +89,7 @@
           <div class="block-comparison">
             <div class="block-column stale">
               <div class="block-label" i18n="chain-tips.stale-block">
-                <span class="badge badge-secondary">Stale</span>
+                <span class="badge bg-secondary">Stale</span>
               </div>
               <div class="block-wrapper">
                 <div
@@ -232,7 +230,7 @@
 
             <div class="block-column canonical">
               <div class="block-label" i18n="chain-tips.winning-block">
-                <span class="badge badge-success">Winning</span>
+                <span class="badge bg-success">Winning</span>
               </div>
               <div
                 class="bitcoin-block mined-block canonical-block"

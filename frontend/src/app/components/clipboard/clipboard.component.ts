@@ -14,7 +14,7 @@ import {
 })
 export class ClipboardComponent {
   @Input() button = false;
-  @Input() class = 'btn btn-secondary ml-1';
+  @Input() class = 'btn btn-secondary ms-1';
   @Input() size: 'small' | 'normal' | 'large' = 'normal';
   @Input() text: string;
   @Input() leftPadding = true;

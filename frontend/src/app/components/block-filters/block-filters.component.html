@@ -12,7 +12,7 @@
     *ngIf="menuOpen"
     [routerLink]="['/docs/faq' | relativeUrl]"
     fragment="how-do-explorer-goggles-work"
-    class="info-badges float-right"
+    class="info-badges float-end"
     i18n-ngbTooltip="Explorer Goggles tooltip"
     ngbTooltip="select filter categories to highlight matching transactions"
   >
@@ -47,69 +47,71 @@
     <div class="filter-row">
       <div class="filter-element">
         <h5 i18n="mempool-goggles.match">Match</h5>
-        <div class="btn-group btn-group-toggle">
-          <label
-            class="btn btn-xs blue mode-toggle"
-            [class.active]="filterMode === 'and'"
+        <div class="btn-group" role="group">
+          <input
+            type="radio"
+            class="btn-check"
+            id="filter-mode-all"
+            [value]="'all'"
+            [checked]="filterMode === 'and'"
+            (click)="setFilterMode('and')"
+          />
+          <label class="btn btn-xs blue mode-toggle" for="filter-mode-all"
+            ><ng-container i18n>All</ng-container></label
           >
-            <input
-              type="radio"
-              [value]="'all'"
-              fragment="all"
-              (click)="setFilterMode('and')"
-            /><ng-container i18n>All</ng-container>
-          </label>
-          <label
-            class="btn btn-xs green mode-toggle"
-            [class.active]="filterMode === 'or'"
+          <input
+            type="radio"
+            class="btn-check"
+            id="filter-mode-any"
+            [value]="'any'"
+            [checked]="filterMode === 'or'"
+            (click)="setFilterMode('or')"
+          />
+          <label class="btn btn-xs green mode-toggle" for="filter-mode-any"
+            ><ng-container i18n="mempool-goggles.any">Any</ng-container></label
           >
-            <input
-              type="radio"
-              [value]="'any'"
-              fragment="any"
-              (click)="setFilterMode('or')"
-            /><ng-container i18n="mempool-goggles.any">Any</ng-container>
-          </label>
-          <label
-            class="btn btn-xs red mode-toggle"
-            [class.active]="filterMode === 'nor'"
+          <input
+            type="radio"
+            class="btn-check"
+            id="filter-mode-nor"
+            [value]="'nor'"
+            [checked]="filterMode === 'nor'"
+            (click)="setFilterMode('nor')"
+          />
+          <label class="btn btn-xs red mode-toggle" for="filter-mode-nor"
+            ><ng-container i18n="mempool-goggles.none"
+              >None</ng-container
+            ></label
           >
-            <input
-              type="radio"
-              [value]="'nor'"
-              fragment="nor"
-              (click)="setFilterMode('nor')"
-            /><ng-container i18n="mempool-goggles.none">None</ng-container>
-          </label>
         </div>
       </div>
       <div class="filter-element">
         <h5 i18n="mempool-goggles.tint">Tint</h5>
-        <div class="btn-group btn-group-toggle">
-          <label
-            class="btn btn-xs yellow mode-toggle"
-            [class.active]="gradientMode === 'fee'"
-          >
-            <input
-              type="radio"
-              [value]="'fee'"
-              fragment="classic"
-              (click)="setGradientMode('fee')"
-            /><ng-container i18n="mempool-goggles.classic"
+        <div class="btn-group" role="group">
+          <input
+            type="radio"
+            class="btn-check"
+            id="gradient-mode-fee"
+            [value]="'fee'"
+            [checked]="gradientMode === 'fee'"
+            (click)="setGradientMode('fee')"
+          />
+          <label class="btn btn-xs yellow mode-toggle" for="gradient-mode-fee"
+            ><ng-container i18n="mempool-goggles.classic"
               >Classic</ng-container
-            >
-          </label>
-          <label
-            class="btn btn-xs blue mode-toggle"
-            [class.active]="gradientMode === 'age'"
+            ></label
           >
-            <input
-              type="radio"
-              [value]="'age'"
-              fragment="age"
-              (click)="setGradientMode('age')"
-            /><ng-container i18n="mempool-goggles.age">Age</ng-container>
-          </label>
+          <input
+            type="radio"
+            class="btn-check"
+            id="gradient-mode-age"
+            [value]="'age'"
+            [checked]="gradientMode === 'age'"
+            (click)="setGradientMode('age')"
+          />
+          <label class="btn btn-xs blue mode-toggle" for="gradient-mode-age"
+            ><ng-container i18n="mempool-goggles.age">Age</ng-container></label
+          >
         </div>
       </div>
     </div>
