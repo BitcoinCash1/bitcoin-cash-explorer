@@ -9,6 +9,33 @@
     legacy: !isMempoolModule,
   }"
 >
+  <div *ngIf="!widget" class="mb-3 d-flex blocks-menu">
+    <a
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: false }"
+      class="btn btn-purple"
+      [routerLink]="['/blocks' | relativeUrl]"
+      i18n="master-page.blocks"
+      >Blocks</a
+    >
+    <a
+      routerLinkActive="active"
+      class="btn btn-purple"
+      [routerLink]="['/blocks/special' | relativeUrl]"
+      i18n="special-blocks.title"
+      >Special Blocks</a
+    >
+    <a
+      routerLinkActive="active"
+      class="btn btn-purple"
+      [routerLink]="['/blocks/stale' | relativeUrl]"
+      i18n="footer.stale-blocks"
+      >Stale Blocks</a
+    >
+  </div>
+
+  <div class="clearfix"></div>
+
   <div
     *ngIf="!widget"
     class="float-left"
@@ -22,7 +49,7 @@
     ></div>
   </div>
 
-  <div class="clearfix"></div>
+  <div *ngIf="!widget" class="clearfix"></div>
 
   <div style="min-height: 295px">
     <table class="table table-borderless">

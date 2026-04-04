@@ -10,6 +10,7 @@ import { PushTransactionComponent } from '@components/push-transaction/push-tran
 import { TestTransactionsComponent } from '@components/test-transactions/test-transactions.component';
 import { CalculatorComponent } from '@components/calculator/calculator.component';
 import { BlocksList } from '@components/blocks-list/blocks-list.component';
+import { SpecialBlocksComponent } from '@components/special-blocks/special-blocks.component';
 import { StaleList } from '@components/stale-list/stale-list.component';
 import { StratumList } from '@components/stratum/stratum-list/stratum-list.component';
 import { ServerHealthComponent } from '@components/server-health/server-health.component';
@@ -56,6 +57,10 @@ const routes: Routes = [
       {
         path: 'blocks/stale',
         component: StaleList,
+      },
+      {
+        path: 'blocks/special',
+        component: SpecialBlocksComponent,
       },
       {
         path: 'blocks/:page',

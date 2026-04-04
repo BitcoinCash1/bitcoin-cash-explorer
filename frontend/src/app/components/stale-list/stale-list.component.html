@@ -1,9 +1,39 @@
 <div class="container-xl" style="min-height: 335px">
-  <h1 class="float-left">
-    <span i18n="page.recent-stale-chain-tips">Recent Stale Chain Tips</span
-    ><span class="badge badge-pill badge-warning beta" i18n="beta">beta</span>
-  </h1>
-  <div *ngIf="isLoading" class="spinner-border ml-3" role="status"></div>
+  <div class="mb-3 d-flex blocks-menu">
+    <a
+      routerLinkActive="active"
+      [routerLinkActiveOptions]="{ exact: false }"
+      class="btn btn-purple"
+      [routerLink]="['/blocks' | relativeUrl]"
+      i18n="master-page.blocks"
+      >Blocks</a
+    >
+    <a
+      routerLinkActive="active"
+      class="btn btn-purple"
+      [routerLink]="['/blocks/special' | relativeUrl]"
+      i18n="special-blocks.title"
+      >Special Blocks</a
+    >
+    <a
+      routerLinkActive="active"
+      class="btn btn-purple"
+      [routerLink]="['/blocks/stale' | relativeUrl]"
+      i18n="footer.stale-blocks"
+      >Stale Blocks</a
+    >
+  </div>
+
+  <div class="clearfix"></div>
+
+  <div
+    class="float-left"
+    style="display: flex; width: 100%; align-items: center"
+  >
+    <h1 i18n="page.recent-stale-chain-tips">Recent Stale Chain Tips</h1>
+    <span class="badge badge-pill badge-warning beta" i18n="beta">beta</span>
+    <div *ngIf="isLoading" class="spinner-border ml-3" role="status"></div>
+  </div>
 
   <div class="clearfix"></div>
 

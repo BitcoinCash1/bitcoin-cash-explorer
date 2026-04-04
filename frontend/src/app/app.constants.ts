@@ -227,10 +227,9 @@ export const specialBlocks = {
     networks: ['mainnet', 'testnet4', 'chipnet'],
   },
   '478559': {
-    labelEvent:
-      'Bitcoin Cash Independence Day (2017-08-01); BTC-BCH hard fork; First >1 MB Block',
+    labelEvent: 'BCH Independence Day; BTC-BCH Fork',
     labelEventCompleted:
-      'This marks the first block which set Bitcoin Cash (BCH) apart from Bitcoin (BTC) by being mined according to user-activated hard fork (UAHF) consensus rules. Increase blocksize limit to 8 MB. First block which tested the upgraded blocksize limit (1,915,175 bytes). Upgrade sigops limit to scale with blocksize. Introduce SIGHASH_FORKID replay protection and upgrade sighash algorithm to adapted BIP143. Enforce SCRIPT_VERIFY_STRICTENC malleability protection. Introduce emergency difficulty adjustment algorithm (EDAA). (https://upgradespecs.bitcoincashnode.org/uahf-technical-spec/)',
+      'Bitcoin Cash Independence Day (2017-08-01). BTC-BCH hard fork. First >1 MB Block. This marks the first block which set Bitcoin Cash (BCH) apart from Bitcoin (BTC) by being mined according to user-activated hard fork (UAHF) consensus rules. Increase blocksize limit to 8 MB. First block which tested the upgraded blocksize limit (1,915,175 bytes). Upgrade sigops limit to scale with blocksize. Introduce SIGHASH_FORKID replay protection and upgrade sighash algorithm to adapted BIP143. Enforce SCRIPT_VERIFY_STRICTENC malleability protection. Introduce emergency difficulty adjustment algorithm (EDAA). (https://upgradespecs.bitcoincashnode.org/uahf-technical-spec/)',
     networks: ['mainnet'],
   },
   '479469': {

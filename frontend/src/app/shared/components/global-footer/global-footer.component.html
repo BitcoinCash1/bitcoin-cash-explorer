@@ -131,6 +131,20 @@
         </p>
         <p>
           <a
+            [routerLink]="['/blocks/special' | relativeUrl]"
+            i18n="footer.special-blocks"
+            >Special Blocks</a
+          >
+        </p>
+        <p>
+          <a
+            [routerLink]="['/blocks/stale' | relativeUrl]"
+            i18n="footer.stale-blocks"
+            >Stale Blocks</a
+          >
+        </p>
+        <p>
+          <a
             [routerLink]="['/tx/push' | relativeUrl]"
             i18n="shared.broadcast-transaction|Broadcast Transaction"
             >Broadcast Transaction</a

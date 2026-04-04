@@ -199,6 +199,7 @@ import { FaucetComponent } from '@components/faucet/faucet.component';
 import { TwitterLogin } from '@components/twitter-login/twitter-login.component';
 import { GithubLogin } from '@components/github-login.component/github-login.component';
 import { MempoolProgressBarComponent } from '@components/mempool-progress-bar/mempool-progress-bar.component';
+import { SpecialBlocksComponent } from '@components/special-blocks/special-blocks.component';
 
 @NgModule({
   declarations: [
@@ -307,6 +308,7 @@ import { MempoolProgressBarComponent } from '@components/mempool-progress-bar/me
     GithubLogin,
     MempoolProgressBarComponent,
     VerifyAddressComponent,
+    SpecialBlocksComponent,
   ],
   imports: [
     CommonModule,
@@ -434,6 +436,7 @@ import { MempoolProgressBarComponent } from '@components/mempool-progress-bar/me
     MempoolProgressBarComponent,
     BitcoinsatoshisPipe,
     VerifyAddressComponent,
+    SpecialBlocksComponent,
 
     MempoolBlockOverviewComponent,
     ClockchainComponent,
