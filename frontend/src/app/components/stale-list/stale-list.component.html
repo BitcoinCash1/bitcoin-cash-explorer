@@ -1,8 +1,7 @@
 <div class="container-xl" style="min-height: 335px">
   <div class="mb-3 d-flex blocks-menu">
     <a
-      routerLinkActive="active"
-      [routerLinkActiveOptions]="{ exact: false }"
+      [class.active]="/^\/blocks\/\d+$/.test(router.url)"
       class="btn btn-purple"
       [routerLink]="['/blocks' | relativeUrl]"
       i18n="master-page.blocks"

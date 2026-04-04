@@ -79,7 +79,7 @@ export class BlocksList implements OnInit {
     private seoService: SeoService,
     private ogService: OpenGraphService,
     private route: ActivatedRoute,
-    private router: Router,
+    public router: Router,
     private relativeUrlPipe: RelativeUrlPipe,
     @Inject(LOCALE_ID) private locale: string
   ) {

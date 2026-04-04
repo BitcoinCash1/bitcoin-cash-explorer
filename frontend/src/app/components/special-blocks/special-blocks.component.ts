@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Router } from '@angular/router';
 import { StateService } from '@app/services/state.service';
 import { SeoService } from '@app/services/seo.service';
 import { specialBlocks } from '@app/app.constants';
@@ -22,7 +23,8 @@ export class SpecialBlocksComponent implements OnInit {
 
   constructor(
     public stateService: StateService,
-    private seoService: SeoService
+    private seoService: SeoService,
+    public router: Router
   ) {}
 
   ngOnInit(): void {

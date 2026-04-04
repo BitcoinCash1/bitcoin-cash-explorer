@@ -1,4 +1,5 @@
 import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Router } from '@angular/router';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { StaleTip, BlockExtended } from '@interfaces/node-api.interface';
@@ -30,7 +31,8 @@ export class StaleList implements OnInit {
   constructor(
     private apiService: ApiService,
     public stateService: StateService,
-    private seoService: SeoService
+    private seoService: SeoService,
+    public router: Router
   ) {}
 
   ngOnInit(): void {
