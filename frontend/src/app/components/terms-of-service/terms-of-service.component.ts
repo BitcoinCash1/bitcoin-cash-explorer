@@ -1,17 +1,25 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { SeoService } from '@app/services/seo.service';
 import { OpenGraphService } from '@app/services/opengraph.service';
+import { ThemeService } from '@app/services/theme.service';
 
 @Component({
   selector: 'app-terms-of-service',
   templateUrl: './terms-of-service.component.html',
   standalone: false,
 })
-export class TermsOfServiceComponent {
+export class TermsOfServiceComponent implements OnDestroy {
+  themeSubscription: Subscription;
+  loadedTheme: string;
+
   constructor(
     private seoService: SeoService,
-    private ogService: OpenGraphService
-  ) {}
+    private ogService: OpenGraphService,
+    private themeService: ThemeService
+  ) {
+    this.loadedTheme = this.themeService.theme;
+  }
 
   ngOnInit(): void {
     this.seoService.setTitle('Terms of Service');
@@ -19,5 +27,19 @@ export class TermsOfServiceComponent {
       'Out of respect for the Bitcoin Cash community, the bchexplorer.cash website is Bitcoin Cash Only and does not display any advertising.'
     );
     this.ogService.setManualOgImage('tos.jpg');
+
+    this.themeSubscription = this.themeService.themeChanged$.subscribe(
+      (theme) => {
+        this.loadedTheme = theme;
+      }
+    );
+  }
+
+  get isLightMode(): boolean {
+    return this.loadedTheme === 'light';
+  }
+
+  ngOnDestroy(): void {
+    this.themeSubscription?.unsubscribe();
   }
 }

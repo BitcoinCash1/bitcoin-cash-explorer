@@ -2,7 +2,11 @@
   <div class="text-center">
     <br />
     <img
-      src="resources/explorer_bitcoin_cash_logo_bigger.png"
+      [src]="
+        isLightMode
+          ? '/resources/explorer_bitcoin_cash_logo_bigger_light.png'
+          : '/resources/explorer_bitcoin_cash_logo_bigger.png'
+      "
       style="width: 387px; height: 100px"
     />
     <br /><br />
