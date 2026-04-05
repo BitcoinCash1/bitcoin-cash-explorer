@@ -194,7 +194,7 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
                 yAxis: '1000000',
                 label: {
                   show: false,
-                  color: '#ffffff',
+                  color: 'var(--fg)',
                 },
               },
             ],

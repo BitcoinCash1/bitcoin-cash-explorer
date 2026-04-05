@@ -65,7 +65,7 @@
 }
 
 .block-subtitle.actual fa-icon {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--transparent-fg);
   font-size: 18px;
   margin-left: 8px;
 }
@@ -228,7 +228,7 @@ h1 {
   text-align: center;
   padding: 0.5em 1em;
   font-size: 80%;
-  color: #fff;
+  color: var(--fg);
   text-decoration: none;
 
   .ng-fa-icon {

@@ -17,6 +17,21 @@
           placeholder="Transaction hex or base64 encoded PSBT"
         ></textarea>
       </div>
+      <div class="form-check mb-3">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          [checked]="!offlineMode"
+          id="offline-mode"
+          (change)="onOfflineModeChange($event)"
+        />
+        <label
+          class="form-check-label"
+          for="offline-mode"
+          i18n="transaction.fetch-prevout-data"
+          >Fetch missing prevouts</label
+        >
+      </div>
       <button
         [disabled]="isLoading"
         type="submit"
@@ -25,17 +40,6 @@
       >
         Preview
       </button>
-      <input
-        type="checkbox"
-        [checked]="!offlineMode"
-        id="offline-mode"
-        (change)="onOfflineModeChange($event)"
-      />
-      <label class="label" for="offline-mode">
-        <span i18n="transaction.fetch-prevout-data"
-          >Fetch missing prevouts</span
-        >
-      </label>
       <p
         *ngIf="error"
         class="red-color d-inline"

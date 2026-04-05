@@ -196,7 +196,7 @@
 
   .badge {
     position: relative;
-    color: #fff;
+    color: var(--fg);
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 145px;

@@ -61,14 +61,20 @@
           placeholder="Comma-separated list of raw transactions"
         ></textarea>
       </div>
-      <label i18n="test.tx.allow-high-fees">Allow high fees?</label>
-      <input
-        type="checkbox"
-        class="form-control input-dark"
-        formControlName="allowhighfees"
-        id="allowhighfees"
-      />
-      <br />
+      <div class="form-check mb-3">
+        <input
+          type="checkbox"
+          class="form-check-input"
+          formControlName="allowhighfees"
+          id="allowhighfees"
+        />
+        <label
+          class="form-check-label"
+          for="allowhighfees"
+          i18n="test.tx.allow-high-fees"
+          >Allow high fees?</label
+        >
+      </div>
       <button
         [disabled]="isLoadingPackage"
         type="submit"

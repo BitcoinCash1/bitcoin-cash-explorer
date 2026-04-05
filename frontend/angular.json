@@ -194,6 +194,11 @@
                 "bundleName": "bukele",
                 "inject": false
               },
+              {
+                "input": "src/theme-light.scss",
+                "bundleName": "light",
+                "inject": false
+              },
               "node_modules/@fortawesome/fontawesome-svg-core/styles.css"
             ],
             "allowedCommonJsDependencies": [

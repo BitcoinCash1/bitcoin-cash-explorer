@@ -461,7 +461,7 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
     );
     const usedBlockSpace = 100 - emptyBackgroundSpacePercentage;
     const backgroundGradients = [
-      `repeating-linear-gradient(to right,  #554b45, #554b45 ${emptyBackgroundSpacePercentage}%`,
+      `repeating-linear-gradient(to right,  var(--mempool-block-loading), var(--mempool-block-loading) ${emptyBackgroundSpacePercentage}%`,
     ];
     const gradientColors = [];
 
@@ -509,7 +509,7 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
   getStyleForMempoolEmptyBlock(index: number) {
     return {
       right: this.containerOffset + index * this.blockOffset + 'px',
-      background: '#554b45',
+      background: 'var(--mempool-block-loading)',
     };
   }
 

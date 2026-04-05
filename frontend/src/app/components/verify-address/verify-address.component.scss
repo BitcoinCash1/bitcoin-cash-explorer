@@ -14,7 +14,7 @@
 .qrSpan {
   position: relative;
   cursor: pointer;
-  color: #fff;
+  color: var(--fg);
 }
 
 .utxo-grid label {

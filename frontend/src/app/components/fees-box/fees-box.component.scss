@@ -79,7 +79,7 @@
   display: flex;
   flex-direction: row;
   transition: background-color 1s;
-  color: #fff;
+  color: var(--fg);
   &.priority {
     width: 75%;
     border-radius: 0px 10px 10px 0px;
@@ -103,10 +103,10 @@
     height: 22px;
     background: repeating-linear-gradient(
       90deg,
-      rgb(45, 51, 72),
-      rgb(45, 51, 72) 2px,
-      rgb(29, 31, 49) 2px,
-      rgb(29, 31, 49) 4px
+      var(--mempool-block-loading),
+      var(--mempool-block-loading) 2px,
+      var(--stat-box-bg) 2px,
+      var(--stat-box-bg) 4px
     );
   }
 }

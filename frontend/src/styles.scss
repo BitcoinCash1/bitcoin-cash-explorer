@@ -113,6 +113,8 @@ input[type="checkbox"].form-control {
   --hover-bg: #{$hover-bg};
   --fg: #{$fg};
   --nav-bg: #{$nav-bg};
+  --nav-icon: #fff;
+  --nav-shadow: #000;
   --title-fg: #{$title-fg};
 
   --primary: #{$primary};
@@ -130,11 +132,21 @@ input[type="checkbox"].form-control {
 
   --box-bg: #24273e;
   --stat-box-bg: #181b2d;
+  --border-subtle: rgba(255, 255, 255, 0.11);
+  --block-top: #232838;
+  --block-side: #191c27;
+  --block-goggles-overlay: #181b2d7f;
+  --mempool-block-top: #403834;
+  --mempool-block-side: #2d2825;
+  --mempool-block-loading: #554b45;
   --alert-bg: #3a1c61;
-  --transparent-fg: #ffffff66;
+  --navbar-bg: #212121;
+  --transparent-fg: #ffffffbb;
+  --footer-fg: rgba(255, 255, 255, 0.4);
   --fade-out-box-bg-start: rgba(36, 39, 62, 0);
   --fade-out-box-bg-end: rgba(36, 39, 62, 1);
   --opacity: 0.57;
+  --address-chunk-color: #119d90;
 
   --testnet: #1d486f;
   --signet: #6f1d5d;
@@ -156,6 +168,9 @@ input[type="checkbox"].form-control {
   --search-button-focus: #2b7963;
   --search-button-shadow: #10a57b80;
 
+  --bs-body-color: var(--fg);
+  --bs-body-bg: var(--active-bg);
+  --bs-card-color: var(--fg);
   --bs-border-radius: 0.25rem;
   --bs-btn-border-color: transparent;
   --bs-btn-disabled-border-color: transparent;
@@ -168,6 +183,7 @@ body {
 
 body {
   background-color: var(--active-bg);
+  color: var(--fg);
   padding-bottom: 60px;
 }
 
@@ -229,6 +245,7 @@ main {
 .form-control:focus {
   color: var(--form-control-color);
   background-color: var(--form-control-bg);
+  border-color: rgba(17, 19, 31, 0.2);
 }
 
 .btn-purple {
@@ -273,7 +290,7 @@ main {
 
 .form-control.form-control-secondary,
 .form-select {
-  color: #fff;
+  color: var(--fg);
   background-color: var(--secondary);
   border: 1px solid var(--secondary);
 }
@@ -339,7 +356,7 @@ main {
 
 .progress-text {
   span {
-    color: #fff !important;
+    color: var(--fg) !important;
   }
 }
 
@@ -347,7 +364,7 @@ main {
 .blocks-container {
   .symbol {
     font-size: 16px;
-    color: #fff !important;
+    color: var(--fg) !important;
   }
 }
 
@@ -360,7 +377,7 @@ main {
   color: var(--fg);
   padding-top: 20px;
   padding-bottom: 10px;
-  border-top: 3px solid var(--fg);
+  border-top: 3px solid var(--nav-icon);
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -397,6 +414,8 @@ main {
 .table {
   margin-bottom: 0;
   font-size: 0.9rem;
+  color: var(--fg);
+  --bs-table-color: var(--fg);
   @media (min-width: 576px) {
     font-size: 1rem;
   }
@@ -504,6 +523,9 @@ html:lang(ru) .card-title {
     color: #fff;
     .total-value {
       float: right;
+      .symbol {
+        color: #ffffffbb;
+      }
     }
   }
   .active {
@@ -608,6 +630,11 @@ html:lang(ru) .card-title {
     padding-left: 0px;
     span {
       font-size: 10px;
+    }
+    .total-parcial-vbytes {
+      .symbol {
+        color: #ffffffbb;
+      }
     }
     .symbol {
       font-size: 9px;
@@ -1353,7 +1380,7 @@ th {
       display: block;
       width: 100%;
       padding: 1rem 2rem;
-      color: #fff;
+      color: var(--fg);
       font-weight: bold;
       &:focus,
       &:hover,
@@ -1411,6 +1438,7 @@ th {
     border: 1px solid var(--tertiary);
   }
   .page-item.disabled .page-link {
+    color: var(--transparent-fg);
     background-color: var(--bg);
     border: 1px solid var(--bg);
   }
@@ -1436,7 +1464,7 @@ th {
 }
 
 .blink-bg {
-  color: #fff;
+  color: var(--fg);
   background: repeating-linear-gradient(
     $highlight-dark,
     $highlight-dark 0.163525%,
@@ -1481,13 +1509,17 @@ app-global-footer {
 }
 
 .info-link fa-icon {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--transparent-fg);
   margin-left: 5px;
 }
 
 .dropdown-menu {
   background-color: var(--bg);
   color: var(--fg);
+
+  .dropdown-item {
+    color: var(--fg);
+  }
   .dropdown-item:hover,
   .dropdown-item:focus {
     background-color: var(--active-bg);
@@ -1498,11 +1530,12 @@ app-global-footer {
 .btn-secondary {
   background-color: var(--secondary);
   border-color: var(--secondary);
+  color: var(--fg);
 }
 
 a {
   color: var(--link-color);
-  &:hover {
+  &:hover:where(:not(.health-badge):not(.btn-purple)) {
     color: var(--link-hover-color);
   }
 }
@@ -1526,6 +1559,12 @@ a {
   --bs-btn-active-bg: #077254;
   --bs-btn-active-border-color: #077254;
   --bs-btn-color: var(--fg);
+}
+
+.btn-outline-info {
+  --bs-btn-active-color: var(--bs-btn-hover-color);
+  --bs-btn-active-bg: var(--bs-btn-hover-bg);
+  --bs-btn-active-border-color: var(--bs-btn-hover-border-color);
 }
 
 .btn-primary {
@@ -1568,6 +1607,10 @@ button {
 }
 
 .btn-success {
+  --bs-btn-color: #fff;
+  --bs-btn-hover-color: #fff;
+  --bs-btn-active-color: #fff;
+  --bs-btn-disabled-color: #fff;
   color: #fff;
   &:focus,
   &:hover,
@@ -1579,6 +1622,11 @@ button {
 
 .badge {
   padding: 0.25em 0.4em;
+}
+
+a.badge:hover,
+a.badge:focus {
+  text-decoration: none;
 }
 
 .table th,
@@ -1666,7 +1714,7 @@ button {
 }
 
 .nav-tabs .nav-link.active {
-  color: #fff;
+  color: var(--fg);
 }
 
 .text-muted {

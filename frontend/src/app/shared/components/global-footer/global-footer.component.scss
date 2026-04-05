@@ -9,7 +9,7 @@ footer {
 }
 
 footer a {
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--footer-fg);
 }
 
 footer p {
@@ -123,6 +123,10 @@ footer .row.social-links svg {
   margin: 10px 0 10px 0;
 }
 
+footer .row.social-links svg.fill {
+  fill: var(--fg) !important;
+}
+
 footer .row.version {
   padding-top: 20px !important;
   padding-bottom: 20px !important;
@@ -133,7 +137,7 @@ footer .row.version p {
   margin-bottom: 0;
   text-align: center;
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.4);
+  color: var(--footer-fg);
 }
 
 footer .row.version p a {
