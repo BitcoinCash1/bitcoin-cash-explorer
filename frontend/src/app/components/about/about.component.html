@@ -1,9 +1,14 @@
 <div class="container-xl about-page">
   <div class="intro">
-    <span style="margin-left: auto; margin-right: -20px; margin-bottom: -20px"
-      >&reg;</span
-    >
-    <img class="logo" src="/resources/explorer_bitcoin_cash_logo_bigger.png" />
+    <img
+      class="logo"
+      [src]="
+        isLightMode
+          ? '/resources/explorer_bitcoin_cash_logo_bigger_light.png'
+          : '/resources/explorer_bitcoin_cash_logo_bigger.png'
+      "
+      style="width: 387px; height: 100px"
+    />
     <div class="version">
       <span
         >v{{ packetJsonVersion }} [<a
@@ -368,7 +373,7 @@
         target="_blank"
         title="StartOS"
       >
-        <img class="image" src="/resources/profile/start9.png" />
+        @if (isLightMode) {
         <span>StartOS</span>
       </a>
       <a

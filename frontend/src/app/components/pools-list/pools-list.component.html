@@ -2,7 +2,7 @@
 
 <div class="container-xl" *ngIf="!error; else errorTemplate">
   <div
-    class="float-left"
+    class="float-start"
     style="display: flex; width: 100%; align-items: center"
   >
     <h1 i18n="master-page.pools">Mining Pools</h1>
@@ -39,7 +39,7 @@
                 [src]="pool.logo"
                 [alt]="pool.name + ' mining pool logo'"
                 onError="this.onerror=null; this.src = '/resources/mining-pools/default.svg'"
-                class="mr-2"
+                class="me-2"
               />
               <div class="d-flex flex-column">
                 <a
@@ -52,7 +52,7 @@
             </div>
           </td>
           <td class="slug">
-            <span class="badge badge-secondary">{{ pool.slug }}</span>
+            <span class="badge bg-secondary">{{ pool.slug }}</span>
           </td>
           <td class="blocks">
             {{ pool.blockCount
@@ -109,7 +109,7 @@
           <td class="pool">
             <div class="d-flex align-items-center">
               <div
-                class="skeleton-loader mr-2"
+                class="skeleton-loader me-2"
                 style="width: 24px; height: 24px"
               ></div>
               <span class="skeleton-loader"></span>
@@ -118,10 +118,10 @@
           <td class="slug">
             <span class="skeleton-loader"></span>
           </td>
-          <td class="blocks text-right">
+          <td class="blocks text-end">
             <span class="skeleton-loader"></span>
           </td>
-          <td class="empty-blocks text-right">
+          <td class="empty-blocks text-end">
             <span class="skeleton-loader"></span>
           </td>
           <td class="link">

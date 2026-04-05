@@ -219,7 +219,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
         axisPointer: {
           type: 'line',
         },
-        backgroundColor: 'rgba(17, 19, 31, 1)',
+        backgroundColor: 'var(--bg)',
         borderRadius: 4,
         shadowColor: 'rgba(0, 0, 0, 0.5)',
         textStyle: {
@@ -231,7 +231,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
           if (data.length <= 0) {
             return '';
           }
-          let tooltip = `<b style="color: white; margin-left: 2px">${formatterXAxis(
+          let tooltip = `<b style="color: var(--fg); margin-left: 2px">${formatterXAxis(
             this.locale,
             this.zoomTimeSpan,
             parseInt(this.data.timestamp[data[0].dataIndex], 10)
@@ -276,14 +276,16 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
             tooltip +=
               `<small>` +
               $localize`At block ${
-                '<b style="color: white; margin-left: 2px">' + data[0].axisValue
+                '<b style="color: var(--fg); margin-left: 2px">' +
+                data[0].axisValue
               }` +
               `</small>`;
           } else {
             tooltip +=
               `<small>` +
               $localize`Around block ${
-                '<b style="color: white; margin-left: 2px">' + data[0].axisValue
+                '<b style="color: var(--fg); margin-left: 2px">' +
+                data[0].axisValue
               }` +
               `</small>`;
           }
@@ -338,7 +340,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                   name: 'Subsidy',
                   inactiveColor: 'var(--grey)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },
@@ -346,7 +348,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                   name: 'Fees',
                   inactiveColor: 'var(--grey)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },
@@ -354,7 +356,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                   name: 'Subsidy (USD)',
                   inactiveColor: 'var(--grey)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },
@@ -362,7 +364,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                   name: 'Fees (USD)',
                   inactiveColor: 'var(--grey)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },
@@ -370,7 +372,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                   name: 'Subsidy (%)',
                   inactiveColor: 'var(--grey)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },
@@ -378,7 +380,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                   name: 'Fees (%)',
                   inactiveColor: 'var(--grey)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },

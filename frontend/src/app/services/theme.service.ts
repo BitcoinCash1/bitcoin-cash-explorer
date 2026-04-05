@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import {
   defaultMempoolFeeColors,
   contrastMempoolFeeColors,
+  lightMempoolFeeColors,
 } from '@app/app.constants';
 import { StorageService } from '@app/services/storage.service';
 import { StateService } from '@app/services/state.service';
@@ -27,7 +28,9 @@ export class ThemeService {
     // theme preference must be a valid known public theme
     if (
       !this.stateService.env.customize?.theme &&
-      !['default', 'contrast', 'softsimon', 'bch', 'bukele'].includes(theme)
+      !['default', 'contrast', 'softsimon', 'bch', 'bukele', 'light'].includes(
+        theme
+      )
     ) {
       theme = 'default';
       this.storageService.setValue('theme-preference', 'default');
@@ -45,7 +48,9 @@ export class ThemeService {
       this.mempoolFeeColors =
         theme === 'contrast' || theme === 'bukele'
           ? contrastMempoolFeeColors
-          : defaultMempoolFeeColors;
+          : theme === 'light'
+            ? lightMempoolFeeColors
+            : defaultMempoolFeeColors;
       try {
         if (!this.style) {
           this.style = document.createElement('link');

@@ -37,7 +37,7 @@
 
   <div
     *ngIf="!widget"
-    class="float-left"
+    class="float-start"
     style="display: flex; width: 100%; align-items: center"
   >
     <h1 i18n="master-page.blocks">Blocks</h1>
@@ -54,7 +54,7 @@
     <table class="table table-borderless">
       <thead>
         <th
-          class="height text-left"
+          class="height text-start"
           [ngClass]="{ widget: widget, legacy: !isMempoolModule }"
           i18n="latest-blocks.height"
         >
@@ -62,7 +62,7 @@
         </th>
         <th
           *ngIf="isMempoolModule"
-          class="pool text-left"
+          class="pool text-start"
           [ngClass]="{ widget: widget, legacy: !isMempoolModule }"
           i18n="mining.pool-name"
           i18n-ngbTooltip="mining.pool-name"
@@ -91,7 +91,7 @@
         </th>
         <th
           *ngIf="auditAvailable"
-          class="health text-right"
+          class="health text-end"
           i18n="latest-blocks.health"
           [ngClass]="{ widget: widget, legacy: !isMempoolModule }"
           i18n-ngbTooltip="latest-blocks.health"
@@ -104,7 +104,7 @@
         </th>
         <th
           *ngIf="isMempoolModule"
-          class="reward text-right"
+          class="reward text-end"
           i18n="latest-blocks.reward"
           [ngClass]="{ widget: widget, legacy: !isMempoolModule }"
           i18n-ngbTooltip="latest-blocks.reward"
@@ -119,7 +119,7 @@
           *ngIf="
             (isMempoolModule && !auditAvailable) || (isMempoolModule && !widget)
           "
-          class="fees text-right"
+          class="fees text-end"
           i18n="latest-blocks.fees"
           [class]="isMempoolModule ? '' : 'legacy'"
         >
@@ -132,7 +132,7 @@
         ></th>
         <th
           *ngIf="isMempoolModule"
-          class="txs text-right"
+          class="txs text-end"
           i18n="dashboard.txs"
           [ngClass]="{ widget: widget, legacy: !isMempoolModule }"
           i18n-ngbTooltip="dashboard.txs"
@@ -145,7 +145,7 @@
         </th>
         <th
           *ngIf="!isMempoolModule"
-          class="txs text-right"
+          class="txs text-end"
           i18n="dashboard.txs"
           [ngClass]="{ widget: widget, legacy: !isMempoolModule }"
         >
@@ -165,7 +165,7 @@
         [style]="isLoading ? 'opacity: 0.75' : ''"
       >
         <tr *ngFor="let block of blocks; let i = index; trackBy: trackByBlock">
-          <td class="height text-left" [class]="widget ? 'widget' : ''">
+          <td class="height text-start" [class]="widget ? 'widget' : ''">
             <a
               [routerLink]="['/block' | relativeUrl, block.id]"
               [state]="{ data: { block: block } }"
@@ -174,7 +174,7 @@
           </td>
           <td
             *ngIf="isMempoolModule"
-            class="pool text-left"
+            class="pool text-start"
             [ngClass]="{ widget: widget, legacy: !isMempoolModule }"
           >
             <div *ngIf="indexingAvailable" class="tooltip-custom">
@@ -185,33 +185,29 @@
                   block.extras.pool.slug,
                 ]"
               >
-                <img
-                  width="22"
-                  height="22"
-                  src="{{ block.extras.pool['logo'] }}"
-                  onError="this.onerror=null; this.src = '/resources/mining-pools/default.svg'"
-                  [alt]="'Logo of ' + block.extras.pool.name + ' mining pool'"
-                />
-                <span class="pool-name">{{ block.extras.pool.name }}</span>
+                <app-mining-pool
+                  [slug]="block.extras.pool.slug"
+                  [name]="block.extras.pool.name"
+                  [logoStyle]="'width:22px;height:22px;'"
+                  [textClass]="'truncate'"
+                ></app-mining-pool>
               </a>
               <span
                 *ngIf="!widget"
-                class="tooltiptext badge badge-secondary scriptmessage"
+                class="tooltiptext badge bg-secondary scriptmessage"
                 >{{ block.extras.coinbaseRaw | hex2ascii }}</span
               >
             </div>
             <div *ngIf="!indexingAvailable" class="tooltip-custom">
-              <img
-                width="22"
-                height="22"
-                src="{{ block.extras.pool['logo'] }}"
-                onError="this.src = '/resources/mining-pools/default.svg'"
-                [alt]="'Logo of ' + block.extras.pool.name + ' mining pool'"
-              />
-              <span class="pool-name">{{ block.extras.pool.name }}</span>
+              <app-mining-pool
+                [slug]="block.extras.pool.slug"
+                [name]="block.extras.pool.name"
+                [logoStyle]="'width:22px;height:22px;'"
+                [textClass]="'truncate'"
+              ></app-mining-pool>
               <span
                 *ngIf="!widget"
-                class="tooltiptext badge badge-secondary scriptmessage"
+                class="tooltiptext badge bg-secondary scriptmessage"
                 >{{ block.extras.coinbaseRaw | hex2ascii }}</span
               >
             </div>
@@ -241,17 +237,17 @@
           </td>
           <td
             *ngIf="auditAvailable"
-            class="health text-right"
+            class="health text-end"
             [ngClass]="{ widget: widget, legacy: !isMempoolModule }"
           >
             <a
               *ngIf="block?.extras?.matchRate != null; else nullHealth"
               class="health-badge badge"
-              [class.badge-success]="block.extras.matchRate >= 99"
-              [class.badge-warning]="
+              [class.bg-success]="block.extras.matchRate >= 99"
+              [class.bg-warning]="
                 block.extras.matchRate >= 75 && block.extras.matchRate < 99
               "
-              [class.badge-danger]="block.extras.matchRate < 75"
+              [class.bg-danger]="block.extras.matchRate < 75"
               [routerLink]="
                 block.extras.matchRate != null
                   ? ['/block/' | relativeUrl, block.id]
@@ -261,14 +257,14 @@
               >{{ block.extras.matchRate }}%</a
             >
             <ng-template #nullHealth>
-              <span class="health-badge badge badge-secondary" i18n="unknown"
+              <span class="health-badge badge bg-secondary" i18n="unknown"
                 >Unknown</span
               >
             </ng-template>
           </td>
           <td
             *ngIf="isMempoolModule"
-            class="reward text-right"
+            class="reward text-end"
             [ngClass]="{ widget: widget, legacy: !isMempoolModule }"
           >
             <app-amount
@@ -282,7 +278,7 @@
               (isMempoolModule && !auditAvailable) ||
               (isMempoolModule && !widget)
             "
-            class="fees text-right"
+            class="fees text-end"
             [class]="isMempoolModule ? '' : 'legacy'"
           >
             <app-amount
@@ -307,7 +303,7 @@
             </span>
           </td>
           <td
-            class="txs text-right"
+            class="txs text-end"
             [ngClass]="{ widget: widget, legacy: !isMempoolModule }"
           >
             {{ block.tx_count | number }}
@@ -339,14 +335,14 @@
         <tbody>
           <tr *ngFor="let item of skeletonLines">
             <td
-              class="height text-left"
+              class="height text-start"
               [ngClass]="{ widget: widget, legacy: !isMempoolModule }"
             >
               <span class="skeleton-loader" style="max-width: 75px"></span>
             </td>
             <td
               *ngIf="isMempoolModule"
-              class="pool text-left"
+              class="pool text-start"
               [ngClass]="{ widget: widget, legacy: !isMempoolModule }"
             >
               <span class="skeleton-loader" style="max-width: 150px"></span>
@@ -360,14 +356,14 @@
             </td>
             <td
               *ngIf="auditAvailable"
-              class="health text-right"
+              class="health text-end"
               [ngClass]="{ widget: widget, legacy: !isMempoolModule }"
             >
               <span class="skeleton-loader" style="max-width: 75px"></span>
             </td>
             <td
               *ngIf="isMempoolModule"
-              class="reward text-right"
+              class="reward text-end"
               [ngClass]="{ widget: widget, legacy: !isMempoolModule }"
             >
               <span class="skeleton-loader" style="max-width: 75px"></span>
@@ -377,7 +373,7 @@
                 (isMempoolModule && !auditAvailable) ||
                 (isMempoolModule && !widget)
               "
-              class="fees text-right"
+              class="fees text-end"
               [class]="isMempoolModule ? '' : 'legacy'"
             >
               <span class="skeleton-loader" style="max-width: 75px"></span>
@@ -390,7 +386,7 @@
               <span class="skeleton-loader" style="max-width: 75px"></span>
             </td>
             <td
-              class="txs text-right"
+              class="txs text-end"
               [ngClass]="{ widget: widget, legacy: !isMempoolModule }"
             >
               <span class="skeleton-loader" style="max-width: 75px"></span>
@@ -409,7 +405,7 @@
 
     <ngb-pagination
       *ngIf="!widget"
-      class="pagination-container float-right mt-2"
+      class="pagination-container float-end mt-2"
       [class]="isLoading ? 'disabled' : ''"
       [collectionSize]="blocksCount"
       [rotate]="true"

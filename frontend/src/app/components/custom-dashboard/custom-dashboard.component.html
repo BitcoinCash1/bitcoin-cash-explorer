@@ -34,7 +34,7 @@
             [style.order]="(isMobile && widget.mobileOrder) || 8"
           >
             <div class="card graph-card">
-              <div class="card-body pl-lg-3 pr-lg-3 pl-2 pr-2">
+              <div class="card-body ps-lg-3 pe-lg-3 ps-2 pe-2">
                 <a
                   class="title-link mb-0"
                   style="margin-top: -2px"
@@ -57,21 +57,23 @@
                   ></fa-icon>
                 </a>
                 <div class="quick-filter">
-                  <div class="btn-group btn-group-toggle">
-                    <label
-                      class="btn btn-purple btn-xs"
-                      [class.active]="filter.index === goggleIndex"
-                      *ngFor="let filter of goggleCycle"
-                    >
+                  <div class="btn-group" role="group">
+                    <ng-container *ngFor="let filter of goggleCycle">
                       <input
                         type="radio"
+                        class="btn-check"
+                        [id]="'btn-radio-' + filter.index"
                         [value]="'3m'"
-                        fragment="3m"
+                        [checked]="filter.index === goggleIndex"
                         (click)="setFilter(filter.index)"
                         [attr.data-cy]="'3m'"
                       />
-                      {{ filter.name }}
-                    </label>
+                      <label
+                        class="btn btn-purple btn-xs"
+                        [for]="'btn-radio-' + filter.index"
+                        >{{ filter.name }}</label
+                      >
+                    </ng-container>
                   </div>
                 </div>
                 <div class="mempool-block-wrapper" *ngIf="webGlEnabled">
@@ -689,7 +691,7 @@
           >
             <div class="card graph-card">
               <div
-                class="card-body pl-lg-3 pr-lg-3 pl-2 pr-2 d-flex flex-column"
+                class="card-body ps-lg-3 pe-lg-3 ps-2 pe-2 d-flex flex-column"
               >
                 <a
                   class="title-link"

@@ -211,7 +211,7 @@
                           placement="bottom"
                           [ngbTooltip]="vin.scriptsig | hex2ascii"
                           ><span
-                            class="badge badge-secondary scriptmessage longer"
+                            class="badge bg-secondary scriptmessage longer"
                             >{{ vin.scriptsig | hex2ascii }}</span
                           ></a
                         ></ng-container
@@ -289,7 +289,7 @@
                     </ng-container>
                   </td>
                   <td
-                    class="text-right nowrap amount"
+                    class="text-end nowrap amount"
                     [class]="{ large: tx.largeInput }"
                   >
                     <span *ngIf="vin.lazy" class="skeleton-loader"></span>
@@ -628,7 +628,7 @@
                           ) {
                             <span
                               *ngIf="vout.scriptpubkey_asm !== 'OP_RETURN'"
-                              class="badge badge-secondary scriptmessage opreturn-msg"
+                              class="badge bg-secondary scriptmessage opreturn-msg"
                               (click)="toggleShowFullOpReturnPreview(vindex)"
                               >{{
                                 vout.scriptpubkey_asm
@@ -644,7 +644,7 @@
                               ) {
                                 @if (!showFullOpReturnPreview[vindex]) {
                                   <span
-                                    class="badge badge-primary"
+                                    class="badge bg-primary"
                                     (click)="
                                       toggleShowFullOpReturnPreview(vindex)
                                     "
@@ -652,7 +652,7 @@
                                   >
                                 } @else {
                                   <span
-                                    class="badge badge-primary"
+                                    class="badge bg-primary"
                                     (click)="
                                       toggleShowFullOpReturnPreview(vindex)
                                     "
@@ -665,7 +665,7 @@
                             <span
                               *ngIf="vout.scriptpubkey_asm !== 'OP_RETURN'"
                               [ngbTooltip]="vout.scriptpubkey_asm | hex2ascii"
-                              class="badge badge-secondary scriptmessage"
+                              class="badge bg-secondary scriptmessage"
                               >{{ vout.scriptpubkey_asm | hex2ascii }}</span
                             >
                           }
@@ -689,7 +689,7 @@
                     </ng-container>
                   </td>
                   <td
-                    class="text-right nowrap amount"
+                    class="text-end nowrap amount"
                     [class]="{ large: tx.largeOutput }"
                   >
                     <app-amount
@@ -1019,11 +1019,11 @@
       </div>
 
       <div class="summary">
-        <div class="float-left">
+        <div class="float-start">
           <button
             *ngIf="addresses.length === 0"
             type="button"
-            class="btn btn-sm btn-secondary mt-2 ml-2"
+            class="btn btn-sm btn-secondary mt-2 ms-2"
             (click)="switchCurrency()"
           >
             <app-amount
@@ -1034,7 +1034,7 @@
           </button>
         </div>
         <div
-          class="float-left ml-2 mt-2-5"
+          class="float-start ms-2 mt-2-5"
           *ngIf="!transactionPage && !tx.vin[0].is_coinbase && tx.fee !== -1"
         >
           <app-fee-rate [fee]="tx.fee" [size]="tx.size"></app-fee-rate>
@@ -1050,14 +1050,14 @@
           ></span>
         </div>
         <div
-          class="float-left ml-2 mt-2-5 grey-info-text"
+          class="float-start ms-2 mt-2-5 grey-info-text"
           *ngIf="tx.fee === -1"
           i18n="transactions-list.load-to-reveal-fee-info"
         >
           Show more inputs to reveal fee data
         </div>
 
-        <div class="float-right">
+        <div class="float-end">
           <ng-container
             *ngIf="showConfirmations && latestBlock$ | async as latestBlock"
           >
@@ -1070,7 +1070,7 @@
           <button
             *ngIf="addresses.length === 0; else viewingAddress"
             type="button"
-            class="btn btn-sm btn-primary mt-2 ml-2"
+            class="btn btn-sm btn-primary mt-2 ms-2"
             (click)="switchCurrency()"
           >
             <app-amount
@@ -1082,7 +1082,7 @@
           <ng-template #viewingAddress>
             <button
               type="button"
-              class="btn btn-sm mt-2 ml-2"
+              class="btn btn-sm mt-2 ms-2"
               (click)="switchCurrency()"
               [ngClass]="{
                 'btn-success': tx['addressValue'] >= 0,

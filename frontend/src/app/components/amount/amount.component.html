@@ -44,7 +44,7 @@
   ) {
     &lrm;{{ addPlus && satoshis >= 0 ? "+" : ""
     }}{{ satoshis / 100000000 | number: digitsInfo }}
-    <span class="symbol">
+    <span class="symbol" [style]="unitStyle">
       <ng-container *ngTemplateOutlet="prefix"></ng-container>BCH
     </span>
   } @else {
@@ -60,7 +60,7 @@
             : true
       }}
     }
-    <span class="symbol">
+    <span class="symbol" [style]="unitStyle">
       <ng-container *ngTemplateOutlet="prefix"></ng-container>sats
     </span>
   }

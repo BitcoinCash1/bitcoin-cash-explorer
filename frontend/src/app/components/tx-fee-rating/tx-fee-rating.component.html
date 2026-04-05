@@ -1,12 +1,12 @@
 <span
   *ngIf="feeRating === 1"
-  class="badge badge-success"
+  class="badge bg-success"
   i18n="tx-fee-rating.optimal|TX Fee Rating is Optimal"
   >Optimal</span
 >
 <span
   *ngIf="feeRating === 2"
-  class="badge badge-warning"
+  class="badge bg-warning"
   placement="bottom"
   i18n-ngbTooltip="tx-fee-rating.warning-tooltip"
   ngbTooltip="Only ~{{
@@ -17,7 +17,7 @@
 >
 <span
   *ngIf="feeRating === 3"
-  class="badge badge-danger"
+  class="badge bg-danger"
   placement="bottom"
   i18n-ngbTooltip="tx-fee-rating.warning-tooltip"
   ngbTooltip="Only ~{{

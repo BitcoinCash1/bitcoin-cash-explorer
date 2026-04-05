@@ -159,13 +159,13 @@
             <ng-container>
               @if (auditStatus.coinbase) {
                 <span
-                  class="badge badge-primary mr-1"
+                  class="badge bg-primary me-1"
                   i18n="transactions-list.coinbase"
                   >Coinbase</span
                 >
               } @else if (auditStatus.expected) {
                 <span
-                  class="badge badge-success mr-1"
+                  class="badge bg-success me-1"
                   i18n-ngbTooltip="Expected in block tooltip"
                   ngbTooltip="This transaction was projected to be included in the block"
                   placement="bottom"
@@ -174,7 +174,7 @@
                 >
               } @else if (auditStatus.seen) {
                 <span
-                  class="badge badge-success mr-1"
+                  class="badge bg-success me-1"
                   i18n-ngbTooltip="Seen in mempool tooltip"
                   ngbTooltip="This transaction was seen in the mempool prior to mining"
                   placement="bottom"
@@ -183,7 +183,7 @@
                 >
               } @else if (!auditStatus.conflict) {
                 <span
-                  class="badge badge-warning mr-1"
+                  class="badge bg-warning me-1"
                   i18n-ngbTooltip="Not seen in mempool tooltip"
                   ngbTooltip="This transaction was missing from our mempool prior to mining"
                   placement="bottom"
@@ -193,7 +193,7 @@
               }
               @if (auditStatus.added) {
                 <span
-                  class="badge badge-warning mr-1"
+                  class="badge bg-warning me-1"
                   i18n-ngbTooltip="Added transaction tooltip"
                   ngbTooltip="This transaction may have been added out-of-band"
                   placement="bottom"
@@ -203,7 +203,7 @@
               }
               @if (auditStatus.conflict) {
                 <span
-                  class="badge badge-warning mr-1"
+                  class="badge bg-warning me-1"
                   i18n-ngbTooltip="Conflict in mempool tooltip"
                   ngbTooltip="This transaction conflicted with another version in our mempool"
                   placement="bottom"
@@ -289,7 +289,7 @@
         </td>
         <td class="wrap-cell">
           <ng-container *ngFor="let filter of filters">
-            <span class="badge badge-primary filter-tag mr-1">{{
+            <span class="badge bg-primary filter-tag me-1">{{
               filter.label
             }}</span>
           </ng-container>

@@ -260,7 +260,8 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
       );
       if ((this.inputIndex || this.outputIndex) && !changes.transactions) {
         setTimeout(() => {
-          const assetBoxElements = document.getElementsByClassName('text-left');
+          const assetBoxElements =
+            document.getElementsByClassName('text-start');
           if (assetBoxElements && assetBoxElements[0]) {
             assetBoxElements[0].scrollIntoView({ block: 'center' });
           }

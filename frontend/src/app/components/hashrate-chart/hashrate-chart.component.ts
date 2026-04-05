@@ -287,14 +287,14 @@ export class HashrateChartComponent implements OnInit {
         axisPointer: {
           type: 'line',
         },
-        backgroundColor: 'rgba(17, 19, 31, 1)',
+        backgroundColor: 'var(--bg)',
         borderRadius: 4,
         shadowColor: 'rgba(0, 0, 0, 0.5)',
         textStyle: {
           color: 'var(--tooltip-grey)',
           align: 'left',
         },
-        borderColor: '#000',
+        borderColor: 'var(--hover-bg)',
         formatter: (ticks) => {
           let hashrateString = '';
           let difficultyString = '';
@@ -347,7 +347,7 @@ export class HashrateChartComponent implements OnInit {
           );
 
           return `
-            <b style="color: white; margin-left: 2px">${date}</b><br>
+            <b style="color: var(--fg); margin-left: 2px">${date}</b><br>
             <span>${difficultyString}</span>
             <span>${hashrateString}</span>
             <span>${hashrateStringMA}</span>
@@ -374,7 +374,7 @@ export class HashrateChartComponent implements OnInit {
                   name: $localize`:@@79a9dc5b1caca3cbeb1733a19515edacc5fc7920:Hashrate`,
                   inactiveColor: 'rgb(110, 112, 121)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                   itemStyle: {
@@ -385,7 +385,7 @@ export class HashrateChartComponent implements OnInit {
                   name: $localize`:@@25148835d92465353fc5fe8897c27d5369978e5a:Difficulty`,
                   inactiveColor: 'rgb(110, 112, 121)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },
@@ -393,7 +393,7 @@ export class HashrateChartComponent implements OnInit {
                   name: $localize`Hashrate (MA)`,
                   inactiveColor: 'rgb(110, 112, 121)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                   itemStyle: {

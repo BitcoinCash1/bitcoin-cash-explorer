@@ -48,7 +48,7 @@
 .sidenav a,
 button {
   text-decoration: none;
-  color: lightgray;
+  color: var(--fg);
   margin-left: 20px;
 }
 .sidenav a:hover {
@@ -74,7 +74,8 @@ button {
 }
 
 .badge-default {
-  background-color: black;
+  background-color: var(--secondary);
+  color: var(--fg);
 }
 
 .badge-og {

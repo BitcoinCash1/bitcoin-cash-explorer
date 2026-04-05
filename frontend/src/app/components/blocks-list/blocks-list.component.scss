@@ -52,7 +52,7 @@ th {
 }
 
 .clear-link {
-  color: white;
+  color: var(--fg);
 }
 
 .disabled {
@@ -86,16 +86,6 @@ th {
     width: 60%;
   }
 }
-.pool-name {
-  display: inline-block;
-  vertical-align: text-top;
-  padding-left: 10px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 160px;
-}
-
 .height {
   width: 8%;
 }

@@ -28,7 +28,7 @@
   <div class="clearfix"></div>
 
   <div
-    class="float-left"
+    class="float-start"
     style="display: flex; width: 100%; align-items: center"
   >
     <h1 i18n="special-blocks.title">Special Blocks</h1>
@@ -45,7 +45,7 @@
     <table class="table table-borderless">
       <thead>
         <tr>
-          <th class="height text-left" i18n="latest-blocks.height">Height</th>
+          <th class="height text-start" i18n="latest-blocks.height">Height</th>
           <th class="event" i18n="special-blocks.event">Event</th>
           <th class="description" i18n="special-blocks.description">
             Description
@@ -54,7 +54,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let block of blocks">
-          <td class="height text-left">
+          <td class="height text-start">
             <a [routerLink]="['/block' | relativeUrl, block.height]">{{
               block.height | number
             }}</a>

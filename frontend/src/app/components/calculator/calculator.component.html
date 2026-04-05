@@ -5,93 +5,97 @@
 
   <ng-container *ngIf="price$ | async; else loading">
     <div class="row justify-content-center">
-      <form [formGroup]="form">
-        <div class="input-group input-group-lg mb-1">
-          <div class="input-group-prepend">
+      <div class="col-md-6 col-lg-5 text-center">
+        <form [formGroup]="form">
+          <div class="input-group input-group-lg mb-1">
             <span class="input-group-text">{{ currency$ | async }}</span>
+            <input
+              type="text"
+              inputmode="numeric"
+              class="form-control"
+              formControlName="fiat"
+              (input)="transformInput('fiat')"
+              (click)="selectAll($event)"
+            />
+            <app-clipboard
+              [button]="true"
+              [text]="form.get('fiat').value"
+              [class]="'btn btn-lg btn-secondary ms-1'"
+            ></app-clipboard>
           </div>
-          <input
-            type="text"
-            inputmode="numeric"
-            class="form-control"
-            formControlName="fiat"
-            (input)="transformInput('fiat')"
-            (click)="selectAll($event)"
-          />
-          <app-clipboard
-            [button]="true"
-            [text]="form.get('fiat').value"
-            [class]="'btn btn-lg btn-secondary ml-1'"
-          ></app-clipboard>
-        </div>
 
-        <div class="input-group input-group-lg mb-1">
-          <div class="input-group-prepend">
+          <div class="input-group input-group-lg mb-1">
             <span class="input-group-text">BCH</span>
+            <input
+              type="text"
+              inputmode="numeric"
+              class="form-control"
+              formControlName="bitcoin"
+              (input)="transformInput('bitcoin')"
+              (click)="selectAll($event)"
+            />
+            <app-clipboard
+              [button]="true"
+              [text]="form.get('bitcoin').value"
+              [class]="'btn btn-lg btn-secondary ms-1'"
+            ></app-clipboard>
           </div>
-          <input
-            type="text"
-            inputmode="numeric"
-            class="form-control"
-            formControlName="bitcoin"
-            (input)="transformInput('bitcoin')"
-            (click)="selectAll($event)"
-          />
-          <app-clipboard
-            [button]="true"
-            [text]="form.get('bitcoin').value"
-            [class]="'btn btn-lg btn-secondary ml-1'"
-          ></app-clipboard>
-        </div>
 
-        <div class="input-group input-group-lg mb-1">
-          <div class="input-group-prepend">
+          <div class="input-group input-group-lg mb-1">
             <span class="input-group-text" i18n="shared.sats">sats</span>
+            <input
+              type="text"
+              inputmode="numeric"
+              class="form-control"
+              formControlName="satoshis"
+              (input)="transformInput('satoshis')"
+              (click)="selectAll($event)"
+            />
+            <app-clipboard
+              [button]="true"
+              [text]="form.get('satoshis').value"
+              [class]="'btn btn-lg btn-secondary ms-1'"
+            ></app-clipboard>
           </div>
-          <input
-            type="text"
-            inputmode="numeric"
-            class="form-control"
-            formControlName="satoshis"
-            (input)="transformInput('satoshis')"
-            (click)="selectAll($event)"
-          />
-          <app-clipboard
-            [button]="true"
-            [text]="form.get('satoshis').value"
-            [class]="'btn btn-lg btn-secondary ml-1'"
-          ></app-clipboard>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
 
     <br />
 
     <div class="row justify-content-center">
-      <div class="bitcoin-satoshis-text">
-        ₿
-        <span [innerHTML]="form.get('bitcoin').value | bitcoinsatoshis"></span>
-        <span class="sats" i18n="shared.sats">sats</span>
+      <div class="col-md-6 col-lg-5 text-center">
+        <div class="bitcoin-satoshis-text">
+          ₿
+          <span
+            [innerHTML]="form.get('bitcoin').value | bitcoinsatoshis"
+          ></span>
+          <span class="sats" i18n="shared.sats">sats</span>
+        </div>
       </div>
     </div>
 
     <div class="row justify-content-center">
-      <div class="fiat-text">
-        <app-fiat
-          [value]="form.get('satoshis').value"
-          digitsInfo="1.0-0"
-        ></app-fiat>
+      <div class="col-md-6 col-lg-5 text-center">
+        <div class="fiat-text">
+          <app-fiat
+            [value]="form.get('satoshis').value"
+            digitsInfo="1.0-0"
+          ></app-fiat>
+        </div>
       </div>
     </div>
 
     <div class="row justify-content-center mt-3">
-      <div class="symbol">
-        Fiat price last updated
-        <app-time
-          kind="since"
-          [time]="lastFiatPrice$ | async"
-          [fastRender]="true"
-        ></app-time>
+      <div class="col-md-6 col-lg-5 text-center">
+        <div class="symbol">
+          Fiat price last updated
+          <app-time
+            kind="since"
+            [time]="lastFiatPrice$ | async"
+            [fastRender]="true"
+          ></app-time>
+        </div>
       </div>
     </div>
   </ng-container>

@@ -53,7 +53,7 @@
             >BIP-30</a
           >.
         </ng-container>
-        <span class="mr-3"></span>
+        <span class="me-3"></span>
         <a
           href="https://blog.bitmex.com/bitcoins-duplicate-transactions/"
           target="_blank"
@@ -85,7 +85,7 @@
   <ng-template [ngIf]="!isLoadingTx && !error">
     <br />
     <ng-container *ngIf="flowEnabled; else flowPlaceholder">
-      <div class="title float-left">
+      <div class="title float-start">
         <h2
           id="flow"
           #flow
@@ -98,7 +98,7 @@
 
       <button
         type="button"
-        class="btn btn-outline-info flow-toggle btn-sm float-right"
+        class="btn btn-outline-info flow-toggle btn-sm float-end"
         (click)="toggleGraph()"
         i18n="hide-diagram"
       >
@@ -191,7 +191,7 @@
       [transactionPage]="true"
     ></app-transactions-list>
 
-    <div class="title text-left">
+    <div class="title text-start">
       <h2 i18n="transaction.details|Transaction Details">Details</h2>
     </div>
     <div class="box">

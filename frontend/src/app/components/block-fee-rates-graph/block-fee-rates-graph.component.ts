@@ -239,7 +239,7 @@ export class BlockFeeRatesGraphComponent implements OnInit {
                 name: percentile,
                 inactiveColor: 'rgb(110, 112, 121)',
                 textStyle: {
-                  color: 'white',
+                  color: 'var(--fg)',
                 },
                 icon: 'roundRect',
                 enabled: false,
@@ -337,19 +337,19 @@ export class BlockFeeRatesGraphComponent implements OnInit {
         axisPointer: {
           type: 'line',
         },
-        backgroundColor: 'rgba(17, 19, 31, 1)',
+        backgroundColor: 'var(--bg)',
         borderRadius: 4,
         shadowColor: 'rgba(0, 0, 0, 0.5)',
         textStyle: {
           color: 'var(--tooltip-grey)',
           align: 'left',
         },
-        borderColor: '#000',
+        borderColor: 'var(--hover-bg)',
         formatter: function (data) {
           if (data.length <= 0) {
             return '';
           }
-          let tooltip = `<b style="color: white; margin-left: 2px">${formatterXAxis(
+          let tooltip = `<b style="color: var(--fg); margin-left: 2px">${formatterXAxis(
             this.locale,
             this.timespan,
             parseInt(data[0].axisValue, 10)

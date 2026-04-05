@@ -303,7 +303,7 @@
 
 .main-title {
   position: relative;
-  color: #ffffff91;
+  color: var(--transparent-fg);
   margin-top: -13px;
   font-size: 10px;
   text-transform: uppercase;
@@ -405,7 +405,7 @@
 
 .in-progress-message {
   position: relative;
-  color: #ffffff91;
+  color: var(--transparent-fg);
   margin-top: 20px;
   text-align: center;
   padding-bottom: 3px;

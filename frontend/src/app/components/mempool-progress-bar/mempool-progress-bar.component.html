@@ -3,7 +3,7 @@
   [ngIfElse]="loadingTransactions"
 >
   <span *ngIf="(mempoolLoadingStatus$ | async) !== 100; else inSync">
-    &nbsp;<span class="badge badge-pill badge-warning"
+    &nbsp;<span class="badge rounded-pill bg-warning"
       ><ng-container i18n="dashboard.backend-is-synchronizing"
         >Backend is synchronizing</ng-container
       >

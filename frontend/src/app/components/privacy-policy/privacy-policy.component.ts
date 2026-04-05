@@ -1,6 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
+import { Subscription } from 'rxjs';
 import { SeoService } from '@app/services/seo.service';
 import { OpenGraphService } from '@app/services/opengraph.service';
+import { ThemeService } from '@app/services/theme.service';
 
 @Component({
   selector: 'app-privacy-policy',
@@ -8,11 +10,17 @@ import { OpenGraphService } from '@app/services/opengraph.service';
   styleUrls: ['./privacy-policy.component.scss'],
   standalone: false,
 })
-export class PrivacyPolicyComponent {
+export class PrivacyPolicyComponent implements OnDestroy {
+  themeSubscription: Subscription;
+  loadedTheme: string;
+
   constructor(
     private seoService: SeoService,
-    private ogService: OpenGraphService
-  ) {}
+    private ogService: OpenGraphService,
+    private themeService: ThemeService
+  ) {
+    this.loadedTheme = this.themeService.theme;
+  }
 
   ngOnInit(): void {
     this.seoService.setTitle('Privacy Policy');
@@ -20,5 +28,19 @@ export class PrivacyPolicyComponent {
       'Trusted third parties are security holes, as are trusted first parties...you should only trust your own self-hosted instance of The Mempool Open Source Project®.'
     );
     this.ogService.setManualOgImage('privacy.jpg');
+
+    this.themeSubscription = this.themeService.themeChanged$.subscribe(
+      (theme) => {
+        this.loadedTheme = theme;
+      }
+    );
+  }
+
+  get isLightMode(): boolean {
+    return this.loadedTheme === 'light';
+  }
+
+  ngOnDestroy(): void {
+    this.themeSubscription?.unsubscribe();
   }
 }

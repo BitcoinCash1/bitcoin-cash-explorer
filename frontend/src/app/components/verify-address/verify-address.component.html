@@ -1,5 +1,5 @@
 <div class="container-xl">
-  <h1 class="text-left" i18n="shared.verify-address|Verify Address Ownership">
+  <h1 class="text-start" i18n="shared.verify-address|Verify Address Ownership">
     Verify Address Ownership
   </h1>
 
@@ -11,7 +11,7 @@
             <strong i18n="shared.address|Address">Address</strong>
             <span
               placement="bottom"
-              class="badge badge-primary ml-2"
+              class="badge bg-primary ms-2"
               *ngIf="addressType"
             >
               <app-address-type [address]="addressType"></app-address-type>
@@ -139,7 +139,7 @@
         </div>
 
         <div class="row mb-1" *ngIf="showFallbackFee">
-          <div class="col-12 text-right">
+          <div class="col-12 text-end">
             <small
               class="form-text text-muted"
               i18n="verify-address.fallback-fee-help|Fallback fee helper text"
@@ -155,7 +155,7 @@
           </label>
           <div
             *ngIf="isLoadingUtxos"
-            class="spinner-border spinner-border-sm text-light ml-2"
+            class="spinner-border spinner-border-sm text-light ms-2"
             role="status"
           ></div>
           <div *ngIf="utxosError" class="text-danger small">
@@ -188,7 +188,7 @@
             </label>
           </div>
           <div class="row mb-3" *ngIf="utxos.length > 8">
-            <div class="col-12 text-right">
+            <div class="col-12 text-end">
               <small class="form-text text-muted"
                 >+{{ utxos.length - 8 }} more</small
               >
@@ -207,7 +207,7 @@
           </button>
           <div
             *ngIf="isGeneratingPsbt"
-            class="spinner-border spinner-border-sm text-light ml-2"
+            class="spinner-border spinner-border-sm text-light ms-2"
             role="status"
             aria-hidden="true"
           ></div>

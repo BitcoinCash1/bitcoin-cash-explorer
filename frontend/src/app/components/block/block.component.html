@@ -143,11 +143,11 @@
                 <td>
                   <span
                     class="health-badge badge"
-                    [class.badge-success]="blockAudit?.matchRate >= 99"
-                    [class.badge-warning]="
+                    [class.bg-success]="blockAudit?.matchRate >= 99"
+                    [class.bg-warning]="
                       blockAudit?.matchRate >= 75 && blockAudit?.matchRate < 99
                     "
-                    [class.badge-danger]="blockAudit?.matchRate < 75"
+                    [class.bg-danger]="blockAudit?.matchRate < 75"
                     *ngIf="
                       blockAudit?.matchRate != null &&
                         blockAudit?.id === block.id;
@@ -163,7 +163,7 @@
                       "
                     >
                       <span
-                        class="health-badge badge badge-secondary"
+                        class="health-badge badge bg-secondary"
                         i18n="unknown"
                         >Unknown</span
                       >
@@ -351,15 +351,10 @@
                 {{ block.extras.pool.minerNames[1] }}
               }
             </span>
-            <img
-              class="pool-logo"
-              [src]="
-                '/resources/mining-pools/' + block.extras.pool.slug + '.svg'
-              "
-              onError="this.src = '/resources/mining-pools/default.svg'"
-              [alt]="'Logo of ' + block.extras.pool.name + ' mining pool'"
-            />
-            {{ block.extras.pool.name }}
+            <app-mining-pool
+              [slug]="block.extras.pool.slug"
+              [name]="block.extras.pool.name"
+            ></app-mining-pool>
           </a>
         </td>
         <td
@@ -373,8 +368,8 @@
             class="badge"
             [class]="
               block.extras.pool.slug === 'unknown'
-                ? 'badge-secondary'
-                : 'badge-primary'
+                ? 'bg-secondary'
+                : 'bg-primary'
             "
           >
             {{ block.extras.pool.name }}
@@ -453,15 +448,11 @@
           <h3 class="block-subtitle" *ngIf="!isMobile">
             <ng-container i18n="block.stale-block">Stale Block</ng-container>
             @if (block?.extras?.pool) {
-              <img
-                class="pool-logo large"
-                [src]="
-                  '/resources/mining-pools/' + block?.extras?.pool.slug + '.svg'
-                "
-                onError="this.src = '/resources/mining-pools/default.svg'"
-                [alt]="'Logo of ' + block?.extras?.pool.name + ' mining pool'"
-              />
-              <span class="pool-name">{{ block?.extras?.pool.name }}</span>
+              <app-mining-pool
+                [slug]="block?.extras?.pool?.slug"
+                [name]="block?.extras?.pool?.name"
+                [logoStyle]="'width:30px;height:30px;margin: 0 .3em;'"
+              ></app-mining-pool>
             }
           </h3>
         } @else {
@@ -539,23 +530,12 @@
                 >Winning Block</ng-container
               >
               @if (canonicalBlock?.extras?.pool) {
-                <img
-                  class="pool-logo large"
-                  [src]="
-                    '/resources/mining-pools/' +
-                    canonicalBlock?.extras?.pool.slug +
-                    '.svg'
-                  "
-                  onError="this.src = '/resources/mining-pools/default.svg'"
-                  [alt]="
-                    'Logo of ' +
-                    canonicalBlock?.extras?.pool.name +
-                    ' mining pool'
-                  "
-                />
-                <span class="pool-name">{{
-                  canonicalBlock?.extras?.pool.name
-                }}</span>
+                <app-mining-pool
+                  [slug]="canonicalBlock?.extras?.pool?.slug"
+                  [name]="canonicalBlock?.extras?.pool?.name"
+                  [showName]="true"
+                  [logoStyle]="'width:30px;height:30px;margin: 0 .3em;'"
+                ></app-mining-pool>
               }
             }
           } @else {
@@ -728,7 +708,7 @@
     @if (!block?.stale && block?.extras?.orphans?.length > 0) {
       <br />
       <div class="header-bg box stale-block-alert">
-        <span class="stale-msg mr-1">
+        <span class="stale-msg me-1">
           @if (block.extras.orphans.length === 1) {
             <span i18n="block.stale-block-singular"
               >There is a stale block at this height</span
@@ -754,7 +734,7 @@
       </div>
     }
 
-    <div id="details-button-id" class="text-right mt-3 toggle-btns">
+    <div id="details-button-id" class="text-end mt-3 toggle-btns">
       <button
         *ngIf="webGlEnabled && auditAvailable"
         type="button"
@@ -777,7 +757,7 @@
     </div>
 
     <div #blockTxTitle id="block-tx-title" class="block-tx-title">
-      <h2 class="text-left">
+      <h2 class="text-start">
         <ng-container
           *ngTemplateOutlet="
             block.tx_count === 1 ? transactionsSingular : transactionsPlural;
@@ -798,7 +778,7 @@
         >
       </h2>
       <ngb-pagination
-        class="pagination-container float-right"
+        class="pagination-container float-end"
         [collectionSize]="block.tx_count"
         [rotate]="true"
         [pageSize]="itemsPerPage"
@@ -833,7 +813,7 @@
     </ng-template>
 
     <ngb-pagination
-      class="pagination-container float-right"
+      class="pagination-container float-end"
       [collectionSize]="block.tx_count"
       [rotate]="true"
       [pageSize]="itemsPerPage"
@@ -864,7 +844,7 @@
     emptyBlock.tx_count <= 1
   ) {
     <a
-      class="info-bubble-link badge badge-primary"
+      class="info-bubble-link badge bg-primary"
       [routerLink]="['/docs/faq/' | relativeUrl]"
       fragment="why-empty-blocks"
     >

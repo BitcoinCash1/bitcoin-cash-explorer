@@ -84,13 +84,13 @@ export class AddressesTreemap implements OnChanges {
           progressive: 100,
           tooltip: {
             show: true,
-            backgroundColor: 'rgba(17, 19, 31, 1)',
+            backgroundColor: 'var(--bg)',
             borderRadius: 4,
             shadowColor: 'rgba(0, 0, 0, 0.5)',
             textStyle: {
-              color: '#b1b1b1',
+              color: 'var(--tooltip-grey)',
             },
-            borderColor: '#000',
+            borderColor: 'var(--hover-bg)',
             formatter: (value): string => {
               if (!value.data.address) {
                 return '';
@@ -99,7 +99,7 @@ export class AddressesTreemap implements OnChanges {
                 <table style="table-layout: fixed;">
                   <tbody>
                     <tr>
-                      <td colspan="2"><b style="color: white; margin-left: 2px">${
+                      <td colspan="2"><b style="color: var(--fg); margin-left: 2px">${
                         value.data.address
                       }</b></td>
                     </tr>
@@ -134,7 +134,7 @@ export class AddressesTreemap implements OnChanges {
             },
           },
           itemStyle: {
-            borderColor: 'black',
+            borderColor: 'var(--fg)',
             borderWidth: 1,
           },
           breadcrumb: {

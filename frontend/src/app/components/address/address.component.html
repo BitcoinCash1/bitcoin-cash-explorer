@@ -32,35 +32,33 @@
       *ngIf="
         addressTypeInfo?.type === 'p2pkh' || addressTypeInfo?.type === 'p2sh'
       "
-      class="btn-group btn-group-toggle address-toggle"
-      data-toggle="buttons"
+      class="btn-group address-toggle"
+      role="group"
     >
-      <label
-        class="btn btn-sm btn-outline-primary"
-        [class.active]="addressType === 'bch'"
+      <input
+        type="radio"
+        class="btn-check"
+        id="addr-type-bch"
+        name="addressType"
+        value="bch"
+        [checked]="addressType === 'bch'"
+        (click)="updateDisplayAddress('bch')"
+      />
+      <label class="btn btn-sm btn-outline-primary" for="addr-type-bch"
+        >BCH Address</label
       >
-        <input
-          type="radio"
-          name="addressType"
-          value="bch"
-          [checked]="addressType === 'bch'"
-          (click)="updateDisplayAddress('bch')"
-        />
-        BCH Address
-      </label>
-      <label
-        class="btn btn-sm btn-outline-primary"
-        [class.active]="addressType === 'token'"
+      <input
+        type="radio"
+        class="btn-check"
+        id="addr-type-token"
+        name="addressType"
+        value="token"
+        [checked]="addressType === 'token'"
+        (click)="updateDisplayAddress('token')"
+      />
+      <label class="btn btn-sm btn-outline-primary" for="addr-type-token"
+        >Token Address</label
       >
-        <input
-          type="radio"
-          name="addressType"
-          value="token"
-          [checked]="addressType === 'token'"
-          (click)="updateDisplayAddress('token')"
-        />
-        Token Address
-      </label>
     </div>
   </div>
 
@@ -147,7 +145,7 @@
     <ng-container *ngIf="address && transactions && transactions.length > 2">
       <br>
       <div class="title-tx">
-        <h2 class="text-left" i18n="address.balance-history">Balance History</h2>
+        <h2 class="text-start" i18n="address.balance-history">Balance History</h2>
       </div>
       <div class="box">
         <div class="widget-toggler" *ngIf="showBalancePeriod()">
@@ -168,7 +166,7 @@
     <ng-container *ngIf="address && utxos && utxos.length > 2">
       <br>
       <div class="title-tx">
-        <h2 class="text-left" i18n="address.unspent-outputs">Unspent Outputs</h2>
+        <h2 class="text-start" i18n="address.unspent-outputs">Unspent Outputs</h2>
       </div>
       <div class="box">
         <div class="row">
@@ -181,7 +179,7 @@
 
     <br />
     <div class="title-tx">
-      <h2 class="text-left">
+      <h2 class="text-start">
         <ng-template [ngIf]="!transactions?.length">&nbsp;</ng-template>
         <ng-template
           i18n="X of X Address Transaction"
@@ -365,10 +363,10 @@
 </ng-template>
 
 <ng-template #pendingBalanceRow>
-  <td i18n="accelerator.pending-state" class="font-italic">Pending</td>
+  <td i18n="accelerator.pending-state" class="fst-italic">Pending</td>
   <td
     *ngIf="mempoolStats.funded_txo_sum !== undefined"
-    class="font-italic wrap-cell"
+    class="fst-italic wrap-cell"
   >
     <app-amount
       [satoshis]="mempoolStats.balance"
@@ -387,10 +385,10 @@
 </ng-template>
 
 <ng-template #pendingTransactionsRow>
-  <td i18n="address.pending-transactions" class="font-italic">
+  <td i18n="address.pending-transactions" class="fst-italic">
     Pending Transactions
   </td>
-  <td class="font-italic wrap-cell">
+  <td class="fst-italic wrap-cell">
     {{ mempoolStats.tx_count }}
   </td>
 </ng-template>
@@ -408,7 +406,7 @@
 <ng-template #typeRow>
   <td i18n="address.type">Type</td>
   <td class="wrap-cell">
-    <span placement="bottom" class="badge badge-primary">
+    <span placement="bottom" class="badge bg-primary">
       <app-address-type [address]="addressTypeInfo"></app-address-type>
     </span>
   </td>

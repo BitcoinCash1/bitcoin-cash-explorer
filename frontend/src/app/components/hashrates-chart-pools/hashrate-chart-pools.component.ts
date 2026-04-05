@@ -211,7 +211,7 @@ export class HashrateChartPoolsComponent implements OnInit {
         name: name,
         inactiveColor: 'rgb(110, 112, 121)',
         textStyle: {
-          color: 'white',
+          color: 'var(--fg)',
         },
         icon: 'roundRect',
         itemStyle: {
@@ -259,20 +259,20 @@ export class HashrateChartPoolsComponent implements OnInit {
         axisPointer: {
           type: 'line',
         },
-        backgroundColor: 'rgba(17, 19, 31, 1)',
+        backgroundColor: 'var(--bg)',
         borderRadius: 4,
         shadowColor: 'rgba(0, 0, 0, 0.5)',
         textStyle: {
           color: 'var(--tooltip-grey)',
           align: 'left',
         },
-        borderColor: '#000',
+        borderColor: 'var(--hover-bg)',
         formatter: function (data) {
           const date = new Date(data[0].data[0]).toLocaleDateString(
             this.locale,
             { year: 'numeric', month: 'short', day: 'numeric' }
           );
-          let tooltip = `<b style="color: white; margin-left: 2px">${date}</b><br>`;
+          let tooltip = `<b style="color: var(--fg); margin-left: 2px">${date}</b><br>`;
           data.sort((a, b) => b.data[1] - a.data[1]);
           for (const pool of data) {
             if (pool.data[1] > 0) {

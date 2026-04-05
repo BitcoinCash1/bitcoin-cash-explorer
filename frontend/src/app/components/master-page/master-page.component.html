@@ -43,14 +43,14 @@
           ></app-svg-images>
           <div class="connection-badge">
             <div
-              class="badge badge-warning"
+              class="badge bg-warning"
               *ngIf="connectionState.val === 0"
               i18n="master-page.offline"
             >
               Offline
             </div>
             <div
-              class="badge badge-warning"
+              class="badge bg-warning"
               *ngIf="connectionState.val === 1"
               i18n="master-page.reconnecting"
             >
@@ -64,7 +64,7 @@
         class="navbar-brand d-flex d-md-none justify-content-center"
         [ngClass]="{
           'dual-logos': enterpriseInfo?.dualLogo,
-          'mr-0': enterpriseInfo?.dualLogo,
+          'me-0': enterpriseInfo?.dualLogo,
         }"
         [routerLink]="['/' | relativeUrl]"
         (click)="brandClick($event)"
@@ -82,14 +82,14 @@
           ></app-svg-images>
           <div class="connection-badge">
             <div
-              class="badge badge-warning"
+              class="badge bg-warning"
               *ngIf="connectionState.val === 0"
               i18n="master-page.offline"
             >
               Offline
             </div>
             <div
-              class="badge badge-warning"
+              class="badge bg-warning"
               *ngIf="connectionState.val === 1"
               i18n="master-page.reconnecting"
             >
@@ -120,7 +120,7 @@
             viewBox="0 0 65 65"
           ></app-svg-images>
         </button>
-        <div ngbDropdownMenu [ngClass]="{ 'dropdown-menu-right': isMobile }">
+        <div ngbDropdownMenu [ngClass]="{ 'dropdown-menu-end': isMobile }">
           <a
             ngbDropdownItem
             *ngIf="env.MAINNET_ENABLED"
@@ -132,7 +132,7 @@
               height="22"
               viewBox="0 0 65 65"
               style="width: 25px; height: 25px"
-              class="mainnet mr-1"
+              class="mainnet me-1"
             ></app-svg-images>
             Mainnet</a
           >
@@ -148,7 +148,7 @@
               height="22"
               viewBox="0 0 65 65"
               style="width: 25px; height: 25px"
-              class="mainnet mr-1"
+              class="mainnet me-1"
             ></app-svg-images>
             Signet</a
           >
@@ -164,7 +164,7 @@
               height="22"
               viewBox="0 0 65 65"
               style="width: 25px; height: 25px"
-              class="mainnet mr-1"
+              class="mainnet me-1"
             ></app-svg-images>
             Testnet3</a
           >
@@ -180,7 +180,7 @@
               height="22"
               viewBox="0 0 65 65"
               style="width: 25px; height: 25px"
-              class="mainnet mr-1"
+              class="mainnet me-1"
             ></app-svg-images>
             Testnet4</a
           >

@@ -180,6 +180,7 @@ import { GeolocationComponent } from '@app/shared/components/geolocation/geoloca
 import { TestnetAlertComponent } from '@app/shared/components/testnet-alert/testnet-alert.component';
 import { GlobalFooterComponent } from '@app/shared/components/global-footer/global-footer.component';
 import { MempoolErrorComponent } from '@app/shared/components/mempool-error/mempool-error.component';
+import { MiningPoolComponent } from '@app/shared/components/mining-pool/mining-pool.component';
 import { VerifyAddressComponent } from '../components/verify-address/verify-address.component';
 
 import { BlockViewComponent } from '@components/block-view/block-view.component';
@@ -289,6 +290,7 @@ import { SpecialBlocksComponent } from '@components/special-blocks/special-block
     GeolocationComponent,
     TestnetAlertComponent,
     GlobalFooterComponent,
+    MiningPoolComponent,
     CalculatorComponent,
     BitcoinsatoshisPipe,
     BlockViewComponent,
@@ -424,6 +426,7 @@ import { SpecialBlocksComponent } from '@components/special-blocks/special-block
     ToggleComponent,
     GeolocationComponent,
     TestnetAlertComponent,
+    MiningPoolComponent,
     PreviewTitleComponent,
     GlobalFooterComponent,
     MempoolErrorComponent,

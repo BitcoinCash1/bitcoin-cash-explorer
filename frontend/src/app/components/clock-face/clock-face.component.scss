@@ -39,7 +39,7 @@
   .tick {
     transform-origin: center;
     fill: none;
-    stroke: white;
+    stroke: var(--fg);
     stroke-width: 2px;
     stroke-linecap: butt;
 
@@ -60,7 +60,7 @@
 
   .dial-segment {
     fill: none;
-    stroke: white;
+    stroke: var(--fg);
     stroke-width: 2px;
   }
 

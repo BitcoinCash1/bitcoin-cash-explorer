@@ -16,7 +16,7 @@ $gray-700: $fg;
 
 $nav-tabs-link-active-bg: $active-bg;
 
-$primary: #1f8148;
+$primary: #07805d;
 $secondary: #2d3948;
 $tertiary: #13926e;
 $success: #1a9436;
@@ -34,7 +34,7 @@ $pagination-hover-bg: $hover-bg;
 $pagination-hover-border-color: $bg;
 $pagination-disabled-bg: $bg;
 
-$custom-select-indicator-color: $fg;
+$form-select-indicator-color: $fg;
 
 .input-group-text {
   background-color: #1c2031 !important;
@@ -61,6 +61,8 @@ $dropdown-link-active-bg: $active-bg;
   --hover-bg: #{$hover-bg};
   --fg: #{$fg};
   --nav-bg: #{$nav-bg};
+  --nav-icon: #fff;
+  --nav-shadow: #000;
   --title-fg: #{$title-fg};
 
   --primary: #{$primary};
@@ -92,11 +94,12 @@ $dropdown-link-active-bg: $active-bg;
   --signet-alt: #471850;
 
   --green: #0fd378;
-  --red: #db192c;
+  --red: #dc3545;
   --yellow: #e9db17;
-  --grey: #6c757d;
-  --tooltip-grey: #b1b1b1;
-  --orange: #b86d12;
+  --grey: #7e7e7e;
+  --tooltip-grey: #f7f7f7;
+  --orange: #ff9f00;
+  --pink: #d63384;
 
   --search-button: #13926e;
   --search-button-border: #0f946e;

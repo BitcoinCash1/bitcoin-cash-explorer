@@ -1,6 +1,6 @@
 {
   "name": "explorer-backend",
-  "version": "3.6",
+  "version": "3.7",
   "description": "Bitcoin Cash Explorer mempool visualizer and blockchain explorer backend",
   "license": "AGPL-3.0-or-later",
   "homepage": "https://bchexplorer.cash",

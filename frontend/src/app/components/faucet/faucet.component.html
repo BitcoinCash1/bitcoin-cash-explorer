@@ -17,7 +17,7 @@
     } @else if (!user) {
       <!-- User not logged in -->
       <div class="alert alert-mempool d-block text-center w-100">
-        <div class="d-inline align-middle pr-2">
+        <div class="d-inline align-middle pe-2">
           <span>To use the faucet, please</span>
         </div>
         <app-github-login
@@ -31,13 +31,13 @@
       user && user.status === "pending" && !user.email && user.snsId
     ) {
       <div
-        class="alert alert-danger w-100 col d-flex justify-content-center text-left"
+        class="alert alert-danger w-100 col d-flex justify-content-center text-start"
       >
         <span class="d-flex">
           <fa-icon
             [icon]="['fas', 'exclamation-triangle']"
             [fixedWidth]="true"
-            class="mr-1"
+            class="me-1"
           ></fa-icon>
           <span
             >Please
@@ -55,7 +55,7 @@
       <!-- User logged in but not a paid user or did not link its Github account -->
       <div class="alert alert-mempool d-block text-center w-100">
         <div class="d-inline align-middle">
-          <span class="mb-2 mr-2">To use the faucet, please</span>
+          <span class="mb-2 me-2">To use the faucet, please</span>
         </div>
         <app-github-login
           customClass="btn btn-sm"
@@ -67,7 +67,7 @@
     } @else if (error === "account_limited") {
       <div class="alert alert-mempool d-block text-center w-100">
         <div class="d-inline align-middle">
-          <span class="mb-2 mr-2"
+          <span class="mb-2 me-2"
             >Your account does not allow you to access the faucet</span
           >
         </div>
@@ -84,13 +84,11 @@
       >
         <div class="row">
           <div class="col">
-            <div class="form-group mb-0">
+            <div class="mb-0">
               <div class="input-group input-group-lg">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" i18n="amount-sats"
-                    >Amount (sats)</span
-                  >
-                </div>
+                <span class="input-group-text" i18n="amount-sats"
+                  >Amount (sats)</span
+                >
                 <input
                   type="number"
                   class="form-control"
@@ -108,21 +106,21 @@
                   </button>
                   <button
                     type="button"
-                    class="btn btn-secondary ml-2"
+                    class="btn btn-secondary ms-2"
                     (click)="setAmount(50000)"
                   >
                     50k
                   </button>
                   <button
                     type="button"
-                    class="btn btn-secondary ml-2"
+                    class="btn btn-secondary ms-2"
                     (click)="setAmount(500000)"
                   >
                     500k
                   </button>
                 </div>
               </div>
-              <div class="text-danger text-left" *ngIf="invalidAmount">
+              <div class="text-danger text-start" *ngIf="invalidAmount">
                 <div *ngIf="amount?.errors?.['required']">
                   Amount is required
                 </div>
@@ -134,9 +132,7 @@
                 </div>
               </div>
               <div class="input-group input-group-lg mt-2">
-                <div class="input-group-prepend">
-                  <span class="input-group-text" i18n="address">Address</span>
-                </div>
+                <span class="input-group-text" i18n="address">Address</span>
                 <input
                   type="text"
                   class="form-control"
@@ -158,7 +154,7 @@
                   Request Testnet4 Coins
                 </button>
               </div>
-              <div class="text-danger text-left" *ngIf="invalidAddress">
+              <div class="text-danger text-start" *ngIf="invalidAddress">
                 <div *ngIf="address?.errors?.['required']">
                   Address is required
                 </div>

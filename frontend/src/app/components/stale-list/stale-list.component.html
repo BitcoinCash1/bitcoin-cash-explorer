@@ -26,12 +26,12 @@
   <div class="clearfix"></div>
 
   <div
-    class="float-left"
+    class="float-start"
     style="display: flex; width: 100%; align-items: center"
   >
     <h1 i18n="page.recent-stale-chain-tips">Recent Stale Chain Tips</h1>
-    <span class="badge badge-pill badge-warning beta" i18n="beta">beta</span>
-    <div *ngIf="isLoading" class="spinner-border ml-3" role="status"></div>
+    <span class="badge rounded-pill bg-warning beta" i18n="beta">beta</span>
+    <div *ngIf="isLoading" class="spinner-border ms-3" role="status"></div>
   </div>
 
   <div class="clearfix"></div>
@@ -56,33 +56,31 @@
             <span class="type" [ngSwitch]="chainTip.status">
               <span
                 *ngSwitchCase="'headers-only'"
-                class="badge badge-info"
+                class="badge bg-info"
                 i18n="chain-tips.headers-only"
                 >Headers Only</span
               >
               <span
                 *ngSwitchCase="'valid-headers'"
-                class="badge badge-info"
+                class="badge bg-info"
                 i18n="chain-tips.valid-headers"
                 >Valid Headers</span
               >
               <span
                 *ngSwitchCase="'valid-fork'"
-                class="badge badge-info"
+                class="badge bg-info"
                 i18n="chain-tips.valid-fork"
                 >Valid Fork</span
               >
               <span
                 *ngSwitchCase="'invalid'"
-                class="badge badge-info"
+                class="badge bg-info"
                 i18n="chain-tips.invalid"
                 >Invalid</span
               >
               <span *ngSwitchDefault>{{ chainTip.status }}</span>
             </span>
-            <span
-              class="badge badge-secondary depth-badge"
-              i18n="chain-tips.depth"
+            <span class="badge bg-secondary depth-badge" i18n="chain-tips.depth"
               >Depth {{ chainTip.branchlen + 1 }}</span
             >
           </span>
@@ -91,7 +89,7 @@
           <div class="block-comparison">
             <div class="block-column stale">
               <div class="block-label" i18n="chain-tips.stale-block">
-                <span class="badge badge-secondary">Stale</span>
+                <span class="badge bg-secondary">Stale</span>
               </div>
               <div class="block-wrapper">
                 <div
@@ -190,39 +188,19 @@
                       else staleBlockCentralisedPool
                     "
                   >
-                    <img
-                      [ngbTooltip]="chainTip.stale.extras.pool.name"
-                      class="pool-logo faded"
-                      [src]="
-                        '/resources/mining-pools/' +
-                        chainTip.stale.extras.pool.slug +
-                        '.svg'
-                      "
-                      onError="this.src = '/resources/mining-pools/default.svg'"
-                      [alt]="
-                        'Logo of ' +
-                        chainTip.stale.extras.pool.name +
-                        ' mining pool'
-                      "
-                    />
+                    <app-mining-pool
+                      [slug]="chainTip.stale.extras.pool.slug"
+                      [name]="chainTip.stale.extras.pool.name"
+                      [logoStyle]="'filter: grayscale(100%) brightness(1.5);'"
+                      [showName]="false"
+                    ></app-mining-pool>
                     {{ chainTip.stale.extras.pool.minerNames[1] }}
                   </ng-container>
                   <ng-template #staleBlockCentralisedPool>
-                    <img
-                      class="pool-logo"
-                      [src]="
-                        '/resources/mining-pools/' +
-                        chainTip.stale.extras.pool.slug +
-                        '.svg'
-                      "
-                      onError="this.src = '/resources/mining-pools/default.svg'"
-                      [alt]="
-                        'Logo of ' +
-                        chainTip.stale.extras.pool.name +
-                        ' mining pool'
-                      "
-                    />
-                    {{ chainTip.stale.extras.pool.name }}
+                    <app-mining-pool
+                      [slug]="chainTip.stale.extras.pool.slug"
+                      [name]="chainTip.stale.extras.pool.name"
+                    ></app-mining-pool>
                   </ng-template>
                 </a>
               </div>
@@ -232,7 +210,7 @@
 
             <div class="block-column canonical">
               <div class="block-label" i18n="chain-tips.winning-block">
-                <span class="badge badge-success">Winning</span>
+                <span class="badge bg-success">Winning</span>
               </div>
               <div
                 class="bitcoin-block mined-block canonical-block"
@@ -333,39 +311,19 @@
                       else canonicalBlockCentralisedPool
                     "
                   >
-                    <img
-                      [ngbTooltip]="chainTip.canonical.extras.pool.name"
-                      class="pool-logo faded"
-                      [src]="
-                        '/resources/mining-pools/' +
-                        chainTip.canonical.extras.pool.slug +
-                        '.svg'
-                      "
-                      onError="this.src = '/resources/mining-pools/default.svg'"
-                      [alt]="
-                        'Logo of ' +
-                        chainTip.canonical.extras.pool.name +
-                        ' mining pool'
-                      "
-                    />
+                    <app-mining-pool
+                      [slug]="chainTip.canonical.extras.pool.slug"
+                      [name]="chainTip.canonical.extras.pool.name"
+                      [logoStyle]="'filter: grayscale(100%) brightness(1.5);'"
+                      [showName]="false"
+                    ></app-mining-pool>
                     {{ chainTip.canonical.extras.pool.minerNames[1] }}
                   </ng-container>
                   <ng-template #canonicalBlockCentralisedPool>
-                    <img
-                      class="pool-logo"
-                      [src]="
-                        '/resources/mining-pools/' +
-                        chainTip.canonical.extras.pool.slug +
-                        '.svg'
-                      "
-                      onError="this.src = '/resources/mining-pools/default.svg'"
-                      [alt]="
-                        'Logo of ' +
-                        chainTip.canonical.extras.pool.name +
-                        ' mining pool'
-                      "
-                    />
-                    {{ chainTip.canonical.extras.pool.name }}
+                    <app-mining-pool
+                      [slug]="chainTip.canonical.extras.pool.slug"
+                      [name]="chainTip.canonical.extras.pool.name"
+                    ></app-mining-pool>
                   </ng-template>
                 </a>
               </div>

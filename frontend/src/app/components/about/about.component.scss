@@ -17,7 +17,7 @@
   .intro {
     margin: 25px auto 30px;
     margin-top: 25px;
-    width: 250px;
+    width: 420px;
     display: flex;
     flex-direction: column;
     .logo {
@@ -230,7 +230,7 @@
     margin: auto;
     line-height: 1.8;
     font-size: 87.5%;
-    color: #e83e8c;
+    color: var(--pink);
     word-wrap: break-word;
     font-family:
       SFMono-Regular,
@@ -268,8 +268,8 @@
 code {
   display: inline-block;
   font-family: "Courier New", Courier, monospace;
-  color: #fff;
-  background-color: #03271b;
+  color: var(--fg);
+  background-color: var(--bg);
   padding: 2px;
   border-radius: 5px;
   margin: 15px 0;

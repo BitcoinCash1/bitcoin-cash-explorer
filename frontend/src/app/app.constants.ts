@@ -82,6 +82,48 @@ export const contrastMempoolFeeColors = [
   'ffb700',
 ];
 
+export const lightMempoolFeeColors = [
+  '00ff66', // Vibrant Emerald
+  '24fd5e',
+  '39fb57',
+  '49f94f',
+  '58f747',
+  '66f43e',
+  '73f134',
+  '80ee28',
+  '8ceb18',
+  '98e700', // Electric Lime
+  'a6e200',
+  'b3dd00',
+  'c0d700',
+  'ccd200',
+  'd9cc00',
+  'e5c500',
+  'f1be00',
+  'ffb700', // Vivid Amber
+  'ffa912',
+  'ff9b1e',
+  'ff8c28',
+  'ff7d31',
+  'ff6c39',
+  'ff5a41',
+  'ff4549',
+  'ff2751', // Bright Coral
+  'ff0059',
+  'f90063',
+  'f3006d',
+  'ec0076',
+  'e50080',
+  'de0089',
+  'd60092',
+  'ce009b',
+  'c600a3',
+  'bd00ab',
+  'b300b3', // Pure Magenta
+  'a700bb',
+  '9900c2', // Deep Electric Purple
+];
+
 export const chartColors = [
   '#A81524',
   '#D81B60',

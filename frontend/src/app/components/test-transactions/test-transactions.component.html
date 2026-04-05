@@ -1,6 +1,6 @@
 <div class="container-xl">
   <div style="display: flex; width: 100%; align-items: center; flex-wrap: wrap">
-    <h1 class="text-left" i18n="shared.test-transactions|Test Transactions">
+    <h1 class="text-start" i18n="shared.test-transactions|Test Transactions">
       Test Transactions
     </h1>
   </div>
@@ -20,20 +20,24 @@
         placeholder="Comma-separated list of raw transactions"
       ></textarea>
     </div>
-    <label for="allowhighfees" i18n="test.tx.allow-high-fees"
-      >Allow high fees?</label
-    >
-    <input
-      type="checkbox"
-      class="form-control input-dark"
-      formControlName="allowhighfees"
-      id="allowhighfees"
-    />
-    <br />
+    <div class="form-check mb-3">
+      <input
+        type="checkbox"
+        class="form-check-input"
+        formControlName="allowhighfees"
+        id="allowhighfees"
+      />
+      <label
+        class="form-check-label"
+        for="allowhighfees"
+        i18n="test.tx.allow-high-fees"
+        >Allow high fees?</label
+      >
+    </div>
     <button
       [disabled]="isLoading"
       type="submit"
-      class="btn btn-success mr-2"
+      class="btn btn-success me-2"
       i18n="shared.test-transactions|Test Transactions"
     >
       Test Transactions

@@ -1,18 +1,21 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
   Inject,
   LOCALE_ID,
   OnInit,
+  OnDestroy,
 } from '@angular/core';
 import { WebsocketService } from '@app/services/websocket.service';
 import { SeoService } from '@app/services/seo.service';
 import { OpenGraphService } from '@app/services/opengraph.service';
 import { StateService } from '@app/services/state.service';
-import { Observable } from 'rxjs';
-import { ApiService } from '@app/services/api.service';
+import { Observable, Subscription } from 'rxjs';
+import { ThemeService } from '@app/services/theme.service';
+// import { ApiService } from '@app/services/api.service';
 import { IBackendInfo } from '@interfaces/websocket.interface';
-import { Router, ActivatedRoute } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ITranslators } from '@interfaces/node-api.interface';
 import { DOCUMENT } from '@angular/common';
 import { EnterpriseService } from '@app/services/enterprise.service';
@@ -24,13 +27,15 @@ import { EnterpriseService } from '@app/services/enterprise.service';
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AboutComponent implements OnInit {
+export class AboutComponent implements OnInit, OnDestroy {
   // @ViewChild('promoVideo') promoVideo: ElementRef;
   backendInfo$: Observable<IBackendInfo>;
   frontendGitCommitHash: string;
   packetJsonVersion: string;
   officialSite: boolean;
   showNavigateToSponsor = false;
+  themeSubscription: Subscription;
+  loadedTheme = 'default';
 
   profiles$: Observable<any>;
   translators$: Observable<ITranslators>;
@@ -43,15 +48,18 @@ export class AboutComponent implements OnInit {
     private ogService: OpenGraphService,
     public stateService: StateService,
     private enterpriseService: EnterpriseService,
-    private apiService: ApiService,
-    private router: Router,
+    // private apiService: ApiService,
+    // private router: Router,
     private route: ActivatedRoute,
+    private themeService: ThemeService,
+    private cd: ChangeDetectorRef,
     @Inject(LOCALE_ID) public locale: string,
     @Inject(DOCUMENT) private document: Document
   ) {
     this.frontendGitCommitHash = this.stateService.env.GIT_COMMIT_HASH;
     this.packetJsonVersion = this.stateService.env.PACKAGE_JSON_VERSION;
     this.officialSite = this.stateService.env.OFFICIAL_BCH_EXPLORER;
+    this.loadedTheme = this.themeService.theme;
   }
 
   ngOnInit() {
@@ -93,6 +101,13 @@ export class AboutComponent implements OnInit {
     //   }),
     //   tap(() => this.goToAnchor())
     // );
+
+    this.themeSubscription = this.themeService.themeChanged$.subscribe(
+      (theme) => {
+        this.loadedTheme = theme;
+        this.cd.markForCheck();
+      }
+    );
 
     // this.ogs$ = this.apiService.getOgs$();
 
@@ -163,5 +178,13 @@ export class AboutComponent implements OnInit {
   onEnterpriseClick(e): boolean {
     this.enterpriseService.goal(6);
     return true;
+  }
+
+  get isLightMode(): boolean {
+    return this.loadedTheme === 'light';
+  }
+
+  ngOnDestroy(): void {
+    this.themeSubscription?.unsubscribe();
   }
 }

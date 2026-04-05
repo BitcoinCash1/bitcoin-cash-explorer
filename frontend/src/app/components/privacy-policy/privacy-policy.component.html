@@ -2,8 +2,12 @@
   <div class="text-center">
     <br />
     <img
-      src="/resources/explorer_bitcoin_cash_logo_bigger.png"
-      style="width: 250px; height: 63px"
+      [src]="
+        isLightMode
+          ? '/resources/explorer_bitcoin_cash_logo_bigger_light.png'
+          : '/resources/explorer_bitcoin_cash_logo_bigger.png'
+      "
+      style="width: 387px; height: 100px"
     />
     <br /><br />
 
@@ -12,8 +16,8 @@
 
     <br /><br />
 
-    <div class="text-left">
-      <h4>USE YOUR OWN SELF-HOSTED MEMPOOL EXPLORER</h4>
+    <div class="text-start">
+      <h4>USE YOUR OWN SELF-HOSTED BCH EXPLORER</h4>
 
       <p>
         For maximum privacy, we recommend that you use your own self-hosted
