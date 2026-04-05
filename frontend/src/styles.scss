@@ -159,7 +159,7 @@ input[type="checkbox"].form-control {
   --red: #dc3545;
   --yellow: #e9db17;
   --grey: #7e7e7e;
-  --tooltip-grey: #b1b1b1;
+  --tooltip-grey: #f7f7f7;
   --orange: #ff9f00;
   --pink: #d63384;
 
@@ -1702,7 +1702,7 @@ a.badge:focus {
 .tooltip-inner {
   max-width: 340px;
   background-color: var(--active-bg);
-  color: var(--fg);
+  color: var(--tooltip-grey);
   border-radius: 5px;
   box-shadow: 0 0 6px #00000062;
 }

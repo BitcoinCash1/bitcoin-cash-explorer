@@ -1,6 +1,6 @@
 .block-overview-tooltip {
   position: absolute;
-  background: color-mix(in srgb, #11131f 95%, transparent);
+  background: color-mix(in srgb, var(--hover-bg) 95%, transparent);
   --link-color: #1bd8f4;
   --link-hover-color: #09a3ba;
   border-radius: 4px;
