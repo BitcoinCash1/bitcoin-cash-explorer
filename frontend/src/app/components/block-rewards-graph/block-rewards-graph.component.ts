@@ -188,19 +188,19 @@ export class BlockRewardsGraphComponent implements OnInit {
         axisPointer: {
           type: 'line',
         },
-        backgroundColor: 'rgba(17, 19, 31, 1)',
+        backgroundColor: 'var(--bg)',
         borderRadius: 4,
         shadowColor: 'rgba(0, 0, 0, 0.5)',
         textStyle: {
           color: 'var(--tooltip-grey)',
           align: 'left',
         },
-        borderColor: '#000',
+        borderColor: 'var(--hover-bg)',
         formatter: function (data) {
           if (data.length <= 0) {
             return '';
           }
-          let tooltip = `<b style="color: white; margin-left: 2px">
+          let tooltip = `<b style="color: var(--fg); margin-left: 2px">
             ${formatterXAxis(
               this.locale,
               this.timespan,

@@ -293,14 +293,14 @@ export class TreasuriesGraphComponent implements OnInit, OnChanges, OnDestroy {
         axisPointer: {
           type: 'line',
         },
-        backgroundColor: 'rgba(17, 19, 31, 1)',
+        backgroundColor: 'var(--bg)',
         borderRadius: 4,
         shadowColor: 'rgba(0, 0, 0, 0.5)',
         textStyle: {
-          color: '#b1b1b1',
+          color: 'var(--tooltip-grey)',
           align: 'left',
         },
-        borderColor: '#000',
+        borderColor: 'var(--hover-bg)',
         formatter: function (data) {
           if (!data.length) {
             return '';
@@ -316,7 +316,7 @@ export class TreasuriesGraphComponent implements OnInit, OnChanges, OnDestroy {
             day: 'numeric',
           });
 
-          tooltip += `<div><b style="color: white; margin-left: 2px">${date}</b><br>`;
+          tooltip += `<div><b style="color: var(--fg); margin-left: 2px">${date}</b><br>`;
 
           // Get all active wallet IDs from the selected wallets
           const activeTreasuries: { treasury: Treasury; index: number }[] =

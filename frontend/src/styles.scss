@@ -534,11 +534,11 @@ html:lang(ru) .card-title {
     font-size: 12px;
     font-weight: 700;
     margin-bottom: 2px;
-    color: #fff;
+    color: var(--fg);
     .total-value {
       float: right;
       .symbol {
-        color: #ffffffbb;
+        color: var(--fg);
       }
     }
   }
@@ -567,7 +567,7 @@ html:lang(ru) .card-title {
     .value {
       text-align: right;
       .symbol {
-        color: #7e7e7e;
+        color: var(--fg);
         font-size: 9px !important;
       }
     }
@@ -596,7 +596,7 @@ html:lang(ru) .card-title {
   .total-label {
     width: 100%;
     text-align: left;
-    color: #fff;
+    color: var(--fg);
     margin-top: 5px;
     font-size: 14px;
     span {
@@ -633,7 +633,7 @@ html:lang(ru) .card-title {
     position: relative;
     span {
       display: block;
-      background: #282d47;
+      background: var(--bg);
       height: 5px;
       border-radius: 2px;
     }
@@ -647,7 +647,7 @@ html:lang(ru) .card-title {
     }
     .total-parcial-vbytes {
       .symbol {
-        color: #ffffffbb;
+        color: var(--fg);
       }
     }
     .symbol {
@@ -698,7 +698,7 @@ html:lang(ru) .card-title {
 .fees-wrapper-tooltip-chart-advanced,
 .tx-wrapper-tooltip-chart-advanced {
   width: 300px;
-  background: rgba($bg, 0.98);
+  background: var(--bg);
 
   thead {
     th {
@@ -749,7 +749,7 @@ html:lang(ru) .card-title {
         width: 100%;
         border-radius: 4px;
         display: block;
-        background: #29324c94;
+        background: var(--active-bg);
       }
       span {
         height: 4px;
@@ -780,7 +780,7 @@ html:lang(ru) .card-title {
     }
   }
   .total-percentage-bar-background {
-    background-color: #282d47;
+    background-color: var(--active-bg);
   }
 }
 
