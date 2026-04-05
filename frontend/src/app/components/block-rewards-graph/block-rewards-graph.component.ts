@@ -249,7 +249,7 @@ export class BlockRewardsGraphComponent implements OnInit {
                   name: 'Rewards BCH',
                   inactiveColor: 'rgb(110, 112, 121)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },
@@ -257,7 +257,7 @@ export class BlockRewardsGraphComponent implements OnInit {
                   name: 'Rewards ' + this.currency,
                   inactiveColor: 'rgb(110, 112, 121)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },

@@ -250,7 +250,7 @@ export class BlockFeesGraphComponent implements OnInit {
                   name: 'Fees BCH',
                   inactiveColor: 'rgb(110, 112, 121)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },
@@ -258,7 +258,7 @@ export class BlockFeesGraphComponent implements OnInit {
                   name: 'Fees ' + this.currency,
                   inactiveColor: 'rgb(110, 112, 121)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },

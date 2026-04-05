@@ -338,7 +338,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                   name: 'Subsidy',
                   inactiveColor: 'var(--grey)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },
@@ -346,7 +346,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                   name: 'Fees',
                   inactiveColor: 'var(--grey)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },
@@ -354,7 +354,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                   name: 'Subsidy (USD)',
                   inactiveColor: 'var(--grey)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },
@@ -362,7 +362,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                   name: 'Fees (USD)',
                   inactiveColor: 'var(--grey)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },
@@ -370,7 +370,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                   name: 'Subsidy (%)',
                   inactiveColor: 'var(--grey)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },
@@ -378,7 +378,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                   name: 'Fees (%)',
                   inactiveColor: 'var(--grey)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },

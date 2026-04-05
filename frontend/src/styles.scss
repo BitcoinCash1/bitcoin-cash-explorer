@@ -167,7 +167,11 @@ input[type="checkbox"].form-control {
   --search-button-border: #0f946e;
   --search-button-focus: #2b7963;
   --search-button-shadow: #10a57b80;
+  --search-button-hover: #21816680;
 
+  --bs-body-color: var(--fg);
+  --bs-body-bg: var(--active-bg);
+  --bs-card-color: var(--fg);
   --bs-body-color: var(--fg);
   --bs-body-bg: var(--active-bg);
   --bs-card-color: var(--fg);
@@ -249,15 +253,15 @@ main {
 }
 
 .btn-purple {
-  --bs-btn-color: #fff;
+  --bs-btn-color: var(--fg);
   --bs-btn-bg: var(--tertiary);
   --bs-btn-border-color: var(--tertiary);
   --bs-btn-hover-color: #fff;
   --bs-btn-hover-bg: var(--search-button-focus);
   --bs-btn-hover-border-color: var(--search-button);
   --bs-btn-active-color: #fff;
-  --bs-btn-active-bg: #077254;
-  --bs-btn-active-border-color: #077254;
+  --bs-btn-active-bg: var(--search-button);
+  --bs-btn-active-border-color: var(--search-button-border);
   --bs-btn-disabled-color: #fff;
   --bs-btn-disabled-bg: var(--tertiary);
   --bs-btn-disabled-border-color: var(--tertiary);
@@ -266,26 +270,31 @@ main {
   color: var(--bs-btn-color);
 }
 
+.btn-purple.disabled,
+.btn-purple:disabled {
+  background-color: var(--bs-btn-disabled-bg);
+  border-color: var(--bs-btn-disabled-border-color);
+  color: var(--bs-btn-disabled-color);
+}
+
 .btn-purple:not(:disabled):not(.disabled):active,
 .btn-purple:not(:disabled):not(.disabled).active,
 .show > .btn-purple.dropdown-toggle {
-  color: #fff;
+  --bs-btn-color: var(--fg);
   background-color: #066348;
   border-color: #066348;
 }
 
 .btn-purple:focus,
 .btn-purple.focus {
-  color: #fff;
   background-color: var(--search-button-focus);
   border-color: var(--search-button);
-  box-shadow: 0 0 0 0.08rem #07584180;
+  box-shadow: 0 0 0 0.08rem var(--search-button-hover);
 }
 
 .btn-purple:hover {
-  color: #fff;
   background-color: var(--search-button-focus);
-  border-color: #21816680;
+  border-color: var(--search-button-hover);
 }
 
 .form-control.form-control-secondary,
@@ -447,6 +456,10 @@ main {
 
 .yellow-color {
   color: var(--yellow);
+}
+
+.fg-color {
+  color: var(--fg);
 }
 
 .table-striped {

@@ -8,10 +8,6 @@ $fg: #182033;
 $nav-bg: #fdfdfd;
 $title-fg: #2055e3;
 
-$taproot: #eba814;
-$taproot-light: #d5a90a;
-$taproot-dark: #9d7c05;
-
 /* Bootstrap */
 $body-bg: $bg;
 $body-color: $fg;
@@ -20,11 +16,11 @@ $gray-700: $fg;
 
 $nav-tabs-link-active-bg: $active-bg;
 
-$primary: #6bb8dc;
+$primary: #13af73;
 $secondary: #dadce1;
-$tertiary: #a377ff;
+$tertiary: #12b677;
 $success: #258751;
-$info: #426de6;
+$info: #12c06f;
 
 $h5-font-size: 1.15rem !default;
 
@@ -122,13 +118,26 @@ $dropdown-link-active-bg: $hover-bg;
   --orange: #f7931a;
   --pink: #db2777;
 
-  --search-button: #a377ff;
-  --search-button-border: #a377ff;
-  --search-button-focus: #9c6dff;
-  --search-button-shadow: #9c6dff;
+  --search-button: #08c586;
+  --search-button-border: #0dbd8b;
+  --search-button-focus: #2b7963;
+  --search-button-shadow: #10a57b80;
+  --search-button-hover: #1aaa819d;
 
   --bs-btn-hover-bg: #{$secondary};
   --bs-btn-hover-border-color: #{$secondary};
+}
+
+.btn-purple:focus,
+.btn-purple.focus {
+  background-color: var(--search-button-focus);
+  border-color: var(--search-button);
+  box-shadow: 0 0 0 0.08rem var(--search-button-hover);
+}
+
+.btn-purple:hover {
+  background-color: var(--search-button-focus);
+  border-color: var(--search-button-hover);
 }
 
 .form-select {
@@ -147,20 +156,25 @@ $dropdown-link-active-bg: $hover-bg;
 }
 
 .btn-primary {
-  --bs-btn-hover-bg: #56aed7;
-  --bs-btn-hover-border-color: #56aed7;
-  --bs-btn-focus-shadow-rgb: 86, 174, 215;
-  --bs-btn-active-bg: #42a4d2;
-  --bs-btn-active-border-color: #42a4d2;
+  --bs-btn-color: var(--fg);
+  --bs-btn-hover-color: var(--fg);
+  --bs-btn-active-color: var(--fg);
+  --bs-btn-hover-bg: #169e6e;
+  --bs-btn-hover-border-color: #169e6e;
+  --bs-btn-focus-shadow-rgb: 28, 151, 104;
+  --bs-btn-active-bg: #0dd38b;
+  --bs-btn-active-border-color: #128a5e;
 }
 
 .btn-secondary {
+  --bs-btn-color: var(--fg);
   --bs-btn-hover-bg: #c8cdd3;
   --bs-btn-hover-border-color: #c8cdd3;
   --bs-btn-focus-shadow-rgb: 200, 205, 211;
   --bs-btn-active-bg: #b6c1d8;
   --bs-btn-active-border-color: #b6c1d8;
   --bs-btn-hover-color: var(--fg);
+  --bs-btn-active-color: var(--fg);
 }
 
 .btn-outline-secondary {
@@ -181,6 +195,21 @@ $dropdown-link-active-bg: $hover-bg;
   --bs-btn-active-color: var(--bg);
   --bs-btn-active-bg: var(--link-color);
   --bs-btn-active-border-color: var(--link-color);
+}
+
+.btn-purple {
+  --bs-btn-color: var(--fg);
+  --bs-btn-hover-color: var(--fg);
+  --bs-btn-active-color: var(--fg);
+  --bs-btn-disabled-color: var(--fg);
+}
+
+.btn-purple:not(:disabled):not(.disabled):active,
+.btn-purple:not(:disabled):not(.disabled).active,
+.show > .btn-purple.dropdown-toggle {
+  color: var(--fg);
+  background-color: var(--search-button);
+  border-color: var(--search-button-border);
 }
 
 .tooltip-inner {

@@ -74,7 +74,8 @@ button {
 }
 
 .badge-default {
-  background-color: black;
+  background-color: var(--secondary);
+  color: var(--fg);
 }
 
 .badge-og {

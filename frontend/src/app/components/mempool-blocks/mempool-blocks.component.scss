@@ -133,7 +133,7 @@
   height: 0;
   border-left: calc(var(--block-size) * 0.3) solid transparent;
   border-right: calc(var(--block-size) * 0.3) solid transparent;
-  border-bottom: calc(var(--block-size) * 0.3) solid var(--fg);
+  border-bottom: calc(var(--block-size) * 0.3) solid var(--nav-icon);
 }
 
 .blockLink {
@@ -178,7 +178,7 @@
   width: calc(0.6 * var(--block-size));
   height: calc(0.25 * var(--block-size));
   border-left: solid calc(0.3 * var(--block-size)) transparent;
-  border-bottom: solid calc(0.3 * var(--block-size)) white;
+  border-bottom: solid calc(0.3 * var(--block-size)) var(--fg);
   border-right: solid calc(0.3 * var(--block-size)) transparent;
   transform: translate(
     calc(-0.2 * var(--block-size)),

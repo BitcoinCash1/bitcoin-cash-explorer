@@ -185,7 +185,7 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
             silent: true,
             symbol: 'none',
             lineStyle: {
-              color: '#fff',
+              color: 'var(--fg)',
               opacity: 1,
               width: this.inverted ? 2 : 0,
             },
@@ -326,7 +326,7 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
               progressPercentageText = `<div class="total-parcial-active">
                 <span class="progress-percentage">
                   ${formatNumber(progressPercentage, this.locale, '1.2-2')}
-                  <span class="symbol">%</span>
+                  <span class="symbol" style="color: #ffffffbb">%</span>
                 </span>
                 <span class="total-parcial-bytes">
                   ${this.bytesPipe.transform(sum, 2, 'B', 'MB', false)}
@@ -464,7 +464,7 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
                 bottom: 0,
                 selectedDataBackground: {
                   lineStyle: {
-                    color: '#fff',
+                    color: 'var(--fg)',
                     opacity: 0.45,
                   },
                   areaStyle: {

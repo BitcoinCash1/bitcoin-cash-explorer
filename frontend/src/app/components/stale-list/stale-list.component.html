@@ -188,39 +188,19 @@
                       else staleBlockCentralisedPool
                     "
                   >
-                    <img
-                      [ngbTooltip]="chainTip.stale.extras.pool.name"
-                      class="pool-logo faded"
-                      [src]="
-                        '/resources/mining-pools/' +
-                        chainTip.stale.extras.pool.slug +
-                        '.svg'
-                      "
-                      onError="this.src = '/resources/mining-pools/default.svg'"
-                      [alt]="
-                        'Logo of ' +
-                        chainTip.stale.extras.pool.name +
-                        ' mining pool'
-                      "
-                    />
+                    <app-mining-pool
+                      [slug]="chainTip.stale.extras.pool.slug"
+                      [name]="chainTip.stale.extras.pool.name"
+                      [logoStyle]="'filter: grayscale(100%) brightness(1.5);'"
+                      [showName]="false"
+                    ></app-mining-pool>
                     {{ chainTip.stale.extras.pool.minerNames[1] }}
                   </ng-container>
                   <ng-template #staleBlockCentralisedPool>
-                    <img
-                      class="pool-logo"
-                      [src]="
-                        '/resources/mining-pools/' +
-                        chainTip.stale.extras.pool.slug +
-                        '.svg'
-                      "
-                      onError="this.src = '/resources/mining-pools/default.svg'"
-                      [alt]="
-                        'Logo of ' +
-                        chainTip.stale.extras.pool.name +
-                        ' mining pool'
-                      "
-                    />
-                    {{ chainTip.stale.extras.pool.name }}
+                    <app-mining-pool
+                      [slug]="chainTip.stale.extras.pool.slug"
+                      [name]="chainTip.stale.extras.pool.name"
+                    ></app-mining-pool>
                   </ng-template>
                 </a>
               </div>
@@ -331,39 +311,19 @@
                       else canonicalBlockCentralisedPool
                     "
                   >
-                    <img
-                      [ngbTooltip]="chainTip.canonical.extras.pool.name"
-                      class="pool-logo faded"
-                      [src]="
-                        '/resources/mining-pools/' +
-                        chainTip.canonical.extras.pool.slug +
-                        '.svg'
-                      "
-                      onError="this.src = '/resources/mining-pools/default.svg'"
-                      [alt]="
-                        'Logo of ' +
-                        chainTip.canonical.extras.pool.name +
-                        ' mining pool'
-                      "
-                    />
+                    <app-mining-pool
+                      [slug]="chainTip.canonical.extras.pool.slug"
+                      [name]="chainTip.canonical.extras.pool.name"
+                      [logoStyle]="'filter: grayscale(100%) brightness(1.5);'"
+                      [showName]="false"
+                    ></app-mining-pool>
                     {{ chainTip.canonical.extras.pool.minerNames[1] }}
                   </ng-container>
                   <ng-template #canonicalBlockCentralisedPool>
-                    <img
-                      class="pool-logo"
-                      [src]="
-                        '/resources/mining-pools/' +
-                        chainTip.canonical.extras.pool.slug +
-                        '.svg'
-                      "
-                      onError="this.src = '/resources/mining-pools/default.svg'"
-                      [alt]="
-                        'Logo of ' +
-                        chainTip.canonical.extras.pool.name +
-                        ' mining pool'
-                      "
-                    />
-                    {{ chainTip.canonical.extras.pool.name }}
+                    <app-mining-pool
+                      [slug]="chainTip.canonical.extras.pool.slug"
+                      [name]="chainTip.canonical.extras.pool.name"
+                    ></app-mining-pool>
                   </ng-template>
                 </a>
               </div>

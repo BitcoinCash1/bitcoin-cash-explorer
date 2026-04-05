@@ -76,7 +76,7 @@ li.nav-item {
 .navbar-nav {
   background: var(--nav-bg);
   bottom: 0;
-  box-shadow: 0px 0px 15px 0px #000;
+  box-shadow: 0 0 15px 0 var(--nav-shadow);
   flex-direction: row;
   left: 0;
   justify-content: space-between;
@@ -139,7 +139,7 @@ li.nav-item {
 }
 
 nav {
-  box-shadow: 0px 0px 15px 0px #000;
+  box-shadow: 0px 0px 15px 0px var(--nav-shadow);
 }
 
 .connection-badge {
@@ -186,7 +186,7 @@ nav {
   }
 }
 .navbar-dark .navbar-nav .nav-link {
-  color: var(--icon);
+  color: var(--nav-icon);
 }
 
 .subdomain_logo {
@@ -242,6 +242,7 @@ app-svg-images {
   align-self: flex-start;
   width: 230px;
   height: 38px;
+  color: var(--nav-icon);
 }
 
 .beta {
@@ -289,8 +290,8 @@ app-svg-images {
   align-self: center;
   cursor: pointer;
   .anon {
-    border: 1.5px solid lightgrey;
-    color: lightgrey;
+    border: 1.5px solid var(--transparent-fg);
+    color: var(--transparent-fg);
     border-radius: 5px;
   }
 }

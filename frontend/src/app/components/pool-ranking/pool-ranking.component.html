@@ -311,14 +311,13 @@
           <td class="d-none d-md-table-cell">{{ pool.rank }}</td>
           <td>
             <div class="d-flex align-items-center">
-              <img
-                width="25"
-                height="25"
-                src="{{ pool.logo }}"
-                [alt]="pool.name + ' mining pool logo'"
-                onError="this.onerror=null; this.src = '/resources/mining-pools/default.svg'"
-                class="me-2"
-              />
+              <app-mining-pool
+                [slug]="pool.slug"
+                [name]="pool.name"
+                [showName]="false"
+                [logoStyle]="'width:25px;height:25px;'"
+                [logoClass]="'me-2'"
+              ></app-mining-pool>
               <a [routerLink]="['/mining/pool/' + pool.slug | relativeUrl]">{{
                 pool.name
               }}</a>

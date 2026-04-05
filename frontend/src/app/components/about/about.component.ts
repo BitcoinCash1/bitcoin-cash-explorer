@@ -9,7 +9,7 @@ import { WebsocketService } from '@app/services/websocket.service';
 import { SeoService } from '@app/services/seo.service';
 import { OpenGraphService } from '@app/services/opengraph.service';
 import { StateService } from '@app/services/state.service';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ApiService } from '@app/services/api.service';
 import { IBackendInfo } from '@interfaces/websocket.interface';
 import { Router, ActivatedRoute } from '@angular/router';

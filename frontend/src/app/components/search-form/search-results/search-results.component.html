@@ -180,16 +180,12 @@
         role="option"
         class="dropdown-item"
       >
-        <img
-          class="pool-logo"
-          [src]="'/resources/mining-pools/' + pool.slug + '.svg'"
-          onError="this.src = '/resources/mining-pools/default.svg'"
-          [alt]="'Logo of ' + pool.name + ' mining pool'"
-        />
-        <ngb-highlight
-          [result]="pool.name"
-          [term]="results.searchText"
-        ></ngb-highlight>
+        <app-mining-pool
+          [slug]="pool.slug"
+          [name]="pool.name"
+          [searchText]="results.searchText"
+          [logoStyle]="'margin-right:10px;'"
+        ></app-mining-pool>
       </button>
     </ng-template>
   </ng-template>

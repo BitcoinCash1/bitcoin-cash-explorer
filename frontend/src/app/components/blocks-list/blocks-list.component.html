@@ -185,14 +185,12 @@
                   block.extras.pool.slug,
                 ]"
               >
-                <img
-                  width="22"
-                  height="22"
-                  src="{{ block.extras.pool['logo'] }}"
-                  onError="this.onerror=null; this.src = '/resources/mining-pools/default.svg'"
-                  [alt]="'Logo of ' + block.extras.pool.name + ' mining pool'"
-                />
-                <span class="pool-name">{{ block.extras.pool.name }}</span>
+                <app-mining-pool
+                  [slug]="block.extras.pool.slug"
+                  [name]="block.extras.pool.name"
+                  [logoStyle]="'width:22px;height:22px;'"
+                  [textClass]="'truncate'"
+                ></app-mining-pool>
               </a>
               <span
                 *ngIf="!widget"
@@ -201,14 +199,12 @@
               >
             </div>
             <div *ngIf="!indexingAvailable" class="tooltip-custom">
-              <img
-                width="22"
-                height="22"
-                src="{{ block.extras.pool['logo'] }}"
-                onError="this.src = '/resources/mining-pools/default.svg'"
-                [alt]="'Logo of ' + block.extras.pool.name + ' mining pool'"
-              />
-              <span class="pool-name">{{ block.extras.pool.name }}</span>
+              <app-mining-pool
+                [slug]="block.extras.pool.slug"
+                [name]="block.extras.pool.name"
+                [logoStyle]="'width:22px;height:22px;'"
+                [textClass]="'truncate'"
+              ></app-mining-pool>
               <span
                 *ngIf="!widget"
                 class="tooltiptext badge bg-secondary scriptmessage"
