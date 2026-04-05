@@ -51,7 +51,9 @@ export class MiningPoolComponent implements OnInit, OnDestroy {
   }
 
   get logoSrc(): string {
-    return `/resources/mining-pools/${this.slug}${this.useLightLogo ? '.light' : ''}.svg`;
+    // return `/resources/mining-pools/${this.slug}${this.useLightLogo ? '.light' : ''}.svg`;
+    // Currently, we only have the standard logo without .light suffix in the name.
+    return `/resources/mining-pools/${this.slug}.svg`;
   }
 
   get logoAlt(): string {
@@ -66,11 +68,12 @@ export class MiningPoolComponent implements OnInit, OnDestroy {
     }
 
     // If light logo is missing, fall back to the standard logo and don't try to load the light logo again
-    if (this.useLightLogo && target.src.endsWith(`${this.slug}.light.svg`)) {
-      MiningPoolComponent.missingLightLogoSlugs.add(this.slug);
-      target.src = `/resources/mining-pools/${this.slug}.svg`;
-      return;
-    }
+    // Currently not used since we only have standard logos (and no light.svg yet)
+    // if (this.useLightLogo && target.src.endsWith(`${this.slug}.light.svg`)) {
+    //   MiningPoolComponent.missingLightLogoSlugs.add(this.slug);
+    //   target.src = `/resources/mining-pools/${this.slug}.svg`;
+    //   return;
+    // }
 
     if (
       target.src.endsWith('/resources/mining-pools/default.svg') ||

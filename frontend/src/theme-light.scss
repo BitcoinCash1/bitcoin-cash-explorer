@@ -17,8 +17,8 @@ $gray-700: $fg;
 $nav-tabs-link-active-bg: $active-bg;
 
 $primary: #13af73;
-$secondary: #dadce1;
-$tertiary: #12b677;
+$secondary: #e7e9ec;
+$tertiary: #0eb885;
 $success: #258751;
 $info: #12c06f;
 
@@ -93,22 +93,13 @@ $dropdown-link-active-bg: $hover-bg;
   --fade-out-box-bg-end: rgba(255, 255, 255, 1);
   --opacity: 0.7;
   --address-chunk-color: #119d90;
-  --world-map-bg: #ccd9ef;
-  --world-map-border: #94a5c1;
 
   --testnet: #93c5fd;
   --signet: #f0abfc;
-  --liquid: #5eead4;
-  --liquidtestnet: #d1d5db;
 
   --mainnet-alt: #a78bfa;
   --testnet-alt: #bfdbfe;
   --signet-alt: #f5d0fe;
-  --liquidtestnet-alt: #e5e7eb;
-
-  --taproot: #eba814;
-  --taproot-light: #d5a90a;
-  --taproot-dark: #9d7c05;
 
   --green: #22a559;
   --red: #e24d5e;
@@ -120,8 +111,8 @@ $dropdown-link-active-bg: $hover-bg;
 
   --search-button: #08c586;
   --search-button-border: #0dbd8b;
-  --search-button-focus: #2b7963;
-  --search-button-shadow: #10a57b80;
+  --search-button-focus: #259674;
+  --search-button-shadow: #10a56c80;
   --search-button-hover: #1aaa819d;
 
   --bs-btn-hover-bg: #{$secondary};
@@ -212,10 +203,6 @@ $dropdown-link-active-bg: $hover-bg;
   border-color: var(--search-button-border);
 }
 
-.tooltip-inner {
-  color: #fff;
-}
-
 .bg-info {
   background-color: var(--info) !important;
 }
@@ -242,16 +229,19 @@ $dropdown-link-active-bg: $hover-bg;
   color: #34aedf;
 }
 .logic {
-  color: #34aedf;
+  color: #289ac7;
 }
 .arithmetic {
-  color: #9cd4a7;
+  color: #76af6d;
 }
 .crypto {
   color: #fa3d3d;
 }
 .locktime {
   color: #d27300;
+}
+.introspection {
+  color: #137a09;
 }
 .reserved {
   color: #d27300;

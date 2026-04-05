@@ -178,6 +178,7 @@ input[type="checkbox"].form-control {
   --bs-border-radius: 0.25rem;
   --bs-btn-border-color: transparent;
   --bs-btn-disabled-border-color: transparent;
+  --bs-emphasis-color: var(--active-bg);
 }
 
 html,
@@ -1133,17 +1134,6 @@ th {
     margin-right: 1em;
   }
 
-  .acceleration-tooltip {
-    @extend .acceleration-tooltip;
-    direction: rtl;
-    text-align: right !important;
-
-    .value {
-      @extend .value;
-      text-align: start !important;
-    }
-  }
-
   .table th {
     text-align: right;
   }
@@ -1710,7 +1700,11 @@ a.badge:focus {
 }
 
 .tooltip-inner {
-  color: unset;
+  max-width: 340px;
+  background-color: var(--active-bg);
+  color: var(--fg);
+  border-radius: 5px;
+  box-shadow: 0 0 6px #00000062;
 }
 
 .form-control::placeholder {
