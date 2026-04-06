@@ -130,9 +130,13 @@ export class AsmStylerPipe implements PipeTransform {
       case 'NOP':
       case 'IF':
       case 'NOTIF':
+      case 'BEGIN':
+      case 'UNTIL':
       case 'ELSE':
       case 'ENDIF':
       case 'VERIFY':
+      case 'DEFINE':
+      case 'INVOKE':
       case 'RETURN':
       case 'RETURN_186':
       case 'RETURN_187':
@@ -231,8 +235,8 @@ export class AsmStylerPipe implements PipeTransform {
 
       case '1ADD':
       case '1SUB':
-      case '2MUL':
-      case '2DIV':
+      case 'LSHIFTNUM':
+      case 'RSHIFTNUM':
       case 'NEGATE':
       case 'ABS':
       case 'NOT':
@@ -242,8 +246,8 @@ export class AsmStylerPipe implements PipeTransform {
       case 'MUL':
       case 'DIV':
       case 'MOD':
-      case 'LSHIFT':
-      case 'RSHIFT':
+      case 'LSHIFTBIN':
+      case 'RSHIFTBIN':
       case 'BOOLAND':
       case 'BOOLOR':
       case 'NUMEQUAL':
@@ -307,8 +311,6 @@ export class AsmStylerPipe implements PipeTransform {
       case 'VER':
       case 'VERIF':
       case 'VERNOTIF':
-      case 'RESERVED1':
-      case 'RESERVED2':
       case 'NOP1':
       case 'NOP4':
       case 'NOP5':
