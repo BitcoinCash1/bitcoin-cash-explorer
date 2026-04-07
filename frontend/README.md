@@ -3,6 +3,7 @@
 You can build and run the BCH Explorer frontend and proxy to the production BCH Explorer backend (for easier frontend development), or you can connect it to your own backend for a full BCH Explorer development instance, custom deployment, etc.
 
 Jump to a section in this doc:
+
 - [Quick Setup for Frontend Development](#quick-setup-for-frontend-development)
 - [Manual Frontend Setup](#manual-setup)
 - [Translations](#translations-transifex-project)
@@ -105,7 +106,7 @@ You will probably want to set up a reverse proxy, TLS, etc. There are sample ngi
 
 ### SSR
 
-*Note:* Server-side rendering can be supported but it is not enabled by default nor tested. I don't use SSR at all (hence `outputMode` is set to `static` in `angular.json`).
+_Note:_ Server-side rendering can be supported but it is **NOT** enabled by default nor tested. I don't use SSR at all (hence `outputMode` is set to `static` in `angular.json`).
 
 Running SSR would also require changes to `angular.json`:
 
@@ -116,6 +117,12 @@ Running SSR would also require changes to `angular.json`:
     }
 ```
 
+### Customization
+
+The frontend can be customized by setting the `CUSTOMIZATION` property to another json file path in the `explorer-frontend-config.json` file (see for example `custom-meta-config.json`). This can be enabled in the top-level configuration like so: `"CUSTOMIZATION": "custom-meta-config.json"`. The `generate-config.js` script will then use this file to generate the `/resources/customize.js` file.
+
+Be sure to use the `index.bchexplorer.html` file instead of `index.explorer.html`, which contains the `/resources/customize.js` script in the HTML head section (by default the `index.explorer.html` get used, which doesn't contain the `/resources/customize.js` script).
+
 ## Translations: Transifex Project
 
 The Explorer frontend strings are localized into 20+ locales:
@@ -123,34 +130,34 @@ https://www.transifex.com/mempool/mempool/dashboard/
 
 ### Translators
 
-* Arabic @baro0k
-* Czech @pixelmade2
-* Danish @pierrevendelboe
-* German @Emzy
-* English (default)
-* Spanish @maxhodler @bisqes
-* Persian @techmix
-* French @Bayernatoor
-* Korean @kcalvinalvinn @sogoagain
-* Italian @HodlBits
-* Lithuanian @eimze21
-* Hebrew @rapidlab309
-* Georgian @wyd_idk
-* Hungarian @btcdragonlord
-* Dutch @m__btc
-* Japanese @wiz @japananon
-* Norwegian @T82771355
-* Polish @maciejsoltysiak
-* Portugese @jgcastro1985
-* Slovenian @thepkbadger
-* Finnish @bio_bitcoin
-* Swedish @softsimon_
-* Thai @Gusb3ll
-* Turkish @stackmore
-* Ukrainian @volbil
-* Vietnamese @BitcoinvnNews
-* Chinese @wdljt
-* Russian @TonyCrusoe @Bitconan
-* Romanian @mirceavesa
-* Macedonian @SkechBoy
-* Nepalese @kebinm
+- Arabic @baro0k
+- Czech @pixelmade2
+- Danish @pierrevendelboe
+- German @Emzy
+- English (default)
+- Spanish @maxhodler @bisqes
+- Persian @techmix
+- French @Bayernatoor
+- Korean @kcalvinalvinn @sogoagain
+- Italian @HodlBits
+- Lithuanian @eimze21
+- Hebrew @rapidlab309
+- Georgian @wyd_idk
+- Hungarian @btcdragonlord
+- Dutch @m\_\_btc
+- Japanese @wiz @japananon
+- Norwegian @T82771355
+- Polish @maciejsoltysiak
+- Portugese @jgcastro1985
+- Slovenian @thepkbadger
+- Finnish @bio_bitcoin
+- Swedish @softsimon\_
+- Thai @Gusb3ll
+- Turkish @stackmore
+- Ukrainian @volbil
+- Vietnamese @BitcoinvnNews
+- Chinese @wdljt
+- Russian @TonyCrusoe @Bitconan
+- Romanian @mirceavesa
+- Macedonian @SkechBoy
+- Nepalese @kebinm
