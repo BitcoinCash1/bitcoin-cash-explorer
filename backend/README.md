@@ -78,16 +78,18 @@ Query OK, 0 rows affected (0.00 sec)
 
 #### Build
 
-_Make sure to use Node.js 20.x and npm 9.x or newer_
+_Make sure to use Node.js 24.x and [pnpm 10.x or newer](https://pnpm.io/installation)_
 
 _The build process requires [Rust](https://www.rust-lang.org/tools/install) to be installed._
 
-Install dependencies with `npm` and build the backend:
+Install dependencies with `pnpm`, run the preinstall script, then install and finally build the backend:
 
 ```sh
 cd backend
-npm install
-npm run build
+# Run preinstall first (pnpm doesn't run it automatically for security reasons)
+pnpm preinstall
+pnpm install
+pnpm build
 ```
 
 #### Configure
@@ -112,13 +114,13 @@ In particular, make sure:
 Run the BCH Explorer backend:
 
 ```sh
-npm run start
+pnpm start
 ```
 
 You can also set env var `EXPLORER_CONFIG_FILE` to specify a custom config file location:
 
 ```sh
-EXPLORER_CONFIG_FILE=/path/to/explorer-config.json npm run start
+EXPLORER_CONFIG_FILE=/path/to/explorer-config.json pnpm start
 ```
 
 When it's running, you should see output like this:
@@ -158,17 +160,17 @@ As a result, for development purposes, you may find it helpful to set up backend
 
 First, install `nodemon` and `ts-node`:
 
-```
-npm install -g ts-node nodemon
+```sh
+pnpm install -g ts-node nodemon
 ```
 
 Then, run the watcher:
 
-```
+```sh
 nodemon src/index.ts --ignore cache/
 ```
 
-`nodemon` should be in npm's global binary folder. If needed, you can determine where that is with `npm -g bin`.
+`nodemon` should be in pnpm's global binary folder. If needed, you can determine where that is with `pnpm -g bin`.
 
 ### Useful Regtest Commands
 
@@ -176,49 +178,49 @@ Helpful link: https://gist.github.com/System-Glitch/cb4e87bf1ae3fec9925725bb3ebe
 
 Run bitcoind on regtest:
 
-```
+```sh
 bitcoind -regtest
 ```
 
 Create a new wallet, if needed:
 
-```
+```sh
 bitcoin-cli -regtest createwallet test
 ```
 
 Load wallet (this command may take a while if you have a lot of UTXOs):
 
-```
+```sh
 bitcoin-cli -regtest loadwallet test
 ```
 
 Get a new address:
 
-```
+```sh
 address=$(bitcoin-cli -regtest getnewaddress)
 ```
 
 Mine blocks to the previously generated address. You need at least 101 blocks before you can spend. This will take some time to execute (~1 min):
 
-```
+```sh
 bitcoin-cli -regtest generatetoaddress 101 $address
 ```
 
 Send 0.1 BTC at 5 sat/vB to another address:
 
-```
+```sh
 bitcoin-cli -named -regtest sendtoaddress address=$(bitcoin-cli -regtest getnewaddress) amount=0.1 fee_rate=5
 ```
 
 See more example of `sendtoaddress`:
 
-```
+```sh
 bitcoin-cli sendtoaddress # will print the help
 ```
 
 Mini script to generate random network activity (random TX count with random tx fee-rate). It's slow so don't expect to use this to test BCH Explorer spam, except if you let it run for a long time, or maybe with multiple regtest nodes connected to each other.
 
-```
+```sh
 #!/bin/bash
 address=$(bitcoin-cli -regtest getnewaddress)
 bitcoin-cli -regtest generatetoaddress 101 $address
@@ -235,7 +237,7 @@ done
 
 Generate block at regular interval (every 10 seconds in this example):
 
-```
+```sh
 watch -n 10 "bitcoin-cli -regtest generatetoaddress 1 $address"
 ```
 
@@ -243,7 +245,7 @@ watch -n 10 "bitcoin-cli -regtest generatetoaddress 1 $address"
 
 By default, mining pools will be not automatically updated regularly (`config.explorer.AUTOMATIC_POOLS_UPDATE` is set to `false`).
 
-To manually update your mining pools, you can use the `--update-pools` command line flag when you run the nodejs backend. For example `npm run start --update-pools`. This will trigger the mining pools update and automatically re-index appropriate blocks.
+To manually update your mining pools, you can use the `--update-pools` command line flag when you run the nodejs backend. For example `pnpm start --update-pools`. This will trigger the mining pools update and automatically re-index appropriate blocks.
 
 You can enable the automatic mining pools update by settings `config.explorer.AUTOMATIC_POOLS_UPDATE` to `true` in your `explorer-config.json`.
 
@@ -258,7 +260,7 @@ Use the `--reindex-blocks` command to truncate the `blocks`, `hashrates`, `diffi
 Usage:
 
 ```sh
-npm run start --reindex-blocks
+pnpm start --reindex-blocks
 ```
 
 Example output:

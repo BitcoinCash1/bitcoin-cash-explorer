@@ -28,18 +28,18 @@ The same frontend codebase is used for https://bchexplorer.cash.
 Configure the frontend for the site you want by running the corresponding command:
 
 ```sh
-$ npm run config:defaults:explorer
+$ pnpm config:defaults:explorer
 ```
 
 ### 3. Run the Frontend
 
-_Make sure to use Node.js 24.x and npm 10.x or newer._
+_Make sure to use Node.js 24.x and [pnpm 10.x](https://pnpm.io/installation) or newer._
 
 Install project dependencies and run the frontend server:
 
 ```sh
-$ npm install
-$ npm run serve:local-prod
+$ pnpm install
+$ pnpm serve:local-prod
 ```
 
 The frontend will be available at http://localhost:4200/ and all API requests will be proxied to the production server at https://bchexplorer.cash.
@@ -51,13 +51,13 @@ After making your changes, you can run our end-to-end automation suite and check
 Headless:
 
 ```sh
-$ npm run config:defaults:explorer && npm run cypress:run
+$ pnpm config:defaults:explorer && pnpm cypress:run
 ```
 
 Interactive:
 
 ```sh
-$ npm run config:defaults:explorer && npm run cypress:open
+$ pnpm config:defaults:explorer && pnpm cypress:open
 ```
 
 This will open the Cypress test runner, where you can select any of the test files to run.
@@ -70,14 +70,14 @@ Set up the [BCH Explorer backend](../backend/) first, if you haven't already.
 
 ### 1. Build the Frontend
 
-_Make sure to use Node.js 24.x and npm 10.x or newer._
+_Make sure to use Node.js 24.x and [pnpm 10.x](https://pnpm.io/installation) or newer._
 
 Build the frontend:
 
 ```sh
 cd frontend
-npm install
-npm run build
+pnpm install
+pnpm build
 ```
 
 ### 2. Run the Frontend
@@ -89,18 +89,18 @@ To run your local BCH Explorer frontend with your local BCH Explorer backend:
 First run only once, which will retrieve the image resources:
 
 ```sh
-npm run sync-assets-dev
+pnpm sync-assets-dev
 ```
 
 Then run:
 
 ```sh
-npm run serve
+pnpm serve
 ```
 
 #### Production
 
-The `npm run build` command from step 1 above should have generated a `dist` directory. Put the contents of `dist/` onto your web server.
+The `pnpm build` command from step 1 above should have generated a `dist` directory. Put the contents of `dist/` onto your web server.
 
 You will probably want to set up a reverse proxy, TLS, etc. There are sample nginx configuration files in the top level of the repository for reference, but note that support for such tasks is outside the scope of this project.
 

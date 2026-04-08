@@ -1,15 +1,15 @@
 default:
-  image: registry.melroy.org/melroy/docker-images/rust:1.93-node-24.13.0
+  image: registry.melroy.org/melroy/docker-images/rust:1.94-node-24.14.0
 
 .cache_backend_template: &cache_backend_definition
   cache:
     key:
       files:
-        - backend/package-lock.json
+        - backend/pnpm-lock.yaml
         - rust/gbt/Cargo.lock
     paths:
-      # npm
-      - backend/.npm/
+      # pnpm
+      - backend/.pnpm-store
       # cargo
       - .cargo
 
@@ -17,9 +17,13 @@ default:
   cache:
     key:
       files:
-        - frontend/package-lock.json
+        - frontend/pnpm-lock.yaml
     paths:
-      - frontend/.npm/
+      - frontend/.pnpm-store
+
+workflow:
+  auto_cancel:
+    on_new_commit: interruptible
 
 stages:
   - test
@@ -32,10 +36,11 @@ lint-format-test-backend:
   interruptible: true
   script:
     - cd backend
-    - npm ci --cache .npm --prefer-offline
-    #- npm run lint
-    - npm run prettier:check
-    - npm run test
+    - pnpm preinstall
+    - pnpm install --prefer-offline --prefer-frozen-lockfile
+    #- pnpm run lint
+    - pnpm prettier:check
+    - pnpm test
 
 #test-frontend:
 #  stage: test
@@ -46,9 +51,9 @@ lint-format-test-backend:
 #    ELECTRON_EXTRA_LAUNCH_ARGS: "--headless --disable-gpu --disable-software-rasterizer --no-sandbox"
 #  script:
 #    - cd frontend
-#    - npm ci --cache .npm --prefer-offline
-#    - npm run config:defaults:explorer
-#    - npm run e2e:ci
+#    - pnpm install --prefer-offline --prefer-frozen-lockfile
+#    - pnpm config:defaults:explorer
+#    - pnpm e2e:ci
 
 lint-format-frontend:
   stage: test
@@ -56,10 +61,10 @@ lint-format-frontend:
   interruptible: true
   script:
     - cd frontend
-    - npm ci --cache .npm --prefer-offline
-    - npm run config:defaults:explorer
-    #- npm run lint
-    - npm run prettier:check
+    - pnpm install --prefer-offline --prefer-frozen-lockfile
+    - pnpm config:defaults:explorer
+    #- pnpm run lint
+    - pnpm prettier:check
 
 build-backend:
   stage: build
@@ -70,8 +75,9 @@ build-backend:
   interruptible: true
   script:
     - cd backend
-    - npm ci --cache .npm --prefer-offline --omit=dev --omit=optional
-    - npm run package
+    - pnpm preinstall
+    - pnpm install --prefer-offline --prefer-frozen-lockfile
+    - pnpm package
   artifacts:
     name: "Backend Build"
     expire_in: 1 week
@@ -86,9 +92,9 @@ build-frontend:
   interruptible: true
   script:
     - cd frontend
-    - npm ci --cache .npm --prefer-offline --omit=optional
-    - npm run config:defaults:explorer
-    - npm run build
+    - pnpm install --prefer-offline --prefer-frozen-lockfile
+    - pnpm config:defaults:explorer
+    - pnpm build
   artifacts:
     name: "Frontend Build"
     expire_in: 1 week
