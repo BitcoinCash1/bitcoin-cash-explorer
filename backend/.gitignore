@@ -11,6 +11,9 @@ Dockerfile
 start.sh
 wait-for-it.sh
 
+# pnpm
+.pnpm-store
+
 # compiled output
 /dist
 /tmp

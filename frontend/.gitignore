@@ -13,6 +13,9 @@ nginx-explorer.conf
 nginx.conf
 wait-for
 
+# pnpm
+.pnpm-store
+
 # Only exists if Bazel was run
 /bazel-out
 

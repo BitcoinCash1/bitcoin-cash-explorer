@@ -4,7 +4,7 @@ set -e
 # Remove previous dist folder (if present)
 rm -rf dist
 # Build new dist folder
-npm run build
+pnpm build
 # Remove previous package folder (if present)
 rm -rf package
 # Move JS and deps
@@ -16,4 +16,4 @@ cp healthcheck.js package
 rm package/node_modules/rust-gbt
 cp -R rust-gbt package/node_modules
 # Clean up deps
-npm run package-rm-build-deps
+pnpm package-rm-build-deps
