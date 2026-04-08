@@ -82,12 +82,14 @@ _Make sure to use Node.js 24.x and [pnpm 10.x or newer](https://pnpm.io/installa
 
 _The build process requires [Rust](https://www.rust-lang.org/tools/install) to be installed._
 
-Install dependencies with `pnpm` and build the backend:
+Install dependencies with `pnpm`, run the preinstall script, then install and finally build the backend:
 
 ```sh
 cd backend
+# Run preinstall first (pnpm doesn't run it automatically for security reasons)
+pnpm preinstall
 pnpm install
-pnpm run build
+pnpm build
 ```
 
 #### Configure

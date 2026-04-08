@@ -36,7 +36,7 @@ lint-format-test-backend:
   interruptible: true
   script:
     - cd backend
-    - pnpm config set store-dir .pnpm-store
+    - pnpm preinstall
     - pnpm install --prefer-offline --prefer-frozen-lockfile
     #- pnpm run lint
     - pnpm prettier:check
@@ -51,7 +51,6 @@ lint-format-test-backend:
 #    ELECTRON_EXTRA_LAUNCH_ARGS: "--headless --disable-gpu --disable-software-rasterizer --no-sandbox"
 #  script:
 #    - cd frontend
-#    - pnpm config set store-dir .pnpm-store
 #    - pnpm install --prefer-offline --prefer-frozen-lockfile
 #    - pnpm config:defaults:explorer
 #    - pnpm e2e:ci
@@ -62,7 +61,6 @@ lint-format-frontend:
   interruptible: true
   script:
     - cd frontend
-    - pnpm config set store-dir .pnpm-store
     - pnpm install --prefer-offline --prefer-frozen-lockfile
     - pnpm config:defaults:explorer
     #- pnpm run lint
@@ -77,7 +75,7 @@ build-backend:
   interruptible: true
   script:
     - cd backend
-    - pnpm config set store-dir .pnpm-store
+    - pnpm preinstall
     - pnpm install --prefer-offline --prefer-frozen-lockfile
     - pnpm package
   artifacts:
@@ -94,7 +92,6 @@ build-frontend:
   interruptible: true
   script:
     - cd frontend
-    - pnpm config set store-dir .pnpm-store
     - pnpm install --prefer-offline --prefer-frozen-lockfile
     - pnpm config:defaults:explorer
     - pnpm build
