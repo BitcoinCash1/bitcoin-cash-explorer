@@ -1,4 +1,4 @@
-FROM node:24.13-trixie-slim AS builder
+FROM registry.melroy.org/melroy/docker-images/debian-pnpm:24.14-trixie AS builder
 
 ARG commitHash
 ENV DOCKER_COMMIT_HASH=${commitHash}
@@ -10,9 +10,9 @@ COPY . .
 RUN apt-get update
 RUN apt-get install -y build-essential rsync
 RUN cp explorer-frontend-config.sample.json explorer-frontend-config.json
-RUN npm install --omit=optional
+RUN pnpm install --no-optional
 
-RUN npm run build
+RUN pnpm build
 
 FROM nginx:1.29.4-alpine
 

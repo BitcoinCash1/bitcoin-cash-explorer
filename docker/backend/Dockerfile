@@ -1,4 +1,4 @@
-FROM registry.melroy.org/melroy/docker-images/rust:1.93-node-24.13.0 AS builder
+FROM registry.melroy.org/melroy/docker-images/rust:1.94-node-24.14.0 AS builder
 
 ARG commitHash
 ENV MEMPOOL_COMMIT_HASH=${commitHash}
@@ -14,10 +14,11 @@ COPY --chown=user:user --from=backend . .
 COPY --chown=user:user --from=rustgbt . ../rust/
 ENV FD=/build/rust-gbt
 
-RUN npm install --omit=dev --omit=optional
-RUN npm run package
+RUN pnpm preinstall
+RUN pnpm install --prod
+RUN pnpm package
 
-FROM registry.melroy.org/melroy/docker-images/rust:1.93-node-24.13.0 AS runtime
+FROM registry.melroy.org/melroy/docker-images/rust:1.94-node-24.14.0 AS runtime
 
 ENV NODE_OPTIONS=--max-old-space-size=16384
 ENV NODE_ENV=production
