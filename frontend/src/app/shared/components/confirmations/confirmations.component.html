@@ -3,8 +3,7 @@
     *ngIf="blockHash; else confirmationsButton"
     [routerLink]="['/block' | relativeUrl, blockHash]"
     class="btn btn-sm btn-success {{ buttonClass }}"
-    ngbTooltip="Go to block"
-    i18n-ngbTooltip="shared.go-to-block|Confirmation button tooltip"
+    [ngbTooltip]="tooltipText"
   >
     <ng-container
       *ngTemplateOutlet="
@@ -48,8 +47,7 @@
     *ngIf="blockHash; else confirmedButton"
     [routerLink]="['/block' | relativeUrl, blockHash]"
     class="btn btn-sm btn-success {{ buttonClass }}"
-    ngbTooltip="Go to block"
-    i18n-ngbTooltip="shared.go-to-block|Confirmation button tooltip"
+    [ngbTooltip]="tooltipText"
     i18n="transaction.confirmed|Transaction confirmed state"
   >
     Confirmed

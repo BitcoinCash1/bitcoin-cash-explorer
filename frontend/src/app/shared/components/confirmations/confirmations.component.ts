@@ -20,6 +20,7 @@ export class ConfirmationsComponent implements OnChanges {
   @Input() blockHash: string;
 
   confirmations: number = 0;
+  tooltipText: string = 'Go to block';
 
   ngOnChanges(): void {
     if (this.chainTip != null && this.height != null) {
@@ -27,5 +28,7 @@ export class ConfirmationsComponent implements OnChanges {
     } else {
       this.confirmations = 0;
     }
+    this.tooltipText =
+      this.height != null ? `Go to block ${this.height}` : 'Go to block';
   }
 }
