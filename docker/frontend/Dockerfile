@@ -10,7 +10,7 @@ COPY . .
 RUN apt-get update
 RUN apt-get install -y build-essential rsync
 RUN cp explorer-frontend-config.sample.json explorer-frontend-config.json
-RUN pnpm install --no-optional
+RUN pnpm install
 
 RUN pnpm build
 
