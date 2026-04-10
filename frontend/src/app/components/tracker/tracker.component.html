@@ -184,6 +184,7 @@
                     *ngIf="tx"
                     [chainTip]="latestBlock?.height"
                     [height]="tx?.status?.block_height"
+                    [blockHash]="tx?.status?.block_hash"
                   ></app-confirmations>
                 </div>
               </span>

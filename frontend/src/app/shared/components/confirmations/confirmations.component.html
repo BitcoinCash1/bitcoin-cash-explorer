@@ -1,7 +1,10 @@
 <ng-template [ngIf]="confirmations">
-  <button
-    type="button"
-    class="btn btn-sm btn-success no-cursor {{ buttonClass }}"
+  <a
+    *ngIf="blockHash; else confirmationsButton"
+    [routerLink]="['/block' | relativeUrl, blockHash]"
+    class="btn btn-sm btn-success {{ buttonClass }}"
+    ngbTooltip="Go to block"
+    i18n-ngbTooltip="shared.go-to-block|Confirmation button tooltip"
   >
     <ng-container
       *ngTemplateOutlet="
@@ -9,33 +12,57 @@
         context: { $implicit: confirmations }
       "
     ></ng-container>
-    <ng-template
-      #confirmationSingular
-      let-i
-      i18n="
-        shared.confirmation-count.singular|Transaction singular confirmation
-        count
-      "
-      >{{ i }} confirmation</ng-template
+  </a>
+  <ng-template #confirmationsButton>
+    <button
+      type="button"
+      class="btn btn-sm btn-success no-cursor {{ buttonClass }}"
     >
-    <ng-template
-      #confirmationPlural
-      let-i
-      i18n="
-        shared.confirmation-count.plural|Transaction plural confirmation count
-      "
-      >{{ i }} confirmations</ng-template
-    >
-  </button>
+      <ng-container
+        *ngTemplateOutlet="
+          confirmations == 1 ? confirmationSingular : confirmationPlural;
+          context: { $implicit: confirmations }
+        "
+      ></ng-container>
+    </button>
+  </ng-template>
+  <ng-template
+    #confirmationSingular
+    let-i
+    i18n="
+      shared.confirmation-count.singular|Transaction singular confirmation count
+    "
+    >{{ i }} confirmation</ng-template
+  >
+  <ng-template
+    #confirmationPlural
+    let-i
+    i18n="
+      shared.confirmation-count.plural|Transaction plural confirmation count
+    "
+    >{{ i }} confirmations</ng-template
+  >
 </ng-template>
 <ng-template [ngIf]="!confirmations && height != null">
-  <button
-    type="button"
-    class="btn btn-sm btn-success no-cursor {{ buttonClass }}"
+  <a
+    *ngIf="blockHash; else confirmedButton"
+    [routerLink]="['/block' | relativeUrl, blockHash]"
+    class="btn btn-sm btn-success {{ buttonClass }}"
+    ngbTooltip="Go to block"
+    i18n-ngbTooltip="shared.go-to-block|Confirmation button tooltip"
     i18n="transaction.confirmed|Transaction confirmed state"
   >
     Confirmed
-  </button>
+  </a>
+  <ng-template #confirmedButton>
+    <button
+      type="button"
+      class="btn btn-sm btn-success no-cursor {{ buttonClass }}"
+      i18n="transaction.confirmed|Transaction confirmed state"
+    >
+      Confirmed
+    </button>
+  </ng-template>
 </ng-template>
 <ng-template [ngIf]="chainTip != null && !confirmations && !confirmed">
   <button

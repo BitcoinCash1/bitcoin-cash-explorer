@@ -17,6 +17,7 @@ export class ConfirmationsComponent implements OnChanges {
   @Input() height: number;
   @Input() confirmed: boolean = false;
   @Input() buttonClass: string = '';
+  @Input() blockHash: string;
 
   confirmations: number = 0;
 
