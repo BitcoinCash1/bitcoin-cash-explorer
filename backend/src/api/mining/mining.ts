@@ -490,12 +490,6 @@ class Mining {
         logger.tags.mining
       );
 
-      // Get existing hashrates to avoid duplicates
-      const existingDailyTimestamps = (await HashratesRepository.$getRawNetworkDailyHashrate(null)).map(
-        (hashrate) => hashrate.timestamp
-      );
-      const existingWeeklyTimestamps = await HashratesRepository.$getWeeklyHashrateTimestamps();
-
       // === DAILY HASHRATE REINDEXING ===
       logger.info('Starting daily hashrate reindexing', logger.tags.mining);
       loadingIndicators.setProgress('daily-hashrate-indexing', 0);
@@ -516,12 +510,6 @@ class Mining {
         const currentDayFrom = currentDayTo - 86400000;
         dailyTotalProcessed++;
 
-        // Skip if already indexed
-        if (existingDailyTimestamps.includes(currentDayTo / 1000)) {
-          currentDayTo -= 86400000;
-          continue;
-        }
-
         // Get block stats for this day
         const blockStats: any = await BlocksRepository.$blockCountBetweenTimestamp(
           null,
@@ -529,22 +517,20 @@ class Mining {
           currentDayTo / 1000
         );
 
-        if (blockStats.blockCount > 0) {
-          const lastBlockHashrate = await bitcoinClient.getNetworkHashPs(
-            blockStats.blockCount,
-            blockStats.lastBlockHeight
-          );
+        const lastBlockHashrate =
+          blockStats.blockCount === 0
+            ? 0
+            : await bitcoinClient.getNetworkHashPs(blockStats.blockCount, blockStats.lastBlockHeight);
 
-          dailyHashrates.push({
-            hashrateTimestamp: currentDayTo / 1000,
-            avgHashrate: lastBlockHashrate,
-            poolId: 0,
-            share: 1,
-            type: 'daily',
-          });
+        dailyHashrates.push({
+          hashrateTimestamp: currentDayTo / 1000,
+          avgHashrate: lastBlockHashrate,
+          poolId: 0,
+          share: 1,
+          type: 'daily',
+        });
 
-          dailyIndexedThisRun++;
-        }
+        dailyIndexedThisRun++;
 
         // Save in batches
         if (dailyHashrates.length > 10) {
@@ -570,7 +556,7 @@ class Mining {
       }
 
       // Add genesis block manually
-      if (!existingDailyTimestamps.includes(genesisTimestamp / 1000)) {
+      if (config.EXPLORER.INDEXING_BLOCKS_AMOUNT === -1) {
         dailyHashrates.push({
           hashrateTimestamp: genesisTimestamp / 1000,
           avgHashrate: await bitcoinClient.getNetworkHashPs(1, 1),
@@ -609,12 +595,6 @@ class Mining {
       while (currentWeekTo > genesisTimestamp) {
         const currentWeekFrom = currentWeekTo - 604800000; // 7 days
         weeklyTotalProcessed++;
-
-        // Skip if already indexed
-        if (existingWeeklyTimestamps.includes(currentWeekTo / 1000)) {
-          currentWeekTo -= 604800000;
-          continue;
-        }
 
         // Get block stats for this week
         const blockStats: any = await BlocksRepository.$blockCountBetweenTimestamp(
@@ -688,6 +668,10 @@ class Mining {
         logger.tags.mining
       );
       loadingIndicators.setProgress('weekly-hashrate-indexing', 100);
+
+      // Mark indexing as done for today so scheduled jobs don't redundantly re-run
+      this.lastHashrateIndexingDate = new Date().getUTCDate();
+      this.lastWeeklyHashrateIndexingDate = new Date().getUTCDate();
 
       // Summary
       const totalTime = Math.round(new Date().getTime() / 1000 - dailyStartedAt);
