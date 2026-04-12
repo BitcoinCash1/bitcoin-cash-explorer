@@ -209,7 +209,8 @@
               "qrcode"
             ],
             "browser": "src/main.ts",
-            "outputMode": "static"
+            "outputMode": "static",
+            "localize": true
           },
           "configurations": {
             "production": {
@@ -243,6 +244,9 @@
                   "with": "src/environments/environment.development.ts"
                 }
               ]
+            },
+            "nl": {
+              "localize": ["nl"]
             }
           },
           "defaultConfiguration": "production"
@@ -280,6 +284,11 @@
               "proxyConfig": "proxy.conf.parameterized.js",
               "host": "0.0.0.0",
               "verbose": false
+            },
+            "nl": {
+              "buildTarget": "explorer:build:development,nl",
+              "proxyConfig": "proxy.conf.local.js",
+              "verbose": true
             }
           },
           "defaultConfiguration": "development"

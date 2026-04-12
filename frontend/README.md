@@ -125,8 +125,18 @@ Be sure to use the `index.bchexplorer.html` file instead of `index.explorer.html
 
 ## Translations: Transifex Project
 
-The Explorer frontend strings are localized into 20+ locales:
+The BCH Explorer frontend strings are localized into 20+ locales:
 https://www.transifex.com/mempool/mempool/dashboard/
+
+### Local Internationalization
+
+By default `ng serve` will serve the BCH Explorer with the English language (default language). You can leverage `--configuration` flag to serve a local version of the BCH Explorer with a custom configuration (eg. `nl`) to show the Dutch language:
+
+```sh
+ng serve --configuration=nl
+```
+
+*Note:* I didn't implemented a configuration for all languages to use with `ng serve`, but you can easily extend the `angular.json` file to add more configurations.
 
 ### Translators
 
