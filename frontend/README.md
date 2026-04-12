@@ -123,20 +123,34 @@ The frontend can be customized by setting the `CUSTOMIZATION` property to anothe
 
 Be sure to use the `index.bchexplorer.html` file instead of `index.explorer.html`, which contains the `/resources/customize.js` script in the HTML head section (by default the `index.explorer.html` get used, which doesn't contain the `/resources/customize.js` script).
 
-## Translations: Transifex Project
+## Translations
 
-The BCH Explorer frontend strings are localized into 20+ locales:
-https://www.transifex.com/mempool/mempool/dashboard/
+The BCH Explorer frontend strings are localized into 20+ locales.
 
 ### Local Internationalization
 
 By default `ng serve` will serve the BCH Explorer with the English language (default language). You can leverage `--configuration` flag to serve a local version of the BCH Explorer with a custom configuration (eg. `nl`) to show the Dutch language:
 
 ```sh
-ng serve --configuration=nl
+pnpm serve --configuration=nl
 ```
 
 *Note:* I didn't implemented a configuration for all languages to use with `ng serve`, but you can easily extend the `angular.json` file to add more configurations.
+
+---
+
+The `ng extract-i18n` command is now (temporarily?) replaced by the [`ng-extract-i18n-merge`](https://github.com/daniel-sc/ng-extract-i18n-merge) package. Which merges the extracted translations into an existing XLF file instead of overwriting it, this was needed due to the large amount of changes we made to the code base.
+
+By default it uses the `src/locale/messages.xlf` file as the base file to merge the extracted translations into. The orginal `angular.json` configuration was:
+
+```json
+"extract-i18n": {
+  "builder": "@angular/build:extract-i18n",
+  "options": {
+    "buildTarget": "explorer:build"
+  }
+}
+```
 
 ### Translators
 

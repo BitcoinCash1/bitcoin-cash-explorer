@@ -1,3 +1,5 @@
+/// <reference types="@angular/localize" />
+
 import { provideZoneChangeDetection } from '@angular/core';
 import { BootstrapContext } from '@angular/platform-browser';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';

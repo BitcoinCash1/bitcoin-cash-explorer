@@ -162,10 +162,7 @@
           "builder": "@angular/build:application",
           "options": {
             "index": "src/index.html",
-            "polyfills": [
-              "zone.js",
-              "@angular/localize/init"
-            ],
+            "polyfills": ["zone.js", "@angular/localize/init"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -205,9 +202,7 @@
               },
               "node_modules/@fortawesome/fontawesome-svg-core/styles.css"
             ],
-            "allowedCommonJsDependencies": [
-              "qrcode"
-            ],
+            "allowedCommonJsDependencies": ["qrcode"],
             "browser": "src/main.ts",
             "outputMode": "static",
             "localize": true
@@ -297,9 +292,46 @@
           "builder": "@angular/build:unit-test"
         },
         "extract-i18n": {
-          "builder": "@angular/build:extract-i18n",
+          "builder": "ng-extract-i18n-merge:ng-extract-i18n-merge",
           "options": {
-            "buildTarget": "explorer:build"
+            "buildTarget": "explorer:build",
+            "format": "xlf",
+            "outputPath": "src/locale",
+            "targetFiles": [
+              "messages.ar.xlf",
+              "messages.ca.xlf",
+              "messages.cs.xlf",
+              "messages.de.xlf",
+              "messages.da.xlf",
+              "messages.es.xlf",
+              "messages.fa.xlf",
+              "messages.fr.xlf",
+              "messages.hr.xlf",
+              "messages.ja.xlf",
+              "messages.ka.xlf",
+              "messages.ko.xlf",
+              "messages.it.xlf",
+              "messages.he.xlf",
+              "messages.nl.xlf",
+              "messages.nb.xlf",
+              "messages.pl.xlf",
+              "messages.pt.xlf",
+              "messages.sl.xlf",
+              "messages.sv.xlf",
+              "messages.th.xlf",
+              "messages.tr.xlf",
+              "messages.uk.xlf",
+              "messages.fi.xlf",
+              "messages.vi.xlf",
+              "messages.hu.xlf",
+              "messages.mk.xlf",
+              "messages.zh.xlf",
+              "messages.ro.xlf",
+              "messages.ru.xlf",
+              "messages.hi.xlf",
+              "messages.ne.xlf",
+              "messages.lt.xlf"
+            ]
           }
         },
         "e2e": {
