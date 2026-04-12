@@ -242,6 +242,9 @@
             },
             "nl": {
               "localize": ["nl"]
+            },
+            "es": {
+              "localize": ["es"]
             }
           },
           "defaultConfiguration": "production"
@@ -282,6 +285,11 @@
             },
             "nl": {
               "buildTarget": "explorer:build:development,nl",
+              "proxyConfig": "proxy.conf.local.js",
+              "verbose": true
+            },
+            "es": {
+              "buildTarget": "explorer:build:development,es",
               "proxyConfig": "proxy.conf.local.js",
               "verbose": true
             }

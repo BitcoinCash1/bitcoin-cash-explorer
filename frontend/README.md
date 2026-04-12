@@ -129,10 +129,10 @@ The BCH Explorer frontend strings are localized into 20+ locales.
 
 ### Local Internationalization
 
-By default `ng serve` will serve the BCH Explorer with the English language (default language). You can leverage `--configuration` flag to serve a local version of the BCH Explorer with a custom configuration (eg. `nl`) to show the Dutch language:
+By default `ng serve` will serve the BCH Explorer with the English language (default language). You can leverage `--configuration` flag to serve a local version of the BCH Explorer with a custom configuration (eg. `nl` or `es`) to show the Dutch or Spanish language:
 
 ```sh
-pnpm serve --configuration=nl
+pnpm serve:nl
 ```
 
 *Note:* I didn't implemented a configuration for all languages to use with `ng serve`, but you can easily extend the `angular.json` file to add more configurations.
