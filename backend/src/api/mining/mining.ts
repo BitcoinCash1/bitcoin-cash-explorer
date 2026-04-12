@@ -472,7 +472,11 @@ class Mining {
    * Note: This might take some time to complete or might do quite some backend calls and DB inserts.
    */
   public async $generateAllHashrateHistoryAlways(): Promise<void> {
-    logger.info('Starting forced hashrate reindex from genesis block to today', logger.tags.mining);
+    logger.notice(`hashrates will now be re-indexed`);
+    // Start with truncating the full hashrates table
+    await database.query(`TRUNCATE hashrates`);
+
+    logger.info('Starting forced hashrate reindex (daily + weekly) from genesis block to today', logger.tags.mining);
 
     try {
       // Calculate time range: from genesis block to now
