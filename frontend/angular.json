@@ -167,7 +167,6 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
-              "src/resources",
               "src/robots.txt",
               "src/config.js",
               "src/customize.js",
@@ -233,6 +232,14 @@
               "sourceMap": true,
               "outputHashing": "none",
               "namedChunks": true,
+              "assets": [
+                "src/favicon.ico",
+                "src/resources",
+                "src/robots.txt",
+                "src/config.js",
+                "src/customize.js",
+                "src/config.template.js"
+              ],
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
