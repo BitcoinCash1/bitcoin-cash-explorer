@@ -94,8 +94,8 @@
     "ENABLED": true,
     "HOST": "127.0.0.1",
     "SOCKET": "/var/run/mysql/mysql.sock",
-    "USERNAME": "__EXPLORER__MAINNET_USER__",
-    "PASSWORD": "__EXPLORER__MAINNET_PASS__",
+    "USERNAME": "__EXPLORER_MAINNET_USER__",
+    "PASSWORD": "__EXPLORER_MAINNET_PASS__",
     "DATABASE": "mempool"
   },
   "STATISTICS": {

@@ -1,7 +1,7 @@
 #!/bin/sh
-__EXPLORER__BACKEND_MAINNET_HTTP_HOST__=${BACKEND_MAINNET_HTTP_HOST:=127.0.0.1}
-__EXPLORER__BACKEND_MAINNET_HTTP_PORT__=${BACKEND_MAINNET_HTTP_PORT:=8999}
-__EXPLORER__FRONTEND_HTTP_PORT__=${FRONTEND_HTTP_PORT:=8080}
+__EXPLORER_BACKEND_MAINNET_HTTP_HOST__=${BACKEND_MAINNET_HTTP_HOST:=127.0.0.1}
+__EXPLORER_BACKEND_MAINNET_HTTP_PORT__=${BACKEND_MAINNET_HTTP_PORT:=8999}
+__EXPLORER_FRONTEND_HTTP_PORT__=${FRONTEND_HTTP_PORT:=8080}
 
 __PROXIED_SERVICES__=${PROXIED_SERVICES:=false}
 __PROXIED_SERVICES_HOST__=${PROXIED_SERVICES_HOST:=https://bchexplorer.cash}
@@ -10,11 +10,11 @@ if [ "${__PROXIED_SERVICES__}" = "true" ]; then
   sed -i "s|proxy_pass https://bchexplorer.cash;|proxy_pass ${__PROXIED_SERVICES_HOST__};|g" /etc/nginx/conf.d/nginx-explorer.conf
 fi
 
-sed -i "s/__EXPLORER__BACKEND_MAINNET_HTTP_HOST__/${__EXPLORER__BACKEND_MAINNET_HTTP_HOST__}/g" /etc/nginx/conf.d/nginx-explorer.conf
-sed -i "s/__EXPLORER__BACKEND_MAINNET_HTTP_PORT__/${__EXPLORER__BACKEND_MAINNET_HTTP_PORT__}/g" /etc/nginx/conf.d/nginx-explorer.conf
+sed -i "s/__EXPLORER_BACKEND_MAINNET_HTTP_HOST__/${__EXPLORER_BACKEND_MAINNET_HTTP_HOST__}/g" /etc/nginx/conf.d/nginx-explorer.conf
+sed -i "s/__EXPLORER_BACKEND_MAINNET_HTTP_PORT__/${__EXPLORER_BACKEND_MAINNET_HTTP_PORT__}/g" /etc/nginx/conf.d/nginx-explorer.conf
 
 cp /etc/nginx/nginx.conf /patch/nginx.conf
-sed -i "s/__EXPLORER__FRONTEND_HTTP_PORT__/${__EXPLORER__FRONTEND_HTTP_PORT__}/g" /patch/nginx.conf
+sed -i "s/__EXPLORER_FRONTEND_HTTP_PORT__/${__EXPLORER_FRONTEND_HTTP_PORT__}/g" /patch/nginx.conf
 cat /patch/nginx.conf > /etc/nginx/nginx.conf
 
 # Runtime overrides - read env vars defined in docker compose

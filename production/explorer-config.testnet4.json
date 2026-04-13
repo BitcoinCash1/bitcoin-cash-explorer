@@ -35,8 +35,8 @@
     "ENABLED": true,
     "HOST": "127.0.0.1",
     "SOCKET": "/var/run/mysql/mysql.sock",
-    "USERNAME": "__EXPLORER__TESTNET4_USER__",
-    "PASSWORD": "__EXPLORER__TESTNET4_PASS__",
+    "USERNAME": "__EXPLORER_TESTNET4_USER__",
+    "PASSWORD": "__EXPLORER_TESTNET4_PASS__",
     "DATABASE": "explorer_testnet4"
   },
   "STATISTICS": {

@@ -77,14 +77,14 @@ build_backend()
 	-e "s!__BITCOIN_RPC_PASS__!${BITCOIN_RPC_PASS}!" \
 	-e "s!__ELEMENTS_RPC_USER__!${ELEMENTS_RPC_USER}!" \
 	-e "s!__ELEMENTS_RPC_PASS__!${ELEMENTS_RPC_PASS}!" \
-        -e "s!__EXPLORER__MAINNET_USER__!${EXPLORER_MAINNET_USER}!" \
-        -e "s!__EXPLORER__MAINNET_PASS__!${EXPLORER_MAINNET_PASS}!" \
-        -e "s!__EXPLORER__TESTNET_USER__!${EXPLORER_TESTNET_USER}!" \
-        -e "s!__EXPLORER__TESTNET_PASS__!${EXPLORER_TESTNET_PASS}!" \
-        -e "s!__EXPLORER__TESTNET4_USER__!${EXPLORER_TESTNET4_USER}!" \
-        -e "s!__EXPLORER__TESTNET4_PASS__!${EXPLORER_TESTNET4_PASS}!" \
-        -e "s!__EXPLORER__SIGNET_USER__!${EXPLORER_SIGNET_USER}!" \
-        -e "s!__EXPLORER__SIGNET_PASS__!${EXPLORER_SIGNET_PASS}!" \
+        -e "s!__EXPLORER_MAINNET_USER__!${EXPLORER_MAINNET_USER}!" \
+        -e "s!__EXPLORER_MAINNET_PASS__!${EXPLORER_MAINNET_PASS}!" \
+        -e "s!__EXPLORER_TESTNET_USER__!${EXPLORER_TESTNET_USER}!" \
+        -e "s!__EXPLORER_TESTNET_PASS__!${EXPLORER_TESTNET_PASS}!" \
+        -e "s!__EXPLORER_TESTNET4_USER__!${EXPLORER_TESTNET4_USER}!" \
+        -e "s!__EXPLORER_TESTNET4_PASS__!${EXPLORER_TESTNET4_PASS}!" \
+        -e "s!__EXPLORER_SIGNET_USER__!${EXPLORER_SIGNET_USER}!" \
+        -e "s!__EXPLORER_SIGNET_PASS__!${EXPLORER_SIGNET_PASS}!" \
 	"explorer-config.json"
     fi
     npm install --omit=dev --omit=optional || exit 1
