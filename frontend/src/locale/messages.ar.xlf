@@ -7,7 +7,7 @@
             </trans-unit>
             <trans-unit id="1007967761117390992">
                 <source xml:space="preserve"><x ctype="x-i" equiv-text="&lt;i             &gt;" id="START_ITALIC_TEXT"/>There are too many transactions on this address, more than your backend can handle. See more on <x ctype="x-a" equiv-text="&lt;a href=&quot;/docs/faq#address-lookup-issues&quot;               &gt;" id="START_LINK"/>setting up a stronger backend<x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/>.<x ctype="x-i" equiv-text="&lt;/i           &gt;" id="CLOSE_ITALIC_TEXT"/><x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/><x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/> Consider viewing this address on the official BCH Explorer website instead: <x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/><x equiv-text="&lt;a             href=&quot;https://bchexplorer.cash/address/{{ addressString }}&quot;             target=&quot;_blank&quot;             &gt;" id="START_LINK_1"/>https://bchexplorer.cash/address/<x equiv-text="{{ addressString }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/></source>
-                <target xml:space="preserve"><x ctype="x-i" equiv-text="&lt;i             &gt;" id="START_ITALIC_TEXT"/>There are too many transactions on this address, more than your backend can handle. See more on <x ctype="x-a" equiv-text="&lt;a href=&quot;/docs/faq#address-lookup-issues&quot;               &gt;" id="START_LINK"/>setting up a stronger backend<x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/>.<x ctype="x-i" equiv-text="&lt;/i           &gt;" id="CLOSE_ITALIC_TEXT"/><x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/><x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/> Consider viewing this address on the official BCH Explorer website instead: <x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/><x equiv-text="&lt;a             href=&quot;https://bchexplorer.cash/address/{{ addressString }}&quot;             target=&quot;_blank&quot;             &gt;" id="START_LINK_1"/>https://bchexplorer.cash/address/<x equiv-text="{{ addressString }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/></target>
+                <target xml:space="preserve"><x ctype="x-i" equiv-text="&lt;i             &gt;" id="START_ITALIC_TEXT"/>هناك عدد كبير جدًا من المعاملات على هذا العنوان، أكثر مما يمكن لخادمك الخلفي معالجته. اطلع على المزيد حول <x ctype="x-a" equiv-text="&lt;a href=&quot;/docs/faq#address-lookup-issues&quot;               &gt;" id="START_LINK"/>وإعداد خادم خلفي أقوى<x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/>.<x ctype="x-i" equiv-text="&lt;/i           &gt;" id="CLOSE_ITALIC_TEXT"/><x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/><x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/> يُنصح بالاطلاع على هذا العنوان على الموقع الرسمي لـ BCH Explorer بدلاً من ذلك: <x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/><x equiv-text="&lt;a             href=&quot;https://bchexplorer.cash/address/{{ addressString }}&quot;             target=&quot;_blank&quot;             &gt;" id="START_LINK_1"/>https://bchexplorer.cash/address/<x equiv-text="{{ addressString }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/></target>
             </trans-unit>
             <trans-unit id="1014548743221553652">
                 <source xml:space="preserve"> Next Halving </source>
@@ -15,7 +15,7 @@
             </trans-unit>
             <trans-unit id="1026404270740126690">
                 <source xml:space="preserve">See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> address <x equiv-text="this.addressString" id="PH_1"/>.</source>
-                <target xml:space="preserve">See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> address <x equiv-text="this.addressString" id="PH_1"/>.</target>
+                <target xml:space="preserve">اطلع على معاملات mempool والمعاملات المؤكدة والرصيد والمزيد لعنوان بيتكوين كاش<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> <x equiv-text="this.addressString" id="PH_1"/> .</target>
             </trans-unit>
             <trans-unit id="1033261550402895380">
                 <source xml:space="preserve">Sum</source>
@@ -23,7 +23,7 @@
             </trans-unit>
             <trans-unit id="1063462873103909661">
                 <source xml:space="preserve">Difficulty</source>
-                <target xml:space="preserve">Difficulty</target>
+                <target xml:space="preserve">الصعوبة</target>
             </trans-unit>
             <trans-unit id="1130652265542107236">
                 <source xml:space="preserve">Age</source>
@@ -59,7 +59,7 @@
             </trans-unit>
             <trans-unit id="1250839334786630849">
                 <source xml:space="preserve"> Preview Transaction </source>
-                <target xml:space="preserve"> Preview Transaction </target>
+                <target xml:space="preserve"> معاينة المعاملة </target>
             </trans-unit>
             <trans-unit id="1257024413147889019">
                 <source xml:space="preserve">Balance (USD)</source>
@@ -71,11 +71,11 @@
             </trans-unit>
             <trans-unit id="1358478559966633776">
                 <source xml:space="preserve">See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> wallet <x equiv-text="walletName" id="INTERPOLATION"/>.</source>
-                <target xml:space="preserve">See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> wallet <x equiv-text="walletName" id="INTERPOLATION"/>.</target>
+                <target xml:space="preserve">اطلع على معاملات mempool والمعاملات المؤكدة والرصيد والمزيد لمحفظة Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> <x equiv-text="walletName" id="INTERPOLATION"/> .</target>
             </trans-unit>
             <trans-unit id="1358842767534290899">
                 <source xml:space="preserve"><x equiv-text="{{ (transactions?.length | number) || &quot;?&quot; }}" id="INTERPOLATION"/> of <x equiv-text="{{ mempoolStats.tx_count + chainStats.tx_count | number }}" id="INTERPOLATION_1"/> transactions</source>
-                <target xml:space="preserve"><x equiv-text="{{ (transactions?.length | number) || &quot;?&quot; }}" id="INTERPOLATION"/> of <x equiv-text="{{ mempoolStats.tx_count + chainStats.tx_count | number }}" id="INTERPOLATION_1"/> transactions</target>
+                <target xml:space="preserve"><x equiv-text="{{ (transactions?.length | number) || &quot;?&quot; }}" id="INTERPOLATION"/> من معاملات <x equiv-text="{{ mempoolStats.tx_count + chainStats.tx_count | number }}" id="INTERPOLATION_1"/> </target>
             </trans-unit>
             <trans-unit id="1374757757883387136">
                 <source xml:space="preserve">Your browser does not support this feature.</source>
@@ -83,7 +83,7 @@
             </trans-unit>
             <trans-unit id="1375913333051334272">
                 <source xml:space="preserve"> Timestamp </source>
-                <target xml:space="preserve"> Timestamp </target>
+                <target xml:space="preserve"> الطابع الزمني </target>
             </trans-unit>
             <trans-unit id="1386306711019304612">
                 <source xml:space="preserve">Input</source>
@@ -107,7 +107,7 @@
             </trans-unit>
             <trans-unit id="1514895844575489984">
                 <source xml:space="preserve"> NFT Capability </source>
-                <target xml:space="preserve"> NFT Capability </target>
+                <target xml:space="preserve"> قدرات NFT </target>
             </trans-unit>
             <trans-unit id="1525857326426458760">
                 <source xml:space="preserve"> Height </source>
@@ -115,7 +115,7 @@
             </trans-unit>
             <trans-unit id="152935433957334260">
                 <source xml:space="preserve"> Test Transactions </source>
-                <target xml:space="preserve"> Test Transactions </target>
+                <target xml:space="preserve"> معاملات الاختبار </target>
             </trans-unit>
             <trans-unit id="1550516794318064232">
                 <source xml:space="preserve"> Filename </source>
@@ -143,7 +143,7 @@
             </trans-unit>
             <trans-unit id="1616102757855967475">
                 <source xml:space="preserve">All</source>
-                <target xml:space="preserve">All</target>
+                <target xml:space="preserve">الكل</target>
             </trans-unit>
             <trans-unit id="1620385434838836828">
                 <source xml:space="preserve">Audit status</source>
@@ -159,7 +159,7 @@
             </trans-unit>
             <trans-unit id="1701986874933494691">
                 <source xml:space="preserve"> Significant Bitcoin Cash blocks, including halvings, hard forks, protocol upgrades, and other milestones — past and future. </source>
-                <target xml:space="preserve"> Significant Bitcoin Cash blocks, including halvings, hard forks, protocol upgrades, and other milestones — past and future. </target>
+                <target xml:space="preserve"> كتل Bitcoin Cash المهمة، بما في ذلك عمليات النصف، والانقسامات الصلبة، وترقيات البروتوكول، وغيرها من المعالم البارزة — في الماضي والمستقبل. </target>
             </trans-unit>
             <trans-unit id="173323320530059738">
                 <source xml:space="preserve">Miners Reward</source>
@@ -187,7 +187,7 @@
             </trans-unit>
             <trans-unit id="1863028041776311445">
                 <source xml:space="preserve">Preview Transaction</source>
-                <target xml:space="preserve">Preview Transaction</target>
+                <target xml:space="preserve">معاينة المعاملة</target>
             </trans-unit>
             <trans-unit id="1877523490807676946">
                 <source xml:space="preserve">Testnet4 Faucet</source>
@@ -195,7 +195,7 @@
             </trans-unit>
             <trans-unit id="1893008407058525771">
                 <source xml:space="preserve"><x ctype="x-span" equiv-text="&lt;span class=&quot;badge bg-success&quot;&gt;" id="START_TAG_SPAN"/>Winning<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></source>
-                <target xml:space="preserve"><x ctype="x-span" equiv-text="&lt;span class=&quot;badge bg-success&quot;&gt;" id="START_TAG_SPAN"/>Winning<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></target>
+                <target xml:space="preserve"><x ctype="x-span" equiv-text="&lt;span class=&quot;badge bg-success&quot;&gt;" id="START_TAG_SPAN"/>الفوز<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></target>
             </trans-unit>
             <trans-unit id="1913155003848417351">
                 <source xml:space="preserve">Block remaining</source>
@@ -215,7 +215,7 @@
             </trans-unit>
             <trans-unit id="1986319458172810942">
                 <source xml:space="preserve"> CashToken Amount </source>
-                <target xml:space="preserve"> CashToken Amount </target>
+                <target xml:space="preserve"> مبلغ CashToken </target>
             </trans-unit>
             <trans-unit id="1989794001571603400">
                 <source xml:space="preserve">High sigop count</source>
@@ -227,7 +227,7 @@
             </trans-unit>
             <trans-unit id="2041675390931385838">
                 <source xml:space="preserve">Health</source>
-                <target xml:space="preserve">Health</target>
+                <target xml:space="preserve">الصحة</target>
             </trans-unit>
             <trans-unit id="2046433062734007708">
                 <source xml:space="preserve">Added</source>
@@ -239,11 +239,11 @@
             </trans-unit>
             <trans-unit id="2078867154932510579">
                 <source xml:space="preserve"><x ctype="x-p" equiv-text="&lt;p&gt;" id="START_PARAGRAPH"/><x ctype="x-b" equiv-text="&lt;b                 &gt;" id="START_BOLD_TEXT"/>bchexplorer.cash merely provides data about the Bitcoin Cash network.<x ctype="x-b" equiv-text="&lt;/b               &gt;" id="CLOSE_BOLD_TEXT"/> It cannot help you with retrieving funds, wallet issues, etc. <x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/><x ctype="x-p" equiv-text="&lt;p&gt;" id="START_PARAGRAPH"/> For any such requests, you need to get in touch with the entity that helped make the transaction (wallet software, exchange company, etc). <x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/></source>
-                <target xml:space="preserve"><x ctype="x-p" equiv-text="For any such requ" id="START_PARAGRAPH"/><x ctype="x-b" equiv-text="mempool.space mer" id="START_BOLD_TEXT"/>يوفر mempool.space فقط بيانات حول شبكة البيتكوين.<x ctype="x-b" equiv-text="&lt;/b&gt;" id="CLOSE_BOLD_TEXT"/> لا يمكنها مساعدتك في استرداد الأموال أو مشكلات المحفظة وما إلى ذلك.<x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/><x ctype="x-p" equiv-text="For any such requ" id="START_PARAGRAPH"/>لأي طلبات من هذا القبيل، يتعين عليك الاتصال بنا مع الكيان الذي ساعد في إجراء المعاملة (برنامج المحفظة، شركة الصرافة، وما إلى ذلك).<x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/></target>
+                <target xml:space="preserve"><x ctype="x-p" equiv-text="&lt;p&gt;" id="START_PARAGRAPH"/><x ctype="x-b" equiv-text="&lt;b                 &gt;" id="START_BOLD_TEXT"/>يوفر موقع bchexplorer.cash بيانات حول شبكة Bitcoin Cash فقط.<x ctype="x-b" equiv-text="&lt;/b               &gt;" id="CLOSE_BOLD_TEXT"/> ولا يمكنه مساعدتك في استرداد الأموال أو حل مشكلات المحفظة، وما إلى ذلك. <x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/><x ctype="x-p" equiv-text="&lt;p&gt;" id="START_PARAGRAPH"/> ولأي طلبات من هذا القبيل، عليك الاتصال بالجهة التي ساعدت في إجراء المعاملة (برنامج المحفظة، شركة الصرف، وما إلى ذلك). <x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/></target>
             </trans-unit>
             <trans-unit id="2091542449422385206">
                 <source xml:space="preserve">Broadcast Transaction</source>
-                <target xml:space="preserve">Broadcast Transaction</target>
+                <target xml:space="preserve">معاملة البث</target>
             </trans-unit>
             <trans-unit id="2137482833477653579">
                 <source xml:space="preserve">Indexing network hashrate</source>
@@ -279,7 +279,7 @@
             </trans-unit>
             <trans-unit id="2238078017374559466">
                 <source xml:space="preserve">Pools Luck</source>
-                <target xml:space="preserve">Pools Luck</target>
+                <target xml:space="preserve">حظ المجموعات</target>
             </trans-unit>
             <trans-unit id="2256671562401574389">
                 <source xml:space="preserve">blocks earlier</source>
@@ -319,7 +319,7 @@
             </trans-unit>
             <trans-unit id="2365612610415331480">
                 <source xml:space="preserve"><x ctype="x-span" equiv-text="&lt;span class=&quot;badge bg-secondary&quot;&gt;" id="START_TAG_SPAN"/>Stale<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></source>
-                <target xml:space="preserve"><x ctype="x-span" equiv-text="&lt;span class=&quot;badge bg-secondary&quot;&gt;" id="START_TAG_SPAN"/>Stale<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></target>
+                <target xml:space="preserve"><x ctype="x-span" equiv-text="&lt;span class=&quot;badge bg-secondary&quot;&gt;" id="START_TAG_SPAN"/>قديم<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></target>
             </trans-unit>
             <trans-unit id="2372330987466821730">
                 <source xml:space="preserve"> Offline </source>
@@ -331,7 +331,7 @@
             </trans-unit>
             <trans-unit id="2390412373676968256">
                 <source xml:space="preserve"> Size </source>
-                <target xml:space="preserve"> Size </target>
+                <target xml:space="preserve"> الحجم </target>
             </trans-unit>
             <trans-unit id="2436785490931696482">
                 <source xml:space="preserve"> Previous output type </source>
@@ -339,15 +339,15 @@
             </trans-unit>
             <trans-unit id="2451851156281438935">
                 <source xml:space="preserve"> Reward </source>
-                <target xml:space="preserve"> Reward </target>
+                <target xml:space="preserve"> المكافأة </target>
             </trans-unit>
             <trans-unit id="2461929428984657289">
                 <source xml:space="preserve">Recent Blocks</source>
-                <target xml:space="preserve">Recent Blocks</target>
+                <target xml:space="preserve">الكتل الحديثة</target>
             </trans-unit>
             <trans-unit id="2467378808402806819">
                 <source xml:space="preserve"> BCH Explorer is a blockchain and mempool explorer for the Bitcoin Cash community, created by Melroy van den Berg. It is a completely self-hosted without any trusted third-parties. </source>
-                <target xml:space="preserve"> BCH Explorer is a blockchain and mempool explorer for the Bitcoin Cash community, created by Melroy van den Berg. It is a completely self-hosted without any trusted third-parties. </target>
+                <target xml:space="preserve"> مستكشف BCH هو مستكشف للبلوكشين ومجمع التذاكر (mempool) لمجتمع بيتكوين كاش، أنشأه ميلروي فان دن بيرغ. وهو مستكشف مستضاف بالكامل ذاتيًا دون أي أطراف ثالثة موثوقة. </target>
             </trans-unit>
             <trans-unit id="2471195790491528944">
                 <source xml:space="preserve"> Broadcasted </source>
@@ -355,7 +355,7 @@
             </trans-unit>
             <trans-unit id="2471517882589815398">
                 <source xml:space="preserve"> verified addresses </source>
-                <target xml:space="preserve"> verified addresses </target>
+                <target xml:space="preserve"> العناوين التي تم التحقق منها </target>
             </trans-unit>
             <trans-unit id="2499150228957542782">
                 <source xml:space="preserve">Unspent TXOs</source>
@@ -391,7 +391,7 @@
             </trans-unit>
             <trans-unit id="2620731225742999598">
                 <source xml:space="preserve">Verify Ownership (PSBT)</source>
-                <target xml:space="preserve">Verify Ownership (PSBT)</target>
+                <target xml:space="preserve">التحقق من الملكية (PSBT)</target>
             </trans-unit>
             <trans-unit id="2628961601867476622">
                 <source xml:space="preserve">Actual</source>
@@ -403,7 +403,7 @@
             </trans-unit>
             <trans-unit id="2666638972429865742">
                 <source xml:space="preserve"> Verify Address Ownership </source>
-                <target xml:space="preserve"> Verify Address Ownership </target>
+                <target xml:space="preserve"> التحقق من ملكية العنوان </target>
             </trans-unit>
             <trans-unit id="2687200647259832044">
                 <source xml:space="preserve"> Avg Block Fee (1m) </source>
@@ -439,11 +439,11 @@
             </trans-unit>
             <trans-unit id="2822320429885114692">
                 <source xml:space="preserve">Indexing blocks</source>
-                <target xml:space="preserve">Indexing blocks</target>
+                <target xml:space="preserve">فهرسة الكتل</target>
             </trans-unit>
             <trans-unit id="283587625204414083">
                 <source xml:space="preserve">Details</source>
-                <target xml:space="preserve">Details</target>
+                <target xml:space="preserve">التفاصيل</target>
             </trans-unit>
             <trans-unit id="2837744407694109201">
                 <source xml:space="preserve">Depth <x equiv-text="{{ chainTip.branchlen + 1 }}" id="INTERPOLATION"/></source>
@@ -459,7 +459,7 @@
             </trans-unit>
             <trans-unit id="2861306361489095884">
                 <source xml:space="preserve">Slug</source>
-                <target xml:space="preserve">Slug</target>
+                <target xml:space="preserve">الاسم المختصر</target>
             </trans-unit>
             <trans-unit id="2863431896244142849">
                 <source xml:space="preserve">Research</source>
@@ -467,7 +467,7 @@
             </trans-unit>
             <trans-unit id="2870197155512312836">
                 <source xml:space="preserve"> Transactions </source>
-                <target xml:space="preserve"> Transactions </target>
+                <target xml:space="preserve"> المعاملات </target>
             </trans-unit>
             <trans-unit id="2876711679148961149">
                 <source xml:space="preserve">Removed</source>
@@ -475,7 +475,7 @@
             </trans-unit>
             <trans-unit id="288170943872765696">
                 <source xml:space="preserve">Input Sequence</source>
-                <target xml:space="preserve">Input Sequence</target>
+                <target xml:space="preserve">تسلسل الإدخال</target>
             </trans-unit>
             <trans-unit id="2892144964426283371">
                 <source xml:space="preserve">Optimal</source>
@@ -487,7 +487,7 @@
             </trans-unit>
             <trans-unit id="2935684390377275172">
                 <source xml:space="preserve">Significant Bitcoin Cash blocks, including halvings, hard forks, protocol upgrades, and other milestones — past and future.</source>
-                <target xml:space="preserve">Significant Bitcoin Cash blocks, including halvings, hard forks, protocol upgrades, and other milestones — past and future.</target>
+                <target xml:space="preserve">أهم أحداث بيتكوين كاش، بما في ذلك عمليات النصف، والانقسامات الصعبة، وترقيات البروتوكول، وغيرها من المعالم البارزة — في الماضي والمستقبل.</target>
             </trans-unit>
             <trans-unit id="2946624699882754313">
                 <source xml:space="preserve">Show all</source>
@@ -499,7 +499,7 @@
             </trans-unit>
             <trans-unit id="2981219928115418649">
                 <source xml:space="preserve">Link</source>
-                <target xml:space="preserve">Link</target>
+                <target xml:space="preserve">رابط</target>
             </trans-unit>
             <trans-unit id="2986811974545371137">
                 <source xml:space="preserve">See mempool size (in MB) and transactions per second (in B/s) visualized over time.</source>
@@ -511,7 +511,7 @@
             </trans-unit>
             <trans-unit id="302660251728612874">
                 <source xml:space="preserve"> Avg Health </source>
-                <target xml:space="preserve"> Avg Health </target>
+                <target xml:space="preserve"> متوسط الصحة </target>
             </trans-unit>
             <trans-unit id="3033623772164647792">
                 <source xml:space="preserve">Height</source>
@@ -519,7 +519,7 @@
             </trans-unit>
             <trans-unit id="3056323879940472778">
                 <source xml:space="preserve">Pools Count</source>
-                <target xml:space="preserve">Pools Count</target>
+                <target xml:space="preserve">عدد المجموعات</target>
             </trans-unit>
             <trans-unit id="3079792765469479718">
                 <source xml:space="preserve">Expected Block</source>
@@ -527,11 +527,11 @@
             </trans-unit>
             <trans-unit id="3084367762111593354">
                 <source xml:space="preserve">Merkle root</source>
-                <target xml:space="preserve">Merkle root</target>
+                <target xml:space="preserve">جذر ميركل</target>
             </trans-unit>
             <trans-unit id="3088064334969042235">
                 <source xml:space="preserve">Special Blocks</source>
-                <target xml:space="preserve">Special Blocks</target>
+                <target xml:space="preserve">الكتل الخاصة</target>
             </trans-unit>
             <trans-unit id="3112239269637020392">
                 <source xml:space="preserve">sats/tx</source>
@@ -563,11 +563,11 @@
             </trans-unit>
             <trans-unit id="3304972143698843178">
                 <source xml:space="preserve">Event</source>
-                <target xml:space="preserve">Event</target>
+                <target xml:space="preserve">الحدث</target>
             </trans-unit>
             <trans-unit id="3316413479857864182">
                 <source xml:space="preserve">Block Fees</source>
-                <target xml:space="preserve">Block Fees</target>
+                <target xml:space="preserve">رسوم الكتلة</target>
             </trans-unit>
             <trans-unit id="3320061433231160997">
                 <source xml:space="preserve">Actual Block</source>
@@ -579,7 +579,7 @@
             </trans-unit>
             <trans-unit id="3340571720517721398">
                 <source xml:space="preserve">This transaction may have been added out-of-band</source>
-                <target xml:space="preserve">This transaction may have been added out-of-band</target>
+                <target xml:space="preserve">ربما تمت إضافة هذه المعاملة خارج النطاق</target>
             </trans-unit>
             <trans-unit id="3348816905677831844">
                 <source xml:space="preserve"> USD Value </source>
@@ -595,7 +595,7 @@
             </trans-unit>
             <trans-unit id="3388418238806768867">
                 <source xml:space="preserve"> CashToken Category </source>
-                <target xml:space="preserve"> CashToken Category </target>
+                <target xml:space="preserve"> فئة CashToken </target>
             </trans-unit>
             <trans-unit id="3399131819685362332">
                 <source xml:space="preserve">Address Types</source>
@@ -603,7 +603,7 @@
             </trans-unit>
             <trans-unit id="3402667419139520163">
                 <source xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> CashToken </source>
-                <target xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> CashToken </target>
+                <target xml:space="preserve"><x equiv-text="{{ networkName }}" id="INTERPOLATION"/> CashToken </target>
             </trans-unit>
             <trans-unit id="3430678834682292642">
                 <source xml:space="preserve">Reward</source>
@@ -683,19 +683,19 @@
             </trans-unit>
             <trans-unit id="3687375115991989307">
                 <source xml:space="preserve">Avg Block Fees</source>
-                <target xml:space="preserve">Avg Block Fees</target>
+                <target xml:space="preserve">متوسط رسوم الكتلة</target>
             </trans-unit>
             <trans-unit id="3694137827245006433">
                 <source xml:space="preserve"> Unsupported or invalid address </source>
-                <target xml:space="preserve"> Unsupported or invalid address </target>
+                <target xml:space="preserve"> عنوان غير مدعوم أو غير صالح </target>
             </trans-unit>
             <trans-unit id="3727261967700441034">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> <x ctype="x-span" equiv-text="&lt;span class=&quot;shared-block&quot;&gt;" id="START_TAG_SPAN"/>block<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> <x ctype="x-span" equiv-text="&lt;span class=&quot;shared-block&quot;&gt;" id="START_TAG_SPAN"/>block<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></target>
+                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> <x ctype="x-span" equiv-text="&lt;span class=&quot;shared-block&quot;&gt;" id="START_TAG_SPAN"/>كتلة<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></target>
             </trans-unit>
             <trans-unit id="3740782280725617165">
                 <source xml:space="preserve">Mining Dashboard</source>
-                <target xml:space="preserve">Mining Dashboard</target>
+                <target xml:space="preserve">لوحة معلومات التعدين</target>
             </trans-unit>
             <trans-unit id="3750067297809998641">
                 <source xml:space="preserve">This transaction was missing from our mempool prior to mining</source>
@@ -703,7 +703,7 @@
             </trans-unit>
             <trans-unit id="3781457392965972953">
                 <source xml:space="preserve">Hashrate</source>
-                <target xml:space="preserve">Hashrate</target>
+                <target xml:space="preserve">معدل التجزئة</target>
             </trans-unit>
             <trans-unit id="3788220819986174087">
                 <source xml:space="preserve"> Transaction not found. </source>
@@ -727,7 +727,7 @@
             </trans-unit>
             <trans-unit id="3882045404946016537">
                 <source xml:space="preserve">Hashrate &amp; Difficulty</source>
-                <target xml:space="preserve">Hashrate &amp; Difficulty</target>
+                <target xml:space="preserve">معدل التجزئة والصعوبة</target>
             </trans-unit>
             <trans-unit id="3900456641470356995">
                 <source xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> Addresses </source>
@@ -735,12 +735,13 @@
             </trans-unit>
             <trans-unit id="3935190348395891735">
                 <source xml:space="preserve">Block Health</source>
-                <target xml:space="preserve">Block Health</target>
+                <target xml:space="preserve">صحة الكتلة</target>
             </trans-unit>
             <trans-unit id="3935295557063521643">
                 <source xml:space="preserve"> Difficulty Adjustment
 </source>
-                <target xml:space="preserve"> تعديل الصعوبة </target>
+                <target xml:space="preserve"> تعديل مستوى الصعوبة
+</target>
             </trans-unit>
             <trans-unit id="3945263760582448384">
                 <source xml:space="preserve"> of total supply </source>
@@ -760,7 +761,7 @@
             </trans-unit>
             <trans-unit id="4061977068003854265">
                 <source xml:space="preserve"> Treasury </source>
-                <target xml:space="preserve"> Treasury </target>
+                <target xml:space="preserve"> الخزانة </target>
             </trans-unit>
             <trans-unit id="4071362499864583859">
                 <source xml:space="preserve">Low Priority</source>
@@ -812,7 +813,7 @@
             </trans-unit>
             <trans-unit id="435092113360011346">
                 <source xml:space="preserve">Stale Blocks</source>
-                <target xml:space="preserve">Stale Blocks</target>
+                <target xml:space="preserve">الكتل القديمة</target>
             </trans-unit>
             <trans-unit id="4355036166068125139">
                 <source xml:space="preserve">BCH</source>
@@ -824,7 +825,7 @@
             </trans-unit>
             <trans-unit id="4355593968886772097">
                 <source xml:space="preserve"> Total fees </source>
-                <target xml:space="preserve"> Total fees </target>
+                <target xml:space="preserve"> إجمالي الرسوم </target>
             </trans-unit>
             <trans-unit id="4364489225661554534">
                 <source xml:space="preserve">Usually places your transaction in between the second and third mempool blocks</source>
@@ -832,7 +833,7 @@
             </trans-unit>
             <trans-unit id="4370227308575957082">
                 <source xml:space="preserve">Mined</source>
-                <target xml:space="preserve">Mined</target>
+                <target xml:space="preserve">تم تعدينها</target>
             </trans-unit>
             <trans-unit id="4379563009807160796">
                 <source xml:space="preserve">There are <x equiv-text="{{ block.extras.orphans.length }}" id="INTERPOLATION"/> stale blocks at this height</source>
@@ -840,7 +841,7 @@
             </trans-unit>
             <trans-unit id="4391915915719593516">
                 <source xml:space="preserve">sat/B</source>
-                <target xml:space="preserve">sat/B</target>
+                <target xml:space="preserve">السبت/ب</target>
             </trans-unit>
             <trans-unit id="4396162952269470945">
                 <source xml:space="preserve"> Waiting for it to appear in the mempool... </source>
@@ -864,15 +865,15 @@
             </trans-unit>
             <trans-unit id="4467323362722952678">
                 <source xml:space="preserve">Unknown</source>
-                <target xml:space="preserve">Unknown</target>
+                <target xml:space="preserve">مجهول</target>
             </trans-unit>
             <trans-unit id="4475609005110549817">
                 <source xml:space="preserve"> NFT Commitment </source>
-                <target xml:space="preserve"> NFT Commitment </target>
+                <target xml:space="preserve"> التزام NFT </target>
             </trans-unit>
             <trans-unit id="4482088243387794106">
                 <source xml:space="preserve">See Bitcoin Cash block sizes (MB) visualized over time.</source>
-                <target xml:space="preserve">See Bitcoin Cash block sizes (MB) visualized over time.</target>
+                <target xml:space="preserve">شاهد أحجام كتل بيتكوين كاش (ميغابايت) موضحة بيانيًا بمرور الوقت.</target>
             </trans-unit>
             <trans-unit id="4498273128887208867">
                 <source xml:space="preserve">New subsidy</source>
@@ -880,7 +881,7 @@
             </trans-unit>
             <trans-unit id="4499536517167963505">
                 <source xml:space="preserve"> Pool </source>
-                <target xml:space="preserve"> Pool </target>
+                <target xml:space="preserve"> المجمع </target>
             </trans-unit>
             <trans-unit id="4508678235062595231">
                 <source xml:space="preserve">Privacy Policy</source>
@@ -904,7 +905,7 @@
             </trans-unit>
             <trans-unit id="45739481977493163">
                 <source xml:space="preserve">Size</source>
-                <target xml:space="preserve">Size</target>
+                <target xml:space="preserve">الحجم</target>
             </trans-unit>
             <trans-unit id="4580786032076405950">
                 <source xml:space="preserve">Classic</source>
@@ -916,12 +917,13 @@
             </trans-unit>
             <trans-unit id="4588071046583048388">
                 <source xml:space="preserve"> Fee </source>
-                <target xml:space="preserve"> Fee </target>
+                <target xml:space="preserve"> الرسوم </target>
             </trans-unit>
             <trans-unit id="4603219930058518974">
                 <source xml:space="preserve"> Halving Countdown
 </source>
-                <target xml:space="preserve"> نصف العد التنازلي </target>
+                <target xml:space="preserve"> العد التنازلي لنصف الكمية
+</target>
             </trans-unit>
             <trans-unit id="4610163795914092608">
                 <source xml:space="preserve">Locktime</source>
@@ -929,7 +931,7 @@
             </trans-unit>
             <trans-unit id="4662281448215873743">
                 <source xml:space="preserve">How to host my own instance?</source>
-                <target xml:space="preserve">How to host my own instance?</target>
+                <target xml:space="preserve">كيف يمكنني استضافة مثيل خاص بي؟</target>
             </trans-unit>
             <trans-unit id="4701769218404429807">
                 <source xml:space="preserve"> TXID </source>
@@ -957,7 +959,7 @@
             </trans-unit>
             <trans-unit id="4808047846196007749">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> <x ctype="x-span" equiv-text="&lt;span class=&quot;shared-block&quot;&gt;" id="START_TAG_SPAN"/>blocks<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> <x ctype="x-span" equiv-text="&lt;span class=&quot;shared-block&quot;&gt;" id="START_TAG_SPAN"/>blocks<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></target>
+                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> <x ctype="x-span" equiv-text="&lt;span class=&quot;shared-block&quot;&gt;" id="START_TAG_SPAN"/>كتل<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></target>
             </trans-unit>
             <trans-unit id="4818852650817502025">
                 <source xml:space="preserve">My Account</source>
@@ -973,7 +975,7 @@
             </trans-unit>
             <trans-unit id="4848881501986788184">
                 <source xml:space="preserve">Limited data available</source>
-                <target xml:space="preserve">Limited data available</target>
+                <target xml:space="preserve">البيانات المتاحة محدودة</target>
             </trans-unit>
             <trans-unit id="4853978141059297311">
                 <source xml:space="preserve">Error loading wallet data.</source>
@@ -1013,15 +1015,15 @@
             </trans-unit>
             <trans-unit id="5012084291992448490">
                 <source xml:space="preserve">Fees</source>
-                <target xml:space="preserve">Fees</target>
+                <target xml:space="preserve">الرسوم</target>
             </trans-unit>
             <trans-unit id="5012271161932121824">
                 <source xml:space="preserve">Overview of the mining pools on Bitcoin Cash.</source>
-                <target xml:space="preserve">Overview of the mining pools on Bitcoin Cash.</target>
+                <target xml:space="preserve">نظرة عامة على مجمعات التعدين على بيتكوين كاش.</target>
             </trans-unit>
             <trans-unit id="5033494112821505715">
                 <source xml:space="preserve">Only ~<x equiv-text="{{     medianFeeNeeded | feeRounding   }}" id="INTERPOLATION"/> sat/B was needed to get into this block</source>
-                <target xml:space="preserve">كان مطلوب حوالي <x equiv-text="{{ medianFeeNeeded | feeRounding }}" id="INTERPOLATION"/> sat/vB فقط لاضافة هذه المعاملة الى هذه الكتلة</target>
+                <target xml:space="preserve">لم يتطلب الأمر سوى حوالي<x equiv-text="{{     medianFeeNeeded | feeRounding   }}" id="INTERPOLATION"/> سات/ب للوصول إلى هذا الكتلة</target>
             </trans-unit>
             <trans-unit id="5063990330610553816">
                 <source xml:space="preserve">Marginal fee rate</source>
@@ -1029,7 +1031,7 @@
             </trans-unit>
             <trans-unit id="5085468009677264088">
                 <source xml:space="preserve"> Pending Transactions </source>
-                <target xml:space="preserve"> Pending Transactions </target>
+                <target xml:space="preserve"> المعاملات المعلقة </target>
             </trans-unit>
             <trans-unit id="5104161527928815399">
                 <source xml:space="preserve"> ETA </source>
@@ -1061,7 +1063,7 @@
             </trans-unit>
             <trans-unit id="5183104988417550665">
                 <source xml:space="preserve"> Hash </source>
-                <target xml:space="preserve"> Hash </target>
+                <target xml:space="preserve"> هاش </target>
             </trans-unit>
             <trans-unit id="5246516893505114366">
                 <source xml:space="preserve">BCH Holdings</source>
@@ -1069,11 +1071,11 @@
             </trans-unit>
             <trans-unit id="5271331539737839370">
                 <source xml:space="preserve"> Hashrate </source>
-                <target xml:space="preserve"> Hashrate </target>
+                <target xml:space="preserve"> معدل التجزئة </target>
             </trans-unit>
             <trans-unit id="5282397014936928869">
                 <source xml:space="preserve"> Health </source>
-                <target xml:space="preserve"> Health </target>
+                <target xml:space="preserve"> الصحة </target>
             </trans-unit>
             <trans-unit id="5310841849641828650">
                 <source xml:space="preserve">Allowed?</source>
@@ -1085,7 +1087,7 @@
             </trans-unit>
             <trans-unit id="5373005510433915917">
                 <source xml:space="preserve">Bitcoin Cash Price</source>
-                <target xml:space="preserve">Bitcoin Cash Price</target>
+                <target xml:space="preserve">سعر بيتكوين كاش</target>
             </trans-unit>
             <trans-unit id="5385698011723379548">
                 <source xml:space="preserve">Mempool size</source>
@@ -1093,7 +1095,7 @@
             </trans-unit>
             <trans-unit id="5417840158792309126">
                 <source xml:space="preserve"> If you like this project and use the explorer on a regular basis, please consider <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Donate to support BCH Explorer&quot;         &gt;" id="START_LINK"/>donating<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/>. </source>
-                <target xml:space="preserve"> If you like this project and use the explorer on a regular basis, please consider <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Donate to support BCH Explorer&quot;         &gt;" id="START_LINK"/>donating<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/>. </target>
+                <target xml:space="preserve"> إذا أعجبك هذا المشروع وتستخدم المستكشف بانتظام، يرجى التفكير في التبرع عبر <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Donate to support BCH Explorer&quot;         &gt;" id="START_LINK"/><x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> . </target>
             </trans-unit>
             <trans-unit id="5452140384265618201">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block remaining</source>
@@ -1101,15 +1103,15 @@
             </trans-unit>
             <trans-unit id="5458697026988984634">
                 <source xml:space="preserve">Cheap</source>
-                <target xml:space="preserve">Cheap</target>
+                <target xml:space="preserve">رخيص</target>
             </trans-unit>
             <trans-unit id="5478121364779850827">
                 <source xml:space="preserve"> Reset </source>
-                <target xml:space="preserve"> Reset </target>
+                <target xml:space="preserve"> إعادة الضبط </target>
             </trans-unit>
             <trans-unit id="5481284030283031915">
                 <source xml:space="preserve">Website</source>
-                <target xml:space="preserve">Website</target>
+                <target xml:space="preserve">موقع ويب</target>
             </trans-unit>
             <trans-unit id="5501309952572778737">
                 <source xml:space="preserve">Overpaid <x equiv-text="{{ overpaidTimes }}" id="INTERPOLATION"/>x</source>
@@ -1129,7 +1131,7 @@
             </trans-unit>
             <trans-unit id="5545107500213121470">
                 <source xml:space="preserve">Confirmed Transactions</source>
-                <target xml:space="preserve">Confirmed Transactions</target>
+                <target xml:space="preserve">المعاملات المؤكدة</target>
             </trans-unit>
             <trans-unit id="5550185768674078941">
                 <source xml:space="preserve">sats</source>
@@ -1157,11 +1159,11 @@
             </trans-unit>
             <trans-unit id="5682558575236654240">
                 <source xml:space="preserve"> By <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Sponsor BCH Explorer development&quot;         &gt;" id="START_LINK"/>sponsoring me<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> you are supporting my work and ensuring that the BCH Explorer project remains up-to-date, stable and available to the whole Bitcoin Cash community. As well as extending this BCH Explorer for specific BCH features. Are you interested in becoming an <x ctype="x-b" equiv-text="&lt;b&gt;" id="START_BOLD_TEXT"/>enterprise sponsor<x ctype="x-b" equiv-text="&lt;/b&gt;" id="CLOSE_BOLD_TEXT"/> and getting your company listed on this site? Feel free to <x equiv-text="&lt;a         href=&quot;https://t.me/melroyvandenberg&quot;         target=&quot;_blank&quot;         aria-label=&quot;Contact Melroy on Telegram&quot;         &gt;" id="START_LINK_1"/>reach out via Telegram<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/>. </source>
-                <target xml:space="preserve"> By <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Sponsor BCH Explorer development&quot;         &gt;" id="START_LINK"/>sponsoring me<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> you are supporting my work and ensuring that the BCH Explorer project remains up-to-date, stable and available to the whole Bitcoin Cash community. As well as extending this BCH Explorer for specific BCH features. Are you interested in becoming an <x ctype="x-b" equiv-text="&lt;b&gt;" id="START_BOLD_TEXT"/>enterprise sponsor<x ctype="x-b" equiv-text="&lt;/b&gt;" id="CLOSE_BOLD_TEXT"/> and getting your company listed on this site? Feel free to <x equiv-text="&lt;a         href=&quot;https://t.me/melroyvandenberg&quot;         target=&quot;_blank&quot;         aria-label=&quot;Contact Melroy on Telegram&quot;         &gt;" id="START_LINK_1"/>reach out via Telegram<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/>. </target>
+                <target xml:space="preserve"> من خلال <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Sponsor BCH Explorer development&quot;         &gt;" id="START_LINK"/>رعايتي<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> فإنك تدعم عملي وتضمن بقاء مشروع مستكشف BCH محدثًا ومستقرًا ومتاحًا لمجتمع بيتكوين كاش بأكمله. بالإضافة إلى توسيع نطاق مستكشف BCH هذا ليشمل ميزات BCH محددة. هل أنت مهتم بأن تصبح راعياً مؤسسياً لـ <x ctype="x-b" equiv-text="&lt;b&gt;" id="START_BOLD_TEXT"/><x ctype="x-b" equiv-text="&lt;/b&gt;" id="CLOSE_BOLD_TEXT"/> وأن يتم إدراج شركتك في هذا الموقع؟ لا تتردد في التواصل عبر Telegram<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> أو عبر البريد الإلكتروني <x equiv-text="&lt;a         href=&quot;https://t.me/melroyvandenberg&quot;         target=&quot;_blank&quot;         aria-label=&quot;Contact Melroy on Telegram&quot;         &gt;" id="START_LINK_1"/>. </target>
             </trans-unit>
             <trans-unit id="5740206434555920246">
                 <source xml:space="preserve"> Preview </source>
-                <target xml:space="preserve"> Preview </target>
+                <target xml:space="preserve"> معاينة </target>
             </trans-unit>
             <trans-unit id="5741604595133607980">
                 <source xml:space="preserve"> Features </source>
@@ -1177,7 +1179,7 @@
             </trans-unit>
             <trans-unit id="5809992200043965490">
                 <source xml:space="preserve">Generate PSBT</source>
-                <target xml:space="preserve">Generate PSBT</target>
+                <target xml:space="preserve">إنشاء PSBT</target>
             </trans-unit>
             <trans-unit id="5829059035985468594">
                 <source xml:space="preserve">Miner</source>
@@ -1193,7 +1195,7 @@
             </trans-unit>
             <trans-unit id="590117958379793860">
                 <source xml:space="preserve"> Maintaining, improving and creating this BCH explorer costs <x ctype="x-i" equiv-text="&lt;i&gt;" id="START_ITALIC_TEXT"/>a lot of time and effort<x ctype="x-i" equiv-text="&lt;/i&gt;" id="CLOSE_ITALIC_TEXT"/>. As a one-man operation, I spend a lot of personal time working on this project. </source>
-                <target xml:space="preserve"> Maintaining, improving and creating this BCH explorer costs <x ctype="x-i" equiv-text="&lt;i&gt;" id="START_ITALIC_TEXT"/>a lot of time and effort<x ctype="x-i" equiv-text="&lt;/i&gt;" id="CLOSE_ITALIC_TEXT"/>. As a one-man operation, I spend a lot of personal time working on this project. </target>
+                <target xml:space="preserve"> يستغرق صيانة هذا المستكشف الخاص بـ BCH وتحسينه وإنشاؤه الكثير من الوقت والجهد من جانب <x ctype="x-i" equiv-text="&lt;i&gt;" id="START_ITALIC_TEXT"/><x ctype="x-i" equiv-text="&lt;/i&gt;" id="CLOSE_ITALIC_TEXT"/> . وباعتباري أعمل بمفردي، فإنني أقضي الكثير من وقتي الشخصي في العمل على هذا المشروع. </target>
             </trans-unit>
             <trans-unit id="5952169083806719170">
                 <source xml:space="preserve">1 block earlier</source>
@@ -1229,7 +1231,7 @@
             </trans-unit>
             <trans-unit id="6052527816314853503">
                 <source xml:space="preserve">Enterprise Sponsors &#128640;</source>
-                <target xml:space="preserve">رعاة المشروع &#128640;</target>
+                <target xml:space="preserve">رعاة المؤسسات &#128640;</target>
             </trans-unit>
             <trans-unit id="6052761358428332094">
                 <source xml:space="preserve">Batch payment</source>
@@ -1241,7 +1243,7 @@
             </trans-unit>
             <trans-unit id="6080998935194218567">
                 <source xml:space="preserve">See size, fee range, included transactions, audit (expected vs actual), and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</source>
-                <target xml:space="preserve">اطلع على الحجم والوزن ونطاق الرسوم والمعاملات المضمنة والمزيد لكتلة Liquid<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</target>
+                <target xml:space="preserve">اطلع على الحجم ونطاق الرسوم والمعاملات المضمنة والتدقيق (المتوقع مقابل الفعلي) والمزيد بالنسبة لكتلة Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</target>
             </trans-unit>
             <trans-unit id="611448626023495165">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block expected</source>
@@ -1253,7 +1255,7 @@
             </trans-unit>
             <trans-unit id="6132290775367866066">
                 <source xml:space="preserve">Block Fee Rates</source>
-                <target xml:space="preserve">Block Fee Rates</target>
+                <target xml:space="preserve">أسعار رسوم الكتلة</target>
             </trans-unit>
             <trans-unit id="6153857867441956659">
                 <source xml:space="preserve">What is a mempool?</source>
@@ -1273,7 +1275,7 @@
             </trans-unit>
             <trans-unit id="6206405941943118648">
                 <source xml:space="preserve">CashToken <x ctype="x-a" equiv-text="&lt;a     class=&quot;info-link&quot;     [routerLink]=&quot;[&apos;/docs/faq&apos; | relativeUrl]&quot;     fragment=&quot;what-are-cashtokens&quot;     &gt;" id="START_LINK"/><x ctype="x-fa_icon" equiv-text="&lt;fa-icon [icon]=&quot;[&apos;fas&apos;, &apos;info-circle&apos;]&quot; [fixedWidth]=&quot;true&quot;&gt;" id="START_TAG_FA_ICON"/><x ctype="x-fa_icon" equiv-text="&lt;/fa-icon   &gt;" id="CLOSE_TAG_FA_ICON"/><x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/></source>
-                <target xml:space="preserve">CashToken <x ctype="x-a" equiv-text="&lt;a     class=&quot;info-link&quot;     [routerLink]=&quot;[&apos;/docs/faq&apos; | relativeUrl]&quot;     fragment=&quot;what-are-cashtokens&quot;     &gt;" id="START_LINK"/><x ctype="x-fa_icon" equiv-text="&lt;fa-icon [icon]=&quot;[&apos;fas&apos;, &apos;info-circle&apos;]&quot; [fixedWidth]=&quot;true&quot;&gt;" id="START_TAG_FA_ICON"/><x ctype="x-fa_icon" equiv-text="&lt;/fa-icon   &gt;" id="CLOSE_TAG_FA_ICON"/><x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/></target>
+                <target xml:space="preserve">توكين النقدي <x ctype="x-a" equiv-text="&lt;a     class=&quot;info-link&quot;     [routerLink]=&quot;[&apos;/docs/faq&apos; | relativeUrl]&quot;     fragment=&quot;what-are-cashtokens&quot;     &gt;" id="START_LINK"/><x ctype="x-fa_icon" equiv-text="&lt;fa-icon [icon]=&quot;[&apos;fas&apos;, &apos;info-circle&apos;]&quot; [fixedWidth]=&quot;true&quot;&gt;" id="START_TAG_FA_ICON"/><x ctype="x-fa_icon" equiv-text="&lt;/fa-icon   &gt;" id="CLOSE_TAG_FA_ICON"/><x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/></target>
             </trans-unit>
             <trans-unit id="6252070156626006029">
                 <source xml:space="preserve">None</source>
@@ -1289,7 +1291,7 @@
             </trans-unit>
             <trans-unit id="6284969874542942529">
                 <source xml:space="preserve">ScriptPubKey (Hex)</source>
-                <target xml:space="preserve">ScriptPubKey (Hex)</target>
+                <target xml:space="preserve">ScriptPubKey (سداسي عشري)</target>
             </trans-unit>
             <trans-unit id="6290595884142884507">
                 <source xml:space="preserve">Heuristics</source>
@@ -1301,7 +1303,7 @@
             </trans-unit>
             <trans-unit id="6334425734122839763">
                 <source xml:space="preserve"> Coinbase tag </source>
-                <target xml:space="preserve"> Coinbase tag </target>
+                <target xml:space="preserve"> علامة Coinbase </target>
             </trans-unit>
             <trans-unit id="633976444972378637">
                 <source xml:space="preserve"> Inputs &amp; Outputs </source>
@@ -1325,7 +1327,7 @@
             </trans-unit>
             <trans-unit id="6408975971582883304">
                 <source xml:space="preserve">Message</source>
-                <target xml:space="preserve">Message</target>
+                <target xml:space="preserve">رسالة</target>
             </trans-unit>
             <trans-unit id="6429024204850914240">
                 <source xml:space="preserve">Not any time soon</source>
@@ -1345,7 +1347,7 @@
             </trans-unit>
             <trans-unit id="6523988616846331064">
                 <source xml:space="preserve">Block Size Limit (ABLA)</source>
-                <target xml:space="preserve">Block Size Limit (ABLA)</target>
+                <target xml:space="preserve">حد حجم الكتلة (ABLA)</target>
             </trans-unit>
             <trans-unit id="6544807137197034459">
                 <source xml:space="preserve"> Preview </source>
@@ -1361,7 +1363,7 @@
             </trans-unit>
             <trans-unit id="6564105000154565963">
                 <source xml:space="preserve"> P2SH redeem script </source>
-                <target xml:space="preserve"> P2SH redeem script </target>
+                <target xml:space="preserve"> نص برمجي لاسترداد P2SH </target>
             </trans-unit>
             <trans-unit id="6578665864950966471">
                 <source xml:space="preserve">Clock (Mined)</source>
@@ -1385,7 +1387,7 @@
             </trans-unit>
             <trans-unit id="6629060512027460576">
                 <source xml:space="preserve">See the most recent Bitcoin Cash<x equiv-text="seoDescriptionNetwork(           this.stateService.network         )" id="PH"/> blocks along with basic stats such as block height, block reward, block size, and more.</source>
-                <target xml:space="preserve">اطلع على أحدث كتل Bitcoin<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> بالإضافة إلى الإحصائيات الأساسية مثل ارتفاع الكتلة ومكافأة الكتلة وحجم الكتلة والمزيد.</target>
+                <target xml:space="preserve">اطلع على أحدث كتل بيتكوين كاش (<x equiv-text="seoDescriptionNetwork(           this.stateService.network         )" id="PH"/> ) إلى جانب الإحصائيات الأساسية مثل ارتفاع الكتلة ومكافأة الكتلة وحجم الكتلة والمزيد.</target>
             </trans-unit>
             <trans-unit id="6641135694653212933">
                 <source xml:space="preserve">Mempool by Bytes (sat/Byte)</source>
@@ -1409,7 +1411,7 @@
             </trans-unit>
             <trans-unit id="6698602804540558682">
                 <source xml:space="preserve">Empty Blocks</source>
-                <target xml:space="preserve">Empty Blocks</target>
+                <target xml:space="preserve">الكتل الفارغة</target>
             </trans-unit>
             <trans-unit id="6699474967382202471">
                 <source xml:space="preserve">The overall luck of all mining pools over the past week. A luck bigger than 100% means the average block time for the current epoch is less than 10 minutes.</source>
@@ -1417,15 +1419,15 @@
             </trans-unit>
             <trans-unit id="671954776532239277">
                 <source xml:space="preserve"> Difficulty Adjustment </source>
-                <target xml:space="preserve"> Difficulty Adjustment </target>
+                <target xml:space="preserve"> تعديل مستوى الصعوبة </target>
             </trans-unit>
             <trans-unit id="6721450802285322732">
                 <source xml:space="preserve"> Included in block </source>
-                <target xml:space="preserve"> Included in block </target>
+                <target xml:space="preserve"> مضمنة في الكتلة </target>
             </trans-unit>
             <trans-unit id="6750241941765637299">
                 <source xml:space="preserve">Size</source>
-                <target xml:space="preserve">Size</target>
+                <target xml:space="preserve">الحجم</target>
             </trans-unit>
             <trans-unit id="6756993559483962422">
                 <source xml:space="preserve">Blocks remaining</source>
@@ -1453,11 +1455,11 @@
             </trans-unit>
             <trans-unit id="6867140695271970529">
                 <source xml:space="preserve">Mining Pools</source>
-                <target xml:space="preserve">Mining Pools</target>
+                <target xml:space="preserve">مجموعات التعدين</target>
             </trans-unit>
             <trans-unit id="6888797559367695264">
                 <source xml:space="preserve">Balance</source>
-                <target xml:space="preserve">Balance</target>
+                <target xml:space="preserve">الرصيد</target>
             </trans-unit>
             <trans-unit id="6899134966533859260">
                 <source xml:space="preserve">Learn</source>
@@ -1469,12 +1471,12 @@
             </trans-unit>
             <trans-unit id="6901614037118888421">
                 <source xml:space="preserve">First seen</source>
-                <target xml:space="preserve">First seen</target>
+                <target xml:space="preserve">شوهدت لأول مرة</target>
             </trans-unit>
             <trans-unit id="6903945166576780156">
                 <source xml:space="preserve"> Bitcoin Cash Supply
 </source>
-                <target xml:space="preserve"> Bitcoin Cash Supply
+                <target xml:space="preserve"> عرض عملة بيتكوين كاش
 </target>
             </trans-unit>
             <trans-unit id="6911512236126604837">
@@ -1487,7 +1489,7 @@
             </trans-unit>
             <trans-unit id="6949454993667784101">
                 <source xml:space="preserve">Your balance is too low.<x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/>Please <x ctype="x-a" equiv-text="&lt;a class=&quot;top-up-link&quot; href=&quot;/services/accelerator&quot;&gt;" id="START_LINK"/>top up your account<x ctype="x-a" equiv-text="&lt;/a   &gt;" id="CLOSE_LINK"/>.</source>
-                <target xml:space="preserve">Your balance is too low.<x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/>Please <x ctype="x-a" equiv-text="&lt;a class=&quot;top-up-link&quot; href=&quot;/services/accelerator&quot;&gt;" id="START_LINK"/>top up your account<x ctype="x-a" equiv-text="&lt;/a   &gt;" id="CLOSE_LINK"/>.</target>
+                <target xml:space="preserve">رصيدك منخفض جدًا.<x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/>يرجى <x ctype="x-a" equiv-text="&lt;a class=&quot;top-up-link&quot; href=&quot;/services/accelerator&quot;&gt;" id="START_LINK"/>شحن رصيد حسابك<x ctype="x-a" equiv-text="&lt;/a   &gt;" id="CLOSE_LINK"/>.</target>
             </trans-unit>
             <trans-unit id="6c453b11fd7bd159ae30bc381f367bc736d86909">
                 <source xml:space="preserve">Block Fees</source>
@@ -1495,7 +1497,7 @@
             </trans-unit>
             <trans-unit id="7010418150749748430">
                 <source xml:space="preserve">Incoming Transactions</source>
-                <target xml:space="preserve">Incoming Transactions</target>
+                <target xml:space="preserve">المعاملات الواردة</target>
             </trans-unit>
             <trans-unit id="704614116893718009">
                 <source xml:space="preserve"> Request Testnet4 Coins </source>
@@ -1515,7 +1517,7 @@
             </trans-unit>
             <trans-unit id="7170419784695970065">
                 <source xml:space="preserve">Allow high fees?</source>
-                <target xml:space="preserve">Allow high fees?</target>
+                <target xml:space="preserve">السماح برسوم عالية؟</target>
             </trans-unit>
             <trans-unit id="7215101881367554791">
                 <source xml:space="preserve">Show more</source>
@@ -1523,11 +1525,11 @@
             </trans-unit>
             <trans-unit id="7346516107220024843">
                 <source xml:space="preserve"> Broadcast Transaction </source>
-                <target xml:space="preserve"> Broadcast Transaction </target>
+                <target xml:space="preserve"> معاملة البث </target>
             </trans-unit>
             <trans-unit id="7370363797434182113">
                 <source xml:space="preserve">This transaction has a low transaction fee on L1, because of BCH</source>
-                <target xml:space="preserve">This transaction has a low transaction fee on L1, because of BCH</target>
+                <target xml:space="preserve">تتميز هذه المعاملة برسوم منخفضة على L1، بفضل BCH</target>
             </trans-unit>
             <trans-unit id="740444365933492829">
                 <source xml:space="preserve">Avg Tx Fee</source>
@@ -1535,7 +1537,7 @@
             </trans-unit>
             <trans-unit id="7413402651194809686">
                 <source xml:space="preserve"> Miners Reward </source>
-                <target xml:space="preserve"> Miners Reward </target>
+                <target xml:space="preserve"> مكافأة المعدنين </target>
             </trans-unit>
             <trans-unit id="7453887203136814323">
                 <source xml:space="preserve">Previous Block</source>
@@ -1543,7 +1545,7 @@
             </trans-unit>
             <trans-unit id="7464498988717654958">
                 <source xml:space="preserve"> verified of total </source>
-                <target xml:space="preserve"> verified of total </target>
+                <target xml:space="preserve"> تم التحقق من إجمالي </target>
             </trans-unit>
             <trans-unit id="7472346433321371233">
                 <source xml:space="preserve">difficulty</source>
@@ -1567,7 +1569,7 @@
             </trans-unit>
             <trans-unit id="7587252691654342708">
                 <source xml:space="preserve">Block Fees Vs Subsidy</source>
-                <target xml:space="preserve">Block Fees Vs Subsidy</target>
+                <target xml:space="preserve">رسوم الكتلة مقابل الدعم</target>
             </trans-unit>
             <trans-unit id="7611664705149933501">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks expected</source>
@@ -1575,7 +1577,7 @@
             </trans-unit>
             <trans-unit id="7621097312029689276">
                 <source xml:space="preserve">Block Sizes</source>
-                <target xml:space="preserve">Block Sizes</target>
+                <target xml:space="preserve">أحجام الكتل</target>
             </trans-unit>
             <trans-unit id="7633487631846436880">
                 <source xml:space="preserve"> Preview Coinbase </source>
@@ -1583,19 +1585,19 @@
             </trans-unit>
             <trans-unit id="7648985858732859082">
                 <source xml:space="preserve">Fallback fee (sats)</source>
-                <target xml:space="preserve">Fallback fee (sats)</target>
+                <target xml:space="preserve">الرسوم الاحتياطية (سات)</target>
             </trans-unit>
             <trans-unit id="7649633720179128094">
                 <source xml:space="preserve">This transaction contains CashToken(s)</source>
-                <target xml:space="preserve">This transaction contains CashToken(s)</target>
+                <target xml:space="preserve">تحتوي هذه المعاملة على CashToken(s)</target>
             </trans-unit>
             <trans-unit id="7678089998784409314">
                 <source xml:space="preserve">Address</source>
-                <target xml:space="preserve">Address</target>
+                <target xml:space="preserve">العنوان</target>
             </trans-unit>
             <trans-unit id="7699647190475586034">
                 <source xml:space="preserve">Next Block</source>
-                <target xml:space="preserve">Next Block</target>
+                <target xml:space="preserve">الكتلة التالية</target>
             </trans-unit>
             <trans-unit id="7700206456457090990">
                 <source xml:space="preserve">How many unique pools found at least one block over the past week.</source>
@@ -1619,11 +1621,11 @@
             </trans-unit>
             <trans-unit id="7816493330657272952">
                 <source xml:space="preserve">Coinjoin</source>
-                <target xml:space="preserve">Coinjoin</target>
+                <target xml:space="preserve">كوينجوين</target>
             </trans-unit>
             <trans-unit id="7840301863034787689">
                 <source xml:space="preserve"> Type </source>
-                <target xml:space="preserve"> Type </target>
+                <target xml:space="preserve"> النوع </target>
             </trans-unit>
             <trans-unit id="7846680274942493960">
                 <source xml:space="preserve">Why is this block empty?</source>
@@ -1631,7 +1633,7 @@
             </trans-unit>
             <trans-unit id="7846744985109881055">
                 <source xml:space="preserve">Next Block Size Limit (ABLA)</source>
-                <target xml:space="preserve">Next Block Size Limit (ABLA)</target>
+                <target xml:space="preserve">حد حجم الكتلة التالية (ABLA)</target>
             </trans-unit>
             <trans-unit id="7886570921510760899">
                 <source xml:space="preserve">Tags</source>
@@ -1691,7 +1693,7 @@
             </trans-unit>
             <trans-unit id="8057974459774940476">
                 <source xml:space="preserve">What are CashTokens?</source>
-                <target xml:space="preserve">What are CashTokens?</target>
+                <target xml:space="preserve">ما هي CashTokens؟</target>
             </trans-unit>
             <trans-unit id="8064189463907167884">
                 <source xml:space="preserve"> Rejection reason </source>
@@ -1699,7 +1701,7 @@
             </trans-unit>
             <trans-unit id="8067204363800324397">
                 <source xml:space="preserve">Provide a fallback fee if the finalized transaction size can&apos;t be estimated reliably (hidden scripts in P2SH).</source>
-                <target xml:space="preserve">Provide a fallback fee if the finalized transaction size can&apos;t be estimated reliably (hidden scripts in P2SH).</target>
+                <target xml:space="preserve">حدد رسومًا احتياطية إذا تعذر تقدير حجم المعاملة النهائي بشكل موثوق (نصوص برمجية مخفية في P2SH).</target>
             </trans-unit>
             <trans-unit id="808338231320400904">
                 <source xml:space="preserve">This transaction was projected to be included in the block</source>
@@ -1707,7 +1709,7 @@
             </trans-unit>
             <trans-unit id="8105367655277227191">
                 <source xml:space="preserve"> Expected </source>
-                <target xml:space="preserve"> Expected </target>
+                <target xml:space="preserve"> المتوقع </target>
             </trans-unit>
             <trans-unit id="8105839921891777281">
                 <source xml:space="preserve">Hashrate (MA)</source>
@@ -1723,7 +1725,7 @@
             </trans-unit>
             <trans-unit id="8158183612118976882">
                 <source xml:space="preserve">Timelock</source>
-                <target xml:space="preserve">Timelock</target>
+                <target xml:space="preserve">تيملوك</target>
             </trans-unit>
             <trans-unit id="8176036021087578640">
                 <source xml:space="preserve">Fee</source>
@@ -1739,7 +1741,7 @@
             </trans-unit>
             <trans-unit id="822985557126132388">
                 <source xml:space="preserve"> Blocks (1w) </source>
-                <target xml:space="preserve"> Blocks (1w) </target>
+                <target xml:space="preserve"> الكتل (1w) </target>
             </trans-unit>
             <trans-unit id="8238703585225968591">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks ahead</source>
@@ -1751,7 +1753,7 @@
             </trans-unit>
             <trans-unit id="8278803452573309499">
                 <source xml:space="preserve"> This node hasn&apos;t seen any stale blocks yet! </source>
-                <target xml:space="preserve"> This node hasn&apos;t seen any stale blocks yet! </target>
+                <target xml:space="preserve"> لم تشهد هذه العقدة أي كتل قديمة حتى الآن! </target>
             </trans-unit>
             <trans-unit id="8280265388760151631">
                 <source xml:space="preserve">Third-party Licenses</source>
@@ -1779,7 +1781,7 @@
             </trans-unit>
             <trans-unit id="8371399036834958761">
                 <source xml:space="preserve"><x equiv-text="{{ (transactions?.length | number) || &quot;?&quot; }}" id="INTERPOLATION"/> of <x equiv-text="{{ mempoolStats.tx_count + chainStats.tx_count | number }}" id="INTERPOLATION_1"/> transaction</source>
-                <target xml:space="preserve"><x equiv-text="{{ (transactions?.length | number) || &quot;?&quot; }}" id="INTERPOLATION"/> of <x equiv-text="{{ mempoolStats.tx_count + chainStats.tx_count | number }}" id="INTERPOLATION_1"/> transaction</target>
+                <target xml:space="preserve"><x equiv-text="{{ (transactions?.length | number) || &quot;?&quot; }}" id="INTERPOLATION"/> معاملة <x equiv-text="{{ mempoolStats.tx_count + chainStats.tx_count | number }}" id="INTERPOLATION_1"/> </target>
             </trans-unit>
             <trans-unit id="838299984212365663">
                 <source xml:space="preserve">Stratum Jobs</source>
@@ -1791,11 +1793,11 @@
             </trans-unit>
             <trans-unit id="8386976308507652568">
                 <source xml:space="preserve"> All </source>
-                <target xml:space="preserve"> All </target>
+                <target xml:space="preserve"> كل </target>
             </trans-unit>
             <trans-unit id="8392623811286459630">
                 <source xml:space="preserve"> Flow </source>
-                <target xml:space="preserve"> Flow </target>
+                <target xml:space="preserve"> التدفق </target>
             </trans-unit>
             <trans-unit id="8396979359626564289">
                 <source xml:space="preserve">Adjusted</source>
@@ -1803,7 +1805,7 @@
             </trans-unit>
             <trans-unit id="8401436958953545077">
                 <source xml:space="preserve">This address is deceptively similar to another output. It may be part of an address poisoning attack.</source>
-                <target xml:space="preserve">This address is deceptively similar to another output. It may be part of an address poisoning attack.</target>
+                <target xml:space="preserve">هذا العنوان يشبه بشكل خادع ناتجًا آخر. قد يكون جزءًا من هجوم تسميم العناوين.</target>
             </trans-unit>
             <trans-unit id="840692109692540367">
                 <source xml:space="preserve">Sign In</source>
@@ -1811,7 +1813,7 @@
             </trans-unit>
             <trans-unit id="841897176602849537">
                 <source xml:space="preserve"> This transaction ID appears twice in the blockchain as the coinbase of blocks <x ctype="x-a" equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[0]]&quot;&gt;" id="START_LINK"/><x equiv-text="{{             duplicateTxBlocks[0]           }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/> and <x equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[1]]&quot;&gt;" id="START_LINK_1"/><x equiv-text="{{             duplicateTxBlocks[1]           }}" id="INTERPOLATION_1"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/>, due to a bug later mitigated by <x equiv-text="&lt;a             href=&quot;https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki&quot;             target=&quot;_blank&quot;             rel=&quot;noopener&quot;             &gt;" id="START_LINK_2"/>BIP-30<x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/>. </source>
-                <target xml:space="preserve"> This transaction ID appears twice in the blockchain as the coinbase of blocks <x ctype="x-a" equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[0]]&quot;&gt;" id="START_LINK"/><x equiv-text="{{             duplicateTxBlocks[0]           }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/> and <x equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[1]]&quot;&gt;" id="START_LINK_1"/><x equiv-text="{{             duplicateTxBlocks[1]           }}" id="INTERPOLATION_1"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/>, due to a bug later mitigated by <x equiv-text="&lt;a             href=&quot;https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki&quot;             target=&quot;_blank&quot;             rel=&quot;noopener&quot;             &gt;" id="START_LINK_2"/>BIP-30<x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/>. </target>
+                <target xml:space="preserve"> يظهر معرف المعاملة هذا مرتين في سلسلة الكتل كقاعدة عملة للكتل <x ctype="x-a" equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[0]]&quot;&gt;" id="START_LINK"/><x equiv-text="{{             duplicateTxBlocks[0]           }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/> و <x equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[1]]&quot;&gt;" id="START_LINK_1"/><x equiv-text="{{             duplicateTxBlocks[1]           }}" id="INTERPOLATION_1"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/> ، بسبب خطأ تم تصحيحه لاحقًا بواسطة <x equiv-text="&lt;a             href=&quot;https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki&quot;             target=&quot;_blank&quot;             rel=&quot;noopener&quot;             &gt;" id="START_LINK_2"/>BIP-30<x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/>. </target>
             </trans-unit>
             <trans-unit id="8454028079923559383">
                 <source xml:space="preserve">Winning Block</source>
@@ -1823,7 +1825,7 @@
             </trans-unit>
             <trans-unit id="8466712742126182910">
                 <source xml:space="preserve">BCH/block</source>
-                <target xml:space="preserve">BCH/block</target>
+                <target xml:space="preserve">BCH/كتلة</target>
             </trans-unit>
             <trans-unit id="8491011120834785215">
                 <source xml:space="preserve">Bitcoin Price</source>
@@ -1843,7 +1845,7 @@
             </trans-unit>
             <trans-unit id="8538305450922736186">
                 <source xml:space="preserve">At block <x equiv-text="&apos;&lt;b style=&quot;color: var(--fg); margin-left: 2px&quot;&gt;&apos; +                 data[0].axisValue" id="PH"/></source>
-                <target xml:space="preserve">في الكتلة <x equiv-text="&apos;&lt;b style=&quot;color: white; margin-left: 2px&quot;&gt;&apos; + data[0].axisValue" id="PH"/></target>
+                <target xml:space="preserve">في الكتلة <x equiv-text="&apos;&lt;b style=&quot;color: var(--fg); margin-left: 2px&quot;&gt;&apos; +                 data[0].axisValue" id="PH"/></target>
             </trans-unit>
             <trans-unit id="8546007275666227290">
                 <source xml:space="preserve">Code Example</source>
@@ -1851,15 +1853,15 @@
             </trans-unit>
             <trans-unit id="8556593667250477164">
                 <source xml:space="preserve">Unconfirmed</source>
-                <target xml:space="preserve">Unconfirmed</target>
+                <target xml:space="preserve">غير مؤكد</target>
             </trans-unit>
             <trans-unit id="8610476630152321637">
                 <source xml:space="preserve">Fee rate</source>
-                <target xml:space="preserve">Fee rate</target>
+                <target xml:space="preserve">معدل الرسوم</target>
             </trans-unit>
             <trans-unit id="8631617549415105973">
                 <source xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network using the transaction&apos;s hash.</source>
-                <target xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network using the transaction&apos;s hash.</target>
+                <target xml:space="preserve">بث معاملة إلى شبكة بيتكوين كاش<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> باستخدام هاش المعاملة.</target>
             </trans-unit>
             <trans-unit id="8638358096787290282">
                 <source xml:space="preserve"> This transaction is stored locally in your browser. Broadcast it to add it to the mempool. </source>
@@ -1883,7 +1885,7 @@
             </trans-unit>
             <trans-unit id="8705001614078671854">
                 <source xml:space="preserve">Double check that this transaction sends the funds back to the provided address before signing</source>
-                <target xml:space="preserve">Double check that this transaction sends the funds back to the provided address before signing</target>
+                <target xml:space="preserve">تأكد جيدًا من أن هذه المعاملة تعيد الأموال إلى العنوان المقدم قبل التوقيع</target>
             </trans-unit>
             <trans-unit id="8727174280080676113">
                 <source xml:space="preserve">REST API service</source>
@@ -1891,7 +1893,7 @@
             </trans-unit>
             <trans-unit id="8746454997762682010">
                 <source xml:space="preserve">Block Rewards</source>
-                <target xml:space="preserve">Block Rewards</target>
+                <target xml:space="preserve">مكافآت الكتلة</target>
             </trans-unit>
             <trans-unit id="8758765586683372781">
                 <source xml:space="preserve"> Memory Usage </source>
@@ -1903,7 +1905,7 @@
             </trans-unit>
             <trans-unit id="8807945662832318286">
                 <source xml:space="preserve">Around block <x equiv-text="&apos;&lt;b style=&quot;color: var(--fg); margin-left: 2px&quot;&gt;&apos; +                 data[0].axisValue" id="PH"/></source>
-                <target xml:space="preserve">حول الكتلة <x equiv-text="&apos;&lt;b style=&quot;color: white; margin-left: 2px&quot;&gt;&apos; + data[0].axisValue" id="PH"/></target>
+                <target xml:space="preserve">حول الكتلة <x equiv-text="&apos;&lt;b style=&quot;color: var(--fg); margin-left: 2px&quot;&gt;&apos; +                 data[0].axisValue" id="PH"/></target>
             </trans-unit>
             <trans-unit id="8829497237648100098">
                 <source xml:space="preserve">Filter</source>
@@ -1915,7 +1917,7 @@
             </trans-unit>
             <trans-unit id="8856591276184789424">
                 <source xml:space="preserve">Audit</source>
-                <target xml:space="preserve">Audit</target>
+                <target xml:space="preserve">التدقيق</target>
             </trans-unit>
             <trans-unit id="885666551418fd59011ceb09d5c481095940193b">
                 <source xml:space="preserve">Features</source>
@@ -1927,7 +1929,7 @@
             </trans-unit>
             <trans-unit id="88825654282419901">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> transaction</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> transaction</target>
+                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> معاملة</target>
             </trans-unit>
             <trans-unit id="8890090607446421296">
                 <source xml:space="preserve">Clock (Mempool)</source>
@@ -1971,7 +1973,7 @@
             </trans-unit>
             <trans-unit id="9001022941132811405">
                 <source xml:space="preserve">Fee rate (sat/B)</source>
-                <target xml:space="preserve">Fee rate (sat/B)</target>
+                <target xml:space="preserve">معدل الرسوم (سات/ب)</target>
             </trans-unit>
             <trans-unit id="9008891323838339468">
                 <source xml:space="preserve"> Blocks (24h) </source>
@@ -1988,11 +1990,12 @@
             <trans-unit id="907780240721638283">
                 <source xml:space="preserve"> Verified Treasuries
 </source>
-                <target xml:space="preserve"> الخزائن الموثقة </target>
+                <target xml:space="preserve"> خزائن معتمدة
+</target>
             </trans-unit>
             <trans-unit id="9079964163800849922">
                 <source xml:space="preserve"> Avg Tx Fee </source>
-                <target xml:space="preserve"> Avg Tx Fee </target>
+                <target xml:space="preserve"> متوسط رسوم المعاملة </target>
             </trans-unit>
             <trans-unit id="9086644539236239452">
                 <source xml:space="preserve">Error loading block data.</source>
@@ -2024,7 +2027,7 @@
             </trans-unit>
             <trans-unit id="956069346153233991">
                 <source xml:space="preserve"> Bitcoin Cash Price </source>
-                <target xml:space="preserve"> Bitcoin Cash Price </target>
+                <target xml:space="preserve"> سعر بيتكوين كاش </target>
             </trans-unit>
             <trans-unit id="959315954123800933">
                 <source xml:space="preserve">Search by student name or ID...</source>
@@ -2036,7 +2039,7 @@
             </trans-unit>
             <trans-unit id="964309715677902826">
                 <source xml:space="preserve">See stats for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(                 this.stateService.network               )" id="PH"/> transactions in the mempool: fee range, aggregate size, and more. Mempool blocks are updated in real-time as the network receives new transactions.</source>
-                <target xml:space="preserve">See stats for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(                 this.stateService.network               )" id="PH"/> transactions in the mempool: fee range, aggregate size, and more. Mempool blocks are updated in real-time as the network receives new transactions.</target>
+                <target xml:space="preserve">اطلع على إحصائيات معاملات بيتكوين كاش<x equiv-text="seoDescriptionNetwork(                 this.stateService.network               )" id="PH"/> في ميمبول: نطاق الرسوم، والحجم الإجمالي، والمزيد. يتم تحديث كتل ميمبول في الوقت الفعلي مع استلام الشبكة لمعاملات جديدة.</target>
             </trans-unit>
             <trans-unit id="973124238841406947">
                 <source xml:space="preserve">Reward stats</source>
@@ -2196,7 +2199,7 @@
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.block">
                 <source xml:space="preserve">See size, weight, fee range, included transactions, audit (expected v actual), and more for Bitcoin<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</source>
-                <target xml:space="preserve">اطلع على الحجم والوزن ونطاق الرسوم والمعاملات المضمنة والتدقيق (المتوقع مقابل الفعلي)، والمزيد لكتلة Bitcoin<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> <x equiv-text="block.height" id="BLOCK_HEIGHT"/> ( <x equiv-text="block.id" id="BLOCK_ID"/>).</target>
+                <target xml:space="preserve">اطلع على الحجم والوزن ونطاق الرسوم والمعاملات المضمنة والتدقيق (المتوقع مقابل الفعلي) والمزيد بالنسبة لكتلة Bitcoin<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-fee-rates">
                 <source xml:space="preserve">See Bitcoin feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
@@ -2208,7 +2211,7 @@
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.hashrate">
                 <source xml:space="preserve">See hashrate and difficulty for the Bitcoin<x equiv-text="seoDescriptionNetwork(           this.network         )" id="PH"/> network visualized over time.</source>
-                <target xml:space="preserve">شاهد معدل التجزئة والصعوبة لشبكة Bitcoin<x equiv-text="seoDescriptionNetwork(this.network)" id="PH"/> التي تم تصورها مع مرور الوقت.</target>
+                <target xml:space="preserve">شاهد معدل التجزئة وصعوبة شبكة بيتكوين كاش (<x equiv-text="seoDescriptionNetwork(           this.network         )" id="PH"/> ) مع عرضها بيانيًا على مدار الوقت.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.pool-ranking">
                 <source xml:space="preserve">See the top Bitcoin mining pools ranked by number of blocks mined, over your desired timeframe.</source>
@@ -2244,7 +2247,7 @@
             </trans-unit>
             <trans-unit id="meta.description.stale-chain-tips">
                 <source xml:space="preserve">See the most recent stale chain tips on the Bitcoin<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network.</source>
-                <target xml:space="preserve">اطّلع على أحدث رؤوس السلسلة المهجورة على شبكة Bitcoin<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/>.</target>
+                <target xml:space="preserve">اطلع على أحدث النصائح المتعلقة بالسلسلة القديمة على شبكة بيتكوين كاش (<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> ).</target>
             </trans-unit>
             <trans-unit id="meta.descriptions.bitcoin.graphs.hashrate-pools">
                 <source xml:space="preserve">See Bitcoin mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
@@ -2252,7 +2255,7 @@
             </trans-unit>
             <trans-unit id="meta.title.docs.electrum">
                 <source xml:space="preserve">Electrum RPC</source>
-                <target xml:space="preserve">Electrum RPC</target>
+                <target xml:space="preserve">إلكتروم RPC</target>
             </trans-unit>
             <trans-unit id="meta.title.docs.faq">
                 <source xml:space="preserve">FAQ</source>
