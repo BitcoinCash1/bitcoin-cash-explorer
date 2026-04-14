@@ -43,3 +43,9 @@ BCH Explorer can be installed in other ways too, but we only recommend doing so 
 - See the [`docker/`](./docker/) directory for instructions on deploying BCH Explorer with Docker.
 - See the [`backend/`](./backend/) and [`frontend/`](./frontend/) directories for manual install instructions oriented for developers.
 - See the [`production/`](./production/) directory for guidance on setting up a more serious BCH Explorer instance designed for high performance at scale.
+
+## Translations
+
+The BCH Explorer frontend is translated into 30+ different languages.
+
+We use Localazy for translation management, go to: [https://localazy.com/p/bch-explorer](https://localazy.com/p/bch-explorer) and help us improve the translations!

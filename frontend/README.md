@@ -125,7 +125,9 @@ Be sure to use the `index.bchexplorer.html` file instead of `index.explorer.html
 
 ## Translations
 
-The BCH Explorer frontend strings are localized into 20+ locales.
+The BCH Explorer frontend strings are localized into 30+ locales.
+
+We use Localazy for translation management, go to: [https://localazy.com/p/bch-explorer](https://localazy.com/p/bch-explorer). And help us improve the translations!
 
 ### Local Internationalization
 
