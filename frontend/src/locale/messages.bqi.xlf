@@ -6,8 +6,8 @@
                 <target xml:space="preserve">About</target>
             </trans-unit>
             <trans-unit id="1007967761117390992">
-                <source xml:space="preserve"><x ctype="x-i" equiv-text="&lt;i &gt;" id="START_ITALIC_TEXT"/>There are too many transactions on this address, more than your backend can handle. See more on <x ctype="x-a" equiv-text="&lt;a href=&quot;/docs/faq#address-lookup-issues&quot; &gt;" id="START_LINK"/>setting up a stronger backend<x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/>.<x ctype="x-i" equiv-text="&lt;/i &gt;" id="CLOSE_ITALIC_TEXT"/><x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/><x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/> Consider viewing this address on the official BCH Explorer website instead: <x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/><x equiv-text="&lt;a href=&quot;https://bchexplorer.cash/address/{{ addressString }}&quot; target=&quot;_blank&quot; &gt;" id="START_LINK_1"/>https://bchexplorer.cash/address/<x equiv-text="{{ addressString }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/></source>
-                <target xml:space="preserve"><x ctype="x-i" equiv-text="&lt;i &gt;" id="START_ITALIC_TEXT"/>There are too many transactions on this address, more than your backend can handle. See more on <x ctype="x-a" equiv-text="&lt;a href=&quot;/docs/faq#address-lookup-issues&quot; &gt;" id="START_LINK"/>setting up a stronger backend<x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/>.<x ctype="x-i" equiv-text="&lt;/i &gt;" id="CLOSE_ITALIC_TEXT"/><x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/><x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/> Consider viewing this address on the official BCH Explorer website instead: <x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/><x equiv-text="&lt;a href=&quot;https://bchexplorer.cash/address/{{ addressString }}&quot; target=&quot;_blank&quot; &gt;" id="START_LINK_1"/>https://bchexplorer.cash/address/<x equiv-text="{{ addressString }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/></target>
+                <source xml:space="preserve"><x ctype="x-i" equiv-text="&lt;i             &gt;" id="START_ITALIC_TEXT"/>There are too many transactions on this address, more than your backend can handle. See more on <x ctype="x-a" equiv-text="&lt;a href=&quot;/docs/faq#address-lookup-issues&quot;               &gt;" id="START_LINK"/>setting up a stronger backend<x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/>.<x ctype="x-i" equiv-text="&lt;/i           &gt;" id="CLOSE_ITALIC_TEXT"/><x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/><x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/> Consider viewing this address on the official BCH Explorer website instead: <x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/><x equiv-text="&lt;a             href=&quot;https://bchexplorer.cash/address/{{ addressString }}&quot;             target=&quot;_blank&quot;             &gt;" id="START_LINK_1"/>https://bchexplorer.cash/address/<x equiv-text="{{ addressString }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/></source>
+                <target xml:space="preserve"><x ctype="x-i" equiv-text="&lt;i             &gt;" id="START_ITALIC_TEXT"/>There are too many transactions on this address, more than your backend can handle. See more on <x ctype="x-a" equiv-text="&lt;a href=&quot;/docs/faq#address-lookup-issues&quot;               &gt;" id="START_LINK"/>setting up a stronger backend<x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/>.<x ctype="x-i" equiv-text="&lt;/i           &gt;" id="CLOSE_ITALIC_TEXT"/><x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/><x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/> Consider viewing this address on the official BCH Explorer website instead: <x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/><x equiv-text="&lt;a             href=&quot;https://bchexplorer.cash/address/{{ addressString }}&quot;             target=&quot;_blank&quot;             &gt;" id="START_LINK_1"/>https://bchexplorer.cash/address/<x equiv-text="{{ addressString }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/></target>
             </trans-unit>
             <trans-unit id="1014548743221553652">
                 <source xml:space="preserve"> Next Halving </source>
@@ -70,8 +70,8 @@
                 <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks behind</target>
             </trans-unit>
             <trans-unit id="1358478559966633776">
-                <source xml:space="preserve">See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork( this.stateService.network )" id="PH"/> wallet <x equiv-text="walletName" id="INTERPOLATION"/>.</source>
-                <target xml:space="preserve">See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork( this.stateService.network )" id="PH"/> wallet <x equiv-text="walletName" id="INTERPOLATION"/>.</target>
+                <source xml:space="preserve">See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> wallet <x equiv-text="walletName" id="INTERPOLATION"/>.</source>
+                <target xml:space="preserve">See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> wallet <x equiv-text="walletName" id="INTERPOLATION"/>.</target>
             </trans-unit>
             <trans-unit id="1358842767534290899">
                 <source xml:space="preserve"><x equiv-text="{{ (transactions?.length | number) || &quot;?&quot; }}" id="INTERPOLATION"/> of <x equiv-text="{{ mempoolStats.tx_count + chainStats.tx_count | number }}" id="INTERPOLATION_1"/> transactions</source>
@@ -238,8 +238,8 @@
                 <target xml:space="preserve">Terms of Service</target>
             </trans-unit>
             <trans-unit id="2078867154932510579">
-                <source xml:space="preserve"><x ctype="x-p" equiv-text="&lt;p&gt;" id="START_PARAGRAPH"/><x ctype="x-b" equiv-text="&lt;b &gt;" id="START_BOLD_TEXT"/>bchexplorer.cash merely provides data about the Bitcoin Cash network.<x ctype="x-b" equiv-text="&lt;/b &gt;" id="CLOSE_BOLD_TEXT"/> It cannot help you with retrieving funds, wallet issues, etc. <x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/><x ctype="x-p" equiv-text="&lt;p&gt;" id="START_PARAGRAPH"/> For any such requests, you need to get in touch with the entity that helped make the transaction (wallet software, exchange company, etc). <x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/></source>
-                <target xml:space="preserve"><x ctype="x-p" equiv-text="&lt;p&gt;" id="START_PARAGRAPH"/><x ctype="x-b" equiv-text="&lt;b &gt;" id="START_BOLD_TEXT"/>bchexplorer.cash merely provides data about the Bitcoin Cash network.<x ctype="x-b" equiv-text="&lt;/b &gt;" id="CLOSE_BOLD_TEXT"/> It cannot help you with retrieving funds, wallet issues, etc. <x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/><x ctype="x-p" equiv-text="&lt;p&gt;" id="START_PARAGRAPH"/> For any such requests, you need to get in touch with the entity that helped make the transaction (wallet software, exchange company, etc). <x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/></target>
+                <source xml:space="preserve"><x ctype="x-p" equiv-text="&lt;p&gt;" id="START_PARAGRAPH"/><x ctype="x-b" equiv-text="&lt;b                 &gt;" id="START_BOLD_TEXT"/>bchexplorer.cash merely provides data about the Bitcoin Cash network.<x ctype="x-b" equiv-text="&lt;/b               &gt;" id="CLOSE_BOLD_TEXT"/> It cannot help you with retrieving funds, wallet issues, etc. <x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/><x ctype="x-p" equiv-text="&lt;p&gt;" id="START_PARAGRAPH"/> For any such requests, you need to get in touch with the entity that helped make the transaction (wallet software, exchange company, etc). <x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/></source>
+                <target xml:space="preserve"><x ctype="x-p" equiv-text="&lt;p&gt;" id="START_PARAGRAPH"/><x ctype="x-b" equiv-text="&lt;b                 &gt;" id="START_BOLD_TEXT"/>bchexplorer.cash merely provides data about the Bitcoin Cash network.<x ctype="x-b" equiv-text="&lt;/b               &gt;" id="CLOSE_BOLD_TEXT"/> It cannot help you with retrieving funds, wallet issues, etc. <x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/><x ctype="x-p" equiv-text="&lt;p&gt;" id="START_PARAGRAPH"/> For any such requests, you need to get in touch with the entity that helped make the transaction (wallet software, exchange company, etc). <x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/></target>
             </trans-unit>
             <trans-unit id="2091542449422385206">
                 <source xml:space="preserve">Broadcast Transaction</source>
@@ -738,8 +738,10 @@
                 <target xml:space="preserve">Block Health</target>
             </trans-unit>
             <trans-unit id="3935295557063521643">
-                <source xml:space="preserve"> Difficulty Adjustment </source>
-                <target xml:space="preserve"> Difficulty Adjustment </target>
+                <source xml:space="preserve"> Difficulty Adjustment
+</source>
+                <target xml:space="preserve"> Difficulty Adjustment
+</target>
             </trans-unit>
             <trans-unit id="3945263760582448384">
                 <source xml:space="preserve"> of total supply </source>
@@ -918,12 +920,18 @@
                 <target xml:space="preserve"> Fee </target>
             </trans-unit>
             <trans-unit id="4603219930058518974">
-                <source xml:space="preserve"> Halving Countdown </source>
-                <target xml:space="preserve"> Halving Countdown </target>
+                <source xml:space="preserve"> Halving Countdown
+</source>
+                <target xml:space="preserve"> Halving Countdown
+</target>
             </trans-unit>
             <trans-unit id="4610163795914092608">
                 <source xml:space="preserve">Locktime</source>
                 <target xml:space="preserve">Locktime</target>
+            </trans-unit>
+            <trans-unit id="4662281448215873743">
+                <source xml:space="preserve">How to host my own instance?</source>
+                <target xml:space="preserve">How to host my own instance?</target>
             </trans-unit>
             <trans-unit id="4701769218404429807">
                 <source xml:space="preserve"> TXID </source>
@@ -1014,8 +1022,8 @@
                 <target xml:space="preserve">Overview of the mining pools on Bitcoin Cash.</target>
             </trans-unit>
             <trans-unit id="5033494112821505715">
-                <source xml:space="preserve">Only ~<x equiv-text="{{ medianFeeNeeded | feeRounding }}" id="INTERPOLATION"/> sat/B was needed to get into this block</source>
-                <target xml:space="preserve">Only ~<x equiv-text="{{ medianFeeNeeded | feeRounding }}" id="INTERPOLATION"/> sat/B was needed to get into this block</target>
+                <source xml:space="preserve">Only ~<x equiv-text="{{     medianFeeNeeded | feeRounding   }}" id="INTERPOLATION"/> sat/B was needed to get into this block</source>
+                <target xml:space="preserve">Only ~<x equiv-text="{{     medianFeeNeeded | feeRounding   }}" id="INTERPOLATION"/> sat/B was needed to get into this block</target>
             </trans-unit>
             <trans-unit id="5063990330610553816">
                 <source xml:space="preserve">Marginal fee rate</source>
@@ -1086,8 +1094,8 @@
                 <target xml:space="preserve">Mempool size</target>
             </trans-unit>
             <trans-unit id="5417840158792309126">
-                <source xml:space="preserve"> If you like this project and use the explorer on a regular basis, please consider <x ctype="x-a" equiv-text="&lt;a href=&quot;https://melroy.org/donate.html&quot; target=&quot;_blank&quot; aria-label=&quot;Donate to support BCH Explorer&quot; &gt;" id="START_LINK"/>donating<x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/>. </source>
-                <target xml:space="preserve"> If you like this project and use the explorer on a regular basis, please consider <x ctype="x-a" equiv-text="&lt;a href=&quot;https://melroy.org/donate.html&quot; target=&quot;_blank&quot; aria-label=&quot;Donate to support BCH Explorer&quot; &gt;" id="START_LINK"/>donating<x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/>. </target>
+                <source xml:space="preserve"> If you like this project and use the explorer on a regular basis, please consider <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Donate to support BCH Explorer&quot;         &gt;" id="START_LINK"/>donating<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/>. </source>
+                <target xml:space="preserve"> If you like this project and use the explorer on a regular basis, please consider <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Donate to support BCH Explorer&quot;         &gt;" id="START_LINK"/>donating<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/>. </target>
             </trans-unit>
             <trans-unit id="5452140384265618201">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block remaining</source>
@@ -1150,8 +1158,8 @@
                 <target xml:space="preserve">Timestamp</target>
             </trans-unit>
             <trans-unit id="5682558575236654240">
-                <source xml:space="preserve"> By <x ctype="x-a" equiv-text="&lt;a href=&quot;https://melroy.org/donate.html&quot; target=&quot;_blank&quot; aria-label=&quot;Sponsor BCH Explorer development&quot; &gt;" id="START_LINK"/>sponsoring me<x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/> you are supporting my work and ensuring that the BCH Explorer project remains up-to-date, stable and available to the whole Bitcoin Cash community. As well as extending this BCH Explorer for specific BCH features. Are you interested in becoming an <x ctype="x-b" equiv-text="&lt;b&gt;" id="START_BOLD_TEXT"/>enterprise sponsor<x ctype="x-b" equiv-text="&lt;/b&gt;" id="CLOSE_BOLD_TEXT"/> and getting your company listed on this site? Feel free to <x equiv-text="&lt;a href=&quot;https://t.me/melroyvandenberg&quot; target=&quot;_blank&quot; aria-label=&quot;Contact Melroy on Telegram&quot; &gt;" id="START_LINK_1"/>reach out via Telegram<x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/>. </source>
-                <target xml:space="preserve"> By <x ctype="x-a" equiv-text="&lt;a href=&quot;https://melroy.org/donate.html&quot; target=&quot;_blank&quot; aria-label=&quot;Sponsor BCH Explorer development&quot; &gt;" id="START_LINK"/>sponsoring me<x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/> you are supporting my work and ensuring that the BCH Explorer project remains up-to-date, stable and available to the whole Bitcoin Cash community. As well as extending this BCH Explorer for specific BCH features. Are you interested in becoming an <x ctype="x-b" equiv-text="&lt;b&gt;" id="START_BOLD_TEXT"/>enterprise sponsor<x ctype="x-b" equiv-text="&lt;/b&gt;" id="CLOSE_BOLD_TEXT"/> and getting your company listed on this site? Feel free to <x equiv-text="&lt;a href=&quot;https://t.me/melroyvandenberg&quot; target=&quot;_blank&quot; aria-label=&quot;Contact Melroy on Telegram&quot; &gt;" id="START_LINK_1"/>reach out via Telegram<x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/>. </target>
+                <source xml:space="preserve"> By <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Sponsor BCH Explorer development&quot;         &gt;" id="START_LINK"/>sponsoring me<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> you are supporting my work and ensuring that the BCH Explorer project remains up-to-date, stable and available to the whole Bitcoin Cash community. As well as extending this BCH Explorer for specific BCH features. Are you interested in becoming an <x ctype="x-b" equiv-text="&lt;b&gt;" id="START_BOLD_TEXT"/>enterprise sponsor<x ctype="x-b" equiv-text="&lt;/b&gt;" id="CLOSE_BOLD_TEXT"/> and getting your company listed on this site? Feel free to <x equiv-text="&lt;a         href=&quot;https://t.me/melroyvandenberg&quot;         target=&quot;_blank&quot;         aria-label=&quot;Contact Melroy on Telegram&quot;         &gt;" id="START_LINK_1"/>reach out via Telegram<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/>. </source>
+                <target xml:space="preserve"> By <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Sponsor BCH Explorer development&quot;         &gt;" id="START_LINK"/>sponsoring me<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> you are supporting my work and ensuring that the BCH Explorer project remains up-to-date, stable and available to the whole Bitcoin Cash community. As well as extending this BCH Explorer for specific BCH features. Are you interested in becoming an <x ctype="x-b" equiv-text="&lt;b&gt;" id="START_BOLD_TEXT"/>enterprise sponsor<x ctype="x-b" equiv-text="&lt;/b&gt;" id="CLOSE_BOLD_TEXT"/> and getting your company listed on this site? Feel free to <x equiv-text="&lt;a         href=&quot;https://t.me/melroyvandenberg&quot;         target=&quot;_blank&quot;         aria-label=&quot;Contact Melroy on Telegram&quot;         &gt;" id="START_LINK_1"/>reach out via Telegram<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/>. </target>
             </trans-unit>
             <trans-unit id="5740206434555920246">
                 <source xml:space="preserve"> Preview </source>
@@ -1234,8 +1242,8 @@
                 <target xml:space="preserve">provably unspendable</target>
             </trans-unit>
             <trans-unit id="6080998935194218567">
-                <source xml:space="preserve">See size, fee range, included transactions, audit (expected vs actual), and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork( this.stateService.network )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</source>
-                <target xml:space="preserve">See size, fee range, included transactions, audit (expected vs actual), and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork( this.stateService.network )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</target>
+                <source xml:space="preserve">See size, fee range, included transactions, audit (expected vs actual), and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</source>
+                <target xml:space="preserve">See size, fee range, included transactions, audit (expected vs actual), and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</target>
             </trans-unit>
             <trans-unit id="611448626023495165">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block expected</source>
@@ -1266,8 +1274,8 @@
                 <target xml:space="preserve">Pools Dominance</target>
             </trans-unit>
             <trans-unit id="6206405941943118648">
-                <source xml:space="preserve">CashToken <x ctype="x-a" equiv-text="&lt;a class=&quot;info-link&quot; [routerLink]=&quot;[&apos;/docs/faq&apos; | relativeUrl]&quot; fragment=&quot;what-are-cashtokens&quot; &gt;" id="START_LINK"/><x ctype="x-fa_icon" equiv-text="&lt;fa-icon [icon]=&quot;[&apos;fas&apos;, &apos;info-circle&apos;]&quot; [fixedWidth]=&quot;true&quot;&gt;" id="START_TAG_FA_ICON"/><x ctype="x-fa_icon" equiv-text="&lt;/fa-icon &gt;" id="CLOSE_TAG_FA_ICON"/><x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/></source>
-                <target xml:space="preserve">CashToken <x ctype="x-a" equiv-text="&lt;a class=&quot;info-link&quot; [routerLink]=&quot;[&apos;/docs/faq&apos; | relativeUrl]&quot; fragment=&quot;what-are-cashtokens&quot; &gt;" id="START_LINK"/><x ctype="x-fa_icon" equiv-text="&lt;fa-icon [icon]=&quot;[&apos;fas&apos;, &apos;info-circle&apos;]&quot; [fixedWidth]=&quot;true&quot;&gt;" id="START_TAG_FA_ICON"/><x ctype="x-fa_icon" equiv-text="&lt;/fa-icon &gt;" id="CLOSE_TAG_FA_ICON"/><x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/></target>
+                <source xml:space="preserve">CashToken <x ctype="x-a" equiv-text="&lt;a     class=&quot;info-link&quot;     [routerLink]=&quot;[&apos;/docs/faq&apos; | relativeUrl]&quot;     fragment=&quot;what-are-cashtokens&quot;     &gt;" id="START_LINK"/><x ctype="x-fa_icon" equiv-text="&lt;fa-icon [icon]=&quot;[&apos;fas&apos;, &apos;info-circle&apos;]&quot; [fixedWidth]=&quot;true&quot;&gt;" id="START_TAG_FA_ICON"/><x ctype="x-fa_icon" equiv-text="&lt;/fa-icon   &gt;" id="CLOSE_TAG_FA_ICON"/><x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/></source>
+                <target xml:space="preserve">CashToken <x ctype="x-a" equiv-text="&lt;a     class=&quot;info-link&quot;     [routerLink]=&quot;[&apos;/docs/faq&apos; | relativeUrl]&quot;     fragment=&quot;what-are-cashtokens&quot;     &gt;" id="START_LINK"/><x ctype="x-fa_icon" equiv-text="&lt;fa-icon [icon]=&quot;[&apos;fas&apos;, &apos;info-circle&apos;]&quot; [fixedWidth]=&quot;true&quot;&gt;" id="START_TAG_FA_ICON"/><x ctype="x-fa_icon" equiv-text="&lt;/fa-icon   &gt;" id="CLOSE_TAG_FA_ICON"/><x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/></target>
             </trans-unit>
             <trans-unit id="6252070156626006029">
                 <source xml:space="preserve">None</source>
@@ -1378,8 +1386,8 @@
                 <target xml:space="preserve">TXs</target>
             </trans-unit>
             <trans-unit id="6629060512027460576">
-                <source xml:space="preserve">See the most recent Bitcoin Cash<x equiv-text="seoDescriptionNetwork( this.stateService.network )" id="PH"/> blocks along with basic stats such as block height, block reward, block size, and more.</source>
-                <target xml:space="preserve">See the most recent Bitcoin Cash<x equiv-text="seoDescriptionNetwork( this.stateService.network )" id="PH"/> blocks along with basic stats such as block height, block reward, block size, and more.</target>
+                <source xml:space="preserve">See the most recent Bitcoin Cash<x equiv-text="seoDescriptionNetwork(           this.stateService.network         )" id="PH"/> blocks along with basic stats such as block height, block reward, block size, and more.</source>
+                <target xml:space="preserve">See the most recent Bitcoin Cash<x equiv-text="seoDescriptionNetwork(           this.stateService.network         )" id="PH"/> blocks along with basic stats such as block height, block reward, block size, and more.</target>
             </trans-unit>
             <trans-unit id="6641135694653212933">
                 <source xml:space="preserve">Mempool by Bytes (sat/Byte)</source>
@@ -1466,8 +1474,10 @@
                 <target xml:space="preserve">First seen</target>
             </trans-unit>
             <trans-unit id="6903945166576780156">
-                <source xml:space="preserve"> Bitcoin Cash Supply </source>
-                <target xml:space="preserve"> Bitcoin Cash Supply </target>
+                <source xml:space="preserve"> Bitcoin Cash Supply
+</source>
+                <target xml:space="preserve"> Bitcoin Cash Supply
+</target>
             </trans-unit>
             <trans-unit id="6911512236126604837">
                 <source xml:space="preserve">Average fees per block in the past 144 blocks</source>
@@ -1478,8 +1488,8 @@
                 <target xml:space="preserve">Blocks</target>
             </trans-unit>
             <trans-unit id="6949454993667784101">
-                <source xml:space="preserve">Your balance is too low.<x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/>Please <x ctype="x-a" equiv-text="&lt;a class=&quot;top-up-link&quot; href=&quot;/services/accelerator&quot;&gt;" id="START_LINK"/>top up your account<x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/>.</source>
-                <target xml:space="preserve">Your balance is too low.<x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/>Please <x ctype="x-a" equiv-text="&lt;a class=&quot;top-up-link&quot; href=&quot;/services/accelerator&quot;&gt;" id="START_LINK"/>top up your account<x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/>.</target>
+                <source xml:space="preserve">Your balance is too low.<x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/>Please <x ctype="x-a" equiv-text="&lt;a class=&quot;top-up-link&quot; href=&quot;/services/accelerator&quot;&gt;" id="START_LINK"/>top up your account<x ctype="x-a" equiv-text="&lt;/a   &gt;" id="CLOSE_LINK"/>.</source>
+                <target xml:space="preserve">Your balance is too low.<x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/>Please <x ctype="x-a" equiv-text="&lt;a class=&quot;top-up-link&quot; href=&quot;/services/accelerator&quot;&gt;" id="START_LINK"/>top up your account<x ctype="x-a" equiv-text="&lt;/a   &gt;" id="CLOSE_LINK"/>.</target>
             </trans-unit>
             <trans-unit id="6c453b11fd7bd159ae30bc381f367bc736d86909">
                 <source xml:space="preserve">Block Fees</source>
@@ -1802,8 +1812,8 @@
                 <target xml:space="preserve">Sign In</target>
             </trans-unit>
             <trans-unit id="841897176602849537">
-                <source xml:space="preserve"> This transaction ID appears twice in the blockchain as the coinbase of blocks <x ctype="x-a" equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[0]]&quot;&gt;" id="START_LINK"/><x equiv-text="{{ duplicateTxBlocks[0] }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/> and <x equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[1]]&quot;&gt;" id="START_LINK_1"/><x equiv-text="{{ duplicateTxBlocks[1] }}" id="INTERPOLATION_1"/><x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/>, due to a bug later mitigated by <x equiv-text="&lt;a href=&quot;https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; &gt;" id="START_LINK_2"/>BIP-30<x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/>. </source>
-                <target xml:space="preserve"> This transaction ID appears twice in the blockchain as the coinbase of blocks <x ctype="x-a" equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[0]]&quot;&gt;" id="START_LINK"/><x equiv-text="{{ duplicateTxBlocks[0] }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/> and <x equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[1]]&quot;&gt;" id="START_LINK_1"/><x equiv-text="{{ duplicateTxBlocks[1] }}" id="INTERPOLATION_1"/><x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/>, due to a bug later mitigated by <x equiv-text="&lt;a href=&quot;https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot; &gt;" id="START_LINK_2"/>BIP-30<x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/>. </target>
+                <source xml:space="preserve"> This transaction ID appears twice in the blockchain as the coinbase of blocks <x ctype="x-a" equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[0]]&quot;&gt;" id="START_LINK"/><x equiv-text="{{             duplicateTxBlocks[0]           }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/> and <x equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[1]]&quot;&gt;" id="START_LINK_1"/><x equiv-text="{{             duplicateTxBlocks[1]           }}" id="INTERPOLATION_1"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/>, due to a bug later mitigated by <x equiv-text="&lt;a             href=&quot;https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki&quot;             target=&quot;_blank&quot;             rel=&quot;noopener&quot;             &gt;" id="START_LINK_2"/>BIP-30<x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/>. </source>
+                <target xml:space="preserve"> This transaction ID appears twice in the blockchain as the coinbase of blocks <x ctype="x-a" equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[0]]&quot;&gt;" id="START_LINK"/><x equiv-text="{{             duplicateTxBlocks[0]           }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/> and <x equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[1]]&quot;&gt;" id="START_LINK_1"/><x equiv-text="{{             duplicateTxBlocks[1]           }}" id="INTERPOLATION_1"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/>, due to a bug later mitigated by <x equiv-text="&lt;a             href=&quot;https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki&quot;             target=&quot;_blank&quot;             rel=&quot;noopener&quot;             &gt;" id="START_LINK_2"/>BIP-30<x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/>. </target>
             </trans-unit>
             <trans-unit id="8454028079923559383">
                 <source xml:space="preserve">Winning Block</source>
@@ -1834,8 +1844,8 @@
                 <target xml:space="preserve">Indexing pools hashrate</target>
             </trans-unit>
             <trans-unit id="8538305450922736186">
-                <source xml:space="preserve">At block <x equiv-text="&apos;&lt;b style=&quot;color: var(--fg); margin-left: 2px&quot;&gt;&apos; + data[0].axisValue" id="PH"/></source>
-                <target xml:space="preserve">At block <x equiv-text="&apos;&lt;b style=&quot;color: var(--fg); margin-left: 2px&quot;&gt;&apos; + data[0].axisValue" id="PH"/></target>
+                <source xml:space="preserve">At block <x equiv-text="&apos;&lt;b style=&quot;color: var(--fg); margin-left: 2px&quot;&gt;&apos; +                 data[0].axisValue" id="PH"/></source>
+                <target xml:space="preserve">At block <x equiv-text="&apos;&lt;b style=&quot;color: var(--fg); margin-left: 2px&quot;&gt;&apos; +                 data[0].axisValue" id="PH"/></target>
             </trans-unit>
             <trans-unit id="8546007275666227290">
                 <source xml:space="preserve">Code Example</source>
@@ -1850,8 +1860,8 @@
                 <target xml:space="preserve">Fee rate</target>
             </trans-unit>
             <trans-unit id="8631617549415105973">
-                <source xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork( this.stateService.network )" id="PH"/> network using the transaction&apos;s hash.</source>
-                <target xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork( this.stateService.network )" id="PH"/> network using the transaction&apos;s hash.</target>
+                <source xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network using the transaction&apos;s hash.</source>
+                <target xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network using the transaction&apos;s hash.</target>
             </trans-unit>
             <trans-unit id="8638358096787290282">
                 <source xml:space="preserve"> This transaction is stored locally in your browser. Broadcast it to add it to the mempool. </source>
@@ -1894,8 +1904,8 @@
                 <target xml:space="preserve">Confirmed balance</target>
             </trans-unit>
             <trans-unit id="8807945662832318286">
-                <source xml:space="preserve">Around block <x equiv-text="&apos;&lt;b style=&quot;color: var(--fg); margin-left: 2px&quot;&gt;&apos; + data[0].axisValue" id="PH"/></source>
-                <target xml:space="preserve">Around block <x equiv-text="&apos;&lt;b style=&quot;color: var(--fg); margin-left: 2px&quot;&gt;&apos; + data[0].axisValue" id="PH"/></target>
+                <source xml:space="preserve">Around block <x equiv-text="&apos;&lt;b style=&quot;color: var(--fg); margin-left: 2px&quot;&gt;&apos; +                 data[0].axisValue" id="PH"/></source>
+                <target xml:space="preserve">Around block <x equiv-text="&apos;&lt;b style=&quot;color: var(--fg); margin-left: 2px&quot;&gt;&apos; +                 data[0].axisValue" id="PH"/></target>
             </trans-unit>
             <trans-unit id="8829497237648100098">
                 <source xml:space="preserve">Filter</source>
@@ -1978,8 +1988,10 @@
                 <target xml:space="preserve">Pools Ranking</target>
             </trans-unit>
             <trans-unit id="907780240721638283">
-                <source xml:space="preserve"> Verified Treasuries </source>
-                <target xml:space="preserve"> Verified Treasuries </target>
+                <source xml:space="preserve"> Verified Treasuries
+</source>
+                <target xml:space="preserve"> Verified Treasuries
+</target>
             </trans-unit>
             <trans-unit id="9079964163800849922">
                 <source xml:space="preserve"> Avg Tx Fee </source>
@@ -2026,8 +2038,8 @@
                 <target xml:space="preserve">Explore the full Bitcoin Cash ecosystem</target>
             </trans-unit>
             <trans-unit id="964309715677902826">
-                <source xml:space="preserve">See stats for Bitcoin Cash<x equiv-text="seoDescriptionNetwork( this.stateService.network )" id="PH"/> transactions in the mempool: fee range, aggregate size, and more. Mempool blocks are updated in real-time as the network receives new transactions.</source>
-                <target xml:space="preserve">See stats for Bitcoin Cash<x equiv-text="seoDescriptionNetwork( this.stateService.network )" id="PH"/> transactions in the mempool: fee range, aggregate size, and more. Mempool blocks are updated in real-time as the network receives new transactions.</target>
+                <source xml:space="preserve">See stats for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(                 this.stateService.network               )" id="PH"/> transactions in the mempool: fee range, aggregate size, and more. Mempool blocks are updated in real-time as the network receives new transactions.</source>
+                <target xml:space="preserve">See stats for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(                 this.stateService.network               )" id="PH"/> transactions in the mempool: fee range, aggregate size, and more. Mempool blocks are updated in real-time as the network receives new transactions.</target>
             </trans-unit>
             <trans-unit id="973124238841406947">
                 <source xml:space="preserve">Reward stats</source>
@@ -2186,8 +2198,8 @@
                 <target xml:space="preserve">Learn more about The Mempool Open Source Project®: enterprise sponsors, individual sponsors, integrations, who contributes, FOSS licensing, and more.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.block">
-                <source xml:space="preserve">See size, weight, fee range, included transactions, audit (expected v actual), and more for Bitcoin<x equiv-text="seoDescriptionNetwork( this.stateService.network )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</source>
-                <target xml:space="preserve">See size, weight, fee range, included transactions, audit (expected v actual), and more for Bitcoin<x equiv-text="seoDescriptionNetwork( this.stateService.network )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</target>
+                <source xml:space="preserve">See size, weight, fee range, included transactions, audit (expected v actual), and more for Bitcoin<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</source>
+                <target xml:space="preserve">See size, weight, fee range, included transactions, audit (expected v actual), and more for Bitcoin<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-fee-rates">
                 <source xml:space="preserve">See Bitcoin feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
@@ -2198,8 +2210,8 @@
                 <target xml:space="preserve">See Bitcoin block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using Mempool&apos;s re-implementation of Bitcoin Core&apos;s transaction selection algorithm.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.hashrate">
-                <source xml:space="preserve">See hashrate and difficulty for the Bitcoin<x equiv-text="seoDescriptionNetwork( this.network )" id="PH"/> network visualized over time.</source>
-                <target xml:space="preserve">See hashrate and difficulty for the Bitcoin<x equiv-text="seoDescriptionNetwork( this.network )" id="PH"/> network visualized over time.</target>
+                <source xml:space="preserve">See hashrate and difficulty for the Bitcoin<x equiv-text="seoDescriptionNetwork(           this.network         )" id="PH"/> network visualized over time.</source>
+                <target xml:space="preserve">See hashrate and difficulty for the Bitcoin<x equiv-text="seoDescriptionNetwork(           this.network         )" id="PH"/> network visualized over time.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.pool-ranking">
                 <source xml:space="preserve">See the top Bitcoin mining pools ranked by number of blocks mined, over your desired timeframe.</source>
@@ -2234,8 +2246,8 @@
                 <target xml:space="preserve">Preview a transaction to the Bitcoin<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> network using the transaction&apos;s raw hex data.</target>
             </trans-unit>
             <trans-unit id="meta.description.stale-chain-tips">
-                <source xml:space="preserve">See the most recent stale chain tips on the Bitcoin<x equiv-text="seoDescriptionNetwork( this.stateService.network )" id="PH"/> network.</source>
-                <target xml:space="preserve">See the most recent stale chain tips on the Bitcoin<x equiv-text="seoDescriptionNetwork( this.stateService.network )" id="PH"/> network.</target>
+                <source xml:space="preserve">See the most recent stale chain tips on the Bitcoin<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network.</source>
+                <target xml:space="preserve">See the most recent stale chain tips on the Bitcoin<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network.</target>
             </trans-unit>
             <trans-unit id="meta.descriptions.bitcoin.graphs.hashrate-pools">
                 <source xml:space="preserve">See Bitcoin mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
