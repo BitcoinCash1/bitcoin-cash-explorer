@@ -314,6 +314,7 @@
             "outputPath": "src/locale",
             "targetFiles": [
               "messages.ar.xlf",
+              "messages.bqi.xlf",
               "messages.ca.xlf",
               "messages.cs.xlf",
               "messages.de.xlf",
@@ -332,6 +333,7 @@
               "messages.pl.xlf",
               "messages.pt.xlf",
               "messages.sl.xlf",
+              "messages.sr.xlf",
               "messages.sv.xlf",
               "messages.th.xlf",
               "messages.tr.xlf",
