@@ -587,7 +587,7 @@
             </trans-unit>
             <trans-unit id="3380799392226022892">
                 <source xml:space="preserve">Based on average native transaction of 140 Bytes</source>
-                <target xml:space="preserve">Gebaseerd op een gemiddelde native segwit-transactie van 140 vBytes</target>
+                <target xml:space="preserve">Gebaseerd op een gemiddelde native segwit-transactie van 140 Bytes</target>
             </trans-unit>
             <trans-unit id="3381079415067175393">
                 <source xml:space="preserve">Get real-time status, addresses, fees, script info, and more for Bitcoin Cash<x equiv-text="seoDescription" id="PH"/> transaction with txid <x equiv-text="this.txId" id="PH_1"/>.</source>
@@ -979,7 +979,7 @@
             </trans-unit>
             <trans-unit id="4865960060175644381">
                 <source xml:space="preserve">Transaction Bytes per second (B/s)</source>
-                <target xml:space="preserve">Transactie-vBytes per seconde (vB/s)</target>
+                <target xml:space="preserve">Transactie Bytes per seconde (B/s)</target>
             </trans-unit>
             <trans-unit id="4895326106573044490">
                 <source xml:space="preserve">Documentation</source>
@@ -1015,7 +1015,7 @@
             </trans-unit>
             <trans-unit id="5033494112821505715">
                 <source xml:space="preserve">Only ~<x equiv-text="{{ medianFeeNeeded | feeRounding }}" id="INTERPOLATION"/> sat/B was needed to get into this block</source>
-                <target xml:space="preserve">Er was maar ~<x equiv-text="{{ medianFeeNeeded | feeRounding }}" id="INTERPOLATION"/> sat/vB nodig om in dit blok te komen</target>
+                <target xml:space="preserve">Er was maar ~<x equiv-text="{{ medianFeeNeeded | feeRounding }}" id="INTERPOLATION"/> sat/B nodig om in dit blok te komen</target>
             </trans-unit>
             <trans-unit id="5063990330610553816">
                 <source xml:space="preserve">Marginal fee rate</source>
@@ -1383,7 +1383,7 @@
             </trans-unit>
             <trans-unit id="6641135694653212933">
                 <source xml:space="preserve">Mempool by Bytes (sat/Byte)</source>
-                <target xml:space="preserve">Mempool per vBytes (sat/vByte)</target>
+                <target xml:space="preserve">Mempool per Bytes (sat/Byte)</target>
             </trans-unit>
             <trans-unit id="6643831251715779218">
                 <source xml:space="preserve">Median fee</source>
