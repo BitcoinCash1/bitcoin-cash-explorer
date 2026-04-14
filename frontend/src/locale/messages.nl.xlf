@@ -1475,7 +1475,7 @@
             </trans-unit>
             <trans-unit id="6948786787037977434">
                 <source xml:space="preserve">Blocks</source>
-                <target xml:space="preserve">blokken</target>
+                <target xml:space="preserve">Blokken</target>
             </trans-unit>
             <trans-unit id="6949454993667784101">
                 <source xml:space="preserve">Your balance is too low.<x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/>Please <x ctype="x-a" equiv-text="&lt;a class=&quot;top-up-link&quot; href=&quot;/services/accelerator&quot;&gt;" id="START_LINK"/>top up your account<x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/>.</source>
@@ -1551,7 +1551,7 @@
             </trans-unit>
             <trans-unit id="7555637800149874155">
                 <source xml:space="preserve"> Empty Blocks </source>
-                <target xml:space="preserve"> Lege blokken </target>
+                <target xml:space="preserve"> Lege Blokken </target>
             </trans-unit>
             <trans-unit id="7556131343926524430">
                 <source xml:space="preserve">No Match</source>
