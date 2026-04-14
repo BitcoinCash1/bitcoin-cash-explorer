@@ -6,7 +6,7 @@ Jump to a section in this doc:
 
 - [Quick Setup for Frontend Development](#quick-setup-for-frontend-development)
 - [Manual Frontend Setup](#manual-setup)
-- [Translations](#translations-transifex-project)
+- [Translations](#translations)
 
 ## Quick Setup for Frontend Development
 
