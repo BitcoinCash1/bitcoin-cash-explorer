@@ -2,9 +2,20 @@
   "upload": {  
     "type": "xliff",
     "features": ["use_project_lang"],
-    "files": "src/locale/messages.xlf"         
+    "files": [
+      {
+        "pattern": "src/locale/messages.xlf",
+        "lang": "inherited"
+      },
+      {
+        "group": "existing",
+        "pattern": "src/locale/messages.*.xlf",
+        "excludes": ["src/locale/messages.xlf"],
+        "lang": "${autodetectLang}"
+      }
+    ]
   },
   "download": {
     "files": "src/locale/messages.${lang}.xlf"
-  }  
+  }
 }
