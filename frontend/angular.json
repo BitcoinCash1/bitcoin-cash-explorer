@@ -132,7 +132,7 @@
             "baseHref": "/mk/"
           },
           "zh": {
-            "translation": "src/locale/messages.zh.xlf",
+            "translation": "src/locale/messages.zh-Hant.xlf",
             "baseHref": "/zh/"
           },
           "ro": {
@@ -252,6 +252,15 @@
             },
             "es": {
               "localize": ["es"]
+            },
+            "ro": {
+              "localize": ["ro"]
+            },
+            "pt": {
+              "localize": ["pt"]
+            },
+            "zh": {
+              "localize": ["zh"]
             }
           },
           "defaultConfiguration": "production"
@@ -297,6 +306,21 @@
             },
             "es": {
               "buildTarget": "explorer:build:development,es",
+              "proxyConfig": "proxy.conf.local.js",
+              "verbose": true
+            },
+            "ro": {
+              "buildTarget": "explorer:build:development,ro",
+              "proxyConfig": "proxy.conf.local.js",
+              "verbose": true
+            },
+            "pt": {
+              "buildTarget": "explorer:build:development,pt",
+              "proxyConfig": "proxy.conf.local.js",
+              "verbose": true
+            },
+            "zh": {
+              "buildTarget": "explorer:build:development,zh",
               "proxyConfig": "proxy.conf.local.js",
               "verbose": true
             }

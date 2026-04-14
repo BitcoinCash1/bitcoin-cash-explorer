@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?><xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2">
-    <file datatype="plaintext" original="ng2.template" source-language="en-US" target-language="he">
+    <file datatype="plaintext" original="ng2.template" source-language="en-US" target-language="zh-Hant">
         <body>
             <trans-unit id="004b222ff9ef9dd4771b777950ca1d0e4cd4348a">
                 <source xml:space="preserve">About</source>
-                <target xml:space="preserve">אודות</target>
+                <target xml:space="preserve">关于</target>
             </trans-unit>
             <trans-unit datatype="html" id="0094b97dd052620710f173e7aedf6807a1eba1f5">
                 <source xml:space="preserve">This transaction has been replaced by:</source>
@@ -75,7 +75,7 @@
             </trans-unit>
             <trans-unit id="1014548743221553652">
                 <source xml:space="preserve"> Next Halving </source>
-                <target xml:space="preserve"> חצייה הבאה </target>
+                <target xml:space="preserve"> 距离下次奖励减半 </target>
             </trans-unit>
             <trans-unit id="1026404270740126690">
                 <source xml:space="preserve">See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> address <x equiv-text="this.addressString" id="PH_1"/>.</source>
@@ -83,7 +83,7 @@
             </trans-unit>
             <trans-unit id="1033261550402895380">
                 <source xml:space="preserve">Sum</source>
-                <target xml:space="preserve">סכום</target>
+                <target xml:space="preserve">总和</target>
             </trans-unit>
             <trans-unit id="1063462873103909661">
                 <source xml:space="preserve">Difficulty</source>
@@ -95,35 +95,35 @@
             </trans-unit>
             <trans-unit id="1130652265542107236">
                 <source xml:space="preserve">Age</source>
-                <target xml:space="preserve">גיל</target>
+                <target xml:space="preserve">年龄</target>
             </trans-unit>
             <trans-unit id="1141848625932683011">
                 <source xml:space="preserve">Tint</source>
-                <target xml:space="preserve">לצבוע</target>
+                <target xml:space="preserve">色彩</target>
             </trans-unit>
             <trans-unit id="116895469304130365">
                 <source xml:space="preserve"> Other Network Address </source>
-                <target xml:space="preserve"> כתובת רשת אחרת </target>
+                <target xml:space="preserve"> 其他网络地址 </target>
             </trans-unit>
             <trans-unit id="1178696012353613358">
                 <source xml:space="preserve">Headers Only</source>
-                <target xml:space="preserve">כותרות בלבד</target>
+                <target xml:space="preserve">仅区块头</target>
             </trans-unit>
             <trans-unit id="1187919775034823182">
                 <source xml:space="preserve"> X Timeline </source>
-                <target xml:space="preserve"> ציר זמן X </target>
+                <target xml:space="preserve"> X时间线 </target>
             </trans-unit>
             <trans-unit id="1207153099804569270">
                 <source xml:space="preserve"> Previous output script </source>
-                <target xml:space="preserve"> פלט קודם </target>
+                <target xml:space="preserve"> 上一次输出脚本 </target>
             </trans-unit>
             <trans-unit id="1230154438678955604">
                 <source xml:space="preserve">Change</source>
-                <target xml:space="preserve">עודף</target>
+                <target xml:space="preserve">变化量</target>
             </trans-unit>
             <trans-unit id="123726871136586876">
                 <source xml:space="preserve"> Audit </source>
-                <target xml:space="preserve"> בדיקה </target>
+                <target xml:space="preserve"> 审计 </target>
             </trans-unit>
             <trans-unit id="1250839334786630849">
                 <source xml:space="preserve"> Preview Transaction </source>
@@ -131,7 +131,7 @@
             </trans-unit>
             <trans-unit id="1257024413147889019">
                 <source xml:space="preserve">Balance (USD)</source>
-                <target xml:space="preserve">מאזן (USD)</target>
+                <target xml:space="preserve">余额（USD）</target>
             </trans-unit>
             <trans-unit datatype="html" id="125c154b4a63daa7e993e1f4a8bea4c98a645142">
                 <source xml:space="preserve">Difficulty adjustment</source>
@@ -139,7 +139,7 @@
             </trans-unit>
             <trans-unit id="1318394327292295541">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks behind</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> בלוקים מאחור</target>
+                <target xml:space="preserve">落后<x equiv-text="{{ i }}" id="INTERPOLATION"/>个区块</target>
             </trans-unit>
             <trans-unit id="1358478559966633776">
                 <source xml:space="preserve">See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> wallet <x equiv-text="walletName" id="INTERPOLATION"/>.</source>
@@ -151,7 +151,7 @@
             </trans-unit>
             <trans-unit id="1374757757883387136">
                 <source xml:space="preserve">Your browser does not support this feature.</source>
-                <target xml:space="preserve">הדפדפן שלך לא תומך בתכונה זאת.</target>
+                <target xml:space="preserve">您的浏览器不支持此功能。</target>
             </trans-unit>
             <trans-unit id="1375913333051334272">
                 <source xml:space="preserve"> Timestamp </source>
@@ -159,7 +159,7 @@
             </trans-unit>
             <trans-unit id="1386306711019304612">
                 <source xml:space="preserve">Input</source>
-                <target xml:space="preserve">קלט</target>
+                <target xml:space="preserve">输入</target>
             </trans-unit>
             <trans-unit datatype="html" id="13f5a75f3e01e5924e45052d2f336eda8bac37e8">
                 <source xml:space="preserve">Weight</source>
@@ -167,19 +167,19 @@
             </trans-unit>
             <trans-unit id="140014747543856969">
                 <source xml:space="preserve">Go to &quot;<x equiv-text="{{ x }}" id="INTERPOLATION"/>&quot;</source>
-                <target xml:space="preserve">עבור ל<x equiv-text="{{ x }}" id="INTERPOLATION"/></target>
+                <target xml:space="preserve">打开&quot;<x equiv-text="{{ x }}" id="INTERPOLATION"/>&quot;</target>
             </trans-unit>
             <trans-unit id="1412642353264167000">
                 <source xml:space="preserve"> Mining </source>
-                <target xml:space="preserve"> כרייה </target>
+                <target xml:space="preserve"> 挖矿 </target>
             </trans-unit>
             <trans-unit id="146442697456175258">
                 <source xml:space="preserve">Data</source>
-                <target xml:space="preserve">מידע</target>
+                <target xml:space="preserve">数据</target>
             </trans-unit>
             <trans-unit id="1482935196707293820">
                 <source xml:space="preserve"> Treasury Transactions </source>
-                <target xml:space="preserve"> טרנזקציות האוצר </target>
+                <target xml:space="preserve"> 国库交易 </target>
             </trans-unit>
             <trans-unit id="1514895844575489984">
                 <source xml:space="preserve"> NFT Capability </source>
@@ -187,7 +187,7 @@
             </trans-unit>
             <trans-unit id="1525857326426458760">
                 <source xml:space="preserve"> Height </source>
-                <target xml:space="preserve"> גובה </target>
+                <target xml:space="preserve"> 区块高度 </target>
             </trans-unit>
             <trans-unit id="152935433957334260">
                 <source xml:space="preserve"> Test Transactions </source>
@@ -195,27 +195,27 @@
             </trans-unit>
             <trans-unit id="1550516794318064232">
                 <source xml:space="preserve"> Filename </source>
-                <target xml:space="preserve"> שם קובץ </target>
+                <target xml:space="preserve"> 文件名 </target>
             </trans-unit>
             <trans-unit id="1569879075312974450">
                 <source xml:space="preserve"> Minimum fee </source>
-                <target xml:space="preserve"> עמלה מינימלית </target>
+                <target xml:space="preserve"> 最低费用 </target>
             </trans-unit>
             <trans-unit id="1576412637250081491">
                 <source xml:space="preserve"> Submit Package </source>
-                <target xml:space="preserve"> שליחת חבילה </target>
+                <target xml:space="preserve"> 提交交易包 </target>
             </trans-unit>
             <trans-unit id="1588217954867055834">
                 <source xml:space="preserve">Recently broadcasted</source>
-                <target xml:space="preserve">שודר לאחרונה</target>
+                <target xml:space="preserve">最近播出</target>
             </trans-unit>
             <trans-unit id="1600222688675819631">
                 <source xml:space="preserve">Become a Community Sponsor</source>
-                <target xml:space="preserve">הצטרף כתומך קהילתי</target>
+                <target xml:space="preserve">成为社区赞助商</target>
             </trans-unit>
             <trans-unit id="1604005258956249607">
                 <source xml:space="preserve">Expected in Block</source>
-                <target xml:space="preserve">צפוי בבלוק</target>
+                <target xml:space="preserve">预计在区块中</target>
             </trans-unit>
             <trans-unit datatype="html" id="160f1ffbd26df073d0fbd02cf8ce0d8cea7603b0">
                 <source xml:space="preserve">Fee</source>
@@ -227,15 +227,15 @@
             </trans-unit>
             <trans-unit id="1620385434838836828">
                 <source xml:space="preserve">Audit status</source>
-                <target xml:space="preserve">מצב בדיקה</target>
+                <target xml:space="preserve">审计情况</target>
             </trans-unit>
             <trans-unit id="1652579116694662723">
                 <source xml:space="preserve"> Purging </source>
-                <target xml:space="preserve"> סף עמלה </target>
+                <target xml:space="preserve"> 清除中 </target>
             </trans-unit>
             <trans-unit id="1684734235599362204">
                 <source xml:space="preserve">Tools</source>
-                <target xml:space="preserve">כלים</target>
+                <target xml:space="preserve">工具</target>
             </trans-unit>
             <trans-unit datatype="html" id="169eed2bc3e08e1bea977bcc5d799379f6b8a758">
                 <source xml:space="preserve">of</source>
@@ -247,19 +247,19 @@
             </trans-unit>
             <trans-unit id="173323320530059738">
                 <source xml:space="preserve">Miners Reward</source>
-                <target xml:space="preserve">פרסי הכורים</target>
+                <target xml:space="preserve">矿池奖励</target>
             </trans-unit>
             <trans-unit id="1780726536610449318">
                 <source xml:space="preserve"> Treasury Leaderboard </source>
-                <target xml:space="preserve"> טבלת מובילי האוצר </target>
+                <target xml:space="preserve"> 国库排行榜 </target>
             </trans-unit>
             <trans-unit id="1792702609723944983">
                 <source xml:space="preserve">Not seen in Mempool</source>
-                <target xml:space="preserve">לא מצפה בממפול</target>
+                <target xml:space="preserve">未在内存池中看到</target>
             </trans-unit>
             <trans-unit id="179958430736909593">
                 <source xml:space="preserve">beta</source>
-                <target xml:space="preserve">בטא</target>
+                <target xml:space="preserve">beta</target>
             </trans-unit>
             <trans-unit datatype="html" id="179eb5c4a21ad324f75f723218a621d120e39d30">
                 <source xml:space="preserve">Height</source>
@@ -267,11 +267,11 @@
             </trans-unit>
             <trans-unit id="1802871584001127867">
                 <source xml:space="preserve"> in treasuries </source>
-                <target xml:space="preserve"> באוצר </target>
+                <target xml:space="preserve"> 国库持有 </target>
             </trans-unit>
             <trans-unit id="1845447508284521819">
                 <source xml:space="preserve">Estimate</source>
-                <target xml:space="preserve">הערכה</target>
+                <target xml:space="preserve">预估调整量</target>
             </trans-unit>
             <trans-unit id="1863028041776311445">
                 <source xml:space="preserve">Preview Transaction</source>
@@ -279,7 +279,7 @@
             </trans-unit>
             <trans-unit id="1877523490807676946">
                 <source xml:space="preserve">Testnet4 Faucet</source>
-                <target xml:space="preserve">ברז רשת בדיקות 4</target>
+                <target xml:space="preserve">Testnet4 龙头</target>
             </trans-unit>
             <trans-unit id="1893008407058525771">
                 <source xml:space="preserve"><x ctype="x-span" equiv-text="&lt;span class=&quot;badge bg-success&quot;&gt;" id="START_TAG_SPAN"/>Winning<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></source>
@@ -287,7 +287,7 @@
             </trans-unit>
             <trans-unit id="1913155003848417351">
                 <source xml:space="preserve">Block remaining</source>
-                <target xml:space="preserve">בלוק נשאר</target>
+                <target xml:space="preserve">剩余区块</target>
             </trans-unit>
             <trans-unit datatype="html" id="1915fb658404dd3fa2a05f7d5fdd774ad72ef422">
                 <source xml:space="preserve">View all »</source>
@@ -295,7 +295,7 @@
             </trans-unit>
             <trans-unit id="1925218593942075988">
                 <source xml:space="preserve">Networks</source>
-                <target xml:space="preserve">רשתות</target>
+                <target xml:space="preserve">网络</target>
             </trans-unit>
             <trans-unit datatype="html" id="192e949d72439897cac5e60476f5f9d7a31d7f75">
                 <source xml:space="preserve">confirmation</source>
@@ -303,7 +303,7 @@
             </trans-unit>
             <trans-unit id="1945058038615471142">
                 <source xml:space="preserve">Total sent</source>
-                <target xml:space="preserve">סה״כ נשלח</target>
+                <target xml:space="preserve">总发送量</target>
             </trans-unit>
             <trans-unit datatype="html" id="194d480219559b855b01ea58459066e3c63acdb2">
                 <source xml:space="preserve">Returns details about a block. Available fields: <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>id<x ctype="x-code" equiv-text="&lt;/code&gt;" id="CLOSE_TAG_CODE"/>, <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>height<x ctype="x-code" equiv-text="&lt;/code&gt;" id="CLOSE_TAG_CODE"/>, <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>version<x ctype="x-code" equiv-text="&lt;/code&gt;" id="CLOSE_TAG_CODE"/>, <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>timestamp<x ctype="x-code" equiv-text="&lt;/code&gt;" id="CLOSE_TAG_CODE"/>, <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>bits<x ctype="x-code" equiv-text="&lt;/code&gt;" id="CLOSE_TAG_CODE"/>, <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>nonce<x ctype="x-code" equiv-text="&lt;/code&gt;" id="CLOSE_TAG_CODE"/>, <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>merkle_root<x ctype="x-code" equiv-text="&lt;/code&gt;" id="CLOSE_TAG_CODE"/>, <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>tx_count<x ctype="x-code" equiv-text="&lt;/code&gt;" id="CLOSE_TAG_CODE"/>, <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>size<x ctype="x-code" equiv-text="&lt;/code&gt;" id="CLOSE_TAG_CODE"/>, <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>weight<x ctype="x-code" equiv-text="&lt;/code&gt;" id="CLOSE_TAG_CODE"/>,<x ctype="x-ng_container" equiv-text="&lt;ng-container *ngIf=&quot;network.val === &apos;liquid&apos;&quot;&gt; " id="START_TAG_NG_CONTAINER"/><x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>proof<x ctype="x-code" equiv-text="&lt;/code&gt;" id="CLOSE_TAG_CODE"/>,<x ctype="x-ng_container" equiv-text="&lt;/ng-container&gt; " id="CLOSE_TAG_NG_CONTAINER"/> and <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>previousblockhash<x ctype="x-code" equiv-text="&lt;/code&gt;" id="CLOSE_TAG_CODE"/>.</source>
@@ -311,7 +311,7 @@
             </trans-unit>
             <trans-unit id="1955634148203463265">
                 <source xml:space="preserve"> Broadcast </source>
-                <target xml:space="preserve"> שידור </target>
+                <target xml:space="preserve"> 广播 </target>
             </trans-unit>
             <trans-unit id="1986319458172810942">
                 <source xml:space="preserve"> CashToken Amount </source>
@@ -319,7 +319,7 @@
             </trans-unit>
             <trans-unit id="1989794001571603400">
                 <source xml:space="preserve">High sigop count</source>
-                <target xml:space="preserve">ספירת sigop גבוהה</target>
+                <target xml:space="preserve">高SigOp计数</target>
             </trans-unit>
             <trans-unit datatype="html" id="1990b8bef8f205a7d1b821aa4f979cc9f4fe179d">
                 <source xml:space="preserve">Circulating amount</source>
@@ -355,7 +355,7 @@
             </trans-unit>
             <trans-unit id="2002714733978232737">
                 <source xml:space="preserve"> Hide diagram </source>
-                <target xml:space="preserve"> הסתר דיאגרמה </target>
+                <target xml:space="preserve"> 隐藏图表 </target>
             </trans-unit>
             <trans-unit id="2041675390931385838">
                 <source xml:space="preserve">Health</source>
@@ -363,15 +363,15 @@
             </trans-unit>
             <trans-unit id="2046433062734007708">
                 <source xml:space="preserve">Added</source>
-                <target xml:space="preserve">נוסף</target>
+                <target xml:space="preserve">添加</target>
             </trans-unit>
             <trans-unit id="2048443747962352098">
                 <source xml:space="preserve">Terms of Service</source>
-                <target xml:space="preserve">תנאי השירות</target>
+                <target xml:space="preserve">服务条款</target>
             </trans-unit>
             <trans-unit id="2078867154932510579">
                 <source xml:space="preserve"><x ctype="x-p" equiv-text="&lt;p&gt;" id="START_PARAGRAPH"/><x ctype="x-b" equiv-text="&lt;b                 &gt;" id="START_BOLD_TEXT"/>bchexplorer.cash merely provides data about the Bitcoin Cash network.<x ctype="x-b" equiv-text="&lt;/b               &gt;" id="CLOSE_BOLD_TEXT"/> It cannot help you with retrieving funds, wallet issues, etc. <x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/><x ctype="x-p" equiv-text="&lt;p&gt;" id="START_PARAGRAPH"/> For any such requests, you need to get in touch with the entity that helped make the transaction (wallet software, exchange company, etc). <x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/></source>
-                <target xml:space="preserve"><x ctype="x-p" equiv-text="For any such requ" id="START_PARAGRAPH"/><x ctype="x-b" equiv-text="mempool.space mer" id="START_BOLD_TEXT"/>mempool.space מספק נתונים re על רשת הביטקוין. <x ctype="x-b" equiv-text="&lt;/b&gt;" id="CLOSE_BOLD_TEXT"/> אתר זה אינו יכול לעזור לך באחזור כספים, בעיות בארנק וכו&apos;.<x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/> <x ctype="x-p" equiv-text="For any such requ" id="START_PARAGRAPH"/> עבור כל בקשה כזו, עליך ליצור קשר עם הגוף שסייע בביצוע העסקה (תוכנת ארנק, חברת בורסה וכו&apos;). <x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/></target>
+                <target xml:space="preserve"><x ctype="x-p" equiv-text="For any such requ" id="START_PARAGRAPH"/><x ctype="x-b" equiv-text="mempool.space mer" id="START_BOLD_TEXT"/>mempool.space 仅提供有关比特币网络的数据。<x ctype="x-b" equiv-text="&lt;/b&gt;" id="CLOSE_BOLD_TEXT"/>它无法帮助您检索资金、解决钱包问题等。<x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/><x ctype="x-p" equiv-text="For any such requ" id="START_PARAGRAPH"/>对于任何此类请求，您都需要联系帮助进行交易的实体（钱包软件、交易所等）。<x ctype="x-p" equiv-text="&lt;/p&gt;" id="CLOSE_PARAGRAPH"/></target>
             </trans-unit>
             <trans-unit id="2091542449422385206">
                 <source xml:space="preserve">Broadcast Transaction</source>
@@ -379,7 +379,7 @@
             </trans-unit>
             <trans-unit id="2137482833477653579">
                 <source xml:space="preserve">Indexing network hashrate</source>
-                <target xml:space="preserve">מאנדקס כמות האשים ברשת</target>
+                <target xml:space="preserve">正在统计网络哈希率</target>
             </trans-unit>
             <trans-unit datatype="html" id="21530115a661c0faac6906740c586118628c2d54">
                 <source xml:space="preserve">Issued amount</source>
@@ -391,19 +391,19 @@
             </trans-unit>
             <trans-unit id="2159027050798400355">
                 <source xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> Transaction </source>
-                <target xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> טרנזקציה </target>
+                <target xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> 交易 </target>
             </trans-unit>
             <trans-unit id="2161283797768746270">
                 <source xml:space="preserve">halving</source>
-                <target xml:space="preserve">חצייה</target>
+                <target xml:space="preserve">减半</target>
             </trans-unit>
             <trans-unit id="2173964791553126730">
                 <source xml:space="preserve">View more »</source>
-                <target xml:space="preserve">צפה בעוד »</target>
+                <target xml:space="preserve">更多 »</target>
             </trans-unit>
             <trans-unit id="2186095762694867802">
                 <source xml:space="preserve">Hashrate (1w)</source>
-                <target xml:space="preserve">Hashrate (1ש&apos;)</target>
+                <target xml:space="preserve">哈希率（近 1 周）</target>
             </trans-unit>
             <trans-unit datatype="html" id="21f88da2fbe81e4dc893ce1df92bd0fe25bcecee">
                 <source xml:space="preserve">Miner</source>
@@ -411,11 +411,11 @@
             </trans-unit>
             <trans-unit id="2207130182560822950">
                 <source xml:space="preserve">Winning</source>
-                <target xml:space="preserve">זכייה</target>
+                <target xml:space="preserve">胜出</target>
             </trans-unit>
             <trans-unit id="2220751863806291374">
                 <source xml:space="preserve">Backend is synchronizing</source>
-                <target xml:space="preserve">מתבצע סנכרון בצד שרת</target>
+                <target xml:space="preserve">后端正在同步中...</target>
             </trans-unit>
             <trans-unit id="2238078017374559466">
                 <source xml:space="preserve">Pools Luck</source>
@@ -423,31 +423,31 @@
             </trans-unit>
             <trans-unit id="2256671562401574389">
                 <source xml:space="preserve">blocks earlier</source>
-                <target xml:space="preserve">בלוקים לפני כן</target>
+                <target xml:space="preserve">更早的区块</target>
             </trans-unit>
             <trans-unit id="2256769237354226511">
                 <source xml:space="preserve"> First seen </source>
-                <target xml:space="preserve"> נראה לראשונה </target>
+                <target xml:space="preserve"> 初次发现时间 </target>
             </trans-unit>
             <trans-unit id="2259944601214794924">
                 <source xml:space="preserve">Sighash Flags</source>
-                <target xml:space="preserve">דגלי Sighash</target>
+                <target xml:space="preserve">Sighash Flags</target>
             </trans-unit>
             <trans-unit id="2293275317959787265">
                 <source xml:space="preserve">Blocks (1w)</source>
-                <target xml:space="preserve">בלוקים (שבוע)</target>
+                <target xml:space="preserve">区块量（近 1 周）</target>
             </trans-unit>
             <trans-unit id="2297185534862218321">
                 <source xml:space="preserve">bare multisig</source>
-                <target xml:space="preserve">מרובה חתימות חשוף</target>
+                <target xml:space="preserve">裸多签</target>
             </trans-unit>
             <trans-unit id="2303359202781425764">
                 <source xml:space="preserve">Genesis</source>
-                <target xml:space="preserve">בראשית</target>
+                <target xml:space="preserve">创世纪</target>
             </trans-unit>
             <trans-unit id="2305093273547008942">
                 <source xml:space="preserve">Change (7d)</source>
-                <target xml:space="preserve">שינוי (7 ימים)</target>
+                <target xml:space="preserve">变化 (7天)</target>
             </trans-unit>
             <trans-unit datatype="html" id="2346453954cf21bf1326e790bfb3cb3369574ed9">
                 <source xml:space="preserve">Name</source>
@@ -455,11 +455,11 @@
             </trans-unit>
             <trans-unit id="2348971518300945764">
                 <source xml:space="preserve">Range</source>
-                <target xml:space="preserve">טווח</target>
+                <target xml:space="preserve">范围</target>
             </trans-unit>
             <trans-unit id="23555386d8af1ff73f297e89dd4af3f4689fb9dd">
                 <source xml:space="preserve">Indexing blocks</source>
-                <target xml:space="preserve">מאנדקס בלוקים</target>
+                <target xml:space="preserve">引索区块</target>
             </trans-unit>
             <trans-unit id="2365612610415331480">
                 <source xml:space="preserve"><x ctype="x-span" equiv-text="&lt;span class=&quot;badge bg-secondary&quot;&gt;" id="START_TAG_SPAN"/>Stale<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></source>
@@ -467,11 +467,11 @@
             </trans-unit>
             <trans-unit id="2372330987466821730">
                 <source xml:space="preserve"> Offline </source>
-                <target xml:space="preserve"> לא מקוון </target>
+                <target xml:space="preserve"> 离线 </target>
             </trans-unit>
             <trans-unit id="2375009149380397713">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block behind</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> בלוק מאחור</target>
+                <target xml:space="preserve">落后<x equiv-text="{{ i }}" id="INTERPOLATION"/>个区块</target>
             </trans-unit>
             <trans-unit id="2390412373676968256">
                 <source xml:space="preserve"> Size </source>
@@ -487,7 +487,7 @@
             </trans-unit>
             <trans-unit id="2436785490931696482">
                 <source xml:space="preserve"> Previous output type </source>
-                <target xml:space="preserve"> סוג פלט קודם </target>
+                <target xml:space="preserve"> 之前输出类型 </target>
             </trans-unit>
             <trans-unit id="2451851156281438935">
                 <source xml:space="preserve"> Reward </source>
@@ -503,43 +503,43 @@
             </trans-unit>
             <trans-unit id="2471195790491528944">
                 <source xml:space="preserve"> Broadcasted </source>
-                <target xml:space="preserve"> שודר </target>
+                <target xml:space="preserve"> 已广播 </target>
             </trans-unit>
             <trans-unit id="2471517882589815398">
                 <source xml:space="preserve"> verified addresses </source>
-                <target xml:space="preserve"> כתובות מאומתות </target>
+                <target xml:space="preserve"> 已验证地址 </target>
             </trans-unit>
             <trans-unit id="2499150228957542782">
                 <source xml:space="preserve">Unspent TXOs</source>
-                <target xml:space="preserve">פלטי פעולה שלא בוזבזו</target>
+                <target xml:space="preserve">未使用输出额</target>
             </trans-unit>
             <trans-unit id="25148835d92465353fc5fe8897c27d5369978e5a">
                 <source xml:space="preserve">Difficulty</source>
-                <target xml:space="preserve">קושי</target>
+                <target xml:space="preserve">难度</target>
             </trans-unit>
             <trans-unit id="2544046280419641488">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block ahead</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> בלוק קדימה</target>
+                <target xml:space="preserve">领先<x equiv-text="{{ i }}" id="INTERPOLATION"/>个区块</target>
             </trans-unit>
             <trans-unit id="2549503191466527026">
                 <source xml:space="preserve"> Fees </source>
-                <target xml:space="preserve"> עמלות </target>
+                <target xml:space="preserve"> 费用 </target>
             </trans-unit>
             <trans-unit id="2574688541305190509">
                 <source xml:space="preserve">High Priority</source>
-                <target xml:space="preserve">עדיפות גבוהה</target>
+                <target xml:space="preserve">高优先级</target>
             </trans-unit>
             <trans-unit id="2575486924758487590">
                 <source xml:space="preserve">Wallet</source>
-                <target xml:space="preserve">ארנק</target>
+                <target xml:space="preserve">钱包</target>
             </trans-unit>
             <trans-unit id="2611475427610660053">
                 <source xml:space="preserve">Transactions</source>
-                <target xml:space="preserve">פעולות</target>
+                <target xml:space="preserve">交易</target>
             </trans-unit>
             <trans-unit id="2612543646528354459">
                 <source xml:space="preserve">Error loading data.</source>
-                <target xml:space="preserve">שגיאה בטעינת נתונים</target>
+                <target xml:space="preserve">加载数据时出错。</target>
             </trans-unit>
             <trans-unit id="2620731225742999598">
                 <source xml:space="preserve">Verify Ownership (PSBT)</source>
@@ -547,11 +547,11 @@
             </trans-unit>
             <trans-unit id="2628961601867476622">
                 <source xml:space="preserve">Actual</source>
-                <target xml:space="preserve">בפועל</target>
+                <target xml:space="preserve">实际区块</target>
             </trans-unit>
             <trans-unit id="2652050456833268583">
                 <source xml:space="preserve"> Recent Transactions </source>
-                <target xml:space="preserve"> פעולות אחרונות </target>
+                <target xml:space="preserve"> 最近交易 </target>
             </trans-unit>
             <trans-unit id="2666638972429865742">
                 <source xml:space="preserve"> Verify Address Ownership </source>
@@ -559,7 +559,7 @@
             </trans-unit>
             <trans-unit id="2687200647259832044">
                 <source xml:space="preserve"> Avg Block Fee (1m) </source>
-                <target xml:space="preserve"> עמלת בלוק ממוצע (1 דקה) </target>
+                <target xml:space="preserve"> 平均区块费用（1个月） </target>
             </trans-unit>
             <trans-unit datatype="html" id="26cdad3f9e94369ff12c5c628d8eb5c724e3acb3">
                 <source xml:space="preserve">Previous output script</source>
@@ -567,31 +567,31 @@
             </trans-unit>
             <trans-unit id="2713682146203031534">
                 <source xml:space="preserve">Amount being paid to miners in the past 144 blocks</source>
-                <target xml:space="preserve">כמות התשלום לכורים ל144 הבלוקים האחרונים</target>
+                <target xml:space="preserve">近 144 个区块已支付的手续费</target>
             </trans-unit>
             <trans-unit id="2718328393398356790">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> confirmation</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> אישור</target>
+                <target xml:space="preserve">确认<x equiv-text="{{ i }}" id="INTERPOLATION"/></target>
             </trans-unit>
             <trans-unit id="2724055831234181057">
                 <source xml:space="preserve">Version</source>
-                <target xml:space="preserve">גרסה</target>
+                <target xml:space="preserve">版本</target>
             </trans-unit>
             <trans-unit id="273835844989646128">
                 <source xml:space="preserve">empty</source>
-                <target xml:space="preserve">ריק</target>
+                <target xml:space="preserve">空的</target>
             </trans-unit>
             <trans-unit id="2799825781368047816">
                 <source xml:space="preserve">Transaction fee</source>
-                <target xml:space="preserve">עמלת טרנזקציה</target>
+                <target xml:space="preserve">交易手续费</target>
             </trans-unit>
             <trans-unit id="2808581435762418449">
                 <source xml:space="preserve">This transaction was seen in the mempool prior to mining</source>
-                <target xml:space="preserve">פעולה זאת נצפתה בברכת הזיכרון לפני הכרייה</target>
+                <target xml:space="preserve">这笔交易在挖矿之前就已经在内存池中被看到了</target>
             </trans-unit>
             <trans-unit id="281888753485074012">
                 <source xml:space="preserve">Total received</source>
-                <target xml:space="preserve">סה&quot;כ התקבל</target>
+                <target xml:space="preserve">总接收量</target>
             </trans-unit>
             <trans-unit id="2822320429885114692">
                 <source xml:space="preserve">Indexing blocks</source>
@@ -603,15 +603,15 @@
             </trans-unit>
             <trans-unit id="2837744407694109201">
                 <source xml:space="preserve">Depth <x equiv-text="{{ chainTip.branchlen + 1 }}" id="INTERPOLATION"/></source>
-                <target xml:space="preserve">עומק <x equiv-text="{{ chainTip.branchlen + 1 }}" id="INTERPOLATION"/></target>
+                <target xml:space="preserve">深度 <x equiv-text="{{ chainTip.branchlen + 1 }}" id="INTERPOLATION"/></target>
             </trans-unit>
             <trans-unit id="2844826968907578486">
                 <source xml:space="preserve"> Pools Luck </source>
-                <target xml:space="preserve"> מזל בריכה </target>
+                <target xml:space="preserve"> 矿池幸运值 </target>
             </trans-unit>
             <trans-unit id="2848969221500885609">
                 <source xml:space="preserve">1 block later</source>
-                <target xml:space="preserve">1 בלוק לאחר מכן</target>
+                <target xml:space="preserve">1个区块以后</target>
             </trans-unit>
             <trans-unit id="2861306361489095884">
                 <source xml:space="preserve">Slug</source>
@@ -619,7 +619,7 @@
             </trans-unit>
             <trans-unit id="2863431896244142849">
                 <source xml:space="preserve">Research</source>
-                <target xml:space="preserve">חקור</target>
+                <target xml:space="preserve">研究</target>
             </trans-unit>
             <trans-unit id="2870197155512312836">
                 <source xml:space="preserve"> Transactions </source>
@@ -627,7 +627,7 @@
             </trans-unit>
             <trans-unit id="2876711679148961149">
                 <source xml:space="preserve">Removed</source>
-                <target xml:space="preserve">הוסר</target>
+                <target xml:space="preserve">已移除</target>
             </trans-unit>
             <trans-unit id="288170943872765696">
                 <source xml:space="preserve">Input Sequence</source>
@@ -639,11 +639,11 @@
             </trans-unit>
             <trans-unit id="2892144964426283371">
                 <source xml:space="preserve">Optimal</source>
-                <target xml:space="preserve">מיטבי</target>
+                <target xml:space="preserve">最佳</target>
             </trans-unit>
             <trans-unit id="2912999844598716434">
                 <source xml:space="preserve"> Balance History </source>
-                <target xml:space="preserve"> היסטוריית מאזן </target>
+                <target xml:space="preserve"> 余额历史记录 </target>
             </trans-unit>
             <trans-unit id="2935684390377275172">
                 <source xml:space="preserve">Significant Bitcoin Cash blocks, including halvings, hard forks, protocol upgrades, and other milestones — past and future.</source>
@@ -651,11 +651,11 @@
             </trans-unit>
             <trans-unit id="2946624699882754313">
                 <source xml:space="preserve">Show all</source>
-                <target xml:space="preserve">הצג הכל</target>
+                <target xml:space="preserve">显示所有</target>
             </trans-unit>
             <trans-unit id="296013377896859721">
                 <source xml:space="preserve">Become an Enterprise Sponsor</source>
-                <target xml:space="preserve">הצטרף כחברה הנותנת חסות</target>
+                <target xml:space="preserve">成为企业赞助商</target>
             </trans-unit>
             <trans-unit id="2981219928115418649">
                 <source xml:space="preserve">Link</source>
@@ -663,11 +663,11 @@
             </trans-unit>
             <trans-unit id="2986811974545371137">
                 <source xml:space="preserve">See mempool size (in MB) and transactions per second (in B/s) visualized over time.</source>
-                <target xml:space="preserve">ראה את גודל הממפול (ב-MvB) ואת התנועות לשנייה (ב-vB/s) המוצגות לאורך זמן.</target>
+                <target xml:space="preserve">查看随时间变化的内存池大小（以 MvB 为单位）和每秒交易次数（以 vB/s 为单位）。</target>
             </trans-unit>
             <trans-unit id="2991117117362614880">
                 <source xml:space="preserve"> Proof </source>
-                <target xml:space="preserve"> הוכחה </target>
+                <target xml:space="preserve"> 证明 </target>
             </trans-unit>
             <trans-unit datatype="html" id="299f97b8ee9c62d45f2cc01961aa1e5101d6d05a">
                 <source xml:space="preserve">Stats</source>
@@ -691,7 +691,7 @@
             </trans-unit>
             <trans-unit id="3033623772164647792">
                 <source xml:space="preserve">Height</source>
-                <target xml:space="preserve">משקל</target>
+                <target xml:space="preserve">重量</target>
             </trans-unit>
             <trans-unit id="3056323879940472778">
                 <source xml:space="preserve">Pools Count</source>
@@ -703,11 +703,11 @@
             </trans-unit>
             <trans-unit id="3079792765469479718">
                 <source xml:space="preserve">Expected Block</source>
-                <target xml:space="preserve">בלוק צפוי</target>
+                <target xml:space="preserve">预计区块</target>
             </trans-unit>
             <trans-unit id="3084367762111593354">
                 <source xml:space="preserve">Merkle root</source>
-                <target xml:space="preserve">שורש מרקל</target>
+                <target xml:space="preserve">哈希树</target>
             </trans-unit>
             <trans-unit id="3088064334969042235">
                 <source xml:space="preserve">Special Blocks</source>
@@ -715,23 +715,23 @@
             </trans-unit>
             <trans-unit id="312539377512157124">
                 <source xml:space="preserve"><x equiv-text="i" id="INTERPOLATION"/> blocks</source>
-                <target xml:space="preserve"><x equiv-text="i" id="INTERPOLATION"/> בלוקים</target>
+                <target xml:space="preserve"><x equiv-text="i" id="INTERPOLATION"/>个区块</target>
             </trans-unit>
             <trans-unit id="313854265968026491">
                 <source xml:space="preserve">Transaction</source>
-                <target xml:space="preserve">פעולה</target>
+                <target xml:space="preserve">交易</target>
             </trans-unit>
             <trans-unit id="3156305053014230404">
                 <source xml:space="preserve">other outputs</source>
-                <target xml:space="preserve">פלטים אחרים</target>
+                <target xml:space="preserve">其他输出</target>
             </trans-unit>
             <trans-unit id="3170961539582792521">
                 <source xml:space="preserve">(144 blocks)</source>
-                <target xml:space="preserve">(144 בלוקים)</target>
+                <target xml:space="preserve">（近 144 个区块）</target>
             </trans-unit>
             <trans-unit id="3184700926171002527">
                 <source xml:space="preserve">Any</source>
-                <target xml:space="preserve">כלשהו</target>
+                <target xml:space="preserve">任何</target>
             </trans-unit>
             <trans-unit datatype="html" id="31d8d7f29ddbd3f64d374a132ddacd5e4a0835a2">
                 <source xml:space="preserve">Inputs &amp; Outputs</source>
@@ -747,7 +747,7 @@
             </trans-unit>
             <trans-unit id="3261973261379224721">
                 <source xml:space="preserve">Fee paid on average for each transaction in the past 144 blocks</source>
-                <target xml:space="preserve">עמלה ממוצעת לטרנזקציה ב144 הבלוקים האחרונים</target>
+                <target xml:space="preserve">近 144 个区块每笔交易平均手续费</target>
             </trans-unit>
             <trans-unit id="3304972143698843178">
                 <source xml:space="preserve">Event</source>
@@ -759,27 +759,27 @@
             </trans-unit>
             <trans-unit id="3320061433231160997">
                 <source xml:space="preserve">Actual Block</source>
-                <target xml:space="preserve">בלוק בפועל</target>
+                <target xml:space="preserve">实际区块</target>
             </trans-unit>
             <trans-unit id="3338707587131638636">
                 <source xml:space="preserve">This block does not belong to the main chain, it has been replaced by:</source>
-                <target xml:space="preserve">בלוק זה אינו שייך לשרשרת הראשית, הוחלף על ידי:</target>
+                <target xml:space="preserve">此区块不属于主链，已被替换为：</target>
             </trans-unit>
             <trans-unit id="3340571720517721398">
                 <source xml:space="preserve">This transaction may have been added out-of-band</source>
-                <target xml:space="preserve">ייתכן שעסקה זו נוספה מחוץ לטווח</target>
+                <target xml:space="preserve">此交易可能已在带外加速中添加</target>
             </trans-unit>
             <trans-unit id="3348816905677831844">
                 <source xml:space="preserve"> USD Value </source>
-                <target xml:space="preserve"> ערך דולרי </target>
+                <target xml:space="preserve"> USD 价值 </target>
             </trans-unit>
             <trans-unit id="3380799392226022892">
                 <source xml:space="preserve">Based on average native transaction of 140 Bytes</source>
-                <target xml:space="preserve">מבוסס על טרנזקציית Native SegWit ממוצעת של 140 בתים</target>
+                <target xml:space="preserve">基于平均140字节的本地segwit交易</target>
             </trans-unit>
             <trans-unit id="3381079415067175393">
                 <source xml:space="preserve">Get real-time status, addresses, fees, script info, and more for Bitcoin Cash<x equiv-text="seoDescription" id="PH"/> transaction with txid <x equiv-text="this.txId" id="PH_1"/>.</source>
-                <target xml:space="preserve">קבלו מצב זמן אמת, כתובות, עמלות, מידע תסריט, ועוד עבור פעולה <x equiv-text="network" id="PH"/> עם מזהה פעולה <x equiv-text="this.txId" id="PH_1"/>.</target>
+                <target xml:space="preserve">获取 <x equiv-text="network" id="PH"/> 交易的实时状态、地址、费用、脚本信息等，交易 ID 为 <x equiv-text="this.txId" id="PH_1"/>。</target>
             </trans-unit>
             <trans-unit id="3388418238806768867">
                 <source xml:space="preserve"> CashToken Category </source>
@@ -787,7 +787,7 @@
             </trans-unit>
             <trans-unit id="3399131819685362332">
                 <source xml:space="preserve">Address Types</source>
-                <target xml:space="preserve">סוגי כתובות</target>
+                <target xml:space="preserve">地址类型</target>
             </trans-unit>
             <trans-unit datatype="html" id="33d349897f450ba879a5a0f48842b6a3d884cac1">
                 <source xml:space="preserve"><x equiv-text="{{ mempoolBlocksData.blocks }}" id="INTERPOLATION"/> blocks</source>
@@ -799,19 +799,19 @@
             </trans-unit>
             <trans-unit id="3430678834682292642">
                 <source xml:space="preserve">Reward</source>
-                <target xml:space="preserve">פרס</target>
+                <target xml:space="preserve">奖励</target>
             </trans-unit>
             <trans-unit id="3438841430617080790">
                 <source xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> Address </source>
-                <target xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> כתובות </target>
+                <target xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> 地址 </target>
             </trans-unit>
             <trans-unit id="3448462145758383019">
                 <source xml:space="preserve">Total</source>
-                <target xml:space="preserve">סה״כ</target>
+                <target xml:space="preserve">全部的</target>
             </trans-unit>
             <trans-unit id="34509554836008126">
                 <source xml:space="preserve">This is a test network. Coins have no value.</source>
-                <target xml:space="preserve">זוהי רשת נסיונית. למטבעות בה אין ערך.</target>
+                <target xml:space="preserve">这是一个测试网络。货币没有价值。</target>
             </trans-unit>
             <trans-unit datatype="html" id="34c21c242665d87bf22645c90f571bd5078eac93">
                 <source xml:space="preserve">Returns a transaction serialized as hex.</source>
@@ -819,15 +819,15 @@
             </trans-unit>
             <trans-unit id="3509728203755510244">
                 <source xml:space="preserve">% Change</source>
-                <target xml:space="preserve">% שינוי</target>
+                <target xml:space="preserve">涨跌幅</target>
             </trans-unit>
             <trans-unit id="3510fc6daa1d975f331e3a717bdf1a34efa06dff">
                 <source xml:space="preserve">Hashrate &amp; Difficulty</source>
-                <target xml:space="preserve">קשי וכמות האשים</target>
+                <target xml:space="preserve">哈希率和难度</target>
             </trans-unit>
             <trans-unit id="3517550046701184661">
                 <source xml:space="preserve">Show less</source>
-                <target xml:space="preserve">הצג פחות</target>
+                <target xml:space="preserve">展示更少</target>
             </trans-unit>
             <trans-unit datatype="html" id="35214e7a6aec1b0317e0fa1eb32e8caf6757b147">
                 <source xml:space="preserve">Size</source>
@@ -835,55 +835,55 @@
             </trans-unit>
             <trans-unit id="3533694482361206673">
                 <source xml:space="preserve"> 1w </source>
-                <target xml:space="preserve"> שבוע </target>
+                <target xml:space="preserve"> 近 1 周 </target>
             </trans-unit>
             <trans-unit id="3552649240172058318">
                 <source xml:space="preserve"> Current Period </source>
-                <target xml:space="preserve"> מחזור נוכחי </target>
+                <target xml:space="preserve"> 当前阶段 </target>
             </trans-unit>
             <trans-unit id="3563823504206575540">
                 <source xml:space="preserve"> Description </source>
-                <target xml:space="preserve"> תיאור </target>
+                <target xml:space="preserve"> 描述 </target>
             </trans-unit>
             <trans-unit id="3602441324260631848">
                 <source xml:space="preserve">Hash</source>
-                <target xml:space="preserve">גיבוב</target>
+                <target xml:space="preserve">哈希值</target>
             </trans-unit>
             <trans-unit id="3609315297931950072">
                 <source xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> Block </source>
-                <target xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> בלוק </target>
+                <target xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> 块 </target>
             </trans-unit>
             <trans-unit id="3618113914737563350">
                 <source xml:space="preserve"><x equiv-text="{{ x }}" id="INTERPOLATION"/> remaining</source>
-                <target xml:space="preserve"><x equiv-text="{{ x }}" id="INTERPOLATION"/> נותרו</target>
+                <target xml:space="preserve"><x equiv-text="{{ x }}" id="INTERPOLATION"/> 剩余</target>
             </trans-unit>
             <trans-unit id="3619092918520740354">
                 <source xml:space="preserve"> Mined </source>
-                <target xml:space="preserve"> נכרה </target>
+                <target xml:space="preserve"> 已出块 </target>
             </trans-unit>
             <trans-unit id="3622187938140330066">
                 <source xml:space="preserve">Mainnet Explorer</source>
-                <target xml:space="preserve">סייר רשת ראשית</target>
+                <target xml:space="preserve">主网浏览器</target>
             </trans-unit>
             <trans-unit id="365703926135033322">
                 <source xml:space="preserve"> Subsidy + fees </source>
-                <target xml:space="preserve"> תגמול + עמלות </target>
+                <target xml:space="preserve"> 补贴+费用 </target>
             </trans-unit>
             <trans-unit id="3657175293620047090">
                 <source xml:space="preserve"> Reconnecting... </source>
-                <target xml:space="preserve"> מתחבר מחדש... </target>
+                <target xml:space="preserve"> 重新连接中 </target>
             </trans-unit>
             <trans-unit id="3666195172774554282">
                 <source xml:space="preserve">Other (<x equiv-text="percentage" id="PH"/>)</source>
-                <target xml:space="preserve">אחר (<x equiv-text="percentage" id="PH"/>)</target>
+                <target xml:space="preserve">其他（<x equiv-text="percentage" id="PH"/>）</target>
             </trans-unit>
             <trans-unit id="3671013045755037186">
                 <source xml:space="preserve">Seen in Mempool</source>
-                <target xml:space="preserve">נצפה בממפול</target>
+                <target xml:space="preserve">在Mempool中查看</target>
             </trans-unit>
             <trans-unit id="3679226341005246424">
                 <source xml:space="preserve">sats/tx</source>
-                <target xml:space="preserve">סאט/טרנזק׳</target>
+                <target xml:space="preserve">聪/笔</target>
             </trans-unit>
             <trans-unit id="3687375115991989307">
                 <source xml:space="preserve">Avg Block Fees</source>
@@ -907,7 +907,7 @@
             </trans-unit>
             <trans-unit id="3750067297809998641">
                 <source xml:space="preserve">This transaction was missing from our mempool prior to mining</source>
-                <target xml:space="preserve">פעולה זאת נעדרה מברכת הזיכרון שלנו לפני הכרייה</target>
+                <target xml:space="preserve">在挖矿之前，此交易已经从内存池丢失。</target>
             </trans-unit>
             <trans-unit id="3781457392965972953">
                 <source xml:space="preserve">Hashrate</source>
@@ -915,15 +915,15 @@
             </trans-unit>
             <trans-unit id="3788220819986174087">
                 <source xml:space="preserve"> Transaction not found. </source>
-                <target xml:space="preserve"> טרנזקציה לא נמצאה. </target>
+                <target xml:space="preserve"> 交易未找到 </target>
             </trans-unit>
             <trans-unit id="3792139409018959890">
                 <source xml:space="preserve">See Bitcoin block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</source>
-                <target xml:space="preserve">ראה תגמולי בלוק של ביטקוין בביטקוין ובדולר אמריקאי, המוצגים לאורך זמן. תגמולי בלוק הם סך כל הכספים שכורי הבלוק מרוויחים מסבסוד הבלוק ועמלות.</target>
+                <target xml:space="preserve">查看比特币区块奖励（以 BTC 和 USD 为单位）随时间的变化。区块奖励是矿工从区块补贴和转账费用中获得的总资金。</target>
             </trans-unit>
             <trans-unit id="3804204581529582717">
                 <source xml:space="preserve">Endpoint</source>
-                <target xml:space="preserve">נקודת קצה</target>
+                <target xml:space="preserve">Endpoint</target>
             </trans-unit>
             <trans-unit datatype="html" id="3846f2527c3c9a50bb84b2c941a876f66797449b">
                 <source xml:space="preserve">Returns a list of all txids in the block.</source>
@@ -931,11 +931,11 @@
             </trans-unit>
             <trans-unit id="3862813234971584804">
                 <source xml:space="preserve">What is a block explorer?</source>
-                <target xml:space="preserve">מה זה סייר בלוקים?</target>
+                <target xml:space="preserve">什么是区块浏览器？</target>
             </trans-unit>
             <trans-unit id="3878977242883867917">
                 <source xml:space="preserve">Balance (BCH)</source>
-                <target xml:space="preserve">מאזן (BTC)</target>
+                <target xml:space="preserve">余额（BTC）</target>
             </trans-unit>
             <trans-unit id="3882045404946016537">
                 <source xml:space="preserve">Hashrate &amp; Difficulty</source>
@@ -943,7 +943,7 @@
             </trans-unit>
             <trans-unit id="3900456641470356995">
                 <source xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> Addresses </source>
-                <target xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> כתובות </target>
+                <target xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> 地址 </target>
             </trans-unit>
             <trans-unit datatype="html" id="39120551bb7b48cc1a7b94a6cb58aef166eee801">
                 <source xml:space="preserve">Amount required</source>
@@ -956,15 +956,15 @@
             <trans-unit id="3935295557063521643">
                 <source xml:space="preserve"> Difficulty Adjustment
 </source>
-                <target xml:space="preserve"> התאמת קשי </target>
+                <target xml:space="preserve"> 难度调整 </target>
             </trans-unit>
             <trans-unit id="3945263760582448384">
                 <source xml:space="preserve"> of total supply </source>
-                <target xml:space="preserve"> מתוך סך הצע </target>
+                <target xml:space="preserve"> 占总供应量 </target>
             </trans-unit>
             <trans-unit id="3973931101896534797">
                 <source xml:space="preserve">Date</source>
-                <target xml:space="preserve">תאריך</target>
+                <target xml:space="preserve">日期</target>
             </trans-unit>
             <trans-unit datatype="html" id="39f61f2d1434d921a1f80a2a2f0903f06e9fd4df">
                 <source xml:space="preserve">Returns our currently suggested fees for new transactions.</source>
@@ -992,11 +992,11 @@
             </trans-unit>
             <trans-unit id="40010431887056610">
                 <source xml:space="preserve">Pools count (1w)</source>
-                <target xml:space="preserve">ספירת בריכות (שבוע)</target>
+                <target xml:space="preserve">矿池数（近 1 周）</target>
             </trans-unit>
             <trans-unit id="4012359471246826308">
                 <source xml:space="preserve">Fee span</source>
-                <target xml:space="preserve">מרווח עמלה</target>
+                <target xml:space="preserve">费用范围</target>
             </trans-unit>
             <trans-unit id="4061977068003854265">
                 <source xml:space="preserve"> Treasury </source>
@@ -1004,51 +1004,51 @@
             </trans-unit>
             <trans-unit id="4071362499864583859">
                 <source xml:space="preserve">Low Priority</source>
-                <target xml:space="preserve">עדיפות נמוכה</target>
+                <target xml:space="preserve">低优先级</target>
             </trans-unit>
             <trans-unit id="4134775753251919633">
                 <source xml:space="preserve">Flow</source>
-                <target xml:space="preserve">זרימה</target>
+                <target xml:space="preserve">流向</target>
             </trans-unit>
             <trans-unit id="4136129438009397007">
                 <source xml:space="preserve">Invalid</source>
-                <target xml:space="preserve">שגוי</target>
+                <target xml:space="preserve">无效</target>
             </trans-unit>
             <trans-unit id="4136162380400286378">
                 <source xml:space="preserve">Consolidation</source>
-                <target xml:space="preserve">האחדה</target>
+                <target xml:space="preserve">整合</target>
             </trans-unit>
             <trans-unit id="41545303ec98792b738d6237adbd1f3b54a22196">
                 <source xml:space="preserve">Block Fees Vs Subsidy</source>
-                <target xml:space="preserve">עמלות בלוק לעומת סובסידיה</target>
+                <target xml:space="preserve">区块费用与补贴</target>
             </trans-unit>
             <trans-unit id="4199596567553695595">
                 <source xml:space="preserve">fee</source>
-                <target xml:space="preserve">עמלה</target>
+                <target xml:space="preserve">费用</target>
             </trans-unit>
             <trans-unit id="420763834450076269">
                 <source xml:space="preserve">Block</source>
-                <target xml:space="preserve">בלוק</target>
+                <target xml:space="preserve">区块</target>
             </trans-unit>
             <trans-unit id="4233811188017847729">
                 <source xml:space="preserve">All miners</source>
-                <target xml:space="preserve">כל הכורים</target>
+                <target xml:space="preserve">所有矿工</target>
             </trans-unit>
             <trans-unit id="424868973735369535">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> transactions</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> ערוצים</target>
+                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/>频道</target>
             </trans-unit>
             <trans-unit id="4265513957728018247">
                 <source xml:space="preserve"> Clean </source>
-                <target xml:space="preserve"> נקה </target>
+                <target xml:space="preserve"> 已清理 </target>
             </trans-unit>
             <trans-unit id="431123319361631379">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> confirmations</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> אישורים</target>
+                <target xml:space="preserve">确认<x equiv-text="{{ i }}" id="INTERPOLATION"/></target>
             </trans-unit>
             <trans-unit id="4333425760770516639">
                 <source xml:space="preserve">What is a mempool explorer?</source>
-                <target xml:space="preserve">מה זה סייר ממפול?</target>
+                <target xml:space="preserve">什么是内存池浏览器？</target>
             </trans-unit>
             <trans-unit id="435092113360011346">
                 <source xml:space="preserve">Stale Blocks</source>
@@ -1060,7 +1060,7 @@
             </trans-unit>
             <trans-unit id="4355353297929558170">
                 <source xml:space="preserve"> Adjustments </source>
-                <target xml:space="preserve"> התאמות </target>
+                <target xml:space="preserve"> 难度调整 </target>
             </trans-unit>
             <trans-unit id="4355593968886772097">
                 <source xml:space="preserve"> Total fees </source>
@@ -1068,7 +1068,7 @@
             </trans-unit>
             <trans-unit id="4364489225661554534">
                 <source xml:space="preserve">Usually places your transaction in between the second and third mempool blocks</source>
-                <target xml:space="preserve">לרב ממקם את הטרנזקציה בטווח שבין הבלוק השני לשלישי שבתור</target>
+                <target xml:space="preserve">通常你能将您的交易置于第二或第三个 mempool 所预测的区块中。</target>
             </trans-unit>
             <trans-unit id="4370227308575957082">
                 <source xml:space="preserve">Mined</source>
@@ -1076,7 +1076,7 @@
             </trans-unit>
             <trans-unit id="4379563009807160796">
                 <source xml:space="preserve">There are <x equiv-text="{{ block.extras.orphans.length }}" id="INTERPOLATION"/> stale blocks at this height</source>
-                <target xml:space="preserve">ישנם <x equiv-text="{{ block.extras.orphans.length }}" id="INTERPOLATION"/>בלוקים מיושנים בגובה זה</target>
+                <target xml:space="preserve">该高度有 <x equiv-text="{{ block.extras.orphans.length }}" id="INTERPOLATION"/> 个陈旧区块</target>
             </trans-unit>
             <trans-unit id="4391915915719593516">
                 <source xml:space="preserve">sat/B</source>
@@ -1084,23 +1084,23 @@
             </trans-unit>
             <trans-unit id="4396162952269470945">
                 <source xml:space="preserve"> Waiting for it to appear in the mempool... </source>
-                <target xml:space="preserve"> ממתין להופעתה בממפול.. </target>
+                <target xml:space="preserve"> 等待交易出现在内存池 </target>
             </trans-unit>
             <trans-unit id="4414442487981069880">
                 <source xml:space="preserve">other inputs</source>
-                <target xml:space="preserve">קלטים אחרים</target>
+                <target xml:space="preserve">其他输入</target>
             </trans-unit>
             <trans-unit id="4416413576346763682">
                 <source xml:space="preserve">Pending</source>
-                <target xml:space="preserve">ממתין</target>
+                <target xml:space="preserve">待处理</target>
             </trans-unit>
             <trans-unit id="4417228290563175049">
                 <source xml:space="preserve"> Redirecting to transaction page... </source>
-                <target xml:space="preserve">ניתוב לדף פעולה...</target>
+                <target xml:space="preserve">正在跳转到交易页面...</target>
             </trans-unit>
             <trans-unit id="4452427314943113135">
                 <source xml:space="preserve">Previous</source>
-                <target xml:space="preserve">הקודם</target>
+                <target xml:space="preserve">前一个</target>
             </trans-unit>
             <trans-unit id="4467323362722952678">
                 <source xml:space="preserve">Unknown</source>
@@ -1116,7 +1116,7 @@
             </trans-unit>
             <trans-unit id="4498273128887208867">
                 <source xml:space="preserve">New subsidy</source>
-                <target xml:space="preserve">סובסידיה חדשה</target>
+                <target xml:space="preserve">新补贴</target>
             </trans-unit>
             <trans-unit id="4499536517167963505">
                 <source xml:space="preserve"> Pool </source>
@@ -1128,23 +1128,23 @@
             </trans-unit>
             <trans-unit id="4508678235062595231">
                 <source xml:space="preserve">Privacy Policy</source>
-                <target xml:space="preserve">מדיניות פרטיות</target>
+                <target xml:space="preserve">隐私协议</target>
             </trans-unit>
             <trans-unit id="4513869814948231749">
                 <source xml:space="preserve">Nonce</source>
-                <target xml:space="preserve">תוספתא</target>
+                <target xml:space="preserve">随机数</target>
             </trans-unit>
             <trans-unit id="4537743732468270530">
                 <source xml:space="preserve">Error loading transaction data.</source>
-                <target xml:space="preserve">שגיאה בטעינת נתוני פעולה.</target>
+                <target xml:space="preserve">加载交易数据时出错。</target>
             </trans-unit>
             <trans-unit id="4545179046181914410">
                 <source xml:space="preserve"> Incoming Transactions </source>
-                <target xml:space="preserve"> פעולות נכנסות </target>
+                <target xml:space="preserve"> 传入交易 </target>
             </trans-unit>
             <trans-unit id="4552955603518842605">
                 <source xml:space="preserve">See the Bitcoin Cash price in USD visualized over time.</source>
-                <target xml:space="preserve">צפו במחיר הביטקוין בדולרים משוקף על פני זמן.</target>
+                <target xml:space="preserve">查看比特币价格（美元）随时间的变化。</target>
             </trans-unit>
             <trans-unit id="45739481977493163">
                 <source xml:space="preserve">Size</source>
@@ -1152,11 +1152,11 @@
             </trans-unit>
             <trans-unit id="4580786032076405950">
                 <source xml:space="preserve">Classic</source>
-                <target xml:space="preserve">קלאסי</target>
+                <target xml:space="preserve">经典</target>
             </trans-unit>
             <trans-unit id="4580988005648117665">
                 <source xml:space="preserve">Search</source>
-                <target xml:space="preserve">חפש</target>
+                <target xml:space="preserve">搜索</target>
             </trans-unit>
             <trans-unit id="4588071046583048388">
                 <source xml:space="preserve"> Fee </source>
@@ -1165,11 +1165,11 @@
             <trans-unit id="4603219930058518974">
                 <source xml:space="preserve"> Halving Countdown
 </source>
-                <target xml:space="preserve"> ספירה לאחור לחצייה </target>
+                <target xml:space="preserve"> 减半倒计时 </target>
             </trans-unit>
             <trans-unit id="4610163795914092608">
                 <source xml:space="preserve">Locktime</source>
-                <target xml:space="preserve">זמן נעילה</target>
+                <target xml:space="preserve">锁定时间</target>
             </trans-unit>
             <trans-unit datatype="html" id="46ae0bacea22bcf409534f1c314735e4983e398a">
                 <source xml:space="preserve">Latest transactions</source>
@@ -1181,11 +1181,11 @@
             </trans-unit>
             <trans-unit id="4701769218404429807">
                 <source xml:space="preserve"> TXID </source>
-                <target xml:space="preserve"> מזהה פעולה </target>
+                <target xml:space="preserve"> 交易ID </target>
             </trans-unit>
             <trans-unit id="472107412483985516">
                 <source xml:space="preserve"> Confirmed </source>
-                <target xml:space="preserve"> אושר </target>
+                <target xml:space="preserve"> 已确认 </target>
             </trans-unit>
             <trans-unit id="4735089676613655651">
                 <source xml:space="preserve">B/s</source>
@@ -1197,15 +1197,15 @@
             </trans-unit>
             <trans-unit id="476870518410763600">
                 <source xml:space="preserve">(Newly Generated Coins)</source>
-                <target xml:space="preserve">(מטבעות שזה עתה נוצרו)</target>
+                <target xml:space="preserve">（新产出货币）</target>
             </trans-unit>
             <trans-unit id="4793828002882320882">
                 <source xml:space="preserve">At block: <x equiv-text="data[0].data[2]" id="PH"/></source>
-                <target xml:space="preserve">בבלוק: <x equiv-text="data[0].data[2]" id="PH"/></target>
+                <target xml:space="preserve">在区块：<x equiv-text="data[0].data[2]" id="PH"/></target>
             </trans-unit>
             <trans-unit id="4805372994221502598">
                 <source xml:space="preserve"> Prevhash </source>
-                <target xml:space="preserve"> גיבוב קודם </target>
+                <target xml:space="preserve"> 上一区块哈希 </target>
             </trans-unit>
             <trans-unit id="4808047846196007749">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> <x ctype="x-span" equiv-text="&lt;span class=&quot;shared-block&quot;&gt;" id="START_TAG_SPAN"/>blocks<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></source>
@@ -1213,15 +1213,15 @@
             </trans-unit>
             <trans-unit id="4818852650817502025">
                 <source xml:space="preserve">My Account</source>
-                <target xml:space="preserve">המשתמש שלי</target>
+                <target xml:space="preserve">我的账户</target>
             </trans-unit>
             <trans-unit id="4836017282886157702">
                 <source xml:space="preserve">Testnet3 is deprecated, and will soon be replaced by <x ctype="x-a" equiv-text="&lt;a href=&quot;/testnet4&quot;&gt;" id="START_LINK"/>Testnet4<x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/></source>
-                <target xml:space="preserve">רשת בדיקות 3 תוצא משימוש ובקרוב תוחלף ע&quot;י <x ctype="x-a" equiv-text="&lt;a href=&quot;/testnet4&quot;&gt;" id="START_LINK"/> רשת בדיקות 4 <x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/></target>
+                <target xml:space="preserve">Testnet3 已废弃，不久将被<x ctype="x-a" equiv-text="&lt;a href=&quot;/testnet4&quot;&gt;" id="START_LINK"/>Testnet4<x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/> 取代</target>
             </trans-unit>
             <trans-unit id="4839842223418106812">
                 <source xml:space="preserve"> Recent Blocks </source>
-                <target xml:space="preserve"> בלוקים אחרונים </target>
+                <target xml:space="preserve"> 最近区块 </target>
             </trans-unit>
             <trans-unit id="4848881501986788184">
                 <source xml:space="preserve">Limited data available</source>
@@ -1229,19 +1229,19 @@
             </trans-unit>
             <trans-unit id="4853978141059297311">
                 <source xml:space="preserve">Error loading wallet data.</source>
-                <target xml:space="preserve">שגיאה בטעינת נתוני ארנק.</target>
+                <target xml:space="preserve">加载钱包数据时出错。</target>
             </trans-unit>
             <trans-unit id="4854223288615253584">
                 <source xml:space="preserve"> Verified </source>
-                <target xml:space="preserve"> מאומת </target>
+                <target xml:space="preserve"> 已验证 </target>
             </trans-unit>
             <trans-unit id="4865960060175644381">
                 <source xml:space="preserve">Transaction Bytes per second (B/s)</source>
-                <target xml:space="preserve">טרנזקציות vBytes לשניה (vB/s)</target>
+                <target xml:space="preserve">交易字节/秒 (虚拟字节)</target>
             </trans-unit>
             <trans-unit id="4895326106573044490">
                 <source xml:space="preserve">Documentation</source>
-                <target xml:space="preserve">דוקיומנטציה</target>
+                <target xml:space="preserve">文档</target>
             </trans-unit>
             <trans-unit datatype="html" id="489827bef9fd30645fd2a217aea141ac43bd01ef">
                 <source xml:space="preserve">The mempool open-source project aims to implement a high quality explorer and visualization website for the entire Bitcoin ecosystem, without distractions like altcoins, advertising, or third-party trackers.</source>
@@ -1249,15 +1249,15 @@
             </trans-unit>
             <trans-unit id="4901852854586869243">
                 <source xml:space="preserve">Transaction hex</source>
-                <target xml:space="preserve">קידוד טרנזקציה</target>
+                <target xml:space="preserve">交易源数据</target>
             </trans-unit>
             <trans-unit id="4902817035128594900">
                 <source xml:space="preserve">Description</source>
-                <target xml:space="preserve">חקיקה</target>
+                <target xml:space="preserve">铭文</target>
             </trans-unit>
             <trans-unit id="4939001214826529053">
                 <source xml:space="preserve">Calculator</source>
-                <target xml:space="preserve">מחשבון</target>
+                <target xml:space="preserve">计算器</target>
             </trans-unit>
             <trans-unit id="4980628658981044012">
                 <source xml:space="preserve">nSequence</source>
@@ -1265,7 +1265,7 @@
             </trans-unit>
             <trans-unit id="4994168675317106570">
                 <source xml:space="preserve">This transaction conflicted with another version in our mempool</source>
-                <target xml:space="preserve">פעולה זאת מנוגדת עם גרסה שונה בברכת הזיכרון שלנו</target>
+                <target xml:space="preserve">此交易与我们的内存池中的另一个版本相冲突</target>
             </trans-unit>
             <trans-unit datatype="html" id="4a0bf20cf26a4f4a387bed5c3d47c23294cb606e">
                 <source xml:space="preserve">Returns transactions associated with the specified Liquid asset. For the network's native asset, returns a list of peg in, peg out, and burn transactions. For user-issued assets, returns a list of issuance, reissuance, and burn transactions. Does not include regular transactions transferring this asset.</source>
@@ -1305,11 +1305,11 @@
             </trans-unit>
             <trans-unit id="5033494112821505715">
                 <source xml:space="preserve">Only ~<x equiv-text="{{     medianFeeNeeded | feeRounding   }}" id="INTERPOLATION"/> sat/B was needed to get into this block</source>
-                <target xml:space="preserve">רק <x equiv-text="{{ medianFeeNeeded | feeRounding }}" id="INTERPOLATION"/>~ סאט/בית נצרכו כדי להיכלל בבלוק הזה</target>
+                <target xml:space="preserve">只需要大约<x equiv-text="{{ medianFeeNeeded | feeRounding }}" id="INTERPOLATION"/>聪/字节以加入这个区块</target>
             </trans-unit>
             <trans-unit id="5063990330610553816">
                 <source xml:space="preserve">Marginal fee rate</source>
-                <target xml:space="preserve">שיעור עמלה שולית</target>
+                <target xml:space="preserve">边际费率</target>
             </trans-unit>
             <trans-unit id="5085468009677264088">
                 <source xml:space="preserve"> Pending Transactions </source>
@@ -1321,31 +1321,31 @@
             </trans-unit>
             <trans-unit id="5104161527928815399">
                 <source xml:space="preserve"> ETA </source>
-                <target xml:space="preserve"> זמן אישור משוער </target>
+                <target xml:space="preserve"> 预估时间 </target>
             </trans-unit>
             <trans-unit id="5112312000726139538">
                 <source xml:space="preserve">Change (30d)</source>
-                <target xml:space="preserve">שינוי (30 ימים)</target>
+                <target xml:space="preserve">变化 (30天)</target>
             </trans-unit>
             <trans-unit id="5151697515296180479">
                 <source xml:space="preserve">Either 2x the minimum, or the Low Priority rate (whichever is lower)</source>
-                <target xml:space="preserve">או כפול מהמינימום או בעמלת עדיפות נמוכה (הנמוך מבין השניים)</target>
+                <target xml:space="preserve">最低 2 倍最小值或低优先率（以较低者为准）</target>
             </trans-unit>
             <trans-unit id="5159814115056353668">
                 <source xml:space="preserve">Addresses</source>
-                <target xml:space="preserve">כתובות</target>
+                <target xml:space="preserve">地址</target>
             </trans-unit>
             <trans-unit id="5162799172921290449">
                 <source xml:space="preserve">Fiat</source>
-                <target xml:space="preserve">פיאט</target>
+                <target xml:space="preserve">法币</target>
             </trans-unit>
             <trans-unit id="5166531163188856419">
                 <source xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> Block Height </source>
-                <target xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> גובה הבלוק </target>
+                <target xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> 区块高度 </target>
             </trans-unit>
             <trans-unit id="5182043391401885822">
                 <source xml:space="preserve">mining pool</source>
-                <target xml:space="preserve">בריכה כרייה</target>
+                <target xml:space="preserve">矿池</target>
             </trans-unit>
             <trans-unit id="5183104988417550665">
                 <source xml:space="preserve"> Hash </source>
@@ -1357,7 +1357,7 @@
             </trans-unit>
             <trans-unit id="5246516893505114366">
                 <source xml:space="preserve">BCH Holdings</source>
-                <target xml:space="preserve">החזקות BTC</target>
+                <target xml:space="preserve">BTC控股</target>
             </trans-unit>
             <trans-unit id="5271331539737839370">
                 <source xml:space="preserve"> Hashrate </source>
@@ -1369,11 +1369,11 @@
             </trans-unit>
             <trans-unit id="5310841849641828650">
                 <source xml:space="preserve">Allowed?</source>
-                <target xml:space="preserve">מאושר?</target>
+                <target xml:space="preserve">是否允许</target>
             </trans-unit>
             <trans-unit id="5369657738305549962">
                 <source xml:space="preserve"> Show diagram </source>
-                <target xml:space="preserve"> הצג דיאגמה </target>
+                <target xml:space="preserve"> 显示图表 </target>
             </trans-unit>
             <trans-unit id="5373005510433915917">
                 <source xml:space="preserve">Bitcoin Cash Price</source>
@@ -1381,7 +1381,7 @@
             </trans-unit>
             <trans-unit id="5385698011723379548">
                 <source xml:space="preserve">Mempool size</source>
-                <target xml:space="preserve">גודל הממפול</target>
+                <target xml:space="preserve">内存池大小</target>
             </trans-unit>
             <trans-unit id="5417840158792309126">
                 <source xml:space="preserve"> If you like this project and use the explorer on a regular basis, please consider <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Donate to support BCH Explorer&quot;         &gt;" id="START_LINK"/>donating<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/>. </source>
@@ -1389,7 +1389,7 @@
             </trans-unit>
             <trans-unit id="5452140384265618201">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block remaining</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> בלוק נותר</target>
+                <target xml:space="preserve">剩余<x equiv-text="{{ i }}" id="INTERPOLATION"/>个区块</target>
             </trans-unit>
             <trans-unit id="5458697026988984634">
                 <source xml:space="preserve">Cheap</source>
@@ -1409,11 +1409,11 @@
             </trans-unit>
             <trans-unit id="5501309952572778737">
                 <source xml:space="preserve">Overpaid <x equiv-text="{{ overpaidTimes }}" id="INTERPOLATION"/>x</source>
-                <target xml:space="preserve">תשלום יתר <x equiv-text="{{ overpaidTimes }}" id="INTERPOLATION"/>x</target>
+                <target xml:space="preserve">多缴<x equiv-text="{{ overpaidTimes }}" id="INTERPOLATION"/>倍</target>
             </trans-unit>
             <trans-unit id="5514856318489056549">
                 <source xml:space="preserve"> Amount </source>
-                <target xml:space="preserve"> כמות </target>
+                <target xml:space="preserve"> 数额 </target>
             </trans-unit>
             <trans-unit id="5530507757130071978">
                 <source xml:space="preserve"> ScriptPubKey (ASM) </source>
@@ -1425,7 +1425,7 @@
             </trans-unit>
             <trans-unit id="5534751684004969564">
                 <source xml:space="preserve"> Average block time </source>
-                <target xml:space="preserve"> זמן בלוק ממוצע </target>
+                <target xml:space="preserve"> 平均出块时间 </target>
             </trans-unit>
             <trans-unit id="5545107500213121470">
                 <source xml:space="preserve">Confirmed Transactions</source>
@@ -1433,27 +1433,27 @@
             </trans-unit>
             <trans-unit id="5550185768674078941">
                 <source xml:space="preserve">sats</source>
-                <target xml:space="preserve">סאטושיז</target>
+                <target xml:space="preserve">聪</target>
             </trans-unit>
             <trans-unit id="5589142532291220451">
                 <source xml:space="preserve"> Treasury Distribution </source>
-                <target xml:space="preserve"> תפוצת האוצר </target>
+                <target xml:space="preserve"> 国库分配 </target>
             </trans-unit>
             <trans-unit id="5593559015323293592">
                 <source xml:space="preserve"> Addresses </source>
-                <target xml:space="preserve"> כתובות </target>
+                <target xml:space="preserve"> 地址 </target>
             </trans-unit>
             <trans-unit id="5628360087464548838">
                 <source xml:space="preserve">Error loading address data.</source>
-                <target xml:space="preserve">שגיאה בטעינת נתוני כתובת.</target>
+                <target xml:space="preserve">在加载地址数据时出错</target>
             </trans-unit>
             <trans-unit id="5656496863503540632">
                 <source xml:space="preserve">Usually places your transaction in between the first and second mempool blocks</source>
-                <target xml:space="preserve">לרב ממקם את הטרנזקציה בטווח שבין הבלוק הראשון לשני שבתור</target>
+                <target xml:space="preserve">通常你能将您的交易置第一或第二个 mempool 所预测的区块中。</target>
             </trans-unit>
             <trans-unit id="5667900632592970266">
                 <source xml:space="preserve">Timestamp</source>
-                <target xml:space="preserve">חותמת זמן</target>
+                <target xml:space="preserve">时间戳</target>
             </trans-unit>
             <trans-unit datatype="html" id="5676910aa3ffb568079a7499b366744fe3fd87ea">
                 <source xml:space="preserve">Get confirmed transaction history for the specified address/scripthash, sorted with newest first. Returns 25 transactions per page. More can be requested by specifying the last txid seen by the previous query.</source>
@@ -1473,15 +1473,15 @@
             </trans-unit>
             <trans-unit id="5741604595133607980">
                 <source xml:space="preserve"> Features </source>
-                <target xml:space="preserve">מומלצים</target>
+                <target xml:space="preserve">精选</target>
             </trans-unit>
             <trans-unit id="5766764880916231123">
                 <source xml:space="preserve"> Fee rate </source>
-                <target xml:space="preserve"> שיעור עמלה </target>
+                <target xml:space="preserve"> 费率 </target>
             </trans-unit>
             <trans-unit id="5780374230204480701">
                 <source xml:space="preserve">Stale Block</source>
-                <target xml:space="preserve">בלוק מיושן</target>
+                <target xml:space="preserve">陈旧区块</target>
             </trans-unit>
             <trans-unit id="5809992200043965490">
                 <source xml:space="preserve">Generate PSBT</source>
@@ -1489,15 +1489,15 @@
             </trans-unit>
             <trans-unit id="5829059035985468594">
                 <source xml:space="preserve">Miner</source>
-                <target xml:space="preserve">כורה</target>
+                <target xml:space="preserve">矿工</target>
             </trans-unit>
             <trans-unit id="5829572156532134311">
                 <source xml:space="preserve">Avg Health</source>
-                <target xml:space="preserve">בריאות ממוצעת</target>
+                <target xml:space="preserve">平均健康</target>
             </trans-unit>
             <trans-unit id="5861843152219434948">
                 <source xml:space="preserve">Medium Priority</source>
-                <target xml:space="preserve">עדיפות בינונית</target>
+                <target xml:space="preserve">中优先级</target>
             </trans-unit>
             <trans-unit id="590117958379793860">
                 <source xml:space="preserve"> Maintaining, improving and creating this BCH explorer costs <x ctype="x-i" equiv-text="&lt;i&gt;" id="START_ITALIC_TEXT"/>a lot of time and effort<x ctype="x-i" equiv-text="&lt;/i&gt;" id="CLOSE_ITALIC_TEXT"/>. As a one-man operation, I spend a lot of personal time working on this project. </source>
@@ -1505,11 +1505,11 @@
             </trans-unit>
             <trans-unit id="5952169083806719170">
                 <source xml:space="preserve">1 block earlier</source>
-                <target xml:space="preserve">1 בלוק קודם</target>
+                <target xml:space="preserve">1 个区块以前</target>
             </trans-unit>
             <trans-unit id="596391936932596858">
                 <source xml:space="preserve">blocks later</source>
-                <target xml:space="preserve">בלוקים לאחר מכן</target>
+                <target xml:space="preserve">稍后的区块</target>
             </trans-unit>
             <trans-unit datatype="html" id="596acaeca7ce3cc45e930e0feeaa09a2d63d4a75">
                 <source xml:space="preserve">minutes</source>
@@ -1517,11 +1517,11 @@
             </trans-unit>
             <trans-unit id="5971155226990207381">
                 <source xml:space="preserve">Signet Explorer</source>
-                <target xml:space="preserve">סייר Signet</target>
+                <target xml:space="preserve">Signet 区块浏览器</target>
             </trans-unit>
             <trans-unit id="5d4f792f048fcaa6df5948575d7cb325c9393383">
                 <source xml:space="preserve">Graphs</source>
-                <target xml:space="preserve">גרפים</target>
+                <target xml:space="preserve">图表</target>
             </trans-unit>
             <trans-unit datatype="html" id="5d67fbdf2986058351024c16d526c444475ead37">
                 <source xml:space="preserve">Returns details about a Bisq transaction.</source>
@@ -1537,35 +1537,35 @@
             </trans-unit>
             <trans-unit id="6008972034653357277">
                 <source xml:space="preserve">Valid Headers</source>
-                <target xml:space="preserve">כותרות תקפות</target>
+                <target xml:space="preserve">有效区块头</target>
             </trans-unit>
             <trans-unit id="6027906779021928443">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks remaining</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> בלוקים נותרו</target>
+                <target xml:space="preserve"> 剩余<x equiv-text="{{ i }}" id="INTERPOLATION"/>个区块</target>
             </trans-unit>
             <trans-unit id="6036711482450364616">
                 <source xml:space="preserve"> Show more inputs to reveal fee data </source>
-                <target xml:space="preserve"> הצג עוד קלטים כדי לחשוף מידע אודות עמלה </target>
+                <target xml:space="preserve"> 显示更多输入以显示费用数据 </target>
             </trans-unit>
             <trans-unit id="6050930598451567468">
                 <source xml:space="preserve">Transaction cannot be broadcasted because it&apos;s missing signature(s)</source>
-                <target xml:space="preserve">טרנזקציה לא יכולה להישלח כיוון שחסרה חתימה אחת לפחות</target>
+                <target xml:space="preserve">交易无法广播，因为缺少签名。</target>
             </trans-unit>
             <trans-unit id="6052527816314853503">
                 <source xml:space="preserve">Enterprise Sponsors &#128640;</source>
-                <target xml:space="preserve">נותני חסות ארגוניים &#128640;</target>
+                <target xml:space="preserve">企业赞助商&#128640;</target>
             </trans-unit>
             <trans-unit id="6052761358428332094">
                 <source xml:space="preserve">Batch payment</source>
-                <target xml:space="preserve">תשלום אצווה</target>
+                <target xml:space="preserve">批次付款</target>
             </trans-unit>
             <trans-unit id="6056001875264593206">
                 <source xml:space="preserve">provably unspendable</source>
-                <target xml:space="preserve">ללא ספק בלתי ניתן לבזבז</target>
+                <target xml:space="preserve">可证明无法使用</target>
             </trans-unit>
             <trans-unit id="6080998935194218567">
                 <source xml:space="preserve">See size, fee range, included transactions, audit (expected vs actual), and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</source>
-                <target xml:space="preserve">ראה גודל, משקל, טווח עמלות, עסקאות כלולות ועוד עבור בלוק <x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> Liquid <x equiv-text="block.height" id="BLOCK_HEIGHT"/>(<x equiv-text="block.id" id="BLOCK_ID"/>).</target>
+                <target xml:space="preserve">查看 Liquid<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> 区块 <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>) 的大小、重量、费用范围、包含的交易等信息。</target>
             </trans-unit>
             <trans-unit datatype="html" id="60cd6fa18f925b42065d8cfb1a791efdc228b4c3">
                 <source xml:space="preserve">Unconfirmed</source>
@@ -1573,11 +1573,11 @@
             </trans-unit>
             <trans-unit id="611448626023495165">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block expected</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> בלוק צפוי</target>
+                <target xml:space="preserve"> 预计<x equiv-text="{{ i }}" id="INTERPOLATION"/>个区块</target>
             </trans-unit>
             <trans-unit id="6121516646370385817">
                 <source xml:space="preserve"> Avg Block Fees </source>
-                <target xml:space="preserve"> ממוצע עמלות בלוק </target>
+                <target xml:space="preserve"> 平均区块费用 </target>
             </trans-unit>
             <trans-unit id="6132290775367866066">
                 <source xml:space="preserve">Block Fee Rates</source>
@@ -1585,19 +1585,19 @@
             </trans-unit>
             <trans-unit id="6153857867441956659">
                 <source xml:space="preserve">What is a mempool?</source>
-                <target xml:space="preserve">מה זה ממפול?</target>
+                <target xml:space="preserve">什么是mempool？</target>
             </trans-unit>
             <trans-unit id="6163892966087492877">
                 <source xml:space="preserve"> verified holdings </source>
-                <target xml:space="preserve"> החזקות מאומתות </target>
+                <target xml:space="preserve"> 已验证持有量 </target>
             </trans-unit>
             <trans-unit id="6163986367161406789">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block mined</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> בלוק נכרה</target>
+                <target xml:space="preserve">已挖<x equiv-text="{{ i }}" id="INTERPOLATION"/>个区块</target>
             </trans-unit>
             <trans-unit id="619430775984437143">
                 <source xml:space="preserve">Pools Dominance</source>
-                <target xml:space="preserve">שליטת בריכות</target>
+                <target xml:space="preserve">矿池优势</target>
             </trans-unit>
             <trans-unit id="6206405941943118648">
                 <source xml:space="preserve">CashToken <x ctype="x-a" equiv-text="&lt;a     class=&quot;info-link&quot;     [routerLink]=&quot;[&apos;/docs/faq&apos; | relativeUrl]&quot;     fragment=&quot;what-are-cashtokens&quot;     &gt;" id="START_LINK"/><x ctype="x-fa_icon" equiv-text="&lt;fa-icon [icon]=&quot;[&apos;fas&apos;, &apos;info-circle&apos;]&quot; [fixedWidth]=&quot;true&quot;&gt;" id="START_TAG_FA_ICON"/><x ctype="x-fa_icon" equiv-text="&lt;/fa-icon   &gt;" id="CLOSE_TAG_FA_ICON"/><x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/></source>
@@ -1605,15 +1605,15 @@
             </trans-unit>
             <trans-unit id="6252070156626006029">
                 <source xml:space="preserve">None</source>
-                <target xml:space="preserve">ללא</target>
+                <target xml:space="preserve">无</target>
             </trans-unit>
             <trans-unit id="6259719754414304364">
                 <source xml:space="preserve">Testnet3 Explorer</source>
-                <target xml:space="preserve">סייר רשת בדיקות3</target>
+                <target xml:space="preserve">Testnet3 浏览器</target>
             </trans-unit>
             <trans-unit id="6275418453915189813">
                 <source xml:space="preserve">Cap outliers</source>
-                <target xml:space="preserve">חריגים בתקרת מכסה</target>
+                <target xml:space="preserve">上限异常值</target>
             </trans-unit>
             <trans-unit id="6284969874542942529">
                 <source xml:space="preserve">ScriptPubKey (Hex)</source>
@@ -1621,11 +1621,11 @@
             </trans-unit>
             <trans-unit id="6290595884142884507">
                 <source xml:space="preserve">Heuristics</source>
-                <target xml:space="preserve">היוריסטיקות</target>
+                <target xml:space="preserve">启发式</target>
             </trans-unit>
             <trans-unit id="6304432362546770951">
                 <source xml:space="preserve">Address</source>
-                <target xml:space="preserve">כתובת</target>
+                <target xml:space="preserve">地址</target>
             </trans-unit>
             <trans-unit id="6334425734122839763">
                 <source xml:space="preserve"> Coinbase tag </source>
@@ -1633,23 +1633,23 @@
             </trans-unit>
             <trans-unit id="633976444972378637">
                 <source xml:space="preserve"> Inputs &amp; Outputs </source>
-                <target xml:space="preserve"> קלטים ופלטים </target>
+                <target xml:space="preserve"> 输入与输出 </target>
             </trans-unit>
             <trans-unit id="6361947660157581901">
                 <source xml:space="preserve">See the average mining fees earned per Bitcoin Cash block visualized in BCH and USD over time.</source>
-                <target xml:space="preserve">ראה את עמלות הכרייה הממוצעות שנצברו לכל בלוק ביטקוין, המוצגות בביטקוין ובדולר ארה&quot;ב לאורך זמן.</target>
+                <target xml:space="preserve">以 BTC 和美元为单位，查看每个比特币区块在一段时间内赚取的平均采矿费。</target>
             </trans-unit>
             <trans-unit id="6370387287356971303">
                 <source xml:space="preserve">Read more</source>
-                <target xml:space="preserve">קריאה נוספת</target>
+                <target xml:space="preserve">了解更多</target>
             </trans-unit>
             <trans-unit id="638227467745318910">
                 <source xml:space="preserve">Recent Stale Chain Tips</source>
-                <target xml:space="preserve">טיפים אחרונים לשרשרת מעופשת</target>
+                <target xml:space="preserve">最近的陈旧链尖</target>
             </trans-unit>
             <trans-unit id="6391724349488018234">
                 <source xml:space="preserve">Indexing in progress</source>
-                <target xml:space="preserve">מפתוח בתהליך</target>
+                <target xml:space="preserve">正在统计</target>
             </trans-unit>
             <trans-unit id="6408975971582883304">
                 <source xml:space="preserve">Message</source>
@@ -1657,11 +1657,11 @@
             </trans-unit>
             <trans-unit id="6429024204850914240">
                 <source xml:space="preserve">Not any time soon</source>
-                <target xml:space="preserve">לא בזמן הקרוב</target>
+                <target xml:space="preserve">近期内不会</target>
             </trans-unit>
             <trans-unit id="6486180801996392368">
                 <source xml:space="preserve">Error loading pool data.</source>
-                <target xml:space="preserve">שגיאת בטעינת מידע הבריכה</target>
+                <target xml:space="preserve">加载矿池数据时出错。</target>
             </trans-unit>
             <trans-unit datatype="html" id="64a98449e66031949cbf82767dd17c30d4e6da7f">
                 <source xml:space="preserve">Waiting for transaction... </source>
@@ -1673,11 +1673,11 @@
             </trans-unit>
             <trans-unit id="6506119173152703241">
                 <source xml:space="preserve">Conflict</source>
-                <target xml:space="preserve">סתירה</target>
+                <target xml:space="preserve">冲突</target>
             </trans-unit>
             <trans-unit id="6506148807267655400">
                 <source xml:space="preserve"> Unconfirmed </source>
-                <target xml:space="preserve"> טרם אושר </target>
+                <target xml:space="preserve"> 未确认 </target>
             </trans-unit>
             <trans-unit id="6523988616846331064">
                 <source xml:space="preserve">Block Size Limit (ABLA)</source>
@@ -1685,15 +1685,15 @@
             </trans-unit>
             <trans-unit id="6544807137197034459">
                 <source xml:space="preserve"> Preview </source>
-                <target xml:space="preserve"> תצוגה מקדימה </target>
+                <target xml:space="preserve"> 预览 </target>
             </trans-unit>
             <trans-unit id="6552449600024516046">
                 <source xml:space="preserve">Response</source>
-                <target xml:space="preserve">תגובה</target>
+                <target xml:space="preserve">响应</target>
             </trans-unit>
             <trans-unit id="6558868518949093648">
                 <source xml:space="preserve">Block Header Hex</source>
-                <target xml:space="preserve">קידוד כותר הבלוק</target>
+                <target xml:space="preserve">区块头字节</target>
             </trans-unit>
             <trans-unit id="6564105000154565963">
                 <source xml:space="preserve"> P2SH redeem script </source>
@@ -1701,15 +1701,15 @@
             </trans-unit>
             <trans-unit id="6578665864950966471">
                 <source xml:space="preserve">Clock (Mined)</source>
-                <target xml:space="preserve">שעון (נכרה)</target>
+                <target xml:space="preserve">时钟（开采）</target>
             </trans-unit>
             <trans-unit id="6589209693884801196">
                 <source xml:space="preserve">Places your transaction in the first mempool block</source>
-                <target xml:space="preserve">ממקם את הטרנזקציה שלך בבלוק הבא בתור</target>
+                <target xml:space="preserve">将您的交易置入第一个预测区块中</target>
             </trans-unit>
             <trans-unit id="6599163504112505785">
                 <source xml:space="preserve">Comma-separated list of raw transactions</source>
-                <target xml:space="preserve">רשימת אקסל של פעולות גולמיות</target>
+                <target xml:space="preserve">以逗号分隔的原始交易列表</target>
             </trans-unit>
             <trans-unit datatype="html" id="65d447765db0bf3390e9b3ecce142bf34bb602a3">
                 <source xml:space="preserve">Mined</source>
@@ -1717,27 +1717,27 @@
             </trans-unit>
             <trans-unit id="6619869754055745168">
                 <source xml:space="preserve">Match</source>
-                <target xml:space="preserve">התאמה</target>
+                <target xml:space="preserve">匹配</target>
             </trans-unit>
             <trans-unit id="6625797147115900929">
                 <source xml:space="preserve">TXs</source>
-                <target xml:space="preserve">TXs</target>
+                <target xml:space="preserve">交易</target>
             </trans-unit>
             <trans-unit id="6629060512027460576">
                 <source xml:space="preserve">See the most recent Bitcoin Cash<x equiv-text="seoDescriptionNetwork(           this.stateService.network         )" id="PH"/> blocks along with basic stats such as block height, block reward, block size, and more.</source>
-                <target xml:space="preserve">ראה את בלוקי <x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> הביטקוין האחרונים יחד עם נתונים סטטיסטיים בסיסיים כגון גובה הבלוק, תגמול הבלוק, גודל הבלוק ועוד.</target>
+                <target xml:space="preserve">查看最新的比特币<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/>区块以及区块高度、区块奖励、区块大小等基本统计数据。</target>
             </trans-unit>
             <trans-unit id="6641135694653212933">
                 <source xml:space="preserve">Mempool by Bytes (sat/Byte)</source>
-                <target xml:space="preserve">Mempool by vBytes (sat/vByte)</target>
+                <target xml:space="preserve">交易字节/秒 (字节)</target>
             </trans-unit>
             <trans-unit id="6643831251715779218">
                 <source xml:space="preserve">Median fee</source>
-                <target xml:space="preserve">עמלה חציונית</target>
+                <target xml:space="preserve">中位矿工手续费</target>
             </trans-unit>
             <trans-unit id="665219418211496660">
                 <source xml:space="preserve">Rank</source>
-                <target xml:space="preserve">דירוג</target>
+                <target xml:space="preserve">矿池排名</target>
             </trans-unit>
             <trans-unit id="6665645515949928612">
                 <source xml:space="preserve"> ScriptPubKey (HEX) </source>
@@ -1745,7 +1745,7 @@
             </trans-unit>
             <trans-unit id="6673915014332700227">
                 <source xml:space="preserve">Amount (sats)</source>
-                <target xml:space="preserve">סכום (סאטושיז)</target>
+                <target xml:space="preserve">数量（聪）</target>
             </trans-unit>
             <trans-unit id="6698602804540558682">
                 <source xml:space="preserve">Empty Blocks</source>
@@ -1753,7 +1753,7 @@
             </trans-unit>
             <trans-unit id="6699474967382202471">
                 <source xml:space="preserve">The overall luck of all mining pools over the past week. A luck bigger than 100% means the average block time for the current epoch is less than 10 minutes.</source>
-                <target xml:space="preserve">מזל בריכות הכירה בשבוע החולף. מזל הגבוה מ100% מציין כי ממוצע זמן מציאת הבלוק קטן מ10 דקות.</target>
+                <target xml:space="preserve">过去一周所有矿池的整体幸运值超过前一周。幸运值大于 100% 意味着当前阶段的平均出块时间少于 10 分钟</target>
             </trans-unit>
             <trans-unit datatype="html" id="66b65556acb90d8764fe166a260af0309671698c">
                 <source xml:space="preserve">Waiting for it to appear in the mempool...</source>
@@ -1773,11 +1773,11 @@
             </trans-unit>
             <trans-unit id="6756993559483962422">
                 <source xml:space="preserve">Blocks remaining</source>
-                <target xml:space="preserve">בלוקים נשארו</target>
+                <target xml:space="preserve">剩余区块</target>
             </trans-unit>
             <trans-unit id="6774874851879246306">
                 <source xml:space="preserve">UTXOs</source>
-                <target xml:space="preserve">UTXOים</target>
+                <target xml:space="preserve">未花费输出</target>
             </trans-unit>
             <trans-unit id="6796943801291207194">
                 <source xml:space="preserve"> ScriptSig (HEX) </source>
@@ -1785,15 +1785,15 @@
             </trans-unit>
             <trans-unit id="6818302414131149444">
                 <source xml:space="preserve">Install Package</source>
-                <target xml:space="preserve">התקנת חבילה</target>
+                <target xml:space="preserve">安装包</target>
             </trans-unit>
             <trans-unit id="6853950829033664225">
                 <source xml:space="preserve">Invert</source>
-                <target xml:space="preserve">להפוך</target>
+                <target xml:space="preserve">倒置</target>
             </trans-unit>
             <trans-unit id="685875304303479823">
                 <source xml:space="preserve">The number of blocks found over the past week.</source>
-                <target xml:space="preserve">מספר הבלוקים שנמצאו בשבוע החולף</target>
+                <target xml:space="preserve">近 1 周中发现的区块总数。</target>
             </trans-unit>
             <trans-unit id="6867140695271970529">
                 <source xml:space="preserve">Mining Pools</source>
@@ -1805,11 +1805,11 @@
             </trans-unit>
             <trans-unit id="6899134966533859260">
                 <source xml:space="preserve">Learn</source>
-                <target xml:space="preserve">למד</target>
+                <target xml:space="preserve">学习</target>
             </trans-unit>
             <trans-unit id="6899446145460225927">
                 <source xml:space="preserve"> Job Received </source>
-                <target xml:space="preserve"> עבודה התקבלה </target>
+                <target xml:space="preserve"> 已接收任务 </target>
             </trans-unit>
             <trans-unit id="6901614037118888421">
                 <source xml:space="preserve">First seen</source>
@@ -1823,19 +1823,19 @@
             </trans-unit>
             <trans-unit id="6911512236126604837">
                 <source xml:space="preserve">Average fees per block in the past 144 blocks</source>
-                <target xml:space="preserve">ממוצע העמלות לבלוק ב144 הבלוקים האחרונים</target>
+                <target xml:space="preserve">过去144个区块中每个区块的平均费用</target>
             </trans-unit>
             <trans-unit id="6948786787037977434">
                 <source xml:space="preserve">Blocks</source>
-                <target xml:space="preserve">בלוקים</target>
+                <target xml:space="preserve">区块</target>
             </trans-unit>
             <trans-unit id="6949454993667784101">
                 <source xml:space="preserve">Your balance is too low.<x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/>Please <x ctype="x-a" equiv-text="&lt;a class=&quot;top-up-link&quot; href=&quot;/services/accelerator&quot;&gt;" id="START_LINK"/>top up your account<x ctype="x-a" equiv-text="&lt;/a   &gt;" id="CLOSE_LINK"/>.</source>
-                <target xml:space="preserve">המאזן שלך נמוך מדי. <x ctype="lb" equiv-text="&lt;br/&gt;" id="LINE_BREAK"/> בבקשה <x ctype="x-a" equiv-text="&lt;a class=&quot;top-up-link&quot; href=&quot;/services/accelerator&quot;&gt;" id="START_LINK"/> למשתמש שלך <x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/>.</target>
+                <target xml:space="preserve">您的余额不足。<x ctype="lb" equiv-text="&lt;br/&gt;" id="LINE_BREAK"/>请<x ctype="x-a" equiv-text="&lt;a class=&quot;top-up-link&quot; href=&quot;/services/accelerator&quot;&gt;" id="START_LINK"/>充值您的账户<x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/>。</target>
             </trans-unit>
             <trans-unit id="6c453b11fd7bd159ae30bc381f367bc736d86909">
                 <source xml:space="preserve">Block Fees</source>
-                <target xml:space="preserve">עמלות בלוק</target>
+                <target xml:space="preserve">区块费用</target>
             </trans-unit>
             <trans-unit datatype="html" id="6d5aacdd7e6c375570a88c25bfd0be82beba4c7b">
                 <source xml:space="preserve">Returns the raw block representation in binary.</source>
@@ -1855,19 +1855,19 @@
             </trans-unit>
             <trans-unit id="704614116893718009">
                 <source xml:space="preserve"> Request Testnet4 Coins </source>
-                <target xml:space="preserve"> בקש מטבעות רשת בדיקות 4 </target>
+                <target xml:space="preserve"> 请求 Testnet4 代币 </target>
             </trans-unit>
             <trans-unit id="7067128377657180850">
                 <source xml:space="preserve">select filter categories to highlight matching transactions</source>
-                <target xml:space="preserve">בחר קטגוריות סינון להבלטת טרנזקציות מתאימות</target>
+                <target xml:space="preserve">选择过滤类别以突出显示匹配的交易</target>
             </trans-unit>
             <trans-unit id="7101197021456818771">
                 <source xml:space="preserve">Pool</source>
-                <target xml:space="preserve">בריכה</target>
+                <target xml:space="preserve">矿池</target>
             </trans-unit>
             <trans-unit id="7146000240905514695">
                 <source xml:space="preserve">Student Name</source>
-                <target xml:space="preserve">שם סטודנט</target>
+                <target xml:space="preserve">学生姓名</target>
             </trans-unit>
             <trans-unit id="7170419784695970065">
                 <source xml:space="preserve">Allow high fees?</source>
@@ -1875,7 +1875,7 @@
             </trans-unit>
             <trans-unit id="7215101881367554791">
                 <source xml:space="preserve">Show more</source>
-                <target xml:space="preserve">הצג עוד</target>
+                <target xml:space="preserve">展示更多</target>
             </trans-unit>
             <trans-unit datatype="html" id="729754dd19eb9ce0670b0aeb5a6ae60574c2c563">
                 <source xml:space="preserve">Address</source>
@@ -1891,7 +1891,7 @@
             </trans-unit>
             <trans-unit id="740444365933492829">
                 <source xml:space="preserve">Avg Tx Fee</source>
-                <target xml:space="preserve">ממוצע עמלה לטרנזקציה</target>
+                <target xml:space="preserve">平均单笔交易费率</target>
             </trans-unit>
             <trans-unit id="7413402651194809686">
                 <source xml:space="preserve"> Miners Reward </source>
@@ -1899,31 +1899,31 @@
             </trans-unit>
             <trans-unit id="7453887203136814323">
                 <source xml:space="preserve">Previous Block</source>
-                <target xml:space="preserve">הבלוק הקודם</target>
+                <target xml:space="preserve">上一个区块</target>
             </trans-unit>
             <trans-unit id="7464498988717654958">
                 <source xml:space="preserve"> verified of total </source>
-                <target xml:space="preserve"> סה&quot;כ מאומת </target>
+                <target xml:space="preserve"> 已验证占比 </target>
             </trans-unit>
             <trans-unit id="7472346433321371233">
                 <source xml:space="preserve">difficulty</source>
-                <target xml:space="preserve">קושי</target>
+                <target xml:space="preserve">难度</target>
             </trans-unit>
             <trans-unit id="7544553937505690917">
                 <source xml:space="preserve"> Error decoding transaction, reason: <x equiv-text="{{ error }}" id="INTERPOLATION"/> </source>
-                <target xml:space="preserve"> שגיאה בפענוח עסקה, סיבה: <x equiv-text="{{ error }}" id="INTERPOLATION"/> </target>
+                <target xml:space="preserve"> 交易解码错误，原因：<x equiv-text="{{ error }}" id="INTERPOLATION"/> </target>
             </trans-unit>
             <trans-unit id="7554398254218840704">
                 <source xml:space="preserve"> Hashrate (24h) </source>
-                <target xml:space="preserve"> כמות האשים (24 שע׳) </target>
+                <target xml:space="preserve"> 哈希率（近 24 小时） </target>
             </trans-unit>
             <trans-unit id="7555637800149874155">
                 <source xml:space="preserve"> Empty Blocks </source>
-                <target xml:space="preserve"> בלוקים ריקים </target>
+                <target xml:space="preserve"> 空区块 </target>
             </trans-unit>
             <trans-unit id="7556131343926524430">
                 <source xml:space="preserve">No Match</source>
-                <target xml:space="preserve">אין התאמה</target>
+                <target xml:space="preserve">无匹配</target>
             </trans-unit>
             <trans-unit id="7587252691654342708">
                 <source xml:space="preserve">Block Fees Vs Subsidy</source>
@@ -1935,7 +1935,7 @@
             </trans-unit>
             <trans-unit id="7611664705149933501">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks expected</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> בלוקים צפויים</target>
+                <target xml:space="preserve">预计<x equiv-text="{{ i }}" id="INTERPOLATION"/>个区块</target>
             </trans-unit>
             <trans-unit id="7621097312029689276">
                 <source xml:space="preserve">Block Sizes</source>
@@ -1943,7 +1943,7 @@
             </trans-unit>
             <trans-unit id="7633487631846436880">
                 <source xml:space="preserve"> Preview Coinbase </source>
-                <target xml:space="preserve"> תצוגה מקדימה של מטבעה </target>
+                <target xml:space="preserve"> 预览 Coinbase </target>
             </trans-unit>
             <trans-unit id="7648985858732859082">
                 <source xml:space="preserve">Fallback fee (sats)</source>
@@ -1967,27 +1967,27 @@
             </trans-unit>
             <trans-unit id="7700206456457090990">
                 <source xml:space="preserve">How many unique pools found at least one block over the past week.</source>
-                <target xml:space="preserve">כמות בריכות הכרייה אשר מצאו לפחות בלוק אחד בשבוע החולף.</target>
+                <target xml:space="preserve">近 1 周挖出至少一个区块的独立矿池数量。</target>
             </trans-unit>
             <trans-unit id="7745628778646339380">
                 <source xml:space="preserve"> Stale </source>
-                <target xml:space="preserve"> מיושן </target>
+                <target xml:space="preserve"> 陈旧 </target>
             </trans-unit>
             <trans-unit id="7802842621993648216">
                 <source xml:space="preserve">Fetch missing prevouts</source>
-                <target xml:space="preserve">אחזור פלטים קודמים חסרים</target>
+                <target xml:space="preserve">获取缺失的 prevout</target>
             </trans-unit>
             <trans-unit id="7807685431509530550">
                 <source xml:space="preserve">API Documentation</source>
-                <target xml:space="preserve">תיעוד API</target>
+                <target xml:space="preserve">API 文档</target>
             </trans-unit>
             <trans-unit id="7814069298939347422">
                 <source xml:space="preserve">Legal</source>
-                <target xml:space="preserve">משפטי</target>
+                <target xml:space="preserve">法律</target>
             </trans-unit>
             <trans-unit id="7816493330657272952">
                 <source xml:space="preserve">Coinjoin</source>
-                <target xml:space="preserve">טרנזקציה משותפת</target>
+                <target xml:space="preserve">代币混合</target>
             </trans-unit>
             <trans-unit id="7840301863034787689">
                 <source xml:space="preserve"> Type </source>
@@ -1995,7 +1995,7 @@
             </trans-unit>
             <trans-unit id="7846680274942493960">
                 <source xml:space="preserve">Why is this block empty?</source>
-                <target xml:space="preserve">למה בלוק זה ריק?</target>
+                <target xml:space="preserve">为什么这个区块是空的？</target>
             </trans-unit>
             <trans-unit id="7846744985109881055">
                 <source xml:space="preserve">Next Block Size Limit (ABLA)</source>
@@ -2007,7 +2007,7 @@
             </trans-unit>
             <trans-unit id="7886570921510760899">
                 <source xml:space="preserve">Tags</source>
-                <target xml:space="preserve">תגיות</target>
+                <target xml:space="preserve">标签</target>
             </trans-unit>
             <trans-unit datatype="html" id="78fe1342aab9e91cb7cbd1becbaacf3b719546b3">
                 <source xml:space="preserve">TXID, block height, hash or address</source>
@@ -2015,31 +2015,31 @@
             </trans-unit>
             <trans-unit id="7909125979002999098">
                 <source xml:space="preserve"> Pools Count </source>
-                <target xml:space="preserve"> כמות בריכות </target>
+                <target xml:space="preserve"> 矿池数量 </target>
             </trans-unit>
             <trans-unit id="7931206222360985340">
                 <source xml:space="preserve">Coinbase tag</source>
-                <target xml:space="preserve">תיוג מטבעה</target>
+                <target xml:space="preserve">CoinBase 标签</target>
             </trans-unit>
             <trans-unit id="7941620384374510360">
                 <source xml:space="preserve">Transaction hex or base64 encoded PSBT</source>
-                <target xml:space="preserve">טרנזקציה הקסדצימלית או קידוד בסיס64 חתומה חלקית</target>
+                <target xml:space="preserve">交易十六进制或 Base64 编码的 PSBT</target>
             </trans-unit>
             <trans-unit id="7944704425911956229">
                 <source xml:space="preserve"> Avg Block Fee (24h) </source>
-                <target xml:space="preserve"> עמלת בלוק ממוצע (24 שע׳) </target>
+                <target xml:space="preserve"> 平均区块费用（24 小时） </target>
             </trans-unit>
             <trans-unit id="7989584202803202902">
                 <source xml:space="preserve">Expected</source>
-                <target xml:space="preserve">צפוי</target>
+                <target xml:space="preserve">预计区块</target>
             </trans-unit>
             <trans-unit id="7989855514418840406">
                 <source xml:space="preserve">Not enough data yet</source>
-                <target xml:space="preserve">אין מספיק מידע עדיין</target>
+                <target xml:space="preserve">还没有足够的数据</target>
             </trans-unit>
             <trans-unit id="79a9dc5b1caca3cbeb1733a19515edacc5fc7920">
                 <source xml:space="preserve">Hashrate</source>
-                <target xml:space="preserve">כמות האשים</target>
+                <target xml:space="preserve">哈希率</target>
             </trans-unit>
             <trans-unit datatype="html" id="7b8ceef54c3151c632777d309944c67d676a585f">
                 <source xml:space="preserve">Mempool size:</source>
@@ -2067,7 +2067,7 @@
             </trans-unit>
             <trans-unit id="7e69426bd97a606d8ae6026762858e6e7c86a1fd">
                 <source xml:space="preserve">Balance</source>
-                <target xml:space="preserve">מאזן</target>
+                <target xml:space="preserve">余额</target>
             </trans-unit>
             <trans-unit datatype="html" id="7e784cfa5833e7b54d4dfc723fabde94f66ebde3">
                 <source xml:space="preserve">Returns the confirmation status of a transaction. Available fields: <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>confirmed<x ctype="x-code" equiv-text="&lt;/code&gt; " id="CLOSE_TAG_CODE"/> (boolean), <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>block_height<x ctype="x-code" equiv-text="&lt;/code&gt; " id="CLOSE_TAG_CODE"/> (optional), and <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>block_hash<x ctype="x-code" equiv-text="&lt;/code&gt; " id="CLOSE_TAG_CODE"/> (optional).</source>
@@ -2083,19 +2083,19 @@
             </trans-unit>
             <trans-unit id="7faaaa08f56427999f3be41df1093ce4089bbd75">
                 <source xml:space="preserve">Size</source>
-                <target xml:space="preserve">גודל</target>
+                <target xml:space="preserve">大小</target>
             </trans-unit>
             <trans-unit id="80065834848189518">
                 <source xml:space="preserve">No data to display yet. Try again later.</source>
-                <target xml:space="preserve">אין מידע זמין להצגה. ניתן לנסות מאוחר יותר.</target>
+                <target xml:space="preserve">没有可展示的数据。请稍后再试。</target>
             </trans-unit>
             <trans-unit id="8040881171107393560">
                 <source xml:space="preserve">ID</source>
-                <target xml:space="preserve">מזהה</target>
+                <target xml:space="preserve">ID</target>
             </trans-unit>
             <trans-unit id="8041636593944092813">
                 <source xml:space="preserve">More FAQs »</source>
-                <target xml:space="preserve">תשובות נוספות »</target>
+                <target xml:space="preserve">更多问题</target>
             </trans-unit>
             <trans-unit datatype="html" id="80449b1198ade0f86ec83b676f3a436026136efe">
                 <source xml:space="preserve">Description</source>
@@ -2111,7 +2111,7 @@
             </trans-unit>
             <trans-unit id="8052456228079338924">
                 <source xml:space="preserve">Stale</source>
-                <target xml:space="preserve">מיושן</target>
+                <target xml:space="preserve">陈旧</target>
             </trans-unit>
             <trans-unit id="8057974459774940476">
                 <source xml:space="preserve">What are CashTokens?</source>
@@ -2119,7 +2119,7 @@
             </trans-unit>
             <trans-unit id="8064189463907167884">
                 <source xml:space="preserve"> Rejection reason </source>
-                <target xml:space="preserve"> סיבות סירוב </target>
+                <target xml:space="preserve"> 拒绝原因 </target>
             </trans-unit>
             <trans-unit id="8067204363800324397">
                 <source xml:space="preserve">Provide a fallback fee if the finalized transaction size can&apos;t be estimated reliably (hidden scripts in P2SH).</source>
@@ -2127,7 +2127,7 @@
             </trans-unit>
             <trans-unit id="808338231320400904">
                 <source xml:space="preserve">This transaction was projected to be included in the block</source>
-                <target xml:space="preserve">פעולה זאת הייתה צפויה להיכלל בבלוק</target>
+                <target xml:space="preserve">这笔交易预计将被纳入区块</target>
             </trans-unit>
             <trans-unit id="8105367655277227191">
                 <source xml:space="preserve"> Expected </source>
@@ -2135,7 +2135,7 @@
             </trans-unit>
             <trans-unit id="8105839921891777281">
                 <source xml:space="preserve">Hashrate (MA)</source>
-                <target xml:space="preserve">כמות האשים (ממוצע נע)</target>
+                <target xml:space="preserve">哈希率（MA）</target>
             </trans-unit>
             <trans-unit id="8108093314946246971">
                 <source xml:space="preserve">TXID</source>
@@ -2143,7 +2143,7 @@
             </trans-unit>
             <trans-unit id="8132128899357611687">
                 <source xml:space="preserve"> Transaction Fees </source>
-                <target xml:space="preserve"> עמלת טרנזקציה </target>
+                <target xml:space="preserve"> 交易费用 </target>
             </trans-unit>
             <trans-unit id="8158183612118976882">
                 <source xml:space="preserve">Timelock</source>
@@ -2151,15 +2151,15 @@
             </trans-unit>
             <trans-unit id="8176036021087578640">
                 <source xml:space="preserve">Fee</source>
-                <target xml:space="preserve">עמלה</target>
+                <target xml:space="preserve">手续费</target>
             </trans-unit>
             <trans-unit id="8177873832400820695">
                 <source xml:space="preserve">Count</source>
-                <target xml:space="preserve">ספירה</target>
+                <target xml:space="preserve">数量</target>
             </trans-unit>
             <trans-unit id="8197600042878175654">
                 <source xml:space="preserve">Total fees</source>
-                <target xml:space="preserve">סך העמלות</target>
+                <target xml:space="preserve">总手续费</target>
             </trans-unit>
             <trans-unit id="822985557126132388">
                 <source xml:space="preserve"> Blocks (1w) </source>
@@ -2167,7 +2167,7 @@
             </trans-unit>
             <trans-unit id="8238703585225968591">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks ahead</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> בלוקים קדימה</target>
+                <target xml:space="preserve">领先<x equiv-text="{{ i }}" id="INTERPOLATION"/>个区块</target>
             </trans-unit>
             <trans-unit id="8244978122807060043">
                 <source xml:space="preserve"> ScriptSig (ASM) </source>
@@ -2175,31 +2175,31 @@
             </trans-unit>
             <trans-unit id="8278803452573309499">
                 <source xml:space="preserve"> This node hasn&apos;t seen any stale blocks yet! </source>
-                <target xml:space="preserve"> צומת זה עדיין לא ראה בלוקים ישנים! </target>
+                <target xml:space="preserve"> 该节点尚未看到任何陈旧区块！ </target>
             </trans-unit>
             <trans-unit id="8280265388760151631">
                 <source xml:space="preserve">Third-party Licenses</source>
-                <target xml:space="preserve">רישיונות צד-שלישי</target>
+                <target xml:space="preserve">第三方许可</target>
             </trans-unit>
             <trans-unit id="8290151608825555274">
                 <source xml:space="preserve">Warning! This transaction involves deceptively similar addresses. It may be an address poisoning attack.</source>
-                <target xml:space="preserve">אזהרה! עסקה זו כוללת כתובות דומות באופן מטעה. ייתכן שמדובר בהתקפת הרעלת כתובות.</target>
+                <target xml:space="preserve">警告！此交易包含高度相似的地址，可能是地址投毒攻击。</target>
             </trans-unit>
             <trans-unit id="8295912551154091254">
                 <source xml:space="preserve"> Details </source>
-                <target xml:space="preserve"> פרטים </target>
+                <target xml:space="preserve"> 明细 </target>
             </trans-unit>
             <trans-unit id="8301052529793444407">
                 <source xml:space="preserve">Test Transaction</source>
-                <target xml:space="preserve">טרנזקיית בחינה</target>
+                <target xml:space="preserve">测试交易</target>
             </trans-unit>
             <trans-unit id="8306976710311886820">
                 <source xml:space="preserve">There is a stale block at this height</source>
-                <target xml:space="preserve">יש בלוק מיושן בגובה זה</target>
+                <target xml:space="preserve">该高度有一个陈旧区块</target>
             </trans-unit>
             <trans-unit id="8349631027640736583">
                 <source xml:space="preserve">in the same block</source>
-                <target xml:space="preserve">באותו הבלוק</target>
+                <target xml:space="preserve">在同一个区块</target>
             </trans-unit>
             <trans-unit id="8371399036834958761">
                 <source xml:space="preserve"><x equiv-text="{{ (transactions?.length | number) || &quot;?&quot; }}" id="INTERPOLATION"/> of <x equiv-text="{{ mempoolStats.tx_count + chainStats.tx_count | number }}" id="INTERPOLATION_1"/> transaction</source>
@@ -2207,11 +2207,11 @@
             </trans-unit>
             <trans-unit id="838299984212365663">
                 <source xml:space="preserve">Stratum Jobs</source>
-                <target xml:space="preserve">משרות סטראטום</target>
+                <target xml:space="preserve">Stratum 作业</target>
             </trans-unit>
             <trans-unit id="8385872309809021855">
                 <source xml:space="preserve">See the mining fees earned per Bitcoin block compared to the Bitcoin block subsidy, visualized in BCH and USD over time.</source>
-                <target xml:space="preserve">ראה את עמלות הכרייה שהתקבלו לכל בלוק ביטקוין בהשוואה לסבסוד בלוק הביטקוין, המוצגות בביטקוין ובדולר ארה&quot;ב לאורך זמן.</target>
+                <target xml:space="preserve">查看每个比特币区块赚取的采矿费与比特币区块补贴的比较，以比特币和美元为单位，可视化显示一段时间内的情况。</target>
             </trans-unit>
             <trans-unit id="8386976308507652568">
                 <source xml:space="preserve"> All </source>
@@ -2223,7 +2223,7 @@
             </trans-unit>
             <trans-unit id="8396979359626564289">
                 <source xml:space="preserve">Adjusted</source>
-                <target xml:space="preserve">מותאם</target>
+                <target xml:space="preserve">矫正量</target>
             </trans-unit>
             <trans-unit datatype="html" id="83b8b9dd1ed416447cf8438460a37b0ddeb2677c">
                 <source xml:space="preserve">sat</source>
@@ -2231,23 +2231,23 @@
             </trans-unit>
             <trans-unit id="8401436958953545077">
                 <source xml:space="preserve">This address is deceptively similar to another output. It may be part of an address poisoning attack.</source>
-                <target xml:space="preserve">כתובת זו דומה באופן מטעה לפלט אחר. ייתכן שהיא חלק מהתקפת הרעלת כתובות.</target>
+                <target xml:space="preserve">此地址与另一个输出非常相似，可能是地址投毒攻击的一部分。</target>
             </trans-unit>
             <trans-unit id="840692109692540367">
                 <source xml:space="preserve">Sign In</source>
-                <target xml:space="preserve">התחבר</target>
+                <target xml:space="preserve">登录</target>
             </trans-unit>
             <trans-unit id="841897176602849537">
                 <source xml:space="preserve"> This transaction ID appears twice in the blockchain as the coinbase of blocks <x ctype="x-a" equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[0]]&quot;&gt;" id="START_LINK"/><x equiv-text="{{             duplicateTxBlocks[0]           }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/> and <x equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[1]]&quot;&gt;" id="START_LINK_1"/><x equiv-text="{{             duplicateTxBlocks[1]           }}" id="INTERPOLATION_1"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/>, due to a bug later mitigated by <x equiv-text="&lt;a             href=&quot;https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki&quot;             target=&quot;_blank&quot;             rel=&quot;noopener&quot;             &gt;" id="START_LINK_2"/>BIP-30<x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/>. </source>
-                <target xml:space="preserve">מזהה עסקה זה מופיע פעמיים בבלוקצ&apos;יין כבסיס המטבעות של הבלוקים <x ctype="x-a" equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[0]]&quot;&gt;" id="START_LINK"/><x equiv-text="locks[0] }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/> ו- <x equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[1]]&quot;&gt;" id="START_LINK_1"/><x equiv-text="cks[1] }}" id="INTERPOLATION_1"/><x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/>, עקב באג שתוקן מאוחר יותר על ידי <x equiv-text="&lt;a href=&quot;https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;" id="START_LINK_2"/> BIP-30 <x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/>.</target>
+                <target xml:space="preserve">该交易 ID 在区块链中作为区块 <x ctype="x-a" equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[0]]&quot;&gt;" id="START_LINK"/><x equiv-text="locks[0] }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/> 和 <x equiv-text="&lt;a [routerLink]=&quot;[&apos;/block/&apos; | relativeUrl, duplicateTxBlocks[1]]&quot;&gt;" id="START_LINK_1"/><x equiv-text="cks[1] }}" id="INTERPOLATION_1"/><x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/> 的 coinbase 出现了两次，这是由于一个后来被 <x equiv-text="&lt;a href=&quot;https://github.com/bitcoin/bips/blob/master/bip-0030.mediawiki&quot; target=&quot;_blank&quot; rel=&quot;noopener&quot;&gt;" id="START_LINK_2"/>BIP-30<x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/> 修复的漏洞。</target>
             </trans-unit>
             <trans-unit id="8454028079923559383">
                 <source xml:space="preserve">Winning Block</source>
-                <target xml:space="preserve">בלוק זוכה</target>
+                <target xml:space="preserve">获胜区块</target>
             </trans-unit>
             <trans-unit id="8461609631969932886">
                 <source xml:space="preserve">Hide</source>
-                <target xml:space="preserve">הסתר</target>
+                <target xml:space="preserve">隐藏</target>
             </trans-unit>
             <trans-unit id="8466712742126182910">
                 <source xml:space="preserve">BCH/block</source>
@@ -2255,27 +2255,27 @@
             </trans-unit>
             <trans-unit id="8491011120834785215">
                 <source xml:space="preserve">Bitcoin Price</source>
-                <target xml:space="preserve">מחיר הביטקוין</target>
+                <target xml:space="preserve">比特币价格</target>
             </trans-unit>
             <trans-unit id="8495536121007053185">
                 <source xml:space="preserve">No Priority</source>
-                <target xml:space="preserve">ללא עדיפות</target>
+                <target xml:space="preserve">无优先级</target>
             </trans-unit>
             <trans-unit id="8506168272622458998">
                 <source xml:space="preserve">Raw hex</source>
-                <target xml:space="preserve">Hex גולמי</target>
+                <target xml:space="preserve">原始十六进制</target>
             </trans-unit>
             <trans-unit id="851325806168609906">
                 <source xml:space="preserve">Indexing pools hashrate</source>
-                <target xml:space="preserve">מאנדקס כמות האשים לבריכות</target>
+                <target xml:space="preserve">正在统计矿池哈希率</target>
             </trans-unit>
             <trans-unit id="8538305450922736186">
                 <source xml:space="preserve">At block <x equiv-text="&apos;&lt;b style=&quot;color: var(--fg); margin-left: 2px&quot;&gt;&apos; +                 data[0].axisValue" id="PH"/></source>
-                <target xml:space="preserve">בבלוק <x equiv-text="&apos;&lt;b style=&quot;color: white; margin-left: 2px&quot;&gt;&apos; + data[0].axisValue" id="PH"/></target>
+                <target xml:space="preserve">在区块<x equiv-text="&apos;&lt;b style=&quot;color: white; margin-left: 2px&quot;&gt;&apos; + data[0].axisValue" id="PH"/></target>
             </trans-unit>
             <trans-unit id="8546007275666227290">
                 <source xml:space="preserve">Code Example</source>
-                <target xml:space="preserve">קוד לדוגמה</target>
+                <target xml:space="preserve">代码示例</target>
             </trans-unit>
             <trans-unit id="8556593667250477164">
                 <source xml:space="preserve">Unconfirmed</source>
@@ -2295,23 +2295,23 @@
             </trans-unit>
             <trans-unit id="8638358096787290282">
                 <source xml:space="preserve"> This transaction is stored locally in your browser. Broadcast it to add it to the mempool. </source>
-                <target xml:space="preserve">טרנזקציה זו נשמרה מקומית בדפדפן שלך. שלח אותה כדי להוסיפה לממפול.</target>
+                <target xml:space="preserve">此交易已在浏览器本地存储。广播交易即可进入内存池。</target>
             </trans-unit>
             <trans-unit id="8644336101711653968">
                 <source xml:space="preserve"> BCH Balance </source>
-                <target xml:space="preserve">מאזן BTC</target>
+                <target xml:space="preserve">BTC 余额</target>
             </trans-unit>
             <trans-unit id="8650499415827640724">
                 <source xml:space="preserve">Type</source>
-                <target xml:space="preserve">סוּג</target>
+                <target xml:space="preserve">类型</target>
             </trans-unit>
             <trans-unit id="8672318679025859345">
                 <source xml:space="preserve">Valid Fork</source>
-                <target xml:space="preserve">פיצול חוקי</target>
+                <target xml:space="preserve">有效分叉</target>
             </trans-unit>
             <trans-unit id="8688298623006329710">
                 <source xml:space="preserve">Treasury</source>
-                <target xml:space="preserve">אוצר</target>
+                <target xml:space="preserve">财政部</target>
             </trans-unit>
             <trans-unit id="8705001614078671854">
                 <source xml:space="preserve">Double check that this transaction sends the funds back to the provided address before signing</source>
@@ -2319,7 +2319,7 @@
             </trans-unit>
             <trans-unit id="8727174280080676113">
                 <source xml:space="preserve">REST API service</source>
-                <target xml:space="preserve">שירותי API</target>
+                <target xml:space="preserve">REST API 服务</target>
             </trans-unit>
             <trans-unit id="8746454997762682010">
                 <source xml:space="preserve">Block Rewards</source>
@@ -2327,23 +2327,23 @@
             </trans-unit>
             <trans-unit id="8758765586683372781">
                 <source xml:space="preserve"> Memory Usage </source>
-                <target xml:space="preserve"> שימוש בזיכרון </target>
+                <target xml:space="preserve"> 内存使用量 </target>
             </trans-unit>
             <trans-unit id="8771087581491765263">
                 <source xml:space="preserve">Confirmed balance</source>
-                <target xml:space="preserve">מאזן מאושר</target>
+                <target xml:space="preserve">已确认余额</target>
             </trans-unit>
             <trans-unit id="8807945662832318286">
                 <source xml:space="preserve">Around block <x equiv-text="&apos;&lt;b style=&quot;color: var(--fg); margin-left: 2px&quot;&gt;&apos; +                 data[0].axisValue" id="PH"/></source>
-                <target xml:space="preserve">סביב בלוק <x equiv-text="&apos;&lt;b style=&quot;color: white; margin-left: 2px&quot;&gt;&apos; + data[0].axisValue" id="PH"/></target>
+                <target xml:space="preserve">区块周围<x equiv-text="&apos;&lt;b style=&quot;color: white; margin-left: 2px&quot;&gt;&apos; + data[0].axisValue" id="PH"/></target>
             </trans-unit>
             <trans-unit id="8829497237648100098">
                 <source xml:space="preserve">Filter</source>
-                <target xml:space="preserve">סנן</target>
+                <target xml:space="preserve">过滤</target>
             </trans-unit>
             <trans-unit id="8831611540421575858">
                 <source xml:space="preserve">Pool Dominance</source>
-                <target xml:space="preserve">דומיננטיות בריכה</target>
+                <target xml:space="preserve">泳池霸主</target>
             </trans-unit>
             <trans-unit id="8856591276184789424">
                 <source xml:space="preserve">Audit</source>
@@ -2351,11 +2351,11 @@
             </trans-unit>
             <trans-unit id="885666551418fd59011ceb09d5c481095940193b">
                 <source xml:space="preserve">Features</source>
-                <target xml:space="preserve">מאפיינים</target>
+                <target xml:space="preserve">交易特征</target>
             </trans-unit>
             <trans-unit id="8875021007006086451">
                 <source xml:space="preserve">Testnet4 Explorer</source>
-                <target xml:space="preserve">סייר רשת בדיקות4</target>
+                <target xml:space="preserve">Testnet4 浏览器</target>
             </trans-unit>
             <trans-unit id="88825654282419901">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> transaction</source>
@@ -2363,35 +2363,35 @@
             </trans-unit>
             <trans-unit id="8890090607446421296">
                 <source xml:space="preserve">Clock (Mempool)</source>
-                <target xml:space="preserve">שעון (Mempool)</target>
+                <target xml:space="preserve">时钟（内存池）</target>
             </trans-unit>
             <trans-unit id="8894377483833272091">
                 <source xml:space="preserve">Price</source>
-                <target xml:space="preserve">מחיר</target>
+                <target xml:space="preserve">价格</target>
             </trans-unit>
             <trans-unit id="8913794084097958305">
                 <source xml:space="preserve">Verify</source>
-                <target xml:space="preserve">אמת</target>
+                <target xml:space="preserve">验证</target>
             </trans-unit>
             <trans-unit id="8914778499301929289">
                 <source xml:space="preserve">Powered By</source>
-                <target xml:space="preserve">מופעל באמצעות</target>
+                <target xml:space="preserve">技术支持</target>
             </trans-unit>
             <trans-unit id="8918254921747459635">
                 <source xml:space="preserve">Around block: <x equiv-text="data[0].data[2]" id="PH"/></source>
-                <target xml:space="preserve">סביב בלוק: <x equiv-text="ticks[0].data[2]" id="PH"/></target>
+                <target xml:space="preserve">周围块：<x equiv-text="ticks[0].data[2]" id="PH"/></target>
             </trans-unit>
             <trans-unit id="8922056105159182968">
                 <source xml:space="preserve">Balances</source>
-                <target xml:space="preserve">מאזן</target>
+                <target xml:space="preserve">余额</target>
             </trans-unit>
             <trans-unit id="8968030053137661433">
                 <source xml:space="preserve">Output</source>
-                <target xml:space="preserve">פלט</target>
+                <target xml:space="preserve">输出</target>
             </trans-unit>
             <trans-unit id="899060995555983474">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks mined</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> בלוקים נכרו</target>
+                <target xml:space="preserve">已挖<x equiv-text="{{ i }}" id="INTERPOLATION"/>个区块</target>
             </trans-unit>
             <trans-unit datatype="html" id="8a24d1f821c3fde832ff742b6aaba455accadc74">
                 <source xml:space="preserve">Request invoice</source>
@@ -2403,11 +2403,11 @@
             </trans-unit>
             <trans-unit id="8a7b4bd44c0ac71b2e72de0398b303257f7d2f54">
                 <source xml:space="preserve">Blocks</source>
-                <target xml:space="preserve">בלוקים</target>
+                <target xml:space="preserve">区块</target>
             </trans-unit>
             <trans-unit id="8ba8fe810458280a83df7fdf4c614dfc1a826445">
                 <source xml:space="preserve">Block Rewards</source>
-                <target xml:space="preserve">פרסי הבלוק</target>
+                <target xml:space="preserve">区块奖励</target>
             </trans-unit>
             <trans-unit datatype="html" id="8d0b91c3b649c0237734a2c27585ed0409451523">
                 <source xml:space="preserve">Become a sponsor ❤️</source>
@@ -2431,20 +2431,20 @@
             </trans-unit>
             <trans-unit id="9008891323838339468">
                 <source xml:space="preserve"> Blocks (24h) </source>
-                <target xml:space="preserve"> בלוקים (24 שע׳) </target>
+                <target xml:space="preserve"> 区块（24小时） </target>
             </trans-unit>
             <trans-unit id="9038326515381177012">
                 <source xml:space="preserve">Sigops</source>
-                <target xml:space="preserve"> פעולות חתימה</target>
+                <target xml:space="preserve">签名操作</target>
             </trans-unit>
             <trans-unit id="9071183321070217369">
                 <source xml:space="preserve">Pools Ranking</source>
-                <target xml:space="preserve">דירוג בריכות</target>
+                <target xml:space="preserve">矿池排名</target>
             </trans-unit>
             <trans-unit id="907780240721638283">
                 <source xml:space="preserve"> Verified Treasuries
 </source>
-                <target xml:space="preserve"> אוצר מאומת </target>
+                <target xml:space="preserve"> 已验证国库 </target>
             </trans-unit>
             <trans-unit id="9079964163800849922">
                 <source xml:space="preserve"> Avg Tx Fee </source>
@@ -2452,15 +2452,15 @@
             </trans-unit>
             <trans-unit id="9086644539236239452">
                 <source xml:space="preserve">Error loading block data.</source>
-                <target xml:space="preserve">שגיאה בטעינת מידע בלוק</target>
+                <target xml:space="preserve">加载区块失败</target>
             </trans-unit>
             <trans-unit id="9112931942640498482">
                 <source xml:space="preserve">Pools luck (1 week)</source>
-                <target xml:space="preserve">מזל הבריכות (1 שבועות)</target>
+                <target xml:space="preserve">矿池幸运度（1 周）</target>
             </trans-unit>
             <trans-unit id="919233352655625255">
                 <source xml:space="preserve"> not available </source>
-                <target xml:space="preserve"> לא זמין </target>
+                <target xml:space="preserve"> 不可用 </target>
             </trans-unit>
             <trans-unit datatype="html" id="919f2fd60a898850c24b1584362bbf18a4628bcb">
                 <source xml:space="preserve">Weight</source>
@@ -2468,11 +2468,11 @@
             </trans-unit>
             <trans-unit id="9212705249340904752">
                 <source xml:space="preserve">Explore</source>
-                <target xml:space="preserve">סייר</target>
+                <target xml:space="preserve">探索</target>
             </trans-unit>
             <trans-unit id="9219712723630129965">
                 <source xml:space="preserve">Coinbase</source>
-                <target xml:space="preserve">מטבעה</target>
+                <target xml:space="preserve">Coinbase</target>
             </trans-unit>
             <trans-unit datatype="html" id="926c571b25cca7e2a294619f145960c0cd3848b6">
                 <source xml:space="preserve">Incoming transactions</source>
@@ -2488,7 +2488,7 @@
             </trans-unit>
             <trans-unit id="945376464060430485">
                 <source xml:space="preserve">Bits</source>
-                <target xml:space="preserve">ביטים</target>
+                <target xml:space="preserve">字节</target>
             </trans-unit>
             <trans-unit datatype="html" id="94731fb77c18c6d537337dddc3699f67a0587985">
                 <source xml:space="preserve">Terms of Service</source>
@@ -2504,7 +2504,7 @@
             </trans-unit>
             <trans-unit id="951262081868205118">
                 <source xml:space="preserve"> yet to be mined </source>
-                <target xml:space="preserve"> טרם נכרה </target>
+                <target xml:space="preserve"> 待挖掘 </target>
             </trans-unit>
             <trans-unit id="956069346153233991">
                 <source xml:space="preserve"> Bitcoin Cash Price </source>
@@ -2512,7 +2512,7 @@
             </trans-unit>
             <trans-unit id="959315954123800933">
                 <source xml:space="preserve">Search by student name or ID...</source>
-                <target xml:space="preserve">חפש לפי שם סטודנט או מספר זהות</target>
+                <target xml:space="preserve">按学生姓名或 ID 搜索...</target>
             </trans-unit>
             <trans-unit datatype="html" id="95d8cabe8e56fa81dd683f73e215b4acd96a06fc">
                 <source xml:space="preserve">In</source>
@@ -2528,7 +2528,7 @@
             </trans-unit>
             <trans-unit id="963664380975841348">
                 <source xml:space="preserve">Explore the full Bitcoin Cash ecosystem</source>
-                <target xml:space="preserve">חקור את מרחב רשתות הביטקוין</target>
+                <target xml:space="preserve">体验完整的比特币生态</target>
             </trans-unit>
             <trans-unit id="964309715677902826">
                 <source xml:space="preserve">See stats for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(                 this.stateService.network               )" id="PH"/> transactions in the mempool: fee range, aggregate size, and more. Mempool blocks are updated in real-time as the network receives new transactions.</source>
@@ -2536,11 +2536,11 @@
             </trans-unit>
             <trans-unit id="973124238841406947">
                 <source xml:space="preserve">Reward stats</source>
-                <target xml:space="preserve">סטטיסטיקת פרסים</target>
+                <target xml:space="preserve">奖励统计</target>
             </trans-unit>
             <trans-unit id="974815456941800688">
                 <source xml:space="preserve">Confirmed UTXOs</source>
-                <target xml:space="preserve">פלטים מאומתים שלא בוזבזו</target>
+                <target xml:space="preserve">已确认的UTXO</target>
             </trans-unit>
             <trans-unit datatype="html" id="975f46d122f2ca0a187308399a58b44d61ef08eb">
                 <source xml:space="preserve">This transaction saved <x equiv-text="ction saved {{ segwitGains.realizedGains * 100 | number:" id="INTERPOLATION"/>% on fees by using SegWit and could save <x equiv-text=" could save {{ segwitGains.potentialBech32Gains * 100 | number " id="INTERPOLATION_1"/>% more by fully upgrading to native SegWit-Bech32</source>
@@ -2556,11 +2556,11 @@
             </trans-unit>
             <trans-unit id="990281140585424266">
                 <source xml:space="preserve">spent </source>
-                <target xml:space="preserve">בוזבז</target>
+                <target xml:space="preserve">花费</target>
             </trans-unit>
             <trans-unit id="991066160113599649">
                 <source xml:space="preserve">Remaining</source>
-                <target xml:space="preserve">נותרו</target>
+                <target xml:space="preserve">距离下次调整</target>
             </trans-unit>
             <trans-unit datatype="html" id="9b8d8dedba1ce2bf7b44f324993f8df5d7a75410">
                 <source xml:space="preserve">If you donate 0.01 BTC or more, your profile photo will be added to the list of sponsors above :)</source>
@@ -2600,7 +2600,7 @@
             </trans-unit>
             <trans-unit id="a681a4e2011bb28157689dbaa387de0dd0aa0c11">
                 <source xml:space="preserve">Mining Dashboard</source>
-                <target xml:space="preserve">לוח כרייה</target>
+                <target xml:space="preserve">挖矿仪表盘</target>
             </trans-unit>
             <trans-unit datatype="html" id="a8bc418b73c6bfcefc1b07c84d7f1126ab2a3237">
                 <source xml:space="preserve">P2SH redeem script</source>
@@ -2636,11 +2636,11 @@
             </trans-unit>
             <trans-unit id="address-label.multisig">
                 <source xml:space="preserve">Multisig <x equiv-text="m" id="multisigM"/> of <x equiv-text="n" id="multisigN"/></source>
-                <target xml:space="preserve">מרובה חתימות <x equiv-text="m" id="multisigM"/> מתוך <x equiv-text="n" id="multisigN"/></target>
+                <target xml:space="preserve"><x equiv-text="n" id="multisigN"/>个多签中的<x equiv-text="m" id="multisigM"/>个</target>
             </trans-unit>
             <trans-unit id="address.component.browser-title">
                 <source xml:space="preserve">Address: <x equiv-text="this.addressString" id="INTERPOLATION"/></source>
-                <target xml:space="preserve">כתובת: <x equiv-text="this.addressString" id="INTERPOLATION"/></target>
+                <target xml:space="preserve">地址： <x equiv-text="this.addressString" id="INTERPOLATION"/></target>
             </trans-unit>
             <trans-unit datatype="html" id="ae9770436d1823a1ddfa0837c5a98f412a0d42c4">
                 <source xml:space="preserve">Total fees</source>
@@ -2656,7 +2656,7 @@
             </trans-unit>
             <trans-unit id="b1fa5b210c9670d49a6506f046d4a0c2797fd402">
                 <source xml:space="preserve">Block Health</source>
-                <target xml:space="preserve">בריאות הבלוק</target>
+                <target xml:space="preserve">区块健康</target>
             </trans-unit>
             <trans-unit datatype="html" id="b2035d486e8d59980736a224891d9790c981691a">
                 <source xml:space="preserve">Optimal</source>
@@ -2704,7 +2704,7 @@
             </trans-unit>
             <trans-unit id="bdf0e930eb22431140a2eaeacd809cc5f8ebd38c">
                 <source xml:space="preserve">Next Block</source>
-                <target xml:space="preserve">הבלוק הבא</target>
+                <target xml:space="preserve">下一个区块</target>
             </trans-unit>
             <trans-unit datatype="html" id="bfa87f9724434e4245b30f2bdd11d97477048cd1">
                 <source xml:space="preserve">Confirmed</source>
@@ -2732,11 +2732,11 @@
             </trans-unit>
             <trans-unit id="bisq.transaction.browser-title">
                 <source xml:space="preserve">Transaction: <x equiv-text="this.txId" id="INTERPOLATION"/></source>
-                <target xml:space="preserve">טרנזקציה: <x equiv-text="this.txId" id="INTERPOLATION"/></target>
+                <target xml:space="preserve">交易：<x equiv-text="this.txId" id="INTERPOLATION"/></target>
             </trans-unit>
             <trans-unit id="block.component.browser-title">
                 <source xml:space="preserve">Block <x equiv-text="block.height" id="BLOCK_HEIGHT"/>: <x equiv-text="block.id" id="BLOCK_ID"/></source>
-                <target xml:space="preserve">בלוק <x equiv-text="block.height" id="BLOCK_HEIGHT"/>: <x equiv-text="block.id" id="BLOCK_ID"/></target>
+                <target xml:space="preserve">区块 <x equiv-text="block.height" id="BLOCK_HEIGHT"/>：<x equiv-text="block.id" id="BLOCK_ID"/></target>
             </trans-unit>
             <trans-unit datatype="html" id="c525ee366d56496a39853d54f8f08fcaed0eaf40">
                 <source xml:space="preserve">Minimum amount is 0.001 BTC</source>
@@ -2780,7 +2780,7 @@
             </trans-unit>
             <trans-unit id="clipboard.copied-message">
                 <source xml:space="preserve">Copied!</source>
-                <target xml:space="preserve">הועתק!</target>
+                <target xml:space="preserve">已复制！</target>
             </trans-unit>
             <trans-unit datatype="html" id="d2a84740e76b7220516a9f10644e4b3bdabdb833">
                 <source xml:space="preserve">Peg In/Out and Burn Transactions</source>
@@ -2788,7 +2788,7 @@
             </trans-unit>
             <trans-unit id="d2bcd3296d2850de762fb943060b7e086a893181">
                 <source xml:space="preserve">Health</source>
-                <target xml:space="preserve">בריאות</target>
+                <target xml:space="preserve">健康度</target>
             </trans-unit>
             <trans-unit datatype="html" id="d2eb45d1cd8cd146b7cb0223ab97a4b03b614060">
                 <source xml:space="preserve">sat/vB</source>
@@ -2800,7 +2800,7 @@
             </trans-unit>
             <trans-unit id="d7f92e6fe26fba6fff568cbdae5db4a5c8c6a55c">
                 <source xml:space="preserve">Preview Transaction</source>
-                <target xml:space="preserve">תצוגה מקדימה של פעולה</target>
+                <target xml:space="preserve">预览交易</target>
             </trans-unit>
             <trans-unit datatype="html" id="d9baa5e9ea1cde02012703c3a43f190947dadd04">
                 <source xml:space="preserve">Endpoint</source>
@@ -2808,67 +2808,67 @@
             </trans-unit>
             <trans-unit id="date-base.day">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> day</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/> יום</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>天</target>
             </trans-unit>
             <trans-unit id="date-base.days">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> days</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/> ימים</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>天</target>
             </trans-unit>
             <trans-unit id="date-base.hour">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> hour</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/> שעה</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>小时</target>
             </trans-unit>
             <trans-unit id="date-base.hours">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> hours</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/> שעות</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>小时</target>
             </trans-unit>
             <trans-unit id="date-base.immediately">
                 <source xml:space="preserve">Immediately</source>
-                <target xml:space="preserve">מיידי</target>
+                <target xml:space="preserve">立刻 </target>
             </trans-unit>
             <trans-unit id="date-base.just-now">
                 <source xml:space="preserve">Just now</source>
-                <target xml:space="preserve">זה עתה</target>
+                <target xml:space="preserve">现在</target>
             </trans-unit>
             <trans-unit id="date-base.minute">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> minute</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/> דקה</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>分钟</target>
             </trans-unit>
             <trans-unit id="date-base.minutes">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> minutes</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/> דקות</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>分钟</target>
             </trans-unit>
             <trans-unit id="date-base.month">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> month</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/> חודש</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>个月</target>
             </trans-unit>
             <trans-unit id="date-base.months">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> months</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/> חודשים</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>个月</target>
             </trans-unit>
             <trans-unit id="date-base.second">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> second</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/> שניה</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>秒</target>
             </trans-unit>
             <trans-unit id="date-base.seconds">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> seconds</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/> שניות</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>秒</target>
             </trans-unit>
             <trans-unit id="date-base.week">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> week</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/> שבוע</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>周</target>
             </trans-unit>
             <trans-unit id="date-base.weeks">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> weeks</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/> שבועות</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>周</target>
             </trans-unit>
             <trans-unit id="date-base.year">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> year</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/> שנה</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>年</target>
             </trans-unit>
             <trans-unit id="date-base.years">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> years</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/> שנים</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>年</target>
             </trans-unit>
             <trans-unit datatype="html" id="dbc2df5fb208e52733f39fc22e55d0b4b38e420f">
                 <source xml:space="preserve">Unconfirmed</source>
@@ -2896,7 +2896,7 @@
             </trans-unit>
             <trans-unit id="dfc3c34e182ea73c5d784ff7c8135f087992dac1">
                 <source xml:space="preserve">All</source>
-                <target xml:space="preserve">הכל</target>
+                <target xml:space="preserve">全部</target>
             </trans-unit>
             <trans-unit datatype="html" id="e1139ea570985b3f114e18876f09fd7223429983">
                 <source xml:space="preserve">Latest blocks</source>
@@ -2936,7 +2936,7 @@
             </trans-unit>
             <trans-unit id="e5d8bb389c702588877f039d72178f219453a72d">
                 <source xml:space="preserve">Unknown</source>
-                <target xml:space="preserve">לא ידוע</target>
+                <target xml:space="preserve">未知</target>
             </trans-unit>
             <trans-unit datatype="html" id="e6213c3f05146287cf121868d9f3d3c3ff5f9714">
                 <source xml:space="preserve">TXs</source>
@@ -2960,7 +2960,7 @@
             </trans-unit>
             <trans-unit id="ed8e33059967f554ff06b4f5b6049c465b92d9b3">
                 <source xml:space="preserve">Block Fee Rates</source>
-                <target xml:space="preserve">גובה עמלות לבלוק</target>
+                <target xml:space="preserve">区块费率</target>
             </trans-unit>
             <trans-unit datatype="html" id="ee0d8fddc1dd89c919c21db1b8b2d848d05cdfdc">
                 <source xml:space="preserve"><x equiv-text="{{ mempoolBlocksData.blocks }}" id="INTERPOLATION"/> block</source>
@@ -3000,7 +3000,7 @@
             </trans-unit>
             <trans-unit id="f13cbfe8cfc955918e9f64466d2cafddb4760d9a">
                 <source xml:space="preserve">Broadcast Transaction</source>
-                <target xml:space="preserve">שדר טרנזקציה</target>
+                <target xml:space="preserve">广播交易</target>
             </trans-unit>
             <trans-unit datatype="html" id="f149942f271231be52f55589398967093382d96d">
                 <source xml:space="preserve">Total sent</source>
@@ -3028,7 +3028,7 @@
             </trans-unit>
             <trans-unit id="f74d6f23e06c5a75d95a994017c00191c162ba9f">
                 <source xml:space="preserve">Test Transactions</source>
-                <target xml:space="preserve">טרנזקציות בחינה</target>
+                <target xml:space="preserve">测试交易</target>
             </trans-unit>
             <trans-unit datatype="html" id="f80dd1511a91af4e592a538f95fa29d24907176f">
                 <source xml:space="preserve">High priority</source>
@@ -3068,7 +3068,7 @@
             </trans-unit>
             <trans-unit id="fe5317c6c60dd7e0e86f04d22f566f67cf04d404">
                 <source xml:space="preserve">Mining Pools</source>
-                <target xml:space="preserve">בריכות כרייה</target>
+                <target xml:space="preserve">矿池</target>
             </trans-unit>
             <trans-unit datatype="html" id="fe56475a8f4cf4bfc3acaafa215a7dd60d9ed7da">
                 <source xml:space="preserve">Default push: <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/><x equiv-text="{{ &apos;{&apos; }}" id="INTERPOLATION"/> action: 'want', data: ['blocks', ...] <x equiv-text="{{ &apos;}&apos; }}" id="INTERPOLATION_1"/><x ctype="x-code" equiv-text="&lt;/code&gt; " id="CLOSE_TAG_CODE"/> to express what you want pushed. Available: <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>blocks<x ctype="x-code" equiv-text="&lt;/code&gt; " id="CLOSE_TAG_CODE"/>, <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>mempool-block<x ctype="x-code" equiv-text="&lt;/code&gt; " id="CLOSE_TAG_CODE"/>, <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>live-2h-chart<x ctype="x-code" equiv-text="&lt;/code&gt; " id="CLOSE_TAG_CODE"/>, and <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>stats<x ctype="x-code" equiv-text="&lt;/code&gt; " id="CLOSE_TAG_CODE"/>.<x ctype="lb" equiv-text="&lt;br&gt;" id="LINE_BREAK"/><x ctype="lb" equiv-text="&lt;br&gt;" id="LINE_BREAK"/>Push transactions related to address: <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/><x equiv-text="{{ &apos;{&apos; }}" id="INTERPOLATION"/> 'track-address': '3PbJ...bF9B' <x equiv-text="{{ &apos;}&apos; }}" id="INTERPOLATION_1"/><x ctype="x-code" equiv-text="&lt;/code&gt; " id="CLOSE_TAG_CODE"/> to receive all new transactions containing that address as input or output. Returns an array of transactions. <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>address-transactions<x ctype="x-code" equiv-text="&lt;/code&gt; " id="CLOSE_TAG_CODE"/> for new mempool transactions, and <x ctype="x-code" equiv-text="&lt;code&gt;" id="START_TAG_CODE"/>block-transactions<x ctype="x-code" equiv-text="&lt;/code&gt; " id="CLOSE_TAG_CODE"/> for new block confirmed transactions.</source>
@@ -3084,7 +3084,7 @@
             </trans-unit>
             <trans-unit id="mempool-block.block.no">
                 <source xml:space="preserve">Mempool block <x equiv-text="this.mempoolBlockIndex + 1" id="INTERPOLATION"/></source>
-                <target xml:space="preserve">ממפול בלוק <x equiv-text="this.mempoolBlockIndex + 1" id="INTERPOLATION"/></target>
+                <target xml:space="preserve">内存池区块<x equiv-text="this.mempoolBlockIndex + 1" id="INTERPOLATION"/></target>
             </trans-unit>
             <trans-unit datatype="html" id="mempool-block.next.block">
                 <source xml:space="preserve">Next block</source>
@@ -3092,67 +3092,67 @@
             </trans-unit>
             <trans-unit id="mempool-block.stack.of.blocks">
                 <source xml:space="preserve">Stack of <x equiv-text="blocksInBlock" id="INTERPOLATION"/> mempool blocks</source>
-                <target xml:space="preserve">ערימה של <x equiv-text="blocksInBlock" id="INTERPOLATION"/> בלוקי ממפול</target>
+                <target xml:space="preserve"><x equiv-text="blocksInBlock" id="INTERPOLATION"/>个内存池区块</target>
             </trans-unit>
             <trans-unit id="meta.description.about">
                 <source xml:space="preserve">Learn more about The Mempool Open Source Project®: enterprise sponsors, individual sponsors, integrations, who contributes, FOSS licensing, and more.</source>
-                <target xml:space="preserve">למדו עוד על The Mempool Open Source Project®: חברות נותנות חסות, נותני חסות פרטיים, אינטגרציות, מי תורם, רישיון קוד פתוח, ועוד.</target>
+                <target xml:space="preserve">了解有关 Mempool 开源项目® 的更多信息：企业赞助商、个人赞助商、集成、贡献者、FOSS 许可等。</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.block">
                 <source xml:space="preserve">See size, weight, fee range, included transactions, audit (expected v actual), and more for Bitcoin<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</source>
-                <target xml:space="preserve">ראה גודל, משקל, טווח עמלות, עסקאות כלולות, ביקורת (צפוי לעומת בפועל) ועוד עבור בלוק <x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> ביטקוין <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</target>
+                <target xml:space="preserve">查看比特币<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/>区块<x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>) 的大小、权重、费用范围、包含的交易、审计（预期与实际）等信息。</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-fee-rates">
                 <source xml:space="preserve">See Bitcoin feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
-                <target xml:space="preserve">ראה שערים של ביטקוין המוצגים לאורך זמן, כולל שערים מינימליים ומקסימליים לכל בלוק יחד עם שערים באחוזונים שונים.</target>
+                <target xml:space="preserve">查看随时间变化的比特币手续费率，包括每个区块的最低和最高手续费率，以及不同百分位数的手续费率。</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">
                 <source xml:space="preserve">See Bitcoin block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using Mempool&apos;s re-implementation of Bitcoin Core&apos;s transaction selection algorithm.</source>
-                <target xml:space="preserve">ראה כיצד בריאות בלוק הביטקוין מודגמת לאורך זמן. בריאות הבלוק היא מדד למספר העסקאות הצפויות שנכללו בבלוק שנכרה בפועל. העסקאות הצפויות נקבעות באמצעות יישום מחדש של אלגוריתם בחירת העסקאות של ביטקוין ליבה על ידי ממפול.</target>
+                <target xml:space="preserve">查看随时间变化的比特币区块健康状况。区块健康度是衡量实际开采的区块中包含多少预期交易的指标。预期交易量是使用 Mempool 重新实现的 Bitcoin Core 交易选择算法确定的。</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.hashrate">
                 <source xml:space="preserve">See hashrate and difficulty for the Bitcoin<x equiv-text="seoDescriptionNetwork(           this.network         )" id="PH"/> network visualized over time.</source>
-                <target xml:space="preserve">ראה את קצב הגיבוב והקושי של רשת הביטקוין <x equiv-text="seoDescriptionNetwork(this.network)" id="PH"/> כפי שהם מוצגים לאורך זמן.</target>
+                <target xml:space="preserve">查看比特币<x equiv-text="seoDescriptionNetwork(this.network)" id="PH"/>网络随时间变化的哈希率和难度。</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.pool-ranking">
                 <source xml:space="preserve">See the top Bitcoin mining pools ranked by number of blocks mined, over your desired timeframe.</source>
-                <target xml:space="preserve">ראה את מאגרי כריית הביטקוין המובילים המדורגים לפי מספר הבלוקים שנכרו, במסגרת הזמן הרצויה.</target>
+                <target xml:space="preserve">查看您所需时间范围内按开采区块数量排名的顶级比特币采矿池。</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.electrumrpc">
                 <source xml:space="preserve">Documentation for our Electrum RPC interface: get instant, convenient, and reliable access to an Esplora instance.</source>
-                <target xml:space="preserve">תיעוד עבור ממשק Electrum RPC שלנו: קבל גישה מיידית, נוחה ואמינה למופע של Esplora.</target>
+                <target xml:space="preserve">我们的 Electrum RPC 接口文档：即时、方便、可靠地访问 Esplora 实例。</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.faq">
                 <source xml:space="preserve">Get answers to common questions like: What is a mempool? Why isn&apos;t my transaction confirming? How can I run my own instance of The Mempool Open Source Project? And more.</source>
-                <target xml:space="preserve">קבל תשובות לשאלות נפוצות כמו: מהו mempool? מדוע העסקה שלי לא מאושרת? כיצד אוכל להפעיל מופע משלי של פרויקט קוד פתוח Mempool? ועוד.</target>
+                <target xml:space="preserve">获取常见问题的答案，例如：什么是Mempool？为什么我的交易未被确认？如何运行自己的Mempool开源项目实例？等等。</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.rest-bitcoin">
                 <source xml:space="preserve">Documentation for the mempool.space REST API service: get info on addresses, transactions, blocks, fees, mining, the Lightning network, and more.</source>
-                <target xml:space="preserve">תיעוד עבור שירות ה-API REST mempool.space: קבל מידע על כתובות, עסקאות, בלוקים, עמלות, כרייה, רשת הברק ועוד.</target>
+                <target xml:space="preserve">mempool.space REST API 服务文档：获取有关地址、交易、区块、费用、挖矿、闪电网络等的信息。</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.websocket-bitcoin">
                 <source xml:space="preserve">Documentation for the mempool.space WebSocket API service: get real-time info on blocks, mempools, transactions, addresses, and more.</source>
-                <target xml:space="preserve">תיעוד עבור שירות ה-API של WebSocket mempool.space: קבל מידע בזמן אמת על בלוקים, mempools, עסקאות, כתובות ועוד.</target>
+                <target xml:space="preserve">mempool.space WebSocket API 服务文档：获取有关块、内存池、交易、地址等的实时信息。</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.dashboard">
                 <source xml:space="preserve">Get real-time Bitcoin mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
-                <target xml:space="preserve">קבלו סטטיסטיקות כריית ביטקוין בזמן אמת כמו קצב עיבוד שבבי, התאמת קושי, תגמולי בלוקים, דומיננטיות בפול ועוד.</target>
+                <target xml:space="preserve">获取实时比特币挖矿统计数据，如哈希率、难度调整、区块奖励、矿池主导地位等。</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.pool">
                 <source xml:space="preserve">See mining pool stats for <x equiv-text="poolStats.pool.name" id="PH"/>: most recent mined blocks, hashrate over time, total block reward to date, known coinbase addresses, and more.</source>
-                <target xml:space="preserve">ראה סטטיסטיקות של מאגר הכרייה עבור <x equiv-text="poolStats.pool.name" id="PH"/>: הבלוקים האחרונים שנכרו, קצב כרייה לאורך זמן, תגמול כולל של הבלוקים עד כה, כתובות מטבע ידועות ועוד.</target>
+                <target xml:space="preserve">查看<x equiv-text="poolStats.pool.name" id="PH"/>的矿池统计数据：最近开采的区块、随时间变化的哈希率、迄今为止的总区块奖励、已知的 coinbase 地址等。</target>
             </trans-unit>
             <trans-unit id="meta.description.preview-tx">
                 <source xml:space="preserve">Preview a transaction to the Bitcoin<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> network using the transaction&apos;s raw hex data.</source>
-                <target xml:space="preserve">הצג תצוגה מקדימה של עסקה ברשת <x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> הביטקוין באמצעות הנתונים ההקסאדיאמליים הגולמיים של העסקה.</target>
+                <target xml:space="preserve">使用交易的原始十六进制数据预览比特币<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/>网络交易。</target>
             </trans-unit>
             <trans-unit id="meta.description.stale-chain-tips">
                 <source xml:space="preserve">See the most recent stale chain tips on the Bitcoin<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network.</source>
-                <target xml:space="preserve">ראו את הטיפים האחרונים לגבי שרשרת מעופשת ברשת <x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> הביטקוין.</target>
+                <target xml:space="preserve">查看比特币<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/>网络上最新的陈旧链尖。</target>
             </trans-unit>
             <trans-unit id="meta.descriptions.bitcoin.graphs.hashrate-pools">
                 <source xml:space="preserve">See Bitcoin mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
-                <target xml:space="preserve">ראה את הדומיננטיות של מאגר הכרייה של ביטקוין מוצגת לאורך זמן: ראה כיצד נתח מאגרי הכרייה המובילים בקצב הגיבוב הכולל השתנה לאורך זמן.</target>
+                <target xml:space="preserve">查看比特币矿池主导地位随时间的变化的可视化：查看顶级矿池在总哈希率中的份额随时间如何波动。</target>
             </trans-unit>
             <trans-unit id="meta.title.docs.electrum">
                 <source xml:space="preserve">Electrum RPC</source>
@@ -3160,7 +3160,7 @@
             </trans-unit>
             <trans-unit id="meta.title.docs.faq">
                 <source xml:space="preserve">FAQ</source>
-                <target xml:space="preserve">שו&quot;ת</target>
+                <target xml:space="preserve">常见问题</target>
             </trans-unit>
             <trans-unit id="meta.title.docs.rest">
                 <source xml:space="preserve">REST API</source>
@@ -3168,11 +3168,11 @@
             </trans-unit>
             <trans-unit id="meta.title.docs.websocket">
                 <source xml:space="preserve">WebSocket API</source>
-                <target xml:space="preserve">WebSocket API</target>
+                <target xml:space="preserve">Websocket API</target>
             </trans-unit>
             <trans-unit id="mining.pools-historical-dominance">
                 <source xml:space="preserve">Pools Historical Dominance</source>
-                <target xml:space="preserve">היסטוריית שליטת הבריכות</target>
+                <target xml:space="preserve">矿池历史占有率</target>
             </trans-unit>
             <trans-unit id="ngb.pagination.first">
                 <source xml:space="preserve">««</source>
@@ -3180,7 +3180,7 @@
             </trans-unit>
             <trans-unit id="ngb.pagination.first-aria">
                 <source xml:space="preserve">First</source>
-                <target xml:space="preserve">ראשון</target>
+                <target xml:space="preserve">第一</target>
             </trans-unit>
             <trans-unit id="ngb.pagination.last">
                 <source xml:space="preserve">»»</source>
@@ -3188,7 +3188,7 @@
             </trans-unit>
             <trans-unit id="ngb.pagination.last-aria">
                 <source xml:space="preserve">Last</source>
-                <target xml:space="preserve">אחרון</target>
+                <target xml:space="preserve">最后</target>
             </trans-unit>
             <trans-unit id="ngb.pagination.next">
                 <source xml:space="preserve">»</source>
@@ -3196,7 +3196,7 @@
             </trans-unit>
             <trans-unit id="ngb.pagination.next-aria">
                 <source xml:space="preserve">Next</source>
-                <target xml:space="preserve">הבא</target>
+                <target xml:space="preserve">下一个</target>
             </trans-unit>
             <trans-unit id="ngb.pagination.previous">
                 <source xml:space="preserve">«</source>
@@ -3204,19 +3204,19 @@
             </trans-unit>
             <trans-unit id="ngb.pagination.previous-aria">
                 <source xml:space="preserve">Previous</source>
-                <target xml:space="preserve">הקודם</target>
+                <target xml:space="preserve">前</target>
             </trans-unit>
             <trans-unit id="page.stale-chain-tips">
                 <source xml:space="preserve">Stale Chain Tips</source>
-                <target xml:space="preserve">טיפים לשרשרת מעופשת</target>
+                <target xml:space="preserve">陈旧链尖</target>
             </trans-unit>
             <trans-unit id="time-before">
                 <source xml:space="preserve"><x equiv-text="dateStrings.i18nYear" id="DATE"/> before</source>
-                <target xml:space="preserve">לפני <x equiv-text="dateStrings.i18nYear" id="DATE"/></target>
+                <target xml:space="preserve"><x equiv-text="dateStrings.i18nYear" id="DATE"/> 之前</target>
             </trans-unit>
             <trans-unit id="time-since">
                 <source xml:space="preserve"><x equiv-text="dateStrings.i18nYear" id="DATE"/> ago</source>
-                <target xml:space="preserve">לפני <x equiv-text="dateStrings.i18nYear" id="DATE"/></target>
+                <target xml:space="preserve"><x equiv-text="dateStrings.i18nYear" id="DATE"/>之前</target>
             </trans-unit>
             <trans-unit datatype="html" id="time-since.day.ago">
                 <source xml:space="preserve"><x equiv-text="{{counter}}" id="INTERPOLATION"/> day ago</source>
@@ -3296,19 +3296,19 @@
             </trans-unit>
             <trans-unit id="time-span">
                 <source xml:space="preserve">After <x equiv-text="dateStrings.i18nYear" id="DATE"/></source>
-                <target xml:space="preserve">לאחר <x equiv-text="dateStrings.i18nYear" id="DATE"/></target>
+                <target xml:space="preserve"><x equiv-text="dateStrings.i18nYear" id="DATE"/>之后</target>
             </trans-unit>
             <trans-unit id="time-until">
                 <source xml:space="preserve">In ~<x equiv-text="dateStrings.i18nYear" id="DATE"/></source>
-                <target xml:space="preserve">תוך <x equiv-text="dateStrings.i18nYear" id="DATE"/>~</target>
+                <target xml:space="preserve"><x equiv-text="dateStrings.i18nYear" id="DATE"/>之内</target>
             </trans-unit>
             <trans-unit id="time-within">
                 <source xml:space="preserve">within ~<x equiv-text="dateStrings.i18nYear" id="DATE"/></source>
-                <target xml:space="preserve">תוך <x equiv-text="dateStrings.i18nYear" id="DATE"/>~</target>
+                <target xml:space="preserve">在~<x equiv-text="dateStrings.i18nYear" id="DATE"/>内</target>
             </trans-unit>
             <trans-unit id="wallet.component.browser-title">
                 <source xml:space="preserve">Wallet: <x equiv-text="walletName" id="INTERPOLATION"/></source>
-                <target xml:space="preserve">ארנק: <x equiv-text="walletName" id="INTERPOLATION"/></target>
+                <target xml:space="preserve">钱包：<x equiv-text="walletName" id="INTERPOLATION"/></target>
             </trans-unit>
         </body>
     </file>

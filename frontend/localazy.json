@@ -1,0 +1,10 @@
+{
+  "upload": {  
+    "type": "xliff",
+    "features": ["use_project_lang"],
+    "files": "src/locale/messages.xlf"         
+  },
+  "download": {
+    "files": "src/locale/messages.${lang}.xlf"
+  }  
+}
