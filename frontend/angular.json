@@ -131,7 +131,7 @@
             "translation": "src/locale/messages.mk.xlf",
             "baseHref": "/mk/"
           },
-          "zh": {
+          "zh-Hant": {
             "translation": "src/locale/messages.zh-Hant.xlf",
             "baseHref": "/zh/"
           },
@@ -259,8 +259,8 @@
             "pt": {
               "localize": ["pt"]
             },
-            "zh": {
-              "localize": ["zh"]
+            "zh-Hant": {
+              "localize": ["zh-Hant"]
             }
           },
           "defaultConfiguration": "production"
@@ -319,8 +319,8 @@
               "proxyConfig": "proxy.conf.local.js",
               "verbose": true
             },
-            "zh": {
-              "buildTarget": "explorer:build:development,zh",
+            "zh-Hant": {
+              "buildTarget": "explorer:build:development,zh-Hant",
               "proxyConfig": "proxy.conf.local.js",
               "verbose": true
             }

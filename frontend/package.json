@@ -32,7 +32,7 @@
     "serve:es": "pnpm run generate-config && ng serve --no-hmr -c es",
     "serve:ro": "pnpm run generate-config && ng serve --no-hmr -c ro",
     "serve:pt": "pnpm run generate-config && ng serve --no-hmr -c pt",
-    "serve:zh": "pnpm run generate-config && ng serve --no-hmr -c zh",
+    "serve:zh": "pnpm run generate-config && ng serve --no-hmr -c zh-Hant",
     "serve:local-prod": "pnpm run generate-config && ng serve --no-hmr -c local-prod",
     "serve:parameterized": "pnpm run generate-config && ng serve --no-hmr -c parameterized",
     "start": "pnpm run generate-config && pnpm run sync-assets-dev && ng serve --no-hmr -c local",
