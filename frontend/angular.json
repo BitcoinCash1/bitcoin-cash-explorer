@@ -307,48 +307,9 @@
           "builder": "@angular/build:unit-test"
         },
         "extract-i18n": {
-          "builder": "ng-extract-i18n-merge:ng-extract-i18n-merge",
+          "builder": "@angular/build:extract-i18n",
           "options": {
-            "buildTarget": "explorer:build",
-            "format": "xlf",
-            "outputPath": "src/locale",
-            "targetFiles": [
-              "messages.ar.xlf",
-              "messages.bqi.xlf",
-              "messages.ca.xlf",
-              "messages.cs.xlf",
-              "messages.de.xlf",
-              "messages.da.xlf",
-              "messages.es.xlf",
-              "messages.fa.xlf",
-              "messages.fr.xlf",
-              "messages.hr.xlf",
-              "messages.ja.xlf",
-              "messages.ka.xlf",
-              "messages.ko.xlf",
-              "messages.it.xlf",
-              "messages.he.xlf",
-              "messages.nl.xlf",
-              "messages.nb.xlf",
-              "messages.pl.xlf",
-              "messages.pt.xlf",
-              "messages.sl.xlf",
-              "messages.sr.xlf",
-              "messages.sv.xlf",
-              "messages.th.xlf",
-              "messages.tr.xlf",
-              "messages.uk.xlf",
-              "messages.fi.xlf",
-              "messages.vi.xlf",
-              "messages.hu.xlf",
-              "messages.mk.xlf",
-              "messages.zh.xlf",
-              "messages.ro.xlf",
-              "messages.ru.xlf",
-              "messages.hi.xlf",
-              "messages.ne.xlf",
-              "messages.lt.xlf"
-            ]
+            "buildTarget": "explorer:build"
           }
         },
         "e2e": {
