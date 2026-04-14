@@ -2023,7 +2023,7 @@
             </trans-unit>
             <trans-unit id="963664380975841348">
                 <source xml:space="preserve">Explore the full Bitcoin Cash ecosystem</source>
-                <target xml:space="preserve">Verken het volledige Bitcoinecosysteem</target>
+                <target xml:space="preserve">Verken het volledige Bitcoin Cash ecosysteem</target>
             </trans-unit>
             <trans-unit id="964309715677902826">
                 <source xml:space="preserve">See stats for Bitcoin Cash<x equiv-text="seoDescriptionNetwork( this.stateService.network )" id="PH"/> transactions in the mempool: fee range, aggregate size, and more. Mempool blocks are updated in real-time as the network receives new transactions.</source>
