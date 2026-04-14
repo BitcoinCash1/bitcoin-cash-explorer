@@ -84,7 +84,7 @@
       >
         <div class="fee-text">
           {{ rewardStats.feePerTx | amountShortener: 2 }}
-          <span i18n="shared.sat-vbyte|sat/vB">sats/tx</span>
+          <span i18n="shared.sat-tx|sat/tx">sats/tx</span>
         </div>
         <span class="fiat">
           <app-fiat [value]="rewardStats.feePerTx"></app-fiat>
