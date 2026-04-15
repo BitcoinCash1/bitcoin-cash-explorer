@@ -16,7 +16,6 @@ export interface WebsocketResponse {
   historicalDate?: string;
   mempoolInfo?: MempoolInfo;
   bytesPerSecond?: number;
-  previousRetarget?: number;
   action?: string;
   data?: string[];
   tx?: Transaction;

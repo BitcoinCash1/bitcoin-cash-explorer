@@ -20,17 +20,15 @@
       </div>
     </div>
 
-    <!-- difficulty adjustment -->
+    <!-- chain stats (average block time, difficulty adjustment and next halving) -->
     <div class="col">
-      <div class="main-title" i18n="dashboard.difficulty-adjustment">
-        Difficulty Adjustment
-      </div>
-      <app-difficulty-mining
+      <div class="main-title" i18n="dashboard.chain-stats">Chain Stats</div>
+      <app-chain-stats-mining
         [attr.data-cy]="'difficulty-adjustment'"
         [showTitle]="false"
         [showProgress]="false"
         [showHalving]="true"
-      ></app-difficulty-mining>
+      ></app-chain-stats-mining>
     </div>
 
     <!-- pool distribution -->

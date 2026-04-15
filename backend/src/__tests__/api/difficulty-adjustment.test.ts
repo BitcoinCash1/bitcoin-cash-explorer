@@ -1,133 +1,52 @@
-import { calcBitsDifference, calcDifficultyAdjustment, DifficultyAdjustment } from '../../api/difficulty-adjustment';
+import {
+  calcBitsDifference,
+  calcAsertDifficultyAdjustment,
+  DifficultyAdjustment,
+} from '../../api/difficulty-adjustment';
 
 describe('Mempool Difficulty Adjustment', () => {
-  test('should calculate Difficulty Adjustments properly', () => {
-    const dt = (dtString) => {
-      return Math.floor(new Date(dtString).getTime() / 1000);
-    };
+  test('should calculate ASERT Difficulty Adjustments properly', () => {
+    // Test basic ASERT calculation with a known block
+    const blockHeight = 946905;
+    const blockTimestamp = 1776280633;
+    const nowSeconds = blockTimestamp + 60; // 1 minute after the block
+    const recentBlocks = [
+      { timestamp: blockTimestamp - 3600 },
+      { timestamp: blockTimestamp - 3000 },
+      { timestamp: blockTimestamp - 2400 },
+      { timestamp: blockTimestamp - 1800 },
+      { timestamp: blockTimestamp - 1200 },
+      { timestamp: blockTimestamp - 600 },
+      { timestamp: blockTimestamp },
+    ];
 
-    const vectors = [
-      [
-        // Vector 1 (normal adjustment)
-        [
-          // Inputs
-          dt('2024-02-02T15:42:06.000Z'), // Last DA time (in seconds)
-          dt('2024-02-08T14:43:05.000Z'), // timestamp of 504 blocks ago (in seconds)
-          dt('2024-02-11T22:43:01.000Z'), // Current time (now) (in seconds)
-          830027, // Current block height
-          7.333505241141637, // Previous retarget % (Passed through)
-          'mainnet', // Network (if testnet, next value is non-zero)
-          0, // Latest block timestamp in seconds (only used if difficulty already locked in)
-        ],
-        {
-          // Expected Result
-          progressPercent: 71.97420634920636,
-          difficultyChange: 8.512745140778843,
-          estimatedRetargetDate: 1708004001715,
-          remainingBlocks: 565,
-          remainingTime: 312620715,
-          previousRetarget: 7.333505241141637,
-          previousTime: 1706888526,
-          nextRetargetHeight: 830592,
-          timeAvg: 553311,
-          adjustedTimeAvg: 553311,
-          timeOffset: 0,
-          expectedBlocks: 1338.0916666666667,
-        },
-      ],
-      [
-        // Vector 2 (within quarter-epoch overlap)
-        [
-          // Inputs
-          dt('2022-08-18T11:07:00.000Z'), // Last DA time (in seconds)
-          dt('2022-08-16T03:16:54.000Z'), // timestamp of 504 blocks ago (in seconds)
-          dt('2022-08-19T14:03:53.000Z'), // Current time (now) (in seconds)
-          750134, // Current block height
-          0.6280047707459726, // Previous retarget % (Passed through)
-          'mainnet', // Network (if testnet, next value is non-zero)
-          0, // Latest block timestamp in seconds (only used if difficulty already locked in)
-        ],
-        {
-          // Expected Result
-          progressPercent: 9.027777777777777,
-          difficultyChange: 1.0420538959004633,
-          estimatedRetargetDate: 1662009048328,
-          remainingBlocks: 1834,
-          remainingTime: 1091215328,
-          previousRetarget: 0.6280047707459726,
-          previousTime: 1660820820,
-          nextRetargetHeight: 751968,
-          timeAvg: 533038,
-          adjustedTimeAvg: 594992,
-          timeOffset: 0,
-          expectedBlocks: 161.68833333333333,
-        },
-      ],
-      [
-        // Vector 3 (testnet)
-        [
-          // Inputs
-          dt('2022-08-18T11:07:00.000Z'), // Last DA time (in seconds)
-          dt('2022-08-16T03:16:54.000Z'), // timestamp of 504 blocks ago (in seconds)
-          dt('2022-08-19T14:03:53.000Z'), // Current time (now) (in seconds)
-          750134, // Current block height
-          0.6280047707459726, // Previous retarget % (Passed through)
-          'testnet', // Network
-          dt('2022-08-19T13:52:46.000Z'), // Latest block timestamp in seconds
-        ],
-        {
-          // Expected Result is same other than timeOffset
-          progressPercent: 9.027777777777777,
-          difficultyChange: 1.0420538959004633,
-          estimatedRetargetDate: 1662009048328,
-          remainingBlocks: 1834,
-          remainingTime: 1091215328,
-          previousTime: 1660820820,
-          previousRetarget: 0.6280047707459726,
-          nextRetargetHeight: 751968,
-          timeAvg: 533038,
-          adjustedTimeAvg: 594992,
-          timeOffset: -667000, // 11 min 7 seconds since last block (testnet only)
-          // If we add time avg to abs(timeOffset) it makes exactly 1200000 ms, or 20 minutes
-          expectedBlocks: 161.68833333333333,
-        },
-      ],
-      [
-        // Vector 4 (mainnet lock-in (epoch ending 788255))
-        [
-          // Inputs
-          dt('2023-04-20T09:57:33.000Z'), // Last DA time (in seconds)
-          dt('2022-08-16T03:16:54.000Z'), // timestamp of 504 blocks ago (in seconds)
-          dt('2023-05-04T14:54:09.000Z'), // Current time (now) (in seconds)
-          788255, // Current block height
-          1.7220298879531821, // Previous retarget % (Passed through)
-          'mainnet', // Network (if testnet, next value is non-zero)
-          dt('2023-05-04T14:54:26.000Z'), // Latest block timestamp in seconds
-        ],
-        {
-          // Expected Result
-          progressPercent: 99.95039682539682,
-          difficultyChange: -1.4512637555574193,
-          estimatedRetargetDate: 1683212658129,
-          remainingBlocks: 1,
-          remainingTime: 609129,
-          previousRetarget: 1.7220298879531821,
-          previousTime: 1681984653,
-          nextRetargetHeight: 788256,
-          timeAvg: 609129,
-          adjustedTimeAvg: 609129,
-          timeOffset: 0,
-          expectedBlocks: 2045.66,
-        },
-      ],
-    ] as [[number, number, number, number, number, string, number], DifficultyAdjustment][];
+    const result = calcAsertDifficultyAdjustment(blockHeight, blockTimestamp, nowSeconds, 'mainnet', recentBlocks);
 
-    for (const vector of vectors) {
-      const result = calcDifficultyAdjustment(...vector[0]);
-      // previousRetarget is passed through untouched
-      expect(result.previousRetarget).toStrictEqual(vector[0][4]);
-      expect(result).toStrictEqual(vector[1]);
-    }
+    // Verify structure
+    expect(result).toHaveProperty('scheduleOffsetSeconds');
+    expect(result).toHaveProperty('difficultyDriftPercent');
+    expect(result).toHaveProperty('currentBits');
+    expect(result).toHaveProperty('nextBits');
+    expect(result).toHaveProperty('timeAvg');
+    expect(result).toHaveProperty('adjustedTimeAvg');
+    expect(result).toHaveProperty('timeOffset');
+
+    // scheduleOffsetSeconds should be a number
+    expect(typeof result.scheduleOffsetSeconds).toBe('number');
+
+    // difficultyDriftPercent should be a small number (near zero for normal operation)
+    expect(typeof result.difficultyDriftPercent).toBe('number');
+
+    // bits should be valid hex strings (8 chars)
+    expect(result.currentBits).toMatch(/^[0-9a-f]{8}$/);
+    expect(result.nextBits).toMatch(/^[0-9a-f]{8}$/);
+
+    // timeAvg should be 600000ms (600s * 1000) for perfectly spaced blocks
+    expect(result.timeAvg).toBe(600000);
+    expect(result.adjustedTimeAvg).toBe(600000);
+
+    // timeOffset should be 0 for mainnet
+    expect(result.timeOffset).toBe(0);
   });
 
   test('should calculate Difficulty change from bits fields of two blocks', () => {

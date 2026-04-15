@@ -3,19 +3,73 @@ import { IDifficultyAdjustment } from '../mempool.interfaces';
 import blocks from './blocks';
 
 export interface DifficultyAdjustment {
-  progressPercent: number; // Percent: 0 to 100
-  difficultyChange: number; // Percent: -75 to 300
-  estimatedRetargetDate: number; // Unix time in ms
-  remainingBlocks: number; // Block count
-  remainingTime: number; // Duration of time in ms
-  previousRetarget: number; // Percent: -75 to 300
-  previousTime: number; // Unix time in ms
-  nextRetargetHeight: number; // Block Height
-  timeAvg: number; // Duration of time in ms
-  adjustedTimeAvg; // Expected block interval with hashrate implied over last 504 blocks
-  timeOffset: number; // (Testnet) Time since last block (cap @ 20min) in ms
-  expectedBlocks: number; // Block count
+  scheduleOffsetSeconds: number; // seconds ahead(+) or behind(-) ideal schedule
+  difficultyDriftPercent: number; // next-block % difficulty change (assuming 600s block)
+  currentBits: string; // current block bits (hex)
+  nextBits: string; // predicted next block bits (hex)
+  timeAvg: number; // avg block time over recent blocks (ms)
+  adjustedTimeAvg: number; // adjusted avg block time (ms)
+  timeOffset: number; // time offset for testnet (ms)
 }
+
+// --- ASERT (aserti3-2d) functions ---
+// Ported from: https://gist.github.com/A60AB5450353F40E/5607d5aeb9ba0e84a71ab8f55ebdd2ad
+
+const ASERT_ANCHOR_BITS = '1804dafe';
+const ASERT_ANCHOR_TICK = 396988200;
+const ASERT_ANCHOR_TIMESTAMP = 1605447844;
+const ASERT_ANCHOR_IDEAL_BLOCK_TIME = 600;
+const ASERT_ANCHOR_TAU = 172800; // half-life = 2 days
+const ASERT_ANCHOR_HEIGHT = Math.floor(ASERT_ANCHOR_TICK / ASERT_ANCHOR_IDEAL_BLOCK_TIME); // 661647
+
+function bitsToTarget(bits: string): number {
+  const exponent = parseInt(bits.slice(0, 2), 16);
+  const mantissa = parseInt(bits.slice(2), 16);
+  return mantissa * Math.pow(2, (exponent - 3) * 8);
+}
+
+function targetToBits(target: number): string {
+  if (target === 0) return '00000000';
+
+  let exponent = Math.floor(Math.log2(target) / 8) + 1;
+  let mantissa = Math.floor(target / Math.pow(2, (exponent - 3) * 8));
+
+  if (mantissa > 0x7fffff) {
+    mantissa = Math.floor(mantissa / 256);
+    exponent++;
+  }
+
+  return exponent.toString(16).padStart(2, '0') + mantissa.toString(16).padStart(6, '0');
+}
+
+function calculateTarget(heightTick: number, timestamp: number, nextTargetBlockTime: number = 600): number {
+  const anchorTarget = bitsToTarget(ASERT_ANCHOR_BITS);
+
+  const tickDelta = heightTick - ASERT_ANCHOR_TICK;
+  const timeDelta = timestamp - ASERT_ANCHOR_TIMESTAMP;
+
+  const t = Math.trunc;
+  const base = t(((timeDelta - (tickDelta + ASERT_ANCHOR_IDEAL_BLOCK_TIME)) * 65536) / ASERT_ANCHOR_TAU);
+  const hi = t(base / 65536) + (base < 0 ? -1 : 0);
+  const lo = base - hi * 65536;
+
+  return (
+    (t((195766423245049 * lo + 971821376 * lo ** 2 + 5127 * lo ** 3 + 140737488355328) / 2 ** 48) + 65536) *
+    t(ASERT_ANCHOR_IDEAL_BLOCK_TIME / nextTargetBlockTime) *
+    anchorTarget *
+    2 ** (hi - 16)
+  );
+}
+
+function calculateTargetLegacy(height: number, timestamp: number, nextTargetBlockTime: number = 600): number {
+  return calculateTarget(height * 600, timestamp, nextTargetBlockTime);
+}
+
+function numericBitsToHex(bits: number): string {
+  return bits.toString(16).padStart(8, '0');
+}
+
+// --- End ASERT functions ---
 
 /**
  * Calculate the difficulty increase/decrease by using the `bits` integer contained in two
@@ -79,54 +133,55 @@ export function calcBitsDifference(oldBits: number, newBits: number): number {
   return result > 300 ? 300 : result < -75 ? -75 : result;
 }
 
-export function calcDifficultyAdjustment(
-  DATime: number,
-  quarterEpochTime: number | null,
-  nowSeconds: number,
+/**
+ * Calculate ASERT-based difficulty adjustment data for BCH.
+ *
+ * Uses the aserti3-2d algorithm to compute:
+ * - Schedule offset: how far ahead/behind the ideal 10-minute schedule
+ * - Difficulty drift: expected % change for the next block
+ * - Current and predicted next block bits
+ */
+export function calcAsertDifficultyAdjustment(
   blockHeight: number,
-  previousRetarget: number,
+  latestBlockTimestamp: number,
+  nowSeconds: number,
   network: string,
-  latestBlockTimestamp: number
+  recentBlocks: { timestamp: number }[]
 ): DifficultyAdjustment {
-  const EPOCH_BLOCK_LENGTH = 2016; // Bitcoin mainnet
-  const BLOCK_SECONDS_TARGET = 600; // Bitcoin mainnet
-  const TESTNET_MAX_BLOCK_SECONDS = 1200; // Bitcoin testnet
+  const BLOCK_SECONDS_TARGET = 600;
+  const TESTNET_MAX_BLOCK_SECONDS = 1200;
 
-  const diffSeconds = Math.max(0, nowSeconds - DATime);
-  const blocksInEpoch = blockHeight >= 0 ? blockHeight % EPOCH_BLOCK_LENGTH : 0;
-  const progressPercent = blockHeight >= 0 ? (blocksInEpoch / EPOCH_BLOCK_LENGTH) * 100 : 100;
-  const remainingBlocks = EPOCH_BLOCK_LENGTH - blocksInEpoch;
-  const nextRetargetHeight = blockHeight >= 0 ? blockHeight + remainingBlocks : 0;
-  const expectedBlocks = diffSeconds / BLOCK_SECONDS_TARGET;
-  const actualTimespan = (blocksInEpoch === 2015 ? latestBlockTimestamp : nowSeconds) - DATime;
+  // Schedule offset: how far ahead or behind the ideal schedule
+  // Positive = network is ahead (blocks mined faster than 10min avg)
+  // Negative = network is behind (blocks mined slower than 10min avg)
+  const idealElapsed = (blockHeight - ASERT_ANCHOR_HEIGHT) * BLOCK_SECONDS_TARGET;
+  const actualElapsed = latestBlockTimestamp - ASERT_ANCHOR_TIMESTAMP;
+  const scheduleOffsetSeconds = idealElapsed - actualElapsed;
 
-  let difficultyChange = 0;
-  let timeAvgSecs = blocksInEpoch ? diffSeconds / blocksInEpoch : BLOCK_SECONDS_TARGET;
+  // Current ASERT target and bits
+  const currentTarget = calculateTargetLegacy(blockHeight, latestBlockTimestamp);
+  const currentBits = targetToBits(currentTarget);
+
+  // Predicted next block target (assuming it arrives in exactly 600s)
+  const nextTarget = calculateTargetLegacy(blockHeight + 1, latestBlockTimestamp + BLOCK_SECONDS_TARGET);
+  const nextBits = targetToBits(nextTarget);
+
+  // Difficulty drift %: how much harder/easier the next block will be
+  // Higher target = easier mining = difficulty decrease (negative drift)
+  // Lower target = harder mining = difficulty increase (positive drift)
+  const difficultyDriftPercent = currentTarget !== 0 ? ((currentTarget - nextTarget) / currentTarget) * 100 : 0;
+
+  // Average block time from recent blocks
+  let timeAvgSecs = BLOCK_SECONDS_TARGET;
+  if (recentBlocks.length >= 2) {
+    const sorted = [...recentBlocks].sort((a, b) => a.timestamp - b.timestamp);
+    const totalTime = sorted[sorted.length - 1].timestamp - sorted[0].timestamp;
+    timeAvgSecs = totalTime / (sorted.length - 1);
+  }
+
   let adjustedTimeAvgSecs = timeAvgSecs;
 
-  // for the first 504 blocks of the epoch, calculate the expected avg block interval
-  // from a sliding window over the last 504 blocks
-  if (quarterEpochTime && blocksInEpoch < 503) {
-    const timeLastEpoch = DATime - quarterEpochTime;
-    const adjustedTimeLastEpoch = timeLastEpoch * (1 + previousRetarget / 100);
-    const adjustedTimeSpan = diffSeconds + adjustedTimeLastEpoch;
-    adjustedTimeAvgSecs = adjustedTimeSpan / 503;
-    difficultyChange = (BLOCK_SECONDS_TARGET / (adjustedTimeSpan / 504) - 1) * 100;
-  } else {
-    difficultyChange = (BLOCK_SECONDS_TARGET / (actualTimespan / (blocksInEpoch + 1)) - 1) * 100;
-  }
-
-  // Max increase is x4 (+300%)
-  if (difficultyChange > 300) {
-    difficultyChange = 300;
-  }
-  // Max decrease is /4 (-75%)
-  if (difficultyChange < -75) {
-    difficultyChange = -75;
-  }
-
-  // Testnet difficulty is set to 1 after 20 minutes of no blocks,
-  // therefore the time between blocks will always be below 20 minutes (1200s).
+  // Testnet: cap block time at 20 minutes
   let timeOffset = 0;
   if (network === 'testnet') {
     if (timeAvgSecs > TESTNET_MAX_BLOCK_SECONDS) {
@@ -141,29 +196,20 @@ export function calcDifficultyAdjustment(
 
   const timeAvg = Math.floor(timeAvgSecs * 1000);
   const adjustedTimeAvg = Math.floor(adjustedTimeAvgSecs * 1000);
-  const remainingTime = remainingBlocks * adjustedTimeAvg;
-  const estimatedRetargetDate = remainingTime + nowSeconds * 1000;
 
   return {
-    progressPercent,
-    difficultyChange,
-    estimatedRetargetDate,
-    remainingBlocks,
-    remainingTime,
-    previousRetarget,
-    previousTime: DATime,
-    nextRetargetHeight,
+    scheduleOffsetSeconds,
+    difficultyDriftPercent,
+    currentBits,
+    nextBits,
     timeAvg,
     adjustedTimeAvg,
     timeOffset,
-    expectedBlocks,
   };
 }
 
 class DifficultyAdjustmentApi {
   public getDifficultyAdjustment(): IDifficultyAdjustment | null {
-    const DATime = blocks.getLastDifficultyAdjustmentTime();
-    const previousRetarget = blocks.getPreviousDifficultyRetarget();
     const blockHeight = blocks.getCurrentBlockHeight();
     const blocksCache = blocks.getBlocks();
     const latestBlock = blocksCache[blocksCache.length - 1];
@@ -171,16 +217,16 @@ class DifficultyAdjustmentApi {
       return null;
     }
     const nowSeconds = Math.floor(new Date().getTime() / 1000);
-    const quarterEpochBlockTime = blocks.getQuarterEpochBlockTime();
 
-    return calcDifficultyAdjustment(
-      DATime,
-      quarterEpochBlockTime,
-      nowSeconds,
+    // Use last ~8 blocks for average block time calculation
+    const recentBlocks = blocksCache.slice(-8).map((b) => ({ timestamp: b.timestamp }));
+
+    return calcAsertDifficultyAdjustment(
       blockHeight,
-      previousRetarget,
+      latestBlock.timestamp,
+      nowSeconds,
       config.EXPLORER.NETWORK,
-      latestBlock.timestamp
+      recentBlocks
     );
   }
 }

@@ -508,10 +508,6 @@ export class WebsocketService {
       this.stateService.bytesPerSecond$.next(response.bytesPerSecond);
     }
 
-    if (response.previousRetarget !== undefined) {
-      this.stateService.previousRetarget$.next(response.previousRetarget);
-    }
-
     if (response.stratumJobs) {
       this.stateService.stratumJobUpdate$.next({ state: response.stratumJobs });
     }
