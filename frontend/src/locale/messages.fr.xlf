@@ -289,6 +289,10 @@
                 <source xml:space="preserve"> First seen </source>
                 <target xml:space="preserve"> Vu pour la première fois </target>
             </trans-unit>
+            <trans-unit id="2257679984526539584">
+                <source xml:space="preserve">Chain Stats</source>
+                <target xml:space="preserve">Chain Stats</target>
+            </trans-unit>
             <trans-unit id="2259944601214794924">
                 <source xml:space="preserve">Sighash Flags</source>
                 <target xml:space="preserve">Drapeaux Sighash</target>
@@ -400,6 +404,10 @@
             <trans-unit id="2652050456833268583">
                 <source xml:space="preserve"> Recent Transactions </source>
                 <target xml:space="preserve"> Transactions récentes </target>
+            </trans-unit>
+            <trans-unit id="2664726858804341447">
+                <source xml:space="preserve">On time</source>
+                <target xml:space="preserve">On time</target>
             </trans-unit>
             <trans-unit id="2666638972429865742">
                 <source xml:space="preserve"> Verify Address Ownership </source>
@@ -536,6 +544,10 @@
             <trans-unit id="3112239269637020392">
                 <source xml:space="preserve">sats/tx</source>
                 <target xml:space="preserve">sats/tx</target>
+            </trans-unit>
+            <trans-unit id="3124019659196374520">
+                <source xml:space="preserve">ahead of schedule</source>
+                <target xml:space="preserve">ahead of schedule</target>
             </trans-unit>
             <trans-unit id="312539377512157124">
                 <source xml:space="preserve"><x equiv-text="i" id="INTERPOLATION"/> blocks</source>
@@ -733,6 +745,10 @@
                 <source xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> Addresses </source>
                 <target xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> Adresses </target>
             </trans-unit>
+            <trans-unit id="3901733599428143571">
+                <source xml:space="preserve">min</source>
+                <target xml:space="preserve">min</target>
+            </trans-unit>
             <trans-unit id="3935190348395891735">
                 <source xml:space="preserve">Block Health</source>
                 <target xml:space="preserve">Block Health</target>
@@ -810,6 +826,10 @@
                 <source xml:space="preserve">What is a mempool explorer?</source>
                 <target xml:space="preserve">Qu’est-ce qu’un explorateur mempool ?</target>
             </trans-unit>
+            <trans-unit id="4341507375690057323">
+                <source xml:space="preserve">Ahead</source>
+                <target xml:space="preserve">Ahead</target>
+            </trans-unit>
             <trans-unit id="435092113360011346">
                 <source xml:space="preserve">Stale Blocks</source>
                 <target xml:space="preserve">Stale Blocks</target>
@@ -857,6 +877,10 @@
             <trans-unit id="4417228290563175049">
                 <source xml:space="preserve"> Redirecting to transaction page... </source>
                 <target xml:space="preserve"> Redirection vers la page de transaction... </target>
+            </trans-unit>
+            <trans-unit id="4419337712236428981">
+                <source xml:space="preserve">behind schedule</source>
+                <target xml:space="preserve">behind schedule</target>
             </trans-unit>
             <trans-unit id="4452427314943113135">
                 <source xml:space="preserve">Previous</source>
@@ -1039,6 +1063,10 @@
                 <source xml:space="preserve">Change (30d)</source>
                 <target xml:space="preserve">Change (30j)</target>
             </trans-unit>
+            <trans-unit id="5138609946306600653">
+                <source xml:space="preserve">Behind</source>
+                <target xml:space="preserve">Behind</target>
+            </trans-unit>
             <trans-unit id="5151697515296180479">
                 <source xml:space="preserve">Either 2x the minimum, or the Low Priority rate (whichever is lower)</source>
                 <target xml:space="preserve">Soit 2x les frais minimum, soit les frais de faible priorité (selon le plus bas)</target>
@@ -1214,6 +1242,10 @@
             <trans-unit id="6008972034653357277">
                 <source xml:space="preserve">Valid Headers</source>
                 <target xml:space="preserve">Headers valides</target>
+            </trans-unit>
+            <trans-unit id="6017769429963261313">
+                <source xml:space="preserve"> ahead</source>
+                <target xml:space="preserve"> ahead</target>
             </trans-unit>
             <trans-unit id="6027906779021928443">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks remaining</source>
@@ -1521,9 +1553,17 @@
                 <source xml:space="preserve">Show more</source>
                 <target xml:space="preserve">Montrer plus</target>
             </trans-unit>
+            <trans-unit id="7324336018364764874">
+                <source xml:space="preserve"> Difficulty drift </source>
+                <target xml:space="preserve"> Difficulty drift </target>
+            </trans-unit>
             <trans-unit id="7346516107220024843">
                 <source xml:space="preserve"> Broadcast Transaction </source>
                 <target xml:space="preserve"> Broadcast Transaction </target>
+            </trans-unit>
+            <trans-unit id="7364009665295974621">
+                <source xml:space="preserve"> behind</source>
+                <target xml:space="preserve"> behind</target>
             </trans-unit>
             <trans-unit id="7370363797434182113">
                 <source xml:space="preserve">This transaction has a low transaction fee on L1, because of BCH</source>
@@ -1801,6 +1841,10 @@
                 <source xml:space="preserve">Adjusted</source>
                 <target xml:space="preserve">Ajustée</target>
             </trans-unit>
+            <trans-unit id="840121400973431948">
+                <source xml:space="preserve">Address Converter</source>
+                <target xml:space="preserve">Address Converter</target>
+            </trans-unit>
             <trans-unit id="8401436958953545077">
                 <source xml:space="preserve">This address is deceptively similar to another output. It may be part of an address poisoning attack.</source>
                 <target xml:space="preserve">Cette adresse est trompeusement similaire à une autre sortie de transaction. Elle pourrait faire partie d’une attaque par empoisonnement d’adresse. </target>
@@ -1976,6 +2020,12 @@
             <trans-unit id="9008891323838339468">
                 <source xml:space="preserve"> Blocks (24h) </source>
                 <target xml:space="preserve"> Blocs (24h) </target>
+            </trans-unit>
+            <trans-unit id="9022605153905997309">
+                <source xml:space="preserve"> Chain Stats
+</source>
+                <target xml:space="preserve"> Chain Stats
+</target>
             </trans-unit>
             <trans-unit id="9038326515381177012">
                 <source xml:space="preserve">Sigops</source>
