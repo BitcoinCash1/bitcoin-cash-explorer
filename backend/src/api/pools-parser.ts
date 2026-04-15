@@ -235,7 +235,8 @@ class PoolsParser {
     logger.info(`${changed} blocks assigned to a new pool`, logger.tags.mining);
 
     // Re-index hashrates later
-    mining.reindexHashrateRequested = true;
+    // Note: Disable for now, as it's causing incorrectly re-indexing hashrates (specifically the daily hashrate)
+    // mining.reindexHashrateRequested = true;
   }
 }
 
