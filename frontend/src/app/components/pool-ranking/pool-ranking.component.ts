@@ -179,19 +179,19 @@ export class PoolRankingComponent implements OnInit {
           pool.name + (isMobile() || this.widget ? `` : ` (${pool.share}%)`),
         label: {
           overflow: 'none',
-          color: 'var(--grey)',
+          color: 'var(--tooltip-grey)',
           alignTo: 'edge',
           edgeDistance: edgeDistance,
         },
         tooltip: {
           show: !isMobile() || !this.widget,
-          backgroundColor: 'rgba(17, 19, 31, 1)',
+          backgroundColor: 'var(--bg)',
           borderRadius: 4,
           shadowColor: 'rgba(0, 0, 0, 0.5)',
           textStyle: {
-            color: 'var(--grey)',
+            color: 'var(--tooltip-grey)',
           },
-          borderColor: '#000',
+          borderColor: 'var(--hover-bg)',
           formatter: () => {
             const i = pool.blockCount.toString();
             if (['24h', '3d', '1w'].includes(this.miningWindowPreference)) {
@@ -203,7 +203,7 @@ export class PoolRankingComponent implements OnInit {
                 hashrate = pool.lastEstimatedHashrate1w;
               }
               return (
-                `<b style="color: white">${pool.name} (${pool.share}%)</b><br>` +
+                `<b style="color: var(--fg)">${pool.name} (${pool.share}%)</b><br>` +
                 hashrate.toFixed(2) +
                 ' ' +
                 miningStats.miningUnits.hashrateUnit +
@@ -212,7 +212,7 @@ export class PoolRankingComponent implements OnInit {
               );
             } else {
               return (
-                `<b style="color: white">${pool.name} (${pool.share}%)</b><br>` +
+                `<b style="color: var(--fg)">${pool.name} (${pool.share}%)</b><br>` +
                 $localize`${i}:INTERPOLATION: blocks`
               );
             }
@@ -233,23 +233,23 @@ export class PoolRankingComponent implements OnInit {
       name: $localize`Other (${percentage})`,
       label: {
         overflow: 'none',
-        color: 'var(--grey)',
+        color: 'var(--tooltip-grey)',
         alignTo: 'edge',
         edgeDistance: edgeDistance,
       },
       tooltip: {
-        backgroundColor: 'rgba(17, 19, 31, 1)',
+        backgroundColor: 'var(--bg)',
         borderRadius: 4,
         shadowColor: 'rgba(0, 0, 0, 0.5)',
         textStyle: {
-          color: 'var(--grey)',
+          color: 'var(--tooltip-grey)',
         },
-        borderColor: '#000',
+        borderColor: 'var(--hover-bg)',
         formatter: () => {
           const i = totalBlockOther.toString();
           if (['24h', '3d', '1w'].includes(this.miningWindowPreference)) {
             return (
-              `<b style="color: white">` +
+              `<b style="color: var(--fg)">` +
               $localize`Other (${percentage})` +
               `</b><br>` +
               totalEstimatedHashrateOther.toFixed(2) +
@@ -260,7 +260,7 @@ export class PoolRankingComponent implements OnInit {
             );
           } else {
             return (
-              `<b style="color: white">` +
+              `<b style="color: var(--fg)">` +
               $localize`Other (${percentage})` +
               `</b><br>` +
               $localize`${i}:INTERPOLATION: blocks`

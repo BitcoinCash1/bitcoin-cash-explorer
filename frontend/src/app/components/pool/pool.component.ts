@@ -18,7 +18,6 @@ import {
 import {
   catchError,
   distinctUntilChanged,
-  filter,
   map,
   share,
   switchMap,
@@ -242,14 +241,14 @@ export class PoolComponent implements OnInit {
         axisPointer: {
           type: 'line',
         },
-        backgroundColor: 'rgba(17, 19, 31, 1)',
+        backgroundColor: 'var(--bg)',
         borderRadius: 4,
         shadowColor: 'rgba(0, 0, 0, 0.5)',
         textStyle: {
           color: 'var(--tooltip-grey)',
           align: 'left',
         },
-        borderColor: '#000',
+        borderColor: 'var(--hover-bg)',
         formatter: function (ticks: any[]) {
           let hashrateString = '';
           let dominanceString = '';
@@ -273,7 +272,7 @@ export class PoolComponent implements OnInit {
           }
 
           return `
-            <b style="color: white; margin-left: 18px">${ticks[0].axisValueLabel}</b><br>
+            <b style="color: var(--fg); margin-left: 18px">${ticks[0].axisValueLabel}</b><br>
             <span>${hashrateString}</span>
             <span>${dominanceString}</span>
           `;
@@ -294,7 +293,7 @@ export class PoolComponent implements OnInit {
         data: [
           {
             name: $localize`:@@79a9dc5b1caca3cbeb1733a19515edacc5fc7920:Hashrate`,
-            inactiveColor: 'rgb(110, 112, 121)',
+            inactiveColor: 'var(--gray)',
             textStyle: {
               color: 'var(--fg)',
             },
@@ -305,7 +304,7 @@ export class PoolComponent implements OnInit {
           },
           {
             name: $localize`:mining.pool-dominance:Pool Dominance`,
-            inactiveColor: 'rgb(110, 112, 121)',
+            inactiveColor: 'var(--gray)',
             textStyle: {
               color: 'var(--fg)',
             },
@@ -323,7 +322,7 @@ export class PoolComponent implements OnInit {
                 },
                 type: 'value',
                 axisLabel: {
-                  color: 'rgb(110, 112, 121)',
+                  color: 'var(--gray)',
                   formatter: (val) => {
                     return this.amountShortenerPipe
                       .transform(val, 3, 'H/s', false, true)
@@ -337,7 +336,7 @@ export class PoolComponent implements OnInit {
               {
                 type: 'value',
                 axisLabel: {
-                  color: 'rgb(110, 112, 121)',
+                  color: 'var(--gray)',
                   formatter: (val) => {
                     return `${val}%`;
                   },

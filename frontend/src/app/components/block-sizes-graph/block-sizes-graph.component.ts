@@ -145,7 +145,7 @@ export class BlockSizesGraphComponent implements OnInit {
     if (data.sizes.length === 0) {
       title = {
         textStyle: {
-          color: 'grey',
+          color: 'var(--fg)',
           fontSize: 15,
         },
         text: $localize`:@@23555386d8af1ff73f297e89dd4af3f4689fb9dd:Indexing blocks`,
@@ -229,9 +229,9 @@ export class BlockSizesGraphComponent implements OnInit {
               data: [
                 {
                   name: $localize`:@@7faaaa08f56427999f3be41df1093ce4089bbd75:Size`,
-                  inactiveColor: 'rgb(110, 112, 121)',
+                  inactiveColor: 'var(--grey)',
                   textStyle: {
-                    color: 'white',
+                    color: 'var(--fg)',
                   },
                   icon: 'roundRect',
                 },
@@ -248,7 +248,7 @@ export class BlockSizesGraphComponent implements OnInit {
                   return value.min * 0.9;
                 },
                 axisLabel: {
-                  color: 'rgb(110, 112, 121)',
+                  color: 'var(--grey)',
                   formatter: (val) => {
                     return `${Math.round(val * 100) / 100} MB`;
                   },
@@ -291,7 +291,7 @@ export class BlockSizesGraphComponent implements OnInit {
                       label: {
                         position: 'end',
                         show: true,
-                        color: '#ffffff',
+                        color: 'var(--fg)',
                         formatter: `1 MB`,
                       },
                     },
@@ -318,7 +318,7 @@ export class BlockSizesGraphComponent implements OnInit {
           right: 15,
           selectedDataBackground: {
             lineStyle: {
-              color: '#fff',
+              color: 'var(--fg)',
               opacity: 0.45,
             },
             areaStyle: {
