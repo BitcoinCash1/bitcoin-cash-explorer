@@ -192,7 +192,7 @@ export const languages: Language[] = [
   { code: 'de', name: 'Deutsch' }, // German
   // { code: 'et', name: 'Eesti' },           // Estonian
   // { code: 'el', name: 'Ελληνικά' },        // Greek
-  { code: 'en', name: 'English' }, // English
+  { code: 'en-US', name: 'English' }, // English
   { code: 'es', name: 'Español' }, // Spanish
   // { code: 'eo', name: 'Esperanto' },       // Esperanto
   // { code: 'eu', name: 'Euskara' },         // Basque
@@ -215,7 +215,7 @@ export const languages: Language[] = [
   { code: 'nl', name: 'Nederlands' }, // Dutch
   { code: 'ja', name: '日本語' }, // Japanese
   { code: 'nb', name: 'Norsk' }, // Norwegian Bokmål
-  // { code: 'nn', name: 'Norsk Nynorsk' },   // Norwegian Nynorsk
+  // { code: 'nn', name: 'Norsk Nynorsk' }, // Norwegian Nynorsk
   { code: 'pl', name: 'Polski' }, // Polish
   { code: 'pt', name: 'Português' }, // Portuguese
   // { code: 'pt-BR', name: 'Português (Brazil)' }, // Portuguese (Brazil)
@@ -231,7 +231,8 @@ export const languages: Language[] = [
   { code: 'tr', name: 'Türkçe' }, // Turkish
   { code: 'uk', name: 'Українська' }, // Ukrainian
   { code: 'vi', name: 'Tiếng Việt' }, // Vietnamese
-  { code: 'zh', name: '中文' }, // Chinese
+  { code: 'zh-Hant', name: '繁體中文' }, // Traditional Chinese
+  { code: 'zh-Hans', name: '简体中文' }, // Simplified Chinese
 ];
 
 export const specialBlocks = {
