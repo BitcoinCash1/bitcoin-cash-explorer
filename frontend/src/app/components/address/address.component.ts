@@ -20,6 +20,10 @@ import { AddressInformation } from '@interfaces/node-api.interface';
 import {
   AddressTypeInfo,
   convertToTokenAddress,
+  cashAddrToLegacy,
+  legacyToCashAddr,
+  isTokenAddress,
+  tokenToCashAddr,
 } from '@app/shared/address-utils';
 
 class AddressStats implements ChainStats {
@@ -121,8 +125,9 @@ export class AddressComponent implements OnInit, OnDestroy {
 
   isMobile: boolean;
   showQR: boolean = false;
-  addressType: 'bch' | 'token' = 'bch';
+  addressType: 'bch' | 'token' | 'legacy' = 'bch';
   displayAddress: string;
+  bchAddressString: string;
 
   address: Address;
   addressString: string;
@@ -204,7 +209,32 @@ export class AddressComponent implements OnInit, OnDestroy {
           ) {
             this.addressString = this.addressString.toLowerCase();
           }
-          this.addressType = 'bch';
+          const network = this.stateService.network || 'mainnet';
+          const isLegacy =
+            !this.addressString.includes(':') &&
+            (this.addressString.startsWith('1') ||
+              this.addressString.startsWith('3') ||
+              this.addressString.startsWith('m') ||
+              this.addressString.startsWith('n') ||
+              this.addressString.startsWith('2'));
+          if (isLegacy) {
+            try {
+              this.bchAddressString = legacyToCashAddr(
+                this.addressString,
+                network
+              );
+            } catch {
+              this.bchAddressString = this.addressString;
+            }
+            this.addressType = 'legacy';
+          } else if (isTokenAddress(this.addressString)) {
+            this.bchAddressString =
+              tokenToCashAddr(this.addressString) || this.addressString;
+            this.addressType = 'token';
+          } else {
+            this.bchAddressString = this.addressString;
+            this.addressType = 'bch';
+          }
           this.displayAddress = this.addressString;
           this.seoService.setTitle(
             $localize`:@@address.component.browser-title:Address: ${this.addressString}:INTERPOLATION:`
@@ -595,13 +625,22 @@ export class AddressComponent implements OnInit, OnDestroy {
     );
   }
 
-  updateDisplayAddress(type: 'bch' | 'token'): void {
+  updateDisplayAddress(type: 'bch' | 'token' | 'legacy'): void {
     this.addressType = type;
     if (type === 'token') {
-      const tokenAddr = convertToTokenAddress(this.addressString);
-      this.displayAddress = tokenAddr || this.addressString;
+      this.displayAddress =
+        convertToTokenAddress(this.bchAddressString) || this.addressString;
+    } else if (type === 'legacy') {
+      try {
+        this.displayAddress = cashAddrToLegacy(
+          this.bchAddressString,
+          this.stateService.network || 'mainnet'
+        );
+      } catch {
+        this.displayAddress = this.addressString;
+      }
     } else {
-      this.displayAddress = this.addressString;
+      this.displayAddress = this.bchAddressString;
     }
   }
 

@@ -59,6 +59,18 @@
       <label class="btn btn-sm btn-outline-primary" for="addr-type-token"
         >Token Address</label
       >
+      <input
+        type="radio"
+        class="btn-check"
+        id="addr-type-legacy"
+        name="addressType"
+        value="legacy"
+        [checked]="addressType === 'legacy'"
+        (click)="updateDisplayAddress('legacy')"
+      />
+      <label class="btn btn-sm btn-outline-primary" for="addr-type-legacy"
+        >Legacy Address</label
+      >
     </div>
   </div>
 

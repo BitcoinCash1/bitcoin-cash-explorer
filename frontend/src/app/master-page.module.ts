@@ -19,6 +19,7 @@ import { FaucetComponent } from '@components/faucet/faucet.component';
 import { SimpleProofWidgetComponent } from '@components/simpleproof-widget/simpleproof-widget.component';
 import { SimpleProofCuboWidgetComponent } from '@components/simpleproof-widget/simpleproof-cubo-widget.component';
 import { VerifyAddressComponent } from '@components/verify-address/verify-address.component';
+import { AddressConverterComponent } from '@components/address-converter/address-converter.component';
 
 const browserWindow = window || {};
 // @ts-ignore
@@ -128,6 +129,10 @@ const routes: Routes = [
       {
         path: 'tools/calculator',
         component: CalculatorComponent,
+      },
+      {
+        path: 'tools/address-converter',
+        component: AddressConverterComponent,
       },
       {
         path: 'verify',

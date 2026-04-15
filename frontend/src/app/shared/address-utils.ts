@@ -629,6 +629,44 @@ export function convertToTokenAddress(address: string): string | null {
   }
 }
 
+export function isTokenAddress(address: string): boolean {
+  try {
+    const decoded = cashaddrDecode(
+      address.includes(':') ? address : `bitcoincash:${address}`
+    );
+    const typeBits = (decoded.version >>> 3) & 0x0f;
+    return typeBits === 2 || typeBits === 3;
+  } catch {
+    return false;
+  }
+}
+
+export function tokenToCashAddr(address: string): string | null {
+  try {
+    const decoded = cashaddrDecode(
+      address.includes(':') ? address : `bitcoincash:${address}`
+    );
+    const typeBits = (decoded.version >>> 3) & 0x0f;
+    const lengthBits = decoded.version & 0x07;
+
+    let normalTypeBits: number;
+    if (typeBits === 2) {
+      normalTypeBits = 0;
+    } else if (typeBits === 3) {
+      normalTypeBits = 1;
+    } else {
+      return null;
+    }
+
+    const normalVersion = (normalTypeBits << 3) | lengthBits;
+    const hadPrefix = address.includes(':');
+    const encoded = cashaddrEncode(decoded.prefix, normalVersion, decoded.hash);
+    return hadPrefix ? encoded : encoded.split(':')[1];
+  } catch (e) {
+    return null;
+  }
+}
+
 /**
  * Cash Address to Script Public key (SPK)
  * @param address
@@ -683,7 +721,7 @@ function base58Decode(address: string): Uint8Array {
     num = num / 256n;
   }
 
-  while (bytes.length < leadingZeros) {
+  for (let i = 0; i < leadingZeros; i++) {
     bytes.unshift(0);
   }
 
@@ -874,6 +912,91 @@ function hexStringToUint8Array(hex: string): Uint8Array {
     result[i / 2] = parseInt(hex.substr(i, 2), 16);
   }
   return result;
+}
+
+function base58Encode(bytes: Uint8Array): string {
+  const alphabet = '123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz';
+  let num = 0n;
+  for (const byte of bytes) {
+    num = num * 256n + BigInt(byte);
+  }
+  let result = '';
+  while (num > 0n) {
+    const remainder = num % 58n;
+    num = num / 58n;
+    result = alphabet[Number(remainder)] + result;
+  }
+  for (const byte of bytes) {
+    if (byte === 0) {
+      result = '1' + result;
+    } else {
+      break;
+    }
+  }
+  return result;
+}
+
+export function legacyToCashAddr(address: string, network?: string): string {
+  const net = network || 'mainnet';
+  const decoded = base58Decode(address);
+  if (decoded.length !== 25) {
+    throw new Error('Invalid legacy address length');
+  }
+  const version = decoded[0];
+  const payload = decoded.slice(1, 21);
+  const checksum = decoded.slice(21, 25);
+
+  const versionedPayload = new Uint8Array([version, ...payload]);
+  const hash1 = new Hash().update(versionedPayload).digest();
+  const hash2 = new Hash().update(hash1).digest();
+  const expectedChecksum = hash2.slice(0, 4);
+  for (let i = 0; i < 4; i++) {
+    if (checksum[i] !== expectedChecksum[i]) {
+      throw new Error('Invalid legacy address checksum');
+    }
+  }
+
+  const isTestnet = ['testnet', 'testnet4', 'signet'].includes(net);
+  const p2pkhVersion = isTestnet ? 0x6f : 0x00;
+  const p2shVersion = isTestnet ? 0xc4 : 0x05;
+  const prefix = isTestnet ? 'bchtest' : 'bitcoincash';
+
+  let cashAddrVersionByte: number;
+  if (version === p2pkhVersion) {
+    cashAddrVersionByte = 0x00;
+  } else if (version === p2shVersion) {
+    cashAddrVersionByte = 0x08;
+  } else {
+    throw new Error('Unrecognised legacy address version byte');
+  }
+
+  return cashaddrEncode(prefix, cashAddrVersionByte, payload);
+}
+
+export function cashAddrToLegacy(address: string, network?: string): string {
+  const net = network || 'mainnet';
+  const isTestnet = ['testnet', 'testnet4', 'signet'].includes(net);
+  const prefix = isTestnet ? 'bchtest' : 'bitcoincash';
+
+  const normalized = address.includes(':') ? address : `${prefix}:${address}`;
+  const decoded = cashaddrDecode(normalized);
+  const typeBits = (decoded.version >>> 3) & 0x0f;
+
+  let legacyVersionByte: number;
+  if (typeBits === 0 || typeBits === 2) {
+    legacyVersionByte = isTestnet ? 0x6f : 0x00;
+  } else if (typeBits === 1 || typeBits === 3) {
+    legacyVersionByte = isTestnet ? 0xc4 : 0x05;
+  } else {
+    throw new Error('Unsupported CashAddr type');
+  }
+
+  const payload = new Uint8Array([legacyVersionByte, ...decoded.hash]);
+  const hash1 = new Hash().update(payload).digest();
+  const hash2 = new Hash().update(hash1).digest();
+  const checksum = hash2.slice(0, 4);
+  const full = new Uint8Array([...payload, ...checksum]);
+  return base58Encode(full);
 }
 
 // Main function to convert address to scriptPubKey

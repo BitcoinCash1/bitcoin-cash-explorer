@@ -201,6 +201,7 @@ import { TwitterLogin } from '@components/twitter-login/twitter-login.component'
 import { GithubLogin } from '@components/github-login.component/github-login.component';
 import { MempoolProgressBarComponent } from '@components/mempool-progress-bar/mempool-progress-bar.component';
 import { SpecialBlocksComponent } from '@components/special-blocks/special-blocks.component';
+import { AddressConverterComponent } from '@components/address-converter/address-converter.component';
 
 @NgModule({
   declarations: [
@@ -311,6 +312,7 @@ import { SpecialBlocksComponent } from '@components/special-blocks/special-block
     MempoolProgressBarComponent,
     VerifyAddressComponent,
     SpecialBlocksComponent,
+    AddressConverterComponent,
   ],
   imports: [
     CommonModule,
@@ -440,6 +442,7 @@ import { SpecialBlocksComponent } from '@components/special-blocks/special-block
     BitcoinsatoshisPipe,
     VerifyAddressComponent,
     SpecialBlocksComponent,
+    AddressConverterComponent,
 
     MempoolBlockOverviewComponent,
     ClockchainComponent,
