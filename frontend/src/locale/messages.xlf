@@ -262,7 +262,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/address/address.component.html</context>
-          <context context-type="linenumber">397,398</context>
+          <context context-type="linenumber">409,410</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/wallet/wallet.component.html</context>
@@ -342,7 +342,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/address/address.component.ts</context>
-          <context context-type="linenumber">210</context>
+          <context context-type="linenumber">240</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1026404270740126690" datatype="html">
@@ -353,14 +353,14 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/address/address.component.ts</context>
-          <context context-type="linenumber">213,215</context>
+          <context context-type="linenumber">243,245</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8371399036834958761" datatype="html">
         <source><x id="INTERPOLATION" equiv-text="{{ (transactions?.length | number) || &quot;?&quot; }}"/> of <x id="INTERPOLATION_1" equiv-text="{{ mempoolStats.tx_count + chainStats.tx_count | number }}"/> transaction</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/address/address.component.html</context>
-          <context context-type="linenumber">187,189</context>
+          <context context-type="linenumber">199,201</context>
         </context-group>
         <note priority="1" from="description">X of X Address Transaction</note>
       </trans-unit>
@@ -368,7 +368,7 @@
         <source><x id="INTERPOLATION" equiv-text="{{ (transactions?.length | number) || &quot;?&quot; }}"/> of <x id="INTERPOLATION_1" equiv-text="{{ mempoolStats.tx_count + chainStats.tx_count | number }}"/> transactions</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/address/address.component.html</context>
-          <context context-type="linenumber">194,196</context>
+          <context context-type="linenumber">206,208</context>
         </context-group>
         <note priority="1" from="description">X of X Address Transactions (Plural)</note>
       </trans-unit>
@@ -376,7 +376,7 @@
         <source>Error loading address data.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/address/address.component.html</context>
-          <context context-type="linenumber">307,310</context>
+          <context context-type="linenumber">319,322</context>
         </context-group>
         <note priority="1" from="description">address.error.loading-address-data</note>
       </trans-unit>
@@ -392,7 +392,7 @@
           &gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/address/address.component.html</context>
-          <context context-type="linenumber">317,332</context>
+          <context context-type="linenumber">329,344</context>
         </context-group>
         <note priority="1" from="description">Electrum server limit exceeded error</note>
       </trans-unit>
@@ -400,7 +400,7 @@
         <source>Confirmed balance</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/address/address.component.html</context>
-          <context context-type="linenumber">358,359</context>
+          <context context-type="linenumber">370,371</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/wallet/wallet.component.html</context>
@@ -412,7 +412,7 @@
         <source>Pending</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/address/address.component.html</context>
-          <context context-type="linenumber">366,368</context>
+          <context context-type="linenumber">378,380</context>
         </context-group>
         <note priority="1" from="description">accelerator.pending-state</note>
       </trans-unit>
@@ -420,7 +420,7 @@
         <source>Confirmed Transactions</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/address/address.component.html</context>
-          <context context-type="linenumber">383,384</context>
+          <context context-type="linenumber">395,396</context>
         </context-group>
         <note priority="1" from="description">address.confirmed-transactions</note>
       </trans-unit>
@@ -428,7 +428,7 @@
         <source> Pending Transactions </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/address/address.component.html</context>
-          <context context-type="linenumber">389,391</context>
+          <context context-type="linenumber">401,403</context>
         </context-group>
         <note priority="1" from="description">address.pending-transactions</note>
       </trans-unit>
@@ -436,7 +436,7 @@
         <source>Type</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/address/address.component.html</context>
-          <context context-type="linenumber">407,408</context>
+          <context context-type="linenumber">419,420</context>
         </context-group>
         <note priority="1" from="description">address.type</note>
       </trans-unit>
@@ -2018,6 +2018,115 @@
         </context-group>
         <note priority="1" from="description">shared.calculator</note>
       </trans-unit>
+      <trans-unit id="9022605153905997309" datatype="html">
+        <source> Chain Stats
+</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/chain-stats-mining/chain-stats-mining.component.html</context>
+          <context context-type="linenumber">2,4</context>
+        </context-group>
+        <note priority="1" from="description">dashboard.chain-stats</note>
+      </trans-unit>
+      <trans-unit id="5534751684004969564" datatype="html">
+        <source> Average block time </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/chain-stats-mining/chain-stats-mining.component.html</context>
+          <context context-type="linenumber">17,19</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/chain-stats-mining/chain-stats-mining.component.html</context>
+          <context context-type="linenumber">130,132</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
+          <context context-type="linenumber">86,88</context>
+        </context-group>
+        <note priority="1" from="description">difficulty-box.average-block-time</note>
+      </trans-unit>
+      <trans-unit id="7324336018364764874" datatype="html">
+        <source> Difficulty drift </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/chain-stats-mining/chain-stats-mining.component.html</context>
+          <context context-type="linenumber">28,30</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/chain-stats-mining/chain-stats-mining.component.html</context>
+          <context context-type="linenumber">139,141</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
+          <context context-type="linenumber">114,116</context>
+        </context-group>
+        <note priority="1" from="description">difficulty-box.difficulty-drift</note>
+      </trans-unit>
+      <trans-unit id="3901733599428143571" datatype="html">
+        <source>min</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/chain-stats-mining/chain-stats-mining.component.html</context>
+          <context context-type="linenumber">51,53</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
+          <context context-type="linenumber">121,123</context>
+        </context-group>
+        <note priority="1" from="description">difficulty-box.minutes</note>
+      </trans-unit>
+      <trans-unit id="6017769429963261313" datatype="html">
+        <source> ahead</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/chain-stats-mining/chain-stats-mining.component.html</context>
+          <context context-type="linenumber">56,57</context>
+        </context-group>
+        <note priority="1" from="description">difficulty-box.ahead</note>
+      </trans-unit>
+      <trans-unit id="7364009665295974621" datatype="html">
+        <source> behind</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/chain-stats-mining/chain-stats-mining.component.html</context>
+          <context context-type="linenumber">62,63</context>
+        </context-group>
+        <note priority="1" from="description">difficulty-box.behind</note>
+      </trans-unit>
+      <trans-unit id="1014548743221553652" datatype="html">
+        <source> Next Halving </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/chain-stats-mining/chain-stats-mining.component.html</context>
+          <context context-type="linenumber">68,70</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/chain-stats-mining/chain-stats-mining.component.html</context>
+          <context context-type="linenumber">148,150</context>
+        </context-group>
+        <note priority="1" from="description">difficulty-box.next-halving</note>
+      </trans-unit>
+      <trans-unit id="4808047846196007749" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ i }}"/> <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;shared-block&quot;&gt;"/>blocks<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/chain-stats-mining/chain-stats-mining.component.html</context>
+          <context context-type="linenumber">119,121</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/footer/footer.component.html</context>
+          <context context-type="linenumber">52,53</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/mempool-blocks/mempool-blocks.component.html</context>
+          <context context-type="linenumber">149,150</context>
+        </context-group>
+        <note priority="1" from="description">shared.blocks</note>
+      </trans-unit>
+      <trans-unit id="3727261967700441034" datatype="html">
+        <source><x id="INTERPOLATION" equiv-text="{{ i }}"/> <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;shared-block&quot;&gt;"/>block<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/chain-stats-mining/chain-stats-mining.component.html</context>
+          <context context-type="linenumber">122,124</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/footer/footer.component.html</context>
+          <context context-type="linenumber">55,56</context>
+        </context-group>
+        <note priority="1" from="description">shared.block</note>
+      </trans-unit>
       <trans-unit id="clipboard.copied-message" datatype="html">
         <source>Copied!</source>
         <context-group purpose="location">
@@ -2148,7 +2257,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/mining-dashboard/mining-dashboard.component.html</context>
-          <context context-type="linenumber">94,96</context>
+          <context context-type="linenumber">92,94</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/dashboard/dashboard.component.html</context>
@@ -2241,11 +2350,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/mining-dashboard/mining-dashboard.component.html</context>
-          <context context-type="linenumber">52,54</context>
+          <context context-type="linenumber">50,52</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/mining-dashboard/mining-dashboard.component.html</context>
-          <context context-type="linenumber">77,79</context>
+          <context context-type="linenumber">75,77</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/treasuries/treasuries.component.html</context>
@@ -2349,201 +2458,10 @@
         <source> Difficulty Adjustment
 </source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty-mining/difficulty-mining.component.html</context>
-          <context context-type="linenumber">6,9</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
           <context context-type="linenumber">6,9</context>
         </context-group>
         <note priority="1" from="description">dashboard.difficulty-adjustment</note>
-      </trans-unit>
-      <trans-unit id="991066160113599649" datatype="html">
-        <source>Remaining</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty-mining/difficulty-mining.component.html</context>
-          <context context-type="linenumber">20,21</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty-mining/difficulty-mining.component.html</context>
-          <context context-type="linenumber">176,178</context>
-        </context-group>
-        <note priority="1" from="description">difficulty-box.remaining</note>
-      </trans-unit>
-      <trans-unit id="4808047846196007749" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ i }}"/> <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;shared-block&quot;&gt;"/>blocks<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty-mining/difficulty-mining.component.html</context>
-          <context context-type="linenumber">29,30</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty-mining/difficulty-mining.component.html</context>
-          <context context-type="linenumber">166,168</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/footer/footer.component.html</context>
-          <context context-type="linenumber">52,53</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/mempool-blocks/mempool-blocks.component.html</context>
-          <context context-type="linenumber">149,150</context>
-        </context-group>
-        <note priority="1" from="description">shared.blocks</note>
-      </trans-unit>
-      <trans-unit id="3727261967700441034" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ i }}"/> <x id="START_TAG_SPAN" ctype="x-span" equiv-text="&lt;span class=&quot;shared-block&quot;&gt;"/>block<x id="CLOSE_TAG_SPAN" ctype="x-span" equiv-text="&lt;/span&gt;"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty-mining/difficulty-mining.component.html</context>
-          <context context-type="linenumber">32,33</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty-mining/difficulty-mining.component.html</context>
-          <context context-type="linenumber">169,171</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/footer/footer.component.html</context>
-          <context context-type="linenumber">55,56</context>
-        </context-group>
-        <note priority="1" from="description">shared.block</note>
-      </trans-unit>
-      <trans-unit id="1845447508284521819" datatype="html">
-        <source>Estimate</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty-mining/difficulty-mining.component.html</context>
-          <context context-type="linenumber">45,47</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty-mining/difficulty-mining.component.html</context>
-          <context context-type="linenumber">183,185</context>
-        </context-group>
-        <note priority="1" from="description">difficulty-box.estimate</note>
-      </trans-unit>
-      <trans-unit id="4452427314943113135" datatype="html">
-        <source>Previous</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty-mining/difficulty-mining.component.html</context>
-          <context context-type="linenumber">68,69</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
-          <context context-type="linenumber">141,142</context>
-        </context-group>
-        <note priority="1" from="description">difficulty-box.previous</note>
-      </trans-unit>
-      <trans-unit id="3552649240172058318" datatype="html">
-        <source> Current Period </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty-mining/difficulty-mining.component.html</context>
-          <context context-type="linenumber">96,98</context>
-        </context-group>
-        <note priority="1" from="description">difficulty-box.current-period</note>
-      </trans-unit>
-      <trans-unit id="1014548743221553652" datatype="html">
-        <source> Next Halving </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty-mining/difficulty-mining.component.html</context>
-          <context context-type="linenumber">115,117</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty-mining/difficulty-mining.component.html</context>
-          <context context-type="linenumber">191,193</context>
-        </context-group>
-        <note priority="1" from="description">difficulty-box.next-halving</note>
-      </trans-unit>
-      <trans-unit id="bdf0e930eb22431140a2eaeacd809cc5f8ebd38c" datatype="html">
-        <source>Next Block</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty/difficulty-tooltip.component.html</context>
-          <context context-type="linenumber">56,60</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/mempool-block/mempool-block.component.ts</context>
-          <context context-type="linenumber">113</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/pool/pool.component.html</context>
-          <context context-type="linenumber">405,407</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7611664705149933501" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ i }}"/> blocks expected</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty/difficulty-tooltip.component.html</context>
-          <context context-type="linenumber">108,110</context>
-        </context-group>
-        <note priority="1" from="description">difficulty-box.expected-blocks</note>
-      </trans-unit>
-      <trans-unit id="611448626023495165" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ i }}"/> block expected</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty/difficulty-tooltip.component.html</context>
-          <context context-type="linenumber">114,116</context>
-        </context-group>
-        <note priority="1" from="description">difficulty-box.expected-block</note>
-      </trans-unit>
-      <trans-unit id="899060995555983474" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ i }}"/> blocks mined</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty/difficulty-tooltip.component.html</context>
-          <context context-type="linenumber">117,119</context>
-        </context-group>
-        <note priority="1" from="description">difficulty-box.mined-blocks</note>
-      </trans-unit>
-      <trans-unit id="6163986367161406789" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ i }}"/> block mined</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty/difficulty-tooltip.component.html</context>
-          <context context-type="linenumber">120,122</context>
-        </context-group>
-        <note priority="1" from="description">difficulty-box.mined-block</note>
-      </trans-unit>
-      <trans-unit id="6027906779021928443" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ i }}"/> blocks remaining</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty/difficulty-tooltip.component.html</context>
-          <context context-type="linenumber">123,125</context>
-        </context-group>
-        <note priority="1" from="description">difficulty-box.remaining-blocks</note>
-      </trans-unit>
-      <trans-unit id="5452140384265618201" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ i }}"/> block remaining</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty/difficulty-tooltip.component.html</context>
-          <context context-type="linenumber">129,131</context>
-        </context-group>
-        <note priority="1" from="description">difficulty-box.remaining-block</note>
-      </trans-unit>
-      <trans-unit id="8238703585225968591" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ i }}"/> blocks ahead</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty/difficulty-tooltip.component.html</context>
-          <context context-type="linenumber">132,134</context>
-        </context-group>
-        <note priority="1" from="description">difficulty-box.blocks-ahead</note>
-      </trans-unit>
-      <trans-unit id="2544046280419641488" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ i }}"/> block ahead</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty/difficulty-tooltip.component.html</context>
-          <context context-type="linenumber">135,137</context>
-        </context-group>
-        <note priority="1" from="description">difficulty-box.block-ahead</note>
-      </trans-unit>
-      <trans-unit id="1318394327292295541" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ i }}"/> blocks behind</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty/difficulty-tooltip.component.html</context>
-          <context context-type="linenumber">138,140</context>
-        </context-group>
-        <note priority="1" from="description">difficulty-box.blocks-behind</note>
-      </trans-unit>
-      <trans-unit id="2375009149380397713" datatype="html">
-        <source><x id="INTERPOLATION" equiv-text="{{ i }}"/> block behind</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/difficulty/difficulty-tooltip.component.html</context>
-          <context context-type="linenumber">141,143</context>
-        </context-group>
-        <note priority="1" from="description">difficulty-box.block-behind</note>
       </trans-unit>
       <trans-unit id="4603219930058518974" datatype="html">
         <source> Halving Countdown
@@ -2570,19 +2488,51 @@
         </context-group>
         <note priority="1" from="description">statistics.median-small</note>
       </trans-unit>
-      <trans-unit id="5534751684004969564" datatype="html">
-        <source> Average block time </source>
+      <trans-unit id="5138609946306600653" datatype="html">
+        <source>Behind</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
-          <context context-type="linenumber">115,117</context>
+          <context context-type="linenumber">69,71</context>
         </context-group>
-        <note priority="1" from="description">difficulty-box.average-block-time</note>
+        <note priority="1" from="description">difficulty-box.behind</note>
+      </trans-unit>
+      <trans-unit id="2664726858804341447" datatype="html">
+        <source>On time</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
+          <context context-type="linenumber">72,74</context>
+        </context-group>
+        <note priority="1" from="description">difficulty-box.on-time</note>
+      </trans-unit>
+      <trans-unit id="4341507375690057323" datatype="html">
+        <source>Ahead</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
+          <context context-type="linenumber">74,76</context>
+        </context-group>
+        <note priority="1" from="description">difficulty-box.ahead</note>
+      </trans-unit>
+      <trans-unit id="3124019659196374520" datatype="html">
+        <source>ahead of schedule</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
+          <context context-type="linenumber">127,130</context>
+        </context-group>
+        <note priority="1" from="description">difficulty-box.ahead-of-schedule</note>
+      </trans-unit>
+      <trans-unit id="4419337712236428981" datatype="html">
+        <source>behind schedule</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
+          <context context-type="linenumber">132,135</context>
+        </context-group>
+        <note priority="1" from="description">difficulty-box.behind-schedule</note>
       </trans-unit>
       <trans-unit id="4498273128887208867" datatype="html">
         <source>New subsidy</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
-          <context context-type="linenumber">215,217</context>
+          <context context-type="linenumber">170,172</context>
         </context-group>
         <note priority="1" from="description">difficulty-box.new-subsidy</note>
       </trans-unit>
@@ -2590,7 +2540,7 @@
         <source>Blocks remaining</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
-          <context context-type="linenumber">226,228</context>
+          <context context-type="linenumber">181,183</context>
         </context-group>
         <note priority="1" from="description">shared.blocks-remaining</note>
       </trans-unit>
@@ -2598,7 +2548,7 @@
         <source>Block remaining</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
-          <context context-type="linenumber">231,233</context>
+          <context context-type="linenumber">186,188</context>
         </context-group>
         <note priority="1" from="description">shared.block-remaining</note>
       </trans-unit>
@@ -2913,6 +2863,17 @@
           <context context-type="linenumber">79,81</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="bdf0e930eb22431140a2eaeacd809cc5f8ebd38c" datatype="html">
+        <source>Next Block</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/mempool-block/mempool-block.component.ts</context>
+          <context context-type="linenumber">113</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/pool/pool.component.html</context>
+          <context context-type="linenumber">405,407</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="mempool-block.stack.of.blocks" datatype="html">
         <source>Stack of <x id="INTERPOLATION" equiv-text="blocksInBlock"/> mempool blocks</source>
         <context-group purpose="location">
@@ -3001,19 +2962,19 @@
         </context-group>
         <note priority="1" from="description">mining.144-blocks</note>
       </trans-unit>
-      <trans-unit id="671954776532239277" datatype="html">
-        <source> Difficulty Adjustment </source>
+      <trans-unit id="2257679984526539584" datatype="html">
+        <source>Chain Stats</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/mining-dashboard/mining-dashboard.component.html</context>
-          <context context-type="linenumber">26,28</context>
+          <context context-type="linenumber">25,26</context>
         </context-group>
-        <note priority="1" from="description">dashboard.difficulty-adjustment</note>
+        <note priority="1" from="description">dashboard.chain-stats</note>
       </trans-unit>
       <trans-unit id="4355353297929558170" datatype="html">
         <source> Adjustments </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/mining-dashboard/mining-dashboard.component.html</context>
-          <context context-type="linenumber">125,127</context>
+          <context context-type="linenumber">123,125</context>
         </context-group>
         <note priority="1" from="description">dashboard.adjustments</note>
       </trans-unit>
@@ -6137,11 +6098,19 @@
         </context-group>
         <note priority="1" from="description">footer.clock-mined</note>
       </trans-unit>
+      <trans-unit id="840121400973431948" datatype="html">
+        <source>Address Converter</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
+          <context context-type="linenumber">307,310</context>
+        </context-group>
+        <note priority="1" from="description">shared.address-converter</note>
+      </trans-unit>
       <trans-unit id="2620731225742999598" datatype="html">
         <source>Verify Ownership (PSBT)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">305,308</context>
+          <context context-type="linenumber">312,315</context>
         </context-group>
         <note priority="1" from="description">shared.verify-ownership</note>
       </trans-unit>
@@ -6149,7 +6118,7 @@
         <source>Legal</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">311,313</context>
+          <context context-type="linenumber">318,320</context>
         </context-group>
         <note priority="1" from="description">footer.legal</note>
       </trans-unit>
@@ -6157,7 +6126,7 @@
         <source>Terms of Service</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">316,320</context>
+          <context context-type="linenumber">323,327</context>
         </context-group>
         <note priority="1" from="description">Terms of Service</note>
         <note priority="1" from="meaning">shared.terms-of-service</note>
@@ -6166,7 +6135,7 @@
         <source>Privacy Policy</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">323,327</context>
+          <context context-type="linenumber">330,334</context>
         </context-group>
         <note priority="1" from="description">Privacy Policy</note>
         <note priority="1" from="meaning">shared.privacy-policy</note>
@@ -6175,7 +6144,7 @@
         <source>Third-party Licenses</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">330,335</context>
+          <context context-type="linenumber">337,342</context>
         </context-group>
         <note priority="1" from="description">Third-party Licenses</note>
         <note priority="1" from="meaning">shared.third-party-licenses</note>
