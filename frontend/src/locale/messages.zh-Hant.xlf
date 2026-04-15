@@ -3,7 +3,7 @@
         <body>
             <trans-unit id="004b222ff9ef9dd4771b777950ca1d0e4cd4348a">
                 <source xml:space="preserve">About</source>
-                <target xml:space="preserve">关于</target>
+                <target xml:space="preserve">關於</target>
             </trans-unit>
             <trans-unit id="1007967761117390992">
                 <source xml:space="preserve"><x ctype="x-i" equiv-text="&lt;i             &gt;" id="START_ITALIC_TEXT"/>There are too many transactions on this address, more than your backend can handle. See more on <x ctype="x-a" equiv-text="&lt;a href=&quot;/docs/faq#address-lookup-issues&quot;               &gt;" id="START_LINK"/>setting up a stronger backend<x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/>.<x ctype="x-i" equiv-text="&lt;/i           &gt;" id="CLOSE_ITALIC_TEXT"/><x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/><x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/> Consider viewing this address on the official BCH Explorer website instead: <x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/><x equiv-text="&lt;a             href=&quot;https://bchexplorer.cash/address/{{ addressString }}&quot;             target=&quot;_blank&quot;             &gt;" id="START_LINK_1"/>https://bchexplorer.cash/address/<x equiv-text="{{ addressString }}" id="INTERPOLATION"/><x ctype="x-a" equiv-text="&lt;/a           &gt;" id="CLOSE_LINK"/></source>
@@ -11,7 +11,7 @@
             </trans-unit>
             <trans-unit id="1014548743221553652">
                 <source xml:space="preserve"> Next Halving </source>
-                <target xml:space="preserve"> 距离下次奖励减半 </target>
+                <target xml:space="preserve"> 下次區塊獎勵減半 </target>
             </trans-unit>
             <trans-unit id="1026404270740126690">
                 <source xml:space="preserve">See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> address <x equiv-text="this.addressString" id="PH_1"/>.</source>
@@ -19,7 +19,7 @@
             </trans-unit>
             <trans-unit id="1033261550402895380">
                 <source xml:space="preserve">Sum</source>
-                <target xml:space="preserve">总和</target>
+                <target xml:space="preserve">總和</target>
             </trans-unit>
             <trans-unit id="1063462873103909661">
                 <source xml:space="preserve">Difficulty</source>
@@ -27,7 +27,7 @@
             </trans-unit>
             <trans-unit id="1130652265542107236">
                 <source xml:space="preserve">Age</source>
-                <target xml:space="preserve">年龄</target>
+                <target xml:space="preserve">年齡</target>
             </trans-unit>
             <trans-unit id="1141848625932683011">
                 <source xml:space="preserve">Tint</source>
@@ -35,27 +35,27 @@
             </trans-unit>
             <trans-unit id="116895469304130365">
                 <source xml:space="preserve"> Other Network Address </source>
-                <target xml:space="preserve"> 其他网络地址 </target>
+                <target xml:space="preserve"> 其他網路地址 </target>
             </trans-unit>
             <trans-unit id="1178696012353613358">
                 <source xml:space="preserve">Headers Only</source>
-                <target xml:space="preserve">仅区块头</target>
+                <target xml:space="preserve">僅區塊頭</target>
             </trans-unit>
             <trans-unit id="1187919775034823182">
                 <source xml:space="preserve"> X Timeline </source>
-                <target xml:space="preserve"> X时间线 </target>
+                <target xml:space="preserve"> X時間線 </target>
             </trans-unit>
             <trans-unit id="1207153099804569270">
                 <source xml:space="preserve"> Previous output script </source>
-                <target xml:space="preserve"> 上一次输出脚本 </target>
+                <target xml:space="preserve"> 之前的輸出腳本 </target>
             </trans-unit>
             <trans-unit id="1230154438678955604">
                 <source xml:space="preserve">Change</source>
-                <target xml:space="preserve">变化量</target>
+                <target xml:space="preserve">變化量</target>
             </trans-unit>
             <trans-unit id="123726871136586876">
                 <source xml:space="preserve"> Audit </source>
-                <target xml:space="preserve"> 审计 </target>
+                <target xml:space="preserve">審計</target>
             </trans-unit>
             <trans-unit id="1250839334786630849">
                 <source xml:space="preserve"> Preview Transaction </source>
@@ -63,11 +63,11 @@
             </trans-unit>
             <trans-unit id="1257024413147889019">
                 <source xml:space="preserve">Balance (USD)</source>
-                <target xml:space="preserve">余额（USD）</target>
+                <target xml:space="preserve">餘額（USD）</target>
             </trans-unit>
             <trans-unit id="1318394327292295541">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks behind</source>
-                <target xml:space="preserve">落后<x equiv-text="{{ i }}" id="INTERPOLATION"/>个区块</target>
+                <target xml:space="preserve">落後<x equiv-text="{{ i }}" id="INTERPOLATION"/>個區塊</target>
             </trans-unit>
             <trans-unit id="1358478559966633776">
                 <source xml:space="preserve">See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> wallet <x equiv-text="walletName" id="INTERPOLATION"/>.</source>
@@ -79,7 +79,7 @@
             </trans-unit>
             <trans-unit id="1374757757883387136">
                 <source xml:space="preserve">Your browser does not support this feature.</source>
-                <target xml:space="preserve">您的浏览器不支持此功能。</target>
+                <target xml:space="preserve">您的瀏覽器不支持此功能。</target>
             </trans-unit>
             <trans-unit id="1375913333051334272">
                 <source xml:space="preserve"> Timestamp </source>
@@ -87,19 +87,19 @@
             </trans-unit>
             <trans-unit id="1386306711019304612">
                 <source xml:space="preserve">Input</source>
-                <target xml:space="preserve">输入</target>
+                <target xml:space="preserve">輸入</target>
             </trans-unit>
             <trans-unit id="140014747543856969">
                 <source xml:space="preserve">Go to &quot;<x equiv-text="{{ x }}" id="INTERPOLATION"/>&quot;</source>
-                <target xml:space="preserve">打开&quot;<x equiv-text="{{ x }}" id="INTERPOLATION"/>&quot;</target>
+                <target xml:space="preserve">打開&quot;<x equiv-text="{{ x }}" id="INTERPOLATION"/>&quot;</target>
             </trans-unit>
             <trans-unit id="1412642353264167000">
                 <source xml:space="preserve"> Mining </source>
-                <target xml:space="preserve"> 挖矿 </target>
+                <target xml:space="preserve"> 挖礦 </target>
             </trans-unit>
             <trans-unit id="146442697456175258">
                 <source xml:space="preserve">Data</source>
-                <target xml:space="preserve">数据</target>
+                <target xml:space="preserve">數據</target>
             </trans-unit>
             <trans-unit id="1482935196707293820">
                 <source xml:space="preserve"> Treasury Transactions </source>

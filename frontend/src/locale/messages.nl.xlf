@@ -279,7 +279,7 @@
             </trans-unit>
             <trans-unit id="2238078017374559466">
                 <source xml:space="preserve">Pools Luck</source>
-                <target xml:space="preserve">Pools Luck</target>
+                <target xml:space="preserve">Pools Geluk</target>
             </trans-unit>
             <trans-unit id="2256671562401574389">
                 <source xml:space="preserve">blocks earlier</source>
@@ -407,7 +407,7 @@
             </trans-unit>
             <trans-unit id="2687200647259832044">
                 <source xml:space="preserve"> Avg Block Fee (1m) </source>
-                <target xml:space="preserve"> Gemiddelde blokkosten (1m) </target>
+                <target xml:space="preserve"> Gemiddelde blokvergoeding (1m) </target>
             </trans-unit>
             <trans-unit id="2713682146203031534">
                 <source xml:space="preserve">Amount being paid to miners in the past 144 blocks</source>
@@ -567,7 +567,7 @@
             </trans-unit>
             <trans-unit id="3316413479857864182">
                 <source xml:space="preserve">Block Fees</source>
-                <target xml:space="preserve">Blokkosten</target>
+                <target xml:space="preserve">Blokvergoeding</target>
             </trans-unit>
             <trans-unit id="3320061433231160997">
                 <source xml:space="preserve">Actual Block</source>
@@ -683,7 +683,7 @@
             </trans-unit>
             <trans-unit id="3687375115991989307">
                 <source xml:space="preserve">Avg Block Fees</source>
-                <target xml:space="preserve">Gemiddelde blokkosten</target>
+                <target xml:space="preserve">Gemiddelde blokvergoeding</target>
             </trans-unit>
             <trans-unit id="3694137827245006433">
                 <source xml:space="preserve"> Unsupported or invalid address </source>
@@ -735,7 +735,7 @@
             </trans-unit>
             <trans-unit id="3935190348395891735">
                 <source xml:space="preserve">Block Health</source>
-                <target xml:space="preserve">Blokstatus</target>
+                <target xml:space="preserve">Blok gezondheid</target>
             </trans-unit>
             <trans-unit id="3935295557063521643">
                 <source xml:space="preserve"> Difficulty Adjustment
@@ -780,7 +780,7 @@
             </trans-unit>
             <trans-unit id="41545303ec98792b738d6237adbd1f3b54a22196">
                 <source xml:space="preserve">Block Fees Vs Subsidy</source>
-                <target xml:space="preserve">Blokkosten versus subsidie</target>
+                <target xml:space="preserve">Blokvergoeding versus subsidie</target>
             </trans-unit>
             <trans-unit id="4199596567553695595">
                 <source xml:space="preserve">fee</source>
@@ -1045,7 +1045,7 @@
             </trans-unit>
             <trans-unit id="5159814115056353668">
                 <source xml:space="preserve">Addresses</source>
-                <target xml:space="preserve">adressen</target>
+                <target xml:space="preserve">Adressen</target>
             </trans-unit>
             <trans-unit id="5162799172921290449">
                 <source xml:space="preserve">Fiat</source>
@@ -1490,7 +1490,7 @@
             </trans-unit>
             <trans-unit id="6c453b11fd7bd159ae30bc381f367bc736d86909">
                 <source xml:space="preserve">Block Fees</source>
-                <target xml:space="preserve">Blok-kosten</target>
+                <target xml:space="preserve">Blokvergoeding</target>
             </trans-unit>
             <trans-unit id="7010418150749748430">
                 <source xml:space="preserve">Incoming Transactions</source>
@@ -1650,7 +1650,7 @@
             </trans-unit>
             <trans-unit id="7944704425911956229">
                 <source xml:space="preserve"> Avg Block Fee (24h) </source>
-                <target xml:space="preserve"> Gem blok-kosten (24 uur) </target>
+                <target xml:space="preserve"> Gem blokvergoeding (24 uur) </target>
             </trans-unit>
             <trans-unit id="7989584202803202902">
                 <source xml:space="preserve">Expected</source>
