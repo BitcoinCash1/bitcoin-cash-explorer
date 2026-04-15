@@ -10,18 +10,13 @@ export interface OptimizedMempoolStats {
 }
 
 export interface DifficultyAdjustment {
-  progressPercent: number;
-  difficultyChange: number;
-  estimatedRetargetDate: number;
-  remainingBlocks: number;
-  remainingTime: number;
-  previousRetarget: number;
-  previousTime: number;
-  nextRetargetHeight: number;
+  scheduleOffsetSeconds: number;
+  difficultyDriftPercent: number;
+  currentBits: string;
+  nextBits: string;
   timeAvg: number;
   adjustedTimeAvg: number;
   timeOffset: number;
-  expectedBlocks: number;
 }
 
 export interface AddressInformation {

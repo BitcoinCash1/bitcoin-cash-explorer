@@ -39,75 +39,46 @@
         class="difficulty-adjustment-container"
         *ngIf="
           (isLoadingWebSocket$ | async) === false &&
-            (difficultyEpoch$ | async) as epochData;
+            (asertStatus$ | async) as asert;
           else loadingDifficulty
         "
       >
-        <div class="epoch-progress">
-          <svg
-            #epochSvg
-            class="epoch-blocks"
-            height="22px"
-            width="100%"
-            viewBox="0 0 224 9"
-            shape-rendering="crispEdges"
-            preserveAspectRatio="none"
-          >
-            <defs>
-              <linearGradient
-                id="diff-gradient"
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="0%"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop offset="0%" stop-color="var(--primary)" />
-                <stop offset="100%" stop-color="var(--mainnet-alt)" />
-              </linearGradient>
-              <linearGradient
-                id="diff-hover-gradient"
-                x1="0%"
-                y1="0%"
-                x2="100%"
-                y2="0%"
-                gradientUnits="userSpaceOnUse"
-              >
-                <stop offset="0%" stop-color="#2486eb" />
-                <stop offset="100%" stop-color="#ae6af7" />
-              </linearGradient>
-            </defs>
-            <rect
-              *ngFor="let rect of shapes"
-              [attr.x]="rect.x"
-              [attr.y]="rect.y"
-              [attr.width]="rect.w"
-              [attr.height]="rect.h"
-              class="rect {{ rect.status }}"
-              [class.hover]="
-                hoverSection && rect.status === hoverSection.status
-              "
-              (pointerover)="onHover($event, rect)"
-              (pointerout)="onBlur()"
+        <div class="schedule-bar-container">
+          <div class="schedule-bar">
+            <div class="schedule-center-mark"></div>
+            <div
+              class="schedule-fill"
+              [ngClass]="{
+                ahead: asert.barOffsetPercent > 0,
+                behind: asert.barOffsetPercent < 0,
+              }"
+              [ngStyle]="{
+                left:
+                  asert.barOffsetPercent >= 0
+                    ? '50%'
+                    : 50 + asert.barOffsetPercent / 2 + '%',
+                width:
+                  (asert.barOffsetPercent >= 0
+                    ? asert.barOffsetPercent / 2
+                    : -asert.barOffsetPercent / 2) + '%',
+              }"
+            ></div>
+          </div>
+          <div class="schedule-bar-labels">
+            <span class="label-behind" i18n="difficulty-box.behind"
+              >Behind</span
             >
-              <animate
-                *ngIf="rect.status === 'next'"
-                attributeType="XML"
-                attributeName="fill"
-                [attr.values]="
-                  '#fff;' + (rect.expected ? '#D81B60' : '#2d3348') + ';#fff'
-                "
-                dur="2s"
-                repeatCount="indefinite"
-              />
-            </rect>
-          </svg>
+            <span class="label-on-time" i18n="difficulty-box.on-time"
+              >On time</span
+            >
+            <span class="label-ahead" i18n="difficulty-box.ahead">Ahead</span>
+          </div>
         </div>
         <div class="difficulty-stats">
           <div class="item">
             <div class="card-text">
               ~<app-time
-                [time]="epochData.timeAvg / 1000"
+                [time]="asert.timeAvg / 1000"
                 [fractionDigits]="1"
               ></app-time>
             </div>
@@ -118,63 +89,48 @@
           <div class="item">
             <div
               class="card-text bigger"
-              [ngStyle]="{ color: epochData.colorAdjustments }"
+              [ngStyle]="{ color: asert.colorDrift }"
             >
-              <span *ngIf="epochData.change > 0; else arrowDownDifficulty">
+              <span
+                *ngIf="asert.difficultyDriftPercent > 0; else arrowDownDrift"
+              >
                 <fa-icon
                   class="retarget-sign"
                   [icon]="['fas', 'caret-up']"
                   [fixedWidth]="true"
                 ></fa-icon>
               </span>
-              <ng-template #arrowDownDifficulty>
+              <ng-template #arrowDownDrift>
                 <fa-icon
                   class="retarget-sign"
                   [icon]="['fas', 'caret-down']"
                   [fixedWidth]="true"
                 ></fa-icon>
               </ng-template>
-              {{ epochData.change | absolute | number: "1.2-2" }}
+              {{ asert.difficultyDriftPercent | absolute | number: "1.2-4" }}
               <span class="symbol">%</span>
             </div>
-            <div class="symbol">
-              <span i18n="difficulty-box.previous">Previous</span>:
-              <span [ngStyle]="{ color: epochData.colorPreviousAdjustments }">
-                <span
-                  *ngIf="
-                    epochData.previousRetarget > 0;
-                    else arrowDownPreviousDifficulty
-                  "
-                >
-                  <fa-icon
-                    class="previous-retarget-sign"
-                    [icon]="['fas', 'caret-up']"
-                    [fixedWidth]="true"
-                  ></fa-icon>
-                </span>
-                <ng-template #arrowDownPreviousDifficulty>
-                  <fa-icon
-                    class="previous-retarget-sign"
-                    [icon]="['fas', 'caret-down']"
-                    [fixedWidth]="true"
-                  ></fa-icon>
-                </ng-template>
-                {{ epochData.previousRetarget | absolute | number: "1.2-2" }}
-              </span>
-              %
+            <div class="symbol" i18n="difficulty-box.difficulty-drift">
+              Difficulty drift
             </div>
           </div>
           <div class="item">
             <div class="card-text">
-              <app-time
-                kind="until"
-                [time]="epochData.estimatedRetargetDate"
-                [fastRender]="true"
-                [precision]="1"
-              ></app-time>
+              <span *ngIf="asert.scheduleOffsetMinutes >= 0">+</span
+              >{{ asert.scheduleOffsetMinutes | number: "1.0-0" }}
+              <span class="symbol" i18n="difficulty-box.minutes">min</span>
             </div>
             <div class="symbol">
-              {{ epochData.retargetDateString }}
+              <span
+                *ngIf="asert.scheduleOffsetSeconds >= 0"
+                i18n="difficulty-box.ahead-of-schedule"
+                >ahead of schedule</span
+              >
+              <span
+                *ngIf="asert.scheduleOffsetSeconds < 0"
+                i18n="difficulty-box.behind-schedule"
+                >behind schedule</span
+              >
             </div>
           </div>
         </div>
@@ -189,7 +145,7 @@
       class="difficulty-adjustment-container halving"
       *ngIf="
         (isLoadingWebSocket$ | async) === false &&
-          (difficultyEpoch$ | async) as epochData;
+          (asertStatus$ | async) as asert;
         else loadingDifficulty
       "
     >
@@ -198,12 +154,11 @@
         <div
           class="remaining"
           [style]="{
-            left:
-              ((210000 - epochData.blocksUntilHalving) / 2100).toFixed(2) + '%',
+            left: ((210000 - asert.blocksUntilHalving) / 2100).toFixed(2) + '%',
           }"
         ></div>
         <div class="label">
-          {{ ((210000 - epochData.blocksUntilHalving) / 2100).toFixed(2) }}%
+          {{ ((210000 - asert.blocksUntilHalving) / 2100).toFixed(2) }}%
         </div>
       </div>
       <div class="difficulty-stats">
@@ -217,16 +172,16 @@
         </div>
         <div class="item">
           <div class="card-text">
-            {{ epochData.blocksUntilHalving | number }}
+            {{ asert.blocksUntilHalving | number }}
           </div>
           <div class="symbol">
             <span
-              *ngIf="epochData.blocksUntilHalving > 1"
+              *ngIf="asert.blocksUntilHalving > 1"
               i18n="shared.blocks-remaining"
               >Blocks remaining</span
             >
             <span
-              *ngIf="epochData.blocksUntilHalving === 1"
+              *ngIf="asert.blocksUntilHalving === 1"
               i18n="shared.block-remaining"
               >Block remaining</span
             >
@@ -238,15 +193,15 @@
             i18n-ngbTooltip="mining.average-fee"
             placement="bottom"
           >
-            <span>{{ epochData.timeUntilHalving | date }}</span>
+            <span>{{ asert.timeUntilHalving | date }}</span>
           </div>
           <div
             class="symbol"
-            *ngIf="epochData.blocksUntilHalving === 1; else approxTime"
+            *ngIf="asert.blocksUntilHalving === 1; else approxTime"
           >
             <app-time
               kind="until"
-              [time]="epochData.adjustedTimeAvg + now"
+              [time]="asert.adjustedTimeAvg + now"
               [fastRender]="false"
               [fixedRender]="true"
               [precision]="1"
@@ -257,7 +212,7 @@
             <div class="symbol">
               <app-time
                 kind="until"
-                [time]="epochData.timeUntilHalving"
+                [time]="asert.timeUntilHalving"
                 [fastRender]="false"
                 [fixedRender]="true"
                 [precision]="0"
@@ -273,8 +228,8 @@
 </ng-template>
 
 <ng-template #loadingDifficulty>
-  <div class="epoch-progress">
-    <div class="skeleton-loader"></div>
+  <div class="schedule-bar-container">
+    <div class="skeleton-loader" style="height: 22px"></div>
   </div>
   <div class="difficulty-skeleton loading-container">
     <div class="item">
@@ -297,14 +252,3 @@
     </div>
   </div>
 </ng-template>
-
-<app-difficulty-tooltip
-  *ngIf="
-    hoverSection &&
-    (isLoadingWebSocket$ | async) === false &&
-    (difficultyEpoch$ | async) as epochData
-  "
-  [cursorPosition]="tooltipPosition"
-  [status]="hoverSection.status"
-  [progress]="epochData"
-></app-difficulty-tooltip>

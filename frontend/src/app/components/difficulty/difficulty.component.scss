@@ -168,51 +168,67 @@
   white-space: nowrap;
 }
 
-.epoch-progress,
+.schedule-bar-container {
+  width: 100%;
+  margin-bottom: 12px;
+}
+
+.schedule-bar {
+  position: relative;
+  width: 100%;
+  height: 22px;
+  background: var(--secondary);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.schedule-center-mark {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  margin-left: -1px;
+  background: var(--transparent-fg);
+  z-index: 2;
+  opacity: 0.6;
+}
+
+.schedule-fill {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  z-index: 1;
+  transition:
+    left 0.3s ease,
+    width 0.3s ease;
+
+  &.ahead {
+    background: linear-gradient(to right, var(--primary), var(--green));
+  }
+  &.behind {
+    background: linear-gradient(to left, var(--red), var(--red));
+  }
+}
+
+.schedule-bar-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--transparent-fg);
+  margin-top: 2px;
+
+  .label-on-time {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
 .halving-progress {
   width: 100%;
   height: 22px;
   margin-bottom: 12px;
-}
-
-.epoch-blocks {
-  display: block;
-  width: 100%;
-  background: var(--secondary);
-
-  .rect {
-    fill: var(--secondary);
-
-    &.behind {
-      fill: var(--red);
-    }
-    &.mined {
-      fill: url(#diff-gradient);
-    }
-    &.ahead {
-      fill: var(--success);
-    }
-
-    &.hover {
-      fill: #0f5e5a;
-      &.behind {
-        fill: #e94d86;
-      }
-      &.mined {
-        fill: url(#diff-hover-gradient);
-      }
-      &.ahead {
-        fill: #29d951;
-      }
-    }
-  }
-}
-
-.blocks-ahead {
-  color: var(--green);
-}
-.blocks-behind {
-  color: var(--red);
 }
 
 .halving-progress {

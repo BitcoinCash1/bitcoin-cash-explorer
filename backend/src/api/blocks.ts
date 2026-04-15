@@ -46,9 +46,6 @@ class Blocks {
   private blockSummaries: BlockSummary[] = [];
   private currentBlockHeight = 0;
   private currentBits = 0;
-  private lastDifficultyAdjustmentTime = 0;
-  private previousDifficultyRetarget = 0;
-  private quarterEpochBlockTime: number | null = null;
   private newBlockCallbacks: ((
     block: BlockExtended,
     txIds: string[],
@@ -962,26 +959,18 @@ class Blocks {
       indexer.reindex(); // Make sure to index the skipped blocks #1619
     }
 
-    if (!this.lastDifficultyAdjustmentTime) {
+    // Initialize currentBits for historical difficulty indexing
+    if (!this.currentBits) {
       const blockchainInfo = await bitcoinClient.getBlockchainInfo();
-      this.updateTimerProgress(timer, 'got blockchain info for initial difficulty adjustment');
+      this.updateTimerProgress(timer, 'got blockchain info for initial bits');
       if (blockchainInfo.blocks === blockchainInfo.headers) {
         const heightDiff = blockHeightTip % 2016;
         const blockHash = await bitcoinApi.$getBlockHash(blockHeightTip - heightDiff);
-        this.updateTimerProgress(timer, 'got block hash for initial difficulty adjustment');
+        this.updateTimerProgress(timer, 'got block hash for initial bits');
         const block: IPublicApi.Block = await bitcoinApi.$getBlock(blockHash);
-        this.updateTimerProgress(timer, 'got block for initial difficulty adjustment');
-        this.lastDifficultyAdjustmentTime = block.timestamp;
+        this.updateTimerProgress(timer, 'got block for initial bits');
         this.currentBits = block.bits;
-
-        if (blockHeightTip >= 2016) {
-          const previousPeriodBlockHash = await bitcoinApi.$getBlockHash(blockHeightTip - heightDiff - 2016);
-          this.updateTimerProgress(timer, 'got previous block hash for initial difficulty adjustment');
-          const previousPeriodBlock: IPublicApi.Block = await bitcoinApi.$getBlock(previousPeriodBlockHash);
-          this.updateTimerProgress(timer, 'got previous block for initial difficulty adjustment');
-          this.previousDifficultyRetarget = calcBitsDifference(previousPeriodBlock.bits, block.bits);
-          logger.debug(`Initial difficulty adjustment data set.`);
-        }
+        logger.debug(`Initial currentBits set for historical indexing.`);
       } else {
         logger.debug(
           `Blockchain headers (${blockchainInfo.headers}) and blocks (${blockchainInfo.blocks}) not in sync. Waiting...`
@@ -989,19 +978,11 @@ class Blocks {
       }
     }
 
-    const heightChanged = lastBlockHeight !== this.currentBlockHeight;
-    // make sure to update the quarter epoch block time now if we won't do it inside the loop
-    if (this.currentBlockHeight >= blockHeightTip && (heightChanged || this.quarterEpochBlockTime == null)) {
-      await this.updateQuarterEpochBlockTime();
-    }
-
     while (this.currentBlockHeight < blockHeightTip) {
       if (this.currentBlockHeight === 0) {
         this.currentBlockHeight = blockHeightTip;
-        await this.updateQuarterEpochBlockTime();
       } else {
         this.currentBlockHeight++;
-        await this.updateQuarterEpochBlockTime();
         logger.debug(`New block found (#${this.currentBlockHeight})!`);
       }
 
@@ -1095,8 +1076,6 @@ class Blocks {
           this.updateTimerProgress(timer, `saved difficulty adjustment for ${this.currentBlockHeight}`);
         }
 
-        this.previousDifficultyRetarget = calcBitsDifference(this.currentBits, block.bits);
-        this.lastDifficultyAdjustmentTime = block.timestamp;
         this.currentBits = block.bits;
       }
 
@@ -1167,19 +1146,6 @@ class Blocks {
   private clearTimer(state): void {
     if (state.timer) {
       clearTimeout(state.timer);
-    }
-  }
-
-  private async updateQuarterEpochBlockTime(): Promise<void> {
-    if (this.currentBlockHeight >= 503) {
-      try {
-        const quarterEpochBlockHash = await bitcoinApi.$getBlockHash(this.currentBlockHeight - 503);
-        const quarterEpochBlock = await bitcoinApi.$getBlock(quarterEpochBlockHash);
-        this.quarterEpochBlockTime = quarterEpochBlock?.timestamp;
-      } catch (e) {
-        this.quarterEpochBlockTime = null;
-        logger.warn('failed to update last epoch block time: ' + (e instanceof Error ? e.message : e));
-      }
     }
   }
 
@@ -1559,18 +1525,6 @@ class Blocks {
     } else {
       return null;
     }
-  }
-
-  public getLastDifficultyAdjustmentTime(): number {
-    return this.lastDifficultyAdjustmentTime;
-  }
-
-  public getPreviousDifficultyRetarget(): number {
-    return this.previousDifficultyRetarget;
-  }
-
-  public getQuarterEpochBlockTime(): number | null {
-    return this.quarterEpochBlockTime;
   }
 
   public getCurrentBlockHeight(): number {

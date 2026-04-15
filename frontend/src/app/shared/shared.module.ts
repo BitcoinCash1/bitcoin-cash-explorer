@@ -148,7 +148,7 @@ import { ServerStatusComponent } from '@components/server-health/server-status.c
 import { FeesBoxComponent } from '@components/fees-box/fees-box.component';
 import { DifficultyComponent } from '@components/difficulty/difficulty.component';
 import { DifficultyTooltipComponent } from '@components/difficulty/difficulty-tooltip.component';
-import { DifficultyMiningComponent } from '@components/difficulty-mining/difficulty-mining.component';
+import { ChainStatsMiningComponent } from '@components/chain-stats-mining/chain-stats-mining.component';
 import { BalanceWidgetComponent } from '@components/balance-widget/balance-widget.component';
 import { AddressTransactionsWidgetComponent } from '@components/address-transactions-widget/address-transactions-widget.component';
 import { PushTransactionComponent } from '@components/push-transaction/push-transaction.component';
@@ -259,7 +259,7 @@ import { AddressConverterComponent } from '@components/address-converter/address
     ServerStatusComponent,
     FeesBoxComponent,
     DifficultyComponent,
-    DifficultyMiningComponent,
+    ChainStatsMiningComponent,
     DifficultyTooltipComponent,
     BalanceWidgetComponent,
     AddressTransactionsWidgetComponent,
@@ -397,7 +397,7 @@ import { AddressConverterComponent } from '@components/address-converter/address
     ServerStatusComponent,
     FeesBoxComponent,
     DifficultyComponent,
-    DifficultyMiningComponent,
+    ChainStatsMiningComponent,
     DifficultyTooltipComponent,
     BalanceWidgetComponent,
     AddressTransactionsWidgetComponent,

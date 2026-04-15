@@ -95,7 +95,7 @@ class WebsocketHandler {
       transactions: memPool.getLatestTransactions(),
       backendInfo: backendInfo.getBackendInfo(),
       loadingIndicators: loadingIndicators.getLoadingIndicators(),
-      da: da?.previousTime ? da : undefined,
+      da: da ?? undefined,
       fees: feeApi.getPreciseRecommendedFee(),
     });
   }
@@ -468,7 +468,7 @@ class WebsocketHandler {
     // update init data
     this.updateSocketDataFields({
       blocks: blocks.getBlocks(),
-      da: da?.previousTime ? da : undefined,
+      da: da ?? undefined,
     });
 
     for (const server of this.webSocketServers) {
@@ -566,7 +566,7 @@ class WebsocketHandler {
       'mempool-blocks': mBlocks,
       transactions: latestTransactions,
       loadingIndicators: loadingIndicators.getLoadingIndicators(),
-      da: da?.previousTime ? da : undefined,
+      da: da ?? undefined,
       fees: recommendedFees,
     };
     this.updateSocketDataFields(socketDataFields);
@@ -630,7 +630,7 @@ class WebsocketHandler {
           response['mempoolInfo'] = getCachedResponse('mempoolInfo', mempoolInfo);
           response['bytesPerSecond'] = getCachedResponse('bytesPerSecond', bytesPerSecond);
           response['transactions'] = getCachedResponse('transactions', latestTransactions);
-          if (da?.previousTime) {
+          if (da) {
             response['da'] = getCachedResponse('da', da);
           }
           response['fees'] = getCachedResponse('fees', recommendedFees);
@@ -935,7 +935,7 @@ class WebsocketHandler {
       blocks: [...blocks.getBlocks(), block].slice(-config.EXPLORER.INITIAL_BLOCKS_AMOUNT),
       'mempool-blocks': mBlocks,
       loadingIndicators: loadingIndicators.getLoadingIndicators(),
-      da: da?.previousTime ? da : undefined,
+      da: da ?? undefined,
       fees: fees,
     });
 
@@ -986,7 +986,7 @@ class WebsocketHandler {
           response['bytesPerSecond'] = getCachedResponse('bytesPerSecond', memPool.getBytesPerSecond());
           response['fees'] = getCachedResponse('fees', fees);
 
-          if (da?.previousTime) {
+          if (da) {
             response['da'] = getCachedResponse('da', da);
           }
         }
