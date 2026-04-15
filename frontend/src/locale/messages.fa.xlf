@@ -503,7 +503,7 @@
             </trans-unit>
             <trans-unit id="2986811974545371137">
                 <source xml:space="preserve">See mempool size (in MB) and transactions per second (in B/s) visualized over time.</source>
-                <target xml:space="preserve">دیدن اندازه ممپول (به MvB) و تراکنش بر ثانیه (به vB بر ثانیه) تصویرسازی‌شده در طول زمان.</target>
+                <target xml:space="preserve">دیدن اندازه ممپول (به MB) و تراکنش بر ثانیه (به B بر ثانیه) تصویرسازی‌شده در طول زمان.</target>
             </trans-unit>
             <trans-unit id="2991117117362614880">
                 <source xml:space="preserve"> Proof </source>
@@ -985,7 +985,7 @@
             </trans-unit>
             <trans-unit id="4865960060175644381">
                 <source xml:space="preserve">Transaction Bytes per second (B/s)</source>
-                <target xml:space="preserve">تراکنش vByte بر ثانیه (vB بر ثانیه)</target>
+                <target xml:space="preserve">تراکنش Byte بر ثانیه (B بر ثانیه)</target>
             </trans-unit>
             <trans-unit id="4895326106573044490">
                 <source xml:space="preserve">Documentation</source>
@@ -1389,7 +1389,7 @@
             </trans-unit>
             <trans-unit id="6641135694653212933">
                 <source xml:space="preserve">Mempool by Bytes (sat/Byte)</source>
-                <target xml:space="preserve">وضعیت ممپول به vByte (ساتوشی بر vByte)</target>
+                <target xml:space="preserve">وضعیت ممپول به Byte (ساتوشی بر Byte)</target>
             </trans-unit>
             <trans-unit id="6643831251715779218">
                 <source xml:space="preserve">Median fee</source>

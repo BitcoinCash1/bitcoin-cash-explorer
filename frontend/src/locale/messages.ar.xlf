@@ -503,7 +503,7 @@
             </trans-unit>
             <trans-unit id="2986811974545371137">
                 <source xml:space="preserve">See mempool size (in MB) and transactions per second (in B/s) visualized over time.</source>
-                <target xml:space="preserve">راجع حجم mempool (في MvB) والمعاملات في الثانية (في vB/s) التي تم تصورها مع مرور الوقت.</target>
+                <target xml:space="preserve">راجع حجم mempool (في MB) والمعاملات في الثانية (في B/s) التي تم تصورها مع مرور الوقت.</target>
             </trans-unit>
             <trans-unit id="2991117117362614880">
                 <source xml:space="preserve"> Proof </source>
@@ -587,7 +587,7 @@
             </trans-unit>
             <trans-unit id="3380799392226022892">
                 <source xml:space="preserve">Based on average native transaction of 140 Bytes</source>
-                <target xml:space="preserve">بناءً على متوسط معاملة native segwit التي يبلغ حجمها 140 ف بايت</target>
+                <target xml:space="preserve">بناءً على متوسط معاملة native التي يبلغ حجمها 140 ف بايت</target>
             </trans-unit>
             <trans-unit id="3381079415067175393">
                 <source xml:space="preserve">Get real-time status, addresses, fees, script info, and more for Bitcoin Cash<x equiv-text="seoDescription" id="PH"/> transaction with txid <x equiv-text="this.txId" id="PH_1"/>.</source>

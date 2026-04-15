@@ -503,7 +503,7 @@
             </trans-unit>
             <trans-unit id="2986811974545371137">
                 <source xml:space="preserve">See mempool size (in MB) and transactions per second (in B/s) visualized over time.</source>
-                <target xml:space="preserve">Se mempoolstorlek (i MvB) och transaktioner per sekund (i vB/s) visualiserade över tid.</target>
+                <target xml:space="preserve">Se mempoolstorlek (i MB) och transaktioner per sekund (i B/s) visualiserade över tid.</target>
             </trans-unit>
             <trans-unit id="2991117117362614880">
                 <source xml:space="preserve"> Proof </source>
@@ -587,7 +587,7 @@
             </trans-unit>
             <trans-unit id="3380799392226022892">
                 <source xml:space="preserve">Based on average native transaction of 140 Bytes</source>
-                <target xml:space="preserve">Baserat på en genomsnittlig native segwit-transaktion på 140 vBytes</target>
+                <target xml:space="preserve">Baserat på en genomsnittlig native segwit-transaktion på 140 Bytes</target>
             </trans-unit>
             <trans-unit id="3381079415067175393">
                 <source xml:space="preserve">Get real-time status, addresses, fees, script info, and more for Bitcoin Cash<x equiv-text="seoDescription" id="PH"/> transaction with txid <x equiv-text="this.txId" id="PH_1"/>.</source>
@@ -985,7 +985,7 @@
             </trans-unit>
             <trans-unit id="4865960060175644381">
                 <source xml:space="preserve">Transaction Bytes per second (B/s)</source>
-                <target xml:space="preserve">Transaktioner i vBytes per sekund (vB/s)</target>
+                <target xml:space="preserve">Transaktioner i Bytes per sekund (B/s)</target>
             </trans-unit>
             <trans-unit id="4895326106573044490">
                 <source xml:space="preserve">Documentation</source>
@@ -1021,7 +1021,7 @@
             </trans-unit>
             <trans-unit id="5033494112821505715">
                 <source xml:space="preserve">Only ~<x equiv-text="{{     medianFeeNeeded | feeRounding   }}" id="INTERPOLATION"/> sat/B was needed to get into this block</source>
-                <target xml:space="preserve">Endast ~<x equiv-text="{{ medianFeeNeeded | feeRounding }}" id="INTERPOLATION"/> sat/vB behövdes för att komma in i detta block</target>
+                <target xml:space="preserve">Endast ~<x equiv-text="{{ medianFeeNeeded | feeRounding }}" id="INTERPOLATION"/> sat/B behövdes för att komma in i detta block</target>
             </trans-unit>
             <trans-unit id="5063990330610553816">
                 <source xml:space="preserve">Marginal fee rate</source>
@@ -1389,7 +1389,7 @@
             </trans-unit>
             <trans-unit id="6641135694653212933">
                 <source xml:space="preserve">Mempool by Bytes (sat/Byte)</source>
-                <target xml:space="preserve">Mempool i vBytes (sat/vByte)</target>
+                <target xml:space="preserve">Mempool i Bytes (sat/Byte)</target>
             </trans-unit>
             <trans-unit id="6643831251715779218">
                 <source xml:space="preserve">Median fee</source>

@@ -503,7 +503,7 @@
             </trans-unit>
             <trans-unit id="2986811974545371137">
                 <source xml:space="preserve">See mempool size (in MB) and transactions per second (in B/s) visualized over time.</source>
-                <target xml:space="preserve">查看随时间变化的内存池大小（以 MvB 为单位）和每秒交易次数（以 vB/s 为单位）。</target>
+                <target xml:space="preserve">查看随时间变化的内存池大小（以 MB 为单位）和每秒交易次数（以 B/s 为单位）。</target>
             </trans-unit>
             <trans-unit id="2991117117362614880">
                 <source xml:space="preserve"> Proof </source>
@@ -587,7 +587,7 @@
             </trans-unit>
             <trans-unit id="3380799392226022892">
                 <source xml:space="preserve">Based on average native transaction of 140 Bytes</source>
-                <target xml:space="preserve">基于平均140字节的本地segwit交易</target>
+                <target xml:space="preserve">基于平均140字节的本地交易</target>
             </trans-unit>
             <trans-unit id="3381079415067175393">
                 <source xml:space="preserve">Get real-time status, addresses, fees, script info, and more for Bitcoin Cash<x equiv-text="seoDescription" id="PH"/> transaction with txid <x equiv-text="this.txId" id="PH_1"/>.</source>

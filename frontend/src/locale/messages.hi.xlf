@@ -985,7 +985,7 @@
             </trans-unit>
             <trans-unit id="4865960060175644381">
                 <source xml:space="preserve">Transaction Bytes per second (B/s)</source>
-                <target xml:space="preserve">लेनदेन vBytes प्रति सेकंड (vB/s)</target>
+                <target xml:space="preserve">लेनदेन Bytes प्रति सेकंड (B/s)</target>
             </trans-unit>
             <trans-unit id="4895326106573044490">
                 <source xml:space="preserve">Documentation</source>
@@ -1389,7 +1389,7 @@
             </trans-unit>
             <trans-unit id="6641135694653212933">
                 <source xml:space="preserve">Mempool by Bytes (sat/Byte)</source>
-                <target xml:space="preserve">vBytes द्वारा मेमपूल (sat/vByte)</target>
+                <target xml:space="preserve">Bytes द्वारा मेमपूल (sat/Byte)</target>
             </trans-unit>
             <trans-unit id="6643831251715779218">
                 <source xml:space="preserve">Median fee</source>
