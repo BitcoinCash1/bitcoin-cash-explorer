@@ -86,6 +86,8 @@ import {
   faTag,
   faCodeFork,
   faCode,
+  faPause,
+  faPlay,
 } from '@fortawesome/free-solid-svg-icons';
 import { InfiniteScrollModule } from 'ngx-infinite-scroll';
 import { MenuComponent } from '@components/menu/menu.component';
@@ -156,6 +158,7 @@ import { TestTransactionsComponent } from '@components/test-transactions/test-tr
 import { AmountShortenerPipe } from '@app/shared/pipes/amount-shortener.pipe';
 import { DifficultyAdjustmentsTable } from '@components/difficulty-adjustments-table/difficulty-adjustments-table.components';
 import { BlocksList } from '@components/blocks-list/blocks-list.component';
+import { RecentTransactionsList } from '@components/recent-transactions-list/recent-transactions-list.component';
 import { StaleList } from '@components/stale-list/stale-list.component';
 import { StratumList } from '@components/stratum/stratum-list/stratum-list.component';
 import { RewardStatsComponent } from '@components/reward-stats/reward-stats.component';
@@ -268,6 +271,7 @@ import { AddressConverterComponent } from '@components/address-converter/address
     AmountShortenerPipe,
     DifficultyAdjustmentsTable,
     BlocksList,
+    RecentTransactionsList,
     StaleList,
     StratumList,
     DataCyDirective,
@@ -406,6 +410,7 @@ import { AddressConverterComponent } from '@components/address-converter/address
     AmountShortenerPipe,
     DifficultyAdjustmentsTable,
     BlocksList,
+    RecentTransactionsList,
     StaleList,
     StratumList,
     DataCyDirective,
@@ -531,5 +536,7 @@ export class SharedModule {
     library.addIcons(faTag);
     library.addIcons(faCodeFork);
     library.addIcons(faCode);
+    library.addIcons(faPause);
+    library.addIcons(faPlay);
   }
 }

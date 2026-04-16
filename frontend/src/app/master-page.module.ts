@@ -10,6 +10,7 @@ import { PushTransactionComponent } from '@components/push-transaction/push-tran
 import { TestTransactionsComponent } from '@components/test-transactions/test-transactions.component';
 import { CalculatorComponent } from '@components/calculator/calculator.component';
 import { BlocksList } from '@components/blocks-list/blocks-list.component';
+import { RecentTransactionsList } from '@components/recent-transactions-list/recent-transactions-list.component';
 import { SpecialBlocksComponent } from '@components/special-blocks/special-blocks.component';
 import { StaleList } from '@components/stale-list/stale-list.component';
 import { StratumList } from '@components/stratum/stratum-list/stratum-list.component';
@@ -70,6 +71,10 @@ const routes: Routes = [
       {
         path: 'blocks',
         redirectTo: 'blocks/1',
+      },
+      {
+        path: 'txs',
+        component: RecentTransactionsList,
       },
       ...(browserWindowEnv.STRATUM_ENABLED
         ? [

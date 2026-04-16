@@ -29,7 +29,6 @@ import {
   AuditStatus,
   BlockExtended,
   OptimizedMempoolStats,
-  TransactionStripped,
 } from '@interfaces/node-api.interface';
 import { MempoolInfo } from '@interfaces/websocket.interface';
 import { ApiService } from '@app/services/api.service';
@@ -73,7 +72,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
   mempoolInfoData$: Observable<MempoolInfoData>;
   mempoolLoadingStatus$: Observable<number>;
   bytesPerSecondLimit = 1667;
-  transactions$: Observable<TransactionStripped[]>;
   blocks$: Observable<BlockExtended[]>;
   latestBlockHeight: number;
   mempoolStats$: Observable<MempoolStatsData>;
@@ -241,8 +239,6 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
         };
       })
     );
-
-    this.transactions$ = this.stateService.transactions$;
 
     this.blocks$ = this.stateService.blocks$.pipe(
       tap((blocks) => {
