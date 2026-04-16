@@ -273,6 +273,10 @@
                 <source xml:space="preserve">Winning</source>
                 <target xml:space="preserve">Winnend</target>
             </trans-unit>
+            <trans-unit id="2216215688309811676">
+                <source xml:space="preserve"> Size </source>
+                <target xml:space="preserve"> Grootte </target>
+            </trans-unit>
             <trans-unit id="2220751863806291374">
                 <source xml:space="preserve">Backend is synchronizing</source>
                 <target xml:space="preserve">Backend is aan het synchroniseren</target>
@@ -403,7 +407,7 @@
             </trans-unit>
             <trans-unit id="2652050456833268583">
                 <source xml:space="preserve"> Recent Transactions </source>
-                <target xml:space="preserve"> recente transacties </target>
+                <target xml:space="preserve"> Recente transacties </target>
             </trans-unit>
             <trans-unit id="2664726858804341447">
                 <source xml:space="preserve">On time</source>
@@ -416,6 +420,10 @@
             <trans-unit id="2687200647259832044">
                 <source xml:space="preserve"> Avg Block Fee (1m) </source>
                 <target xml:space="preserve"> Gemiddelde blokvergoeding (1m) </target>
+            </trans-unit>
+            <trans-unit id="2697417327357066096">
+                <source xml:space="preserve">Recent Transactions</source>
+                <target xml:space="preserve">Recente transacties</target>
             </trans-unit>
             <trans-unit id="2713682146203031534">
                 <source xml:space="preserve">Amount being paid to miners in the past 144 blocks</source>
@@ -782,6 +790,10 @@
                 <source xml:space="preserve">Low Priority</source>
                 <target xml:space="preserve">Lage Prioriteit</target>
             </trans-unit>
+            <trans-unit id="4073285970817086172">
+                <source xml:space="preserve">Pause/Resume</source>
+                <target xml:space="preserve">Pauze/Hervatten</target>
+            </trans-unit>
             <trans-unit id="4134775753251919633">
                 <source xml:space="preserve">Flow</source>
                 <target xml:space="preserve">Stroom</target>
@@ -821,6 +833,10 @@
             <trans-unit id="431123319361631379">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> confirmations</source>
                 <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> bevestigingen</target>
+            </trans-unit>
+            <trans-unit id="4316256994048337845">
+                <source xml:space="preserve"><x equiv-text="{{ bufferedCount$ | async }}" id="INTERPOLATION"/> new transactions</source>
+                <target xml:space="preserve"><x equiv-text="{{ bufferedCount$ | async }}" id="INTERPOLATION"/> nieuwe transacties</target>
             </trans-unit>
             <trans-unit id="4333425760770516639">
                 <source xml:space="preserve">What is a mempool explorer?</source>
@@ -1676,6 +1692,10 @@
                 <source xml:space="preserve">Tags</source>
                 <target xml:space="preserve">Tags</target>
             </trans-unit>
+            <trans-unit id="7890823441105218329">
+                <source xml:space="preserve">Pause/Resume</source>
+                <target xml:space="preserve">Pauze/Hervatten</target>
+            </trans-unit>
             <trans-unit id="7909125979002999098">
                 <source xml:space="preserve"> Pools Count </source>
                 <target xml:space="preserve"> Aantal pools </target>
@@ -1691,6 +1711,10 @@
             <trans-unit id="7944704425911956229">
                 <source xml:space="preserve"> Avg Block Fee (24h) </source>
                 <target xml:space="preserve"> Gem blokvergoeding (24 uur) </target>
+            </trans-unit>
+            <trans-unit id="7981454540995527470">
+                <source xml:space="preserve">1 new transaction</source>
+                <target xml:space="preserve">1 nieuwe transactie</target>
             </trans-unit>
             <trans-unit id="7989584202803202902">
                 <source xml:space="preserve">Expected</source>
@@ -2318,6 +2342,22 @@
                 <source xml:space="preserve">Pools Historical Dominance</source>
                 <target xml:space="preserve">Pools Historische Dominantie</target>
             </trans-unit>
+            <trans-unit id="ngb.datepicker.next-month">
+                <source xml:space="preserve">Next month</source>
+                <target xml:space="preserve">Volgende maand</target>
+            </trans-unit>
+            <trans-unit id="ngb.datepicker.previous-month">
+                <source xml:space="preserve">Previous month</source>
+                <target xml:space="preserve">Vorige maand</target>
+            </trans-unit>
+            <trans-unit id="ngb.datepicker.select-month">
+                <source xml:space="preserve">Select month</source>
+                <target xml:space="preserve">Selecteer maand</target>
+            </trans-unit>
+            <trans-unit id="ngb.datepicker.select-year">
+                <source xml:space="preserve">Select year</source>
+                <target xml:space="preserve">Selecteer jaar</target>
+            </trans-unit>
             <trans-unit id="ngb.pagination.first">
                 <source xml:space="preserve">««</source>
                 <target xml:space="preserve">««</target>
@@ -2353,6 +2393,10 @@
             <trans-unit id="page.stale-chain-tips">
                 <source xml:space="preserve">Stale Chain Tips</source>
                 <target xml:space="preserve">Rotte ketentips</target>
+            </trans-unit>
+            <trans-unit id="recent-transactions-title">
+                <source xml:space="preserve">Recent Transactions</source>
+                <target xml:space="preserve">Recente Transacties</target>
             </trans-unit>
             <trans-unit id="time-before">
                 <source xml:space="preserve"><x equiv-text="dateStrings.i18nYear" id="DATE"/> before</source>

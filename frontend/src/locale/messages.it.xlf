@@ -273,6 +273,10 @@
                 <source xml:space="preserve">Winning</source>
                 <target xml:space="preserve">Vincente</target>
             </trans-unit>
+            <trans-unit id="2216215688309811676">
+                <source xml:space="preserve"> Size </source>
+                <target xml:space="preserve"> Size </target>
+            </trans-unit>
             <trans-unit id="2220751863806291374">
                 <source xml:space="preserve">Backend is synchronizing</source>
                 <target xml:space="preserve">Il backend sta sincronizzando</target>
@@ -416,6 +420,10 @@
             <trans-unit id="2687200647259832044">
                 <source xml:space="preserve"> Avg Block Fee (1m) </source>
                 <target xml:space="preserve"> Commissioni Medie Blocco (1m) </target>
+            </trans-unit>
+            <trans-unit id="2697417327357066096">
+                <source xml:space="preserve">Recent Transactions</source>
+                <target xml:space="preserve">Recent Transactions</target>
             </trans-unit>
             <trans-unit id="2713682146203031534">
                 <source xml:space="preserve">Amount being paid to miners in the past 144 blocks</source>
@@ -782,6 +790,10 @@
                 <source xml:space="preserve">Low Priority</source>
                 <target xml:space="preserve">Bassa Priorità</target>
             </trans-unit>
+            <trans-unit id="4073285970817086172">
+                <source xml:space="preserve">Pause/Resume</source>
+                <target xml:space="preserve">Pause/Resume</target>
+            </trans-unit>
             <trans-unit id="4134775753251919633">
                 <source xml:space="preserve">Flow</source>
                 <target xml:space="preserve">Flusso</target>
@@ -821,6 +833,10 @@
             <trans-unit id="431123319361631379">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> confirmations</source>
                 <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> conferme</target>
+            </trans-unit>
+            <trans-unit id="4316256994048337845">
+                <source xml:space="preserve"><x equiv-text="{{ bufferedCount$ | async }}" id="INTERPOLATION"/> new transactions</source>
+                <target xml:space="preserve"><x equiv-text="{{ bufferedCount$ | async }}" id="INTERPOLATION"/> new transactions</target>
             </trans-unit>
             <trans-unit id="4333425760770516639">
                 <source xml:space="preserve">What is a mempool explorer?</source>
@@ -1678,6 +1694,10 @@
                 <source xml:space="preserve">Tags</source>
                 <target xml:space="preserve">Tag</target>
             </trans-unit>
+            <trans-unit id="7890823441105218329">
+                <source xml:space="preserve">Pause/Resume</source>
+                <target xml:space="preserve">Pause/Resume</target>
+            </trans-unit>
             <trans-unit id="7909125979002999098">
                 <source xml:space="preserve"> Pools Count </source>
                 <target xml:space="preserve"> Conteggio delle Pool </target>
@@ -1693,6 +1713,10 @@
             <trans-unit id="7944704425911956229">
                 <source xml:space="preserve"> Avg Block Fee (24h) </source>
                 <target xml:space="preserve"> Commissioni Medie Blocco (24h) </target>
+            </trans-unit>
+            <trans-unit id="7981454540995527470">
+                <source xml:space="preserve">1 new transaction</source>
+                <target xml:space="preserve">1 new transaction</target>
             </trans-unit>
             <trans-unit id="7989584202803202902">
                 <source xml:space="preserve">Expected</source>
@@ -2293,6 +2317,10 @@
                 <source xml:space="preserve">Preview a transaction to the Bitcoin<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> network using the transaction&apos;s raw hex data.</source>
                 <target xml:space="preserve">Visualizza l&apos;anteprima di una transazione sulla rete Bitcoin<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> utilizzando i dati hex grezzi della transazione.</target>
             </trans-unit>
+            <trans-unit id="meta.description.recent-transactions">
+                <source xml:space="preserve">See the most recent transactions on the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> network, updated in real-time.</source>
+                <target xml:space="preserve">See the most recent transactions on the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> network, updated in real-time.</target>
+            </trans-unit>
             <trans-unit id="meta.description.stale-chain-tips">
                 <source xml:space="preserve">See the most recent stale chain tips on the Bitcoin<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network.</source>
                 <target xml:space="preserve">Visualizza i più recenti rami di blockchain scartati sul network Bitcoin<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/>:</target>
@@ -2320,6 +2348,22 @@
             <trans-unit id="mining.pools-historical-dominance">
                 <source xml:space="preserve">Pools Historical Dominance</source>
                 <target xml:space="preserve">Predominanza Storica delle Pool</target>
+            </trans-unit>
+            <trans-unit id="ngb.datepicker.next-month">
+                <source xml:space="preserve">Next month</source>
+                <target xml:space="preserve">Next month</target>
+            </trans-unit>
+            <trans-unit id="ngb.datepicker.previous-month">
+                <source xml:space="preserve">Previous month</source>
+                <target xml:space="preserve">Previous month</target>
+            </trans-unit>
+            <trans-unit id="ngb.datepicker.select-month">
+                <source xml:space="preserve">Select month</source>
+                <target xml:space="preserve">Select month</target>
+            </trans-unit>
+            <trans-unit id="ngb.datepicker.select-year">
+                <source xml:space="preserve">Select year</source>
+                <target xml:space="preserve">Select year</target>
             </trans-unit>
             <trans-unit id="ngb.pagination.first">
                 <source xml:space="preserve">««</source>
@@ -2356,6 +2400,10 @@
             <trans-unit id="page.stale-chain-tips">
                 <source xml:space="preserve">Stale Chain Tips</source>
                 <target xml:space="preserve">Rami di blockchain scartati</target>
+            </trans-unit>
+            <trans-unit id="recent-transactions-title">
+                <source xml:space="preserve">Recent Transactions</source>
+                <target xml:space="preserve">Recent Transactions</target>
             </trans-unit>
             <trans-unit id="time-before">
                 <source xml:space="preserve"><x equiv-text="dateStrings.i18nYear" id="DATE"/> before</source>
