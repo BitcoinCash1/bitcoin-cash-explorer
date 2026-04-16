@@ -1,15 +1,25 @@
-import { formatCurrency, getCurrencySymbol } from '@angular/common';
-import { Inject, LOCALE_ID, Pipe, PipeTransform } from '@angular/core';
+import {
+  Inject,
+  LOCALE_ID,
+  OnDestroy,
+  Pipe,
+  PipeTransform,
+} from '@angular/core';
 import { Subscription } from 'rxjs';
 import { StateService } from '@app/services/state.service';
+
+// Below this threshold, show 2 decimal places even when digitsInfo requests 0,
+// so small fiat amounts (e.g. $3.50) remain readable instead of rounding to $4.
+export const SMALL_FIAT_THRESHOLD = 1000;
 
 @Pipe({
   name: 'fiatCurrency',
   standalone: false,
 })
-export class FiatCurrencyPipe implements PipeTransform {
+export class FiatCurrencyPipe implements PipeTransform, OnDestroy {
   fiatSubscription: Subscription;
   currency: string;
+  private currencyMaxFracCache: Record<string, number> = {};
 
   constructor(
     @Inject(LOCALE_ID) public locale: string,
@@ -22,34 +32,47 @@ export class FiatCurrencyPipe implements PipeTransform {
     );
   }
 
+  ngOnDestroy(): void {
+    this.fiatSubscription.unsubscribe();
+  }
+
+  private getCurrencyMaxFrac(currency: string): number {
+    if (!(currency in this.currencyMaxFracCache)) {
+      this.currencyMaxFracCache[currency] =
+        new Intl.NumberFormat(this.locale, {
+          style: 'currency',
+          currency,
+        }).resolvedOptions().maximumFractionDigits ?? Number.POSITIVE_INFINITY;
+    }
+    return this.currencyMaxFracCache[currency];
+  }
+
   transform(num: number, ...args: any[]): unknown {
-    const digitsInfo = args[0] || '1.2-2';
+    const digitsInfo = args[0];
     const currency = args[1] || this.currency || 'USD';
 
-    // Parse digitsInfo (format: {minIntegerDigits}.{minFractionDigits}-{maxFractionDigits})
-    const digitsMatch = digitsInfo.match(/^(\d+)\.(\d+)-(\d+)$/);
-    let minFractionDigits = 2;
-    let maxFractionDigits = 2;
+    const options: Intl.NumberFormatOptions = { style: 'currency', currency };
 
-    if (digitsMatch) {
-      minFractionDigits = parseInt(digitsMatch[2], 10);
-      maxFractionDigits = parseInt(digitsMatch[3], 10);
+    if (digitsInfo) {
+      const match = digitsInfo.match(/^(\d+)\.(\d+)-(\d+)$/);
+      if (match) {
+        const minInt = parseInt(match[1], 10);
+        const minFrac = parseInt(match[2], 10);
+        const maxFrac = parseInt(match[3], 10);
+        const currencyMaxFrac = this.getCurrencyMaxFrac(currency);
+        if (minInt > 1) {
+          options.minimumIntegerDigits = minInt;
+        }
+        if (maxFrac === 0 && Math.abs(num) < SMALL_FIAT_THRESHOLD) {
+          options.minimumFractionDigits = Math.min(2, currencyMaxFrac);
+          options.maximumFractionDigits = Math.min(2, currencyMaxFrac);
+        } else {
+          options.minimumFractionDigits = Math.min(minFrac, currencyMaxFrac);
+          options.maximumFractionDigits = Math.min(maxFrac, currencyMaxFrac);
+        }
+      }
     }
 
-    if (Math.abs(num) >= 1000) {
-      return new Intl.NumberFormat(this.locale, {
-        style: 'currency',
-        currency,
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(num);
-    } else {
-      return new Intl.NumberFormat(this.locale, {
-        style: 'currency',
-        currency,
-        minimumFractionDigits: minFractionDigits,
-        maximumFractionDigits: maxFractionDigits,
-      }).format(num);
-    }
+    return new Intl.NumberFormat(this.locale, options).format(num);
   }
 }
