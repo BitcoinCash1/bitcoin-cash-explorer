@@ -179,7 +179,7 @@ export class PoolRankingComponent implements OnInit {
           pool.name + (isMobile() || this.widget ? `` : ` (${pool.share}%)`),
         label: {
           overflow: 'none',
-          color: 'var(--tooltip-grey)',
+          color: 'var(--grey)',
           alignTo: 'edge',
           edgeDistance: edgeDistance,
         },
@@ -233,7 +233,7 @@ export class PoolRankingComponent implements OnInit {
       name: $localize`Other (${percentage})`,
       label: {
         overflow: 'none',
-        color: 'var(--tooltip-grey)',
+        color: 'var(--grey)',
         alignTo: 'edge',
         edgeDistance: edgeDistance,
       },
