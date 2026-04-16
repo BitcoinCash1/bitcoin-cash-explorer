@@ -3,6 +3,11 @@ import { CommonModule } from '@angular/common';
 import {
   NgbCollapseModule,
   NgbTypeaheadModule,
+  NgbNavModule,
+  NgbTooltipModule,
+  NgbPaginationModule,
+  NgbDropdownModule,
+  NgbDatepickerModule,
 } from '@ng-bootstrap/ng-bootstrap';
 import {
   FontAwesomeModule,
@@ -86,6 +91,7 @@ import {
   faTag,
   faCodeFork,
   faCode,
+  faCalendar,
   faPause,
   faPlay,
 } from '@fortawesome/free-solid-svg-icons';
@@ -111,15 +117,9 @@ import { TimeComponent } from '@components/time/time.component';
 import { ClipboardComponent } from '@components/clipboard/clipboard.component';
 import { QrcodeComponent } from '@components/qrcode/qrcode.component';
 import { FiatComponent } from '@app/fiat/fiat.component';
-import {
-  NgbNavModule,
-  NgbTooltipModule,
-  NgbPaginationModule,
-  NgbDropdownModule,
-} from '@ng-bootstrap/ng-bootstrap';
 import { TxFeaturesComponent } from '@components/tx-features/tx-features.component';
 import { TxFeeRatingComponent } from '@components/tx-fee-rating/tx-fee-rating.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { LanguageSelectorComponent } from '@components/language-selector/language-selector.component';
 import { FiatSelectorComponent } from '@components/fiat-selector/fiat-selector.component';
 import { RateUnitSelectorComponent } from '@components/rate-unit-selector/rate-unit-selector.component';
@@ -321,6 +321,7 @@ import { AddressConverterComponent } from '@components/address-converter/address
   imports: [
     CommonModule,
     RouterModule,
+    FormsModule,
     ReactiveFormsModule,
     NgbNavModule,
     NgbTooltipModule,
@@ -328,6 +329,7 @@ import { AddressConverterComponent } from '@components/address-converter/address
     NgbTypeaheadModule,
     NgbDropdownModule,
     NgbCollapseModule,
+    NgbDatepickerModule,
     InfiniteScrollModule,
     FontAwesomeModule,
   ],
@@ -351,6 +353,7 @@ import { AddressConverterComponent } from '@components/address-converter/address
     NgbTypeaheadModule,
     NgbDropdownModule,
     NgbCollapseModule,
+    NgbDatepickerModule,
     InfiniteScrollModule,
     FontAwesomeModule,
     TimeComponent,
@@ -517,6 +520,7 @@ export class SharedModule {
     library.addIcons(faTimeline);
     library.addIcons(faCircleXmark);
     library.addIcons(faCalendarCheck);
+    library.addIcons(faCalendar);
     library.addIcons(faMoneyBillTrendUp);
     library.addIcons(faRobot);
     library.addIcons(faShareNodes);

@@ -415,7 +415,7 @@ class PricesRepository {
         `
         SELECT ${ApiPriceFields}
         FROM prices
-        WHERE UNIX_TIMESTAMP(time) < ?
+        WHERE UNIX_TIMESTAMP(time) <= ?
           AND USD >= 0
         ORDER BY time DESC
         LIMIT 1`,

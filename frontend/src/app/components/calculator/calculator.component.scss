@@ -28,3 +28,10 @@
 .row {
   margin: auto;
 }
+
+.form-control.disabled {
+  pointer-events: none;
+  color: var(--form-control-color);
+  background-color: var(--form-control-bg);
+  opacity: 0.9;
+}
