@@ -20,6 +20,7 @@ import {
   DataZoomComponent,
   VisualMapComponent,
   MarkLineComponent,
+  MarkPointComponent,
   GraphicComponent,
 } from 'echarts/components';
 import { SVGRenderer, CanvasRenderer } from 'echarts/renderers';
@@ -42,6 +43,7 @@ echarts.use([
   DataZoomComponent,
   VisualMapComponent,
   MarkLineComponent,
+  MarkPointComponent,
   LineChart,
   LinesChart,
   BarChart,

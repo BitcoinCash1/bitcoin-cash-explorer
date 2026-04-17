@@ -282,6 +282,9 @@
 .card-wrapper {
   .card {
     height: auto !important;
+    @media (min-width: 768px) {
+      height: 97% !important;
+    }
   }
   .card-body {
     display: flex;
@@ -290,9 +293,6 @@
     flex-direction: column;
     justify-content: space-around;
     padding: 22px 20px;
-  }
-  .less-padding {
-    padding: 20px 20px;
   }
 }
 

@@ -7,16 +7,14 @@ import {
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { StateService } from '@app/services/state.service';
-import {
-  getScheduleOffsetSeconds,
-  getDifficultyDriftPercent,
-} from '@app/shared/asert.utils';
+import { getDifficultyDriftPercent } from '@app/shared/asert.utils';
 
 interface AsertMiningStatus {
   difficultyDriftPercent: number;
   colorDrift: string;
-  scheduleOffsetMinutes: number;
-  scheduleOffsetSeconds: number;
+  diffChangePercent: number;
+  diffChangeBlocks: number;
+  colorDiffChange: string;
   blocksUntilHalving: number;
   timeUntilHalving: number;
   timeAvg: number;
@@ -59,12 +57,6 @@ export class ChainStatsMiningComponent implements OnInit {
           blocks[0]
         );
 
-        const scheduleOffsetSeconds = getScheduleOffsetSeconds(
-          latestBlock.height,
-          latestBlock.timestamp
-        );
-        const scheduleOffsetMinutes = scheduleOffsetSeconds / 60;
-
         const difficultyDriftPercent = getDifficultyDriftPercent(
           latestBlock.height,
           latestBlock.timestamp
@@ -77,6 +69,24 @@ export class ChainStatsMiningComponent implements OnInit {
           colorDrift = 'var(--red)';
         }
 
+        // Difficulty change over visible blocks
+        const sorted = [...blocks].sort((a, b) => a.height - b.height);
+        const oldestBlock = sorted[0];
+        const diffChangeBlocks = sorted.length;
+        let diffChangePercent = 0;
+        if (oldestBlock && oldestBlock.difficulty > 0) {
+          diffChangePercent =
+            ((latestBlock.difficulty - oldestBlock.difficulty) /
+              oldestBlock.difficulty) *
+            100;
+        }
+        let colorDiffChange = 'var(--transparent-fg)';
+        if (diffChangePercent > 0.001) {
+          colorDiffChange = 'var(--green)';
+        } else if (diffChangePercent < -0.001) {
+          colorDiffChange = 'var(--red)';
+        }
+
         this.blocksUntilHalving = 210000 - (maxHeight % 210000);
         this.timeUntilHalving =
           new Date().getTime() + this.blocksUntilHalving * 600000;
@@ -85,8 +95,9 @@ export class ChainStatsMiningComponent implements OnInit {
         return {
           difficultyDriftPercent,
           colorDrift,
-          scheduleOffsetMinutes,
-          scheduleOffsetSeconds,
+          diffChangePercent,
+          diffChangeBlocks,
+          colorDiffChange,
           blocksUntilHalving: this.blocksUntilHalving,
           timeUntilHalving: this.timeUntilHalving,
           timeAvg: da.timeAvg,

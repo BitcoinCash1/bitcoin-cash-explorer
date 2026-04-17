@@ -43,37 +43,7 @@
           else loadingDifficulty
         "
       >
-        <div class="schedule-bar-container">
-          <div class="schedule-bar">
-            <div class="schedule-center-mark"></div>
-            <div
-              class="schedule-fill"
-              [ngClass]="{
-                ahead: asert.barOffsetPercent > 0,
-                behind: asert.barOffsetPercent < 0,
-              }"
-              [ngStyle]="{
-                left:
-                  asert.barOffsetPercent >= 0
-                    ? '50%'
-                    : 50 + asert.barOffsetPercent / 2 + '%',
-                width:
-                  (asert.barOffsetPercent >= 0
-                    ? asert.barOffsetPercent / 2
-                    : -asert.barOffsetPercent / 2) + '%',
-              }"
-            ></div>
-          </div>
-          <div class="schedule-bar-labels">
-            <span class="label-behind" i18n="difficulty-box.behind"
-              >Behind</span
-            >
-            <span class="label-on-time" i18n="difficulty-box.on-time"
-              >On time</span
-            >
-            <span class="label-ahead" i18n="difficulty-box.ahead">Ahead</span>
-          </div>
-        </div>
+        <app-asert-deviation [data]="asertData"></app-asert-deviation>
         <div class="difficulty-stats">
           <div class="item">
             <div class="card-text">
@@ -115,22 +85,26 @@
             </div>
           </div>
           <div class="item">
-            <div class="card-text">
-              <span *ngIf="asert.scheduleOffsetMinutes >= 0">+</span
-              >{{ asert.scheduleOffsetMinutes | number: "1.0-0" }}
-              <span class="symbol" i18n="difficulty-box.minutes">min</span>
+            <div class="card-text" [ngStyle]="{ color: asert.colorDiffChange }">
+              <span *ngIf="asert.diffChangePercent > 0; else arrowDownChange">
+                <fa-icon
+                  class="retarget-sign"
+                  [icon]="['fas', 'caret-up']"
+                  [fixedWidth]="true"
+                ></fa-icon>
+              </span>
+              <ng-template #arrowDownChange>
+                <fa-icon
+                  class="retarget-sign"
+                  [icon]="['fas', 'caret-down']"
+                  [fixedWidth]="true"
+                ></fa-icon>
+              </ng-template>
+              {{ asert.diffChangePercent | absolute | number: "1.2-4" }}
+              <span class="symbol">%</span>
             </div>
-            <div class="symbol">
-              <span
-                *ngIf="asert.scheduleOffsetSeconds >= 0"
-                i18n="difficulty-box.ahead-of-schedule"
-                >ahead of schedule</span
-              >
-              <span
-                *ngIf="asert.scheduleOffsetSeconds < 0"
-                i18n="difficulty-box.behind-schedule"
-                >behind schedule</span
-              >
+            <div class="symbol" i18n="difficulty-box.difficulty-change">
+              Difficulty Δ ({{ asert.diffChangeBlocks }} blocks)
             </div>
           </div>
         </div>
