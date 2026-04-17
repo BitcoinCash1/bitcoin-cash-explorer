@@ -68,15 +68,16 @@ export class AsertDeviationGraphComponent implements OnChanges {
 
       yAxis: {
         type: 'value',
-        name: 'Δ offset (s)',
+        name: 'Δ schedule (s)',
         nameLocation: 'middle',
+        nameGap: 36,
         nameRotate: 90,
         nameTextStyle: {
           color: 'var(--transparent-fg)',
           fontSize: 9,
         },
         axisLabel: {
-          formatter: (v: number) => `${v > 0 ? '+' : ''}${v}s`,
+          formatter: (v: number) => this.formatAxisLabel(v),
           color: 'var(--transparent-fg)',
           fontSize: 9,
         },
@@ -97,17 +98,19 @@ export class AsertDeviationGraphComponent implements OnChanges {
           if (!params || !params[0]) {
             return '';
           }
-          const p = params[0];
-          const val = p.data as number;
-          const absVal = Math.abs(val);
-          const direction =
-            val >= 0
-              ? 'Gaining on schedule → difficulty increasing'
-              : 'Falling behind → difficulty decreasing';
+          const idx = params[0].dataIndex;
+          const dev = deviations[idx];
+          const absDev = Math.abs(dev);
+          const state =
+            dev > 0
+              ? '<span style="color:#ef4444">Gaining on schedule → difficulty increasing</span>'
+              : dev < 0
+                ? '<span style="color:#3b82f6">Falling behind → difficulty decreasing</span>'
+                : 'On schedule';
           return `
-            <strong>Block ${p.axisValue}</strong><br/>
-            Deviation: ${val >= 0 ? '+' : ''}${val}s (${this.formatDuration(absVal)})<br/>
-            <span style="opacity:0.65;font-size:10px">${direction}</span>
+            <strong>Block ${heights[idx]}</strong><br/>
+            Deviation: ${dev >= 0 ? '+' : ''}${dev}s (${this.formatDuration(absDev)})<br/>
+            ${state}
           `;
         },
       },
@@ -121,20 +124,15 @@ export class AsertDeviationGraphComponent implements OnChanges {
           symbol: 'none',
           lineStyle: {
             width: 2,
-            color: '#10b981',
+            color: this.buildGradient(deviations, '#ef4444', '#3b82f6', 1),
           },
           areaStyle: {
-            color: {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [
-                { offset: 0, color: 'rgba(16, 185, 129, 0.3)' },
-                { offset: 1, color: 'rgba(16, 185, 129, 0.02)' },
-              ],
-            },
+            color: this.buildGradient(
+              deviations,
+              'rgba(239,68,68,0.25)',
+              'rgba(59,130,246,0.25)',
+              0
+            ),
           },
           markLine: {
             silent: true,
@@ -157,15 +155,54 @@ export class AsertDeviationGraphComponent implements OnChanges {
   }
 
   private updateChart() {
-    const heights = this.data.map((d) => d.height);
-    const deviations = this.data.map((d) => d.deviation);
-
+    this.buildChart();
     this.zone.runOutsideAngular(() => {
-      this.chartInstance.setOption({
-        xAxis: { data: heights },
-        series: [{ data: deviations }],
-      });
+      this.chartInstance.setOption(this.chartOption);
     });
+  }
+
+  /**
+   * Build a vertical linear gradient that transitions from `aboveColor` (top)
+   * through transparent at the zero-line to `belowColor` (bottom).
+   * `zeroAlpha` controls the midpoint opacity (0 = fully transparent).
+   */
+  private buildGradient(
+    deviations: number[],
+    aboveColor: string,
+    belowColor: string,
+    zeroAlpha: number
+  ): any {
+    const minDev = Math.min(...deviations);
+    const maxDev = Math.max(...deviations);
+    const range = maxDev - minDev;
+
+    // Position of zero in gradient space (0 = top/max, 1 = bottom/min)
+    const zeroOffset =
+      range > 0 ? Math.max(0.01, Math.min(0.99, maxDev / range)) : 0.5;
+
+    const midColor = `rgba(128,128,128,${zeroAlpha})`;
+
+    return {
+      type: 'linear',
+      x: 0,
+      y: 0,
+      x2: 0,
+      y2: 1,
+      colorStops: [
+        { offset: 0, color: aboveColor },
+        { offset: zeroOffset, color: midColor },
+        { offset: 1, color: belowColor },
+      ],
+    };
+  }
+
+  private formatAxisLabel(v: number): string {
+    const abs = Math.abs(v);
+    if (abs < 60) {
+      return `${v > 0 ? '+' : ''}${v}s`;
+    }
+    const mins = Math.round(v / 60);
+    return `${mins > 0 ? '+' : ''}${mins}m`;
   }
 
   private formatDuration(seconds: number): string {

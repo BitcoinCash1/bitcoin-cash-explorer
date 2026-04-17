@@ -57,10 +57,11 @@ export class ChainStatsMiningComponent implements OnInit {
           blocks[0]
         );
 
-        const difficultyDriftPercentSinceAnchor = getDifficultyDriftPercentSinceAnchor(
-          latestBlock.height,
-          latestBlock.timestamp
-        );
+        const difficultyDriftPercentSinceAnchor =
+          getDifficultyDriftPercentSinceAnchor(
+            latestBlock.height,
+            latestBlock.timestamp
+          );
 
         let colorDrift = 'var(--transparent-fg)';
         if (difficultyDriftPercentSinceAnchor > 0.001) {
