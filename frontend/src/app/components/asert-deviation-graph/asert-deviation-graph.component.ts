@@ -59,6 +59,13 @@ export class AsertDeviationGraphComponent implements OnChanges {
       xAxis: {
         type: 'category',
         data: heights,
+        name: 'Blocks',
+        nameLocation: 'middle',
+        nameGap: 4,
+        nameTextStyle: {
+          color: 'var(--transparent-fg)',
+          fontSize: 9,
+        },
         axisLabel: { show: false },
         axisTick: { show: false },
         axisLine: {
