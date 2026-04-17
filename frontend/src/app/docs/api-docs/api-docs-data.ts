@@ -115,7 +115,6 @@ export const wsApiDocsData = [
     "previousTime": 1734312810,
     "nextRetargetHeight": 876960,
     "timeAvg": 596239,
-    "adjustedTimeAvg": 596239,
     "timeOffset": 0,
     "expectedBlocks": 650.895
   }
@@ -174,7 +173,6 @@ export const wsApiDocsData = [
     "previousTime": 1733564813,
     "nextRetargetHeight": 3538080,
     "timeAvg": 1200000,
-    "adjustedTimeAvg": 1231202,
     "timeOffset": 0,
     "expectedBlocks": 1898.1033333333332
   }
@@ -225,7 +223,6 @@ export const wsApiDocsData = [
     "previousTime": 1733848494,
     "nextRetargetHeight": 227808,
     "timeAvg": 618452,
-    "adjustedTimeAvg": 618452,
     "timeOffset": 0,
     "expectedBlocks": 1425.5333333333333
   },
@@ -1411,7 +1408,6 @@ export const restApiDocsData = [
   "currentBits": "180154ce",
   "nextBits": "180154b2",
   "timeAvg": 595000,
-  "adjustedTimeAvg": 595000,
   "timeOffset": 0
 }`,
         },
@@ -1425,7 +1421,6 @@ export const restApiDocsData = [
   currentBits: "180154ce",
   nextBits: "180154c0",
   timeAvg: 302328,
-  adjustedTimeAvg: 302328,
   timeOffset: 0
 }`,
         },
@@ -1439,7 +1434,6 @@ export const restApiDocsData = [
   currentBits: "180154ce",
   nextBits: "180154c0",
   timeAvg: 302328,
-  adjustedTimeAvg: 302328,
   timeOffset: 0
 }`,
         },

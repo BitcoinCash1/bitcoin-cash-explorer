@@ -479,7 +479,6 @@ export interface IDifficultyAdjustment {
   currentBits: string;
   nextBits: string;
   timeAvg: number;
-  adjustedTimeAvg: number;
   timeOffset: number;
 }
 

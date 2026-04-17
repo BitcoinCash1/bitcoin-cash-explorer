@@ -119,7 +119,7 @@
               >
                 <app-time
                   kind="until"
-                  [time]="da.adjustedTimeAvg * (i + 1) + now + da.timeOffset"
+                  [time]="da.timeAvg * (i + 1) + now + da.timeOffset"
                   [fastRender]="false"
                   [fixedRender]="true"
                   [precision]="1"

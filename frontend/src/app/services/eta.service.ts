@@ -100,13 +100,13 @@ export class EtaService {
       return null;
     }
 
-    // difficulty adjustment estimate is required to know avg block time on non-Liquid networks
+    // difficulty adjustment estimate is required to know avg block time
     if (!da) {
       return null;
     }
 
     const blocks = mempoolPosition.block + 1;
-    const wait = da.adjustedTimeAvg * (mempoolPosition.block + 1);
+    const wait = da.timeAvg * (mempoolPosition.block + 1);
     return {
       now,
       time: wait + now + da.timeOffset,
@@ -157,13 +157,13 @@ export class EtaService {
     }
     // at max depth, the transaction is guaranteed to be mined in the next block if it hasn't already
     Q += (max + 1) * (1 - tailProb);
-    const eta = da.adjustedTimeAvg * Q; // T x Q
+    const eta = da.timeAvg * Q; // T x Q
 
     return {
       now,
       time: eta + now + da.timeOffset,
       wait: eta,
-      blocks: Math.ceil(eta / da.adjustedTimeAvg),
+      blocks: Math.ceil(eta / da.timeAvg),
     };
   }
 
@@ -192,7 +192,7 @@ export class EtaService {
     }
 
     const blocks = mempoolPosition.block + 1;
-    const wait = da.adjustedTimeAvg * (mempoolPosition.block + 1);
+    const wait = da.timeAvg * (mempoolPosition.block + 1);
     return {
       now,
       time: wait + now + da.timeOffset,

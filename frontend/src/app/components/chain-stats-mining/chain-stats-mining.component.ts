@@ -18,7 +18,6 @@ interface AsertMiningStatus {
   blocksUntilHalving: number;
   timeUntilHalving: number;
   timeAvg: number;
-  adjustedTimeAvg: number;
 }
 
 @Component({
@@ -102,7 +101,6 @@ export class ChainStatsMiningComponent implements OnInit {
           blocksUntilHalving: this.blocksUntilHalving,
           timeUntilHalving: this.timeUntilHalving,
           timeAvg: da.timeAvg,
-          adjustedTimeAvg: da.adjustedTimeAvg,
         };
       })
     );

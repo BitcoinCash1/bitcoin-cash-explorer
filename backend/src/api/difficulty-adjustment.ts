@@ -7,8 +7,7 @@ export interface DifficultyAdjustment {
   difficultyDriftPercent: number; // next-block % difficulty change (assuming 600s block)
   currentBits: string; // current block bits (hex)
   nextBits: string; // predicted next block bits (hex)
-  timeAvg: number; // avg block time over recent blocks (ms)
-  adjustedTimeAvg: number; // adjusted avg block time (ms)
+  timeAvg: number; // avg block time over recent 8 blocks (ms)
   timeOffset: number; // time offset for testnet (ms)
 }
 
@@ -179,8 +178,6 @@ export function calcAsertDifficultyAdjustment(
     timeAvgSecs = totalTime / (sorted.length - 1);
   }
 
-  let adjustedTimeAvgSecs = timeAvgSecs;
-
   // Testnet: cap block time at 20 minutes
   let timeOffset = 0;
   if (network === 'testnet') {
@@ -195,7 +192,6 @@ export function calcAsertDifficultyAdjustment(
   }
 
   const timeAvg = Math.floor(timeAvgSecs * 1000);
-  const adjustedTimeAvg = Math.floor(adjustedTimeAvgSecs * 1000);
 
   return {
     scheduleOffsetSeconds,
@@ -203,7 +199,6 @@ export function calcAsertDifficultyAdjustment(
     currentBits,
     nextBits,
     timeAvg,
-    adjustedTimeAvg,
     timeOffset,
   };
 }
