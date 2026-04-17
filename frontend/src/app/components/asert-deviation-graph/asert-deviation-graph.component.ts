@@ -68,7 +68,7 @@ export class AsertDeviationGraphComponent implements OnChanges {
 
       yAxis: {
         type: 'value',
-        name: 'Δ schedule (s)',
+        name: 'Δ schedule',
         nameLocation: 'middle',
         nameGap: 36,
         nameRotate: 90,
