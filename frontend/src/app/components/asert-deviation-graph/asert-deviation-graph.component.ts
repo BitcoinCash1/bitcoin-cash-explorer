@@ -69,10 +69,11 @@ export class AsertDeviationGraphComponent implements OnChanges {
       yAxis: {
         type: 'value',
         name: 'Δ offset (s)',
+        nameLocation: 'middle',
+        nameRotate: 90,
         nameTextStyle: {
           color: 'var(--transparent-fg)',
           fontSize: 9,
-          padding: [0, 0, 0, -4],
         },
         axisLabel: {
           formatter: (v: number) => `${v > 0 ? '+' : ''}${v}s`,
