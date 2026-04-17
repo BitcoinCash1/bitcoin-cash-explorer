@@ -84,7 +84,18 @@
               {{ asert.difficultyDriftPercent | absolute | number: "1.2-4" }}
               <span class="symbol">%</span>
             </div>
-            <div class="symbol" i18n="difficulty-box.difficulty-drift">
+            <div
+              class="symbol"
+              i18n="difficulty-box.difficulty-drift"
+              [ngbTooltip]="
+                'Anchor block: #' +
+                ASERT_ANCHOR_HEIGHT +
+                ' - Date: ' +
+                (ASERT_ANCHOR_TIMESTAMP * 1000 | date: 'shortDate')
+              "
+              placement="bottom"
+              container="body"
+            >
               Difficulty drift (since anchor)
             </div>
           </div>
