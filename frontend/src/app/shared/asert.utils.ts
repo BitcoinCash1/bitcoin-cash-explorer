@@ -84,19 +84,16 @@ export function getScheduleOffsetSeconds(
   return idealElapsed - actualElapsed;
 }
 
-export function getDifficultyDriftPercent(
+export function getDifficultyDriftPercentSinceAnchor(
   height: number,
   timestamp: number
 ): number {
+  const anchorTarget = bitsToTarget(ASERT_ANCHOR_BITS);
   const currentTarget = calculateTargetLegacy(height, timestamp);
-  const nextTarget = calculateTargetLegacy(
-    height + 1,
-    timestamp + ASERT_ANCHOR_IDEAL_BLOCK_TIME
-  );
-  if (currentTarget === 0) return 0;
+  if (anchorTarget === 0) return 0;
   // Higher target = easier = difficulty decrease (negative drift)
   // Lower target = harder = difficulty increase (positive drift)
-  return ((currentTarget - nextTarget) / currentTarget) * 100;
+  return ((anchorTarget - currentTarget) / anchorTarget) * 100;
 }
 
 // --- End ASERT functions ---

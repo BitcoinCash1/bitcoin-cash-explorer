@@ -7,7 +7,7 @@ import {
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { StateService } from '@app/services/state.service';
-import { getDifficultyDriftPercent } from '@app/shared/asert.utils';
+import { getDifficultyDriftPercentSinceAnchor } from '@app/shared/asert.utils';
 
 interface AsertMiningStatus {
   difficultyDriftPercent: number;
@@ -57,15 +57,15 @@ export class ChainStatsMiningComponent implements OnInit {
           blocks[0]
         );
 
-        const difficultyDriftPercent = getDifficultyDriftPercent(
+        const difficultyDriftPercentSinceAnchor = getDifficultyDriftPercentSinceAnchor(
           latestBlock.height,
           latestBlock.timestamp
         );
 
         let colorDrift = 'var(--transparent-fg)';
-        if (difficultyDriftPercent > 0.001) {
+        if (difficultyDriftPercentSinceAnchor > 0.001) {
           colorDrift = 'var(--green)';
-        } else if (difficultyDriftPercent < -0.001) {
+        } else if (difficultyDriftPercentSinceAnchor < -0.001) {
           colorDrift = 'var(--red)';
         }
 
@@ -93,7 +93,7 @@ export class ChainStatsMiningComponent implements OnInit {
         this.now = new Date().getTime();
 
         return {
-          difficultyDriftPercent,
+          difficultyDriftPercent: difficultyDriftPercentSinceAnchor,
           colorDrift,
           diffChangePercent,
           diffChangeBlocks,

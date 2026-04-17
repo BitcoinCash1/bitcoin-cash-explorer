@@ -10,7 +10,7 @@ import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import {
   getScheduleOffsetSeconds,
-  getDifficultyDriftPercent,
+  getDifficultyDriftPercentSinceAnchor,
 } from '@app/shared/asert.utils';
 import { StateService } from '@app/services/state.service';
 import { AsertPoint } from '@app/components/asert-deviation-graph/asert-deviation-graph.component';
@@ -80,16 +80,17 @@ export class DifficultyComponent implements OnInit {
           new Date().getTime() + blocksUntilHalving * 600000;
 
         // ASERT difficulty drift %
-        const difficultyDriftPercent = getDifficultyDriftPercent(
-          latestBlock.height,
-          latestBlock.timestamp
-        );
+        const difficultyDriftPercentSinceAnchor =
+          getDifficultyDriftPercentSinceAnchor(
+            latestBlock.height,
+            latestBlock.timestamp
+          );
 
         // Color for drift indicator
         let colorDrift = 'var(--transparent-fg)';
-        if (difficultyDriftPercent > 0.001) {
+        if (difficultyDriftPercentSinceAnchor > 0.001) {
           colorDrift = 'var(--green)';
-        } else if (difficultyDriftPercent < -0.001) {
+        } else if (difficultyDriftPercentSinceAnchor < -0.001) {
           colorDrift = 'var(--red)';
         }
 
@@ -138,7 +139,7 @@ export class DifficultyComponent implements OnInit {
         }
 
         return {
-          difficultyDriftPercent,
+          difficultyDriftPercent: difficultyDriftPercentSinceAnchor,
           colorDrift,
           timeAvg: da.timeAvg,
           adjustedTimeAvg: da.adjustedTimeAvg,
