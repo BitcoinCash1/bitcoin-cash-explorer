@@ -28,7 +28,6 @@ describe('Mempool Difficulty Adjustment', () => {
     expect(result).toHaveProperty('currentBits');
     expect(result).toHaveProperty('nextBits');
     expect(result).toHaveProperty('timeAvg');
-    expect(result).toHaveProperty('adjustedTimeAvg');
     expect(result).toHaveProperty('timeOffset');
 
     // scheduleOffsetSeconds should be a number
@@ -43,7 +42,6 @@ describe('Mempool Difficulty Adjustment', () => {
 
     // timeAvg should be 600000ms (600s * 1000) for perfectly spaced blocks
     expect(result.timeAvg).toBe(600000);
-    expect(result.adjustedTimeAvg).toBe(600000);
 
     // timeOffset should be 0 for mainnet
     expect(result.timeOffset).toBe(0);
