@@ -56,7 +56,7 @@ class Blocks {
     txIds: string[],
     transactions: VerboseMempoolTransactionExtended[]
   ) => Promise<void>)[] = [];
-  private classifyingBlocks = false;
+  // private classifyingBlocks = false;
 
   private mainLoopTimeout = 120000;
 

@@ -171,7 +171,7 @@ export function calcAsertDifficultyAdjustment(
   // Lower target = harder mining = difficulty increase (positive drift)
   const difficultyDriftPercent = currentTarget !== 0 ? ((currentTarget - nextTarget) / currentTarget) * 100 : 0;
 
-  // Average block time from recent blocks
+  // Average block time from recent blocks (last ~8 blocks = 7 intervals)
   let timeAvgSecs = BLOCK_SECONDS_TARGET;
   if (recentBlocks.length >= 2) {
     const sorted = [...recentBlocks].sort((a, b) => a.timestamp - b.timestamp);
@@ -218,7 +218,7 @@ class DifficultyAdjustmentApi {
     }
     const nowSeconds = Math.floor(new Date().getTime() / 1000);
 
-    // Use last ~8 blocks for average block time calculation
+    // Use last ~8 blocks for average block time calculation (7 intervals)
     const recentBlocks = blocksCache.slice(-8).map((b) => ({ timestamp: b.timestamp }));
 
     return calcAsertDifficultyAdjustment(
