@@ -287,12 +287,12 @@ export class BlockSizesGraphComponent implements OnInit {
                   },
                   data: [
                     {
-                      yAxis: 1,
+                      yAxis: 32,
                       label: {
                         position: 'end',
                         show: true,
                         color: 'var(--fg)',
-                        formatter: `1 MB`,
+                        formatter: `32 MB`,
                       },
                     },
                   ],
