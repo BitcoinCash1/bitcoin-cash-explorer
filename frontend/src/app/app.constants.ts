@@ -334,6 +334,12 @@ export const specialBlocks = {
       'Replace script SigOps limits with SigChecks limits. Introduce OP_REVERSEBYTES. This marks the first block mined to satisfy upgraded consensus rules. (https://upgradespecs.bitcoincashnode.org/2020-05-15-upgrade/)',
     networks: ['mainnet'],
   },
+  '661647': {
+    labelEvent: 'Anchor block for ASERT-DAA',
+    labelEventCompleted:
+      'This block serves as the reference point for the Absolutely Scheduled Exponentially Rising Targets (aserti3-2d) algorithm. ASERT acts as a log-target accumulator of timing errors, using an exponential moving average with a specific half-life to calculate difficulty adjustments. This ensures stable 10-minute block times even with significant hash rate fluctuations, eliminating the volatility and oscillations of previous algorithms like CW-144.',
+    networks: ['mainnet'],
+  },
   '661648': {
     labelEvent: 'November 2020 Upgrade; BCH-XEC hard fork',
     labelEventCompleted:
