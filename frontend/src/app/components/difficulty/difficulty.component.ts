@@ -8,23 +8,23 @@ import {
 } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { StateService } from '@app/services/state.service';
 import {
   getScheduleOffsetSeconds,
-  getDifficultyDriftPercent,
+  getDifficultyDriftPercentSinceAnchor,
 } from '@app/shared/asert.utils';
+import { StateService } from '@app/services/state.service';
+import { AsertPoint } from '@app/components/asert-deviation-graph/asert-deviation-graph.component';
 
 interface AsertStatus {
-  scheduleOffsetSeconds: number;
-  scheduleOffsetMinutes: number;
   difficultyDriftPercent: number;
   colorDrift: string;
   timeAvg: number;
   adjustedTimeAvg: number;
   blocksUntilHalving: number;
   timeUntilHalving: number;
-  // Schedule bar: percentage offset from center, capped at [-100, 100]
-  barOffsetPercent: number;
+  diffChangePercent: number;
+  diffChangeBlocks: number;
+  colorDiffChange: string;
 }
 
 @Component({
@@ -47,6 +47,8 @@ export class DifficultyComponent implements OnInit {
 
   now: number = Date.now();
   nextSubsidy: number;
+  asertData: AsertPoint[] = [];
+  private asertRawData: AsertPoint[] = [];
 
   constructor(
     public stateService: StateService,
@@ -77,48 +79,75 @@ export class DifficultyComponent implements OnInit {
         const timeUntilHalving =
           new Date().getTime() + blocksUntilHalving * 600000;
 
-        // ASERT schedule offset (computed client-side from latest block)
-        const scheduleOffsetSeconds = getScheduleOffsetSeconds(
-          latestBlock.height,
-          latestBlock.timestamp
-        );
-        const scheduleOffsetMinutes = scheduleOffsetSeconds / 60;
-
         // ASERT difficulty drift %
-        const difficultyDriftPercent = getDifficultyDriftPercent(
-          latestBlock.height,
-          latestBlock.timestamp
-        );
+        const difficultyDriftPercentSinceAnchor =
+          getDifficultyDriftPercentSinceAnchor(
+            latestBlock.height,
+            latestBlock.timestamp
+          );
 
         // Color for drift indicator
         let colorDrift = 'var(--transparent-fg)';
-        if (difficultyDriftPercent > 0.001) {
+        if (difficultyDriftPercentSinceAnchor > 0.001) {
           colorDrift = 'var(--green)';
-        } else if (difficultyDriftPercent < -0.001) {
+        } else if (difficultyDriftPercentSinceAnchor < -0.001) {
           colorDrift = 'var(--red)';
         }
 
-        // Bar offset: map schedule offset to [-100, 100]%, capped at +/- 60 minutes
-        const MAX_OFFSET_MINUTES = 60;
-        const barOffsetPercent = Math.max(
-          -100,
-          Math.min(100, (scheduleOffsetMinutes / MAX_OFFSET_MINUTES) * 100)
-        );
+        // Difficulty change over visible blocks
+        const sorted = [...blocks].sort((a, b) => a.height - b.height);
+        const oldestBlock = sorted[0];
+        const diffChangeBlocks = sorted.length;
+        let diffChangePercent = 0;
+        if (oldestBlock && oldestBlock.difficulty > 0) {
+          diffChangePercent =
+            ((latestBlock.difficulty - oldestBlock.difficulty) /
+              oldestBlock.difficulty) *
+            100;
+        }
+        let colorDiffChange = 'var(--transparent-fg)';
+        if (diffChangePercent > 0.001) {
+          colorDiffChange = 'var(--green)';
+        } else if (diffChangePercent < -0.001) {
+          colorDiffChange = 'var(--red)';
+        }
+
+        // Build ASERT deviation points from all known blocks (relative to baseline)
+        const absolutePoints = sorted.map((block) => ({
+          height: block.height,
+          deviation: getScheduleOffsetSeconds(block.height, block.timestamp),
+        }));
+        // Merge new points into raw rolling window (absolute values), dedup by height
+        this.asertRawData = [
+          ...this.asertRawData,
+          ...absolutePoints.filter(
+            (p) => !this.asertRawData.some((e) => e.height === p.height)
+          ),
+        ]
+          .sort((a, b) => a.height - b.height)
+          .slice(-100);
+        // Normalize: subtract first point's deviation so chart centers at 0
+        const baseline =
+          this.asertRawData.length > 0 ? this.asertRawData[0].deviation : 0;
+        this.asertData = this.asertRawData.map((p) => ({
+          height: p.height,
+          deviation: p.deviation - baseline,
+        }));
 
         if (!this.userSelectedMode) {
           this.mode = 'difficulty';
         }
 
         return {
-          scheduleOffsetSeconds,
-          scheduleOffsetMinutes,
-          difficultyDriftPercent,
+          difficultyDriftPercent: difficultyDriftPercentSinceAnchor,
           colorDrift,
           timeAvg: da.timeAvg,
           adjustedTimeAvg: da.adjustedTimeAvg,
           blocksUntilHalving,
           timeUntilHalving,
-          barOffsetPercent,
+          diffChangePercent,
+          diffChangeBlocks,
+          colorDiffChange,
         };
       })
     );

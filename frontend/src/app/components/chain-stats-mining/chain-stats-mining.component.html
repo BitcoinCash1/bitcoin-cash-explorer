@@ -45,21 +45,11 @@
             {{ asert.difficultyDriftPercent | absolute | number: "1.2-4" }}
             <span class="symbol">%</span>
           </div>
-          <div class="symbol">
-            <span *ngIf="asert.scheduleOffsetSeconds >= 0">+</span
-            >{{ asert.scheduleOffsetMinutes | number: "1.0-0" }}
-            <span i18n="difficulty-box.minutes">min</span>
-            <span
-              *ngIf="asert.scheduleOffsetSeconds >= 0"
-              i18n="difficulty-box.ahead"
-            >
-              ahead</span
-            >
-            <span
-              *ngIf="asert.scheduleOffsetSeconds < 0"
-              i18n="difficulty-box.behind"
-            >
-              behind</span
+          <div class="symbol" [ngStyle]="{ color: asert.colorDiffChange }">
+            <span *ngIf="asert.diffChangePercent > 0">+</span
+            >{{ asert.diffChangePercent | number: "1.2-4" }}%
+            <span i18n="difficulty-box.difficulty-change">
+              over {{ asert.diffChangeBlocks }} blocks</span
             >
           </div>
         </div>

@@ -185,6 +185,8 @@ import { GlobalFooterComponent } from '@app/shared/components/global-footer/glob
 import { MempoolErrorComponent } from '@app/shared/components/mempool-error/mempool-error.component';
 import { MiningPoolComponent } from '@app/shared/components/mining-pool/mining-pool.component';
 import { VerifyAddressComponent } from '../components/verify-address/verify-address.component';
+import { NgxEchartsModule } from 'ngx-echarts';
+import { AsertDeviationGraphComponent } from '@app/components/asert-deviation-graph/asert-deviation-graph.component';
 
 import { BlockViewComponent } from '@components/block-view/block-view.component';
 import { EightBlocksComponent } from '@components/eight-blocks/eight-blocks.component';
@@ -317,6 +319,7 @@ import { AddressConverterComponent } from '@components/address-converter/address
     VerifyAddressComponent,
     SpecialBlocksComponent,
     AddressConverterComponent,
+    AsertDeviationGraphComponent,
   ],
   imports: [
     CommonModule,
@@ -332,6 +335,9 @@ import { AddressConverterComponent } from '@components/address-converter/address
     NgbDatepickerModule,
     InfiniteScrollModule,
     FontAwesomeModule,
+    NgxEchartsModule.forRoot({
+      echarts: () => import('@app/graphs/echarts').then((m) => m.echarts),
+    }),
   ],
   providers: [
     BytesPipe,
@@ -451,6 +457,7 @@ import { AddressConverterComponent } from '@components/address-converter/address
     VerifyAddressComponent,
     SpecialBlocksComponent,
     AddressConverterComponent,
+    AsertDeviationGraphComponent,
 
     MempoolBlockOverviewComponent,
     ClockchainComponent,
