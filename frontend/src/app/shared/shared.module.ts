@@ -186,7 +186,7 @@ import { MempoolErrorComponent } from '@app/shared/components/mempool-error/memp
 import { MiningPoolComponent } from '@app/shared/components/mining-pool/mining-pool.component';
 import { VerifyAddressComponent } from '../components/verify-address/verify-address.component';
 import { NgxEchartsModule } from 'ngx-echarts';
-import { AsertDeviationComponent } from '@app/components/asert-deviation/asert-deviation.component';
+import { AsertDeviationGraphComponent } from '@app/components/asert-deviation-graph/asert-deviation-graph.component';
 
 import { BlockViewComponent } from '@components/block-view/block-view.component';
 import { EightBlocksComponent } from '@components/eight-blocks/eight-blocks.component';
@@ -319,7 +319,7 @@ import { AddressConverterComponent } from '@components/address-converter/address
     VerifyAddressComponent,
     SpecialBlocksComponent,
     AddressConverterComponent,
-    AsertDeviationComponent,
+    AsertDeviationGraphComponent,
   ],
   imports: [
     CommonModule,
@@ -457,7 +457,7 @@ import { AddressConverterComponent } from '@components/address-converter/address
     VerifyAddressComponent,
     SpecialBlocksComponent,
     AddressConverterComponent,
-    AsertDeviationComponent,
+    AsertDeviationGraphComponent,
 
     MempoolBlockOverviewComponent,
     ClockchainComponent,

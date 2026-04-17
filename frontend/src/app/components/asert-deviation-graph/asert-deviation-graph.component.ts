@@ -13,13 +13,13 @@ export interface AsertPoint {
 }
 
 @Component({
-  selector: 'app-asert-deviation',
-  templateUrl: './asert-deviation.component.html',
-  styleUrls: ['./asert-deviation.component.scss'],
+  selector: 'app-asert-deviation-graph',
+  templateUrl: './asert-deviation-graph.component.html',
+  styleUrls: ['./asert-deviation-graph.component.scss'],
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AsertDeviationComponent implements OnChanges {
+export class AsertDeviationGraphComponent implements OnChanges {
   @Input() data: AsertPoint[] = [];
 
   chartOption: EChartsOption = {};

@@ -43,7 +43,10 @@
           else loadingDifficulty
         "
       >
-        <app-asert-deviation [data]="asertData"></app-asert-deviation>
+        <app-asert-deviation-graph
+          [data]="asertData"
+          class="asert-deviation-graph"
+        ></app-asert-deviation-graph>
         <div class="difficulty-stats">
           <div class="item">
             <div class="card-text">

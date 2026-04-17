@@ -13,7 +13,7 @@ import {
   getDifficultyDriftPercent,
 } from '@app/shared/asert.utils';
 import { StateService } from '@app/services/state.service';
-import { AsertPoint } from '@app/components/asert-deviation/asert-deviation.component';
+import { AsertPoint } from '@app/components/asert-deviation-graph/asert-deviation-graph.component';
 
 interface AsertStatus {
   difficultyDriftPercent: number;
