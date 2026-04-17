@@ -186,7 +186,7 @@ import { MempoolErrorComponent } from '@app/shared/components/mempool-error/memp
 import { MiningPoolComponent } from '@app/shared/components/mining-pool/mining-pool.component';
 import { VerifyAddressComponent } from '../components/verify-address/verify-address.component';
 import { NgxEchartsModule } from 'ngx-echarts';
-import { AsertDeviationComponent } from '@components/difficulty/asert-deviation.component';
+import { AsertDeviationComponent } from '@app/components/asert-deviation/asert-deviation.component';
 
 import { BlockViewComponent } from '@components/block-view/block-view.component';
 import { EightBlocksComponent } from '@components/eight-blocks/eight-blocks.component';

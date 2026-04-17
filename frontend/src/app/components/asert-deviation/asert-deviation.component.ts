@@ -14,23 +14,8 @@ export interface AsertPoint {
 
 @Component({
   selector: 'app-asert-deviation',
-  template: `
-    <div
-      echarts
-      [options]="chartOption"
-      [initOpts]="initOpts"
-      (chartInit)="onChartInit($event)"
-      class="asert-deviation-chart"
-    ></div>
-  `,
-  styles: [
-    `
-      .asert-deviation-chart {
-        width: 100%;
-        height: 80px;
-      }
-    `,
-  ],
+  templateUrl: './asert-deviation.component.html',
+  styleUrls: ['./asert-deviation.component.scss'],
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

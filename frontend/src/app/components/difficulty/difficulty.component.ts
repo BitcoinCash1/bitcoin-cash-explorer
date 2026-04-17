@@ -8,12 +8,12 @@ import {
 } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { StateService } from '@app/services/state.service';
 import {
   getScheduleOffsetSeconds,
   getDifficultyDriftPercent,
 } from '@app/shared/asert.utils';
-import { AsertPoint } from './asert-deviation.component';
+import { StateService } from '@app/services/state.service';
+import { AsertPoint } from '@app/components/asert-deviation/asert-deviation.component';
 
 interface AsertStatus {
   difficultyDriftPercent: number;
