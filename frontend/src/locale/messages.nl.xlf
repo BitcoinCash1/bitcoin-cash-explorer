@@ -397,6 +397,10 @@
                 <source xml:space="preserve">Error loading data.</source>
                 <target xml:space="preserve">Fout bij laden van data.</target>
             </trans-unit>
+            <trans-unit id="2614255064143783465">
+                <source xml:space="preserve"> over <x equiv-text="{{ asert.diffChangeBlocks }}" id="INTERPOLATION"/> blocks</source>
+                <target xml:space="preserve"> over <x equiv-text="{{ asert.diffChangeBlocks }}" id="INTERPOLATION"/> blocks</target>
+            </trans-unit>
             <trans-unit id="2620731225742999598">
                 <source xml:space="preserve">Verify Ownership (PSBT)</source>
                 <target xml:space="preserve">Eigendom verifiëren (PSBT)</target>
@@ -805,6 +809,10 @@
             <trans-unit id="4136162380400286378">
                 <source xml:space="preserve">Consolidation</source>
                 <target xml:space="preserve">Consolidatie</target>
+            </trans-unit>
+            <trans-unit id="4150117346908548600">
+                <source xml:space="preserve"> Difficulty drift (since anchor) </source>
+                <target xml:space="preserve"> Difficulty drift (since anchor) </target>
             </trans-unit>
             <trans-unit id="41545303ec98792b738d6237adbd1f3b54a22196">
                 <source xml:space="preserve">Block Fees Vs Subsidy</source>
@@ -2052,6 +2060,10 @@
             <trans-unit id="9038326515381177012">
                 <source xml:space="preserve">Sigops</source>
                 <target xml:space="preserve">Sigops</target>
+            </trans-unit>
+            <trans-unit id="9052625006561799134">
+                <source xml:space="preserve"> Difficulty Δ (<x equiv-text="{{ asert.diffChangeBlocks }}" id="INTERPOLATION"/> blocks) </source>
+                <target xml:space="preserve"> Difficulty Δ (<x equiv-text="{{ asert.diffChangeBlocks }}" id="INTERPOLATION"/> blocks) </target>
             </trans-unit>
             <trans-unit id="9071183321070217369">
                 <source xml:space="preserve">Pools Ranking</source>
