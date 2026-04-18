@@ -253,11 +253,7 @@
       <div
         class="links"
         *ngIf="
-          officialBCHExplorerSite ||
-            env.TESTNET_ENABLED ||
-            env.TESTNET4_ENABLED ||
-            env.SIGNET_ENABLED;
-          else toolBox
+          env.TESTNET_ENABLED || env.TESTNET4_ENABLED || env.SIGNET_ENABLED
         "
       >
         <p class="category" i18n="footer.networks">Networks</p>
@@ -306,38 +302,38 @@
           >
         </p>
       </div>
-      <ng-template #toolBox>
-        <div class="links">
-          <p class="category" i18n="footer.tools">Tools</p>
-          <p>
-            <a [routerLink]="['/clock/mempool/0']" i18n="footer.clock-mempool"
-              >Clock (Mempool)</a
-            >
-          </p>
-          <p>
-            <a [routerLink]="['/clock/mined/0']" i18n="footer.clock-mined"
-              >Clock (Mined)</a
-            >
-          </p>
-          <p>
-            <a [routerLink]="['/tools/calculator']" i18n="shared.calculator"
-              >Calculator</a
-            >
-          </p>
-          <p>
-            <a
-              [routerLink]="['/tools/address-converter']"
-              i18n="shared.address-converter"
-              >Address Converter</a
-            >
-          </p>
-          <p>
-            <a [routerLink]="['/verify']" i18n="shared.verify-ownership"
-              >Verify Ownership (PSBT)</a
-            >
-          </p>
-        </div>
-      </ng-template>
+
+      <div class="links">
+        <p class="category" i18n="footer.tools">Tools</p>
+        <p>
+          <a [routerLink]="['/clock/mempool/0']" i18n="footer.clock-mempool"
+            >Clock (Mempool)</a
+          >
+        </p>
+        <p>
+          <a [routerLink]="['/clock/mined/0']" i18n="footer.clock-mined"
+            >Clock (Mined)</a
+          >
+        </p>
+        <p>
+          <a [routerLink]="['/tools/calculator']" i18n="shared.calculator"
+            >Calculator</a
+          >
+        </p>
+        <p>
+          <a
+            [routerLink]="['/tools/address-converter']"
+            i18n="shared.address-converter"
+            >Address Converter</a
+          >
+        </p>
+        <p>
+          <a [routerLink]="['/verify']" i18n="shared.verify-ownership"
+            >Verify Ownership (PSBT)</a
+          >
+        </p>
+      </div>
+
       <div class="links">
         <p class="category" i18n="footer.legal">Legal</p>
         <p>
