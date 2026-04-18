@@ -276,12 +276,15 @@ export class AsertDeviationGraphComponent implements OnChanges {
     if (abs / 60 < 60) {
       return `${sign}${mins}m`;
     }
-    const hours = Math.round(mins / 60);
+    const hours = v / 3600;
     if (abs / 3600 < 24) {
-      return `${sign}${hours}h`;
+      // Use decimal precision to avoid duplicate labels (e.g., 1.5h, 2h, 2.5h)
+      const roundedHours = Math.round(hours * 10) / 10;
+      return `${sign}${roundedHours}h`;
     }
-    const days = Math.round(hours / 24);
-    return `${sign}${days}d`;
+    const days = hours / 24;
+    const roundedDays = Math.round(days * 10) / 10;
+    return `${sign}${roundedDays}d`;
   }
 
   private formatDuration(seconds: number): string {
