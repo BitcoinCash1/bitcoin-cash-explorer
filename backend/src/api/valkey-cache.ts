@@ -338,6 +338,47 @@ class ValkeyCache {
   public setIgnoreBlocksCache(): void {
     this.ignoreBlocksCache = true;
   }
+
+  /**
+   * Get arbitrary cache value by key
+   */
+  public async $getCache(key: string): Promise<string | null> {
+    if (!config.VALKEY.ENABLED) {
+      return null;
+    }
+    if (!this.connected) {
+      logger.warn(`Failed to retrieve cache from Valkey: Valkey is not connected`);
+      return null;
+    }
+    try {
+      return await this.client.get(key);
+    } catch (e) {
+      logger.warn(`Failed to retrieve cache from Valkey: ${e instanceof Error ? e.message : e}`);
+      return null;
+    }
+  }
+
+  /**
+   * Set arbitrary cache value by key with optional expiry
+   */
+  public async $setCache(key: string, value: string, expirySeconds?: number): Promise<void> {
+    if (!config.VALKEY.ENABLED) {
+      return;
+    }
+    if (!this.connected) {
+      logger.warn(`Failed to set cache in Valkey: Valkey is not connected`);
+      return;
+    }
+    try {
+      if (expirySeconds) {
+        await this.client.set(key, value, { EX: expirySeconds });
+      } else {
+        await this.client.set(key, value);
+      }
+    } catch (e) {
+      logger.warn(`Failed to set cache in Valkey: ${e instanceof Error ? e.message : e}`);
+    }
+  }
 }
 
 export default new ValkeyCache();

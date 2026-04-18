@@ -79,6 +79,13 @@
         >Block Sizes</a
       >
       <a
+        class="dropdown-item"
+        routerLinkActive="active"
+        [routerLink]="['/graphs/mining/asert-deviation' | relativeUrl]"
+        i18n="mining.asert-deviation"
+        >Difficulty Adjustment Deviation</a
+      >
+      <a
         *ngIf="stateService.env.AUDIT"
         class="dropdown-item"
         routerLinkActive="active"

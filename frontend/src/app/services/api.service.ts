@@ -361,6 +361,15 @@ export class ApiService {
     );
   }
 
+  getAsertBlocks$(fromHeight: number): Observable<{ h: number; t: number }[]> {
+    return this.httpClient.get<{ h: number; t: number }[]>(
+      this.apiBaseUrl +
+        this.apiBasePath +
+        '/api/v1/mining/blocks/asert/' +
+        fromHeight
+    );
+  }
+
   getBlock$(hash: string): Observable<BlockExtended> {
     return this.httpClient.get<BlockExtended>(
       this.apiBaseUrl + this.apiBasePath + '/api/v1/block/' + hash

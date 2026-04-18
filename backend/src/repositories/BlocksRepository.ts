@@ -1214,6 +1214,34 @@ class BlocksRepository {
     blk.extras = <BlockExtension>extras;
     return <BlockExtended>blk;
   }
+
+  /**
+   * Get minimal block data (height and timestamp) between heights
+   * @param fromHeight Starting block height
+   * @param toHeight Ending block height
+   * @returns Array of objects with height and timestamp
+   */
+  public async $getMinimalBlocksBetweenHeights(
+    fromHeight: number,
+    toHeight: number
+  ): Promise<{ height: number; timestamp: number }[]> {
+    try {
+      const query = `
+        SELECT height, UNIX_TIMESTAMP(blockTimestamp) as timestamp
+        FROM blocks
+        WHERE height >= ? AND height <= ? AND stale = 0
+        ORDER BY height ASC
+      `;
+      const [rows]: any[] = await DB.query(query, [fromHeight, toHeight]);
+      return rows;
+    } catch (e) {
+      logger.err(
+        'Cannot get minimal blocks between heights from the db. Reason: ' +
+          (e instanceof Error ? e.message : e)
+      );
+      throw e;
+    }
+  }
 }
 
 export default new BlocksRepository();

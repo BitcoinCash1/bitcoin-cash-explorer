@@ -23,6 +23,7 @@ import { TreasuriesComponent } from '@components/treasuries/treasuries.component
 import { AddressComponent } from '@components/address/address.component';
 import { WalletComponent } from '@components/wallet/wallet.component';
 import { TokenDetailsComponent } from '@components/token-details/token-details.component';
+import { AsertDeviationGraphPageComponent } from '@components/asert-deviation-graph-page/asert-deviation-graph-page.component';
 
 const browserWindow = window || {};
 // @ts-ignore
@@ -141,6 +142,11 @@ const routes: Routes = [
             path: 'mining/block-sizes',
             data: { networks: ['bitcoin'] },
             component: BlockSizesGraphComponent,
+          },
+          {
+            path: 'mining/asert-deviation',
+            data: { networks: ['bitcoin'] },
+            component: AsertDeviationGraphPageComponent,
           },
           {
             path: '',

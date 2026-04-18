@@ -38,6 +38,7 @@ import { UtxoGraphComponent } from '@components/utxo-graph/utxo-graph.component'
 import { AddressesTreemap } from '@components/addresses-treemap/addresses-treemap.component';
 import { CommonModule } from '@angular/common';
 import { AsmStylerPipe } from '@app/shared/pipes/asm-styler/asm-styler.pipe';
+import { AsertDeviationGraphPageComponent } from '@components/asert-deviation-graph-page/asert-deviation-graph-page.component';
 
 @NgModule({
   declarations: [
@@ -75,6 +76,7 @@ import { AsmStylerPipe } from '@app/shared/pipes/asm-styler/asm-styler.pipe';
     TreasuriesVerifyProgressComponent,
     UtxoGraphComponent,
     AddressesTreemap,
+    AsertDeviationGraphPageComponent,
   ],
   imports: [
     CommonModule,

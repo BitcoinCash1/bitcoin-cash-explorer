@@ -4,6 +4,8 @@ import {
   OnChanges,
   NgZone,
   ChangeDetectionStrategy,
+  Output,
+  EventEmitter,
 } from '@angular/core';
 import { EChartsOption } from '@app/graphs/echarts';
 
@@ -21,16 +23,25 @@ export interface AsertPoint {
 })
 export class AsertDeviationGraphComponent implements OnChanges {
   @Input() data: AsertPoint[] = [];
+  @Input() compressed = false;
+  @Output() chartInit = new EventEmitter<any>();
+  @Output() chartOptionsChange = new EventEmitter<EChartsOption>();
 
   chartOption: EChartsOption = {};
   initOpts = { renderer: 'svg' };
 
   private chartInstance: any;
 
+  private get fontSize(): number {
+    return this.compressed ? 9 : 12;
+  }
+
   constructor(private zone: NgZone) {}
 
   onChartInit(chart: any) {
     this.chartInstance = chart;
+    this.chartInit.emit(chart);
+    this.chartOptionsChange.emit(this.chartOption);
   }
 
   ngOnChanges() {
@@ -42,6 +53,7 @@ export class AsertDeviationGraphComponent implements OnChanges {
     } else {
       this.buildChart();
     }
+    this.chartOptionsChange.emit(this.chartOption);
   }
 
   private buildChart() {
@@ -64,7 +76,7 @@ export class AsertDeviationGraphComponent implements OnChanges {
         nameGap: 4,
         nameTextStyle: {
           color: 'var(--transparent-fg)',
-          fontSize: 9,
+          fontSize: this.fontSize,
         },
         axisLabel: { show: false },
         axisTick: { show: false },
@@ -81,12 +93,12 @@ export class AsertDeviationGraphComponent implements OnChanges {
         nameRotate: 90,
         nameTextStyle: {
           color: 'var(--transparent-fg)',
-          fontSize: 9,
+          fontSize: this.fontSize,
         },
         axisLabel: {
           formatter: (v: number) => this.formatAxisLabel(v),
           color: 'var(--transparent-fg)',
-          fontSize: 9,
+          fontSize: this.fontSize,
         },
         splitLine: {
           lineStyle: { color: 'var(--transparent-fg)', opacity: 0.08 },
@@ -99,7 +111,7 @@ export class AsertDeviationGraphComponent implements OnChanges {
         borderColor: 'var(--transparent-fg)',
         textStyle: {
           color: 'var(--fg)',
-          fontSize: 11,
+          fontSize: 12,
         },
         formatter: (params: any) => {
           if (!params || !params[0]) {

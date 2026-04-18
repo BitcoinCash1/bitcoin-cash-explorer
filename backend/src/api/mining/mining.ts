@@ -6,7 +6,6 @@ import bitcoinClient from '../bitcoin/bitcoin-client';
 import logger from '../../logger';
 import { Common } from '../common';
 import loadingIndicators from '../loading-indicators';
-import { escape } from 'mysql2';
 import DifficultyAdjustmentsRepository from '../../repositories/DifficultyAdjustmentsRepository';
 import config from '../../config';
 import BlocksAuditsRepository from '../../repositories/BlocksAuditsRepository';
@@ -14,6 +13,8 @@ import PricesRepository from '../../repositories/PricesRepository';
 import bitcoinApi from '../bitcoin/bitcoin-api-factory';
 import { IPublicApi } from '../bitcoin/public-api.interface';
 import database from '../../database';
+import blocks from '../blocks';
+import valkeyCache from '../valkey-cache';
 
 interface DifficultyBlock {
   timestamp: number;
@@ -997,6 +998,123 @@ class Mining {
       };
     }
     return this.genesisData;
+  }
+
+  /**
+   * Largest-Triangle-Three-Buckets (LTTB) downsampling algorithm
+   * Reduces the number of data points while preserving the visual shape of the data
+   * @param data Array of points with height (h) and timestamp (t)
+   * @param threshold Maximum number of points to return
+   * @returns Downsampled array of points
+   */
+  private lttbDownsample(data: { h: number; t: number }[], threshold: number): { h: number; t: number }[] {
+    if (data.length <= threshold) {
+      return data;
+    }
+
+    const sampled: { h: number; t: number }[] = [];
+    const bucketSize = (data.length - 2) / (threshold - 2);
+
+    let a = 0; // Initial point
+    sampled.push(data[a]);
+
+    for (let i = 0; i < threshold - 2; i++) {
+      // Calculate bucket boundaries
+      const avgRangeStart = Math.floor((i + 1) * bucketSize) + 1;
+      const avgRangeEnd = Math.floor((i + 2) * bucketSize) + 1;
+
+      // Calculate next bucket boundaries
+      const nextBucketStart = Math.floor((i + 2) * bucketSize) + 1;
+      const nextBucketEnd = Math.floor((i + 3) * bucketSize) + 1;
+      const nextBucketLength = nextBucketEnd - nextBucketStart;
+
+      // Calculate average of next bucket
+      let avgX = 0;
+      let avgY = 0;
+      for (let j = nextBucketStart; j < nextBucketEnd && j < data.length; j++) {
+        avgX += data[j].h;
+        avgY += data[j].t;
+      }
+      avgX /= nextBucketLength;
+      avgY /= nextBucketLength;
+
+      // Find point in current bucket that forms largest triangle
+      let maxArea = -1;
+      let maxAreaPoint = data[avgRangeStart];
+
+      for (let j = avgRangeStart; j < avgRangeEnd && j < data.length; j++) {
+        const point = data[j];
+
+        // Calculate triangle area using cross product
+        const area = Math.abs(
+          (data[a].h - avgX) * (point.t - data[a].t) - (data[a].h - point.h) * (avgY - data[a].t)
+        );
+
+        if (area > maxArea) {
+          maxArea = area;
+          maxAreaPoint = point;
+        }
+      }
+
+      sampled.push(maxAreaPoint);
+      a = avgRangeStart;
+    }
+
+    sampled.push(data[data.length - 1]); // Always include last point
+    return sampled;
+  }
+
+  /**
+   * Get minimal ASERT blocks data (height and timestamp) from a given height to current tip
+   * @param fromHeight Starting block height (must be >= 661647, the ASERT anchor height)
+   * @returns Array of objects with abbreviated keys: {h: height, t: timestamp}
+   */
+  public async $getAsertBlocks(fromHeight: number): Promise<{ h: number; t: number }[]> {
+    const ASERT_ANCHOR_HEIGHT = 661647;
+    const DOWNSAMPLE_THRESHOLD = 5000;
+
+    // Validate that fromHeight is not before ASERT anchor
+    if (fromHeight < ASERT_ANCHOR_HEIGHT) {
+      throw new Error(`Block height must be >= ${ASERT_ANCHOR_HEIGHT} (ASERT anchor height)`);
+    }
+
+    const currentTipHeight = blocks.getCurrentBlockHeight();
+
+    // Check Valkey cache first
+    const cacheKey = `asert-blocks-${fromHeight}`;
+    if (config.VALKEY.ENABLED) {
+      try {
+        const cachedData = await valkeyCache.$getCache(cacheKey);
+        if (cachedData) {
+          return JSON.parse(cachedData);
+        }
+      } catch (e) {
+        logger.warn(`Failed to retrieve ASERT blocks from Valkey cache: ${e instanceof Error ? e.message : e}`);
+      }
+    }
+
+    // Query database for minimal block data
+    const blocksData = await BlocksRepository.$getMinimalBlocksBetweenHeights(fromHeight, currentTipHeight);
+
+    // Transform to abbreviated keys
+    const transformedData = blocksData.map((block) => ({
+      h: block.height,
+      t: block.timestamp,
+    }));
+
+    // Apply LTTB downsampling if data exceeds threshold
+    const finalData = transformedData.length > DOWNSAMPLE_THRESHOLD ? this.lttbDownsample(transformedData, DOWNSAMPLE_THRESHOLD) : transformedData;
+
+    // Cache the result in Valkey
+    if (config.VALKEY.ENABLED) {
+      try {
+        await valkeyCache.$setCache(cacheKey, JSON.stringify(finalData), 300);
+      } catch (e) {
+        logger.warn(`Failed to cache ASERT blocks in Valkey: ${e instanceof Error ? e.message : e}`);
+      }
+    }
+
+    return finalData;
   }
 }
 

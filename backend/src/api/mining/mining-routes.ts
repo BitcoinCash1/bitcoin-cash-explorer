@@ -35,6 +35,7 @@ class MiningRoutes {
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/audit/score/:hash', this.$getBlockAuditScore)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/audit/:hash', this.$getBlockAudit)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/timestamp/:timestamp', this.$getHeightFromTimestamp)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/asert/:blockheight', this.$getAsertBlocks)
       .get(config.EXPLORER.API_URL_PREFIX + 'historical-price', this.$getHistoricalPrice)
       .get(config.EXPLORER.API_URL_PREFIX + 'internal/mining/hashrate/reindex', this.$reindexAllHashrate);
   }
@@ -404,6 +405,41 @@ class MiningRoutes {
     } catch (e) {
       logger.err(`Internal API: Failed to trigger forced hashrate reindex: ${e instanceof Error ? e.message : e}`);
       handleError(req, res, 500, 'Failed to trigger forced hashrate reindex');
+    }
+  }
+
+  private async $getAsertBlocks(req: Request, res: Response): Promise<void> {
+    try {
+      const blockHeight = parseInt(req.params.blockheight, 10);
+      const ASERT_ANCHOR_HEIGHT = 661647;
+
+      // Validate block height parameter
+      if (isNaN(blockHeight)) {
+        handleError(req, res, 400, 'Invalid block height parameter');
+        return;
+      }
+
+      // Validate that block height is not before ASERT anchor
+      if (blockHeight < ASERT_ANCHOR_HEIGHT) {
+        handleError(req, res, 400, `Block height must be >= ${ASERT_ANCHOR_HEIGHT} (ASERT anchor height)`);
+        return;
+      }
+
+      // Get ASERT blocks data
+      const asertBlocks = await mining.$getAsertBlocks(blockHeight);
+
+      // Set cache headers
+      res.header('Pragma', 'public');
+      res.header('Cache-control', 'public');
+      res.setHeader('Expires', new Date(Date.now() + 1000 * 300).toUTCString());
+
+      res.json(asertBlocks);
+    } catch (e) {
+      if (e instanceof Error && e.message.includes('Block height must be')) {
+        handleError(req, res, 400, e.message);
+      } else {
+        handleError(req, res, 500, 'Failed to get ASERT blocks');
+      }
     }
   }
 }
