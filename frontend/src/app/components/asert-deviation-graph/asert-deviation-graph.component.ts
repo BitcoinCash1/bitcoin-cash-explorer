@@ -60,6 +60,20 @@ export class AsertDeviationGraphComponent implements OnChanges {
     const heights = this.data.map((d) => d.height);
     const deviations = this.data.map((d) => d.deviation);
 
+    // Calculate y-axis range for centering when not compressed
+    let yAxisMin: number | undefined;
+    let yAxisMax: number | undefined;
+    if (!this.compressed) {
+      const minDev = Math.min(...deviations);
+      const maxDev = Math.max(...deviations);
+      const maxAbs = Math.max(Math.abs(minDev), Math.abs(maxDev));
+      // Add 10% padding for visual breathing room
+      const padding = maxAbs * 0.1;
+      const range = maxAbs + padding;
+      yAxisMin = -range;
+      yAxisMax = range;
+    }
+
     this.chartOption = {
       grid: {
         left: 40,
@@ -78,7 +92,7 @@ export class AsertDeviationGraphComponent implements OnChanges {
           color: 'var(--transparent-fg)',
           fontSize: this.fontSize,
         },
-        axisLabel: { show: false },
+        axisLabel: { show: !this.compressed },
         axisTick: { show: false },
         axisLine: {
           lineStyle: { color: 'var(--transparent-fg)', opacity: 0.2 },
@@ -87,6 +101,8 @@ export class AsertDeviationGraphComponent implements OnChanges {
 
       yAxis: {
         type: 'value',
+        min: yAxisMin,
+        max: yAxisMax,
         name: 'Δ schedule',
         nameLocation: 'middle',
         nameGap: 36,
