@@ -17,10 +17,20 @@
     <br /><br />
 
     <div class="text-start">
-      <p>
+      <p *ngIf="officialBCHExplorer">
+        The <a href="https://bchexplorer.cash">bchexplorer.cash</a> website, its
+        associated API services, and related network and server infrastructure
+        (collectively, the "Website") are operated by Melroy van den Berg. It is
+        self-hosted and is the <b>official</b> Bitcoin Cash explorer (<a
+          href="https://bchexplorer.cash"
+          >bchexplorer.cash</a
+        >) website.
+      </p>
+      <p *ngIf="!officialBCHExplorer">
         This website and its API service (collectively, the "Website") are
-        operated by Melroy van den Berg, which is a member of the Bitcoin Cash
-        community ("We" or "Us").
+        operated by a member of the Bitcoin Cash community ("We" or "Us"). This
+        is <b>not</b> the official Bitcoin Cash explorer website. For support
+        please contact the operator of this site.
       </p>
 
       <h5>

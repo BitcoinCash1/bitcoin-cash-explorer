@@ -52,7 +52,7 @@ export class MasterPageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.env = this.stateService.env;
-    this.isOfficialSiteBuild = this.stateService.isOfficialSiteBuild;
+    this.isOfficialSiteBuild = this.stateService.isofficialBCHExplorerSiteBuild;
     this.connectionState$ = this.stateService.connectionState$;
     this.network$ = merge(of(''), this.stateService.networkChanged$);
     this.urlLanguage = this.languageService.getLanguageForUrl();

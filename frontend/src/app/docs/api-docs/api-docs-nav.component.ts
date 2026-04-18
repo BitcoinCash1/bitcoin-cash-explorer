@@ -27,7 +27,7 @@ export class ApiDocsNavComponent implements OnInit {
   ngOnInit(): void {
     this.env = this.stateService.env;
     this.officialMempoolInstance = this.env.OFFICIAL_BCH_EXPLORER;
-    this.isOfficialSiteBuild = this.stateService.isOfficialSiteBuild;
+    this.isOfficialSiteBuild = this.stateService.isofficialBCHExplorerSiteBuild;
     this.auditEnabled = this.env.AUDIT;
     if (this.whichTab === 'rest') {
       this.tabData = restApiDocsData;

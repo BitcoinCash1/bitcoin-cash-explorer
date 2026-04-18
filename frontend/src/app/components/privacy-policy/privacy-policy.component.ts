@@ -1,5 +1,6 @@
 import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { StateService } from '@app/services/state.service';
 import { SeoService } from '@app/services/seo.service';
 import { OpenGraphService } from '@app/services/opengraph.service';
 import { ThemeService } from '@app/services/theme.service';
@@ -11,14 +12,17 @@ import { ThemeService } from '@app/services/theme.service';
   standalone: false,
 })
 export class PrivacyPolicyComponent implements OnDestroy {
+  officialBCHExplorer = false;
   themeSubscription: Subscription;
   loadedTheme: string;
 
   constructor(
     private seoService: SeoService,
     private ogService: OpenGraphService,
-    private themeService: ThemeService
+    private themeService: ThemeService,
+    private stateService: StateService
   ) {
+    this.officialBCHExplorer = this.stateService.env.OFFICIAL_BCH_EXPLORER;
     this.loadedTheme = this.themeService.theme;
   }
 

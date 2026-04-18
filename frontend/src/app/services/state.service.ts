@@ -148,7 +148,7 @@ const defaultEnv: Env = {
 export class StateService {
   referrer: string = '';
   isBrowser: boolean;
-  isOfficialSiteBuild = window['isOfficialSiteBuild'] ?? false;
+  isofficialBCHExplorerSiteBuild = window['isOfficialSiteBuild'] ?? false;
   isProdDomain: boolean;
   backend: 'electrum' | 'none' = 'electrum';
   network = '';

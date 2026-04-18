@@ -29,9 +29,21 @@
           &copy; Created by:
           <a
             target="_blank"
-            href="https://melroy.org"
-            aria-label="Visit creator website"
+            href="https://bchexplorer.cash"
+            aria-label="Visit official BCH explorer website"
             >Melroy van den Berg</a
+          >
+        </p>
+        <p *ngIf="!officialBCHExplorerSite" class="explore-tagline-mobile">
+          <b
+            >This is NOT the official
+            <a
+              href="https://bchexplorer.cash"
+              target="_blank"
+              style="color: var(--fg)"
+              >bchexplorer.cash</a
+            >
+            website.</b
           >
         </p>
         <div
@@ -62,7 +74,7 @@
             </div>
           }
           <a
-            *ngIf="stateService.isOfficialSiteBuild"
+            *ngIf="stateService.isofficialBCHExplorerSiteBuild"
             class="btn btn-purple sponsor d-none justify-content-center"
             [ngClass]="isServicesPage ? 'd-lg-flex' : 'd-md-flex'"
             [routerLink]="['/login']"
@@ -87,7 +99,7 @@
         }
 
         <a
-          *ngIf="stateService.isOfficialSiteBuild"
+          *ngIf="stateService.isofficialBCHExplorerSiteBuild"
           class="btn btn-purple sponsor d-flex justify-content-center ms-auto me-auto mt-0 mb-2"
           [ngClass]="isServicesPage ? 'd-lg-none' : 'd-md-none'"
           [routerLink]="['/login']"
@@ -104,9 +116,21 @@
           &copy; Created by:
           <a
             target="_blank"
-            href="https://melroy.org"
-            aria-label="Visit creator website"
+            href="https://bchexplorer.cash"
+            aria-label="Visit official BCH explorer website"
             >Melroy van den Berg</a
+          >
+        </p>
+        <p *ngIf="!officialBCHExplorerSite" class="explore-tagline-desktop">
+          <b
+            >This is NOT the official
+            <a
+              href="https://bchexplorer.cash"
+              target="_blank"
+              style="color: var(--fg)"
+              >bchexplorer.cash</a
+            >
+            website.</b
           >
         </p>
       </div>
@@ -219,7 +243,7 @@
             >More FAQs &raquo;</a
           >
         </p>
-        <p *ngIf="mempoolSpaceBuild">
+        <p *ngIf="isofficialBCHExplorerBuild">
           <a [routerLink]="['/research' | relativeUrl]" i18n="mempool-research"
             >Research</a
           >
@@ -229,7 +253,7 @@
       <div
         class="links"
         *ngIf="
-          officialSite ||
+          officialBCHExplorerSite ||
             env.TESTNET_ENABLED ||
             env.TESTNET4_ENABLED ||
             env.SIGNET_ENABLED;
@@ -239,7 +263,7 @@
         <p class="category" i18n="footer.networks">Networks</p>
         <p
           *ngIf="
-            (officialSite || env.BASE_MODULE === 'explorer') &&
+            (officialBCHExplorerSite || env.BASE_MODULE === 'explorer') &&
             currentNetwork !== '' &&
             currentNetwork !== 'mainnet'
           "
@@ -250,7 +274,7 @@
         </p>
         <p
           *ngIf="
-            (officialSite || env.BASE_MODULE === 'explorer') &&
+            (officialBCHExplorerSite || env.BASE_MODULE === 'explorer') &&
             currentNetwork !== 'testnet' &&
             env.TESTNET_ENABLED
           "
@@ -261,7 +285,7 @@
         </p>
         <p
           *ngIf="
-            (officialSite || env.BASE_MODULE === 'explorer') &&
+            (officialBCHExplorerSite || env.BASE_MODULE === 'explorer') &&
             currentNetwork !== 'testnet4' &&
             env.TESTNET4_ENABLED
           "
@@ -272,7 +296,7 @@
         </p>
         <p
           *ngIf="
-            (officialSite || env.BASE_MODULE === 'explorer') &&
+            (officialBCHExplorerSite || env.BASE_MODULE === 'explorer') &&
             currentNetwork !== 'signet' &&
             env.SIGNET_ENABLED
           "
@@ -490,7 +514,7 @@
       [style]="{ 'background-color': isServicesPage ? 'var(--bg)' : '' }"
     >
       <div class="col-sm-12">
-        <ng-container *ngIf="officialSite">
+        <ng-container *ngIf="officialBCHExplorerSite">
           <p *ngIf="backendInfo$ | async as backend; else officialFallback">
             <span
               >{{ backend.hostname }} (v{{ backend.version }}) [<a
@@ -519,7 +543,7 @@
             </p>
           </ng-template>
         </ng-container>
-        <p *ngIf="!officialSite">
+        <p *ngIf="!officialBCHExplorerSite">
           v{{ packetJsonVersion }} [<a
             target="_blank"
             href="https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/-/commit/{{

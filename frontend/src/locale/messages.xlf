@@ -118,11 +118,16 @@
         </context-group>
         <note priority="1" from="description">about.enterprise-sponsor-button</note>
       </trans-unit>
-      <trans-unit id="2467378808402806819" datatype="html">
-        <source> BCH Explorer is a blockchain and mempool explorer for the Bitcoin Cash community, created by Melroy van den Berg. It is a completely self-hosted without any trusted third-parties. </source>
+      <trans-unit id="4216043949498872457" datatype="html">
+        <source><x id="START_LINK" ctype="x-a" equiv-text="&lt;a
+        href=&quot;https://bchexplorer.cash&quot;
+        target=&quot;_blank&quot;
+        aria-label=&quot;Visit official BCH explorer website&quot;
+        &gt;"/>BCH Explorer<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a
+      &gt;"/> is a blockchain and mempool explorer for the Bitcoin Cash community, created by Melroy van den Berg. It is a completely self-hosted without any trusted third-parties. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/about/about.component.html</context>
-          <context context-type="linenumber">29,31</context>
+          <context context-type="linenumber">30,37</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5417840158792309126" datatype="html">
@@ -134,14 +139,14 @@
       &gt;"/>. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/about/about.component.html</context>
-          <context context-type="linenumber">35,45</context>
+          <context context-type="linenumber">41,51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="590117958379793860" datatype="html">
         <source> Maintaining, improving and creating this BCH explorer costs <x id="START_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;i&gt;"/>a lot of time and effort<x id="CLOSE_ITALIC_TEXT" ctype="x-i" equiv-text="&lt;/i&gt;"/>. As a one-man operation, I spend a lot of personal time working on this project. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/about/about.component.html</context>
-          <context context-type="linenumber">46,50</context>
+          <context context-type="linenumber">52,56</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5682558575236654240" datatype="html">
@@ -158,14 +163,14 @@
       &gt;"/>. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/about/about.component.html</context>
-          <context context-type="linenumber">51,70</context>
+          <context context-type="linenumber">57,76</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6052527816314853503" datatype="html">
         <source>Enterprise Sponsors 🚀</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/about/about.component.html</context>
-          <context context-type="linenumber">73,75</context>
+          <context context-type="linenumber">79,81</context>
         </context-group>
         <note priority="1" from="description">about.sponsors.enterprise</note>
       </trans-unit>
@@ -173,7 +178,7 @@
         <source>Powered By</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/about/about.component.html</context>
-          <context context-type="linenumber">99,101</context>
+          <context context-type="linenumber">105,107</context>
         </context-group>
         <note priority="1" from="description">about.project-manager</note>
       </trans-unit>
@@ -546,6 +551,29 @@
         <note priority="1" from="description">Fiat</note>
         <note priority="1" from="meaning">shared.fiat</note>
       </trans-unit>
+      <trans-unit id="2098028765268782950" datatype="html">
+        <source>Difficulty Adjustment Deviation</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/asert-deviation-graph-page/asert-deviation-graph-page.component.html</context>
+          <context context-type="linenumber">6,8</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/asert-deviation-graph-page/asert-deviation-graph-page.component.ts</context>
+          <context context-type="linenumber">80</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/graphs/graphs.component.html</context>
+          <context context-type="linenumber">86,89</context>
+        </context-group>
+        <note priority="1" from="description">mining.asert-deviation</note>
+      </trans-unit>
+      <trans-unit id="6925252478846398233" datatype="html">
+        <source>View Bitcoin Cash ASERT difficulty adjustment deviation over time.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/asert-deviation-graph-page/asert-deviation-graph-page.component.ts</context>
+          <context context-type="linenumber">82</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="5246516893505114366" datatype="html">
         <source>BCH Holdings</source>
         <context-group purpose="location">
@@ -852,7 +880,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/graphs/graphs.component.html</context>
-          <context context-type="linenumber">87,92</context>
+          <context context-type="linenumber">94,99</context>
         </context-group>
         <note priority="1" from="description">mining.blocks-health</note>
       </trans-unit>
@@ -1802,7 +1830,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">136,139</context>
+          <context context-type="linenumber">160,163</context>
         </context-group>
         <note priority="1" from="description">special-blocks.title</note>
       </trans-unit>
@@ -1822,7 +1850,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">143,146</context>
+          <context context-type="linenumber">167,170</context>
         </context-group>
         <note priority="1" from="description">footer.stale-blocks</note>
       </trans-unit>
@@ -2058,7 +2086,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">300,302</context>
+          <context context-type="linenumber">324,326</context>
         </context-group>
         <note priority="1" from="description">shared.calculator</note>
       </trans-unit>
@@ -2158,7 +2186,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/graphs/graphs.component.html</context>
-          <context context-type="linenumber">100</context>
+          <context context-type="linenumber">107</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2574688541305190509" datatype="html">
@@ -2508,7 +2536,7 @@
         <source> Average block time (8 blocks) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
-          <context context-type="linenumber">60,62</context>
+          <context context-type="linenumber">61,63</context>
         </context-group>
         <note priority="1" from="description">difficulty-box.average-block-time</note>
       </trans-unit>
@@ -2516,7 +2544,7 @@
         <source> Difficulty drift (since anchor) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
-          <context context-type="linenumber">99,101</context>
+          <context context-type="linenumber">100,102</context>
         </context-group>
         <note priority="1" from="description">difficulty-box.difficulty-drift</note>
       </trans-unit>
@@ -2524,7 +2552,7 @@
         <source> Difficulty Δ (<x id="INTERPOLATION" equiv-text="{{ asert.diffChangeBlocks }}"/> blocks) </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
-          <context context-type="linenumber">122,123</context>
+          <context context-type="linenumber">123,124</context>
         </context-group>
         <note priority="1" from="description">difficulty-box.difficulty-change</note>
       </trans-unit>
@@ -2532,7 +2560,7 @@
         <source>New subsidy</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
-          <context context-type="linenumber">159,161</context>
+          <context context-type="linenumber">160,162</context>
         </context-group>
         <note priority="1" from="description">difficulty-box.new-subsidy</note>
       </trans-unit>
@@ -2540,7 +2568,7 @@
         <source>Blocks remaining</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
-          <context context-type="linenumber">170,172</context>
+          <context context-type="linenumber">171,173</context>
         </context-group>
         <note priority="1" from="description">shared.blocks-remaining</note>
       </trans-unit>
@@ -2548,7 +2576,7 @@
         <source>Block remaining</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/difficulty/difficulty.component.html</context>
-          <context context-type="linenumber">175,177</context>
+          <context context-type="linenumber">176,178</context>
         </context-group>
         <note priority="1" from="description">shared.block-remaining</note>
       </trans-unit>
@@ -2938,11 +2966,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">75,77</context>
+          <context context-type="linenumber">87,89</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">100,102</context>
+          <context context-type="linenumber">112,114</context>
         </context-group>
         <note priority="1" from="description">shared.sign-in</note>
       </trans-unit>
@@ -4217,7 +4245,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">290,293</context>
+          <context context-type="linenumber">314,317</context>
         </context-group>
         <note priority="1" from="description">footer.clock-mempool</note>
       </trans-unit>
@@ -5978,11 +6006,11 @@
         <source>My Account</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">72,74</context>
+          <context context-type="linenumber">84,86</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">97,99</context>
+          <context context-type="linenumber">109,111</context>
         </context-group>
         <note priority="1" from="description">shared.my-account</note>
       </trans-unit>
@@ -5990,7 +6018,7 @@
         <source>Explore</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">116,118</context>
+          <context context-type="linenumber">140,142</context>
         </context-group>
         <note priority="1" from="description">footer.explore</note>
       </trans-unit>
@@ -5998,7 +6026,7 @@
         <source>Mining Dashboard</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">122,125</context>
+          <context context-type="linenumber">146,149</context>
         </context-group>
         <note priority="1" from="description">mining.mining-dashboard</note>
       </trans-unit>
@@ -6006,7 +6034,7 @@
         <source>Recent Blocks</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">129,132</context>
+          <context context-type="linenumber">153,156</context>
         </context-group>
         <note priority="1" from="description">dashboard.recent-blocks</note>
       </trans-unit>
@@ -6014,7 +6042,7 @@
         <source>Broadcast Transaction</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">150,155</context>
+          <context context-type="linenumber">174,179</context>
         </context-group>
         <note priority="1" from="description">Broadcast Transaction</note>
         <note priority="1" from="meaning">shared.broadcast-transaction</note>
@@ -6023,7 +6051,7 @@
         <source>Test Transaction</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">157,161</context>
+          <context context-type="linenumber">181,185</context>
         </context-group>
         <note priority="1" from="description">Test Transaction</note>
         <note priority="1" from="meaning">shared.test-transaction</note>
@@ -6032,7 +6060,7 @@
         <source>Preview Transaction</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">164,169</context>
+          <context context-type="linenumber">188,193</context>
         </context-group>
         <note priority="1" from="description">Preview Transaction</note>
         <note priority="1" from="meaning">shared.preview-transaction</note>
@@ -6041,7 +6069,7 @@
         <source>API Documentation</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">171,174</context>
+          <context context-type="linenumber">195,198</context>
         </context-group>
         <note priority="1" from="description">footer.api-documentation</note>
       </trans-unit>
@@ -6049,7 +6077,7 @@
         <source>Learn</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">176,178</context>
+          <context context-type="linenumber">200,202</context>
         </context-group>
         <note priority="1" from="description">footer.learn</note>
       </trans-unit>
@@ -6057,7 +6085,7 @@
         <source>What is a mempool?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">182,185</context>
+          <context context-type="linenumber">206,209</context>
         </context-group>
         <note priority="1" from="description">faq.what-is-a-mempool</note>
       </trans-unit>
@@ -6065,7 +6093,7 @@
         <source>What is a block explorer?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">190,193</context>
+          <context context-type="linenumber">214,217</context>
         </context-group>
         <note priority="1" from="description">faq.what-is-a-block-exlorer</note>
       </trans-unit>
@@ -6073,7 +6101,7 @@
         <source>What is a mempool explorer?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">198,202</context>
+          <context context-type="linenumber">222,226</context>
         </context-group>
         <note priority="1" from="description">faq.what-is-a-mempool-exlorer</note>
       </trans-unit>
@@ -6081,7 +6109,7 @@
         <source>What are CashTokens?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">206,209</context>
+          <context context-type="linenumber">230,233</context>
         </context-group>
         <note priority="1" from="description">faq.what-are-cashtokens</note>
       </trans-unit>
@@ -6089,7 +6117,7 @@
         <source>How to host my own instance?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">214,218</context>
+          <context context-type="linenumber">238,242</context>
         </context-group>
         <note priority="1" from="description">faq.host-my-own-instance-server</note>
       </trans-unit>
@@ -6097,7 +6125,7 @@
         <source>More FAQs »</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">219,221</context>
+          <context context-type="linenumber">243,245</context>
         </context-group>
         <note priority="1" from="description">faq.more-faq</note>
       </trans-unit>
@@ -6105,7 +6133,7 @@
         <source>Research</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">224,227</context>
+          <context context-type="linenumber">248,251</context>
         </context-group>
         <note priority="1" from="description">mempool-research</note>
       </trans-unit>
@@ -6113,7 +6141,7 @@
         <source>Networks</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">239,241</context>
+          <context context-type="linenumber">263,265</context>
         </context-group>
         <note priority="1" from="description">footer.networks</note>
       </trans-unit>
@@ -6121,7 +6149,7 @@
         <source>Mainnet Explorer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">248,251</context>
+          <context context-type="linenumber">272,275</context>
         </context-group>
         <note priority="1" from="description">footer.mainnet-explorer</note>
       </trans-unit>
@@ -6129,7 +6157,7 @@
         <source>Testnet3 Explorer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">259,262</context>
+          <context context-type="linenumber">283,286</context>
         </context-group>
         <note priority="1" from="description">footer.testnet3-explorer</note>
       </trans-unit>
@@ -6137,7 +6165,7 @@
         <source>Testnet4 Explorer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">270,273</context>
+          <context context-type="linenumber">294,297</context>
         </context-group>
         <note priority="1" from="description">footer.testnet4-explorer</note>
       </trans-unit>
@@ -6145,7 +6173,7 @@
         <source>Signet Explorer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">281,284</context>
+          <context context-type="linenumber">305,308</context>
         </context-group>
         <note priority="1" from="description">footer.signet-explorer</note>
       </trans-unit>
@@ -6153,7 +6181,7 @@
         <source>Tools</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">287,289</context>
+          <context context-type="linenumber">311,313</context>
         </context-group>
         <note priority="1" from="description">footer.tools</note>
       </trans-unit>
@@ -6161,7 +6189,7 @@
         <source>Clock (Mined)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">295,297</context>
+          <context context-type="linenumber">319,321</context>
         </context-group>
         <note priority="1" from="description">footer.clock-mined</note>
       </trans-unit>
@@ -6169,7 +6197,7 @@
         <source>Address Converter</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">307,310</context>
+          <context context-type="linenumber">331,334</context>
         </context-group>
         <note priority="1" from="description">shared.address-converter</note>
       </trans-unit>
@@ -6177,7 +6205,7 @@
         <source>Verify Ownership (PSBT)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">312,315</context>
+          <context context-type="linenumber">336,339</context>
         </context-group>
         <note priority="1" from="description">shared.verify-ownership</note>
       </trans-unit>
@@ -6185,7 +6213,7 @@
         <source>Legal</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">318,320</context>
+          <context context-type="linenumber">342,344</context>
         </context-group>
         <note priority="1" from="description">footer.legal</note>
       </trans-unit>
@@ -6193,7 +6221,7 @@
         <source>Terms of Service</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">323,327</context>
+          <context context-type="linenumber">347,351</context>
         </context-group>
         <note priority="1" from="description">Terms of Service</note>
         <note priority="1" from="meaning">shared.terms-of-service</note>
@@ -6202,7 +6230,7 @@
         <source>Privacy Policy</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">330,334</context>
+          <context context-type="linenumber">354,358</context>
         </context-group>
         <note priority="1" from="description">Privacy Policy</note>
         <note priority="1" from="meaning">shared.privacy-policy</note>
@@ -6211,7 +6239,7 @@
         <source>Third-party Licenses</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">337,342</context>
+          <context context-type="linenumber">361,366</context>
         </context-group>
         <note priority="1" from="description">Third-party Licenses</note>
         <note priority="1" from="meaning">shared.third-party-licenses</note>

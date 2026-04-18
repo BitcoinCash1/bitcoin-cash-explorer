@@ -33,8 +33,8 @@ export class GlobalFooterComponent implements OnInit, OnDestroy, OnChanges {
 
   private destroy$: Subject<any> = new Subject<any>();
   env: Env;
-  officialSite: boolean;
-  mempoolSpaceBuild = window['isOfficialSiteBuild'];
+  officialBCHExplorerSite = false;
+  isofficialBCHExplorerBuild = window['isOfficialSiteBuild'];
   backendInfo$: Observable<IBackendInfo>;
   servicesBackendInfo$: Observable<IBackendInfo>;
   frontendGitCommitHash: string;
@@ -66,7 +66,7 @@ export class GlobalFooterComponent implements OnInit, OnDestroy, OnChanges {
     this.isServicesPage = this.router.url.includes('/services/');
 
     this.env = this.stateService.env;
-    this.officialSite = this.env.OFFICIAL_BCH_EXPLORER;
+    this.officialBCHExplorerSite = this.env.OFFICIAL_BCH_EXPLORER;
     this.frontendGitCommitHash = this.env.GIT_COMMIT_HASH;
     this.packetJsonVersion = this.env.PACKAGE_JSON_VERSION;
     this.backendInfo$ = this.stateService.backendInfo$;
