@@ -120,6 +120,7 @@ export class DifficultyComponent implements OnInit {
         const absolutePoints = sorted.map((block) => ({
           height: block.height,
           deviation: getScheduleOffsetSeconds(block.height, block.timestamp),
+          timestamp: block.timestamp,
         }));
         // Merge new points into raw rolling window (absolute values), dedup by height
         this.asertRawData = [
@@ -136,6 +137,7 @@ export class DifficultyComponent implements OnInit {
         this.asertData = this.asertRawData.map((p) => ({
           height: p.height,
           deviation: p.deviation - baseline,
+          timestamp: p.timestamp,
         }));
 
         if (!this.userSelectedMode) {

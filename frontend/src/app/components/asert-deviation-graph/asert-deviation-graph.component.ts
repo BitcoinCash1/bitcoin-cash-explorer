@@ -6,12 +6,16 @@ import {
   ChangeDetectionStrategy,
   Output,
   EventEmitter,
+  Inject,
+  LOCALE_ID,
 } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { EChartsOption } from '@app/graphs/echarts';
 
 export interface AsertPoint {
   height: number;
   deviation: number; // seconds (positive = gaining on schedule, negative = falling behind)
+  timestamp: number; // Unix timestamp in seconds
 }
 
 @Component({
@@ -36,7 +40,11 @@ export class AsertDeviationGraphComponent implements OnChanges {
     return this.compressed ? 9 : 12;
   }
 
-  constructor(private zone: NgZone) {}
+  constructor(
+    private zone: NgZone,
+    @Inject(LOCALE_ID) public locale: string,
+    private datePipe: DatePipe
+  ) {}
 
   onChartInit(chart: any) {
     this.chartInstance = chart;
@@ -168,6 +176,13 @@ export class AsertDeviationGraphComponent implements OnChanges {
           const idx = params[0].dataIndex;
           const dev = deviations[idx];
           const absDev = Math.abs(dev);
+          const timestamp = this.data[idx].timestamp;
+          const date = new Date(timestamp * 1000);
+          const formattedDate = this.datePipe.transform(
+            date,
+            'medium',
+            this.locale
+          );
           const state =
             dev > 0
               ? '<span style="color:#ef4444">Gaining on schedule → difficulty increasing</span>'
@@ -176,6 +191,7 @@ export class AsertDeviationGraphComponent implements OnChanges {
                 : 'On schedule';
           return `
             <strong>Block ${heights[idx]}</strong><br/>
+            ${formattedDate}<br/>
             Deviation: ${dev >= 0 ? '+' : ''}${dev}s (${this.formatDuration(absDev)})<br/>
             ${state}
           `;

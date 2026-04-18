@@ -196,6 +196,7 @@ export class AsertDeviationGraphPageComponent implements OnInit {
     const absolutePoints = sorted.map((block) => ({
       height: block.h,
       deviation: getScheduleOffsetSeconds(block.h, block.t),
+      timestamp: block.t,
     }));
 
     // Normalize: subtract first point's deviation so chart centers at 0
@@ -204,6 +205,7 @@ export class AsertDeviationGraphPageComponent implements OnInit {
     return absolutePoints.map((p) => ({
       height: p.height,
       deviation: p.deviation - baseline,
+      timestamp: p.timestamp,
     }));
   }
 
