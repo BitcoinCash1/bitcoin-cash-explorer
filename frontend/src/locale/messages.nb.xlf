@@ -245,6 +245,10 @@
                 <source xml:space="preserve">Broadcast Transaction</source>
                 <target xml:space="preserve">Broadcast Transaction</target>
             </trans-unit>
+            <trans-unit id="2098028765268782950">
+                <source xml:space="preserve">Difficulty Adjustment Deviation</source>
+                <target xml:space="preserve">Difficulty Adjustment Deviation</target>
+            </trans-unit>
             <trans-unit id="2137482833477653579">
                 <source xml:space="preserve">Indexing network hashrate</source>
                 <target xml:space="preserve">Indekserer nettverk-hashrate</target>
@@ -825,6 +829,10 @@
             <trans-unit id="420763834450076269">
                 <source xml:space="preserve">Block</source>
                 <target xml:space="preserve">Blokk</target>
+            </trans-unit>
+            <trans-unit id="4216043949498872457">
+                <source xml:space="preserve"><x ctype="x-a" equiv-text="&lt;a         href=&quot;https://bchexplorer.cash&quot;         target=&quot;_blank&quot;         aria-label=&quot;Visit official BCH explorer website&quot;         &gt;" id="START_LINK"/>BCH Explorer<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> is a blockchain and mempool explorer for the Bitcoin Cash community, created by Melroy van den Berg. It is a completely self-hosted without any trusted third-parties. </source>
+                <target xml:space="preserve"><x ctype="x-a" equiv-text="&lt;a         href=&quot;https://bchexplorer.cash&quot;         target=&quot;_blank&quot;         aria-label=&quot;Visit official BCH explorer website&quot;         &gt;" id="START_LINK"/>BCH Explorer<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> is a blockchain and mempool explorer for the Bitcoin Cash community, created by Melroy van den Berg. It is a completely self-hosted without any trusted third-parties. </target>
             </trans-unit>
             <trans-unit id="4233811188017847729">
                 <source xml:space="preserve">All miners</source>
@@ -1536,6 +1544,10 @@
             <trans-unit id="6911512236126604837">
                 <source xml:space="preserve">Average fees per block in the past 144 blocks</source>
                 <target xml:space="preserve">Gjennomsnittlige avgifter per blokk i de siste 144 blokkene</target>
+            </trans-unit>
+            <trans-unit id="6925252478846398233">
+                <source xml:space="preserve">View Bitcoin Cash ASERT difficulty adjustment deviation over time.</source>
+                <target xml:space="preserve">View Bitcoin Cash ASERT difficulty adjustment deviation over time.</target>
             </trans-unit>
             <trans-unit id="6948786787037977434">
                 <source xml:space="preserve">Blocks</source>
