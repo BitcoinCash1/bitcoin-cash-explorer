@@ -1577,6 +1577,10 @@
                 <source xml:space="preserve">Show more</source>
                 <target xml:space="preserve">Показать больше</target>
             </trans-unit>
+            <trans-unit id="7322388690608271951">
+                <source xml:space="preserve"> Average block time (8 blocks) </source>
+                <target xml:space="preserve"> Average block time (8 blocks) </target>
+            </trans-unit>
             <trans-unit id="7324336018364764874">
                 <source xml:space="preserve"> Difficulty drift </source>
                 <target xml:space="preserve"> Difficulty drift </target>

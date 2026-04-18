@@ -1579,6 +1579,10 @@
                 <source xml:space="preserve">Show more</source>
                 <target xml:space="preserve">展示更多</target>
             </trans-unit>
+            <trans-unit id="7322388690608271951">
+                <source xml:space="preserve"> Average block time (8 blocks) </source>
+                <target xml:space="preserve"> 平均區塊時間（8 個區塊） </target>
+            </trans-unit>
             <trans-unit id="7324336018364764874">
                 <source xml:space="preserve"> Difficulty drift </source>
                 <target xml:space="preserve"> 難度漂移 </target>
