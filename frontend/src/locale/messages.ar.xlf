@@ -275,7 +275,7 @@
             </trans-unit>
             <trans-unit id="2216215688309811676">
                 <source xml:space="preserve"> Size </source>
-                <target xml:space="preserve"> Size </target>
+                <target xml:space="preserve"> مقاس </target>
             </trans-unit>
             <trans-unit id="2220751863806291374">
                 <source xml:space="preserve">Backend is synchronizing</source>
@@ -295,7 +295,7 @@
             </trans-unit>
             <trans-unit id="2257679984526539584">
                 <source xml:space="preserve">Chain Stats</source>
-                <target xml:space="preserve">Chain Stats</target>
+                <target xml:space="preserve">إحصائيات السلسلة</target>
             </trans-unit>
             <trans-unit id="2259944601214794924">
                 <source xml:space="preserve">Sighash Flags</source>
@@ -399,7 +399,7 @@
             </trans-unit>
             <trans-unit id="2614255064143783465">
                 <source xml:space="preserve"> over <x equiv-text="{{ asert.diffChangeBlocks }}" id="INTERPOLATION"/> blocks</source>
-                <target xml:space="preserve"> over <x equiv-text="{{ asert.diffChangeBlocks }}" id="INTERPOLATION"/> blocks</target>
+                <target xml:space="preserve">أكثر من <x equiv-text="{{ asert.diffChangeBlocks }}" id="INTERPOLATION"/> مربعات سكنية</target>
             </trans-unit>
             <trans-unit id="2620731225742999598">
                 <source xml:space="preserve">Verify Ownership (PSBT)</source>
@@ -415,7 +415,7 @@
             </trans-unit>
             <trans-unit id="2664726858804341447">
                 <source xml:space="preserve">On time</source>
-                <target xml:space="preserve">On time</target>
+                <target xml:space="preserve">في الوقت المحدد</target>
             </trans-unit>
             <trans-unit id="2666638972429865742">
                 <source xml:space="preserve"> Verify Address Ownership </source>
@@ -427,7 +427,7 @@
             </trans-unit>
             <trans-unit id="2697417327357066096">
                 <source xml:space="preserve">Recent Transactions</source>
-                <target xml:space="preserve">Recent Transactions</target>
+                <target xml:space="preserve">المعاملات الأخيرة</target>
             </trans-unit>
             <trans-unit id="2713682146203031534">
                 <source xml:space="preserve">Amount being paid to miners in the past 144 blocks</source>
@@ -559,7 +559,7 @@
             </trans-unit>
             <trans-unit id="3124019659196374520">
                 <source xml:space="preserve">ahead of schedule</source>
-                <target xml:space="preserve">ahead of schedule</target>
+                <target xml:space="preserve">قبل الموعد المحدد</target>
             </trans-unit>
             <trans-unit id="312539377512157124">
                 <source xml:space="preserve"><x equiv-text="i" id="INTERPOLATION"/> blocks</source>
@@ -759,7 +759,7 @@
             </trans-unit>
             <trans-unit id="3901733599428143571">
                 <source xml:space="preserve">min</source>
-                <target xml:space="preserve">min</target>
+                <target xml:space="preserve">دقائق</target>
             </trans-unit>
             <trans-unit id="3935190348395891735">
                 <source xml:space="preserve">Block Health</source>
@@ -797,7 +797,7 @@
             </trans-unit>
             <trans-unit id="4073285970817086172">
                 <source xml:space="preserve">Pause/Resume</source>
-                <target xml:space="preserve">Pause/Resume</target>
+                <target xml:space="preserve">إيقاف مؤقت/استئناف</target>
             </trans-unit>
             <trans-unit id="4134775753251919633">
                 <source xml:space="preserve">Flow</source>
@@ -813,7 +813,7 @@
             </trans-unit>
             <trans-unit id="4150117346908548600">
                 <source xml:space="preserve"> Difficulty drift (since anchor) </source>
-                <target xml:space="preserve"> Difficulty drift (since anchor) </target>
+                <target xml:space="preserve">صعوبة الانجراف (منذ تثبيت المرساة)</target>
             </trans-unit>
             <trans-unit id="41545303ec98792b738d6237adbd1f3b54a22196">
                 <source xml:space="preserve">Block Fees Vs Subsidy</source>
@@ -845,7 +845,7 @@
             </trans-unit>
             <trans-unit id="4316256994048337845">
                 <source xml:space="preserve"><x equiv-text="{{ bufferedCount$ | async }}" id="INTERPOLATION"/> new transactions</source>
-                <target xml:space="preserve"><x equiv-text="{{ bufferedCount$ | async }}" id="INTERPOLATION"/> new transactions</target>
+                <target xml:space="preserve"><x equiv-text="{{ bufferedCount$ | async }}" id="INTERPOLATION"/> معاملة جديدة</target>
             </trans-unit>
             <trans-unit id="4333425760770516639">
                 <source xml:space="preserve">What is a mempool explorer?</source>
@@ -853,7 +853,7 @@
             </trans-unit>
             <trans-unit id="4341507375690057323">
                 <source xml:space="preserve">Ahead</source>
-                <target xml:space="preserve">Ahead</target>
+                <target xml:space="preserve">إلى الأمام</target>
             </trans-unit>
             <trans-unit id="435092113360011346">
                 <source xml:space="preserve">Stale Blocks</source>
@@ -905,7 +905,7 @@
             </trans-unit>
             <trans-unit id="4419337712236428981">
                 <source xml:space="preserve">behind schedule</source>
-                <target xml:space="preserve">behind schedule</target>
+                <target xml:space="preserve">متأخر عن الموعد المحدد</target>
             </trans-unit>
             <trans-unit id="4452427314943113135">
                 <source xml:space="preserve">Previous</source>
@@ -1091,7 +1091,7 @@
             </trans-unit>
             <trans-unit id="5138609946306600653">
                 <source xml:space="preserve">Behind</source>
-                <target xml:space="preserve">Behind</target>
+                <target xml:space="preserve">خلف</target>
             </trans-unit>
             <trans-unit id="5151697515296180479">
                 <source xml:space="preserve">Either 2x the minimum, or the Low Priority rate (whichever is lower)</source>
@@ -1271,7 +1271,7 @@
             </trans-unit>
             <trans-unit id="6017769429963261313">
                 <source xml:space="preserve"> ahead</source>
-                <target xml:space="preserve"> ahead</target>
+                <target xml:space="preserve">إلى الأمام</target>
             </trans-unit>
             <trans-unit id="6027906779021928443">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks remaining</source>
@@ -1581,7 +1581,7 @@
             </trans-unit>
             <trans-unit id="7324336018364764874">
                 <source xml:space="preserve"> Difficulty drift </source>
-                <target xml:space="preserve"> Difficulty drift </target>
+                <target xml:space="preserve"> صعوبة الانحراف </target>
             </trans-unit>
             <trans-unit id="7346516107220024843">
                 <source xml:space="preserve"> Broadcast Transaction </source>
@@ -1589,7 +1589,7 @@
             </trans-unit>
             <trans-unit id="7364009665295974621">
                 <source xml:space="preserve"> behind</source>
-                <target xml:space="preserve"> behind</target>
+                <target xml:space="preserve">خلف</target>
             </trans-unit>
             <trans-unit id="7370363797434182113">
                 <source xml:space="preserve">This transaction has a low transaction fee on L1, because of BCH</source>
@@ -1705,7 +1705,7 @@
             </trans-unit>
             <trans-unit id="7890823441105218329">
                 <source xml:space="preserve">Pause/Resume</source>
-                <target xml:space="preserve">Pause/Resume</target>
+                <target xml:space="preserve">إيقاف مؤقت/استئناف</target>
             </trans-unit>
             <trans-unit id="7909125979002999098">
                 <source xml:space="preserve"> Pools Count </source>
@@ -1725,7 +1725,7 @@
             </trans-unit>
             <trans-unit id="7981454540995527470">
                 <source xml:space="preserve">1 new transaction</source>
-                <target xml:space="preserve">1 new transaction</target>
+                <target xml:space="preserve">معاملة جديدة واحدة</target>
             </trans-unit>
             <trans-unit id="7989584202803202902">
                 <source xml:space="preserve">Expected</source>
@@ -1877,7 +1877,7 @@
             </trans-unit>
             <trans-unit id="840121400973431948">
                 <source xml:space="preserve">Address Converter</source>
-                <target xml:space="preserve">Address Converter</target>
+                <target xml:space="preserve">محول العناوين</target>
             </trans-unit>
             <trans-unit id="8401436958953545077">
                 <source xml:space="preserve">This address is deceptively similar to another output. It may be part of an address poisoning attack.</source>
@@ -2058,8 +2058,7 @@
             <trans-unit id="9022605153905997309">
                 <source xml:space="preserve"> Chain Stats
 </source>
-                <target xml:space="preserve"> Chain Stats
-</target>
+                <target xml:space="preserve">إحصائيات السلسلة</target>
             </trans-unit>
             <trans-unit id="9038326515381177012">
                 <source xml:space="preserve">Sigops</source>
@@ -2067,7 +2066,8 @@
             </trans-unit>
             <trans-unit id="9052625006561799134">
                 <source xml:space="preserve"> Difficulty Δ (<x equiv-text="{{ asert.diffChangeBlocks }}" id="INTERPOLATION"/> blocks) </source>
-                <target xml:space="preserve"> Difficulty Δ (<x equiv-text="{{ asert.diffChangeBlocks }}" id="INTERPOLATION"/> blocks) </target>
+                <target xml:space="preserve">)صعوبة Δ 
+ (مكعبات <x equiv-text="{{ asert.diffChangeBlocks }}" id="INTERPOLATION"/> </target>
             </trans-unit>
             <trans-unit id="9071183321070217369">
                 <source xml:space="preserve">Pools Ranking</source>
@@ -2333,7 +2333,7 @@
             </trans-unit>
             <trans-unit id="meta.description.recent-transactions">
                 <source xml:space="preserve">See the most recent transactions on the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> network, updated in real-time.</source>
-                <target xml:space="preserve">See the most recent transactions on the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> network, updated in real-time.</target>
+                <target xml:space="preserve">اطلع على أحدث المعاملات على شبكة بيتكوين كاش، والتي يتم تحديثها في الوقت الفعلي.</target>
             </trans-unit>
             <trans-unit id="meta.description.stale-chain-tips">
                 <source xml:space="preserve">See the most recent stale chain tips on the Bitcoin<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network.</source>
@@ -2365,19 +2365,19 @@
             </trans-unit>
             <trans-unit id="ngb.datepicker.next-month">
                 <source xml:space="preserve">Next month</source>
-                <target xml:space="preserve">Next month</target>
+                <target xml:space="preserve">الشهر المقبل</target>
             </trans-unit>
             <trans-unit id="ngb.datepicker.previous-month">
                 <source xml:space="preserve">Previous month</source>
-                <target xml:space="preserve">Previous month</target>
+                <target xml:space="preserve">الشهر الماضي</target>
             </trans-unit>
             <trans-unit id="ngb.datepicker.select-month">
                 <source xml:space="preserve">Select month</source>
-                <target xml:space="preserve">Select month</target>
+                <target xml:space="preserve">اختر الشهر</target>
             </trans-unit>
             <trans-unit id="ngb.datepicker.select-year">
                 <source xml:space="preserve">Select year</source>
-                <target xml:space="preserve">Select year</target>
+                <target xml:space="preserve">اختر السنة</target>
             </trans-unit>
             <trans-unit id="ngb.pagination.first">
                 <source xml:space="preserve">««</source>
@@ -2417,7 +2417,7 @@
             </trans-unit>
             <trans-unit id="recent-transactions-title">
                 <source xml:space="preserve">Recent Transactions</source>
-                <target xml:space="preserve">Recent Transactions</target>
+                <target xml:space="preserve">المعاملات الأخيرة</target>
             </trans-unit>
             <trans-unit id="time-before">
                 <source xml:space="preserve"><x equiv-text="dateStrings.i18nYear" id="DATE"/> before</source>
