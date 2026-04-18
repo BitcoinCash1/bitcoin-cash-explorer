@@ -1236,8 +1236,7 @@ class BlocksRepository {
       return rows;
     } catch (e) {
       logger.err(
-        'Cannot get minimal blocks between heights from the db. Reason: ' +
-          (e instanceof Error ? e.message : e)
+        'Cannot get minimal blocks between heights from the db. Reason: ' + (e instanceof Error ? e.message : e)
       );
       throw e;
     }

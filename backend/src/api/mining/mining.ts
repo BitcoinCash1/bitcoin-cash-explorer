@@ -1046,9 +1046,7 @@ class Mining {
         const point = data[j];
 
         // Calculate triangle area using cross product
-        const area = Math.abs(
-          (data[a].h - avgX) * (point.t - data[a].t) - (data[a].h - point.h) * (avgY - data[a].t)
-        );
+        const area = Math.abs((data[a].h - avgX) * (point.t - data[a].t) - (data[a].h - point.h) * (avgY - data[a].t));
 
         if (area > maxArea) {
           maxArea = area;
@@ -1103,7 +1101,10 @@ class Mining {
     }));
 
     // Apply LTTB downsampling if data exceeds threshold
-    const finalData = transformedData.length > DOWNSAMPLE_THRESHOLD ? this.lttbDownsample(transformedData, DOWNSAMPLE_THRESHOLD) : transformedData;
+    const finalData =
+      transformedData.length > DOWNSAMPLE_THRESHOLD
+        ? this.lttbDownsample(transformedData, DOWNSAMPLE_THRESHOLD)
+        : transformedData;
 
     // Cache the result in Valkey
     if (config.VALKEY.ENABLED) {
