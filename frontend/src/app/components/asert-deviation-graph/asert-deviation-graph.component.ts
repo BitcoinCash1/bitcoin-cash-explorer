@@ -74,12 +74,44 @@ export class AsertDeviationGraphComponent implements OnChanges {
       yAxisMax = range;
     }
 
+    // Add dataZoom when not compressed
+    const dataZoom = !this.compressed
+      ? [
+          {
+            type: 'inside',
+            realtime: true,
+            zoomLock: true,
+            maxSpan: 100,
+            minSpan: 5,
+            moveOnMouseMove: false,
+          },
+          {
+            showDetail: false,
+            show: true,
+            type: 'slider',
+            brushSelect: false,
+            realtime: true,
+            left: 20,
+            right: 15,
+            selectedDataBackground: {
+              lineStyle: {
+                color: '#fff',
+                opacity: 0.45,
+              },
+              areaStyle: {
+                opacity: 0,
+              },
+            },
+          },
+        ]
+      : undefined;
+
     this.chartOption = {
       grid: {
         left: 40,
         right: 12,
         top: 4,
-        bottom: 16,
+        bottom: !this.compressed ? 80 : 4,
       },
 
       xAxis: {
@@ -183,6 +215,8 @@ export class AsertDeviationGraphComponent implements OnChanges {
         },
       ],
 
+      dataZoom: dataZoom,
+
       animationDuration: 300,
       animationDurationUpdate: 400,
       animationEasingUpdate: 'cubicInOut',
@@ -233,11 +267,21 @@ export class AsertDeviationGraphComponent implements OnChanges {
 
   private formatAxisLabel(v: number): string {
     const abs = Math.abs(v);
+    const sign = v > 0 ? '+' : '';
+
     if (abs < 60) {
-      return `${v > 0 ? '+' : ''}${v}s`;
+      return `${sign}${v}s`;
     }
     const mins = Math.round(v / 60);
-    return `${mins > 0 ? '+' : ''}${mins}m`;
+    if (abs / 60 < 60) {
+      return `${sign}${mins}m`;
+    }
+    const hours = Math.round(mins / 60);
+    if (abs / 3600 < 24) {
+      return `${sign}${hours}h`;
+    }
+    const days = Math.round(hours / 24);
+    return `${sign}${days}d`;
   }
 
   private formatDuration(seconds: number): string {
@@ -251,6 +295,11 @@ export class AsertDeviationGraphComponent implements OnChanges {
     }
     const hours = Math.floor(mins / 60);
     const remainMins = mins % 60;
-    return remainMins > 0 ? `${hours}h ${remainMins}m` : `${hours}h`;
+    if (hours < 24) {
+      return remainMins > 0 ? `${hours}h ${remainMins}m` : `${hours}h`;
+    }
+    const days = Math.floor(hours / 24);
+    const remainHours = hours % 24;
+    return remainHours > 0 ? `${days}d ${remainHours}h` : `${days}d`;
   }
 }
