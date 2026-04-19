@@ -2326,19 +2326,19 @@
                 <target xml:space="preserve">Xem các nhóm đào Bitcoin hàng đầu được xếp hạng theo số khối được đào, trong khung thời gian mong muốn của bạn.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.electrumrpc">
-                <source xml:space="preserve">Documentation for our Electrum RPC interface: get instant, convenient, and reliable access to an Esplora instance.</source>
+                <source xml:space="preserve">Documentation for our Electrum RPC interface: get instant, convenient, and reliable access to a Fulcrum instance.</source>
                 <target xml:space="preserve">Tài liệu cho giao diện Electrum RPC của chúng tôi: nhận quyền truy cập tức thì, thuận tiện và tin cậy vào phiên bản Esplora.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.faq">
-                <source xml:space="preserve">Get answers to common questions like: What is a mempool? Why isn&apos;t my transaction confirming? How can I run my own instance of The Mempool Open Source Project? And more.</source>
+                <source xml:space="preserve">Get answers to common questions like: What is a mempool? What is a blockchain? How can I run my own instance of BCH Explorer? And more.</source>
                 <target xml:space="preserve">Những câu hỏi thường gặp như: Mempool là gì? Tại sao giao dịch của tôi chưa được xác nhận? Làm sao để vận hành một phiên bản Mempool Mã nguồn mở riêng? Vân vân.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.rest-bitcoin">
-                <source xml:space="preserve">Documentation for the mempool.space REST API service: get info on addresses, transactions, blocks, fees, mining, the Lightning network, and more.</source>
+                <source xml:space="preserve">Documentation for the bchexplorer.cash REST API service: get info on addresses, transactions, blocks, fees, mining, and more.</source>
                 <target xml:space="preserve">Tài liệu cho dịch vụ REST API mempool.space: thông tin về các đia chỉ, giao dịch, khối, phí, đào, mạng Lightning và nhiều thông tin khác.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.websocket-bitcoin">
-                <source xml:space="preserve">Documentation for the mempool.space WebSocket API service: get real-time info on blocks, mempools, transactions, addresses, and more.</source>
+                <source xml:space="preserve">Documentation for the bchexplorer.cash WebSocket API service: get real-time info on blocks, mempools, transactions, addresses, and more.</source>
                 <target xml:space="preserve">Tài liệu cho dịch vụ API WebSocket mempool.space: nhận thông tin thời gian thực về khối, mempool, giao dịch, địa chỉ và nhiều hơn nữa.</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.dashboard">

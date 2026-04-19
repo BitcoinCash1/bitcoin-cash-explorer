@@ -2325,19 +2325,19 @@
                 <target xml:space="preserve">원하는 기간 동안 블록 생성 수 기준으로 정렬된 상위 비트코인 채굴 풀을 확인하세요</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.electrumrpc">
-                <source xml:space="preserve">Documentation for our Electrum RPC interface: get instant, convenient, and reliable access to an Esplora instance.</source>
+                <source xml:space="preserve">Documentation for our Electrum RPC interface: get instant, convenient, and reliable access to a Fulcrum instance.</source>
                 <target xml:space="preserve">일렉트럼 RPC 인터페이스 문서: Esplora 인스턴스에 즉시, 편리하고 안정적으로 접근하세요</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.faq">
-                <source xml:space="preserve">Get answers to common questions like: What is a mempool? Why isn&apos;t my transaction confirming? How can I run my own instance of The Mempool Open Source Project? And more.</source>
+                <source xml:space="preserve">Get answers to common questions like: What is a mempool? What is a blockchain? How can I run my own instance of BCH Explorer? And more.</source>
                 <target xml:space="preserve">자주 묻는 질문에 대한 답을 확인하세요: 멤풀이란? 왜 내 트랜잭션이 확정되지 않나요? Mempool 오픈소스 프로젝트를 직접 실행하려면 어떻게 해야 하나요? 등</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.rest-bitcoin">
-                <source xml:space="preserve">Documentation for the mempool.space REST API service: get info on addresses, transactions, blocks, fees, mining, the Lightning network, and more.</source>
+                <source xml:space="preserve">Documentation for the bchexplorer.cash REST API service: get info on addresses, transactions, blocks, fees, mining, and more.</source>
                 <target xml:space="preserve">mempool.space REST API 문서: 주소, 트랜잭션, 블록, 수수료, 채굴, 라이트닝 네트워크 등의 정보를 확인하세요.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.websocket-bitcoin">
-                <source xml:space="preserve">Documentation for the mempool.space WebSocket API service: get real-time info on blocks, mempools, transactions, addresses, and more.</source>
+                <source xml:space="preserve">Documentation for the bchexplorer.cash WebSocket API service: get real-time info on blocks, mempools, transactions, addresses, and more.</source>
                 <target xml:space="preserve">mempool.space WebSocket API 문서: 블록, 멤풀, 트랜잭션, 주소 등의 실시간 정보 제공</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.dashboard">

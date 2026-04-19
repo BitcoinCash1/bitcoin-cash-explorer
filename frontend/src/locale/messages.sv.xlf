@@ -2325,19 +2325,19 @@
                 <target xml:space="preserve">Se de bästa Bitcoin-minngpoolerna rankade efter antal utvunna block över din önskade tidsram.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.electrumrpc">
-                <source xml:space="preserve">Documentation for our Electrum RPC interface: get instant, convenient, and reliable access to an Esplora instance.</source>
+                <source xml:space="preserve">Documentation for our Electrum RPC interface: get instant, convenient, and reliable access to a Fulcrum instance.</source>
                 <target xml:space="preserve">Dokumentation för vårt Electrum RPC-gränssnitt: få omedelbar, bekväm och pålitlig åtkomst till en Esplora-instans.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.faq">
-                <source xml:space="preserve">Get answers to common questions like: What is a mempool? Why isn&apos;t my transaction confirming? How can I run my own instance of The Mempool Open Source Project? And more.</source>
+                <source xml:space="preserve">Get answers to common questions like: What is a mempool? What is a blockchain? How can I run my own instance of BCH Explorer? And more.</source>
                 <target xml:space="preserve">Få svar på vanliga frågor som: Vad är en mempool? Varför bekräftas inte min transaktion? Hur kan jag köra min egen instans av Mempool Open Source Project? Och mer.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.rest-bitcoin">
-                <source xml:space="preserve">Documentation for the mempool.space REST API service: get info on addresses, transactions, blocks, fees, mining, the Lightning network, and more.</source>
+                <source xml:space="preserve">Documentation for the bchexplorer.cash REST API service: get info on addresses, transactions, blocks, fees, mining, and more.</source>
                 <target xml:space="preserve">Dokumentation för tjänsten mempool.space REST API: få information om adresser, transaktioner, block, avgifter, gruvdrift, Lightning-nätverket och mer.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.websocket-bitcoin">
-                <source xml:space="preserve">Documentation for the mempool.space WebSocket API service: get real-time info on blocks, mempools, transactions, addresses, and more.</source>
+                <source xml:space="preserve">Documentation for the bchexplorer.cash WebSocket API service: get real-time info on blocks, mempools, transactions, addresses, and more.</source>
                 <target xml:space="preserve">Dokumentation för mempool.space WebSocket API-tjänsten: få realtidsinformation om block, mempooler, transaktioner, adresser och mer.</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.dashboard">

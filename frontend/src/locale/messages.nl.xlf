@@ -2319,20 +2319,20 @@
                 <target xml:space="preserve">Bekijk de beste Bitcoin Cash-miningpools gerangschikt op het aantal gevonden blokken, gedurende het door u gewenste tijdsbestek.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.electrumrpc">
-                <source xml:space="preserve">Documentation for our Electrum RPC interface: get instant, convenient, and reliable access to an Esplora instance.</source>
-                <target xml:space="preserve">Documentatie voor onze Electrum RPC-interface: krijg direct, gemakkelijk en betrouwbaar toegang tot een Esplora-instantie.</target>
+                <source xml:space="preserve">Documentation for our Electrum RPC interface: get instant, convenient, and reliable access to a Fulcrum instance.</source>
+                <target xml:space="preserve">Documentatie voor onze Electrum RPC-interface: krijg direct, gemakkelijk en betrouwbaar toegang tot een Fulcrum-instantie.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.faq">
-                <source xml:space="preserve">Get answers to common questions like: What is a mempool? Why isn&apos;t my transaction confirming? How can I run my own instance of The Mempool Open Source Project? And more.</source>
-                <target xml:space="preserve">Krijg antwoorden op veelgestelde vragen zoals: Wat is een mempool? Waarom wordt mijn transactie niet bevestigd? Hoe kan ik mijn eigen exemplaar van The Mempool Open Source Project draaien? En meer.</target>
+                <source xml:space="preserve">Get answers to common questions like: What is a mempool? What is a blockchain? How can I run my own instance of BCH Explorer? And more.</source>
+                <target xml:space="preserve">Krijg antwoorden op veelgestelde vragen zoals: Wat is een mempool? Wat is een blockchain? Hoe kan ik mijn eigen exemplaar van BCH Explorer draaien? En meer.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.rest-bitcoin">
-                <source xml:space="preserve">Documentation for the mempool.space REST API service: get info on addresses, transactions, blocks, fees, mining, the Lightning network, and more.</source>
-                <target xml:space="preserve">Documentatie voor de mempool.space REST API-service: krijg informatie over adressen, transacties, blokken, kosten, mining, het Lightning-netwerk en meer.</target>
+                <source xml:space="preserve">Documentation for the bchexplorer.cash REST API service: get info on addresses, transactions, blocks, fees, mining, and more.</source>
+                <target xml:space="preserve">Documentatie voor de bchexplorer.cash REST API-service: krijg informatie over adressen, transacties, blokken, kosten, mining en meer.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.websocket-bitcoin">
-                <source xml:space="preserve">Documentation for the mempool.space WebSocket API service: get real-time info on blocks, mempools, transactions, addresses, and more.</source>
-                <target xml:space="preserve">Documentatie voor de mempool.space WebSocket API-service: ontvang realtime informatie over blokken, mempools, transacties, adressen en meer.</target>
+                <source xml:space="preserve">Documentation for the bchexplorer.cash WebSocket API service: get real-time info on blocks, mempools, transactions, addresses, and more.</source>
+                <target xml:space="preserve">Documentatie voor de bchexplorer.cash WebSocket API-service: ontvang realtime informatie over blokken, mempools, transacties, adressen en meer.</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.dashboard">
                 <source xml:space="preserve">Get real-time Bitcoin Cash mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>

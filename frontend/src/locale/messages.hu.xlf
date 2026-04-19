@@ -2325,19 +2325,19 @@
                 <target xml:space="preserve">Nézd meg a legjobb Bitcoin bányász pool-ok rangsorát a kibányászott blokkok alapján, az általad választott időablakban.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.electrumrpc">
-                <source xml:space="preserve">Documentation for our Electrum RPC interface: get instant, convenient, and reliable access to an Esplora instance.</source>
+                <source xml:space="preserve">Documentation for our Electrum RPC interface: get instant, convenient, and reliable access to a Fulcrum instance.</source>
                 <target xml:space="preserve">Dokumentáció az Electrum RPC felületünkhöz: kapj azonnali, kényelmes és megbízható hozzáférést egy Espora csomóponthoz.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.faq">
-                <source xml:space="preserve">Get answers to common questions like: What is a mempool? Why isn&apos;t my transaction confirming? How can I run my own instance of The Mempool Open Source Project? And more.</source>
+                <source xml:space="preserve">Get answers to common questions like: What is a mempool? What is a blockchain? How can I run my own instance of BCH Explorer? And more.</source>
                 <target xml:space="preserve">Kapj választ gyakran felmerülő kérdésekre mint: Mi az a mempool? Miért nem kap megerősítést a tranzakcióm? Hogyan tudok saját példányt futtatni a Mempool nyíl forrású projektből? És sok más.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.rest-bitcoin">
-                <source xml:space="preserve">Documentation for the mempool.space REST API service: get info on addresses, transactions, blocks, fees, mining, the Lightning network, and more.</source>
+                <source xml:space="preserve">Documentation for the bchexplorer.cash REST API service: get info on addresses, transactions, blocks, fees, mining, and more.</source>
                 <target xml:space="preserve">Dokumentáció a mempool.space REST API szolgáltatáshoz: kapj infót címekről, tranzakciókról, blokkokról, díjakról, bányászokról, a Lightning hálózatról és sok egyébről.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.websocket-bitcoin">
-                <source xml:space="preserve">Documentation for the mempool.space WebSocket API service: get real-time info on blocks, mempools, transactions, addresses, and more.</source>
+                <source xml:space="preserve">Documentation for the bchexplorer.cash WebSocket API service: get real-time info on blocks, mempools, transactions, addresses, and more.</source>
                 <target xml:space="preserve">Dokumentáció a mempool.space WebSocket API szolgáltatáshoz: kapj valós idejú infót blokkokról, mempool-ról, tranzakciókról, címekről és sok egyébről.</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.dashboard">
