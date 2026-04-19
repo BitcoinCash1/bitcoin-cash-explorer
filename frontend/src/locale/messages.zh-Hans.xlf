@@ -791,6 +791,10 @@
                 <source xml:space="preserve">Fee span</source>
                 <target xml:space="preserve">费用范围</target>
             </trans-unit>
+            <trans-unit id="4045684136967540279">
+                <source xml:space="preserve">See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</source>
+                <target xml:space="preserve">See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</target>
+            </trans-unit>
             <trans-unit id="4061977068003854265">
                 <source xml:space="preserve"> Treasury </source>
                 <target xml:space="preserve"> Treasury </target>
@@ -1951,6 +1955,10 @@
                 <source xml:space="preserve">Fee rate</source>
                 <target xml:space="preserve">費率</target>
             </trans-unit>
+            <trans-unit id="8611201246499042017">
+                <source xml:space="preserve">See the mining fees earned per Bitcoin Cash block compared to the Bitcoin Cash block subsidy, visualized in BCH and USD over time.</source>
+                <target xml:space="preserve">See the mining fees earned per Bitcoin Cash block compared to the Bitcoin Cash block subsidy, visualized in BCH and USD over time.</target>
+            </trans-unit>
             <trans-unit id="8631617549415105973">
                 <source xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network using the transaction&apos;s hash.</source>
                 <target xml:space="preserve">使用交易的哈希值，將交易發送到比特幣現金<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> 網路。</target>
@@ -2308,7 +2316,7 @@
                 <target xml:space="preserve">查看随时间变化的比特币手续费率，包括每个区块的最低和最高手续费率，以及不同百分位数的手续费率。</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">
-                <source xml:space="preserve">See Bitcoin block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using Mempool&apos;s re-implementation of Bitcoin Core&apos;s transaction selection algorithm.</source>
+                <source xml:space="preserve">See Bitcoin Cash block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using BCH Explorer&apos;s re-implementation of BCHN&apos;s transaction selection algorithm.</source>
                 <target xml:space="preserve">查看随时间变化的比特币区块健康状况。区块健康度是衡量实际开采的区块中包含多少预期交易的指标。预期交易量是使用 Mempool 重新实现的 Bitcoin Core 交易选择算法确定的。</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.hashrate">
@@ -2316,7 +2324,7 @@
                 <target xml:space="preserve">查看比特幣<x equiv-text="seoDescriptionNetwork(           this.network         )" id="PH"/> 網路的算力與難度隨時間變化的視覺化圖表。</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.pool-ranking">
-                <source xml:space="preserve">See the top Bitcoin mining pools ranked by number of blocks mined, over your desired timeframe.</source>
+                <source xml:space="preserve">See the top Bitcoin Cash mining pools ranked by number of blocks mined, over your desired timeframe.</source>
                 <target xml:space="preserve">查看您所需时间范围内按开采区块数量排名的顶级比特币采矿池。</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.electrumrpc">
@@ -2336,7 +2344,7 @@
                 <target xml:space="preserve">mempool.space WebSocket API 服务文档：获取有关块、内存池、交易、地址等的实时信息。</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.dashboard">
-                <source xml:space="preserve">Get real-time Bitcoin mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
+                <source xml:space="preserve">Get real-time Bitcoin Cash mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
                 <target xml:space="preserve">获取实时比特币挖矿统计数据，如哈希率、难度调整、区块奖励、矿池主导地位等。</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.pool">
@@ -2356,7 +2364,7 @@
                 <target xml:space="preserve">查看比特幣<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> 網路上的最新過期鏈尖端。</target>
             </trans-unit>
             <trans-unit id="meta.descriptions.bitcoin.graphs.hashrate-pools">
-                <source xml:space="preserve">See Bitcoin mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
+                <source xml:space="preserve">See Bitcoin Cash mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
                 <target xml:space="preserve">查看比特币矿池主导地位随时间的变化的可视化：查看顶级矿池在总哈希率中的份额随时间如何波动。</target>
             </trans-unit>
             <trans-unit id="meta.title.docs.electrum">

@@ -790,6 +790,10 @@
                 <source xml:space="preserve">Fee span</source>
                 <target xml:space="preserve">Интервал комиссий</target>
             </trans-unit>
+            <trans-unit id="4045684136967540279">
+                <source xml:space="preserve">See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</source>
+                <target xml:space="preserve">See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</target>
+            </trans-unit>
             <trans-unit id="4061977068003854265">
                 <source xml:space="preserve"> Treasury </source>
                 <target xml:space="preserve"> Treasury </target>
@@ -1949,6 +1953,10 @@
                 <source xml:space="preserve">Fee rate</source>
                 <target xml:space="preserve">Fee rate</target>
             </trans-unit>
+            <trans-unit id="8611201246499042017">
+                <source xml:space="preserve">See the mining fees earned per Bitcoin Cash block compared to the Bitcoin Cash block subsidy, visualized in BCH and USD over time.</source>
+                <target xml:space="preserve">See the mining fees earned per Bitcoin Cash block compared to the Bitcoin Cash block subsidy, visualized in BCH and USD over time.</target>
+            </trans-unit>
             <trans-unit id="8631617549415105973">
                 <source xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network using the transaction&apos;s hash.</source>
                 <target xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network using the transaction&apos;s hash.</target>
@@ -2305,7 +2313,7 @@
                 <target xml:space="preserve">Посмотреть комиссионные ставки в Биткоине с течением времени, включая минимальные и максимальные ставки на блок.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">
-                <source xml:space="preserve">See Bitcoin block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using Mempool&apos;s re-implementation of Bitcoin Core&apos;s transaction selection algorithm.</source>
+                <source xml:space="preserve">See Bitcoin Cash block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using BCH Explorer&apos;s re-implementation of BCHN&apos;s transaction selection algorithm.</source>
                 <target xml:space="preserve">Посмотреть состояния блока биткоина с течением времени. Здоровье блока - это показатель того, сколько ожидаемых транзакций было включено в фактический добытый блок. Ожидаемые транзакции определяются с помощью переделанного Mempool алгоритма отбора транзакций Bitcoin Core.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.hashrate">
@@ -2313,7 +2321,7 @@
                 <target xml:space="preserve">Посмотреть хэшрейт и сложность сети Биткоин <x equiv-text="seoDescriptionNetwork(this.network)" id="PH"/> с течением времени.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.pool-ranking">
-                <source xml:space="preserve">See the top Bitcoin mining pools ranked by number of blocks mined, over your desired timeframe.</source>
+                <source xml:space="preserve">See the top Bitcoin Cash mining pools ranked by number of blocks mined, over your desired timeframe.</source>
                 <target xml:space="preserve">Посмотреть лучшие майнинг-пулы, ранжированные по количеству добытых блоков за желаемый период времени.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.electrumrpc">
@@ -2333,7 +2341,7 @@
                 <target xml:space="preserve">Документация для WebSocket API mempool.space: получайте в режиме реального времени информацию о блоках, мемпулах, транзакциях, адресах и многом другом.</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.dashboard">
-                <source xml:space="preserve">Get real-time Bitcoin mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
+                <source xml:space="preserve">Get real-time Bitcoin Cash mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
                 <target xml:space="preserve">Получить в режиме реального времени статистику биткоин-майнинга, такую как хэшрейт, корректировка сложности, вознаграждения за блок, доминирование пулов и многое другое.</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.pool">
@@ -2353,7 +2361,7 @@
                 <target xml:space="preserve">Просмотреть недавние устаревшие вершины в Bitcoin <x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/>.</target>
             </trans-unit>
             <trans-unit id="meta.descriptions.bitcoin.graphs.hashrate-pools">
-                <source xml:space="preserve">See Bitcoin mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
+                <source xml:space="preserve">See Bitcoin Cash mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
                 <target xml:space="preserve">Оцените визуализацию доминации майнинг-пулов Биткоина с течением времени: просмотрите, как доля ведущих майнинг-пулов в общем хешрейте колебалась со временем.</target>
             </trans-unit>
             <trans-unit id="meta.title.docs.electrum">

@@ -790,6 +790,10 @@
                 <source xml:space="preserve">Fee span</source>
                 <target xml:space="preserve">Vergoedingbereik</target>
             </trans-unit>
+            <trans-unit id="4045684136967540279">
+                <source xml:space="preserve">See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</source>
+                <target xml:space="preserve">Bekijk de Bitcoin Cash-blokbeloningen in BCH en USD, weergegeven over tijd. Blokbeloningen zijn de totale bedragen die miners verdienen via de bloksubsidie ​​en transactiekosten.</target>
+            </trans-unit>
             <trans-unit id="4061977068003854265">
                 <source xml:space="preserve"> Treasury </source>
                 <target xml:space="preserve"> Schatkist </target>
@@ -1948,6 +1952,10 @@
                 <source xml:space="preserve">Fee rate</source>
                 <target xml:space="preserve">Tarief</target>
             </trans-unit>
+            <trans-unit id="8611201246499042017">
+                <source xml:space="preserve">See the mining fees earned per Bitcoin Cash block compared to the Bitcoin Cash block subsidy, visualized in BCH and USD over time.</source>
+                <target xml:space="preserve">Bekijk de miningkosten per Bitcoin Cash-blok in vergelijking met de Bitcoin Cash-bloksubsidie, weergegeven in BCH en USD over tijd.</target>
+            </trans-unit>
             <trans-unit id="8631617549415105973">
                 <source xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network using the transaction&apos;s hash.</source>
                 <target xml:space="preserve">Verzend een transactie naar het Bitcoin Cash-<x equiv-text="seoDescriptionNetwork( this.stateService.network )" id="PH"/> -netwerk met behulp van de hash van de transactie.</target>
@@ -2299,16 +2307,16 @@
                 <target xml:space="preserve">Bekijk Bitcoin-kosten in de loop van de tijd gevisualiseerd, inclusief minimale en maximale kosten per blok, samen met kosten op verschillende percentielen.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">
-                <source xml:space="preserve">See Bitcoin block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using Mempool&apos;s re-implementation of Bitcoin Core&apos;s transaction selection algorithm.</source>
-                <target xml:space="preserve">Zie de gezondheid van Bitcoin-blokken in de loop van de tijd gevisualiseerd. De blokstatus is een maatstaf voor het aantal verwachte transacties dat in een daadwerkelijk gedolven blok is opgenomen. Verwachte transacties worden bepaald met behulp van Mempool&apos;s herimplementatie van het transactieselectie-algoritme van Bitcoin Core.</target>
+                <source xml:space="preserve">See Bitcoin Cash block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using BCH Explorer&apos;s re-implementation of BCHN&apos;s transaction selection algorithm.</source>
+                <target xml:space="preserve">Zie de gezondheid van Bitcoin Cash-blokken in de loop van de tijd gevisualiseerd. De blokstatus is een maatstaf voor het aantal verwachte transacties dat in een daadwerkelijk gedolven blok is opgenomen. Verwachte transacties worden bepaald met behulp van BCH Explorer&apos;s herimplementatie van het transactieselectie-algoritme van BCHN.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.hashrate">
                 <source xml:space="preserve">See hashrate and difficulty for the Bitcoin<x equiv-text="seoDescriptionNetwork(           this.network         )" id="PH"/> network visualized over time.</source>
                 <target xml:space="preserve">Bekijk de hashrate en moeilijkheidsgraad voor het Bitcoin<x equiv-text="seoDescriptionNetwork(this.network)" id="PH"/> netwerk in de loop van de tijd gevisualiseerd.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.pool-ranking">
-                <source xml:space="preserve">See the top Bitcoin mining pools ranked by number of blocks mined, over your desired timeframe.</source>
-                <target xml:space="preserve">Bekijk de beste Bitcoin-miningpools gerangschikt op het aantal gevonden blokken, gedurende het door u gewenste tijdsbestek.</target>
+                <source xml:space="preserve">See the top Bitcoin Cash mining pools ranked by number of blocks mined, over your desired timeframe.</source>
+                <target xml:space="preserve">Bekijk de beste Bitcoin Cash-miningpools gerangschikt op het aantal gevonden blokken, gedurende het door u gewenste tijdsbestek.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.electrumrpc">
                 <source xml:space="preserve">Documentation for our Electrum RPC interface: get instant, convenient, and reliable access to an Esplora instance.</source>
@@ -2327,8 +2335,8 @@
                 <target xml:space="preserve">Documentatie voor de mempool.space WebSocket API-service: ontvang realtime informatie over blokken, mempools, transacties, adressen en meer.</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.dashboard">
-                <source xml:space="preserve">Get real-time Bitcoin mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
-                <target xml:space="preserve">Ontvang realtime Bitcoin-mining-statistieken zoals hashrate, aanpassing van de moeilijkheidsgraad, blokbeloningen, pooldominantie en meer.</target>
+                <source xml:space="preserve">Get real-time Bitcoin Cash mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
+                <target xml:space="preserve">Ontvang realtime Bitcoin Cash-mining-statistieken zoals hashrate, aanpassing van de moeilijkheidsgraad, blokbeloningen, pooldominantie en meer.</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.pool">
                 <source xml:space="preserve">See mining pool stats for <x equiv-text="poolStats.pool.name" id="PH"/>: most recent mined blocks, hashrate over time, total block reward to date, known coinbase addresses, and more.</source>
@@ -2343,8 +2351,8 @@
                 <target xml:space="preserve">Bekijk de meest recente rotte ketentips op het Bitcoin<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/>-netwerk.</target>
             </trans-unit>
             <trans-unit id="meta.descriptions.bitcoin.graphs.hashrate-pools">
-                <source xml:space="preserve">See Bitcoin mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
-                <target xml:space="preserve">Bekijk de dominantie van Bitcoin-miners in de loop van de tijd gevisualiseerd: zie hoe het aandeel van de topmining-pools in de totale hashrate in de loop van de tijd fluctueert.</target>
+                <source xml:space="preserve">See Bitcoin Cash mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
+                <target xml:space="preserve">Bekijk de dominantie van Bitcoin Cash-miners in de loop van de tijd gevisualiseerd: zie hoe het aandeel van de topmining-pools in de totale hashrate in de loop van de tijd fluctueert.</target>
             </trans-unit>
             <trans-unit id="meta.title.docs.electrum">
                 <source xml:space="preserve">Electrum RPC</source>

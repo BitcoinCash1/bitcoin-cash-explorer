@@ -790,6 +790,10 @@
                 <source xml:space="preserve">Fee span</source>
                 <target xml:space="preserve">Avgiftspann</target>
             </trans-unit>
+            <trans-unit id="4045684136967540279">
+                <source xml:space="preserve">See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</source>
+                <target xml:space="preserve">See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</target>
+            </trans-unit>
             <trans-unit id="4061977068003854265">
                 <source xml:space="preserve"> Treasury </source>
                 <target xml:space="preserve"> Treasury </target>
@@ -1949,6 +1953,10 @@
                 <source xml:space="preserve">Fee rate</source>
                 <target xml:space="preserve">Fee rate</target>
             </trans-unit>
+            <trans-unit id="8611201246499042017">
+                <source xml:space="preserve">See the mining fees earned per Bitcoin Cash block compared to the Bitcoin Cash block subsidy, visualized in BCH and USD over time.</source>
+                <target xml:space="preserve">See the mining fees earned per Bitcoin Cash block compared to the Bitcoin Cash block subsidy, visualized in BCH and USD over time.</target>
+            </trans-unit>
             <trans-unit id="8631617549415105973">
                 <source xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network using the transaction&apos;s hash.</source>
                 <target xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network using the transaction&apos;s hash.</target>
@@ -2305,7 +2313,7 @@
                 <target xml:space="preserve">Se Bitcoin-avgifter visualiserade över tid, inklusive lägsta och högsta avgifter per block tillsammans med avgifter i olika percentiler.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">
-                <source xml:space="preserve">See Bitcoin block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using Mempool&apos;s re-implementation of Bitcoin Core&apos;s transaction selection algorithm.</source>
+                <source xml:space="preserve">See Bitcoin Cash block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using BCH Explorer&apos;s re-implementation of BCHN&apos;s transaction selection algorithm.</source>
                 <target xml:space="preserve">Se Bitcoin blockhälsa visualiserad över tid. Blockhälsa är ett mått på hur många förväntade transaktioner som ingick i ett faktiskt mineat block. Förväntade transaktioner bestäms med hjälp av Mempools återimplementering av Bitcoin Cores transaktionsvalsalgoritm.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.hashrate">
@@ -2313,7 +2321,7 @@
                 <target xml:space="preserve">Se hashrate och svårighetsgrad för Bitcoin<x equiv-text="seoDescriptionNetwork(this.network)" id="PH"/>-nätverket visualiserat över tid.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.pool-ranking">
-                <source xml:space="preserve">See the top Bitcoin mining pools ranked by number of blocks mined, over your desired timeframe.</source>
+                <source xml:space="preserve">See the top Bitcoin Cash mining pools ranked by number of blocks mined, over your desired timeframe.</source>
                 <target xml:space="preserve">Se de bästa Bitcoin-minngpoolerna rankade efter antal utvunna block över din önskade tidsram.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.electrumrpc">
@@ -2333,7 +2341,7 @@
                 <target xml:space="preserve">Dokumentation för mempool.space WebSocket API-tjänsten: få realtidsinformation om block, mempooler, transaktioner, adresser och mer.</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.dashboard">
-                <source xml:space="preserve">Get real-time Bitcoin mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
+                <source xml:space="preserve">Get real-time Bitcoin Cash mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
                 <target xml:space="preserve">Få Bitcoin-miningstatistik i realtid som hashrate, svårighetsjustering, blockbelöningar, pooldominans och mer.</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.pool">
@@ -2353,7 +2361,7 @@
                 <target xml:space="preserve">Se de senaste stale-kedjespetsarna på Bitcoin<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/>-nätverket.</target>
             </trans-unit>
             <trans-unit id="meta.descriptions.bitcoin.graphs.hashrate-pools">
-                <source xml:space="preserve">See Bitcoin mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
+                <source xml:space="preserve">See Bitcoin Cash mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
                 <target xml:space="preserve">Se Bitcoin-miningpooldominans visualiserad över tid: se hur de bästa gruvpoolernas andel av det totala hashratet har fluktuerat över tid.</target>
             </trans-unit>
             <trans-unit id="meta.title.docs.electrum">

@@ -790,6 +790,10 @@
                 <source xml:space="preserve">Fee span</source>
                 <target xml:space="preserve">Rango de tasas</target>
             </trans-unit>
+            <trans-unit id="4045684136967540279">
+                <source xml:space="preserve">See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</source>
+                <target xml:space="preserve">See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</target>
+            </trans-unit>
             <trans-unit id="4061977068003854265">
                 <source xml:space="preserve"> Treasury </source>
                 <target xml:space="preserve"> Treasury </target>
@@ -1949,6 +1953,10 @@
                 <source xml:space="preserve">Fee rate</source>
                 <target xml:space="preserve">Fee rate</target>
             </trans-unit>
+            <trans-unit id="8611201246499042017">
+                <source xml:space="preserve">See the mining fees earned per Bitcoin Cash block compared to the Bitcoin Cash block subsidy, visualized in BCH and USD over time.</source>
+                <target xml:space="preserve">See the mining fees earned per Bitcoin Cash block compared to the Bitcoin Cash block subsidy, visualized in BCH and USD over time.</target>
+            </trans-unit>
             <trans-unit id="8631617549415105973">
                 <source xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network using the transaction&apos;s hash.</source>
                 <target xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network using the transaction&apos;s hash.</target>
@@ -2305,7 +2313,7 @@
                 <target xml:space="preserve">Ver las tasas de comisión de Bitcoin visualizadas a lo largo del tiempo, incluidas las tasas de comisión mínimas y máximas por bloque junto con las tasas de comisión en varios percentiles.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">
-                <source xml:space="preserve">See Bitcoin block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using Mempool&apos;s re-implementation of Bitcoin Core&apos;s transaction selection algorithm.</source>
+                <source xml:space="preserve">See Bitcoin Cash block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using BCH Explorer&apos;s re-implementation of BCHN&apos;s transaction selection algorithm.</source>
                 <target xml:space="preserve">Ver la salud del bloque de Bitcoin visualizada a lo largo del tiempo. La salud del bloque mide el número de transacciones previstas que se incluyeron en un bloque minado real. Las transacciones previstas se determinan mediante la reimplementación de Mempool del algoritmo de selección de transacciones de Bitcoin Core.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.hashrate">
@@ -2313,7 +2321,7 @@
                 <target xml:space="preserve">Ver tasa de hash y dificultad para la red Bitcoin<x equiv-text="seoDescriptionNetwork(this.network)" id="PH"/> a lo largo del tiempo.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.pool-ranking">
-                <source xml:space="preserve">See the top Bitcoin mining pools ranked by number of blocks mined, over your desired timeframe.</source>
+                <source xml:space="preserve">See the top Bitcoin Cash mining pools ranked by number of blocks mined, over your desired timeframe.</source>
                 <target xml:space="preserve">Ver las principales pools de minería ordenadas por número de bloques minados, en un periodo de tiempo determinado.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.electrumrpc">
@@ -2333,7 +2341,7 @@
                 <target xml:space="preserve">Documentación para el servicio Websocket API de mempool.space: obtén información en tiempo real sobre bloques, mempools, transacciones, direcciones y más.</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.dashboard">
-                <source xml:space="preserve">Get real-time Bitcoin mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
+                <source xml:space="preserve">Get real-time Bitcoin Cash mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
                 <target xml:space="preserve">Obtén estadísticas de minería en tiempo real como tasa de hash, ajuste de dificultad, recompensa por bloque, dominancia de pool, y más.</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.pool">
@@ -2353,7 +2361,7 @@
                 <target xml:space="preserve">Ver las puntas de cadena huérfanas más recientes en la red Bitcoin<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/>.</target>
             </trans-unit>
             <trans-unit id="meta.descriptions.bitcoin.graphs.hashrate-pools">
-                <source xml:space="preserve">See Bitcoin mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
+                <source xml:space="preserve">See Bitcoin Cash mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
                 <target xml:space="preserve">Ver la dominancia de pools de minería Bitcoin en el tiempo: ver cómo ha fluctuado en el tiempo la tasa de minería de las principales pools.</target>
             </trans-unit>
             <trans-unit id="meta.title.docs.electrum">

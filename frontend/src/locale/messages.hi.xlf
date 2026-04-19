@@ -790,6 +790,10 @@
                 <source xml:space="preserve">Fee span</source>
                 <target xml:space="preserve">फी स्पेन </target>
             </trans-unit>
+            <trans-unit id="4045684136967540279">
+                <source xml:space="preserve">See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</source>
+                <target xml:space="preserve">See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</target>
+            </trans-unit>
             <trans-unit id="4061977068003854265">
                 <source xml:space="preserve"> Treasury </source>
                 <target xml:space="preserve"> Treasury </target>
@@ -1949,6 +1953,10 @@
                 <source xml:space="preserve">Fee rate</source>
                 <target xml:space="preserve">Fee rate</target>
             </trans-unit>
+            <trans-unit id="8611201246499042017">
+                <source xml:space="preserve">See the mining fees earned per Bitcoin Cash block compared to the Bitcoin Cash block subsidy, visualized in BCH and USD over time.</source>
+                <target xml:space="preserve">See the mining fees earned per Bitcoin Cash block compared to the Bitcoin Cash block subsidy, visualized in BCH and USD over time.</target>
+            </trans-unit>
             <trans-unit id="8631617549415105973">
                 <source xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network using the transaction&apos;s hash.</source>
                 <target xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network using the transaction&apos;s hash.</target>
@@ -2305,7 +2313,7 @@
                 <target xml:space="preserve">समय के साथ बिटकॉइन शुल्क दरों को देखें, जिसमें प्रति ब्लॉक न्यूनतम और अधिकतम शुल्क दरों के साथ-साथ विभिन्न प्रतिशत पर शुल्क दरें भी शामिल हैं।</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">
-                <source xml:space="preserve">See Bitcoin block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using Mempool&apos;s re-implementation of Bitcoin Core&apos;s transaction selection algorithm.</source>
+                <source xml:space="preserve">See Bitcoin Cash block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using BCH Explorer&apos;s re-implementation of BCHN&apos;s transaction selection algorithm.</source>
                 <target xml:space="preserve">समय के साथ बिटकॉइन ब्लॉक स्वास्थ्य को देखें। ब्लॉक स्वास्थ्य एक माप है कि वास्तविक खनन किए गए ब्लॉक में कितने अपेक्षित लेनदेन शामिल थे। अपेक्षित लेनदेन बिटकॉइन कोर के लेनदेन चयन एल्गोरिथ्म के मेमपूल के पुन: कार्यान्वयन का उपयोग करके निर्धारित किए जाते हैं।</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.hashrate">
@@ -2313,7 +2321,7 @@
                 <target xml:space="preserve">बिटकॉइन नेटवर्क के लिए हैशरेट और कठिनाई को समय के साथ देखें।</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.pool-ranking">
-                <source xml:space="preserve">See the top Bitcoin mining pools ranked by number of blocks mined, over your desired timeframe.</source>
+                <source xml:space="preserve">See the top Bitcoin Cash mining pools ranked by number of blocks mined, over your desired timeframe.</source>
                 <target xml:space="preserve">अपने इच्छित समय सीमा में खनन किए गए ब्लॉकों की संख्या के आधार पर रैंक किए गए शीर्ष बिटकॉइन खनन पूल देखें।</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.electrumrpc">
@@ -2333,7 +2341,7 @@
                 <target xml:space="preserve">मेमपूल.स्पेस वेबसॉकेट एपीआई सेवा के लिए दस्तावेज़ीकरण: ब्लॉक, मेमपूल, लेनदेन, पते और अधिक पर वास्तविक समय की जानकारी प्राप्त करें।</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.dashboard">
-                <source xml:space="preserve">Get real-time Bitcoin mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
+                <source xml:space="preserve">Get real-time Bitcoin Cash mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
                 <target xml:space="preserve">वास्तविक समय बिटकॉइन खनन आँकड़े प्राप्त करें जैसे हैशरेट, कठिनाई समायोजन, ब्लॉक पुरस्कार, पूल प्रभुत्व, और अधिक।</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.pool">
@@ -2353,7 +2361,7 @@
                 <target xml:space="preserve">See the most recent stale chain tips on the Bitcoin<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network.</target>
             </trans-unit>
             <trans-unit id="meta.descriptions.bitcoin.graphs.hashrate-pools">
-                <source xml:space="preserve">See Bitcoin mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
+                <source xml:space="preserve">See Bitcoin Cash mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
                 <target xml:space="preserve">समय के साथ बिटकॉइन खनन पूल के प्रभुत्व को देखें: देखें कि कुल हैशरेट में शीर्ष खनन पूलों की हिस्सेदारी समय के साथ कैसे उतार-चढ़ाव करती रही है।</target>
             </trans-unit>
             <trans-unit id="meta.title.docs.electrum">

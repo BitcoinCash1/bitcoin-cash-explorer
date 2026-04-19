@@ -791,6 +791,10 @@
                 <source xml:space="preserve">Fee span</source>
                 <target xml:space="preserve">نطاق الرسوم</target>
             </trans-unit>
+            <trans-unit id="4045684136967540279">
+                <source xml:space="preserve">See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</source>
+                <target xml:space="preserve">See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</target>
+            </trans-unit>
             <trans-unit id="4061977068003854265">
                 <source xml:space="preserve"> Treasury </source>
                 <target xml:space="preserve"> الخزانة </target>
@@ -1951,6 +1955,10 @@
                 <source xml:space="preserve">Fee rate</source>
                 <target xml:space="preserve">معدل الرسوم</target>
             </trans-unit>
+            <trans-unit id="8611201246499042017">
+                <source xml:space="preserve">See the mining fees earned per Bitcoin Cash block compared to the Bitcoin Cash block subsidy, visualized in BCH and USD over time.</source>
+                <target xml:space="preserve">See the mining fees earned per Bitcoin Cash block compared to the Bitcoin Cash block subsidy, visualized in BCH and USD over time.</target>
+            </trans-unit>
             <trans-unit id="8631617549415105973">
                 <source xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network using the transaction&apos;s hash.</source>
                 <target xml:space="preserve">بث معاملة إلى شبكة بيتكوين كاش<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> باستخدام هاش المعاملة.</target>
@@ -2308,7 +2316,7 @@
                 <target xml:space="preserve">شاهد رسوم البيتكوين التي يتم تصورها بمرور الوقت، بما في ذلك الحد الأدنى والحد الأقصى من الرسوم لكل كتلة بالإضافة إلى الرسوم بنسب مئوية مختلفة.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">
-                <source xml:space="preserve">See Bitcoin block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using Mempool&apos;s re-implementation of Bitcoin Core&apos;s transaction selection algorithm.</source>
+                <source xml:space="preserve">See Bitcoin Cash block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using BCH Explorer&apos;s re-implementation of BCHN&apos;s transaction selection algorithm.</source>
                 <target xml:space="preserve">شاهد صحة كتلة البيتكوين مع مرور الوقت. تعد صحة الكتلة مقياسًا لعدد المعاملات المتوقعة التي تم تضمينها في الكتلة الملغومة الفعلية. يتم تحديد المعاملات المتوقعة باستخدام إعادة تنفيذ Mempool لخوارزمية اختيار المعاملات الخاصة بـ Bitcoin Core.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.hashrate">
@@ -2316,7 +2324,7 @@
                 <target xml:space="preserve">شاهد معدل التجزئة وصعوبة شبكة بيتكوين كاش (<x equiv-text="seoDescriptionNetwork(           this.network         )" id="PH"/> ) مع عرضها بيانيًا على مدار الوقت.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.pool-ranking">
-                <source xml:space="preserve">See the top Bitcoin mining pools ranked by number of blocks mined, over your desired timeframe.</source>
+                <source xml:space="preserve">See the top Bitcoin Cash mining pools ranked by number of blocks mined, over your desired timeframe.</source>
                 <target xml:space="preserve">اطلع على أفضل مجموعات تعدين البيتكوين مرتبة حسب عدد الكتل التي تم تعدينها، خلال الإطار الزمني الذي تريده.</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.electrumrpc">
@@ -2336,7 +2344,7 @@
                 <target xml:space="preserve">وثائق خدمة mempool.space WebSocket API: احصل على معلومات في الوقت الفعلي حول الكتل وmempools والمعاملات والعناوين والمزيد.</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.dashboard">
-                <source xml:space="preserve">Get real-time Bitcoin mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
+                <source xml:space="preserve">Get real-time Bitcoin Cash mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
                 <target xml:space="preserve">احصل على إحصائيات تعدين البيتكوين في الوقت الفعلي مثل معدل التجزئة وتعديل الصعوبة ومكافآت الكتلة والسيطرة على المجمع والمزيد.</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.pool">
@@ -2356,7 +2364,7 @@
                 <target xml:space="preserve">اطلع على أحدث النصائح المتعلقة بالسلسلة القديمة على شبكة بيتكوين كاش (<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> ).</target>
             </trans-unit>
             <trans-unit id="meta.descriptions.bitcoin.graphs.hashrate-pools">
-                <source xml:space="preserve">See Bitcoin mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
+                <source xml:space="preserve">See Bitcoin Cash mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
                 <target xml:space="preserve">شاهد هيمنة مجمع تعدين Bitcoin بشكل مرئي مع مرور الوقت: شاهد كيف تقلبت حصة مجمعات التعدين الأعلى من إجمالي معدل التجزئة بمرور الوقت.</target>
             </trans-unit>
             <trans-unit id="meta.title.docs.electrum">
