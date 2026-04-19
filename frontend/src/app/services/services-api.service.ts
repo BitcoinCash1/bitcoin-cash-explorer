@@ -217,7 +217,7 @@ export class ServicesApiServices {
   }
 
   getSimpleProofs$(key: string): Observable<Record<string, SimpleProof>> {
-    // Need to use relative path here to avoid CORS errors, since this won't be used from mempool.space website
+    // Need to use relative path here to avoid CORS errors, since this won't be used from bchexplorer.cash website
     const pathname = new URL(
       this.stateService.env.SERVICES_API + '/sp/verified'
     ).pathname;

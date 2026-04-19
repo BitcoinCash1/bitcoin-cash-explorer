@@ -260,8 +260,8 @@ yarn add @mempool/mempool.js`;
       this.network === 'testnet4' ||
       this.network === 'signet'
       ? code.codeTemplate.python.replace(
-          'wss://mempool.space/api/v1/ws',
-          'wss://mempool.space/' + this.network + '/api/v1/ws'
+          'wss://bchexplorer.cash/api/v1/ws',
+          'wss://bchexplorer.cash/' + this.network + '/api/v1/ws'
         )
       : code.codeTemplate.python;
   }

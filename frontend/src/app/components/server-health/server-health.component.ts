@@ -27,10 +27,10 @@ export class ServerHealthComponent implements OnInit {
 
   repoMap = {
     frontend: 'bitcoin-cash-explorer',
-    hybrid: 'mempool.space',
+    hybrid: 'bchexplorer.cash',
     backend: 'bitcoin-cash-explorer',
     electrs: 'electrs',
-    ssr: 'mempool.space',
+    ssr: 'bchexplorer.cash',
   };
 
   constructor(

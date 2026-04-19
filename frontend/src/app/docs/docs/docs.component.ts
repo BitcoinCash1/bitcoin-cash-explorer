@@ -41,14 +41,14 @@ export class DocsComponent implements OnInit {
       this.activeTab = 0;
       this.seoService.setTitle($localize`:@@meta.title.docs.faq:FAQ`);
       this.seoService.setDescription(
-        $localize`:@@meta.description.docs.faq:Get answers to common questions like: What is a mempool? Why isn't my transaction confirming? How can I run my own instance of The Mempool Open Source Project? And more.`
+        $localize`:@@meta.description.docs.faq:Get answers to common questions like: What is a mempool? What is a blockchain? How can I run my own instance of BCH Explorer? And more.`
       );
       this.ogService.setManualOgImage('faq.jpg');
     } else if (url[1].path === 'rest') {
       this.activeTab = 1;
       this.seoService.setTitle($localize`:@@meta.title.docs.rest:REST API`);
       this.seoService.setDescription(
-        $localize`:@@meta.description.docs.rest-bitcoin:Documentation for the mempool.space REST API service: get info on addresses, transactions, blocks, fees, mining, the Lightning network, and more.`
+        $localize`:@@meta.description.docs.rest-bitcoin:Documentation for the bchexplorer.cash REST API service: get info on addresses, transactions, blocks, fees, mining, and more.`
       );
     } else if (url[1].path === 'websocket') {
       this.activeTab = 2;
@@ -56,7 +56,7 @@ export class DocsComponent implements OnInit {
         $localize`:@@meta.title.docs.websocket:WebSocket API`
       );
       this.seoService.setDescription(
-        $localize`:@@meta.description.docs.websocket-bitcoin:Documentation for the mempool.space WebSocket API service: get real-time info on blocks, mempools, transactions, addresses, and more.`
+        $localize`:@@meta.description.docs.websocket-bitcoin:Documentation for the bchexplorer.cash WebSocket API service: get real-time info on blocks, mempools, transactions, addresses, and more.`
       );
     } else {
       this.activeTab = 3;
@@ -64,7 +64,7 @@ export class DocsComponent implements OnInit {
         $localize`:@@meta.title.docs.electrum:Electrum RPC`
       );
       this.seoService.setDescription(
-        $localize`:@@meta.description.docs.electrumrpc:Documentation for our Electrum RPC interface: get instant, convenient, and reliable access to an Esplora instance.`
+        $localize`:@@meta.description.docs.electrumrpc:Documentation for our Electrum RPC interface: get instant, convenient, and reliable access to a Fulcrum instance.`
       );
     }
   }

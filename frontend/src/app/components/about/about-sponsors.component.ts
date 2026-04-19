@@ -8,7 +8,7 @@ import { EnterpriseService } from '@app/services/enterprise.service';
   standalone: false,
 })
 export class AboutSponsorsComponent {
-  @Input() host = 'https://mempool.space';
+  @Input() host = 'https://bchexplorer.cash';
   @Input() context = 'about';
 
   constructor(private enterpriseService: EnterpriseService) {}

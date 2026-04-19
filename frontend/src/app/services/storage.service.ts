@@ -18,7 +18,7 @@ export class StorageService {
     const fragment = window.location.hash.replace('#', '');
 
     if (graphWindowPreference === null) {
-      // First visit to mempool.space
+      // First visit to bchexplorer.cash
       if (
         (window.location.pathname.includes('graphs') &&
           key === 'graphWindowPreference') ||

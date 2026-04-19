@@ -5555,7 +5555,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="meta.description.docs.faq" datatype="html">
-        <source>Get answers to common questions like: What is a mempool? Why isn&apos;t my transaction confirming? How can I run my own instance of The Mempool Open Source Project? And more.</source>
+        <source>Get answers to common questions like: What is a mempool? What is a blockchain? How can I run my own instance of BCH Explorer? And more.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/docs/docs/docs.component.ts</context>
           <context context-type="linenumber">44</context>
@@ -5569,7 +5569,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="meta.description.docs.rest-bitcoin" datatype="html">
-        <source>Documentation for the mempool.space REST API service: get info on addresses, transactions, blocks, fees, mining, the Lightning network, and more.</source>
+        <source>Documentation for the bchexplorer.cash REST API service: get info on addresses, transactions, blocks, fees, mining, and more.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/docs/docs/docs.component.ts</context>
           <context context-type="linenumber">51</context>
@@ -5583,7 +5583,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="meta.description.docs.websocket-bitcoin" datatype="html">
-        <source>Documentation for the mempool.space WebSocket API service: get real-time info on blocks, mempools, transactions, addresses, and more.</source>
+        <source>Documentation for the bchexplorer.cash WebSocket API service: get real-time info on blocks, mempools, transactions, addresses, and more.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/docs/docs/docs.component.ts</context>
           <context context-type="linenumber">59</context>
@@ -5597,7 +5597,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="meta.description.docs.electrumrpc" datatype="html">
-        <source>Documentation for our Electrum RPC interface: get instant, convenient, and reliable access to an Esplora instance.</source>
+        <source>Documentation for our Electrum RPC interface: get instant, convenient, and reliable access to a Fulcrum instance.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/docs/docs/docs.component.ts</context>
           <context context-type="linenumber">67</context>

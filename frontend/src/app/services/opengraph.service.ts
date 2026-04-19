@@ -2,7 +2,6 @@ import { Injectable, NgZone } from '@angular/core';
 import { Meta } from '@angular/platform-browser';
 import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
 import { filter, map, switchMap } from 'rxjs/operators';
-import { combineLatest } from 'rxjs';
 import { StateService } from '@app/services/state.service';
 import { LanguageService } from '@app/services/language.service';
 
@@ -28,7 +27,7 @@ export class OpenGraphService {
     const initialOgImageTag = metaService.getTag("property='og:image'");
     this.defaultImageUrl =
       initialOgImageTag?.content ||
-      'https://mempool.space/resources/previews/mempool-space-preview.jpg';
+      'https://bchexplorer.cash/resources/previews/explorer_preview.png';
     this.router.events
       .pipe(
         filter((event) => event instanceof NavigationEnd),
