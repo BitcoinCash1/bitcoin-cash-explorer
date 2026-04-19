@@ -2309,7 +2309,7 @@
                 <target xml:space="preserve">Zeige Größe, Gewicht, Gebührenbereich, enthaltene Transaktionen, Prüfung von (erwartet vs. tatsächlich) und mehr für Bitcoin <x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> Block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-fee-rates">
-                <source xml:space="preserve">See Bitcoin feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
+                <source xml:space="preserve">See Bitcoin Cash feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
                 <target xml:space="preserve">Visualisierung der Bitcoin-Feerate im Zeitverlauf ansehen, einschließlich der minimalen und maximalen Feerrate pro Block sowie der Feerate bei verschiedenen Perzentilen.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">

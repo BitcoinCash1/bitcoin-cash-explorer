@@ -2303,8 +2303,8 @@
                 <target xml:space="preserve">Bekijk grootte, gewicht, vergoedingsbereik, inbegrepen transacties, audit (verwachte versus werkelijke) en meer voor Bitcoin<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> blok<x equiv-text="block.height" id="BLOCK_HEIGHT"/> ( <x equiv-text="block.id" id="BLOCK_ID"/>).</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-fee-rates">
-                <source xml:space="preserve">See Bitcoin feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
-                <target xml:space="preserve">Bekijk Bitcoin-kosten in de loop van de tijd gevisualiseerd, inclusief minimale en maximale kosten per blok, samen met kosten op verschillende percentielen.</target>
+                <source xml:space="preserve">See Bitcoin Cash feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
+                <target xml:space="preserve">Bekijk Bitcoin Cash kosten in de loop van de tijd gevisualiseerd, inclusief minimale en maximale kosten per blok, samen met kosten op verschillende percentielen.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">
                 <source xml:space="preserve">See Bitcoin Cash block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using BCH Explorer&apos;s re-implementation of BCHN&apos;s transaction selection algorithm.</source>

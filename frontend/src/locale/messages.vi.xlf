@@ -2310,7 +2310,7 @@
                 <target xml:space="preserve">Xem kích thước, trọng lượng, phạm vi phí, các giao dịch đã thêm, kiểm toán (dự kiến so với thực tế) và nhiều hơn nữa cho khối Bitcoin<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-fee-rates">
-                <source xml:space="preserve">See Bitcoin feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
+                <source xml:space="preserve">See Bitcoin Cash feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
                 <target xml:space="preserve">Xem mức phí Bitcoin được trực quan hóa theo thời gian, bao gồm mức phí tối thiểu, tối đa trên mỗi khối cùng với các mức phí ở các phần trăm khác nhau.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">

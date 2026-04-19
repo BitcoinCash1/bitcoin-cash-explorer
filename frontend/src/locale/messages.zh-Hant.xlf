@@ -2312,7 +2312,7 @@
                 <target xml:space="preserve">查看比特幣<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> 區塊<x equiv-text="block.height" id="BLOCK_HEIGHT"/> （<x equiv-text="block.id" id="BLOCK_ID"/> ）的區塊大小、權重、手續費範圍、包含的交易、審計（預期值與實際值）等資訊。</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-fee-rates">
-                <source xml:space="preserve">See Bitcoin feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
+                <source xml:space="preserve">See Bitcoin Cash feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
                 <target xml:space="preserve">查看比特幣手續費隨時間變化的可視化圖表，包括每個區塊的最低和最高手續費以及不同百分位數的手續費。</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">

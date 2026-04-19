@@ -2309,7 +2309,7 @@
                 <target xml:space="preserve">ビットコイン<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> ブロック <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>) のサイズ、ウェイト、手数料範囲、含まれる取引、監査 (予想と実際) などを確認します。</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-fee-rates">
-                <source xml:space="preserve">See Bitcoin feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
+                <source xml:space="preserve">See Bitcoin Cash feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
                 <target xml:space="preserve">ブロックあたりの最小手数料と最大手数料、さまざまなパーセンタイルの手数料など、時間の経過に伴うビットコインの手数料を視覚化して表示します。</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">

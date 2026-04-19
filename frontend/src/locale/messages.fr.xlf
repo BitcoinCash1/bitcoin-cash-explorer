@@ -2309,7 +2309,7 @@
                 <target xml:space="preserve">Consultez la taille, le poids, la fourchette de frais, les transactions incluses, l&apos;audit (attendu et réel) et bien plus encore pour le bloc Bitcoin<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> <x equiv-text="block.height" id="BLOCK_HEIGHT"/> ( <x equiv-text="block.id" id="BLOCK_ID"/>).</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-fee-rates">
-                <source xml:space="preserve">See Bitcoin feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
+                <source xml:space="preserve">See Bitcoin Cash feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
                 <target xml:space="preserve">Consultez les tarifs Bitcoin visualisés au fil du temps, y compris les tarifs minimum et maximum par bloc ainsi que les tarifs à différents centiles.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">

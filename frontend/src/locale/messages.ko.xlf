@@ -2309,7 +2309,7 @@
                 <target xml:space="preserve">비트코인<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> 블록 <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>)의 크기, 무게, 수수료 범위, 포함된 트랜잭션, 감사(예상 vs 실제) 등의 정보를 확인하세요.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-fee-rates">
-                <source xml:space="preserve">See Bitcoin feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
+                <source xml:space="preserve">See Bitcoin Cash feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
                 <target xml:space="preserve">비트코인 수수료율(최소, 최대, 백분위 기준)을 시간 흐름에 따라 시각화하여 확인하세요.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">

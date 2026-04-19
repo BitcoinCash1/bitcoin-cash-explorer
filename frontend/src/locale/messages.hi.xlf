@@ -2309,7 +2309,7 @@
                 <target xml:space="preserve">बिटकॉइन<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> ब्लॉक <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>) के लिए साइज, वजन, शुल्क सीमा, शामिल लेनदेन, ऑडिट (अपेक्षित बनाम वास्तविक) और अधिक देखें।</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-fee-rates">
-                <source xml:space="preserve">See Bitcoin feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
+                <source xml:space="preserve">See Bitcoin Cash feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
                 <target xml:space="preserve">समय के साथ बिटकॉइन शुल्क दरों को देखें, जिसमें प्रति ब्लॉक न्यूनतम और अधिकतम शुल्क दरों के साथ-साथ विभिन्न प्रतिशत पर शुल्क दरें भी शामिल हैं।</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">

@@ -2312,7 +2312,7 @@
                 <target xml:space="preserve">اطلع على الحجم والوزن ونطاق الرسوم والمعاملات المضمنة والتدقيق (المتوقع مقابل الفعلي) والمزيد بالنسبة لكتلة Bitcoin<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-fee-rates">
-                <source xml:space="preserve">See Bitcoin feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
+                <source xml:space="preserve">See Bitcoin Cash feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
                 <target xml:space="preserve">شاهد رسوم البيتكوين التي يتم تصورها بمرور الوقت، بما في ذلك الحد الأدنى والحد الأقصى من الرسوم لكل كتلة بالإضافة إلى الرسوم بنسب مئوية مختلفة.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">
