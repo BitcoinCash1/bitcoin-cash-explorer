@@ -99,7 +99,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
       $localize`:@@41545303ec98792b738d6237adbd1f3b54a22196:Block Fees Vs Subsidy`
     );
     this.seoService.setDescription(
-      $localize`See the mining fees earned per Bitcoin block compared to the Bitcoin block subsidy, visualized in BCH and USD over time.`
+      $localize`See the mining fees earned per Bitcoin Cash block compared to the Bitcoin Cash block subsidy, visualized in BCH and USD over time.`
     );
 
     this.miningWindowPreference = this.miningService.getDefaultTimespan('24h');

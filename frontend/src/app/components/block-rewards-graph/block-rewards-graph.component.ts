@@ -78,7 +78,7 @@ export class BlockRewardsGraphComponent implements OnInit {
       $localize`:@@8ba8fe810458280a83df7fdf4c614dfc1a826445:Block Rewards`
     );
     this.seoService.setDescription(
-      $localize`See Bitcoin block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.`
+      $localize`See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.`
     );
     this.miningWindowPreference = this.miningService.getDefaultTimespan('3m');
     this.radioGroupForm = this.formBuilder.group({

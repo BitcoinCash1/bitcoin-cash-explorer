@@ -770,8 +770,8 @@
           <context context-type="linenumber">99</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="8385872309809021855" datatype="html">
-        <source>See the mining fees earned per Bitcoin block compared to the Bitcoin block subsidy, visualized in BCH and USD over time.</source>
+      <trans-unit id="8611201246499042017" datatype="html">
+        <source>See the mining fees earned per Bitcoin Cash block compared to the Bitcoin Cash block subsidy, visualized in BCH and USD over time.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-fees-subsidy-graph/block-fees-subsidy-graph.component.ts</context>
           <context context-type="linenumber">102</context>
@@ -892,7 +892,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="meta.description.bitcoin.graphs.block-health" datatype="html">
-        <source>See Bitcoin block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using Mempool&apos;s re-implementation of Bitcoin Core&apos;s transaction selection algorithm.</source>
+        <source>See Bitcoin Cash block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using BCH Explorer&apos;s re-implementation of BCHN&apos;s transaction selection algorithm.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-health-graph/block-health-graph.component.ts</context>
           <context context-type="linenumber">83</context>
@@ -1122,8 +1122,8 @@
           <context context-type="linenumber">78</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="3792139409018959890" datatype="html">
-        <source>See Bitcoin block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</source>
+      <trans-unit id="4045684136967540279" datatype="html">
+        <source>See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-rewards-graph/block-rewards-graph.component.ts</context>
           <context context-type="linenumber">81</context>
@@ -2086,7 +2086,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">324,326</context>
+          <context context-type="linenumber">320,323</context>
         </context-group>
         <note priority="1" from="description">shared.calculator</note>
       </trans-unit>
@@ -2831,7 +2831,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="meta.descriptions.bitcoin.graphs.hashrate-pools" datatype="html">
-        <source>See Bitcoin mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
+        <source>See Bitcoin Cash mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/hashrates-chart-pools/hashrate-chart-pools.component.ts</context>
           <context context-type="linenumber">101</context>
@@ -3014,7 +3014,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="meta.description.mining.dashboard" datatype="html">
-        <source>Get real-time Bitcoin mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
+        <source>Get real-time Bitcoin Cash mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/mining-dashboard/mining-dashboard.component.ts</context>
           <context context-type="linenumber">40</context>
@@ -3200,7 +3200,7 @@
         </context-group>
       </trans-unit>
       <trans-unit id="meta.description.bitcoin.graphs.pool-ranking" datatype="html">
-        <source>See the top Bitcoin mining pools ranked by number of blocks mined, over your desired timeframe.</source>
+        <source>See the top Bitcoin Cash mining pools ranked by number of blocks mined, over your desired timeframe.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/pool-ranking/pool-ranking.component.ts</context>
           <context context-type="linenumber">73</context>
@@ -4245,7 +4245,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">314,317</context>
+          <context context-type="linenumber">310,313</context>
         </context-group>
         <note priority="1" from="description">footer.clock-mempool</note>
       </trans-unit>
@@ -6141,7 +6141,7 @@
         <source>Networks</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">263,265</context>
+          <context context-type="linenumber">259,261</context>
         </context-group>
         <note priority="1" from="description">footer.networks</note>
       </trans-unit>
@@ -6149,7 +6149,7 @@
         <source>Mainnet Explorer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">272,275</context>
+          <context context-type="linenumber">268,271</context>
         </context-group>
         <note priority="1" from="description">footer.mainnet-explorer</note>
       </trans-unit>
@@ -6157,7 +6157,7 @@
         <source>Testnet3 Explorer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">283,286</context>
+          <context context-type="linenumber">279,282</context>
         </context-group>
         <note priority="1" from="description">footer.testnet3-explorer</note>
       </trans-unit>
@@ -6165,7 +6165,7 @@
         <source>Testnet4 Explorer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">294,297</context>
+          <context context-type="linenumber">290,293</context>
         </context-group>
         <note priority="1" from="description">footer.testnet4-explorer</note>
       </trans-unit>
@@ -6173,7 +6173,7 @@
         <source>Signet Explorer</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">305,308</context>
+          <context context-type="linenumber">301,304</context>
         </context-group>
         <note priority="1" from="description">footer.signet-explorer</note>
       </trans-unit>
@@ -6181,7 +6181,7 @@
         <source>Tools</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">311,313</context>
+          <context context-type="linenumber">307,309</context>
         </context-group>
         <note priority="1" from="description">footer.tools</note>
       </trans-unit>
@@ -6189,7 +6189,7 @@
         <source>Clock (Mined)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">319,321</context>
+          <context context-type="linenumber">315,318</context>
         </context-group>
         <note priority="1" from="description">footer.clock-mined</note>
       </trans-unit>
@@ -6197,7 +6197,7 @@
         <source>Address Converter</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">331,334</context>
+          <context context-type="linenumber">327,330</context>
         </context-group>
         <note priority="1" from="description">shared.address-converter</note>
       </trans-unit>
@@ -6205,7 +6205,7 @@
         <source>Verify Ownership (PSBT)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">336,339</context>
+          <context context-type="linenumber">332,335</context>
         </context-group>
         <note priority="1" from="description">shared.verify-ownership</note>
       </trans-unit>
@@ -6213,7 +6213,7 @@
         <source>Legal</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">342,344</context>
+          <context context-type="linenumber">338,340</context>
         </context-group>
         <note priority="1" from="description">footer.legal</note>
       </trans-unit>
@@ -6221,7 +6221,7 @@
         <source>Terms of Service</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">347,351</context>
+          <context context-type="linenumber">343,347</context>
         </context-group>
         <note priority="1" from="description">Terms of Service</note>
         <note priority="1" from="meaning">shared.terms-of-service</note>
@@ -6230,7 +6230,7 @@
         <source>Privacy Policy</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">354,358</context>
+          <context context-type="linenumber">350,354</context>
         </context-group>
         <note priority="1" from="description">Privacy Policy</note>
         <note priority="1" from="meaning">shared.privacy-policy</note>
@@ -6239,7 +6239,7 @@
         <source>Third-party Licenses</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/global-footer/global-footer.component.html</context>
-          <context context-type="linenumber">361,366</context>
+          <context context-type="linenumber">357,362</context>
         </context-group>
         <note priority="1" from="description">Third-party Licenses</note>
         <note priority="1" from="meaning">shared.third-party-licenses</note>

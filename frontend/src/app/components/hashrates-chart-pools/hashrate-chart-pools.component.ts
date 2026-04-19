@@ -98,7 +98,7 @@ export class HashrateChartPoolsComponent implements OnInit {
       $localize`:@@mining.pools-historical-dominance:Pools Historical Dominance`
     );
     this.seoService.setDescription(
-      $localize`:@@meta.descriptions.bitcoin.graphs.hashrate-pools:See Bitcoin mining pool dominance visualized over time: see how top mining pools' share of total hashrate has fluctuated over time.`
+      $localize`:@@meta.descriptions.bitcoin.graphs.hashrate-pools:See Bitcoin Cash mining pool dominance visualized over time: see how top mining pools' share of total hashrate has fluctuated over time.`
     );
     this.miningWindowPreference = this.miningService.getDefaultTimespan('6m');
     this.radioGroupForm = this.formBuilder.group({
