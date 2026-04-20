@@ -1161,7 +1161,9 @@ class BitcoinRoutes {
                   : '',
                 scriptpubkey_type: transactionUtils.translateScriptPubKeyType(rawPrevout.scriptPubKey.type),
                 scriptpubkey_address:
-                  rawPrevout.scriptPubKey && rawPrevout.scriptPubKey.address ? rawPrevout.scriptPubKey.address : '',
+                  rawPrevout.scriptPubKey && rawPrevout.scriptPubKey.addresses
+                    ? rawPrevout.scriptPubKey.addresses[0]
+                    : '',
                 token_category: rawPrevout.tokenData?.category || '',
                 token_amount: rawPrevout.tokenData?.amount || 0,
                 token_nft_capability: rawPrevout.tokenData?.nft?.capability || '',
