@@ -33,6 +33,41 @@
   }
 }
 
+.small-buttons {
+  width: 100%;
+  display: flex;
+  font-size: 14px;
+  margin: 7px 0px;
+  justify-content: space-between;
+  flex-direction: row-reverse;
+
+  @media (min-width: 830px) {
+    margin: 2px 0px;
+    width: auto;
+    flex-direction: row;
+  }
+  @media (min-width: 830px) {
+    margin: 0px 0px;
+  }
+  .btn {
+    width: 50%;
+    flex-grow: 1;
+    flex-shrink: 1;
+    margin: 1px 0;
+    margin-right: 0.5rem;
+    @media (min-width: 830px) {
+      width: auto;
+    }
+
+    &:first-child {
+      margin-right: 0;
+      @media (min-width: 830px) {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
+
 .chart {
   display: flex;
   flex: 1;

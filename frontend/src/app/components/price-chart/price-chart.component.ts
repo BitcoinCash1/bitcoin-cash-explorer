@@ -48,6 +48,7 @@ export class PriceChartComponent implements OnInit {
 
   miningWindowPreference: string;
   radioGroupForm: UntypedFormGroup;
+  scaleType: 'value' | 'log' = 'value';
 
   chartOptions: EChartsOption = {};
   chartInitOptions = {
@@ -59,6 +60,7 @@ export class PriceChartComponent implements OnInit {
   formatNumber = formatNumber;
   chartInstance: any = undefined;
   currentTimespan = '';
+  currentPriceData: any = null;
 
   constructor(
     @Inject(LOCALE_ID) public locale: string,
@@ -191,14 +193,15 @@ export class PriceChartComponent implements OnInit {
           .getHistoricalPrice$(undefined, this.currency)
           .pipe(
             tap((response) => {
-              this.prepareChartOptions({
+              this.currentPriceData = {
                 priceData: response.prices
                   .filter(
                     (p: any) =>
                       p[this.currency] > 0 && p.time * 1000 >= startTimestamp
                   )
                   .map((p: any) => [p.time * 1000, p[this.currency]]),
-              });
+              };
+              this.prepareChartOptions(this.currentPriceData);
               this.isLoading = false;
             }),
             map((response) => {
@@ -310,8 +313,9 @@ export class PriceChartComponent implements OnInit {
           ? undefined
           : [
               {
-                type: 'value',
-                min: 'dataMin',
+                type: this.scaleType,
+                ...(this.scaleType === 'log' && { logBase: 1.5 }),
+                ...(this.scaleType === 'value' && { min: 'dataMin' }),
                 axisLabel: {
                   color: 'rgb(110, 112, 121)',
                   formatter: function (val) {
@@ -390,6 +394,13 @@ export class PriceChartComponent implements OnInit {
 
   isMobile() {
     return window.innerWidth <= 767.98;
+  }
+
+  toggleScale() {
+    this.scaleType = this.scaleType === 'value' ? 'log' : 'value';
+    if (this.currentPriceData) {
+      this.prepareChartOptions(this.currentPriceData);
+    }
   }
 
   onSaveChart() {

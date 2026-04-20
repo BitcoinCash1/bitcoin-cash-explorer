@@ -59,6 +59,27 @@
       class="formRadioGroup"
       *ngIf="priceObservable$ | async as price"
     >
+      <div class="small-buttons">
+        <button
+          class="btn btn-purple btn-sm mb-0"
+          [class.active]="scaleType === 'log'"
+          (click)="toggleScale()"
+          [title]="
+            scaleType === 'value'
+              ? 'Switch to logarithmic scale'
+              : 'Switch to linear scale'
+          "
+          aria-label="Toggle scale type"
+          i18n-title="price-chart.toggle-scale-title"
+        >
+          <ng-container *ngIf="scaleType === 'log'; else linearText">
+            <span i18n="@@price-chart.logarithmic">Logarithmic</span>
+          </ng-container>
+          <ng-template #linearText>
+            <span i18n="@@price-chart.linear">Linear</span>
+          </ng-template>
+        </button>
+      </div>
       <div class="btn-group" role="group" name="radioBasic">
         <input
           type="radio"
