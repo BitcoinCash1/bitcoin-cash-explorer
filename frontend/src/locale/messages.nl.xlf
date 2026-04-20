@@ -2426,6 +2426,14 @@
                 <source xml:space="preserve">Stale Chain Tips</source>
                 <target xml:space="preserve">Rotte ketentips</target>
             </trans-unit>
+            <trans-unit id="price-chart.linear">
+                <source xml:space="preserve">Linear</source>
+                <target xml:space="preserve">Lineair</target>
+            </trans-unit>
+            <trans-unit id="price-chart.logarithmic">
+                <source xml:space="preserve">Logarithmic</source>
+                <target xml:space="preserve">Logaritmisch</target>
+            </trans-unit>
             <trans-unit id="recent-transactions-title">
                 <source xml:space="preserve">Recent Transactions</source>
                 <target xml:space="preserve">Recente Transacties</target>

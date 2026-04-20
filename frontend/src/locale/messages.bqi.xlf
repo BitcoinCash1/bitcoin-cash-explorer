@@ -2439,6 +2439,14 @@
                 <source xml:space="preserve">Stale Chain Tips</source>
                 <target xml:space="preserve">Stale Chain Tips</target>
             </trans-unit>
+            <trans-unit id="price-chart.linear">
+                <source xml:space="preserve">Linear</source>
+                <target xml:space="preserve">Linear</target>
+            </trans-unit>
+            <trans-unit id="price-chart.logarithmic">
+                <source xml:space="preserve">Logarithmic</source>
+                <target xml:space="preserve">Logarithmic</target>
+            </trans-unit>
             <trans-unit id="recent-transactions-title">
                 <source xml:space="preserve">Recent Transactions</source>
                 <target xml:space="preserve">Recent Transactions</target>
