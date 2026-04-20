@@ -567,7 +567,7 @@ function cashaddrDecode(address: string): {
 }
 
 // Based on: https://github.com/bitcoincashorg/bitcoincash.org/blob/master/spec/cashaddr.md
-function cashaddrEncode(
+export function cashaddrEncode(
   prefix: string,
   version: number,
   hash: Uint8Array

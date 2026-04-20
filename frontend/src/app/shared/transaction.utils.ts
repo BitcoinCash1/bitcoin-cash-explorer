@@ -6,7 +6,7 @@ import {
 } from '@app/shared/script.utils';
 import { Transaction, Vin, Utxo } from '@app/interfaces/backend-api.interface';
 import { hash, Hash } from '@app/shared/sha256';
-import { AddressType } from '@app/shared/address-utils';
+import { AddressType, cashaddrEncode } from '@app/shared/address-utils';
 
 // BCHN default policy settings
 const MIN_BLOCK_SIZE = 32_000_000;
@@ -1856,31 +1856,17 @@ function checkSigopsBIP54(
 }
 
 function p2pkh(pubKeyHash: string, network: string): string {
-  const pubkeyHashArray = hexStringToUint8Array(pubKeyHash);
-  const version = ['testnet', 'testnet4', 'signet'].includes(network)
-    ? 0x6f
-    : 0x00;
-  const versionedPayload = Uint8Array.from([version, ...pubkeyHashArray]);
-  const hash1 = new Hash().update(versionedPayload).digest();
-  const hash2 = new Hash().update(hash1).digest();
-  const checksum = hash2.slice(0, 4);
-  const finalPayload = Uint8Array.from([...versionedPayload, ...checksum]);
-  const bitcoinAddress = base58Encode(finalPayload);
-  return bitcoinAddress;
+  const isTestnet = ['testnet', 'testnet4', 'signet'].includes(network);
+  const prefix = isTestnet ? 'bchtest' : 'bitcoincash';
+  const hashBytes = hexStringToUint8Array(pubKeyHash);
+  return cashaddrEncode(prefix, 0x00, hashBytes);
 }
 
 function p2sh(scriptHash: string, network: string): string {
-  const scriptHashArray = hexStringToUint8Array(scriptHash);
-  const version = ['testnet', 'testnet4', 'signet'].includes(network)
-    ? 0xc4
-    : 0x05;
-  const versionedPayload = Uint8Array.from([version, ...scriptHashArray]);
-  const hash1 = new Hash().update(versionedPayload).digest();
-  const hash2 = new Hash().update(hash1).digest();
-  const checksum = hash2.slice(0, 4);
-  const finalPayload = Uint8Array.from([...versionedPayload, ...checksum]);
-  const bitcoinAddress = base58Encode(finalPayload);
-  return bitcoinAddress;
+  const isTestnet = ['testnet', 'testnet4', 'signet'].includes(network);
+  const prefix = isTestnet ? 'bchtest' : 'bitcoincash';
+  const hashBytes = hexStringToUint8Array(scriptHash);
+  return cashaddrEncode(prefix, 0x08, hashBytes);
 }
 
 function p2a(network: string): string {
