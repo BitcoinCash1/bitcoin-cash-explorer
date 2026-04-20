@@ -2302,7 +2302,7 @@
                 <target xml:space="preserve">Bộ <x equiv-text="blocksInBlock" id="INTERPOLATION"/> khối mempool</target>
             </trans-unit>
             <trans-unit id="meta.description.about">
-                <source xml:space="preserve">Learn more about The Mempool Open Source Project®: enterprise sponsors, individual sponsors, integrations, who contributes, FOSS licensing, and more.</source>
+                <source xml:space="preserve">Learn more about the BCH Explorer open-source project. Discover enterprise sponsors, integrations, FOSS licensing, and more.</source>
                 <target xml:space="preserve">Tìm hiểu thêm về Dự án Mã nguồn mở Mempool®: nhà tài trợ doanh nghiệp, nhà tài trợ cá nhân, đơn vị tích hợp, người đóng góp, cấp phép FOSS, v.v.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.block">

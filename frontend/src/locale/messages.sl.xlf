@@ -2303,8 +2303,8 @@
                 <target xml:space="preserve">Sklad <x equiv-text="blocksInBlock" id="INTERPOLATION"/> mempool blokov</target>
             </trans-unit>
             <trans-unit id="meta.description.about">
-                <source xml:space="preserve">Learn more about The Mempool Open Source Project®: enterprise sponsors, individual sponsors, integrations, who contributes, FOSS licensing, and more.</source>
-                <target xml:space="preserve">Learn more about The Mempool Open Source Project®: enterprise sponsors, individual sponsors, integrations, who contributes, FOSS licensing, and more.</target>
+                <source xml:space="preserve">Learn more about the BCH Explorer open-source project. Discover enterprise sponsors, integrations, FOSS licensing, and more.</source>
+                <target xml:space="preserve">Learn more about the BCH Explorer open-source project. Discover enterprise sponsors, integrations, FOSS licensing, and more.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.block">
                 <source xml:space="preserve">See size, weight, fee range, included transactions, audit (expected v actual), and more for Bitcoin<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</source>

@@ -2304,7 +2304,7 @@
                 <target xml:space="preserve"><x equiv-text="blocksInBlock" id="INTERPOLATION"/>个内存池区块</target>
             </trans-unit>
             <trans-unit id="meta.description.about">
-                <source xml:space="preserve">Learn more about The Mempool Open Source Project®: enterprise sponsors, individual sponsors, integrations, who contributes, FOSS licensing, and more.</source>
+                <source xml:space="preserve">Learn more about the BCH Explorer open-source project. Discover enterprise sponsors, integrations, FOSS licensing, and more.</source>
                 <target xml:space="preserve">了解有关 Mempool 开源项目® 的更多信息：企业赞助商、个人赞助商、集成、贡献者、FOSS 许可等。</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.block">

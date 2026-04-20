@@ -2301,7 +2301,7 @@
                 <target xml:space="preserve"><x equiv-text="blocksInBlock" id="INTERPOLATION"/> मेमपूल ब्लॉक का ढेर</target>
             </trans-unit>
             <trans-unit id="meta.description.about">
-                <source xml:space="preserve">Learn more about The Mempool Open Source Project®: enterprise sponsors, individual sponsors, integrations, who contributes, FOSS licensing, and more.</source>
+                <source xml:space="preserve">Learn more about the BCH Explorer open-source project. Discover enterprise sponsors, integrations, FOSS licensing, and more.</source>
                 <target xml:space="preserve">मेमपूल ओपन सोर्स प्रोजेक्ट® के बारे में अधिक जानें: उद्यम प्रायोजक, व्यक्तिगत प्रायोजक, एकीकरण, योगदानकर्ता, FOSS लाइसेंसिंग, इत्यादि।</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.block">

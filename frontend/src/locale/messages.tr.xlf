@@ -2301,7 +2301,7 @@
                 <target xml:space="preserve"><x equiv-text="blocksInBlock" id="INTERPOLATION"/> mempool blok yığını</target>
             </trans-unit>
             <trans-unit id="meta.description.about">
-                <source xml:space="preserve">Learn more about The Mempool Open Source Project®: enterprise sponsors, individual sponsors, integrations, who contributes, FOSS licensing, and more.</source>
+                <source xml:space="preserve">Learn more about the BCH Explorer open-source project. Discover enterprise sponsors, integrations, FOSS licensing, and more.</source>
                 <target xml:space="preserve">The Mempool Open Source Project® hakkında daha fazla bilgi edin: kurumsal, bireysel sponsorları gör, entegrasyonları, koda katkı sağlayanları incele ve FOSS -açık kaynak- lisansı ile daha fazlasını öğren. </target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.block">

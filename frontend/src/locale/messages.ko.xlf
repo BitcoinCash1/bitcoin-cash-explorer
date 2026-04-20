@@ -2301,7 +2301,7 @@
                 <target xml:space="preserve">멤풀 블록 스택 <x equiv-text="blocksInBlock" id="INTERPOLATION"/>개</target>
             </trans-unit>
             <trans-unit id="meta.description.about">
-                <source xml:space="preserve">Learn more about The Mempool Open Source Project®: enterprise sponsors, individual sponsors, integrations, who contributes, FOSS licensing, and more.</source>
+                <source xml:space="preserve">Learn more about the BCH Explorer open-source project. Discover enterprise sponsors, integrations, FOSS licensing, and more.</source>
                 <target xml:space="preserve">멤풀 오픈 소스 프로젝트®에 대해 더 알아보기: 기업 스폰서, 개인 스폰서, 통합, 기여자, FOSS 라이선싱 등.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.block">

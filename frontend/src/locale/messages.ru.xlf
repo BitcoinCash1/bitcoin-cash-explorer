@@ -2301,7 +2301,7 @@
                 <target xml:space="preserve">Стек блоков пула ожидания<x equiv-text="blocksInBlock" id="INTERPOLATION"/></target>
             </trans-unit>
             <trans-unit id="meta.description.about">
-                <source xml:space="preserve">Learn more about The Mempool Open Source Project®: enterprise sponsors, individual sponsors, integrations, who contributes, FOSS licensing, and more.</source>
+                <source xml:space="preserve">Learn more about the BCH Explorer open-source project. Discover enterprise sponsors, integrations, FOSS licensing, and more.</source>
                 <target xml:space="preserve">Узнайте больше о проекте Mempool Open Source Project®: корпоративные спонсоры, частные спонсоры, интеграции, кто вносит свой вклад, лицензирование FOSS и многое другое.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.block">

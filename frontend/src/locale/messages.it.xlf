@@ -2302,7 +2302,7 @@
                 <target xml:space="preserve">Pila di <x equiv-text="blocksInBlock" id="INTERPOLATION"/> blocchi mempool</target>
             </trans-unit>
             <trans-unit id="meta.description.about">
-                <source xml:space="preserve">Learn more about The Mempool Open Source Project®: enterprise sponsors, individual sponsors, integrations, who contributes, FOSS licensing, and more.</source>
+                <source xml:space="preserve">Learn more about the BCH Explorer open-source project. Discover enterprise sponsors, integrations, FOSS licensing, and more.</source>
                 <target xml:space="preserve">Scopri di più sul Progetto Open Source Mempool®: sponsor aziendali, sponsor individuali, integrazioni, chi contribuisce, licenze FOSS e altro ancora.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.block">

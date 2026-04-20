@@ -2302,7 +2302,7 @@
                 <target xml:space="preserve">ชั้นของ <x equiv-text="blocksInBlock" id="INTERPOLATION"/> บล็อก mempool</target>
             </trans-unit>
             <trans-unit id="meta.description.about">
-                <source xml:space="preserve">Learn more about The Mempool Open Source Project®: enterprise sponsors, individual sponsors, integrations, who contributes, FOSS licensing, and more.</source>
+                <source xml:space="preserve">Learn more about the BCH Explorer open-source project. Discover enterprise sponsors, integrations, FOSS licensing, and more.</source>
                 <target xml:space="preserve">เรียนรู้เพิ่มเติมเกี่ยวกับ Mempool Open Source Project®: ผู้สนับสนุนองค์กร ผู้สนับสนุนรายบุคคล การบูรณาการ ผู้สนับสนุน การออกใบอนุญาต FOSS และอื่นๆ</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.block">
