@@ -65,6 +65,7 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
   fragmentSubscription: Subscription;
   sizeFromMissingSig: number = 0;
   missingSignatures: boolean;
+  warnings: string[] = [];
   tooltipSize: string;
 
   isMobile: boolean;
@@ -130,10 +131,11 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
     this.resetState();
     this.isLoading = true;
     try {
-      const { tx, hex, psbt } = decodeRawTransaction(
+      const { tx, hex, psbt, warnings } = decodeRawTransaction(
         this.pushTxForm.get('txRaw').value.trim(),
         this.stateService.network
       );
+      this.warnings = warnings || [];
       await this.fetchPrevouts(tx);
       this.checkSignatures(tx, hex);
       this.processTransaction(tx, hex, psbt);
@@ -333,6 +335,7 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
     this.missingPrevouts = [];
     this.sizeFromMissingSig = 0;
     this.missingSignatures = false;
+    this.warnings = [];
     this.tooltipSize = null;
     this.stateService.markBlock$.next({});
     this.mempoolBlocksSubscription?.unsubscribe();

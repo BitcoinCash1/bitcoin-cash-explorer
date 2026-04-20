@@ -157,6 +157,16 @@
       </div>
     }
 
+    @if (warnings?.length) {
+      <div class="alert alert-warning" style="align-items: center">
+        <fa-icon
+          [icon]="['fas', 'exclamation-triangle']"
+          [fixedWidth]="true"
+        ></fa-icon>
+        <span *ngFor="let w of warnings"> {{ w }}</span>
+      </div>
+    }
+
     <app-transaction-details
       [unbroadcasted]="true"
       [network]="stateService.network"

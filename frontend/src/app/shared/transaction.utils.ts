@@ -868,7 +868,7 @@ function fromBuffer(
   buffer: Uint8Array,
   network: string,
   inputs?: PsbtKeyValueMap[]
-): { tx: Transaction; hex: string } {
+): { tx: Transaction; hex: string; warnings: string[] } {
   let offset = 0;
 
   // Parse raw transaction
@@ -981,8 +981,11 @@ function fromBuffer(
 
   [tx.locktime, offset] = readInt32(buffer, offset, true);
 
+  const warnings: string[] = [];
   if (offset !== buffer.length) {
-    throw new Error('Transaction has unexpected data');
+    warnings.push(
+      'Transaction has trailing data; the input script may contain extra fields (e.g. unsigned transaction)'
+    );
   }
 
   // Optionally add data from PSBT: prevouts, redeem scripts and signatures
@@ -1104,7 +1107,7 @@ function fromBuffer(
   const rawHex = serializeTransaction(tx);
   tx.size = rawHex.length;
   tx.txid = txid(tx);
-  return { tx, hex: uint8ArrayToHexString(rawHex) };
+  return { tx, hex: uint8ArrayToHexString(rawHex), warnings };
 }
 
 export type PsbtKeyValue = { keyData: Uint8Array; value: Uint8Array };
@@ -1479,7 +1482,7 @@ export const TX_CHECKS = {
 export function decodeRawTransaction(
   input: string,
   network: string
-): { tx: Transaction; hex: string; psbt?: string } {
+): { tx: Transaction; hex: string; psbt?: string; warnings: string[] } {
   const buffer = convertTextToBuffer(input);
 
   if (
@@ -1496,7 +1499,77 @@ export function decodeRawTransaction(
     };
   }
 
-  return fromBuffer(buffer, network);
+  try {
+    return fromBuffer(buffer, network);
+  } catch (e) {
+    // Retry stripping 8-byte embedded input values (BCH unsigned tx format)
+    return fromBufferWithInputValues(buffer, network);
+  }
+}
+
+/**
+ * Parses a raw transaction where each input has an extra 8-byte value field
+ * appended after the sequence (BCH unsigned tx / sighash preimage format).
+ * Strips those bytes and delegates to fromBuffer, adding a warning.
+ */
+function fromBufferWithInputValues(
+  buffer: Uint8Array,
+  network: string
+): { tx: Transaction; hex: string; warnings: string[] } {
+  let offset = 0;
+  const clean: number[] = [];
+
+  // version (4 bytes)
+  if (offset + 4 > buffer.length) {
+    throw new Error('Cannot read slice out of bounds');
+  }
+  clean.push(...buffer.slice(offset, offset + 4));
+  offset += 4;
+
+  const [vinLen, afterVinLen] = readVarInt(buffer, offset);
+  clean.push(...varIntToBytes(vinLen));
+  offset = afterVinLen;
+
+  for (let i = 0; i < vinLen; i++) {
+    // txid (32) + vout (4)
+    if (offset + 36 > buffer.length) {
+      throw new Error('Cannot read slice out of bounds');
+    }
+    clean.push(...buffer.slice(offset, offset + 36));
+    offset += 36;
+
+    // scriptsig (varint-prefixed)
+    const [scriptLen, afterScript] = readVarInt(buffer, offset);
+    clean.push(...varIntToBytes(scriptLen));
+    offset = afterScript;
+    if (offset + scriptLen > buffer.length) {
+      throw new Error('Cannot read slice out of bounds');
+    }
+    clean.push(...buffer.slice(offset, offset + scriptLen));
+    offset += scriptLen;
+
+    // sequence (4 bytes)
+    if (offset + 4 > buffer.length) {
+      throw new Error('Cannot read slice out of bounds');
+    }
+    clean.push(...buffer.slice(offset, offset + 4));
+    offset += 4;
+
+    // skip 8-byte embedded input value
+    if (offset + 8 > buffer.length) {
+      throw new Error('Cannot read slice out of bounds');
+    }
+    offset += 8;
+  }
+
+  // copy remainder (vout count + outputs + locktime)
+  clean.push(...buffer.slice(offset));
+
+  const result = fromBuffer(new Uint8Array(clean), network);
+  result.warnings.push(
+    'Input script contains extra fields (unsigned transaction); signature is missing or invalid'
+  );
+  return result;
 }
 
 function serializeTransaction(tx: Transaction): Uint8Array {
