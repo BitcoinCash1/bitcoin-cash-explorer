@@ -5,7 +5,7 @@ import {
   isPoint,
 } from '@app/shared/script.utils';
 import { Transaction, Vin, Utxo } from '@app/interfaces/backend-api.interface';
-import { hash, Hash } from '@app/shared/sha256';
+import { hash, Hash, ripemd160 } from '@app/shared/sha256';
 import { AddressType, cashaddrEncode } from '@app/shared/address-utils';
 
 // BCHN default policy settings
@@ -853,6 +853,69 @@ export function addInnerScriptsToVin(vin: Vin): void {
 
 // Adapted from bitcoinjs-lib at https://github.com/bitcoinjs/bitcoinjs-lib/blob/32e08aa57f6a023e995d8c4f0c9fbdc5f11d1fa0/ts_src/transaction.ts#L78
 /**
+ * Derives the sender CashAddr from a standard P2PKH scriptsig (sig + pubkey pushes).
+ * Returns a minimal prevout with address info but value: null so fee calc is unaffected.
+ * Returns null for coinbase, unsigned, or non-P2PKH inputs.
+ */
+function deriveAddressFromScriptSig(
+  scriptsig: string,
+  network: string
+): { value: null; scriptpubkey: string; scriptpubkey_asm: string; scriptpubkey_type: string; scriptpubkey_address: string } | null {
+  if (!scriptsig) return null;
+  try {
+    const buf = hexStringToUint8Array(scriptsig);
+    let i = 0;
+    let lastPush: Uint8Array | null = null;
+    while (i < buf.length) {
+      const op = buf[i++];
+      if (op === 0) {
+        lastPush = new Uint8Array(0);
+      } else if (op <= 0x4b) {
+        if (i + op > buf.length) return null;
+        lastPush = buf.slice(i, i + op);
+        i += op;
+      } else if (op === 0x4c) {
+        if (i >= buf.length) return null;
+        const len = buf[i++];
+        if (i + len > buf.length) return null;
+        lastPush = buf.slice(i, i + len);
+        i += len;
+      } else if (op === 0x4d) {
+        if (i + 2 > buf.length) return null;
+        const len = buf[i] | (buf[i + 1] << 8);
+        i += 2;
+        if (i + len > buf.length) return null;
+        lastPush = buf.slice(i, i + len);
+        i += len;
+      } else {
+        return null;
+      }
+    }
+    // P2PKH: last push must be a valid compressed (33 B) or uncompressed (65 B) pubkey
+    if (
+      lastPush &&
+      (lastPush.length === 33 || lastPush.length === 65) &&
+      (lastPush[0] === 0x02 || lastPush[0] === 0x03 || lastPush[0] === 0x04)
+    ) {
+      const sha256d = new Hash().update(lastPush).digest();
+      const pubkeyHash = ripemd160(sha256d);
+      const pubkeyHashHex = uint8ArrayToHexString(pubkeyHash);
+      const scriptpubkey = '76a914' + pubkeyHashHex + '88ac';
+      return {
+        value: null,
+        scriptpubkey,
+        scriptpubkey_asm: 'OP_DUP OP_HASH160 OP_PUSHBYTES_20 ' + pubkeyHashHex + ' OP_EQUALVERIFY OP_CHECKSIG',
+        scriptpubkey_type: 'p2pkh',
+        scriptpubkey_address: p2pkh(pubkeyHashHex, network),
+      };
+    }
+  } catch {
+    // ignore
+  }
+  return null;
+}
+
+/**
  * Convert a buffer from a hex string to a transaction object
  * Example is from TX ID: 138dabc52e88eda9760976f8adad5bebb92409be2d1842c345d41e606deae45e
  *
@@ -926,6 +989,7 @@ function fromBuffer(
     // const token_amount = 0;
     // const token_nft_capability = '';
     // const token_nft_commitment = '';
+    const derivedPrevout = is_coinbase ? null : deriveAddressFromScriptSig(scriptsig, network);
     tx.vin.push({
       value,
       txid,
@@ -943,7 +1007,7 @@ function fromBuffer(
       scriptpubkey_byte_code_pattern,
       // scriptpubkey_byte_code,
       sequence,
-      prevout: null,
+      prevout: derivedPrevout,
     });
   }
 

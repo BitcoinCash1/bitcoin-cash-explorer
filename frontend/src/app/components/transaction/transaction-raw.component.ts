@@ -148,7 +148,7 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
 
   async fetchPrevouts(transaction: Transaction): Promise<void> {
     const prevoutsToFetch = transaction.vin
-      .filter((input) => !input.prevout)
+      .filter((input) => !input.prevout || input.prevout.value === null)
       .map((input) => ({ txid: input.txid, vout: input.vout }));
 
     if (
@@ -163,33 +163,38 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
         this.missingPrevouts = [];
         this.isLoadingPrevouts = true;
 
-        const prevouts: { prevout: Vout; unconfirmed: boolean }[] =
+        const prevouts: ({ prevout: Vout; unconfirmed: boolean } | null)[] =
           await firstValueFrom(this.apiService.getPrevouts$(prevoutsToFetch));
-
-        if (prevouts?.length !== prevoutsToFetch.length) {
-          throw new Error();
-        }
 
         let fetchIndex = 0;
         transaction.vin.forEach((input) => {
-          if (!input.prevout) {
-            const fetched = prevouts[fetchIndex];
+          if (!input.prevout || input.prevout.value === null) {
+            const fetched = prevouts?.[fetchIndex] ?? null;
             if (fetched) {
+              const derivedAddress = input.prevout?.scriptpubkey_address;
               input.prevout = fetched.prevout;
-            } else {
+              if (!input.prevout.scriptpubkey_address && derivedAddress) {
+                input.prevout.scriptpubkey_address = derivedAddress;
+              }
+            } else if (!input.prevout) {
               this.missingPrevouts.push(`${input.txid}:${input.vout}`);
             }
+            // else: keep derived address prevout (value: null) as display fallback
             fetchIndex++;
           }
         });
 
-        if (this.missingPrevouts.length) {
+        const allValuesPresent = transaction.vin.every(
+          (input) => input.is_coinbase || (input.prevout?.value !== null && input.prevout?.value !== undefined)
+        );
+
+        if (this.missingPrevouts.length && !allValuesPresent) {
           throw new Error(
             `Some prevouts do not exist or are already spent (${this.missingPrevouts.length})`
           );
         }
 
-        this.hasPrevouts = true;
+        this.hasPrevouts = allValuesPresent;
         this.isLoadingPrevouts = false;
       } catch (error) {
         console.log(error);
