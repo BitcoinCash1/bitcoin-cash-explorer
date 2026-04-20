@@ -748,7 +748,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/price-chart/price-chart.component.ts</context>
-          <context context-type="linenumber">238</context>
+          <context context-type="linenumber">241</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7587252691654342708" datatype="html">
@@ -3632,7 +3632,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/price-chart/price-chart.component.html</context>
-          <context context-type="linenumber">206,208</context>
+          <context context-type="linenumber">227,229</context>
         </context-group>
         <note priority="1" from="description">price-chart.percent-change</note>
       </trans-unit>
@@ -3644,15 +3644,29 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/price-chart/price-chart.component.ts</context>
-          <context context-type="linenumber">86</context>
+          <context context-type="linenumber">88</context>
         </context-group>
         <note priority="1" from="description">price-chart.title</note>
+      </trans-unit>
+      <trans-unit id="price-chart.logarithmic" datatype="html">
+        <source>Logarithmic</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/price-chart/price-chart.component.html</context>
+          <context context-type="linenumber">76,78</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="price-chart.linear" datatype="html">
+        <source>Linear</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/price-chart/price-chart.component.html</context>
+          <context context-type="linenumber">79,81</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="8491011120834785215" datatype="html">
         <source>Bitcoin Price</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/price-chart/price-chart.component.html</context>
-          <context context-type="linenumber">200,202</context>
+          <context context-type="linenumber">221,223</context>
         </context-group>
         <note priority="1" from="description">price-chart.bitcoin-price</note>
       </trans-unit>
@@ -3660,7 +3674,7 @@
         <source>See the Bitcoin Cash price in USD visualized over time.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/price-chart/price-chart.component.ts</context>
-          <context context-type="linenumber">88</context>
+          <context context-type="linenumber">90</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7346516107220024843" datatype="html">
