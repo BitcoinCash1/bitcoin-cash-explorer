@@ -247,7 +247,7 @@
             </trans-unit>
             <trans-unit id="2098028765268782950">
                 <source xml:space="preserve">Difficulty Adjustment Deviation</source>
-                <target xml:space="preserve">Difficulty Adjustment Deviation</target>
+                <target xml:space="preserve">難度調整偏差</target>
             </trans-unit>
             <trans-unit id="2137482833477653579">
                 <source xml:space="preserve">Indexing network hashrate</source>
@@ -793,7 +793,7 @@
             </trans-unit>
             <trans-unit id="4045684136967540279">
                 <source xml:space="preserve">See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</source>
-                <target xml:space="preserve">See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</target>
+                <target xml:space="preserve">查看比特幣現金 (BCH) 和美元 (USD) 的區塊獎勵隨時間變化的圖表。區塊獎勵是礦工從區塊補貼和手續費中獲得的總收益。</target>
             </trans-unit>
             <trans-unit id="4061977068003854265">
                 <source xml:space="preserve"> Treasury </source>
@@ -837,7 +837,7 @@
             </trans-unit>
             <trans-unit id="4216043949498872457">
                 <source xml:space="preserve"><x ctype="x-a" equiv-text="&lt;a         href=&quot;https://bchexplorer.cash&quot;         target=&quot;_blank&quot;         aria-label=&quot;Visit official BCH explorer website&quot;         &gt;" id="START_LINK"/>BCH Explorer<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> is a blockchain and mempool explorer for the Bitcoin Cash community, created by Melroy van den Berg. It is a completely self-hosted without any trusted third-parties. </source>
-                <target xml:space="preserve"><x ctype="x-a" equiv-text="&lt;a         href=&quot;https://bchexplorer.cash&quot;         target=&quot;_blank&quot;         aria-label=&quot;Visit official BCH explorer website&quot;         &gt;" id="START_LINK"/>BCH Explorer<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> is a blockchain and mempool explorer for the Bitcoin Cash community, created by Melroy van den Berg. It is a completely self-hosted without any trusted third-parties. </target>
+                <target xml:space="preserve"><x ctype="x-a" equiv-text="&lt;a         href=&quot;https://bchexplorer.cash&quot;         target=&quot;_blank&quot;         aria-label=&quot;Visit official BCH explorer website&quot;         &gt;" id="START_LINK"/>BCH Explorer<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> 是一個面向比特幣現金社群的區塊鏈及內存池視覺化瀏覽器，由Melroy van den Berg創建。它完全自託管，不依賴任何信任第三方</target>
             </trans-unit>
             <trans-unit id="4233811188017847729">
                 <source xml:space="preserve">All miners</source>
@@ -1239,7 +1239,7 @@
             </trans-unit>
             <trans-unit id="5780374230204480701">
                 <source xml:space="preserve">Stale Block</source>
-                <target xml:space="preserve">舊區塊</target>
+                <target xml:space="preserve">陳舊區塊</target>
             </trans-unit>
             <trans-unit id="5809992200043965490">
                 <source xml:space="preserve">Generate PSBT</source>
@@ -1307,7 +1307,7 @@
             </trans-unit>
             <trans-unit id="6056001875264593206">
                 <source xml:space="preserve">provably unspendable</source>
-                <target xml:space="preserve">可证明无法使用</target>
+                <target xml:space="preserve">可證明無法花費</target>
             </trans-unit>
             <trans-unit id="6080998935194218567">
                 <source xml:space="preserve">See size, fee range, included transactions, audit (expected vs actual), and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</source>
@@ -1315,47 +1315,47 @@
             </trans-unit>
             <trans-unit id="611448626023495165">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block expected</source>
-                <target xml:space="preserve"> 预计<x equiv-text="{{ i }}" id="INTERPOLATION"/>个区块</target>
+                <target xml:space="preserve">預計<x equiv-text="{{ i }}" id="INTERPOLATION"/> 個區塊</target>
             </trans-unit>
             <trans-unit id="6121516646370385817">
                 <source xml:space="preserve"> Avg Block Fees </source>
-                <target xml:space="preserve"> 平均区块费用 </target>
+                <target xml:space="preserve"> 平均區塊交易費用 </target>
             </trans-unit>
             <trans-unit id="6132290775367866066">
                 <source xml:space="preserve">Block Fee Rates</source>
-                <target xml:space="preserve">區塊手續費率</target>
+                <target xml:space="preserve">區塊費率</target>
             </trans-unit>
             <trans-unit id="6153857867441956659">
                 <source xml:space="preserve">What is a mempool?</source>
-                <target xml:space="preserve">什么是mempool？</target>
+                <target xml:space="preserve">什麼是內存池？</target>
             </trans-unit>
             <trans-unit id="6163892966087492877">
                 <source xml:space="preserve"> verified holdings </source>
-                <target xml:space="preserve"> 已验证持有量 </target>
+                <target xml:space="preserve"> 已驗證持倉 </target>
             </trans-unit>
             <trans-unit id="6163986367161406789">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block mined</source>
-                <target xml:space="preserve">已挖<x equiv-text="{{ i }}" id="INTERPOLATION"/>个区块</target>
+                <target xml:space="preserve">已挖出<x equiv-text="{{ i }}" id="INTERPOLATION"/>個區塊</target>
             </trans-unit>
             <trans-unit id="619430775984437143">
                 <source xml:space="preserve">Pools Dominance</source>
-                <target xml:space="preserve">矿池优势</target>
+                <target xml:space="preserve">礦池市佔率</target>
             </trans-unit>
             <trans-unit id="6206405941943118648">
                 <source xml:space="preserve">CashToken <x ctype="x-a" equiv-text="&lt;a     class=&quot;info-link&quot;     [routerLink]=&quot;[&apos;/docs/faq&apos; | relativeUrl]&quot;     fragment=&quot;what-are-cashtokens&quot;     &gt;" id="START_LINK"/><x ctype="x-fa_icon" equiv-text="&lt;fa-icon [icon]=&quot;[&apos;fas&apos;, &apos;info-circle&apos;]&quot; [fixedWidth]=&quot;true&quot;&gt;" id="START_TAG_FA_ICON"/><x ctype="x-fa_icon" equiv-text="&lt;/fa-icon   &gt;" id="CLOSE_TAG_FA_ICON"/><x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/></source>
-                <target xml:space="preserve">CashToken<x ctype="x-a" equiv-text="&lt;a     class=&quot;info-link&quot;     [routerLink]=&quot;[&apos;/docs/faq&apos; | relativeUrl]&quot;     fragment=&quot;what-are-cashtokens&quot;     &gt;" id="START_LINK"/><x ctype="x-fa_icon" equiv-text="&lt;fa-icon [icon]=&quot;[&apos;fas&apos;, &apos;info-circle&apos;]&quot; [fixedWidth]=&quot;true&quot;&gt;" id="START_TAG_FA_ICON"/><x ctype="x-fa_icon" equiv-text="&lt;/fa-icon   &gt;" id="CLOSE_TAG_FA_ICON"/><x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/></target>
+                <target xml:space="preserve">現金代幣<x ctype="x-a" equiv-text="&lt;a     class=&quot;info-link&quot;     [routerLink]=&quot;[&apos;/docs/faq&apos; | relativeUrl]&quot;     fragment=&quot;what-are-cashtokens&quot;     &gt;" id="START_LINK"/><x ctype="x-fa_icon" equiv-text="&lt;fa-icon [icon]=&quot;[&apos;fas&apos;, &apos;info-circle&apos;]&quot; [fixedWidth]=&quot;true&quot;&gt;" id="START_TAG_FA_ICON"/><x ctype="x-fa_icon" equiv-text="&lt;/fa-icon   &gt;" id="CLOSE_TAG_FA_ICON"/><x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/></target>
             </trans-unit>
             <trans-unit id="6252070156626006029">
                 <source xml:space="preserve">None</source>
-                <target xml:space="preserve">无</target>
+                <target xml:space="preserve">無</target>
             </trans-unit>
             <trans-unit id="6259719754414304364">
                 <source xml:space="preserve">Testnet3 Explorer</source>
-                <target xml:space="preserve">Testnet3 浏览器</target>
+                <target xml:space="preserve">Testnet3 瀏覽器</target>
             </trans-unit>
             <trans-unit id="6275418453915189813">
                 <source xml:space="preserve">Cap outliers</source>
-                <target xml:space="preserve">上限异常值</target>
+                <target xml:space="preserve">上限異常值</target>
             </trans-unit>
             <trans-unit id="6284969874542942529">
                 <source xml:space="preserve">ScriptPubKey (Hex)</source>
@@ -1363,7 +1363,7 @@
             </trans-unit>
             <trans-unit id="6290595884142884507">
                 <source xml:space="preserve">Heuristics</source>
-                <target xml:space="preserve">启发式</target>
+                <target xml:space="preserve">啟發式方法</target>
             </trans-unit>
             <trans-unit id="6304432362546770951">
                 <source xml:space="preserve">Address</source>
@@ -1375,7 +1375,7 @@
             </trans-unit>
             <trans-unit id="633976444972378637">
                 <source xml:space="preserve"> Inputs &amp; Outputs </source>
-                <target xml:space="preserve"> 输入与输出 </target>
+                <target xml:space="preserve"> 輸入與輸出 </target>
             </trans-unit>
             <trans-unit id="6361947660157581901">
                 <source xml:space="preserve">See the average mining fees earned per Bitcoin Cash block visualized in BCH and USD over time.</source>
@@ -1387,11 +1387,11 @@
             </trans-unit>
             <trans-unit id="638227467745318910">
                 <source xml:space="preserve">Recent Stale Chain Tips</source>
-                <target xml:space="preserve">最近的陈旧链尖</target>
+                <target xml:space="preserve">最近的陳舊鏈尖</target>
             </trans-unit>
             <trans-unit id="6391724349488018234">
                 <source xml:space="preserve">Indexing in progress</source>
-                <target xml:space="preserve">正在索引中</target>
+                <target xml:space="preserve">索引進行中</target>
             </trans-unit>
             <trans-unit id="6408975971582883304">
                 <source xml:space="preserve">Message</source>
@@ -1399,19 +1399,19 @@
             </trans-unit>
             <trans-unit id="6429024204850914240">
                 <source xml:space="preserve">Not any time soon</source>
-                <target xml:space="preserve">近期内不会</target>
+                <target xml:space="preserve">近期內不會</target>
             </trans-unit>
             <trans-unit id="6486180801996392368">
                 <source xml:space="preserve">Error loading pool data.</source>
-                <target xml:space="preserve">加载矿池数据时出错。</target>
+                <target xml:space="preserve">載入礦池數據時發生錯誤。</target>
             </trans-unit>
             <trans-unit id="6506119173152703241">
                 <source xml:space="preserve">Conflict</source>
-                <target xml:space="preserve">冲突</target>
+                <target xml:space="preserve">衝突</target>
             </trans-unit>
             <trans-unit id="6506148807267655400">
                 <source xml:space="preserve"> Unconfirmed </source>
-                <target xml:space="preserve"> 未确认 </target>
+                <target xml:space="preserve"> 未確認 </target>
             </trans-unit>
             <trans-unit id="6523988616846331064">
                 <source xml:space="preserve">Block Size Limit (ABLA)</source>
@@ -1419,15 +1419,15 @@
             </trans-unit>
             <trans-unit id="6544807137197034459">
                 <source xml:space="preserve"> Preview </source>
-                <target xml:space="preserve"> 预览 </target>
+                <target xml:space="preserve"> 預覽 </target>
             </trans-unit>
             <trans-unit id="6552449600024516046">
                 <source xml:space="preserve">Response</source>
-                <target xml:space="preserve">响应</target>
+                <target xml:space="preserve">回應</target>
             </trans-unit>
             <trans-unit id="6558868518949093648">
                 <source xml:space="preserve">Block Header Hex</source>
-                <target xml:space="preserve">区块头字节</target>
+                <target xml:space="preserve">區塊標題十六進位</target>
             </trans-unit>
             <trans-unit id="6564105000154565963">
                 <source xml:space="preserve"> P2SH redeem script </source>
@@ -1435,15 +1435,15 @@
             </trans-unit>
             <trans-unit id="6578665864950966471">
                 <source xml:space="preserve">Clock (Mined)</source>
-                <target xml:space="preserve">时钟（开采）</target>
+                <target xml:space="preserve">時鐘（已開採）</target>
             </trans-unit>
             <trans-unit id="6589209693884801196">
                 <source xml:space="preserve">Places your transaction in the first mempool block</source>
-                <target xml:space="preserve">将您的交易置入第一个预测区块中</target>
+                <target xml:space="preserve">將您的交易放入第一個內存池區塊</target>
             </trans-unit>
             <trans-unit id="6599163504112505785">
                 <source xml:space="preserve">Comma-separated list of raw transactions</source>
-                <target xml:space="preserve">以逗号分隔的原始交易列表</target>
+                <target xml:space="preserve">以逗號分隔的原始交易清單</target>
             </trans-unit>
             <trans-unit id="6619869754055745168">
                 <source xml:space="preserve">Match</source>
@@ -1459,15 +1459,15 @@
             </trans-unit>
             <trans-unit id="6641135694653212933">
                 <source xml:space="preserve">Mempool by Bytes (sat/Byte)</source>
-                <target xml:space="preserve">交易字节/秒 (字节)</target>
+                <target xml:space="preserve">每秒內存池位元組 (sat/Byte)</target>
             </trans-unit>
             <trans-unit id="6643831251715779218">
                 <source xml:space="preserve">Median fee</source>
-                <target xml:space="preserve">中位矿工手续费</target>
+                <target xml:space="preserve">交易費用中位數</target>
             </trans-unit>
             <trans-unit id="665219418211496660">
                 <source xml:space="preserve">Rank</source>
-                <target xml:space="preserve">矿池排名</target>
+                <target xml:space="preserve">排名</target>
             </trans-unit>
             <trans-unit id="6665645515949928612">
                 <source xml:space="preserve"> ScriptPubKey (HEX) </source>
@@ -1475,7 +1475,7 @@
             </trans-unit>
             <trans-unit id="6673915014332700227">
                 <source xml:space="preserve">Amount (sats)</source>
-                <target xml:space="preserve">数量（聪）</target>
+                <target xml:space="preserve">數量（聰）</target>
             </trans-unit>
             <trans-unit id="6698602804540558682">
                 <source xml:space="preserve">Empty Blocks</source>
@@ -1483,7 +1483,7 @@
             </trans-unit>
             <trans-unit id="6699474967382202471">
                 <source xml:space="preserve">The overall luck of all mining pools over the past week. A luck bigger than 100% means the average block time for the current epoch is less than 10 minutes.</source>
-                <target xml:space="preserve">过去一周所有矿池的整体幸运值超过前一周。幸运值大于 100% 意味着当前阶段的平均出块时间少于 10 分钟</target>
+                <target xml:space="preserve">過去一週所有挖礦池的整體運氣值。若運氣值大於 100%，表示當前週期的平均區塊生成時間少於 10 分鐘。</target>
             </trans-unit>
             <trans-unit id="671954776532239277">
                 <source xml:space="preserve"> Difficulty Adjustment </source>
@@ -1499,11 +1499,11 @@
             </trans-unit>
             <trans-unit id="6756993559483962422">
                 <source xml:space="preserve">Blocks remaining</source>
-                <target xml:space="preserve">剩余区块</target>
+                <target xml:space="preserve">剩餘區塊</target>
             </trans-unit>
             <trans-unit id="6774874851879246306">
                 <source xml:space="preserve">UTXOs</source>
-                <target xml:space="preserve">未花费输出</target>
+                <target xml:space="preserve">UTXOs</target>
             </trans-unit>
             <trans-unit id="6796943801291207194">
                 <source xml:space="preserve"> ScriptSig (HEX) </source>
@@ -1519,7 +1519,7 @@
             </trans-unit>
             <trans-unit id="685875304303479823">
                 <source xml:space="preserve">The number of blocks found over the past week.</source>
-                <target xml:space="preserve">近 1 周中发现的区块总数。</target>
+                <target xml:space="preserve">過去一週內發現的區塊數量。</target>
             </trans-unit>
             <trans-unit id="6867140695271970529">
                 <source xml:space="preserve">Mining Pools</source>
@@ -1531,11 +1531,11 @@
             </trans-unit>
             <trans-unit id="6899134966533859260">
                 <source xml:space="preserve">Learn</source>
-                <target xml:space="preserve">学习</target>
+                <target xml:space="preserve">了解更多</target>
             </trans-unit>
             <trans-unit id="6899446145460225927">
                 <source xml:space="preserve"> Job Received </source>
-                <target xml:space="preserve"> 已接收任务 </target>
+                <target xml:space="preserve"> 已收到工作 </target>
             </trans-unit>
             <trans-unit id="6901614037118888421">
                 <source xml:space="preserve">First seen</source>
@@ -1553,11 +1553,11 @@
             </trans-unit>
             <trans-unit id="6925252478846398233">
                 <source xml:space="preserve">View Bitcoin Cash ASERT difficulty adjustment deviation over time.</source>
-                <target xml:space="preserve">View Bitcoin Cash ASERT difficulty adjustment deviation over time.</target>
+                <target xml:space="preserve">查看比特幣現金 ASERT 難度調整偏差隨時間的變化。</target>
             </trans-unit>
             <trans-unit id="6948786787037977434">
                 <source xml:space="preserve">Blocks</source>
-                <target xml:space="preserve">区块</target>
+                <target xml:space="preserve">區塊</target>
             </trans-unit>
             <trans-unit id="6949454993667784101">
                 <source xml:space="preserve">Your balance is too low.<x ctype="lb" equiv-text="&lt;br /&gt;" id="LINE_BREAK"/>Please <x ctype="x-a" equiv-text="&lt;a class=&quot;top-up-link&quot; href=&quot;/services/accelerator&quot;&gt;" id="START_LINK"/>top up your account<x ctype="x-a" equiv-text="&lt;/a   &gt;" id="CLOSE_LINK"/>.</source>
@@ -1565,7 +1565,7 @@
             </trans-unit>
             <trans-unit id="6c453b11fd7bd159ae30bc381f367bc736d86909">
                 <source xml:space="preserve">Block Fees</source>
-                <target xml:space="preserve">区块费用</target>
+                <target xml:space="preserve">區塊交易費用</target>
             </trans-unit>
             <trans-unit id="7010418150749748430">
                 <source xml:space="preserve">Incoming Transactions</source>
@@ -1573,11 +1573,11 @@
             </trans-unit>
             <trans-unit id="704614116893718009">
                 <source xml:space="preserve"> Request Testnet4 Coins </source>
-                <target xml:space="preserve"> 请求 Testnet4 代币 </target>
+                <target xml:space="preserve"> 請求 Testnet4 貨幣 </target>
             </trans-unit>
             <trans-unit id="7067128377657180850">
                 <source xml:space="preserve">select filter categories to highlight matching transactions</source>
-                <target xml:space="preserve">选择过滤类别以突出显示匹配的交易</target>
+                <target xml:space="preserve">選擇篩選類別以標示符合條件的交易</target>
             </trans-unit>
             <trans-unit id="7101197021456818771">
                 <source xml:space="preserve">Pool</source>
@@ -1585,7 +1585,7 @@
             </trans-unit>
             <trans-unit id="7146000240905514695">
                 <source xml:space="preserve">Student Name</source>
-                <target xml:space="preserve">学生姓名</target>
+                <target xml:space="preserve">學生姓名</target>
             </trans-unit>
             <trans-unit id="7170419784695970065">
                 <source xml:space="preserve">Allow high fees?</source>
@@ -1593,7 +1593,7 @@
             </trans-unit>
             <trans-unit id="7215101881367554791">
                 <source xml:space="preserve">Show more</source>
-                <target xml:space="preserve">展示更多</target>
+                <target xml:space="preserve">顯示更多</target>
             </trans-unit>
             <trans-unit id="7322388690608271951">
                 <source xml:space="preserve"> Average block time (8 blocks) </source>
@@ -1957,7 +1957,7 @@
             </trans-unit>
             <trans-unit id="8611201246499042017">
                 <source xml:space="preserve">See the mining fees earned per Bitcoin Cash block compared to the Bitcoin Cash block subsidy, visualized in BCH and USD over time.</source>
-                <target xml:space="preserve">See the mining fees earned per Bitcoin Cash block compared to the Bitcoin Cash block subsidy, visualized in BCH and USD over time.</target>
+                <target xml:space="preserve">查看比特幣現金區塊挖礦費用與比特幣現金區塊補貼的比較情況，以比特幣現金 (BCH) 和 美元 (USD) 為單位，隨時間變化的可視化圖表。</target>
             </trans-unit>
             <trans-unit id="8631617549415105973">
                 <source xml:space="preserve">Broadcast a transaction to the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network using the transaction&apos;s hash.</source>
@@ -2313,7 +2313,7 @@
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-fee-rates">
                 <source xml:space="preserve">See Bitcoin Cash feerates visualized over time, including minimum and maximum feerates per block along with feerates at various percentiles.</source>
-                <target xml:space="preserve">查看比特幣手續費隨時間變化的可視化圖表，包括每個區塊的最低和最高手續費以及不同百分位數的手續費。</target>
+                <target xml:space="preserve">查看比特幣現金手續費隨時間變化的可視化圖表，包括每個區塊的最低和最高費率以及不同百分位數費率。</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.block-health">
                 <source xml:space="preserve">See Bitcoin Cash block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using BCH Explorer&apos;s re-implementation of BCHN&apos;s transaction selection algorithm.</source>
@@ -2329,23 +2329,23 @@
             </trans-unit>
             <trans-unit id="meta.description.docs.electrumrpc">
                 <source xml:space="preserve">Documentation for our Electrum RPC interface: get instant, convenient, and reliable access to a Fulcrum instance.</source>
-                <target xml:space="preserve">我们的 Electrum RPC 接口文档：即时、方便、可靠地访问 Esplora 实例。</target>
+                <target xml:space="preserve">我們的 Electrum RPC 文檔：獲取即時、方便、可靠地訪問 Esplora 實例。</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.faq">
                 <source xml:space="preserve">Get answers to common questions like: What is a mempool? What is a blockchain? How can I run my own instance of BCH Explorer? And more.</source>
-                <target xml:space="preserve">取得常見問題的答案，例如：什麼是Mempool？為什麼我的交易尚未被確認？如何運行自己的Mempool開源項目實例？等等。</target>
+                <target xml:space="preserve">取得常見問題的答案，例如：什麼是內存池？為什麼我的交易尚未被確認？如何運行自己的BCH瀏覽器實例？等等。</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.rest-bitcoin">
                 <source xml:space="preserve">Documentation for the bchexplorer.cash REST API service: get info on addresses, transactions, blocks, fees, mining, and more.</source>
-                <target xml:space="preserve">mempool.space REST API 服务文档：获取有关地址、交易、区块、费用、挖矿、闪电网络等的信息。</target>
+                <target xml:space="preserve">BCH Explorer REST API 服務文檔：獲取有關地址、交易、區塊、費用、挖礦等的相關資訊。</target>
             </trans-unit>
             <trans-unit id="meta.description.docs.websocket-bitcoin">
                 <source xml:space="preserve">Documentation for the bchexplorer.cash WebSocket API service: get real-time info on blocks, mempools, transactions, addresses, and more.</source>
-                <target xml:space="preserve">mempool.space WebSocket API 服务文档：获取有关块、内存池、交易、地址等的实时信息。</target>
+                <target xml:space="preserve">BCH Explorer WebSocket API 服務文檔：獲取有關區塊、內存池、交易、地址等相關資訊。</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.dashboard">
                 <source xml:space="preserve">Get real-time Bitcoin Cash mining stats like hashrate, difficulty adjustment, block rewards, pool dominance, and more.</source>
-                <target xml:space="preserve">取得實時比特幣現金挖礦統計數據，如哈希率、難度調整、區塊獎勵、礦池主導地位等。</target>
+                <target xml:space="preserve">取得實時比特幣現金挖礦統計數據，如哈希率、難度調整、區塊獎勵、礦池市佔率等。</target>
             </trans-unit>
             <trans-unit id="meta.description.mining.pool">
                 <source xml:space="preserve">See mining pool stats for <x equiv-text="poolStats.pool.name" id="PH"/>: most recent mined blocks, hashrate over time, total block reward to date, known coinbase addresses, and more.</source>
@@ -2365,7 +2365,7 @@
             </trans-unit>
             <trans-unit id="meta.descriptions.bitcoin.graphs.hashrate-pools">
                 <source xml:space="preserve">See Bitcoin Cash mining pool dominance visualized over time: see how top mining pools&apos; share of total hashrate has fluctuated over time.</source>
-                <target xml:space="preserve">查看比特幣現金礦池主導地位隨時間變化的視覺化圖：查看頂級礦池的總算力份額如何隨時間波動。</target>
+                <target xml:space="preserve">查看比特幣現金礦池市佔率隨時間變化的視覺化圖：查看頂級礦池的總算力份額如何隨時間波動。</target>
             </trans-unit>
             <trans-unit id="meta.title.docs.electrum">
                 <source xml:space="preserve">Electrum RPC</source>
