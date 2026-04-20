@@ -68,7 +68,7 @@ export class AboutComponent implements OnInit, OnDestroy {
       $localize`:@@004b222ff9ef9dd4771b777950ca1d0e4cd4348a:About`
     );
     this.seoService.setDescription(
-      $localize`:@@meta.description.about:Learn more about The Mempool Open Source Project®\: enterprise sponsors, individual sponsors, integrations, who contributes, FOSS licensing, and more.`
+      $localize`:@@meta.description.about:Learn more about the BCH Explorer open-source project. Discover enterprise sponsors, integrations, FOSS licensing, and more.`
     );
     this.ogService.setManualOgImage('about.jpg');
     this.websocketService.want(['blocks']);
