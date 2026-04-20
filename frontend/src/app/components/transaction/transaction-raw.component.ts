@@ -205,16 +205,16 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
   }
 
   checkSignatures(transaction: Transaction, hex: string): void {
-    let missingNonWitnessBytes = 0;
+    let missingBytes = 0;
 
     transaction.vin.forEach((vin) => {
       addInnerScriptsToVin(vin);
       const result = fillUnsignedInput(vin);
       vin['_missingSigs'] = result.missingSigs;
-      missingNonWitnessBytes += result.bytes;
+      missingBytes += result.bytes;
     });
 
-    this.sizeFromMissingSig = missingNonWitnessBytes;
+    this.sizeFromMissingSig = missingBytes;
 
     if (this.sizeFromMissingSig) {
       this.tooltipSize = `Includes ${this.bytesPipe.transform(this.sizeFromMissingSig, 2, undefined, undefined, true)} added for missing signatures`;
