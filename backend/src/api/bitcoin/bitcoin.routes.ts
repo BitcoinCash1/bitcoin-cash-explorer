@@ -1128,7 +1128,7 @@ class BitcoinRoutes {
         return;
       }
 
-      if (outpoints.length > 100) {
+      if (outpoints.length > 250) {
         handleError(req, res, 400, 'Too many outpoints requested');
         return;
       }

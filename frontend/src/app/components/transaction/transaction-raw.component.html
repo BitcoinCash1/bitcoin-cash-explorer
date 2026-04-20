@@ -116,11 +116,13 @@
         </span>
         <button
           *ngIf="!successBroadcast"
-          [disabled]="isLoadingBroadcast || missingSignatures"
+          [disabled]="
+            isLoadingBroadcast || missingSignatures || warnings?.length
+          "
           i18n-ngbTooltip="transaction.missing-signature"
-          ngbTooltip="Transaction cannot be broadcasted because it's missing signature(s)"
+          ngbTooltip="Transaction cannot be broadcasted because it's missing or has an invalid signature"
           placement="bottom"
-          [disableTooltip]="!missingSignatures"
+          [disableTooltip]="!missingSignatures && !warnings?.length"
           type="button"
           class="btn btn-sm btn-success btn-broadcast"
           i18n="transaction.broadcast|Broadcast"
