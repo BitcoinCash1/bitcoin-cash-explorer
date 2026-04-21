@@ -241,6 +241,12 @@ export const specialBlocks = {
     labelEventCompleted: 'The Genesis of Bitcoin',
     networks: ['mainnet', 'testnet4', 'chipnet'],
   },
+  '74637': {
+    labelEvent: 'Value overflow incident & rollback',
+    labelEventCompleted:
+      'This block contained an integer overflow bug that allowed the creation of 184 billion BTC. Satoshi himself rolled back this block, marking the first and only time he intervened. Within a day, the revised chain regained its status as the main chain.',
+    networks: ['mainnet'],
+  },
   '124721': {
     labelEvent: 'First miner burn',
     labelEventCompleted:
