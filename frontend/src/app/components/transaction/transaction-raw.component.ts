@@ -185,7 +185,10 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
         });
 
         const allValuesPresent = transaction.vin.every(
-          (input) => input.is_coinbase || (input.prevout?.value !== null && input.prevout?.value !== undefined)
+          (input) =>
+            input.is_coinbase ||
+            (input.prevout?.value !== null &&
+              input.prevout?.value !== undefined)
         );
 
         if (this.missingPrevouts.length && !allValuesPresent) {

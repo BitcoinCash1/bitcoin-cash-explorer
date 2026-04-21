@@ -851,7 +851,51 @@ export function addInnerScriptsToVin(vin: Vin): void {
   }
 }
 
-// Adapted from bitcoinjs-lib at https://github.com/bitcoinjs/bitcoinjs-lib/blob/32e08aa57f6a023e995d8c4f0c9fbdc5f11d1fa0/ts_src/transaction.ts#L78
+/**
+ * Extracts each pushed data element from a raw scriptsig hex into an array of hex strings,
+ * matching the format BCHN returns as scriptsig_byte_code.
+ * E.g. P2PKH: [ "<sig+sighash>", "<pubkey>" ]
+ */
+function extractScriptsigByteCode(scriptsig: string): string[] {
+  if (!scriptsig) return [];
+  const buf = hexStringToUint8Array(scriptsig);
+  const chunks: string[] = [];
+  let i = 0;
+  while (i < buf.length) {
+    const op = buf[i++];
+    let len = 0;
+    if (op === 0x00) {
+      // OP_0 / OP_FALSE — zero-length push, skip
+      continue;
+    } else if (op >= 0x01 && op <= 0x4b) {
+      len = op;
+    } else if (op === 0x4c) {
+      // OP_PUSHDATA1
+      if (i >= buf.length) break;
+      len = buf[i++];
+    } else if (op === 0x4d) {
+      // OP_PUSHDATA2
+      if (i + 2 > buf.length) break;
+      len = buf[i] | (buf[i + 1] << 8);
+      i += 2;
+    } else if (op === 0x4e) {
+      // OP_PUSHDATA4
+      if (i + 4 > buf.length) break;
+      len =
+        buf[i] | (buf[i + 1] << 8) | (buf[i + 2] << 16) | (buf[i + 3] << 24);
+      i += 4;
+    } else {
+      // Non-push opcode — not expected in standard scriptsigs, stop
+      break;
+    }
+    if (i + len > buf.length) break;
+    chunks.push(uint8ArrayToHexString(buf.slice(i, i + len)));
+    i += len;
+  }
+  return chunks;
+}
+
+// Adapted from bitcoinjs-lib at https://github.com/bitcoinjs/bitcoinjs-lib/blob/32e08aa57f6a023e955a9a49baddce186ee3ad4daad/ts_src/transaction.ts#L78
 /**
  * Derives the sender CashAddr from a standard P2PKH scriptsig (sig + pubkey pushes).
  * Returns a minimal prevout with address info but value: null so fee calc is unaffected.
@@ -860,7 +904,13 @@ export function addInnerScriptsToVin(vin: Vin): void {
 function deriveAddressFromScriptSig(
   scriptsig: string,
   network: string
-): { value: null; scriptpubkey: string; scriptpubkey_asm: string; scriptpubkey_type: string; scriptpubkey_address: string } | null {
+): {
+  value: null;
+  scriptpubkey: string;
+  scriptpubkey_asm: string;
+  scriptpubkey_type: string;
+  scriptpubkey_address: string;
+} | null {
   if (!scriptsig) return null;
   try {
     const buf = hexStringToUint8Array(scriptsig);
@@ -904,7 +954,10 @@ function deriveAddressFromScriptSig(
       return {
         value: null,
         scriptpubkey,
-        scriptpubkey_asm: 'OP_DUP OP_HASH160 OP_PUSHBYTES_20 ' + pubkeyHashHex + ' OP_EQUALVERIFY OP_CHECKSIG',
+        scriptpubkey_asm:
+          'OP_DUP OP_HASH160 OP_PUSHBYTES_20 ' +
+          pubkeyHashHex +
+          ' OP_EQUALVERIFY OP_CHECKSIG',
         scriptpubkey_type: 'p2pkh',
         scriptpubkey_address: p2pkh(pubkeyHashHex, network),
       };
@@ -978,7 +1031,9 @@ function fromBuffer(
     // Q: Is this even all stored in a raw transaction hex?
     const value = null;
     // const scriptsig_byte_code_pattern = '';
-    const scriptsig_byte_code: string[] = [];
+    const scriptsig_byte_code: string[] = is_coinbase
+      ? []
+      : extractScriptsigByteCode(scriptsig);
     // const scriptpubkey = '';
     // const scriptpubkey_asm = '';
     // const scriptpubkey_type = '';
@@ -989,7 +1044,9 @@ function fromBuffer(
     // const token_amount = 0;
     // const token_nft_capability = '';
     // const token_nft_commitment = '';
-    const derivedPrevout = is_coinbase ? null : deriveAddressFromScriptSig(scriptsig, network);
+    const derivedPrevout = is_coinbase
+      ? null
+      : deriveAddressFromScriptSig(scriptsig, network);
     tx.vin.push({
       value,
       txid,
