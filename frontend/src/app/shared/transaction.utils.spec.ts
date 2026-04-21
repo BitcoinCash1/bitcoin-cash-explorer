@@ -306,3 +306,142 @@ describe('decodeRawTransaction — BCH P2PKH tx (1 in, 2 out)', () => {
     });
   });
 });
+
+/**
+ * Raw BCH mainnet CashToken transaction (version 2, 2 inputs, 2 outputs).
+ *
+ * Input[0]: d90ce9d43a93e6b270c0ef281a305866ae400e64589d8b9e9762b2bb08013310:0
+ *   CashToken prevout (category set on the UTXO being spent; not encoded in the raw tx itself)
+ *
+ * Input[1]: 737fdd3fafe4bf124c984641a7e33994ded439c460d26382c940b7039f2c3685:1
+ *   Standard P2PKH input
+ *
+ * Output[0]: 1000 sats → P2SH32 locking script with CashToken prefix
+ *   token_category: 6c47906ae20adfb3400baf6242802e5c03761f4e90574894d371ca2e8b2c7746
+ *   token_nft_capability: mutable
+ *   token_nft_commitment: 0030da180002ad0000
+ *
+ * Output[1]: 135648500 sats → bitcoincash:qzpkzmpx2mwya8u42vyg05vxdxfccnuxmc2wdyth90 (P2PKH)
+ */
+const RAW_CASHTOKEN_TX_HEX =
+  '020000000210330108bbb262979e8b9d58640e40ae6658301a28efc070b2e6933ad4e90cd9' +
+  '00000000fd2d0140f8a9b103d4f610f07ce42fddeb5c9f987b543f1810ffd208a8b55c1ff' +
+  '0e1693afee7187b53d9de53f3c7fbdf062f884d6aa148469859202c0f45f434a69b17a310' +
+  'd9dfe7694ada180030da180002ad0000004cd8203ed5e7bcaa1fe4699d5672a7144a7f5b05' +
+  '66ae49839a2b43ff9f3b911410b4d02102d09db08af1ff4e8453919cc866a4be427d7bfe1' +
+  '8f2c05e5444c196fcf6fd28185279009c63c0009d00cd00c78800d100ce8800cc02e8039d' +
+  '00d3009d547a54797bbb7b587f77547f7881765a97009c00cf517f77547f81547981787c9' +
+  '4907c02c80096a27b7c9b6981a06901007b7e7c7e00d2877777675279519c63c0cdc0c788' +
+  'c0d1c0ce88c0cc02e8039dc0d3009dc0d2c0cf87777777677b529dc0009d51ce01207f757' +
+  'b8800d100ce8800cc02e8039c776868feffffff85362c9f03b740c98263d260c439d4de943' +
+  '9e3a74146984c12bfe4af3fdd7f73010000006441aa798d753f1ad83bd4faf9bc77344e15' +
+  '4bda7dab2d025419011980d77d7e58477664fef3ac64e2a309d3253857dfb6558fd643117' +
+  'c28823a754d12acb60f48656121032ea97c9bb5d7efc09e1155178169173838c377f70a68' +
+  '6af1b05f169b47ae65adfeffffff02e8030000000000004fef46772c8b2eca71d3944857' +
+  '904e1f76035c2e804262af0b40b3df0ae26a90476c61090030da180002ad0000aa206ed67' +
+  '2972210f1bf197bf2a9ae93a25016a6c27176fdf09a57c4ba0843070c7c87f4d415080000' +
+  '00001976a91483616c2656dc4e9f95530887d18669938c4f86de88ac00000000';
+
+describe('decodeRawTransaction — BCH CashToken tx (2 in, 2 out)', () => {
+  let result: ReturnType<typeof decodeRawTransaction>;
+
+  beforeEach(() => {
+    result = decodeRawTransaction(RAW_CASHTOKEN_TX_HEX, 'mainnet');
+  });
+
+  it('should decode without errors', () => {
+    expect(result.tx).toBeDefined();
+  });
+
+  it('should round-trip the hex', () => {
+    expect(result.hex).toBe(RAW_CASHTOKEN_TX_HEX);
+  });
+
+  it('should have version 2', () => {
+    expect(result.tx.version).toBe(2);
+  });
+
+  it('should have locktime 0', () => {
+    expect(result.tx.locktime).toBe(0);
+  });
+
+  describe('inputs', () => {
+    it('should have exactly 2 inputs', () => {
+      expect(result.tx.vin.length).toBe(2);
+    });
+
+    it('vin[0] should have correct txid', () => {
+      expect(result.tx.vin[0].txid).toBe(
+        'd90ce9d43a93e6b270c0ef281a305866ae400e64589d8b9e9762b2bb08013310'
+      );
+    });
+
+    it('vin[0] should reference vout 0', () => {
+      expect(result.tx.vin[0].vout).toBe(0);
+    });
+
+    it('vin[0] should have sequence 0xfffffffe', () => {
+      expect(result.tx.vin[0].sequence).toBe(0xfffffffe);
+    });
+
+    it('vin[1] should have correct txid', () => {
+      expect(result.tx.vin[1].txid).toBe(
+        '737fdd3fafe4bf124c984641a7e33994ded439c460d26382c940b7039f2c3685'
+      );
+    });
+
+    it('vin[1] should reference vout 1', () => {
+      expect(result.tx.vin[1].vout).toBe(1);
+    });
+
+    it('vin[1] should have sequence 0xfffffffe', () => {
+      expect(result.tx.vin[1].sequence).toBe(0xfffffffe);
+    });
+  });
+
+  describe('outputs', () => {
+    it('should have exactly 2 outputs', () => {
+      expect(result.tx.vout.length).toBe(2);
+    });
+
+    it('vout[0] should have value 1000 sats', () => {
+      expect(result.tx.vout[0].value).toBe(1000);
+    });
+
+    it('vout[0] should have token_category', () => {
+      expect(result.tx.vout[0].token_category).toBe(
+        '6c47906ae20adfb3400baf6242802e5c03761f4e90574894d371ca2e8b2c7746'
+      );
+    });
+
+    it('vout[0] should have token_nft_capability mutable', () => {
+      expect(result.tx.vout[0].token_nft_capability).toBe('mutable');
+    });
+
+    it('vout[0] should have token_nft_commitment', () => {
+      expect(result.tx.vout[0].token_nft_commitment).toBe('0030da180002ad0000');
+    });
+
+    it('vout[0] should have no fungible token amount', () => {
+      expect(result.tx.vout[0].token_amount).toBeUndefined();
+    });
+
+    it('vout[0] should have scriptpubkey_type p2sh32', () => {
+      expect(result.tx.vout[0].scriptpubkey_type).toBe('p2sh32');
+    });
+
+    it('vout[1] should have value 135648500 sats (1.356485 BCH)', () => {
+      expect(result.tx.vout[1].value).toBe(135648500);
+    });
+
+    it('vout[1] should have no token_category', () => {
+      expect(result.tx.vout[1].token_category).toBeUndefined();
+    });
+
+    it('vout[1] should go to bitcoincash:qzpkzmpx2mwya8u42vyg05vxdxfccnuxmc2wdyth90', () => {
+      expect(result.tx.vout[1].scriptpubkey_address).toBe(
+        'bitcoincash:qzpkzmpx2mwya8u42vyg05vxdxfccnuxmc2wdyth90'
+      );
+    });
+  });
+});

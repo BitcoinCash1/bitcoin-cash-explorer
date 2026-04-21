@@ -969,6 +969,82 @@ function deriveAddressFromScriptSig(
 }
 
 /**
+ * Parses a CashToken prefix (CHIP-2022-02) from a raw output script blob.
+ * PREFIX_TOKEN = 0xef, followed by 32-byte category ID (little-endian), bitfield, and optional fields.
+ * Returns the parsed token fields and the number of bytes consumed (0 if no token prefix present).
+ */
+function parseCashTokenPrefix(
+  data: Uint8Array,
+  startOffset: number
+): {
+  token_category?: string;
+  token_nft_capability?: string;
+  token_nft_commitment?: string;
+  token_amount?: string;
+  bytesConsumed: number;
+} {
+  if (data.length <= startOffset || data[startOffset] !== 0xef) {
+    return { bytesConsumed: 0 };
+  }
+  let p = startOffset + 1; // skip PREFIX_TOKEN byte
+
+  // 32-byte category ID in OP_HASH256 byte order (little-endian); reverse for display
+  if (p + 32 > data.length) {
+    return { bytesConsumed: 0 };
+  }
+  const categoryBytes = data.slice(p, p + 32);
+  const token_category = uint8ArrayToHexString(
+    new Uint8Array(categoryBytes).reverse()
+  );
+  p += 32;
+
+  if (p >= data.length) {
+    return { bytesConsumed: 0 };
+  }
+  const bitfield = data[p++];
+
+  const HAS_NFT = (bitfield & 0x20) !== 0;
+  const HAS_COMMITMENT_LENGTH = (bitfield & 0x40) !== 0;
+  const HAS_AMOUNT = (bitfield & 0x10) !== 0;
+  const nft_capability_bits = bitfield & 0x0f;
+
+  let token_nft_capability: string | undefined;
+  let token_nft_commitment: string | undefined;
+  let token_amount: string | undefined;
+
+  if (HAS_NFT) {
+    if (nft_capability_bits === 0x00) token_nft_capability = 'none';
+    else if (nft_capability_bits === 0x01) token_nft_capability = 'mutable';
+    else if (nft_capability_bits === 0x02) token_nft_capability = 'minting';
+    else token_nft_capability = 'none';
+  }
+
+  if (HAS_COMMITMENT_LENGTH) {
+    const [commitLen, afterCommitLen] = readVarInt(data, p);
+    p = afterCommitLen;
+    if (p + commitLen > data.length) {
+      return { bytesConsumed: 0 };
+    }
+    token_nft_commitment = uint8ArrayToHexString(data.slice(p, p + commitLen));
+    p += commitLen;
+  }
+
+  if (HAS_AMOUNT) {
+    const [ftAmount, afterAmount] = readVarInt(data, p);
+    p = afterAmount;
+    token_amount = ftAmount.toString();
+  }
+
+  return {
+    token_category,
+    token_nft_capability,
+    token_nft_commitment,
+    token_amount,
+    bytesConsumed: p - startOffset,
+  };
+}
+
+/**
  * Convert a buffer from a hex string to a transaction object
  * Example is from TX ID: 138dabc52e88eda9760976f8adad5bebb92409be2d1842c345d41e606deae45e
  *
@@ -1076,7 +1152,9 @@ function fromBuffer(
     [value, offset] = readInt64(buffer, offset);
     value = Number(value);
     [scriptpubkeyArray, offset] = readVarSlice(buffer, offset);
-    scriptpubkey = uint8ArrayToHexString(scriptpubkeyArray);
+    const tokenFields = parseCashTokenPrefix(scriptpubkeyArray, 0);
+    const lockingScript = scriptpubkeyArray.slice(tokenFields.bytesConsumed);
+    scriptpubkey = uint8ArrayToHexString(lockingScript);
     const scriptpubkey_asm = convertScriptSigAsm(scriptpubkey);
     const toAddress = scriptPubKeyToAddress(scriptpubkey, network);
     const scriptpubkey_type = toAddress.type;
@@ -1085,11 +1163,7 @@ function fromBuffer(
     // Q: Is this even all stored in a raw transaction hex?
     // const scriptpubkey_byte_code_pattern = '';
     // const scriptpubkey_byte_code: string[] = [];
-    // const token_category = '';
-    // const token_amount = 0;
-    // const token_nft_capability = '';
-    // const token_nft_commitment = '';
-    tx.vout.push({
+    const voutEntry: any = {
       value,
       scriptpubkey,
       scriptpubkey_asm,
@@ -1097,7 +1171,20 @@ function fromBuffer(
       scriptpubkey_address,
       // scriptpubkey_byte_code_pattern,
       // scriptpubkey_byte_code,
-    });
+    };
+    if (tokenFields.bytesConsumed > 0) {
+      voutEntry.token_category = tokenFields.token_category;
+      if (tokenFields.token_nft_capability !== undefined) {
+        voutEntry.token_nft_capability = tokenFields.token_nft_capability;
+      }
+      if (tokenFields.token_nft_commitment !== undefined) {
+        voutEntry.token_nft_commitment = tokenFields.token_nft_commitment;
+      }
+      if (tokenFields.token_amount !== undefined) {
+        voutEntry.token_amount = tokenFields.token_amount;
+      }
+    }
+    tx.vout.push(voutEntry);
   }
 
   [tx.locktime, offset] = readInt32(buffer, offset, true);
@@ -1639,6 +1726,11 @@ function fromBufferWithInputValues(
 ): { tx: Transaction; hex: string; warnings: string[] } {
   let offset = 0;
   const clean: number[] = [];
+  // token data extracted per-input (index → token fields) for later merging into prevouts
+  const inputTokenData: Map<
+    number,
+    ReturnType<typeof parseCashTokenPrefix>
+  > = new Map();
 
   // version (4 bytes)
   if (offset + 4 > buffer.length) {
@@ -1676,21 +1768,104 @@ function fromBufferWithInputValues(
     clean.push(...buffer.slice(offset, offset + 4));
     offset += 4;
 
-    // skip 8-byte embedded input value
+    // embedded input value (8 bytes in unsigned tx format)
     if (offset + 8 > buffer.length) {
       throw new Error('Cannot read slice out of bounds');
     }
+    const valueLow = buffer[offset] | (buffer[offset + 1] << 8) | (buffer[offset + 2] << 16) | (buffer[offset + 3] << 24);
+    const valueHigh = buffer[offset + 4] | (buffer[offset + 5] << 8) | (buffer[offset + 6] << 16) | (buffer[offset + 7] << 24);
+    const valueUnsigned = ((valueHigh >>> 0) * 0x100000000) + (valueLow >>> 0);
     offset += 8;
+
+    // Detect extended unsigned tx format: sentinel value >= 0xfffffffffffffff0
+    // Lower nibble 0x0f = extension version 0, meaning a real value + optional token data follow
+    if (valueUnsigned >= 0xfffffffffffffff0) {
+      // read real satoshi value (varint)
+      const [_realValue, afterValue] = readVarInt(buffer, offset);
+      offset = afterValue;
+      // read wrapped token data (varint-prefixed slice)
+      const [tokenSliceLen, afterSliceLen] = readVarInt(buffer, offset);
+      offset = afterSliceLen;
+      if (offset + tokenSliceLen > buffer.length) {
+        throw new Error('Cannot read slice out of bounds');
+      }
+      const tokenSlice = buffer.slice(offset, offset + tokenSliceLen);
+      offset += tokenSliceLen;
+      // first byte should be 0xef (PREFIX_TOKEN), rest is token data
+      if (tokenSlice.length > 0 && tokenSlice[0] === 0xef) {
+        const tokenFields = parseCashTokenPrefix(tokenSlice, 0);
+        if (tokenFields.bytesConsumed > 0) {
+          inputTokenData.set(i, tokenFields);
+        }
+      }
+    }
   }
 
   // copy remainder (vout count + outputs + locktime)
   clean.push(...buffer.slice(offset));
 
   const result = fromBuffer(new Uint8Array(clean), network);
+
+  // Merge extracted input token data into prevouts
+  for (const [idx, tokenFields] of inputTokenData) {
+    const vin = result.tx.vin[idx];
+    if (vin) {
+      if (!vin.prevout) {
+        (vin as any).prevout = {};
+      }
+      (vin.prevout as any).token_category = tokenFields.token_category;
+      if (tokenFields.token_nft_capability !== undefined) {
+        (vin.prevout as any).token_nft_capability = tokenFields.token_nft_capability;
+      }
+      if (tokenFields.token_nft_commitment !== undefined) {
+        (vin.prevout as any).token_nft_commitment = tokenFields.token_nft_commitment;
+      }
+      if (tokenFields.token_amount !== undefined) {
+        (vin.prevout as any).token_amount = tokenFields.token_amount;
+      }
+    }
+  }
+
   result.warnings.push(
     'Input script contains extra fields (unsigned transaction); signature is missing or invalid'
   );
   return result;
+}
+
+function serializeCashTokenPrefix(output: any): number[] {
+  if (!output.token_category) {
+    return [];
+  }
+  const prefix: number[] = [];
+  prefix.push(0xef); // PREFIX_TOKEN
+  // category id: stored as display hex (big-endian), must be written reversed (little-endian)
+  prefix.push(...hexStringToUint8Array(output.token_category).reverse());
+  const hasNft = output.token_nft_capability !== undefined;
+  const hasCommitment =
+    hasNft &&
+    output.token_nft_commitment !== undefined &&
+    output.token_nft_commitment.length > 0;
+  const hasAmount =
+    output.token_amount !== undefined && output.token_amount !== '0';
+  let bitfield = 0x00;
+  if (hasNft) bitfield |= 0x20;
+  if (hasCommitment) bitfield |= 0x40;
+  if (hasAmount) bitfield |= 0x10;
+  if (hasNft) {
+    const cap = output.token_nft_capability;
+    if (cap === 'mutable') bitfield |= 0x01;
+    else if (cap === 'minting') bitfield |= 0x02;
+  }
+  prefix.push(bitfield);
+  if (hasCommitment) {
+    const commitBytes = hexStringToUint8Array(output.token_nft_commitment);
+    prefix.push(...varIntToBytes(commitBytes.length));
+    prefix.push(...commitBytes);
+  }
+  if (hasAmount) {
+    prefix.push(...varIntToBytes(Number(output.token_amount)));
+  }
+  return prefix;
 }
 
 function serializeTransaction(tx: Transaction): Uint8Array {
@@ -1714,8 +1889,10 @@ function serializeTransaction(tx: Transaction): Uint8Array {
   result.push(...varIntToBytes(tx.vout.length));
   for (const output of tx.vout) {
     result.push(...bigIntToBytes(BigInt(output.value), 8));
+    const tokenPrefixBytes = serializeCashTokenPrefix(output);
     const scriptPubKey = hexStringToUint8Array(output.scriptpubkey);
-    result.push(...varIntToBytes(scriptPubKey.length));
+    result.push(...varIntToBytes(tokenPrefixBytes.length + scriptPubKey.length));
+    result.push(...tokenPrefixBytes);
     result.push(...scriptPubKey);
   }
 
@@ -1899,6 +2076,17 @@ export function scriptPubKeyToAddress(
   scriptPubKey: string,
   network: string
 ): { address: string; type: string } {
+  // Safety guard: strip an accidentally un-stripped CashToken prefix (0xef + 32-byte category + bitfield...)
+  // This should not normally happen since fromBuffer now strips the prefix before calling this function.
+  if (scriptPubKey.startsWith('ef') && scriptPubKey.length >= 68) {
+    const tokenFields = parseCashTokenPrefix(
+      hexStringToUint8Array(scriptPubKey),
+      0
+    );
+    if (tokenFields.bytesConsumed > 0) {
+      scriptPubKey = scriptPubKey.slice(tokenFields.bytesConsumed * 2);
+    }
+  }
   // P2PKH
   if (/^76a914[0-9a-f]{40}88ac$/.test(scriptPubKey)) {
     return {
@@ -1918,6 +2106,13 @@ export function scriptPubKeyToAddress(
     return {
       address: p2sh(scriptPubKey.substring(4, 4 + 40), network),
       type: 'p2sh',
+    };
+  }
+  // P2SH32 (CHIP-2022-05, activated May 2023)
+  if (/^aa20[0-9a-f]{64}87$/.test(scriptPubKey)) {
+    return {
+      address: p2sh32(scriptPubKey.substring(4, 4 + 64), network),
+      type: 'p2sh32',
     };
   }
   // multisig
@@ -1988,6 +2183,13 @@ function p2sh(scriptHash: string, network: string): string {
   const prefix = isTestnet ? 'bchtest' : 'bitcoincash';
   const hashBytes = hexStringToUint8Array(scriptHash);
   return cashaddrEncode(prefix, 0x08, hashBytes);
+}
+
+function p2sh32(scriptHash: string, network: string): string {
+  const isTestnet = ['testnet', 'testnet4', 'signet'].includes(network);
+  const prefix = isTestnet ? 'bchtest' : 'bitcoincash';
+  const hashBytes = hexStringToUint8Array(scriptHash);
+  return cashaddrEncode(prefix, 0x0b, hashBytes);
 }
 
 function p2a(network: string): string {

@@ -16,6 +16,7 @@ export type AddressType =
   | 'p2pk'
   | 'p2pkh'
   | 'p2sh'
+  | 'p2sh32'
   | 'anchor'
   | 'unknown';
 
