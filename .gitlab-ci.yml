@@ -55,7 +55,7 @@ lint-format-test-backend:
 #    - pnpm config:defaults:explorer
 #    - pnpm e2e:ci
 
-lint-format-frontend:
+lint-format-test-frontend:
   stage: test
   <<: *cache_frontend_definition
   interruptible: true
@@ -65,6 +65,7 @@ lint-format-frontend:
     - pnpm config:defaults:explorer
     #- pnpm run lint
     - pnpm prettier:check
+    - pnpm test:unit
 
 build-backend:
   stage: build

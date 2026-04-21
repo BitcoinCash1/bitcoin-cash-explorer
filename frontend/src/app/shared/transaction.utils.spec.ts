@@ -57,7 +57,8 @@ const RAW_TX3_HEX = '01000000012187635ddffe786d9ea05d2a4de598f8d3a3c836585b24632
  * Input:
  *   txid: 7a1c944c8b73462063245b5836c8a3d3f898e54d2a5da09e6d78fedf5d638721, vout: 1
  *   sequence: 0xfffffffe (RBF / locktime-relative)
- *   input address: not derivable (unsigned — no scriptSig pubkey)
+ *   spending address: bitcoincash:qpgtf66s2ugu2uc24r8stluuk3734vqykgem4uxv34 (known externally)
+ *   input address: not derivable by decodeRawTransaction (unsigned — scriptsig has no pubkey push)
  *
  * Outputs:
  *   [0] 12741600 sats (0.127416 BCH)  → bitcoincash:qz5ry8l8jw8f0mmejzp0ejr32665pf8wcql73560as
@@ -112,7 +113,11 @@ describe('decodeRawTransaction — BCH P2PKH unsigned tx (1 in, 2 out)', () => {
       expect(result.tx.vin[0].sequence).toBe(0xfffffffe);
     });
 
-    it('should have no derivable input address (unsigned)', () => {
+    it('should have no derivable input address (unsigned — scriptsig has no pubkey push)', () => {
+      // The spending address bitcoincash:qpgtf66s2ugu2uc24r8stluuk3734vqykgem4uxv34
+      // is displayed in the UI because transaction-raw.component.ts calls fetchPrevouts()
+      // which hits /api/v1/prevouts to retrieve the real UTXO data from the chain.
+      // decodeRawTransaction alone cannot derive it from the unsigned scriptsig.
       expect(result.tx.vin[0].prevout?.scriptpubkey_address).toBeUndefined();
     });
   });
