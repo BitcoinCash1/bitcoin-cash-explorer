@@ -679,7 +679,7 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
 
   getTotalTxInput(tx: Transaction): number {
     return tx.vin
-      .map((v: Vin) => v.value || 0)
+      .map((v: Vin) => v.prevout?.value ?? v.value ?? 0)
       .reduce((a: number, b: number) => a + b);
   }
 
