@@ -276,8 +276,8 @@ export function fillUnsignedInput(vin: Vin): {
   // Only switch on BCH supported types
   switch (addressType) {
     case 'p2pk':
-      signatures = extractDERSignaturesASM(vin.scriptsig_asm);
-      if (!signatures.length) {
+      // BCH uses Schnorr signatures (not DER) — use scriptsig_byte_code populated during decode
+      if (!vin.scriptsig_byte_code?.length) {
         missingSigs = 1;
         bytes = 72;
       }
@@ -296,8 +296,8 @@ export function fillUnsignedInput(vin: Vin): {
       }
       break;
     case 'p2pkh':
-      signatures = extractDERSignaturesASM(vin.scriptsig_asm);
-      if (!signatures.length) {
+      // BCH uses Schnorr signatures (not DER) — use scriptsig_byte_code populated during decode
+      if (!vin.scriptsig_byte_code?.length) {
         missingSigs = 1;
         bytes = 106; // 72 + 34 (sig + public key)
       }
