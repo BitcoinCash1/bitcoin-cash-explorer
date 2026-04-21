@@ -1772,9 +1772,17 @@ function fromBufferWithInputValues(
     if (offset + 8 > buffer.length) {
       throw new Error('Cannot read slice out of bounds');
     }
-    const valueLow = buffer[offset] | (buffer[offset + 1] << 8) | (buffer[offset + 2] << 16) | (buffer[offset + 3] << 24);
-    const valueHigh = buffer[offset + 4] | (buffer[offset + 5] << 8) | (buffer[offset + 6] << 16) | (buffer[offset + 7] << 24);
-    const valueUnsigned = ((valueHigh >>> 0) * 0x100000000) + (valueLow >>> 0);
+    const valueLow =
+      buffer[offset] |
+      (buffer[offset + 1] << 8) |
+      (buffer[offset + 2] << 16) |
+      (buffer[offset + 3] << 24);
+    const valueHigh =
+      buffer[offset + 4] |
+      (buffer[offset + 5] << 8) |
+      (buffer[offset + 6] << 16) |
+      (buffer[offset + 7] << 24);
+    const valueUnsigned = (valueHigh >>> 0) * 0x100000000 + (valueLow >>> 0);
     offset += 8;
 
     // Detect extended unsigned tx format: sentinel value >= 0xfffffffffffffff0
@@ -1815,10 +1823,12 @@ function fromBufferWithInputValues(
       }
       (vin.prevout as any).token_category = tokenFields.token_category;
       if (tokenFields.token_nft_capability !== undefined) {
-        (vin.prevout as any).token_nft_capability = tokenFields.token_nft_capability;
+        (vin.prevout as any).token_nft_capability =
+          tokenFields.token_nft_capability;
       }
       if (tokenFields.token_nft_commitment !== undefined) {
-        (vin.prevout as any).token_nft_commitment = tokenFields.token_nft_commitment;
+        (vin.prevout as any).token_nft_commitment =
+          tokenFields.token_nft_commitment;
       }
       if (tokenFields.token_amount !== undefined) {
         (vin.prevout as any).token_amount = tokenFields.token_amount;
@@ -1891,7 +1901,9 @@ function serializeTransaction(tx: Transaction): Uint8Array {
     result.push(...bigIntToBytes(BigInt(output.value), 8));
     const tokenPrefixBytes = serializeCashTokenPrefix(output);
     const scriptPubKey = hexStringToUint8Array(output.scriptpubkey);
-    result.push(...varIntToBytes(tokenPrefixBytes.length + scriptPubKey.length));
+    result.push(
+      ...varIntToBytes(tokenPrefixBytes.length + scriptPubKey.length)
+    );
     result.push(...tokenPrefixBytes);
     result.push(...scriptPubKey);
   }

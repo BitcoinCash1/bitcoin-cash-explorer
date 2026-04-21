@@ -176,6 +176,14 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
               if (!input.prevout.scriptpubkey_address && derivedAddress) {
                 input.prevout.scriptpubkey_address = derivedAddress;
               }
+              // Promote token fields from prevout to vin so display templates
+              // (which read vin.token_category directly) can render them
+              if (input.prevout.token_category) {
+                input.token_category = input.prevout.token_category;
+                input.token_amount = input.prevout.token_amount;
+                input.token_nft_capability = input.prevout.token_nft_capability;
+                input.token_nft_commitment = input.prevout.token_nft_commitment;
+              }
             } else if (!input.prevout) {
               this.missingPrevouts.push(`${input.txid}:${input.vout}`);
             }
