@@ -215,7 +215,7 @@
             </trans-unit>
             <trans-unit id="1986319458172810942">
                 <source xml:space="preserve"> CashToken Amount </source>
-                <target xml:space="preserve"> CashToken 數量 </target>
+                <target xml:space="preserve"> 現金代幣金額 </target>
             </trans-unit>
             <trans-unit id="1989794001571603400">
                 <source xml:space="preserve">High sigop count</source>
@@ -327,7 +327,7 @@
             </trans-unit>
             <trans-unit id="23555386d8af1ff73f297e89dd4af3f4689fb9dd">
                 <source xml:space="preserve">Indexing blocks</source>
-                <target xml:space="preserve">索隱區塊</target>
+                <target xml:space="preserve">區塊索引</target>
             </trans-unit>
             <trans-unit id="2365612610415331480">
                 <source xml:space="preserve"><x ctype="x-span" equiv-text="&lt;span class=&quot;badge bg-secondary&quot;&gt;" id="START_TAG_SPAN"/>Stale<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></source>
@@ -567,7 +567,7 @@
             </trans-unit>
             <trans-unit id="312539377512157124">
                 <source xml:space="preserve"><x equiv-text="i" id="INTERPOLATION"/> blocks</source>
-                <target xml:space="preserve"><x equiv-text="i" id="INTERPOLATION"/>个区块</target>
+                <target xml:space="preserve"><x equiv-text="i" id="INTERPOLATION"/>個區塊</target>
             </trans-unit>
             <trans-unit id="313854265968026491">
                 <source xml:space="preserve">Transaction</source>
@@ -623,7 +623,7 @@
             </trans-unit>
             <trans-unit id="3388418238806768867">
                 <source xml:space="preserve"> CashToken Category </source>
-                <target xml:space="preserve"> CashToken 類別 </target>
+                <target xml:space="preserve"> 現金代幣類別 </target>
             </trans-unit>
             <trans-unit id="3399131819685362332">
                 <source xml:space="preserve">Address Types</source>
@@ -683,7 +683,7 @@
             </trans-unit>
             <trans-unit id="3618113914737563350">
                 <source xml:space="preserve"><x equiv-text="{{ x }}" id="INTERPOLATION"/> remaining</source>
-                <target xml:space="preserve"><x equiv-text="{{ x }}" id="INTERPOLATION"/> 剩余</target>
+                <target xml:space="preserve"><x equiv-text="{{ x }}" id="INTERPOLATION"/> 剩餘</target>
             </trans-unit>
             <trans-unit id="3619092918520740354">
                 <source xml:space="preserve"> Mined </source>
@@ -1159,7 +1159,7 @@
             </trans-unit>
             <trans-unit id="5417840158792309126">
                 <source xml:space="preserve"> If you like this project and use the explorer on a regular basis, please consider <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Donate to support BCH Explorer&quot;         &gt;" id="START_LINK"/>donating<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/>. </source>
-                <target xml:space="preserve"> 如果您喜歡這個專案，並經常使用，請考慮透過<x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Donate to support BCH Explorer&quot;         &gt;" id="START_LINK"/>捐款至<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> 。 </target>
+                <target xml:space="preserve"> 如果您喜歡這個專案，並經常使用，請考慮透過<x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Donate to support BCH Explorer&quot;         &gt;" id="START_LINK"/>捐款<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> 。 </target>
             </trans-unit>
             <trans-unit id="5452140384265618201">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block remaining</source>
@@ -1223,7 +1223,7 @@
             </trans-unit>
             <trans-unit id="5682558575236654240">
                 <source xml:space="preserve"> By <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Sponsor BCH Explorer development&quot;         &gt;" id="START_LINK"/>sponsoring me<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> you are supporting my work and ensuring that the BCH Explorer project remains up-to-date, stable and available to the whole Bitcoin Cash community. As well as extending this BCH Explorer for specific BCH features. Are you interested in becoming an <x ctype="x-b" equiv-text="&lt;b&gt;" id="START_BOLD_TEXT"/>enterprise sponsor<x ctype="x-b" equiv-text="&lt;/b&gt;" id="CLOSE_BOLD_TEXT"/> and getting your company listed on this site? Feel free to <x equiv-text="&lt;a         href=&quot;https://t.me/melroyvandenberg&quot;         target=&quot;_blank&quot;         aria-label=&quot;Contact Melroy on Telegram&quot;         &gt;" id="START_LINK_1"/>reach out via Telegram<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/>. </source>
-                <target xml:space="preserve"> 由<x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Sponsor BCH Explorer development&quot;         &gt;" id="START_LINK"/>贊助我<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> ，您將支持我的工作，並確保 BCH Explorer 專案能持續保持最新、穩定，並供整個比特幣現金社群使用，同時也能擴展 BCH Explorer，以支援特定的比特幣現金功能。您是否有興趣成為<x ctype="x-b" equiv-text="&lt;b&gt;" id="START_BOLD_TEXT"/>的企業贊助商<x ctype="x-b" equiv-text="&lt;/b&gt;" id="CLOSE_BOLD_TEXT"/> ，並讓您的公司名錄出現在本網站上？歡迎隨時透過<x equiv-text="&lt;a         href=&quot;https://t.me/melroyvandenberg&quot;         target=&quot;_blank&quot;         aria-label=&quot;Contact Melroy on Telegram&quot;         &gt;" id="START_LINK_1"/>或 Telegram<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> 與我聯繫。 </target>
+                <target xml:space="preserve"> 由<x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Sponsor BCH Explorer development&quot;         &gt;" id="START_LINK"/>贊助我<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> ，您將支持我的工作，並確保 BCH Explorer 專案能持續保持最新、穩定，並供整個比特幣現金社群使用，同時也能擴展 BCH Explorer，以支援特定的比特幣現金功能。您是否有興趣成為<x ctype="x-b" equiv-text="&lt;b&gt;" id="START_BOLD_TEXT"/>的企業贊助商<x ctype="x-b" equiv-text="&lt;/b&gt;" id="CLOSE_BOLD_TEXT"/> ，並讓您的公司名錄出現在本網站上？歡迎隨時透過<x equiv-text="&lt;a         href=&quot;https://t.me/melroyvandenberg&quot;         target=&quot;_blank&quot;         aria-label=&quot;Contact Melroy on Telegram&quot;         &gt;" id="START_LINK_1"/>Telegram<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> 與我聯繫。 </target>
             </trans-unit>
             <trans-unit id="5740206434555920246">
                 <source xml:space="preserve"> Preview </source>
@@ -1379,7 +1379,7 @@
             </trans-unit>
             <trans-unit id="6361947660157581901">
                 <source xml:space="preserve">See the average mining fees earned per Bitcoin Cash block visualized in BCH and USD over time.</source>
-                <target xml:space="preserve">以 BTC 和美元为单位，查看每个比特币区块在一段时间内赚取的平均采矿费。</target>
+                <target xml:space="preserve">以比特幣現金和美元為單位，查看每個比特幣現金區塊在一段時間內賺取的平均挖礦收入。</target>
             </trans-unit>
             <trans-unit id="6370387287356971303">
                 <source xml:space="preserve">Read more</source>
@@ -1549,7 +1549,7 @@
             </trans-unit>
             <trans-unit id="6911512236126604837">
                 <source xml:space="preserve">Average fees per block in the past 144 blocks</source>
-                <target xml:space="preserve">过去144个区块中每个区块的平均费用</target>
+                <target xml:space="preserve">過去 144 個區塊的平均每區塊交易費用</target>
             </trans-unit>
             <trans-unit id="6925252478846398233">
                 <source xml:space="preserve">View Bitcoin Cash ASERT difficulty adjustment deviation over time.</source>
@@ -1733,7 +1733,7 @@
             </trans-unit>
             <trans-unit id="7931206222360985340">
                 <source xml:space="preserve">Coinbase tag</source>
-                <target xml:space="preserve">Coinbase 标签</target>
+                <target xml:space="preserve">Coinbase 標籤</target>
             </trans-unit>
             <trans-unit id="7941620384374510360">
                 <source xml:space="preserve">Transaction hex or base64 encoded PSBT</source>
@@ -2217,11 +2217,11 @@
             </trans-unit>
             <trans-unit id="date-base.hour">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> hour</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>小时</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>小時</target>
             </trans-unit>
             <trans-unit id="date-base.hours">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> hours</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>小时</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>小時</target>
             </trans-unit>
             <trans-unit id="date-base.immediately">
                 <source xml:space="preserve">Immediately</source>
@@ -2233,11 +2233,11 @@
             </trans-unit>
             <trans-unit id="date-base.minute">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> minute</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>分钟</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>分鐘</target>
             </trans-unit>
             <trans-unit id="date-base.minutes">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> minutes</source>
-                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>分钟</target>
+                <target xml:space="preserve"><x equiv-text="counter" id="DATE"/>分鐘</target>
             </trans-unit>
             <trans-unit id="date-base.month">
                 <source xml:space="preserve"><x equiv-text="counter" id="DATE"/> month</source>
@@ -2305,7 +2305,7 @@
             </trans-unit>
             <trans-unit id="meta.description.about">
                 <source xml:space="preserve">Learn more about the BCH Explorer open-source project. Discover enterprise sponsors, integrations, FOSS licensing, and more.</source>
-                <target xml:space="preserve">了解有關 Mempool 開源項目® 的更多消息：企業贊助商、個人贊助商、整合、貢獻者、FOSS 許可等。</target>
+                <target xml:space="preserve">了解有關 BCH Explorer 開源項目® 的更多消息：企業贊助商、個人贊助商、整合、貢獻者、FOSS 許可等。</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.block">
                 <source xml:space="preserve">See size, weight, fee range, included transactions, audit (expected v actual), and more for Bitcoin<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</source>
@@ -2441,11 +2441,11 @@
             </trans-unit>
             <trans-unit id="price-chart.linear">
                 <source xml:space="preserve">Linear</source>
-                <target xml:space="preserve">Linear</target>
+                <target xml:space="preserve">線性</target>
             </trans-unit>
             <trans-unit id="price-chart.logarithmic">
                 <source xml:space="preserve">Logarithmic</source>
-                <target xml:space="preserve">Logarithmic</target>
+                <target xml:space="preserve">對數</target>
             </trans-unit>
             <trans-unit id="recent-transactions-title">
                 <source xml:space="preserve">Recent Transactions</source>
@@ -2465,7 +2465,7 @@
             </trans-unit>
             <trans-unit id="time-until">
                 <source xml:space="preserve">In ~<x equiv-text="dateStrings.i18nYear" id="DATE"/></source>
-                <target xml:space="preserve"><x equiv-text="dateStrings.i18nYear" id="DATE"/>之内</target>
+                <target xml:space="preserve"><x equiv-text="dateStrings.i18nYear" id="DATE"/>之內</target>
             </trans-unit>
             <trans-unit id="time-within">
                 <source xml:space="preserve">within ~<x equiv-text="dateStrings.i18nYear" id="DATE"/></source>
