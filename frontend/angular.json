@@ -340,7 +340,10 @@
           "defaultConfiguration": "development"
         },
         "test": {
-          "builder": "@angular/build:unit-test"
+          "builder": "@angular/build:unit-test",
+          "options": {
+            "tsConfig": "tsconfig.spec.json"
+          }
         },
         "extract-i18n": {
           "builder": "@angular/build:extract-i18n",
