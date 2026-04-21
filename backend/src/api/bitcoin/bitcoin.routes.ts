@@ -1166,8 +1166,12 @@ class BitcoinRoutes {
                     : '',
                 ...(rawPrevout.tokenData?.category !== undefined && { token_category: rawPrevout.tokenData.category }),
                 ...(rawPrevout.tokenData?.amount !== undefined && { token_amount: rawPrevout.tokenData.amount }),
-                ...(rawPrevout.tokenData?.nft?.capability !== undefined && { token_nft_capability: rawPrevout.tokenData.nft.capability }),
-                ...(rawPrevout.tokenData?.nft?.commitment !== undefined && { token_nft_commitment: rawPrevout.tokenData.nft.commitment }),
+                ...(rawPrevout.tokenData?.nft?.capability !== undefined && {
+                  token_nft_capability: rawPrevout.tokenData.nft.capability,
+                }),
+                ...(rawPrevout.tokenData?.nft?.commitment !== undefined && {
+                  token_nft_commitment: rawPrevout.tokenData.nft.commitment,
+                }),
               };
               unconfirmed = false;
             }
