@@ -1,4 +1,4 @@
-FROM registry.melroy.org/melroy/docker-images/rust:1.94-node-24.14.0 AS builder
+FROM registry.melroy.org/melroy/docker-images/rust:1.95-node-24.14.1 AS builder
 
 ARG commitHash
 ENV MEMPOOL_COMMIT_HASH=${commitHash}
@@ -18,7 +18,7 @@ RUN pnpm preinstall
 RUN pnpm install --prod
 RUN pnpm package
 
-FROM registry.melroy.org/melroy/docker-images/rust:1.94-node-24.14.0 AS runtime
+FROM registry.melroy.org/melroy/docker-images/rust:1.95-node-24.14.1 AS runtime
 
 ENV NODE_OPTIONS=--max-old-space-size=16384
 ENV NODE_ENV=production
