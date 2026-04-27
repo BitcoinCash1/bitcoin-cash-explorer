@@ -65,10 +65,6 @@
                 <source xml:space="preserve">Balance (USD)</source>
                 <target xml:space="preserve">餘額（USD）</target>
             </trans-unit>
-            <trans-unit id="1318394327292295541">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks behind</source>
-                <target xml:space="preserve">落後<x equiv-text="{{ i }}" id="INTERPOLATION"/>個區塊</target>
-            </trans-unit>
             <trans-unit id="1358478559966633776">
                 <source xml:space="preserve">See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> wallet <x equiv-text="walletName" id="INTERPOLATION"/>.</source>
                 <target xml:space="preserve">查看比特幣現金<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> 錢包的待處理交易、已確認交易、餘額等資訊<x equiv-text="walletName" id="INTERPOLATION"/> 。</target>
@@ -180,10 +176,6 @@
             <trans-unit id="1802871584001127867">
                 <source xml:space="preserve"> in treasuries </source>
                 <target xml:space="preserve"> 財庫持有 </target>
-            </trans-unit>
-            <trans-unit id="1845447508284521819">
-                <source xml:space="preserve">Estimate</source>
-                <target xml:space="preserve">預計</target>
             </trans-unit>
             <trans-unit id="1863028041776311445">
                 <source xml:space="preserve">Preview Transaction</source>
@@ -337,10 +329,6 @@
                 <source xml:space="preserve"> Offline </source>
                 <target xml:space="preserve"> 離線 </target>
             </trans-unit>
-            <trans-unit id="2375009149380397713">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block behind</source>
-                <target xml:space="preserve">落後<x equiv-text="{{ i }}" id="INTERPOLATION"/>個區塊</target>
-            </trans-unit>
             <trans-unit id="2390412373676968256">
                 <source xml:space="preserve"> Size </source>
                 <target xml:space="preserve"> 大小 </target>
@@ -357,10 +345,6 @@
                 <source xml:space="preserve">Recent Blocks</source>
                 <target xml:space="preserve">最近的區塊</target>
             </trans-unit>
-            <trans-unit id="2467378808402806819">
-                <source xml:space="preserve"> BCH Explorer is a blockchain and mempool explorer for the Bitcoin Cash community, created by Melroy van den Berg. It is a completely self-hosted without any trusted third-parties. </source>
-                <target xml:space="preserve"> BCH Explorer 是由 Melroy van den Berg 為比特幣現金社群所開發的區塊鏈與內存池瀏覽器。它完全採用自主託管模式，無需任何可信第三方。 </target>
-            </trans-unit>
             <trans-unit id="2471195790491528944">
                 <source xml:space="preserve"> Broadcasted </source>
                 <target xml:space="preserve"> 已廣播 </target>
@@ -376,10 +360,6 @@
             <trans-unit id="25148835d92465353fc5fe8897c27d5369978e5a">
                 <source xml:space="preserve">Difficulty</source>
                 <target xml:space="preserve">難度</target>
-            </trans-unit>
-            <trans-unit id="2544046280419641488">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block ahead</source>
-                <target xml:space="preserve">領先<x equiv-text="{{ i }}" id="INTERPOLATION"/>個區塊</target>
             </trans-unit>
             <trans-unit id="2549503191466527026">
                 <source xml:space="preserve"> Fees </source>
@@ -416,10 +396,6 @@
             <trans-unit id="2652050456833268583">
                 <source xml:space="preserve"> Recent Transactions </source>
                 <target xml:space="preserve"> 最近交易 </target>
-            </trans-unit>
-            <trans-unit id="2664726858804341447">
-                <source xml:space="preserve">On time</source>
-                <target xml:space="preserve">準時</target>
             </trans-unit>
             <trans-unit id="2666638972429865742">
                 <source xml:space="preserve"> Verify Address Ownership </source>
@@ -561,10 +537,6 @@
                 <source xml:space="preserve">sats/tx</source>
                 <target xml:space="preserve">聰/筆</target>
             </trans-unit>
-            <trans-unit id="3124019659196374520">
-                <source xml:space="preserve">ahead of schedule</source>
-                <target xml:space="preserve">提前</target>
-            </trans-unit>
             <trans-unit id="312539377512157124">
                 <source xml:space="preserve"><x equiv-text="i" id="INTERPOLATION"/> blocks</source>
                 <target xml:space="preserve"><x equiv-text="i" id="INTERPOLATION"/>個區塊</target>
@@ -665,10 +637,6 @@
                 <source xml:space="preserve"> 1w </source>
                 <target xml:space="preserve"> 1週 </target>
             </trans-unit>
-            <trans-unit id="3552649240172058318">
-                <source xml:space="preserve"> Current Period </source>
-                <target xml:space="preserve"> 當前期間 </target>
-            </trans-unit>
             <trans-unit id="3563823504206575540">
                 <source xml:space="preserve"> Description </source>
                 <target xml:space="preserve"> 描述 </target>
@@ -737,10 +705,6 @@
                 <source xml:space="preserve"> Transaction not found. </source>
                 <target xml:space="preserve"> 交易未找到 </target>
             </trans-unit>
-            <trans-unit id="3792139409018959890">
-                <source xml:space="preserve">See Bitcoin block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</source>
-                <target xml:space="preserve">查看比特幣現金區塊獎勵（以 BCH 和 美元 為單位）隨時間的變化。區塊獎勵是礦工從區塊補貼和交易費用中獲得的總獎勵。</target>
-            </trans-unit>
             <trans-unit id="3804204581529582717">
                 <source xml:space="preserve">Endpoint</source>
                 <target xml:space="preserve">端點</target>
@@ -760,10 +724,6 @@
             <trans-unit id="3900456641470356995">
                 <source xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> Addresses </source>
                 <target xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> 地址 </target>
-            </trans-unit>
-            <trans-unit id="3901733599428143571">
-                <source xml:space="preserve">min</source>
-                <target xml:space="preserve">分鐘</target>
             </trans-unit>
             <trans-unit id="3935190348395891735">
                 <source xml:space="preserve">Block Health</source>
@@ -863,10 +823,6 @@
                 <source xml:space="preserve">What is a mempool explorer?</source>
                 <target xml:space="preserve">什麼是內存池瀏覽器？</target>
             </trans-unit>
-            <trans-unit id="4341507375690057323">
-                <source xml:space="preserve">Ahead</source>
-                <target xml:space="preserve">前面</target>
-            </trans-unit>
             <trans-unit id="435092113360011346">
                 <source xml:space="preserve">Stale Blocks</source>
                 <target xml:space="preserve">過期區塊</target>
@@ -914,14 +870,6 @@
             <trans-unit id="4417228290563175049">
                 <source xml:space="preserve"> Redirecting to transaction page... </source>
                 <target xml:space="preserve"> 正在重定向到交易頁面... </target>
-            </trans-unit>
-            <trans-unit id="4419337712236428981">
-                <source xml:space="preserve">behind schedule</source>
-                <target xml:space="preserve">落後</target>
-            </trans-unit>
-            <trans-unit id="4452427314943113135">
-                <source xml:space="preserve">Previous</source>
-                <target xml:space="preserve">前一個</target>
             </trans-unit>
             <trans-unit id="4467323362722952678">
                 <source xml:space="preserve">Unknown</source>
@@ -1065,6 +1013,10 @@
                 <source xml:space="preserve">Calculator</source>
                 <target xml:space="preserve">計算機</target>
             </trans-unit>
+            <trans-unit id="4948789143508999262">
+                <source xml:space="preserve">Transaction cannot be broadcasted because it&apos;s missing or has an invalid signature</source>
+                <target xml:space="preserve">Transaction cannot be broadcasted because it&apos;s missing or has an invalid signature</target>
+            </trans-unit>
             <trans-unit id="4980628658981044012">
                 <source xml:space="preserve">nSequence</source>
                 <target xml:space="preserve">nSequence</target>
@@ -1100,10 +1052,6 @@
             <trans-unit id="5112312000726139538">
                 <source xml:space="preserve">Change (30d)</source>
                 <target xml:space="preserve">變化 (近30天)</target>
-            </trans-unit>
-            <trans-unit id="5138609946306600653">
-                <source xml:space="preserve">Behind</source>
-                <target xml:space="preserve">後面</target>
             </trans-unit>
             <trans-unit id="5151697515296180479">
                 <source xml:space="preserve">Either 2x the minimum, or the Low Priority rate (whichever is lower)</source>
@@ -1160,10 +1108,6 @@
             <trans-unit id="5417840158792309126">
                 <source xml:space="preserve"> If you like this project and use the explorer on a regular basis, please consider <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Donate to support BCH Explorer&quot;         &gt;" id="START_LINK"/>donating<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/>. </source>
                 <target xml:space="preserve"> 如果您喜歡這個專案，並經常使用，請考慮透過<x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Donate to support BCH Explorer&quot;         &gt;" id="START_LINK"/>捐款<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> 。 </target>
-            </trans-unit>
-            <trans-unit id="5452140384265618201">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block remaining</source>
-                <target xml:space="preserve">剩餘<x equiv-text="{{ i }}" id="INTERPOLATION"/>個區塊</target>
             </trans-unit>
             <trans-unit id="5458697026988984634">
                 <source xml:space="preserve">Cheap</source>
@@ -1281,21 +1225,9 @@
                 <source xml:space="preserve">Valid Headers</source>
                 <target xml:space="preserve">有效區塊頭</target>
             </trans-unit>
-            <trans-unit id="6017769429963261313">
-                <source xml:space="preserve"> ahead</source>
-                <target xml:space="preserve"> 前面</target>
-            </trans-unit>
-            <trans-unit id="6027906779021928443">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks remaining</source>
-                <target xml:space="preserve">剩餘<x equiv-text="{{ i }}" id="INTERPOLATION"/>個區塊</target>
-            </trans-unit>
             <trans-unit id="6036711482450364616">
                 <source xml:space="preserve"> Show more inputs to reveal fee data </source>
                 <target xml:space="preserve"> 顯示更多輸入以顯示費用數據 </target>
-            </trans-unit>
-            <trans-unit id="6050930598451567468">
-                <source xml:space="preserve">Transaction cannot be broadcasted because it&apos;s missing signature(s)</source>
-                <target xml:space="preserve">交易無法廣播，因為缺少簽名。</target>
             </trans-unit>
             <trans-unit id="6052527816314853503">
                 <source xml:space="preserve">Enterprise Sponsors &#128640;</source>
@@ -1313,10 +1245,6 @@
                 <source xml:space="preserve">See size, fee range, included transactions, audit (expected vs actual), and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</source>
                 <target xml:space="preserve">查看比特幣現金區塊<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> 的區塊大小、手續費範圍、包含的交易、審計（預期值與實際值）等資訊，區塊編號為<x equiv-text="block.height" id="BLOCK_HEIGHT"/> （<x equiv-text="block.id" id="BLOCK_ID"/> ）。</target>
             </trans-unit>
-            <trans-unit id="611448626023495165">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block expected</source>
-                <target xml:space="preserve">預計<x equiv-text="{{ i }}" id="INTERPOLATION"/> 個區塊</target>
-            </trans-unit>
             <trans-unit id="6121516646370385817">
                 <source xml:space="preserve"> Avg Block Fees </source>
                 <target xml:space="preserve"> 平均區塊交易費用 </target>
@@ -1332,10 +1260,6 @@
             <trans-unit id="6163892966087492877">
                 <source xml:space="preserve"> verified holdings </source>
                 <target xml:space="preserve"> 已驗證持倉 </target>
-            </trans-unit>
-            <trans-unit id="6163986367161406789">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block mined</source>
-                <target xml:space="preserve">已挖出<x equiv-text="{{ i }}" id="INTERPOLATION"/>個區塊</target>
             </trans-unit>
             <trans-unit id="619430775984437143">
                 <source xml:space="preserve">Pools Dominance</source>
@@ -1485,10 +1409,6 @@
                 <source xml:space="preserve">The overall luck of all mining pools over the past week. A luck bigger than 100% means the average block time for the current epoch is less than 10 minutes.</source>
                 <target xml:space="preserve">過去一週所有挖礦池的整體運氣值。若運氣值大於 100%，表示當前週期的平均區塊生成時間少於 10 分鐘。</target>
             </trans-unit>
-            <trans-unit id="671954776532239277">
-                <source xml:space="preserve"> Difficulty Adjustment </source>
-                <target xml:space="preserve"> 難度調整 </target>
-            </trans-unit>
             <trans-unit id="6721450802285322732">
                 <source xml:space="preserve"> Included in block </source>
                 <target xml:space="preserve"> 包含於區塊中 </target>
@@ -1607,10 +1527,6 @@
                 <source xml:space="preserve"> Broadcast Transaction </source>
                 <target xml:space="preserve"> 廣播交易 </target>
             </trans-unit>
-            <trans-unit id="7364009665295974621">
-                <source xml:space="preserve"> behind</source>
-                <target xml:space="preserve"> 後</target>
-            </trans-unit>
             <trans-unit id="7370363797434182113">
                 <source xml:space="preserve">This transaction has a low transaction fee on L1, because of BCH</source>
                 <target xml:space="preserve">由於使用了比特幣現金（BCH），這筆交易在L1層的交易手續費很低。</target>
@@ -1654,10 +1570,6 @@
             <trans-unit id="7587252691654342708">
                 <source xml:space="preserve">Block Fees Vs Subsidy</source>
                 <target xml:space="preserve">區塊費用與補貼</target>
-            </trans-unit>
-            <trans-unit id="7611664705149933501">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks expected</source>
-                <target xml:space="preserve">預計<x equiv-text="{{ i }}" id="INTERPOLATION"/>個區塊</target>
             </trans-unit>
             <trans-unit id="7621097312029689276">
                 <source xml:space="preserve">Block Sizes</source>
@@ -1835,10 +1747,6 @@
                 <source xml:space="preserve"> Blocks (1w) </source>
                 <target xml:space="preserve"> 區塊 (近一週) </target>
             </trans-unit>
-            <trans-unit id="8238703585225968591">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks ahead</source>
-                <target xml:space="preserve">領先<x equiv-text="{{ i }}" id="INTERPOLATION"/>個區塊</target>
-            </trans-unit>
             <trans-unit id="8244978122807060043">
                 <source xml:space="preserve"> ScriptSig (ASM) </source>
                 <target xml:space="preserve"> ScriptSig (ASM) </target>
@@ -1878,10 +1786,6 @@
             <trans-unit id="838299984212365663">
                 <source xml:space="preserve">Stratum Jobs</source>
                 <target xml:space="preserve">Stratum 作業</target>
-            </trans-unit>
-            <trans-unit id="8385872309809021855">
-                <source xml:space="preserve">See the mining fees earned per Bitcoin block compared to the Bitcoin block subsidy, visualized in BCH and USD over time.</source>
-                <target xml:space="preserve">查看每個比特幣現金區塊所賺取的挖礦收入與區塊獎勵的對比，並以 比特幣現金 和 美元 為單位，呈現隨時間變化的視覺化圖表。</target>
             </trans-unit>
             <trans-unit id="8386976308507652568">
                 <source xml:space="preserve"> All </source>
@@ -2059,10 +1963,6 @@
                 <source xml:space="preserve">Output</source>
                 <target xml:space="preserve">輸出</target>
             </trans-unit>
-            <trans-unit id="899060995555983474">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks mined</source>
-                <target xml:space="preserve">已挖<x equiv-text="{{ i }}" id="INTERPOLATION"/>個區塊</target>
-            </trans-unit>
             <trans-unit id="8a7b4bd44c0ac71b2e72de0398b303257f7d2f54">
                 <source xml:space="preserve">Blocks</source>
                 <target xml:space="preserve">區塊</target>
@@ -2162,10 +2062,6 @@
             <trans-unit id="990281140585424266">
                 <source xml:space="preserve">spent </source>
                 <target xml:space="preserve">花費 </target>
-            </trans-unit>
-            <trans-unit id="991066160113599649">
-                <source xml:space="preserve">Remaining</source>
-                <target xml:space="preserve">距離下次調整</target>
             </trans-unit>
             <trans-unit id="a681a4e2011bb28157689dbaa387de0dd0aa0c11">
                 <source xml:space="preserve">Mining Dashboard</source>

@@ -65,10 +65,6 @@
                 <source xml:space="preserve">Balance (USD)</source>
                 <target xml:space="preserve">Saldo (USD)</target>
             </trans-unit>
-            <trans-unit id="1318394327292295541">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks behind</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blokken achter</target>
-            </trans-unit>
             <trans-unit id="1358478559966633776">
                 <source xml:space="preserve">See mempool transactions, confirmed transactions, balance, and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> wallet <x equiv-text="walletName" id="INTERPOLATION"/>.</source>
                 <target xml:space="preserve">Bekijk mempool-transacties, bevestigde transacties, saldo en meer voor de Bitcoin Cash-<x equiv-text="seoDescriptionNetwork( this.stateService.network )" id="PH"/> -portemonnee <x equiv-text="walletName" id="INTERPOLATION"/>.</target>
@@ -180,10 +176,6 @@
             <trans-unit id="1802871584001127867">
                 <source xml:space="preserve"> in treasuries </source>
                 <target xml:space="preserve"> in schatkisten </target>
-            </trans-unit>
-            <trans-unit id="1845447508284521819">
-                <source xml:space="preserve">Estimate</source>
-                <target xml:space="preserve">Schatting</target>
             </trans-unit>
             <trans-unit id="1863028041776311445">
                 <source xml:space="preserve">Preview Transaction</source>
@@ -337,10 +329,6 @@
                 <source xml:space="preserve"> Offline </source>
                 <target xml:space="preserve"> Offline </target>
             </trans-unit>
-            <trans-unit id="2375009149380397713">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block behind</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blok achter</target>
-            </trans-unit>
             <trans-unit id="2390412373676968256">
                 <source xml:space="preserve"> Size </source>
                 <target xml:space="preserve"> Grootte </target>
@@ -357,10 +345,6 @@
                 <source xml:space="preserve">Recent Blocks</source>
                 <target xml:space="preserve">Recente blokken</target>
             </trans-unit>
-            <trans-unit id="2467378808402806819">
-                <source xml:space="preserve"> BCH Explorer is a blockchain and mempool explorer for the Bitcoin Cash community, created by Melroy van den Berg. It is a completely self-hosted without any trusted third-parties. </source>
-                <target xml:space="preserve"> BCH Explorer is een blockchain- en mempool-verkenner voor de Bitcoin Cash-gemeenschap, ontwikkeld door Melroy van den Berg. Het is een volledig zelfgehoste oplossing zonder tussenkomst van vertrouwde derde partijen. </target>
-            </trans-unit>
             <trans-unit id="2471195790491528944">
                 <source xml:space="preserve"> Broadcasted </source>
                 <target xml:space="preserve"> Uitgezonden </target>
@@ -376,10 +360,6 @@
             <trans-unit id="25148835d92465353fc5fe8897c27d5369978e5a">
                 <source xml:space="preserve">Difficulty</source>
                 <target xml:space="preserve">Moeilijkheid</target>
-            </trans-unit>
-            <trans-unit id="2544046280419641488">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block ahead</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blok verder</target>
             </trans-unit>
             <trans-unit id="2549503191466527026">
                 <source xml:space="preserve"> Fees </source>
@@ -416,10 +396,6 @@
             <trans-unit id="2652050456833268583">
                 <source xml:space="preserve"> Recent Transactions </source>
                 <target xml:space="preserve"> Recente transacties </target>
-            </trans-unit>
-            <trans-unit id="2664726858804341447">
-                <source xml:space="preserve">On time</source>
-                <target xml:space="preserve">Optijd</target>
             </trans-unit>
             <trans-unit id="2666638972429865742">
                 <source xml:space="preserve"> Verify Address Ownership </source>
@@ -561,10 +537,6 @@
                 <source xml:space="preserve">sats/tx</source>
                 <target xml:space="preserve">sats/tx</target>
             </trans-unit>
-            <trans-unit id="3124019659196374520">
-                <source xml:space="preserve">ahead of schedule</source>
-                <target xml:space="preserve">eerder dan gepland</target>
-            </trans-unit>
             <trans-unit id="312539377512157124">
                 <source xml:space="preserve"><x equiv-text="i" id="INTERPOLATION"/> blocks</source>
                 <target xml:space="preserve"><x equiv-text="i" id="INTERPOLATION"/> blokken</target>
@@ -665,10 +637,6 @@
                 <source xml:space="preserve"> 1w </source>
                 <target xml:space="preserve"> 1 week </target>
             </trans-unit>
-            <trans-unit id="3552649240172058318">
-                <source xml:space="preserve"> Current Period </source>
-                <target xml:space="preserve"> Huidige Periode </target>
-            </trans-unit>
             <trans-unit id="3563823504206575540">
                 <source xml:space="preserve"> Description </source>
                 <target xml:space="preserve"> Omschrijving </target>
@@ -737,10 +705,6 @@
                 <source xml:space="preserve"> Transaction not found. </source>
                 <target xml:space="preserve"> Transactie niet gevonden. </target>
             </trans-unit>
-            <trans-unit id="3792139409018959890">
-                <source xml:space="preserve">See Bitcoin block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</source>
-                <target xml:space="preserve">Bekijk Bitcoin-blokbeloningen in BTC en USD in de loop van de tijd gevisualiseerd. Blokbeloningen zijn het totale bedrag dat mijnwerkers verdienen aan de bloksubsidie en vergoedingen.</target>
-            </trans-unit>
             <trans-unit id="3804204581529582717">
                 <source xml:space="preserve">Endpoint</source>
                 <target xml:space="preserve">Eindpunt</target>
@@ -760,10 +724,6 @@
             <trans-unit id="3900456641470356995">
                 <source xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> Addresses </source>
                 <target xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> Adressen </target>
-            </trans-unit>
-            <trans-unit id="3901733599428143571">
-                <source xml:space="preserve">min</source>
-                <target xml:space="preserve">min</target>
             </trans-unit>
             <trans-unit id="3935190348395891735">
                 <source xml:space="preserve">Block Health</source>
@@ -862,10 +822,6 @@
                 <source xml:space="preserve">What is a mempool explorer?</source>
                 <target xml:space="preserve">Wat is een mempool-verkenner?</target>
             </trans-unit>
-            <trans-unit id="4341507375690057323">
-                <source xml:space="preserve">Ahead</source>
-                <target xml:space="preserve">Vooruit</target>
-            </trans-unit>
             <trans-unit id="435092113360011346">
                 <source xml:space="preserve">Stale Blocks</source>
                 <target xml:space="preserve">Verouderde blokken</target>
@@ -913,14 +869,6 @@
             <trans-unit id="4417228290563175049">
                 <source xml:space="preserve"> Redirecting to transaction page... </source>
                 <target xml:space="preserve"> Doorsturen naar transactiepagina... </target>
-            </trans-unit>
-            <trans-unit id="4419337712236428981">
-                <source xml:space="preserve">behind schedule</source>
-                <target xml:space="preserve">achter op schema</target>
-            </trans-unit>
-            <trans-unit id="4452427314943113135">
-                <source xml:space="preserve">Previous</source>
-                <target xml:space="preserve">Vorige</target>
             </trans-unit>
             <trans-unit id="4467323362722952678">
                 <source xml:space="preserve">Unknown</source>
@@ -1063,6 +1011,10 @@
                 <source xml:space="preserve">Calculator</source>
                 <target xml:space="preserve">Rekenmachine</target>
             </trans-unit>
+            <trans-unit id="4948789143508999262">
+                <source xml:space="preserve">Transaction cannot be broadcasted because it&apos;s missing or has an invalid signature</source>
+                <target xml:space="preserve">De transactie kan niet worden uitgezonden omdat deze ontbreekt of een ongeldige handtekening heeft.</target>
+            </trans-unit>
             <trans-unit id="4980628658981044012">
                 <source xml:space="preserve">nSequence</source>
                 <target xml:space="preserve">nSequence</target>
@@ -1098,10 +1050,6 @@
             <trans-unit id="5112312000726139538">
                 <source xml:space="preserve">Change (30d)</source>
                 <target xml:space="preserve">Wijziging (30d)</target>
-            </trans-unit>
-            <trans-unit id="5138609946306600653">
-                <source xml:space="preserve">Behind</source>
-                <target xml:space="preserve">Achter</target>
             </trans-unit>
             <trans-unit id="5151697515296180479">
                 <source xml:space="preserve">Either 2x the minimum, or the Low Priority rate (whichever is lower)</source>
@@ -1158,10 +1106,6 @@
             <trans-unit id="5417840158792309126">
                 <source xml:space="preserve"> If you like this project and use the explorer on a regular basis, please consider <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Donate to support BCH Explorer&quot;         &gt;" id="START_LINK"/>donating<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/>. </source>
                 <target xml:space="preserve"> Als je dit project leuk vindt en de verkenner regelmatig gebruikt, overweeg dan om een donatie te doen via <x ctype="x-a" equiv-text="&lt;a href=&quot;https://melroy.org/donate.html&quot; target=&quot;_blank&quot; aria-label=&quot;Donate to support BCH Explorer&quot; &gt;" id="START_LINK"/>of<x ctype="x-a" equiv-text="&lt;/a &gt;" id="CLOSE_LINK"/>. </target>
-            </trans-unit>
-            <trans-unit id="5452140384265618201">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block remaining</source>
-                <target xml:space="preserve">Nog <x equiv-text="{{ i }}" id="INTERPOLATION"/> blok over</target>
             </trans-unit>
             <trans-unit id="5458697026988984634">
                 <source xml:space="preserve">Cheap</source>
@@ -1279,21 +1223,9 @@
                 <source xml:space="preserve">Valid Headers</source>
                 <target xml:space="preserve">Geldige Headers</target>
             </trans-unit>
-            <trans-unit id="6017769429963261313">
-                <source xml:space="preserve"> ahead</source>
-                <target xml:space="preserve">vooruit</target>
-            </trans-unit>
-            <trans-unit id="6027906779021928443">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks remaining</source>
-                <target xml:space="preserve">Nog <x equiv-text="{{ i }}" id="INTERPOLATION"/> blokken over </target>
-            </trans-unit>
             <trans-unit id="6036711482450364616">
                 <source xml:space="preserve"> Show more inputs to reveal fee data </source>
                 <target xml:space="preserve"> Toon meer inputs om vergoedingsgegevens te onthullen </target>
-            </trans-unit>
-            <trans-unit id="6050930598451567468">
-                <source xml:space="preserve">Transaction cannot be broadcasted because it&apos;s missing signature(s)</source>
-                <target xml:space="preserve">Transactie kan niet worden uitgezonden omdat er handtekening(en) ontbreken</target>
             </trans-unit>
             <trans-unit id="6052527816314853503">
                 <source xml:space="preserve">Enterprise Sponsors &#128640;</source>
@@ -1311,10 +1243,6 @@
                 <source xml:space="preserve">See size, fee range, included transactions, audit (expected vs actual), and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</source>
                 <target xml:space="preserve">Bekijk de grootte, het gewicht, het tariefbereik, de inbegrepen transacties en meer voor Liquid<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> blok <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</target>
             </trans-unit>
-            <trans-unit id="611448626023495165">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block expected</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blok verwacht</target>
-            </trans-unit>
             <trans-unit id="6121516646370385817">
                 <source xml:space="preserve"> Avg Block Fees </source>
                 <target xml:space="preserve"> Gem Blokvergoedingen </target>
@@ -1330,10 +1258,6 @@
             <trans-unit id="6163892966087492877">
                 <source xml:space="preserve"> verified holdings </source>
                 <target xml:space="preserve"> geverifieerde tegoeden </target>
-            </trans-unit>
-            <trans-unit id="6163986367161406789">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> block mined</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blok gemined</target>
             </trans-unit>
             <trans-unit id="619430775984437143">
                 <source xml:space="preserve">Pools Dominance</source>
@@ -1483,10 +1407,6 @@
                 <source xml:space="preserve">The overall luck of all mining pools over the past week. A luck bigger than 100% means the average block time for the current epoch is less than 10 minutes.</source>
                 <target xml:space="preserve">Het algemene geluk van alle miningpools van de afgelopen week. Een geluk groter dan 100% betekent dat de gemiddelde bloktijd voor het huidige tijdperk minder dan 10 minuten is.</target>
             </trans-unit>
-            <trans-unit id="671954776532239277">
-                <source xml:space="preserve"> Difficulty Adjustment </source>
-                <target xml:space="preserve"> Aanpassing van de moeilijkheidsgraad </target>
-            </trans-unit>
             <trans-unit id="6721450802285322732">
                 <source xml:space="preserve"> Included in block </source>
                 <target xml:space="preserve"> Opgenomen in blok </target>
@@ -1604,10 +1524,6 @@
                 <source xml:space="preserve"> Broadcast Transaction </source>
                 <target xml:space="preserve"> Uitzendtransactie </target>
             </trans-unit>
-            <trans-unit id="7364009665295974621">
-                <source xml:space="preserve"> behind</source>
-                <target xml:space="preserve">achter</target>
-            </trans-unit>
             <trans-unit id="7370363797434182113">
                 <source xml:space="preserve">This transaction has a low transaction fee on L1, because of BCH</source>
                 <target xml:space="preserve">Deze transactie heeft lage transactiekosten op L1, dankzij BCH</target>
@@ -1651,10 +1567,6 @@
             <trans-unit id="7587252691654342708">
                 <source xml:space="preserve">Block Fees Vs Subsidy</source>
                 <target xml:space="preserve">Blokvergoeding versus subsidie</target>
-            </trans-unit>
-            <trans-unit id="7611664705149933501">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks expected</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blokken verwacht</target>
             </trans-unit>
             <trans-unit id="7621097312029689276">
                 <source xml:space="preserve">Block Sizes</source>
@@ -1832,10 +1744,6 @@
                 <source xml:space="preserve"> Blocks (1w) </source>
                 <target xml:space="preserve"> Blokken (1w) </target>
             </trans-unit>
-            <trans-unit id="8238703585225968591">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks ahead</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blokken verder</target>
-            </trans-unit>
             <trans-unit id="8244978122807060043">
                 <source xml:space="preserve"> ScriptSig (ASM) </source>
                 <target xml:space="preserve"> ScriptSig (ASM) </target>
@@ -1875,10 +1783,6 @@
             <trans-unit id="838299984212365663">
                 <source xml:space="preserve">Stratum Jobs</source>
                 <target xml:space="preserve">Stratum-taken</target>
-            </trans-unit>
-            <trans-unit id="8385872309809021855">
-                <source xml:space="preserve">See the mining fees earned per Bitcoin block compared to the Bitcoin block subsidy, visualized in BCH and USD over time.</source>
-                <target xml:space="preserve">Bekijk de verdiende miningkosten per Bitcoin-blok ten opzichte van de Bitcoin-bloksubsidie, gevisualiseerd in BTC en USD in de loop van de tijd.</target>
             </trans-unit>
             <trans-unit id="8386976308507652568">
                 <source xml:space="preserve"> All </source>
@@ -2056,10 +1960,6 @@
                 <source xml:space="preserve">Output</source>
                 <target xml:space="preserve">Uitvoer</target>
             </trans-unit>
-            <trans-unit id="899060995555983474">
-                <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blocks mined</source>
-                <target xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> blokken gemined</target>
-            </trans-unit>
             <trans-unit id="8a7b4bd44c0ac71b2e72de0398b303257f7d2f54">
                 <source xml:space="preserve">Blocks</source>
                 <target xml:space="preserve">Blokken</target>
@@ -2153,10 +2053,6 @@
             <trans-unit id="990281140585424266">
                 <source xml:space="preserve">spent </source>
                 <target xml:space="preserve">besteed</target>
-            </trans-unit>
-            <trans-unit id="991066160113599649">
-                <source xml:space="preserve">Remaining</source>
-                <target xml:space="preserve">Resterend</target>
             </trans-unit>
             <trans-unit id="a681a4e2011bb28157689dbaa387de0dd0aa0c11">
                 <source xml:space="preserve">Mining Dashboard</source>
@@ -2345,6 +2241,11 @@
             <trans-unit id="meta.description.preview-tx">
                 <source xml:space="preserve">Preview a transaction to the Bitcoin<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> network using the transaction&apos;s raw hex data.</source>
                 <target xml:space="preserve">Bekijk een transactie op het Bitcoin<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/>-netwerk met de ruwe hex-data van de transactie.</target>
+            </trans-unit>
+            <trans-unit id="meta.description.recent-transactions">
+                <source xml:space="preserve">See the most recent transactions on the Bitcoin Cash<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> network, updated in real-time.</source>
+                <target xml:space="preserve">Bekijk de meest recente transacties op Bitcoin Cash <x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/> netwerk, 
+wordt in realtime bijgewerkt.</target>
             </trans-unit>
             <trans-unit id="meta.description.stale-chain-tips">
                 <source xml:space="preserve">See the most recent stale chain tips on the Bitcoin<x equiv-text="seoDescriptionNetwork(         this.stateService.network       )" id="PH"/> network.</source>
