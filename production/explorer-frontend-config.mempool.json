@@ -14,7 +14,5 @@
   "ITEMS_PER_PAGE": 25,
   "PUBLIC_ACCELERATIONS": true,
   "AUDIT": true,
-  "PROD_DOMAINS": [
-    "mempool.space"
-  ]
+  "PROD_DOMAINS": "mempool.space"
 }
