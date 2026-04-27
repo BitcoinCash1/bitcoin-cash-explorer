@@ -2,6 +2,7 @@
   "upload": {  
     "type": "xliff",
     "features": ["use_project_lang"],
+    "deprecate": "file",
     "files": [
       {
         "pattern": "src/locale/messages.xlf",
