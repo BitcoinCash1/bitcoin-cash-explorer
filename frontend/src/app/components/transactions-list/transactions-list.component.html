@@ -98,6 +98,11 @@
               >
                 <tr
                   [ngClass]="{
+                    focus:
+                      (!vin.is_coinbase &&
+                        vin.prevout.scriptpubkey_address &&
+                        tx._unblinded) ||
+                      inputIndex === vindex,
                     highlight:
                       this.addresses.length &&
                       ((vin.prevout?.scriptpubkey_type !== 'p2pk' &&
@@ -555,6 +560,12 @@
               >
                 <tr
                   [ngClass]="{
+                    focus:
+                      (vout.scriptpubkey_address &&
+                        tx.vin &&
+                        !tx.vin[0].is_coinbase &&
+                        tx._unblinded) ||
+                      outputIndex === vindex,
                     highlight:
                       this.addresses.length &&
                       ((vout.scriptpubkey_type !== 'p2pk' &&
@@ -781,6 +792,12 @@
                     showFullOpReturnPreview[vindex]
                   "
                   [ngClass]="{
+                    focus:
+                      (vout.scriptpubkey_address &&
+                        tx.vin &&
+                        !tx.vin[0].is_coinbase &&
+                        tx._unblinded) ||
+                      outputIndex === vindex,
                     highlight:
                       addresses?.length &&
                       addresses.includes(vout.scriptpubkey_address),

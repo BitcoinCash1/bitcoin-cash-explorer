@@ -314,6 +314,10 @@ h2 {
   background-color: color-mix(in srgb, var(--fg) 12%, transparent);
 }
 
+.focus {
+  background: color-mix(in srgb, var(--tertiary) 56%, transparent);
+}
+
 .summary {
   margin-top: 10px;
 }
