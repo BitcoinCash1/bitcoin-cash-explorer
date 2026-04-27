@@ -59,7 +59,7 @@ export namespace IPublicApi {
   }
 
   export interface Vout {
-    scriptpubkey: string;
+    scriptpubkey: string; // in hex
     scriptpubkey_asm: string;
     scriptpubkey_type: string;
     scriptpubkey_address?: string;
@@ -80,7 +80,7 @@ export namespace IPublicApi {
     inner_redeemscript_asm: string;
     scriptsig_byte_code_pattern: string; // in hex
     scriptsig_byte_code: string[]; // script data in hex
-    scriptpubkey: string;
+    scriptpubkey: string; // in hex
     scriptpubkey_asm: string;
     scriptpubkey_type: string;
     scriptpubkey_byte_code_pattern: string; // in hex
@@ -97,7 +97,7 @@ export namespace IPublicApi {
   }
 
   export interface VerboseVout {
-    scriptpubkey: string;
+    scriptpubkey: string; // in hex
     scriptpubkey_asm: string;
     scriptpubkey_type: string;
     scriptpubkey_address?: string;
