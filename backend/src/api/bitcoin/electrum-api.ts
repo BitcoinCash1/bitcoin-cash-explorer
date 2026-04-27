@@ -15,7 +15,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
   constructor(bitcoinClient: any) {
     super(bitcoinClient);
 
-    const electrumConfig = { client: 'mempool-v2', version: '1.4' };
+    const electrumConfig = { client: 'BCH-Explorer-v3', version: '1.6.0' };
     const electrumPersistencePolicy = {
       retryPeriod: 1000,
       maxRetry: Number.MAX_SAFE_INTEGER,
@@ -312,6 +312,57 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     }
   }
 
+  async $getBatchedOutspends(txId: string[]): Promise<IPublicApi.Outspend[][]> {
+    const outspends: IPublicApi.Outspend[][] = [];
+    for (const tx of txId) {
+      const outspend = await this.$getOutspends(tx);
+      outspends.push(outspend);
+    }
+    return outspends;
+  }
+
+  async $getOutspends(txId: string): Promise<IPublicApi.Outspend[]> {
+    const outSpends: IPublicApi.Outspend[] = [];
+    const tx = (await this.$getRawTransaction(txId, false, false)) as IPublicApi.Transaction;
+    const blockHeight = tx.status.block_height;
+    for (let i = 0; i < tx.vout.length; i++) {
+      if (tx.status && tx.status.block_height === 0) {
+        outSpends.push({
+          spent: false,
+        });
+      } else {
+        const txOut = await this.bitcoindClient.getTxOut(txId, i);
+        let outTxId: string | undefined;
+        // Only look up history if the output is spent (txOut is null)
+        if (blockHeight && txOut === null) {
+          // Retrieve the history from the current block height + 1 (so the next or higher, including mempool)
+          const history = await this.$getScriptHashHistory(tx.vout[i].scriptpubkey, blockHeight + 1);
+          // In case we have multiple results, we just pick the first (its the most 'oldest' tx hash from the lowest block height)
+          const firstHistory = history.length >= 1 ? history[0] : null;
+          if (firstHistory) {
+            outTxId = firstHistory.tx_hash;
+          }
+        } else if (!blockHeight && txOut === null) {
+          // If blockHeight is null and txOut is null, it means the spent tx is in the mempool
+          const history = await this.$getScriptHashHistory(tx.vout[i].scriptpubkey);
+          // only get height -1, using history.filer
+          const mempoolTx = history.filter((h) => h.height === -1);
+          // filter out its own txid
+          const filteredMempoolTx = mempoolTx.filter((h) => h.tx_hash !== txId);
+          // get first result
+          const firstMempoolTx = filteredMempoolTx[0];
+          if (firstMempoolTx) {
+            outTxId = firstMempoolTx.tx_hash;
+          }
+        }
+
+        // Only return spent boolean, include outTxId if available
+        outSpends.push({ spent: txOut === null, ...(outTxId && { txid: outTxId }) });
+      }
+    }
+    return outSpends;
+  }
+
   private $getScriptHashUnspent(scriptHash: string): Promise<IElectrumApi.ScriptHashUtxos[]> {
     return this.electrumClient.blockchainScripthash_listunspent(scriptHash);
   }
@@ -329,13 +380,45 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     return this.electrumClient.blockchainScripthash_getBalance(this.encodeScriptHash(scriptHash));
   }
 
-  private $getScriptHashHistory(scriptHash: string): Promise<IElectrumApi.ScriptHashHistory[]> {
-    const fromCache = memoryCache.get<IElectrumApi.ScriptHashHistory[]>('Scripthash_getHistory', scriptHash);
+  private $getScriptHashHistory(
+    scriptHash: string,
+    fromHeight?: number,
+    toHeight?: number
+  ): Promise<IElectrumApi.ScriptHashHistory[]> {
+    // Use dedicated cache key for height-filtered queries
+    const cacheKey =
+      fromHeight !== undefined || toHeight !== undefined
+        ? `Scripthash_getHistory_heights_${fromHeight || '0'}_${toHeight || '-1'}`
+        : 'Scripthash_getHistory';
+
+    const fromCache = memoryCache.get<IElectrumApi.ScriptHashHistory[]>(cacheKey, scriptHash);
     if (fromCache) {
       return Promise.resolve(fromCache);
     }
+
+    // If height parameters are provided, use custom request method
+    if (fromHeight !== undefined || toHeight !== undefined) {
+      const params: any[] = [this.encodeScriptHash(scriptHash)];
+
+      if (fromHeight !== undefined) {
+        params.push(fromHeight);
+      }
+
+      if (toHeight !== undefined) {
+        // Ensure toHeight is at least fromHeight if both are provided
+        const adjustedToHeight = fromHeight !== undefined && toHeight < fromHeight ? fromHeight : toHeight;
+        params.push(adjustedToHeight);
+      }
+
+      return this.electrumClient.request('blockchain.scripthash.get_history', params).then((history) => {
+        memoryCache.set(cacheKey, scriptHash, history, 2);
+        return history;
+      });
+    }
+
+    // Use standard method for non-height-filtered queries
     return this.electrumClient.blockchainScripthash_getHistory(this.encodeScriptHash(scriptHash)).then((history) => {
-      memoryCache.set('Scripthash_getHistory', scriptHash, history, 2);
+      memoryCache.set(cacheKey, scriptHash, history, 2);
       return history;
     });
   }

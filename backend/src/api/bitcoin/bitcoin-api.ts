@@ -249,36 +249,48 @@ class BitcoinApi implements AbstractBitcoinApi {
     };
   }
 
-  async $getOutspends(txId: string): Promise<IPublicApi.Outspend[]> {
-    const outSpends: IPublicApi.Outspend[] = [];
-    const tx = (await this.$getRawTransaction(txId, false, false)) as IPublicApi.Transaction;
-    for (let i = 0; i < tx.vout.length; i++) {
-      if (tx.status && tx.status.block_height === 0) {
-        outSpends.push({
-          spent: false,
-        });
-      } else {
-        const txOut = await this.bitcoindClient.getTxOut(txId, i);
-        outSpends.push({
-          spent: txOut === null,
-        });
-      }
-    }
-    return outSpends;
+  // async $getOutspends(txId: string): Promise<IPublicApi.Outspend[]> {
+  //   const outSpends: IPublicApi.Outspend[] = [];
+  //   const tx = (await this.$getRawTransaction(txId, false, false)) as IPublicApi.Transaction;
+  //   for (let i = 0; i < tx.vout.length; i++) {
+  //     if (tx.status && tx.status.block_height === 0) {
+  //       outSpends.push({
+  //         spent: false,
+  //       });
+  //     } else {
+  //       const txOut = await this.bitcoindClient.getTxOut(txId, i);
+  //       outSpends.push({
+  //         spent: txOut === null,
+  //       });
+  //     }
+  //   }
+  //   return outSpends;
+  // }
+
+  $getOutspends(txId: string): Promise<IPublicApi.Outspend[]> {
+    throw new Error('Method getOutspends not supported by the Bitcoin RPC API.');
   }
 
-  async $getBatchedOutspends(txId: string[]): Promise<IPublicApi.Outspend[][]> {
-    const outspends: IPublicApi.Outspend[][] = [];
-    for (const tx of txId) {
-      const outspend = await this.$getOutspends(tx);
-      outspends.push(outspend);
-    }
-    return outspends;
+  $getBatchedOutspends(txId: string[]): Promise<IPublicApi.Outspend[][]> {
+    throw new Error('Method getBatchedOutspends not supported by the Bitcoin RPC API.');
   }
 
-  async $getBatchedOutspendsInternal(txId: string[]): Promise<IPublicApi.Outspend[][]> {
-    return this.$getBatchedOutspends(txId);
+  $getBatchedOutspendsInternal(txId: string[]): Promise<IPublicApi.Outspend[][]> {
+    throw new Error('Method getBatchedOutspendsInternal not supported by the Bitcoin RPC API.');
   }
+
+  // async $getBatchedOutspends(txId: string[]): Promise<IPublicApi.Outspend[][]> {
+  //   const outspends: IPublicApi.Outspend[][] = [];
+  //   for (const tx of txId) {
+  //     const outspend = await this.$getOutspends(tx);
+  //     outspends.push(outspend);
+  //   }
+  //   return outspends;
+  // }
+
+  // async $getBatchedOutspendsInternal(txId: string[]): Promise<IPublicApi.Outspend[][]> {
+  //   return this.$getBatchedOutspends(txId);
+  // }
 
   async $getOutSpendsByOutpoint(outpoints: { txid: string; vout: number }[]): Promise<IPublicApi.Outspend[]> {
     const outspends: IPublicApi.Outspend[] = [];
