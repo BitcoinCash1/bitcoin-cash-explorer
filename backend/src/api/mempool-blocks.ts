@@ -112,6 +112,15 @@ class MempoolBlocks {
     return mempoolBlockDeltas;
   }
 
+  /**
+   * Create block templates based on the current mempool.
+   * This function is only called if RUST_GBT config is false, otherwise the rust implementation is used: $rustMakeBlockTemplates.
+   *
+   * @param transactions
+   * @param newMempool
+   * @param candidates
+   * @param saveResults
+   */
   public async $makeBlockTemplates(
     transactions: string[],
     newMempool: { [txid: string]: VerboseMempoolTransactionExtended },
@@ -203,6 +212,17 @@ class MempoolBlocks {
     return this.mempoolBlocks;
   }
 
+  /**
+   * Update the block templates based on the changes in the mempool.
+   * This function is only called if RUST_GBT config is false, otherwise the rust implementation is used: $rustUpdateBlockTemplates.
+   *
+   * @param transactions
+   * @param newMempool
+   * @param added
+   * @param removed
+   * @param candidates
+   * @param saveResults
+   */
   public async $updateBlockTemplates(
     transactions: string[],
     newMempool: { [txid: string]: VerboseMempoolTransactionExtended },
@@ -282,6 +302,16 @@ class MempoolBlocks {
     );
   }
 
+  /**
+   * Create block templates using the Rust GBT generator.
+   * This function is only called if RUST_GBT config is true.
+   *
+   * @param txids
+   * @param newMempool
+   * @param candidates
+   * @param saveResults
+   * @returns
+   */
   public async $rustMakeBlockTemplates(
     txids: string[],
     newMempool: { [txid: string]: VerboseMempoolTransactionExtended },
@@ -335,6 +365,7 @@ class MempoolBlocks {
     return this.mempoolBlocks;
   }
 
+  // Unused method
   public async $oneOffRustBlockTemplates(
     transactions: string[],
     newMempool: { [txid: string]: VerboseMempoolTransactionExtended },
@@ -343,6 +374,17 @@ class MempoolBlocks {
     return this.$rustMakeBlockTemplates(transactions, newMempool, candidates, false);
   }
 
+  /**
+   * Update the block templates based on the changes in the mempool.
+   * This function is called if RUST_GBT config is true.
+   *
+   * @param transactions
+   * @param newMempool
+   * @param added
+   * @param removed
+   * @param candidates
+   * @returns
+   */
   public async $rustUpdateBlockTemplates(
     transactions: string[],
     newMempool: { [txid: string]: VerboseMempoolTransactionExtended },
