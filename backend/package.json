@@ -45,7 +45,7 @@
     "prettier:check": "prettier --check \"src/**/*.{js,ts}\""
   },
   "dependencies": {
-    "@mempool/electrum-client": "1.1.9",
+    "@bitcoincash/electrum-client": "^1.2.1",
     "@types/node": "^24.12.2",
     "axios": "1.14.0",
     "bitcoinjs-lib": "~7.0.1",

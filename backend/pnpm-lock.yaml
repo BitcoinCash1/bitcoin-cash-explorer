@@ -8,9 +8,9 @@ importers:
 
   .:
     dependencies:
-      '@mempool/electrum-client':
-        specifier: 1.1.9
-        version: 1.1.9
+      '@bitcoincash/electrum-client':
+        specifier: ^1.2.1
+        version: 1.2.1
       '@types/node':
         specifier: ^24.12.2
         version: 24.12.2
@@ -258,6 +258,10 @@ packages:
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
+  '@bitcoincash/electrum-client@1.2.1':
+    resolution: {integrity: sha512-0j7YARmrzihbfMCRyOJdxNtjZSL0JCgGYbAorQyLCGaWGRBoHZliOHzbLcP1xX+LJLrQQ3a5eI5azRpQg+DpOg==}
+    engines: {node: '>=14'}
+
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
@@ -442,10 +446,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.9':
     resolution: {integrity: sha512-3Belt6tdc8bPgAtbcmdtNJlirVoTmEb5e2gC94PnkwEW9jI6CAHUeoG85tjWP5WquqfavoMtMwiG4P926ZKKuQ==}
-
-  '@mempool/electrum-client@1.1.9':
-    resolution: {integrity: sha512-mlvPiCzUlaETpYW3i6V87A24jjMYgsebaXtUo3WQyyLnYUuxs0KiXQ2mnKh3h15j8Xg/hfxeGIi+5OC9u0nftQ==}
-    engines: {node: '>=6'}
 
   '@napi-rs/wasm-runtime@0.2.12':
     resolution: {integrity: sha512-ZVWUcfwY4E/yPitQJl481FjFo3K22D6qF0DuFH6Y/nbnE11GY5uguDxZMGXPQ8WQ0128MXQD7TnfHyK4oWoIJQ==}
@@ -2488,6 +2488,8 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
+  '@bitcoincash/electrum-client@1.2.1': {}
+
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
@@ -2777,8 +2779,6 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
-
-  '@mempool/electrum-client@1.1.9': {}
 
   '@napi-rs/wasm-runtime@0.2.12':
     dependencies:

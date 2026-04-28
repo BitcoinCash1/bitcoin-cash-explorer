@@ -1,5 +1,6 @@
 import config from '../../config';
-import Client from '@mempool/electrum-client';
+import { ElectrumClient } from '@bitcoincash/electrum-client';
+import { ElectrumConfig, PersistencePolicy } from '@bitcoincash/electrum-client/dist/types';
 import { AbstractBitcoinApi } from './bitcoin-api-abstract-factory';
 import { IPublicApi } from './public-api.interface';
 import { IElectrumApi } from './electrum-api.interface';
@@ -10,13 +11,13 @@ import loadingIndicators from '../loading-indicators';
 import memoryCache from '../memory-cache';
 
 class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
-  private electrumClient: any;
+  private electrumClient: ElectrumClient;
 
   constructor(bitcoinClient: any) {
     super(bitcoinClient);
 
-    const electrumConfig = { client: 'BCH-Explorer-v3', version: '1.6.0' };
-    const electrumPersistencePolicy = {
+    const electrumConfig: ElectrumConfig = { client: 'BCH-Explorer-v3', version: '1.6.0' };
+    const electrumPersistencePolicy: PersistencePolicy = {
       retryPeriod: 1000,
       maxRetry: Number.MAX_SAFE_INTEGER,
       callback: null,
@@ -41,11 +42,10 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       },
     };
 
-    this.electrumClient = new Client(
+    this.electrumClient = new ElectrumClient(
       config.ELECTRUM.PORT,
       config.ELECTRUM.HOST,
       config.ELECTRUM.TLS_ENABLED ? 'tls' : 'tcp',
-      null,
       electrumCallbacks
     );
 
@@ -373,7 +373,11 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
 
   async $getTransactionMerkleProof(txId: string): Promise<IPublicApi.MerkleProof> {
     const tx = (await this.$getRawTransaction(txId)) as IPublicApi.VerboseTransaction;
-    return this.electrumClient.blockchainTransaction_getMerkle(txId, tx.status.block_height);
+    if (tx.status.block_height) {
+      return this.electrumClient.blockchainTransaction_getMerkle(txId, tx.status.block_height);
+    } else {
+      throw new Error('Transaction is not confirmed / could not find block height.');
+    }
   }
 
   private $getScriptHashBalance(scriptHash: string): Promise<IElectrumApi.ScriptHashBalance> {
@@ -410,6 +414,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
         params.push(adjustedToHeight);
       }
 
+      // TODO: Extend blockchainScripthash_getHistory method in your new @bitcoincash/electrum-client package
       return this.electrumClient.request('blockchain.scripthash.get_history', params).then((history) => {
         memoryCache.set(cacheKey, scriptHash, history, 2);
         return history;
