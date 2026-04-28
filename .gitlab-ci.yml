@@ -1,5 +1,5 @@
 default:
-  image: registry.melroy.org/melroy/docker-images/rust:1.95-node-24.14.1
+  image: registry.melroy.org/melroy/docker-images/rust:1.95-node-24.15.0
 
 .cache_backend_template: &cache_backend_definition
   cache:
