@@ -16,7 +16,6 @@ import { Common, OnlineFeeStatsCalculator } from './common';
 import config from '../config';
 import { Worker } from 'worker_threads';
 import path from 'path';
-import mempool from './mempool';
 import PoolsRepository from '../repositories/PoolsRepository';
 
 const MAX_UINT32 = Math.pow(2, 32) - 1;
