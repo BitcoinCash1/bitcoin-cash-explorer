@@ -155,7 +155,7 @@ class DB {
   }
 
   public getPidLock(): boolean {
-    const filePath = path.join(config.DATABASE.PID_DIR || __dirname, `/mempool-${config.DATABASE.DATABASE}.pid`);
+    const filePath = path.join(config.DATABASE.PID_DIR || __dirname, `/bch-${config.DATABASE.DATABASE}.pid`);
     this.enforcePidLock(filePath);
     fs.writeFileSync(filePath, `${process.pid}`);
     return true;
@@ -188,7 +188,7 @@ class DB {
   }
 
   public releasePidLock(): void {
-    const filePath = path.join(config.DATABASE.PID_DIR || __dirname, `/mempool-${config.DATABASE.DATABASE}.pid`);
+    const filePath = path.join(config.DATABASE.PID_DIR || __dirname, `/bch-${config.DATABASE.DATABASE}.pid`);
     if (fs.existsSync(filePath)) {
       const pid = parseInt(fs.readFileSync(filePath, 'utf-8'));
       // only release our own pid file
