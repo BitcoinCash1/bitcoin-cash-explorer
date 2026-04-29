@@ -1,7 +1,4 @@
-import {
-  calcBitsDifference,
-  calcAsertDifficultyAdjustment,
-} from '../../api/difficulty-adjustment';
+import { calcBitsDifference, calcAsertDifficultyAdjustment } from '../../api/difficulty-adjustment';
 
 describe('Mempool Difficulty Adjustment', () => {
   test('should calculate ASERT Difficulty Adjustments properly', () => {
