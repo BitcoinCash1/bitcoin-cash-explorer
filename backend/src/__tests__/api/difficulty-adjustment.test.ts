@@ -1,7 +1,6 @@
 import {
   calcBitsDifference,
   calcAsertDifficultyAdjustment,
-  DifficultyAdjustment,
 } from '../../api/difficulty-adjustment';
 
 describe('Mempool Difficulty Adjustment', () => {
