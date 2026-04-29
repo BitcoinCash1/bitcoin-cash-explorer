@@ -28,6 +28,7 @@
     "build": "pnpm run tsc && pnpm run create-resources",
     "clean": "rm -rf ./dist/ ./node_modules/ ./package/ ./rust-gbt/",
     "create-resources": "cp ./src/tasks/price-feeds/mtgox-weekly.json ./dist/tasks && node dist/api/fetch-version.js",
+    "dev": "tsx watch src/index.ts",
     "package": "./pnpm_package.sh",
     "package-rm-build-deps": "./pnpm_package_rm_build_deps.sh",
     "preinstall": "cd ../rust/gbt && pnpm run build-release && pnpm run to-backend",
@@ -73,6 +74,7 @@
     "prettier": "^3.8.3",
     "ts-jest": "^29.4.9",
     "ts-node": "^10.9.2",
+    "tsx": "^4.21.0",
     "typescript-eslint": "^8.59.0"
   },
   "overrides": {

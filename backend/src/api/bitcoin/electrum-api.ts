@@ -332,17 +332,21 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
         });
       } else {
         const txOut = await this.bitcoindClient.getTxOut(txId, i);
+        const isSpent = txOut === null; // True if the output is spent (txout is null)
+
         let outTxId: string | undefined;
         // Only look up history if the output is spent (txOut is null)
-        if (blockHeight && txOut === null) {
+        if (blockHeight && isSpent) {
           // Retrieve the history from the current block height + 1 (so the next or higher, including mempool)
           const history = await this.$getScriptHashHistory(tx.vout[i].scriptpubkey, blockHeight + 1);
-          // In case we have multiple results, we just pick the first (its the most 'oldest' tx hash from the lowest block height)
-          const firstHistory = history.length >= 1 ? history[0] : null;
+          // Filter out possible our own txid
+          const filteredHistory = history.filter((h) => h.tx_hash !== txId);
+          // Pick the first (its the most 'oldest' tx hash from the lowest block height)
+          const firstHistory = filteredHistory.length >= 1 ? filteredHistory[0] : null;
           if (firstHistory) {
             outTxId = firstHistory.tx_hash;
           }
-        } else if (!blockHeight && txOut === null) {
+        } else if (!blockHeight && isSpent) {
           // If blockHeight is null and txOut is null, it means the spent tx is in the mempool
           const history = await this.$getScriptHashHistory(tx.vout[i].scriptpubkey);
           // only get height -1, using history.filer
@@ -357,7 +361,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
         }
 
         // Only return spent boolean, include outTxId if available
-        outSpends.push({ spent: txOut === null, ...(outTxId && { txid: outTxId }) });
+        outSpends.push({ spent: isSpent, ...(outTxId && { txid: outTxId }) });
       }
     }
     return outSpends;

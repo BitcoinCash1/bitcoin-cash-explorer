@@ -359,6 +359,28 @@ class PriceUpdater {
   }
 
   /**
+   * Helper function to load mtgox-weekly.json from multiple possible locations
+   * Tries current directory first (production), then price-feeds subdirectory (development)
+   */
+  private loadMtGoxPrices(): any[] {
+    const possiblePaths = [
+      path.join(__dirname, 'mtgox-weekly.json'), // Production: dist/tasks/mtgox-weekly.json
+      path.join(__dirname, 'price-feeds', 'mtgox-weekly.json'), // Development: src/tasks/price-feeds/mtgox-weekly.json
+    ];
+
+    for (const filePath of possiblePaths) {
+      try {
+        const content = fs.readFileSync(filePath).toString();
+        return JSON.parse(content);
+      } catch (e) {
+        // Try next path
+      }
+    }
+
+    throw new Error(`Could not find mtgox-weekly.json in any of these locations: ${possiblePaths.join(', ')}`);
+  }
+
+  /**
    * Called once by the database migration to initialize historical prices data (weekly)
    * We use MtGox weekly price from July 19, 2010 to September 30, 2013
    * We use Kraken weekly price from October 3, 2013 up to last month
@@ -368,7 +390,19 @@ class PriceUpdater {
     const existingPriceTimes = await PricesRepository.$getPricesTimes();
 
     // Insert MtGox weekly prices
-    const pricesJson: any[] = JSON.parse(fs.readFileSync(path.join(__dirname, 'mtgox-weekly.json')).toString());
+    let pricesJson: any[];
+    try {
+      pricesJson = this.loadMtGoxPrices();
+    } catch (e) {
+      logger.warn(
+        `Cannot load MtGox historical prices. Skipping MtGox price insertion. Reason: ${
+          e instanceof Error ? e.message : e
+        }`,
+        logger.tags.mining
+      );
+      // Continue with Kraken prices even if MtGox fails
+      pricesJson = [];
+    }
     const prices = this.getEmptyPricesObj();
     let insertedCount = 0;
     for (const price of pricesJson) {
