@@ -4,7 +4,6 @@ import config from '../config';
 import PoolsRepository from '../repositories/PoolsRepository';
 import { PoolTag } from '../mempool.interfaces';
 import diskCache from './disk-cache';
-import mining from './mining/mining';
 import transactionUtils from './transaction-utils';
 import BlocksRepository from '../repositories/BlocksRepository';
 import valkeyCache from './valkey-cache';

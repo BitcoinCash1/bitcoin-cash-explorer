@@ -937,7 +937,6 @@ class Blocks {
 
     let fastForwarded = false;
     let handledBlocks = 0;
-    const lastBlockHeight = this.currentBlockHeight;
     const blockHeightTip = await bitcoinCoreApi.$getBlockHeightTip();
     this.updateTimerProgress(timer, 'got block height tip');
 

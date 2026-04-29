@@ -28,7 +28,6 @@ import BlocksSummariesRepository from '../repositories/BlocksSummariesRepository
 import Audit from './audit';
 import priceUpdater from '../tasks/price-updater';
 import { ApiPrice } from '../repositories/PricesRepository';
-import mempool from './mempool';
 import statistics from './statistics/statistics';
 import bitcoinApi from './bitcoin/bitcoin-api-factory';
 import walletApi from './services/wallets';

@@ -5,6 +5,7 @@
     "types": ["node", "jest"],
     "lib": ["es2024"],
     "strict": true,
+    "noUnusedLocals": true,
     "skipLibCheck": true,
     "noImplicitAny": false,
     "sourceMap": false,

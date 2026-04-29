@@ -64,9 +64,9 @@ function calculateTargetLegacy(height: number, timestamp: number, nextTargetBloc
   return calculateTarget(height * 600, timestamp, nextTargetBlockTime);
 }
 
-function numericBitsToHex(bits: number): string {
-  return bits.toString(16).padStart(8, '0');
-}
+// function numericBitsToHex(bits: number): string {
+//   return bits.toString(16).padStart(8, '0');
+// }
 
 // --- End ASERT functions ---
 

@@ -514,41 +514,6 @@ class BitcoinRoutes {
     }
   }
 
-  private async getLegacyBlocks(req: Request, res: Response) {
-    try {
-      const returnBlocks: IPublicApi.Block[] = [];
-      const tip = blocks.getCurrentBlockHeight();
-      const fromHeight = Math.min(parseInt(req.params.height, 10) || tip, tip);
-
-      // Check if block height exist in local cache to skip the hash lookup
-      const blockByHeight = blocks.getBlocks().find((b) => b.height === fromHeight);
-      let startFromHash: string | null = null;
-      if (blockByHeight) {
-        startFromHash = blockByHeight.id;
-      } else {
-        startFromHash = await bitcoinApi.$getBlockHash(fromHeight);
-      }
-
-      let nextHash = startFromHash;
-      for (let i = 0; i < 15 && nextHash; i++) {
-        const localBlock = blocks.getBlocks().find((b) => b.id === nextHash);
-        if (localBlock) {
-          returnBlocks.push(localBlock);
-          nextHash = localBlock.previousblockhash;
-        } else {
-          const block = await bitcoinApi.$getBlock(nextHash);
-          returnBlocks.push(block);
-          nextHash = block.previousblockhash;
-        }
-      }
-
-      res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
-      res.json(returnBlocks);
-    } catch (e) {
-      handleError(req, res, 500, 'Failed to get blocks');
-    }
-  }
-
   private async getBlockTransactions(req: Request, res: Response) {
     if (!BLOCK_HASH_REGEX.test(req.params.hash)) {
       handleError(req, res, 501, `Invalid block hash`);

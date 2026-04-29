@@ -15,7 +15,7 @@ class ServicesRoutes {
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.setHeader('Expires', new Date(Date.now() + 1000 * 5).toUTCString());
-      const walletId = req.params.walletId;
+      // const walletId = req.params.walletId;
       // const wallet = await WalletApi.getWallet(walletId);
       // Currently just an example placeholder from BTC (coming from wallet xxi)
       const wallet = {

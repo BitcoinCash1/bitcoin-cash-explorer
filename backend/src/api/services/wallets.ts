@@ -41,11 +41,11 @@ class WalletApi {
   private treasuries: Treasury[] = [];
   private wallets: Record<string, Wallet> = {};
   private syncing = false;
-  private lastSync = 0;
-  private isSaving = false;
+  // private lastSync = 0;
+  // private isSaving = false;
   private cacheSchemaVersion = 1;
 
-  private static TMP_FILE_NAME = config.EXPLORER.CACHE_DIR + '/tmp-wallets-cache.json';
+  // private static TMP_FILE_NAME = config.EXPLORER.CACHE_DIR + '/tmp-wallets-cache.json';
   private static FILE_NAME = config.EXPLORER.CACHE_DIR + '/wallets-cache.json';
 
   constructor() {
@@ -95,32 +95,32 @@ class WalletApi {
     }
   }
 
-  private async $saveCache(): Promise<void> {
-    if (this.isSaving || !config.WALLETS.ENABLED) {
-      return;
-    }
+  // private async $saveCache(): Promise<void> {
+  //   if (this.isSaving || !config.WALLETS.ENABLED) {
+  //     return;
+  //   }
 
-    try {
-      this.isSaving = true;
-      logger.debug('Writing wallets data to disk cache...');
+  //   try {
+  //     this.isSaving = true;
+  //     logger.debug('Writing wallets data to disk cache...');
 
-      const cacheData = {
-        cacheSchemaVersion: this.cacheSchemaVersion,
-        wallets: this.wallets,
-        treasuries: this.treasuries,
-      };
+  //     const cacheData = {
+  //       cacheSchemaVersion: this.cacheSchemaVersion,
+  //       wallets: this.wallets,
+  //       treasuries: this.treasuries,
+  //     };
 
-      await fsPromises.writeFile(WalletApi.TMP_FILE_NAME, JSON.stringify(cacheData), { flag: 'w' });
+  //     await fsPromises.writeFile(WalletApi.TMP_FILE_NAME, JSON.stringify(cacheData), { flag: 'w' });
 
-      await fsPromises.rename(WalletApi.TMP_FILE_NAME, WalletApi.FILE_NAME);
+  //     await fsPromises.rename(WalletApi.TMP_FILE_NAME, WalletApi.FILE_NAME);
 
-      logger.debug('Wallets data saved to disk cache');
-    } catch (e) {
-      logger.warn('Error writing to wallets cache file: ' + (e instanceof Error ? e.message : e));
-    } finally {
-      this.isSaving = false;
-    }
-  }
+  //     logger.debug('Wallets data saved to disk cache');
+  //   } catch (e) {
+  //     logger.warn('Error writing to wallets cache file: ' + (e instanceof Error ? e.message : e));
+  //   } finally {
+  //     this.isSaving = false;
+  //   }
+  // }
 
   private async $wipeCache(): Promise<void> {
     try {

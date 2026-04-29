@@ -52,7 +52,7 @@ class Indexer {
       updatedBCHNIndexes.push(newState);
 
       if (indexName === 'coinstatsindex' && newState.synced === true) {
-        const previousState = this.isBCHNIndexReady('coinstatsindex');
+        // const previousState = this.isBCHNIndexReady('coinstatsindex');
         // if (!previousState || previousState.synced === false) {
         this.runSingleTask('coinStatsIndex');
         // }

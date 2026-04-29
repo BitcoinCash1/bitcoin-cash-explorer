@@ -44,7 +44,6 @@ class StratumApi {
   private ws: WebSocket | null = null;
   private runWebsocketLoop = false;
   private startedWebsocketLoop = false;
-  private websocketConnected = false;
   private jobs: Record<string, StratumJob> = {};
 
   public constructor() {}
@@ -72,7 +71,6 @@ class StratumApi {
       this.startedWebsocketLoop = true;
       if (!this.ws) {
         this.ws = new WebSocket(`${config.STRATUM.API}`);
-        this.websocketConnected = true;
 
         this.ws.on('open', () => {
           logger.info('Stratum websocket opened');
@@ -81,13 +79,11 @@ class StratumApi {
         this.ws.on('error', (error) => {
           logger.err('Stratum websocket error: ' + error);
           this.ws = null;
-          this.websocketConnected = false;
         });
 
         this.ws.on('close', () => {
           logger.info('Stratum websocket closed');
           this.ws = null;
-          this.websocketConnected = false;
         });
 
         this.ws.on('message', (data, isBinary) => {
