@@ -335,6 +335,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
         const isSpent = txOut === null; // True if the output is spent (txout is null)
 
         let outTxId: string | undefined;
+        let outTxVin = -1; // Set to -1 if not found (same as what findIndex would return)
         // Only look up history if the output is spent (txOut is null)
         if (blockHeight && isSpent) {
           // Retrieve the history from the current block height + 1 (so the next or higher, including mempool)
@@ -360,8 +361,20 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
           }
         }
 
+        if (outTxId) {
+          // get raw tx of outTxId using blockchain.transaction.get on fulcrum with verbose is true as second parameter
+          const spenderTx = await this.electrumClient.blockchainTransaction_get(outTxId, true);
+          if (spenderTx && spenderTx.vin) {
+            const spenderTxVins = spenderTx.vin;
+            // TODO: Check also if the vout matches the input tx "vout" with this possible spender vin.vout number.
+            // Currently however we do only submit the txid to the backend (and not yet the vout).
+            // Try to find the vin index
+            outTxVin = spenderTxVins.findIndex((vin) => vin.txid === txId);
+          }
+        }
+
         // Only return spent boolean, include outTxId if available
-        outSpends.push({ spent: isSpent, ...(outTxId && { txid: outTxId }) });
+        outSpends.push({ spent: isSpent, ...(outTxId && outTxVin !== -1 && { txid: outTxId, vin: outTxVin }) });
       }
     }
     return outSpends;

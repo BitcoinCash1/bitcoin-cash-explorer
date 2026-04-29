@@ -210,7 +210,7 @@ export interface MempoolStats {
 export interface Outspend {
   spent: boolean;
   txid?: string;
-  vin?: number; // Currently not yet implemented for BCH
+  vin?: number;
   status?: Status; // Currently not yet implemented for BCH
 }
 

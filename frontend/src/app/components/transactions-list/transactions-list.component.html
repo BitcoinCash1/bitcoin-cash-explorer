@@ -763,11 +763,10 @@
                             '/tx/' | relativeUrl,
                             tx._outspends[vindex].txid,
                           ]"
+                          [fragment]="'vin=' + tx._outspends[vindex].vin"
                           class="red"
                           ngbTooltip="Spent"
                         >
-                          <!-- TODO: vin on outspend is currently not yet implemented for BCH, see above link -->
-                          <!--<a ....existing.... [fragment]="'vin=' + tx._outspends[vindex].vin"></a>-->
                           <fa-icon
                             [icon]="['fas', 'arrow-alt-circle-right']"
                             [fixedWidth]="true"

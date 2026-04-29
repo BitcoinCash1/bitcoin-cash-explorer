@@ -147,7 +147,7 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
             this.outspends[i] = {
               spent: true,
               txid: utxoSpent[i].txid,
-              // vin: utxoSpent[i].vin, // Currently not yet implemented for BCH
+              vin: utxoSpent[i].vin,
             };
           }
         })
@@ -685,7 +685,7 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
             queryParamsHandling: 'merge',
             fragment: new URLSearchParams({
               flow: '',
-              // vin: outspend.vin.toString(), // spend vin is currently not yet implemented for BCH
+              vin: outspend.vin.toString(),
             }).toString(),
           }
         );
