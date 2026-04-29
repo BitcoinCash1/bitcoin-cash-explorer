@@ -6,22 +6,17 @@
     "lib": ["es2024"],
     "strict": true,
     "noUnusedLocals": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
     "skipLibCheck": true,
     "noImplicitAny": false,
     "sourceMap": false,
     "outDir": "dist",
     "moduleResolution": "node",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
+    "typeRoots": ["node_modules/@types"],
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "allowJs": true,
+    "allowJs": true
   },
-  "include": [
-    "src/**/*.ts"
-  ],
-  "exclude": [
-    "dist/**"
-  ]
+  "include": ["src/**/*.ts"],
+  "exclude": ["dist/**"]
 }
