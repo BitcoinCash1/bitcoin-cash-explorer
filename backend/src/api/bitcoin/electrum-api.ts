@@ -362,7 +362,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
         }
 
         if (outTxId) {
-          // get raw tx of outTxId using blockchain.transaction.get on fulcrum with verbose is true as second parameter
+          // get raw tx of outTxId (verbose)
           const spenderTx = await this.electrumClient.blockchainTransaction_get(outTxId, true);
           if (spenderTx && spenderTx.vin) {
             const spenderTxVins = spenderTx.vin;
