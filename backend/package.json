@@ -22,7 +22,7 @@
     "explorer",
     "bch"
   ],
-  "main": "index.ts",
+  "main": "dist/index.js",
   "scripts": {
     "tsc": "tsc -p tsconfig.build.json",
     "build": "pnpm run tsc && pnpm run create-resources",
