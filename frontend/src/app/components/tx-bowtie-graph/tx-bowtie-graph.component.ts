@@ -13,6 +13,7 @@ import {
   Transaction,
   Vin,
   Vout,
+  DetailedOutspend,
 } from '@app/interfaces/backend-api.interface';
 import { Router } from '@angular/router';
 import { ReplaySubject, merge, Subscription, of } from 'rxjs';
@@ -83,6 +84,8 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
   zeroValueWidth = 60;
   zeroValueThickness = 20;
   hasLine: boolean;
+  outspendRequestPending: boolean = false;
+  pendingOutspendKey: string | null = null;
 
   outspendsSubscription: Subscription;
   refreshOutspends$: ReplaySubject<string> = new ReplaySubject();
@@ -672,23 +675,8 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
     } else {
       const output = this.tx.vout[index];
       const outspend = this.outspends[index];
-      if (
-        side === 'output-connector' &&
-        output &&
-        outspend &&
-        outspend.spent
-        // outspend.txid
-      ) {
-        // this.router.navigate(
-        //   [this.relativeUrlPipe.transform('/tx'), outspend.txid],
-        //   {
-        //     queryParamsHandling: 'merge',
-        //     fragment: new URLSearchParams({
-        //       flow: '',
-        //       vin: outspend.vin.toString(),
-        //     }).toString(),
-        //   }
-        // );
+      if (side === 'output-connector' && output && outspend && outspend.spent) {
+        this.onOutspendClick(this.tx.txid, index);
       } else if (index != null) {
         this.router.navigate(
           [this.relativeUrlPipe.transform('/tx'), this.tx.txid],
@@ -702,5 +690,50 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
         );
       }
     }
+  }
+
+  onOutspendClick(txid: string, vindex: number): void {
+    const key = `${txid}-${vindex}`;
+
+    // Prevent multiple simultaneous requests
+    if (this.outspendRequestPending) {
+      return;
+    }
+
+    this.outspendRequestPending = true;
+    this.pendingOutspendKey = key;
+
+    this.electrsApiService.getOutspend$(txid, vindex).subscribe({
+      next: (detailedOutspend: DetailedOutspend) => {
+        this.outspendRequestPending = false;
+        this.pendingOutspendKey = null;
+
+        if (detailedOutspend.spent && detailedOutspend.txid) {
+          this.router.navigate(
+            [this.relativeUrlPipe.transform('/tx'), detailedOutspend.txid],
+            {
+              queryParamsHandling: 'merge',
+              queryParams: { showFlow: true },
+              fragment: new URLSearchParams({
+                flow: '',
+                vin: detailedOutspend.vin?.toString() || '0',
+              }).toString(),
+            }
+          );
+        }
+      },
+      error: () => {
+        this.outspendRequestPending = false;
+        this.pendingOutspendKey = key;
+        // Fail silently
+      },
+    });
+  }
+
+  isOutspendPending(txid: string, vindex: number): boolean {
+    return (
+      this.outspendRequestPending &&
+      this.pendingOutspendKey === `${txid}-${vindex}`
+    );
   }
 }
