@@ -35,7 +35,7 @@ export interface AbstractBitcoinApi {
   $sendRawTransaction(rawTransaction: string): Promise<string>;
   $testMempoolAccept(rawTransactions: string[], allowhighfees?: boolean): Promise<TestMempoolAcceptResult[]>;
   $submitPackage(rawTransactions: string[], allowhighfees?: boolean): Promise<SubmitPackageResult>;
-  $getOutspend(txId: string, vout: number): Promise<IPublicApi.Outspend>;
+  $getOutspend(txId: string, vout: number): Promise<IPublicApi.DetailedOutspend>;
   $getOutspends(txId: string): Promise<IPublicApi.Outspend[]>;
   $getBatchedOutspends(txId: string[]): Promise<IPublicApi.Outspend[][]>;
   $getBatchedOutspendsInternal(txId: string[]): Promise<IPublicApi.Outspend[][]>;

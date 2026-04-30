@@ -676,19 +676,19 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
         side === 'output-connector' &&
         output &&
         outspend &&
-        outspend.spent &&
-        outspend.txid
+        outspend.spent
+        // outspend.txid
       ) {
-        this.router.navigate(
-          [this.relativeUrlPipe.transform('/tx'), outspend.txid],
-          {
-            queryParamsHandling: 'merge',
-            fragment: new URLSearchParams({
-              flow: '',
-              vin: outspend.vin.toString(),
-            }).toString(),
-          }
-        );
+        // this.router.navigate(
+        //   [this.relativeUrlPipe.transform('/tx'), outspend.txid],
+        //   {
+        //     queryParamsHandling: 'merge',
+        //     fragment: new URLSearchParams({
+        //       flow: '',
+        //       vin: outspend.vin.toString(),
+        //     }).toString(),
+        //   }
+        // );
       } else if (index != null) {
         this.router.navigate(
           [this.relativeUrlPipe.transform('/tx'), this.tx.txid],

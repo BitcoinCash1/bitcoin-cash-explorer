@@ -787,13 +787,18 @@
                         ></fa-icon>
                       </span>
                       <ng-template #spent>
-                        <a
+                        <!-- <a
                           *ngIf="tx._outspends[vindex].txid; else outputNoTxId"
                           [routerLink]="[
                             '/tx/' | relativeUrl,
                             tx._outspends[vindex].txid,
                           ]"
                           [fragment]="'vin=' + tx._outspends[vindex].vin"
+                          class="red"
+                          ngbTooltip="Spent"
+                        > -->
+                        <a
+                          [routerLink]="['/tx/' | relativeUrl]"
                           class="red"
                           ngbTooltip="Spent"
                         >

@@ -312,26 +312,19 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     }
   }
 
-  async $getBatchedOutspends(txId: string[]): Promise<IPublicApi.Outspend[][]> {
-    const outspends: IPublicApi.Outspend[][] = [];
-    for (const tx of txId) {
-      const outspend = await this.$getOutspends(tx);
-      outspends.push(outspend);
-    }
-    return outspends;
-  }
-
-  async $getOutspends(txId: string): Promise<IPublicApi.Outspend[]> {
-    const outSpends: IPublicApi.Outspend[] = [];
+  async $getOutspend(txId: string, vout: number): Promise<IPublicApi.DetailedOutspend> {
     const tx = (await this.$getRawTransaction(txId, false, false)) as IPublicApi.Transaction;
     const blockHeight = tx.status.block_height;
+    const txOut = await this.bitcoindClient.getTxOut(txId, vout);
+    const isSpent = txOut === null; // True if the output is spent (txout is null)
+    const lookBackHeight = 500;
 
     // Helper function to find the spender transaction from history candidates
     const findSpenderFromHistory = async (
       candidates: IElectrumApi.ScriptHashHistory[]
     ): Promise<{ txId: string; vin: number } | undefined> => {
       // Limit the max lookups starting from the first one (oldest)
-      const maxAttempts = Math.min(candidates.length, 3);
+      const maxAttempts = Math.min(candidates.length, 3000);
       for (let j = 0; j < maxAttempts; j++) {
         const candidate = candidates[j];
         // Get raw tx
@@ -350,48 +343,36 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       return undefined;
     };
 
-    for (let i = 0; i < tx.vout.length; i++) {
-      if (tx.status && tx.status.block_height === 0) {
-        outSpends.push({
-          spent: false,
-        });
-      } else {
-        const txOut = await this.bitcoindClient.getTxOut(txId, i);
-        const isSpent = txOut === null; // True if the output is spent (txout is null)
+    let spenderInfo: { txId: string; vin: number } | undefined;
 
-        let spenderInfo: { txId: string; vin: number } | undefined;
-
-        // Only look up history if the output is spent (txOut is null)
-        if (blockHeight && isSpent) {
-          // Retrieve the history from the current block height + 1 (so the next or higher, including mempool)
-          const history = await this.$getScriptHashHistory(tx.vout[i].scriptpubkey, blockHeight + 1);
-          // Filter out possible our own txid
-          const filteredHistory = history.filter((h) => h.tx_hash !== txId);
-          // Try up to 3 candidates (oldest first)
-          if (filteredHistory.length > 0) {
-            spenderInfo = await findSpenderFromHistory(filteredHistory);
-          }
-        } else if (!blockHeight && isSpent) {
-          // If blockHeight is null and txOut is null, it means the spent tx is in the mempool
-          const history = await this.$getScriptHashHistory(tx.vout[i].scriptpubkey);
-          // only get height -1, using history.filer
-          const mempoolTx = history.filter((h) => h.height === -1);
-          // filter out its own txid
-          const filteredMempoolTx = mempoolTx.filter((h) => h.tx_hash !== txId);
-          // Try up to 3 candidates (oldest first)
-          if (filteredMempoolTx.length > 0) {
-            spenderInfo = await findSpenderFromHistory(filteredMempoolTx);
-          }
-        }
-
-        // Only return spent boolean, include txid and vin if available
-        outSpends.push({
-          spent: isSpent,
-          ...(spenderInfo && { txid: spenderInfo.txId, vin: spenderInfo.vin }),
-        });
+    // Only look up history if the output is spent (txOut is null)
+    if (blockHeight && isSpent) {
+      // Retrieve the history from the current block height + 1 (so the next or higher, including mempool)
+      const fromHeight = blockHeight - lookBackHeight < 0 ? 0 : blockHeight - lookBackHeight;
+      const history = await this.$getScriptHashHistory(tx.vout[vout].scriptpubkey, fromHeight);
+      console.log(JSON.stringify(history, null, 2));
+      // Filter out possible our own txid
+      const filteredHistory = history.filter((h) => h.tx_hash !== txId);
+      if (filteredHistory.length > 0) {
+        spenderInfo = await findSpenderFromHistory(filteredHistory);
+      }
+    } else if (!blockHeight && isSpent) {
+      // If blockHeight is null and txOut is null, it means the spent tx is in the mempool
+      const history = await this.$getScriptHashHistory(tx.vout[vout].scriptpubkey);
+      // only get height -1, using history.filer
+      const mempoolTx = history.filter((h) => h.height === -1);
+      // filter out its own txid
+      const filteredMempoolTx = mempoolTx.filter((h) => h.tx_hash !== txId);
+      if (filteredMempoolTx.length > 0) {
+        spenderInfo = await findSpenderFromHistory(filteredMempoolTx);
       }
     }
-    return outSpends;
+
+    // Return spent boolean, include txid and vin if available
+    return {
+      spent: isSpent,
+      ...(spenderInfo && { txid: spenderInfo.txId, vin: spenderInfo.vin }),
+    };
   }
 
   private $getScriptHashUnspent(scriptHash: string): Promise<IElectrumApi.ScriptHashUtxos[]> {

@@ -20,6 +20,7 @@ import {
   ScriptHash,
   AddressTxSummary,
   Utxo,
+  DetailedOutspend,
 } from '@app/interfaces/backend-api.interface';
 import { StateService } from '@app/services/state.service';
 import { BlockExtended } from '@interfaces/node-api.interface';
@@ -143,8 +144,8 @@ export class ElectrsApiService {
     );
   }
 
-  getOutspend$(hash: string, vout: number): Observable<Outspend> {
-    return this.httpClient.get<Outspend>(
+  getOutspend$(hash: string, vout: number): Observable<DetailedOutspend> {
+    return this.httpClient.get<DetailedOutspend>(
       this.apiBaseUrl +
         this.apiBasePath +
         '/api/tx/' +

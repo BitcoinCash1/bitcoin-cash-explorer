@@ -194,17 +194,8 @@ class BitcoinApi implements AbstractBitcoinApi {
     throw new Error('Method getScriptHashMempoolTransactions not supported by the Bitcoin RPC API.');
   }
 
-  // Implemented getOutspends (multiple outspends) in electrum-api.ts
-  $getOutspends(txId: string): Promise<IPublicApi.Outspend[]> {
-    throw new Error('Method getOutspends not supported by the Bitcoin RPC API.');
-  }
-
-  $getBatchedOutspends(txId: string[]): Promise<IPublicApi.Outspend[][]> {
-    throw new Error('Method getBatchedOutspends not supported by the Bitcoin RPC API.');
-  }
-
-  $getBatchedOutspendsInternal(txId: string[]): Promise<IPublicApi.Outspend[][]> {
-    throw new Error('Method getBatchedOutspendsInternal not supported by the Bitcoin RPC API.');
+  $getOutspend(txId: string, vout: number): Promise<IPublicApi.DetailedOutspend> {
+    throw new Error('Method getScriptHashMempoolTransactions not supported by the Bitcoin RPC API.');
   }
 
   $getRawMempool(): Promise<IPublicApi.Transaction['txid'][]> {
@@ -252,14 +243,35 @@ class BitcoinApi implements AbstractBitcoinApi {
     return this.bitcoindClient.submitPackage(rawTransactions, allowhighfees);
   }
 
-  async $getOutspend(txId: string, vout: number): Promise<IPublicApi.Outspend> {
-    const txOut = await this.bitcoindClient.getTxOut(txId, vout, false);
-    return {
-      spent: txOut === null,
-      status: {
-        confirmed: true,
-      },
-    };
+  async $getOutspends(txId: string): Promise<IPublicApi.Outspend[]> {
+    const outSpends: IPublicApi.Outspend[] = [];
+    const tx = (await this.$getRawTransaction(txId, false, false)) as IPublicApi.Transaction;
+    for (let i = 0; i < tx.vout.length; i++) {
+      if (tx.status && tx.status.block_height === 0) {
+        outSpends.push({
+          spent: false,
+        });
+      } else {
+        const txOut = await this.bitcoindClient.getTxOut(txId, i);
+        outSpends.push({
+          spent: txOut === null,
+        });
+      }
+    }
+    return outSpends;
+  }
+
+  async $getBatchedOutspends(txId: string[]): Promise<IPublicApi.Outspend[][]> {
+    const outspends: IPublicApi.Outspend[][] = [];
+    for (const tx of txId) {
+      const outspend = await this.$getOutspends(tx);
+      outspends.push(outspend);
+    }
+    return outspends;
+  }
+
+  async $getBatchedOutspendsInternal(txId: string[]): Promise<IPublicApi.Outspend[][]> {
+    return this.$getBatchedOutspends(txId);
   }
 
   async $getOutSpendsByOutpoint(outpoints: { txid: string; vout: number }[]): Promise<IPublicApi.Outspend[]> {
