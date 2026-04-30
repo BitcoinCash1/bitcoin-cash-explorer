@@ -64,6 +64,7 @@ class BitcoinRoutes {
       .post(config.EXPLORER.API_URL_PREFIX + 'txs/test', this.$testTransactions)
       .get(config.EXPLORER.API_URL_PREFIX + 'tx/:txId/hex', this.getTransactionHex)
       .get(config.EXPLORER.API_URL_PREFIX + 'tx/:txId/status', this.getTransactionStatus)
+      .get(config.EXPLORER.API_URL_PREFIX + 'tx/:txId/outspend/:vout', this.getTransactionOutspend)
       .get(config.EXPLORER.API_URL_PREFIX + 'tx/:txId/outspends', this.getTransactionOutspends)
       .get(config.EXPLORER.API_URL_PREFIX + 'tx/:txId/merkle-proof', this.getTransactionMerkleProof)
       .get(config.EXPLORER.API_URL_PREFIX + 'txs/outspends', this.$getBatchedOutspends)
@@ -981,6 +982,24 @@ class BitcoinRoutes {
       res.json(result);
     } catch (e) {
       handleError(req, res, 500, 'Failed to get transaction outspends');
+    }
+  }
+
+  private async getTransactionOutspend(req: Request, res: Response) {
+    if (!TXID_REGEX.test(req.params.txId)) {
+      handleError(req, res, 501, `Invalid transaction ID`);
+      return;
+    }
+    // Check if vout is a valid number
+    if (isNaN(parseInt(req.params.vout))) {
+      handleError(req, res, 501, `Invalid vout`);
+      return;
+    }
+    try {
+      const result = await bitcoinApi.$getOutspend(req.params.txId, parseInt(req.params.vout));
+      res.json(result);
+    } catch (e) {
+      handleError(req, res, 500, 'Failed to get transaction outspend');
     }
   }
 

@@ -172,6 +172,11 @@ export namespace IPublicApi {
 
   export interface Outspend {
     spent: boolean;
+    status?: Status;
+  }
+
+  export interface DetailedOutspend {
+    spent: boolean;
     txid?: string;
     vin?: number;
     status?: Status;

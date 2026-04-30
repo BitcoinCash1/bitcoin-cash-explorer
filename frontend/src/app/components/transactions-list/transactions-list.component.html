@@ -133,7 +133,7 @@
                     <ng-template #hasPrevout>
                       <a
                         [routerLink]="['/tx/' | relativeUrl, vin.txid]"
-                        [fragment]="'vout=' + vin.vout"
+                        [fragment]="'flow=&vout=' + vin.vout"
                         class="red"
                         ngbTooltip="Spent"
                       >
@@ -207,7 +207,7 @@
                         </span>
                         <span
                           *ngIf="showTokenCopied[i + '-vin-' + vindex]"
-                          class="copied-message"
+                          class="tooltip-message"
                           style="top: 25px; left: -10px"
                           >Token ID Copied!</span
                         >
@@ -609,7 +609,7 @@
                         </span>
                         <span
                           *ngIf="showTokenCopied[i + '-vout-' + vindex]"
-                          class="copied-message"
+                          class="tooltip-message"
                           style="top: 25px; left: -10px"
                           >Token ID Copied!</span
                         >
@@ -788,12 +788,13 @@
                       </span>
                       <ng-template #spent>
                         <a
-                          *ngIf="tx._outspends[vindex].txid; else outputNoTxId"
-                          [routerLink]="[
-                            '/tx/' | relativeUrl,
-                            tx._outspends[vindex].txid,
-                          ]"
-                          [fragment]="'vin=' + tx._outspends[vindex].vin"
+                          *ngIf="
+                            !hasOutspendError(tx.txid, vindex);
+                            else outputNoTxId
+                          "
+                          (click)="onOutspendClick(tx, vindex)"
+                          [class.disabled]="isOutspendPending(tx.txid, vindex)"
+                          style="cursor: pointer"
                           class="red"
                           ngbTooltip="Spent"
                         >
@@ -803,12 +804,22 @@
                           ></fa-icon>
                         </a>
                         <ng-template #outputNoTxId>
-                          <span class="red">
+                          <span
+                            class="red"
+                            (click)="clearOutspendError()"
+                            style="cursor: pointer"
+                          >
                             <fa-icon
                               [icon]="['fas', 'arrow-alt-circle-right']"
                               [fixedWidth]="true"
                               ngbTooltip="Spent"
                             ></fa-icon>
+                            <span
+                              *ngIf="hasOutspendError(tx.txid, vindex)"
+                              class="tooltip-message"
+                              style="top: 25px; left: -10px"
+                              >{{ outspendError }}</span
+                            >
                           </span>
                         </ng-template>
                       </ng-template>

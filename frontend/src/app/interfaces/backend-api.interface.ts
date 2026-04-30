@@ -209,9 +209,14 @@ export interface MempoolStats {
 
 export interface Outspend {
   spent: boolean;
+  status?: Status;
+}
+
+export interface DetailedOutspend {
+  spent: boolean;
   txid?: string;
   vin?: number;
-  status?: Status; // Currently not yet implemented for BCH
+  status?: Status;
 }
 
 export interface Utxo {

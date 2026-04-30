@@ -26,6 +26,7 @@ import {
   Transaction,
   Vin,
   Vout,
+  DetailedOutspend,
 } from '@app/interfaces/backend-api.interface';
 import { BcmrMetadata } from '../../interfaces/bcmr-api.interface';
 import { ElectrsApiService } from '@app/services/backend-api.service';
@@ -46,7 +47,7 @@ import {
   SigInfo,
   SighashLabels,
 } from '@app/shared/transaction.utils';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { SighashFlag } from '@app/shared/transaction.utils';
 
 @Component({
@@ -101,6 +102,9 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     Map<string, { score: number; match: AddressMatch; group: number }>
   > = new Map();
   showTokenCopied: { [key: string]: boolean } = {};
+  outspendRequestPending: boolean = false;
+  outspendError: string | null = null;
+  pendingOutspendKey: string | null = null;
 
   selectedSig: { txIndex: number; vindex: number; sig: SigInfo } | null = null;
   sigHighlights: { vin: boolean[]; vout: boolean[] } = { vin: [], vout: [] };
@@ -120,7 +124,8 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     private priceService: PriceService,
     private storageService: StorageService,
     private route: ActivatedRoute,
-    private bcmrService: BcmrService
+    private bcmrService: BcmrService,
+    private router: Router
   ) {
     this.signaturesMode =
       this.forceSignaturesMode || this.stateService.signaturesMode$.value;
@@ -906,5 +911,67 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     this.currencyChangeSubscription?.unsubscribe();
     this.networkSubscription.unsubscribe();
     this.signaturesSubscription.unsubscribe();
+  }
+
+  onOutspendClick(tx: Transaction, vindex: number): void {
+    const key = `${tx.txid}-${vindex}`;
+
+    // Prevent multiple simultaneous requests
+    if (this.outspendRequestPending) {
+      return;
+    }
+
+    this.outspendRequestPending = true;
+    this.pendingOutspendKey = key;
+    this.outspendError = null;
+    this.ref.markForCheck();
+
+    this.electrsApiService.getOutspend$(tx.txid, vindex).subscribe({
+      next: (detailedOutspend: DetailedOutspend) => {
+        this.outspendRequestPending = false;
+
+        if (detailedOutspend.spent && detailedOutspend.txid) {
+          this.pendingOutspendKey = null;
+          this.router.navigate(['/tx', detailedOutspend.txid], {
+            fragment: `flow=&vin=${detailedOutspend.vin}`,
+            queryParams: { showFlow: true },
+          });
+        } else if (detailedOutspend.spent && !detailedOutspend.txid) {
+          // Spent but txid not found
+          this.pendingOutspendKey = key;
+          this.outspendError = 'Spending transaction not found';
+        } else {
+          // Not spent !?
+          this.pendingOutspendKey = null;
+        }
+        this.ref.markForCheck();
+      },
+      error: (error) => {
+        this.outspendRequestPending = false;
+        this.pendingOutspendKey = key;
+        this.outspendError = 'Failed to load outspend details';
+        this.ref.markForCheck();
+      },
+    });
+  }
+
+  isOutspendPending(txid: string, vindex: number): boolean {
+    return (
+      this.outspendRequestPending &&
+      this.pendingOutspendKey === `${txid}-${vindex}`
+    );
+  }
+
+  hasOutspendError(txid: string, vindex: number): boolean {
+    return (
+      this.outspendError !== null &&
+      this.pendingOutspendKey === `${txid}-${vindex}`
+    );
+  }
+
+  clearOutspendError(): void {
+    this.outspendError = null;
+    this.pendingOutspendKey = null;
+    this.ref.markForCheck();
   }
 }

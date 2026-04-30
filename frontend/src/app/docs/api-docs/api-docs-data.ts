@@ -6471,15 +6471,7 @@ export const restApiDocsData = [
           ],
           response: `[
   {
-    spent: true,
-    txid: "34de8ba520eb846da8831fa47c06eef9b4eb4a2ff6a3271165fd6b9aafc5a20c",
-    vin: 12,
-    status: {
-      confirmed: true,
-      block_height: 363349,
-      block_hash: "000000000000000012ad81b3ea2cb1c4ba115901bd1b41cd05a6a8d736691322",
-      block_time: 1435754897
-    }
+    spent: true
   },
   ...
 ]`,
@@ -6523,15 +6515,7 @@ export const restApiDocsData = [
           ],
           response: `[
   {
-    spent: true,
-    txid: "ad9cb0f6770219f0a2325d77466d30ff2ddd18b0f7f68b1deb547c4b3b972623",
-    vin: 0,
-    status: {
-      confirmed: true,
-      block_height: 53789,
-      block_hash: "000000372e6b34e56866b4e4c75a372454e956bc42f6760b1b119bfa5ce58223",
-      block_time: 1630649351
-    }
+    spent: true
   }
 ]`,
         },
