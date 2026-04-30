@@ -133,7 +133,7 @@
                     <ng-template #hasPrevout>
                       <a
                         [routerLink]="['/tx/' | relativeUrl, vin.txid]"
-                        [fragment]="'vout=' + vin.vout"
+                        [fragment]="'flow=&vout=' + vin.vout"
                         class="red"
                         ngbTooltip="Spent"
                       >
@@ -788,7 +788,10 @@
                       </span>
                       <ng-template #spent>
                         <a
-                          *ngIf="!hasOutspendError(tx.txid, vindex); else outputNoTxId"
+                          *ngIf="
+                            !hasOutspendError(tx.txid, vindex);
+                            else outputNoTxId
+                          "
                           (click)="onOutspendClick(tx, vindex)"
                           [class.disabled]="isOutspendPending(tx.txid, vindex)"
                           style="cursor: pointer"
@@ -815,7 +818,7 @@
                               *ngIf="hasOutspendError(tx.txid, vindex)"
                               class="tooltip-message"
                               style="top: 25px; left: -10px"
-                            >{{ outspendError }}</span
+                              >{{ outspendError }}</span
                             >
                           </span>
                         </ng-template>

@@ -915,26 +915,26 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
 
   onOutspendClick(tx: Transaction, vindex: number): void {
     const key = `${tx.txid}-${vindex}`;
-    
+
     // Prevent multiple simultaneous requests
     if (this.outspendRequestPending) {
       return;
     }
-    
+
     this.outspendRequestPending = true;
     this.pendingOutspendKey = key;
     this.outspendError = null;
     this.ref.markForCheck();
-    
+
     this.electrsApiService.getOutspend$(tx.txid, vindex).subscribe({
       next: (detailedOutspend: DetailedOutspend) => {
         this.outspendRequestPending = false;
-        
+
         if (detailedOutspend.spent && detailedOutspend.txid) {
           this.pendingOutspendKey = null;
           this.router.navigate(['/tx', detailedOutspend.txid], {
             fragment: `flow=&vin=${detailedOutspend.vin}`,
-            queryParams: { showFlow: true }
+            queryParams: { showFlow: true },
           });
         } else if (detailedOutspend.spent && !detailedOutspend.txid) {
           // Spent but txid not found
@@ -951,16 +951,22 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
         this.pendingOutspendKey = key;
         this.outspendError = 'Failed to load outspend details';
         this.ref.markForCheck();
-      }
+      },
     });
   }
 
   isOutspendPending(txid: string, vindex: number): boolean {
-    return this.outspendRequestPending && this.pendingOutspendKey === `${txid}-${vindex}`;
+    return (
+      this.outspendRequestPending &&
+      this.pendingOutspendKey === `${txid}-${vindex}`
+    );
   }
 
   hasOutspendError(txid: string, vindex: number): boolean {
-    return this.outspendError !== null && this.pendingOutspendKey === `${txid}-${vindex}`;
+    return (
+      this.outspendError !== null &&
+      this.pendingOutspendKey === `${txid}-${vindex}`
+    );
   }
 
   clearOutspendError(): void {
