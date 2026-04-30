@@ -100,6 +100,7 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     string,
     Map<string, { score: number; match: AddressMatch; group: number }>
   > = new Map();
+  showTokenCopied: { [key: string]: boolean } = {};
 
   selectedSig: { txIndex: number; vindex: number; sig: SigInfo } | null = null;
   sigHighlights: { vin: boolean[]; vout: boolean[] } = { vin: [], vout: [] };
@@ -880,6 +881,24 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
       default:
         return false;
     }
+  }
+
+  copyTokenId(
+    tokenId: string,
+    txIndex: number,
+    type: 'vin' | 'vout',
+    index: number
+  ): void {
+    const key = `${txIndex}-${type}-${index}`;
+    if (this.showTokenCopied[key]) return;
+    navigator.clipboard.writeText(tokenId).then(() => {
+      this.showTokenCopied[key] = true;
+      this.ref.markForCheck();
+      setTimeout(() => {
+        this.showTokenCopied[key] = false;
+        this.ref.markForCheck();
+      }, 1000);
+    });
   }
 
   ngOnDestroy(): void {

@@ -194,8 +194,23 @@
                   }
                   @if (tx.vin[vindex].token_category) {
                     <td class="token-td">
-                      <span class="token" ngbTooltip="Cash Token">
-                        <fa-icon [icon]="['fas', 'tag']"></fa-icon>
+                      <span style="position: relative">
+                        <span
+                          class="token"
+                          ngbTooltip="Cash Token"
+                          (click)="
+                            copyTokenId(vin.token_category, i, 'vin', vindex)
+                          "
+                          style="cursor: pointer"
+                        >
+                          <fa-icon [icon]="['fas', 'tag']"></fa-icon>
+                        </span>
+                        <span
+                          *ngIf="showTokenCopied[i + '-vin-' + vindex]"
+                          class="copied-message"
+                          style="top: 25px; left: -10px"
+                          >Token ID Copied!</span
+                        >
                       </span>
                     </td>
                   }
@@ -581,8 +596,23 @@
                 >
                   @if (vout.token_category) {
                     <td class="token-td">
-                      <span class="token" ngbTooltip="Cash Token">
-                        <fa-icon [icon]="['fas', 'tag']"></fa-icon>
+                      <span style="position: relative">
+                        <span
+                          class="token"
+                          ngbTooltip="Cash Token"
+                          (click)="
+                            copyTokenId(vout.token_category, i, 'vout', vindex)
+                          "
+                          style="cursor: pointer"
+                        >
+                          <fa-icon [icon]="['fas', 'tag']"></fa-icon>
+                        </span>
+                        <span
+                          *ngIf="showTokenCopied[i + '-vout-' + vindex]"
+                          class="copied-message"
+                          style="top: 25px; left: -10px"
+                          >Token ID Copied!</span
+                        >
                       </span>
                     </td>
                   }
