@@ -350,7 +350,6 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       // Retrieve the history from the current block height + 1 (so the next or higher, including mempool)
       const fromHeight = blockHeight - lookBackHeight < 0 ? 0 : blockHeight - lookBackHeight;
       const history = await this.$getScriptHashHistory(tx.vout[vout].scriptpubkey, fromHeight);
-      console.log(JSON.stringify(history, null, 2));
       // Filter out possible our own txid
       const filteredHistory = history.filter((h) => h.tx_hash !== txId);
       if (filteredHistory.length > 0) {
