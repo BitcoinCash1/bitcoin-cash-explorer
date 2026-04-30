@@ -31,9 +31,6 @@ class BackendInfo {
       osVersion: `${os.type()} ${os.release()}`,
     };
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    // ts-build noUnusedLocals
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     setInterval(
       async () => {
         await this.$updateCoreVersion();
