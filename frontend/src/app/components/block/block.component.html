@@ -865,7 +865,7 @@
         <td>
           <app-amount
             [satoshis]="blockAudit.expectedFees"
-            digitsInfo="1.3-5"
+            digitsInfo="1.3-8"
             [noFiat]="true"
           ></app-amount>
         </td>
@@ -893,7 +893,7 @@
         <td class="text-wrap">
           <app-amount
             [satoshis]="block.extras.totalFees"
-            digitsInfo="1.3-5"
+            digitsInfo="1.3-8"
             [noFiat]="true"
           ></app-amount>
           <span
@@ -952,7 +952,7 @@
         <td>
           <app-amount
             [satoshis]="staleStats.totalFees"
-            digitsInfo="1.3-5"
+            digitsInfo="1.3-8"
             [noFiat]="true"
           ></app-amount>
           @if (
@@ -1026,7 +1026,7 @@
         <td class="text-wrap">
           <app-amount
             [satoshis]="canonicalStats.totalFees"
-            digitsInfo="1.3-5"
+            digitsInfo="1.3-8"
             [noFiat]="true"
           ></app-amount>
           @if (
