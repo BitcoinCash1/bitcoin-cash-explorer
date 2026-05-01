@@ -4,7 +4,6 @@ import { VerboseMempoolTransactionExtended, MempoolBlockWithTransactions } from 
 
 const PROPAGATION_MARGIN = 180; // in seconds, time since a transaction is first seen after which it is assumed to have propagated to all miners
 
-// TODO: Basically all this code is not correct for BCH. BCH audit code need be revised.
 class Audit {
   auditBlock(
     height: number,
@@ -73,14 +72,14 @@ class Audit {
     }
 
     if (transactions[0]) {
-      displacedSize += 4000 - transactions[0].size;
+      displacedSize += 1000 - transactions[0].size;
       projectedSize += transactions[0].size;
       matchedSize += transactions[0].size;
     }
 
     // we can expect an honest miner to include 'displaced' transactions in place of recent arrivals and censored txs
-    // these displaced transactions should occupy the first N weight units of the next projected block
-    let displacedSizeRemaining = displacedSize + 4000;
+    // these displaced transactions should occupy the first N bytes of the next projected block
+    let displacedSizeRemaining = displacedSize + 1000;
     let index = 0;
     let lastFeeRate = Infinity;
     let failures = 0;
@@ -89,13 +88,12 @@ class Audit {
       const txid = projectedBlocks[blockIndex].transactionIds[index];
       const tx = mempool[txid];
       if (tx) {
-        const fits = tx.size - displacedSizeRemaining < 4000;
-        // 0.005 margin of error for any remaining vsize rounding issues
+        const fits = tx.size - displacedSizeRemaining < 1000;
+        // 0.005 margin of error for any remaining fee rate rounding issues
         const feeMatches = tx.feePerSize >= lastFeeRate - 0.005;
         if (fits || feeMatches) {
           isDisplaced[txid] = true;
           if (fits) {
-            // (tx.effectiveFeePerSize * tx.size) / Math.ceil(tx.size) attempts to correct for size rounding in the simple non-CPFP case
             lastFeeRate = Math.min(lastFeeRate, (tx.feePerSize * tx.size) / Math.ceil(tx.size));
           }
           if (tx.firstSeen == null || now - (tx?.firstSeen || 0) > PROPAGATION_MARGIN) {
