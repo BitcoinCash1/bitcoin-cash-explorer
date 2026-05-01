@@ -1,411 +1,245 @@
-use priority_queue::PriorityQueue;
-use std::{cmp::Ordering, collections::HashSet, mem::ManuallyDrop};
+use std::{collections::VecDeque, mem::ManuallyDrop};
 use tracing::{info, trace};
 
 use crate::{
-    audit_transaction::{partial_cmp_uid_score, AuditTransaction},
-    u32_hasher_types::{u32hashset_new, u32priority_queue_with_capacity, U32HasherState},
+    audit_transaction::AuditTransaction,
+    u32_hasher_types::{u32hashset_new, U32HasherState},
     GbtResult, ThreadTransactionsMap,
 };
 
-const BLOCK_SIGOPS: u32 = 80_000;
-const BLOCK_RESERVED_SIZE: u32 = 32_000; // Min. block size in BCH
-const BLOCK_RESERVED_SIGOPS: u32 = 400;
+// BCHN coinbase reservation (matches resetBlock() in BCHN miner.cpp)
+const BLOCK_RESERVED_SIZE: u32 = 1_000;
+const BLOCK_RESERVED_SIGCHECKS: u32 = 100;
+
+// Give up trying to fill the current block after this many consecutive failures
+// when the block is nearly full (matches MAX_CONSECUTIVE_FAILURES in BCHN miner.cpp)
+const MAX_CONSECUTIVE_FAILURES: u32 = 1_000;
 
 type AuditPool = Vec<Option<ManuallyDrop<AuditTransaction>>>;
-type ModifiedQueue = PriorityQueue<u32, TxPriority, U32HasherState>;
 
-#[derive(Debug)]
-struct TxPriority {
-    uid: u32,
-    order: u32,
-    score: f64,
-}
-impl PartialEq for TxPriority {
-    fn eq(&self, other: &Self) -> bool {
-        self.uid == other.uid
-    }
-}
-impl Eq for TxPriority {}
-impl PartialOrd for TxPriority {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        partial_cmp_uid_score(
-            (self.uid, self.order, self.score),
-            (other.uid, other.order, other.score),
-        )
-    }
-}
-impl Ord for TxPriority {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.partial_cmp(other).expect("score will never be NaN")
-    }
-}
-
-/// Build projected mempool blocks using an approximation of the transaction selection algorithm from Bitcoin Core.
+/// Build projected mempool blocks using the BCHN `addTxs` transaction selection algorithm.
 ///
-/// See `BlockAssembler` in Bitcoin Core's
-/// [miner.cpp](https://github.com/bitcoin/bitcoin/blob/master/src/node/miner.cpp).
-/// Ported from mempool backend's
-/// [tx-selection-worker.ts](https://github.com/mempool/mempool/blob/master/backend/src/api/tx-selection-worker.ts).
-//
-// TODO: Make gbt smaller to fix these lints.
-#[allow(clippy::too_many_lines)]
-#[allow(clippy::cognitive_complexity)]
+/// See `BlockAssembler::addTxs` in BCHN's
+/// [miner.cpp](https://gitlab.com/bitcoin-cash-node/bitcoin-cash-node/-/blob/master/src/miner.cpp).
+///
+/// Transactions are selected individually in descending fee-per-byte order.
+/// Topological ordering is enforced via a per-transaction `missing_parent_count` that
+/// is decremented as parents are added to the block. Children whose count reaches zero
+/// are moved to a backlog queue for immediate processing.
 pub fn gbt(
     mempool: &mut ThreadTransactionsMap,
     max_uid: usize,
-    max_block_weight: u32,
+    max_block_size: u32,
     max_blocks: usize,
 ) -> GbtResult {
+    // BCH consensus sigchecks limit: GetMaxBlockSigChecksCount(blockSize) = blockSize / 141
+    let max_sigchecks: u32 = max_block_size / 141;
+
     info!("Initializing working vecs with uid capacity for {}", max_uid + 1);
     let mempool_len = mempool.len();
     let mut audit_pool: AuditPool = Vec::with_capacity(max_uid + 1);
     audit_pool.resize(max_uid + 1, None);
-    let mut mempool_stack: Vec<u32> = Vec::with_capacity(mempool_len);
-    let mut block_sizes: Vec<u32> = Vec::new();
+    let mut uid_list: Vec<u32> = Vec::with_capacity(mempool_len);
 
-    info!("Initializing working structs");
+    // Phase 1: populate audit pool
+    info!("Building audit pool");
     for (uid, tx) in &mut *mempool {
         let audit_tx = AuditTransaction::from_thread_transaction(tx);
-        // Safety: audit_pool and mempool_stack must always contain the same transactions
         audit_pool[*uid as usize] = Some(ManuallyDrop::new(audit_tx));
-        mempool_stack.push(*uid);
+        uid_list.push(*uid);
     }
 
-    info!("Building relatives graph & calculate ancestor scores");
-    for txid in &mempool_stack {
-        set_relatives(*txid, &mut audit_pool);
-    }
-    trace!("Post relative graph Audit Pool: {:#?}", audit_pool);
-
-    info!("Sorting by descending ancestor score");
-    let mut mempool_stack: Vec<(u32, u32, f64)> = mempool_stack
-        .into_iter()
-        .map(|txid| {
-            let atx = audit_pool
-                .get(txid as usize)
-                .and_then(Option::as_ref)
-                .expect("All txids are from audit_pool");
-            (txid, atx.order(), atx.score())
-        })
-        .collect();
-    mempool_stack.sort_unstable_by(|a, b| partial_cmp_uid_score(*a, *b).expect("Not NaN"));
-    let mut mempool_stack: Vec<u32> = mempool_stack.into_iter().map(|(txid, _, _)| txid).collect();
-
-    info!("Building blocks by greedily choosing the highest feerate package");
-    info!("(i.e. the package rooted in the transaction with the best ancestor score)");
-    let mut blocks: Vec<Vec<u32>> = Vec::new();
-    let mut block_size: u32 = BLOCK_RESERVED_SIZE;
-    let mut block_sigops: u32 = BLOCK_RESERVED_SIGOPS;
-    // No need to be bigger than 4096 transactions for the per-block transaction Vec.
-    let initial_txes_per_block: usize = 4096.min(mempool_len);
-    let mut transactions: Vec<u32> = Vec::with_capacity(initial_txes_per_block);
-    let mut modified: ModifiedQueue = u32priority_queue_with_capacity(mempool_len);
-    let mut overflow: Vec<u32> = Vec::new();
-    let mut failures = 0;
-    while !mempool_stack.is_empty() || !modified.is_empty() {
-        // This trace log storm is big, so to make scrolling through
-        // Each iteration easier, leaving a bunch of empty rows
-        // And a header of ======
-        trace!("\n\n\n\n\n\n\n\n\n\n==================================");
-        trace!("mempool_array: {:#?}", mempool_stack);
-        trace!("modified: {:#?}", modified);
-        trace!("audit_pool: {:#?}", audit_pool);
-        trace!("blocks: {:#?}", blocks);
-        trace!("block_weight: {:#?}", block_size);
-        trace!("block_sigops: {:#?}", block_sigops);
-        trace!("transactions: {:#?}", transactions);
-        trace!("overflow: {:#?}", overflow);
-        trace!("failures: {:#?}", failures);
-        trace!("\n==================================");
-
-        let next_from_stack = next_valid_from_stack(&mut mempool_stack, &audit_pool);
-        let next_from_queue = next_valid_from_queue(&mut modified, &audit_pool);
-        if next_from_stack.is_none() && next_from_queue.is_none() {
-            info!("No transactions left! {:#?} in overflow", overflow.len());
+    // Phase 2: build children sets and initialize missing_parent_count
+    info!("Building parent→child relationships");
+    for &txid in &uid_list {
+        // Collect inputs first to avoid borrowing audit_pool mutably and immutably at once
+        let inputs: Vec<u32> = if let Some(Some(tx)) = audit_pool.get(txid as usize) {
+            tx.inputs.clone()
         } else {
-            let (next_tx, from_stack) = match (next_from_stack, next_from_queue) {
-                (Some(stack_tx), Some(queue_tx)) => match queue_tx.cmp(stack_tx) {
-                    std::cmp::Ordering::Less => (stack_tx, true),
-                    _ => (queue_tx, false),
-                },
-                (Some(stack_tx), None) => (stack_tx, true),
-                (None, Some(queue_tx)) => (queue_tx, false),
-                (None, None) => unreachable!(),
+            continue;
+        };
+
+        for parent_uid in inputs {
+            if let Some(Some(_parent)) = audit_pool.get(parent_uid as usize) {
+                // parent is in the mempool: register the relationship
+                if let Some(Some(parent)) = audit_pool.get_mut(parent_uid as usize) {
+                    parent.children.insert(txid);
+                }
+                if let Some(Some(tx)) = audit_pool.get_mut(txid as usize) {
+                    tx.missing_parent_count += 1;
+                }
+            }
+        }
+    }
+
+    // Phase 3: sort by descending fee_per_size; tie-break by ascending order (partial txid)
+    info!("Sorting by descending fee rate");
+    let mut sorted: Vec<u32> = uid_list;
+    sorted.sort_unstable_by(|&a, &b| {
+        let ta = audit_pool[a as usize].as_ref().expect("uid in audit_pool");
+        let tb = audit_pool[b as usize].as_ref().expect("uid in audit_pool");
+        // primary: descending score (fee_per_size)
+        tb.score()
+            .partial_cmp(&ta.score())
+            .unwrap_or(std::cmp::Ordering::Equal)
+            // tie-break: ascending order (lower partial txid first, matches lexicographic txid order)
+            .then_with(|| ta.order().cmp(&tb.order()))
+    });
+
+    // Phase 4: build projected blocks (BCHN addTxs algorithm)
+    info!("Building blocks (BCHN addTxs)");
+    let mut blocks: Vec<Vec<u32>> = Vec::new();
+    let mut block_sizes: Vec<u32> = Vec::new();
+    let mut sorted_idx: usize = 0;
+    let mut backlog: VecDeque<u32> = VecDeque::new();
+    // Tracks txs that were encountered in the sorted list but skipped due to missing parents.
+    // Only these are eligible for promotion to the backlog once their parents are added.
+    let mut skipped_uids: std::collections::HashSet<u32, U32HasherState> = u32hashset_new();
+
+    for _ in 0..max_blocks {
+        let mut block_size: u32 = BLOCK_RESERVED_SIZE;
+        let mut block_sigchecks: u32 = BLOCK_RESERVED_SIGCHECKS;
+        let mut consecutive_failures: u32 = 0;
+        let mut transactions: Vec<u32> = Vec::with_capacity(4096.min(mempool_len));
+        // Backlog items that didn't fit in this block; prepended to backlog for the next block.
+        let mut next_block_deferred: Vec<u32> = Vec::new();
+
+        loop {
+            // Prefer the backlog (children whose parents were just added) over the sorted list
+            let (next_uid, from_backlog) = if let Some(uid) = backlog.pop_front() {
+                (uid, true)
+            } else if sorted_idx < sorted.len() {
+                let uid = sorted[sorted_idx];
+                sorted_idx += 1;
+                (uid, false)
+            } else {
+                break; // both sources exhausted
             };
 
-            if from_stack {
-                mempool_stack.pop();
-            } else {
-                modified.pop();
+            // Skip transactions already added to a previous block
+            let tx_used = audit_pool
+                .get(next_uid as usize)
+                .and_then(Option::as_ref)
+                .map_or(true, |tx| tx.used);
+            if tx_used {
+                continue;
             }
 
-            if blocks.len() < (max_blocks - 1)
-                && ((block_size + (4 * next_tx.ancestor_sigop_adjusted_size())
-                    >= max_block_weight - 4_000)
-                    || (block_sigops + next_tx.ancestor_sigops() > BLOCK_SIGOPS))
+            // Topological constraint: all in-mempool parents must have been added first
+            let missing = audit_pool[next_uid as usize]
+                .as_ref()
+                .map_or(0, |tx| tx.missing_parent_count);
+            if missing > 0 {
+                // Record that this tx was encountered; it will be promoted to the backlog
+                // once its last parent is added.
+                skipped_uids.insert(next_uid);
+                continue;
+            }
+
+            let (tx_size, tx_sigops) = audit_pool[next_uid as usize]
+                .as_ref()
+                .map_or((0, 0), |tx| (tx.size, tx.sigops));
+
+            // BCHN TestTx: two independent BCH block limits (raw bytes + sigchecks)
+            if block_size + tx_size >= max_block_size
+                || block_sigchecks + tx_sigops >= max_sigchecks
             {
-                // hold this package in an overflow list while we check for smaller options
-                overflow.push(next_tx.uid);
-                failures += 1;
-            } else {
-                let mut package: Vec<(u32, u32, usize)> = Vec::new();
-                for ancestor_id in &next_tx.ancestors {
-                    if let Some(Some(ancestor)) = audit_pool.get(*ancestor_id as usize) {
-                        package.push((*ancestor_id, ancestor.order(), ancestor.ancestors.len()));
+                consecutive_failures += 1;
+                if from_backlog {
+                    // Keep for the next block rather than discarding
+                    next_block_deferred.push(next_uid);
+                }
+                // BCHN give-up condition: many failures when close to full
+                if consecutive_failures > MAX_CONSECUTIVE_FAILURES
+                    && block_size > max_block_size - 1_000
+                {
+                    break;
+                }
+                continue;
+            }
+
+            // Add transaction to the current block
+            if let Some(Some(tx)) = audit_pool.get_mut(next_uid as usize) {
+                tx.used = true;
+                transactions.push(tx.uid);
+                block_size += tx.size;
+                block_sigchecks += tx.sigops;
+                consecutive_failures = 0;
+
+                // Collect children before releasing the borrow
+                let children: Vec<u32> = tx.children.iter().copied().collect();
+
+                // Decrement missing_parent_count for all children
+                for child_uid in children {
+                    if let Some(Some(child)) = audit_pool.get_mut(child_uid as usize) {
+                        if child.missing_parent_count > 0 {
+                            child.missing_parent_count -= 1;
+                        }
+                        // Promote to backlog if the child was previously skipped in the
+                        // sorted iteration and is now fully unblocked
+                        if child.missing_parent_count == 0
+                            && skipped_uids.contains(&child_uid)
+                            && !child.used
+                        {
+                            backlog.push_back(child_uid);
+                        }
                     }
                 }
-                package.sort_unstable_by(|a, b| -> Ordering {
-                    if a.2 != b.2 {
-                        // order by ascending ancestor count
-                        a.2.cmp(&b.2)
-                    } else if a.1 != b.1 {
-                        // tie-break by ascending partial txid
-                        a.1.cmp(&b.1)
-                    } else {
-                        // tie-break partial txid collisions by ascending uid
-                        a.0.cmp(&b.0)
-                    }
-                });
-                package.push((next_tx.uid, next_tx.order(), next_tx.ancestors.len()));
-
-                for (txid, _, _) in &package {
-                    if let Some(Some(tx)) = audit_pool.get_mut(*txid as usize) {
-                        tx.used = true;
-                        transactions.push(tx.uid);
-                        block_size += tx.size;
-                        block_sigops += tx.sigops;
-                    }
-                    update_descendants(*txid, &mut audit_pool, &mut modified);
-                }
-
-                failures = 0;
             }
         }
 
-        // this block is full
-        let exceeded_package_tries =
-            failures > 1000 && block_size > (max_block_weight - 4_000 - BLOCK_RESERVED_SIZE);
-        let queue_is_empty = mempool_stack.is_empty() && modified.is_empty();
-        if (exceeded_package_tries || queue_is_empty) && blocks.len() < (max_blocks - 1) {
-            // finalize this block
-            if transactions.is_empty() {
-                info!("trying to push an empty block! breaking loop! mempool {:#?} | modified {:#?} | overflow {:#?}", mempool_stack.len(), modified.len(), overflow.len());
-                break;
+        if transactions.is_empty() {
+            // Re-queue any deferred items so they appear in overflow
+            for uid in next_block_deferred.drain(..).rev() {
+                backlog.push_front(uid);
             }
-
-            blocks.push(transactions);
-            block_sizes.push(block_size);
-
-            // reset for the next block
-            transactions = Vec::with_capacity(initial_txes_per_block);
-            block_size = BLOCK_RESERVED_SIZE;
-            block_sigops = BLOCK_RESERVED_SIGOPS;
-            failures = 0;
-            // 'overflow' packages didn't fit in this block, but are valid candidates for the next
-            overflow.reverse();
-            for overflowed in &overflow {
-                if let Some(Some(overflowed_tx)) = audit_pool.get(*overflowed as usize) {
-                    if overflowed_tx.modified {
-                        modified.push(
-                            *overflowed,
-                            TxPriority {
-                                uid: *overflowed,
-                                order: overflowed_tx.order(),
-                                score: overflowed_tx.score(),
-                            },
-                        );
-                    } else {
-                        mempool_stack.push(*overflowed);
-                    }
-                }
-            }
-            overflow = Vec::new();
+            break;
         }
-    }
-    info!("add the final unbounded block if it contains any transactions");
-    if !transactions.is_empty() {
+
         blocks.push(transactions);
         block_sizes.push(block_size);
+
+        // Deferred backlog items couldn't fit in this block; try them first in the next one
+        for uid in next_block_deferred.drain(..).rev() {
+            backlog.push_front(uid);
+        }
     }
 
-    info!("make a list of dirty transactions and their new rates");
-    let mut rates: Vec<Vec<f64>> = Vec::new();
-    for (uid, thread_tx) in mempool {
-        // Takes ownership of the audit_tx and replaces with None
-        if let Some(Some(audit_tx)) = audit_pool.get_mut(*uid as usize).map(Option::take) {
-            trace!("txid: {}, is_dirty: {}", uid, audit_tx.dirty);
-            if audit_tx.dirty {
-                rates.push(vec![f64::from(*uid), audit_tx.fee_per_size]);
-                thread_tx.fee_per_size = audit_tx.fee_per_size;
-            }
-            // Drops the AuditTransaction manually
-            // There are no audit_txs that are not in the mempool HashMap
-            // So there is guaranteed to be no memory leaks.
+    // Phase 5: collect remaining unused transactions as overflow
+    info!("Collecting overflow transactions");
+    let overflow: Vec<u32> = sorted[sorted_idx..]
+        .iter()
+        .chain(backlog.iter())
+        .copied()
+        .filter(|&uid| {
+            audit_pool
+                .get(uid as usize)
+                .and_then(Option::as_ref)
+                .map_or(false, |tx| !tx.used)
+        })
+        .collect();
+
+    trace!("blocks: {:#?}", blocks);
+    trace!("overflow count: {}", overflow.len());
+
+    // Drop all ManuallyDrop<AuditTransaction> allocations
+    for (uid, _thread_tx) in mempool.iter() {
+        if let Some(audit_tx) = audit_pool
+            .get_mut(*uid as usize)
+            .and_then(Option::take)
+        {
             ManuallyDrop::into_inner(audit_tx);
         }
     }
-    trace!("\n\n\n\n\n====================");
-    trace!("blocks: {:#?}", blocks);
-    trace!("rates: {:#?}\n====================\n\n\n\n\n", rates);
+
+    // The BCHN algorithm selects transactions on their own fee_per_size without
+    // ancestor-score recalculation, so no rate adjustments are needed.
+    let rates: Vec<Vec<f64>> = Vec::new();
 
     GbtResult {
         blocks,
         block_sizes,
         rates,
         overflow,
-    }
-}
-
-fn next_valid_from_stack<'a>(
-    mempool_stack: &mut Vec<u32>,
-    audit_pool: &'a AuditPool,
-) -> Option<&'a AuditTransaction> {
-    while let Some(next_txid) = mempool_stack.last() {
-        match audit_pool.get(*next_txid as usize) {
-            Some(Some(tx)) if !tx.used && !tx.modified => {
-                return Some(tx);
-            }
-            _ => {
-                mempool_stack.pop();
-            }
-        }
-    }
-    None
-}
-
-fn next_valid_from_queue<'a>(
-    queue: &mut ModifiedQueue,
-    audit_pool: &'a AuditPool,
-) -> Option<&'a AuditTransaction> {
-    while let Some((next_txid, _)) = queue.peek() {
-        match audit_pool.get(*next_txid as usize) {
-            Some(Some(tx)) if !tx.used => {
-                return Some(tx);
-            }
-            _ => {
-                queue.pop();
-            }
-        }
-    }
-    None
-}
-
-fn set_relatives(txid: u32, audit_pool: &mut AuditPool) {
-    let mut parents: HashSet<u32, U32HasherState> = u32hashset_new();
-    if let Some(Some(tx)) = audit_pool.get(txid as usize) {
-        if tx.relatives_set_flag {
-            return;
-        }
-        for input in &tx.inputs {
-            parents.insert(*input);
-        }
-    } else {
-        return;
-    }
-
-    let mut ancestors: HashSet<u32, U32HasherState> = u32hashset_new();
-    for parent_id in &parents {
-        set_relatives(*parent_id, audit_pool);
-
-        if let Some(Some(parent)) = audit_pool.get_mut(*parent_id as usize) {
-            // Safety: ancestors must always contain only txes in audit_pool
-            ancestors.insert(*parent_id);
-            parent.children.insert(txid);
-            for ancestor in &parent.ancestors {
-                ancestors.insert(*ancestor);
-            }
-        }
-    }
-
-    let mut total_fee: u64 = 0;
-    let mut total_sigop_adjusted_size: u32 = 0;
-    let mut total_sigops: u32 = 0;
-
-    for ancestor_id in &ancestors {
-        if let Some(ancestor) = audit_pool
-            .get(*ancestor_id as usize)
-            .expect("audit_pool contains all ancestors")
-        {
-            total_fee += ancestor.fee;
-            total_sigop_adjusted_size += ancestor.sigop_adjusted_size;
-            total_sigops += ancestor.sigops;
-        } else { todo!() };
-    }
-
-    if let Some(Some(tx)) = audit_pool.get_mut(txid as usize) {
-        tx.set_ancestors(
-            ancestors,
-            total_fee,
-            total_sigop_adjusted_size,
-            total_sigops
-        );
-    }
-}
-
-// iterate over remaining descendants, removing the root as a valid ancestor & updating the ancestor score
-fn update_descendants(
-    root_txid: u32,
-    audit_pool: &mut AuditPool,
-    modified: &mut ModifiedQueue,
-) {
-    let mut visited: HashSet<u32, U32HasherState> = u32hashset_new();
-    let mut descendant_stack: Vec<u32> = Vec::new();
-    let root_fee: u64;
-    let root_sigop_adjusted_size: u32;
-    let root_sigops: u32;
-    if let Some(Some(root_tx)) = audit_pool.get(root_txid as usize) {
-        for descendant_id in &root_tx.children {
-            if !visited.contains(descendant_id) {
-                descendant_stack.push(*descendant_id);
-                visited.insert(*descendant_id);
-            }
-        }
-        root_fee = root_tx.fee;
-        root_sigop_adjusted_size = root_tx.sigop_adjusted_size;
-        root_sigops = root_tx.sigops;
-    } else {
-        return;
-    }
-    while let Some(next_txid) = descendant_stack.pop() {
-        if let Some(Some(descendant)) = audit_pool.get_mut(next_txid as usize) {
-            // remove root tx as ancestor
-            let old_score = descendant.remove_root(
-                root_txid,
-                root_fee,
-                root_sigop_adjusted_size,
-                root_sigops,
-            );
-            // add to priority queue or update priority if score has changed
-            if descendant.score() < old_score {
-                descendant.modified = true;
-                modified.push_decrease(
-                    descendant.uid,
-                    TxPriority {
-                        uid: descendant.uid,
-                        order: descendant.order(),
-                        score: descendant.score(),
-                    },
-                );
-            } else if descendant.score() > old_score {
-                descendant.modified = true;
-                modified.push_increase(
-                    descendant.uid,
-                    TxPriority {
-                        uid: descendant.uid,
-                        order: descendant.order(),
-                        score: descendant.score(),
-                    },
-                );
-            }
-
-            // add this node's children to the stack
-            for child_id in &descendant.children {
-                if !visited.contains(child_id) {
-                    descendant_stack.push(*child_id);
-                    visited.insert(*child_id);
-                }
-            }
-        }
     }
 }

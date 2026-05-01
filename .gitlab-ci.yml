@@ -143,8 +143,8 @@ deploy-frontend:
     name: production
     url: https://bchexplorer.cash
   script:
-    # Make this the official site
-    - sed -i "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.OFFICIAL_BCH_EXPLORER = true;" frontend/dist/explorer/browser/resources/config.js
+    # Make this the official site + enable audit
+    - sed -i -e "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.OFFICIAL_BCH_EXPLORER = true;" -e "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.AUDIT = true;" frontend/dist/explorer/browser/resources/config.js
   artifacts:
     name: "Frontend"
     expire_in: 3 months

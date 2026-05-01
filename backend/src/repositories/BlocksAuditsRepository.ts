@@ -16,7 +16,7 @@ class BlocksAuditRepositories {
     try {
       await DB.query(
         `INSERT INTO blocks_audits(version, time, height, hash, unseen_txs, missing_txs, added_txs, fresh_txs, sigop_txs, match_rate, expected_fees, expected_size)
-        VALUE (?, FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        VALUE (?, FROM_UNIXTIME(?), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           audit.version,
           audit.time,
