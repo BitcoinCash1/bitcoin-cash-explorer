@@ -323,7 +323,7 @@ export class BlockComponent implements OnInit, OnDestroy {
       tap((block: BlockExtended) => {
         if (block.previousblockhash) {
           this.preloadService.block$.next(block.previousblockhash);
-          if (this.auditSupported) {
+          if (this.isAuditAvailableFromBlockHeight(block.height)) {
             this.preloadService.blockAudit$.next(block.previousblockhash);
           }
         }
@@ -1142,6 +1142,12 @@ export class BlockComponent implements OnInit, OnDestroy {
   }
 
   isAuditAvailableFromBlockHeight(blockHeight: number): boolean {
+    console.log(
+      'Compare it with MAINNET_BLOCK_AUDIT_START_HEIGHT:',
+      this.stateService.env.MAINNET_BLOCK_AUDIT_START_HEIGHT
+    );
+    console.log('Checking audit availability for block height:', blockHeight);
+    console.log('Current network:', this.stateService.network);
     if (!this.auditSupported) {
       return false;
     }
@@ -1164,9 +1170,11 @@ export class BlockComponent implements OnInit, OnDestroy {
         if (
           blockHeight < this.stateService.env.MAINNET_BLOCK_AUDIT_START_HEIGHT
         ) {
+          console.log('NOPE');
           return false;
         }
     }
+    console.log('Audit is available for this block height.');
     return true;
   }
 
