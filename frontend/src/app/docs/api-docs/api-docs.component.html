@@ -902,20 +902,27 @@
     </li>
     <li>
       <span class="block-audit-highlight-color marginal">■</span
-      ><code>Marginal fee</code>
+      ><code>Marginal fee rate</code>
       <p>
-        A transaction is darkened if it is in the low end of the expected
+        A transaction is darkened if it is at the low end of the expected
         feerate range and missing in either the expected block or the actual
-        block.
+        block. This covers two cases:
       </p>
+      <ul>
+        <li>
+          <b>Marginal fee rate:</b> the transaction has a fee rate so close to
+          the block's cutoff that it may have been displaced by another
+          transaction competing for the last bytes of space.
+        </li>
+        <li>
+          <b>Selected (marginal):</b> the transaction was a borderline candidate
+          in the projected block template, sitting at the boundary of what would
+          be included.
+        </li>
+      </ul>
       <p>
-        Such a transaction may have been displaced by an added transaction, or
-        it may have been displaced by another transaction from the mempool that
-        was also at the low end of the expected feerate range for the block. In
-        either case, the deviation is not considered notable.
-      </p>
-      <p>
-        Marginal fee transactions do not negatively affect
+        In either case the deviation is not considered notable, and these
+        transactions do not negatively affect
         <a
           [routerLink]="['/docs/faq' | relativeUrl]"
           fragment="what-is-block-health"
@@ -925,23 +932,36 @@
     </li>
     <li>
       <span class="block-audit-highlight-color removed">■</span
-      ><code>Removed</code>
+      ><code>Removed / No match</code>
+      <p>A transaction is highlighted bright pink under two circumstances:</p>
+      <ul>
+        <li>
+          <b>Removed (censored):</b> the transaction is present in the expected
+          block, not present in the actual block, and qualifies as neither
+          recently-broadcasted nor marginal-fee. It has been in the mempool long
+          enough to be widely propagated and has a feerate well within the range
+          expected for the block. There is a chance the miner intentionally
+          excluded it.
+        </li>
+        <li>
+          <b>No match:</b> a transaction in the projected block could not be
+          matched to any transaction in the actual block, and the projected data
+          is considered stale. This shares the same color but does
+          <i>not</i> affect block health.
+        </li>
+      </ul>
       <p>
-        A transaction is highlighted bright pink if it is present in the
-        expected block, not present in the actual block, and qualifies as
-        neither recently-broadcasted nor marginal-fee. In other words, it has
-        been in the mempool long enough to be widely propagated and has a
-        feerate that is well within the range expected for the block. There is a
-        chance such a transaction may have been intentionally excluded from the
-        block.
-      </p>
-      <p>
-        Removed transactions do negatively affect
+        Only <b>Removed</b> transactions negatively affect
         <a
           [routerLink]="['/docs/faq' | relativeUrl]"
           fragment="what-is-block-health"
           >block health</a
         >.
+      </p>
+      <p>
+        Block health is calculated as
+        <span class="math">matches / (matches + removed)</span>, where only
+        truly removed transactions count against it.
       </p>
     </li>
   </ul>

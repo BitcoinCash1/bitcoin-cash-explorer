@@ -4,21 +4,23 @@ import { VerboseMempoolTransactionExtended, MempoolBlockWithTransactions } from 
 
 const PROPAGATION_MARGIN = 180; // in seconds, time since a transaction is first seen after which it is assumed to have propagated to all miners
 
+export interface AuditResult {
+  unseen: string[];
+  censored: string[];
+  added: string[];
+  fresh: string[];
+  sigop: string[];
+  matchRate: number;
+  similarity: number;
+}
+
 class Audit {
   auditBlock(
     height: number,
     transactions: VerboseMempoolTransactionExtended[],
     projectedBlocks: MempoolBlockWithTransactions[],
     mempool: { [txId: string]: VerboseMempoolTransactionExtended }
-  ): {
-    unseen: string[];
-    censored: string[];
-    added: string[];
-    fresh: string[];
-    sigop: string[];
-    score: number;
-    similarity: number;
-  } {
+  ): AuditResult {
     if (!projectedBlocks?.[0]?.transactionIds || !mempool) {
       return {
         unseen: [],
@@ -26,7 +28,7 @@ class Audit {
         added: [],
         fresh: [],
         sigop: [],
-        score: 1,
+        matchRate: 1,
         similarity: 1,
       };
     }
@@ -164,11 +166,11 @@ class Audit {
 
     const numCensored = Object.keys(isCensored).length;
     const numMatches = matches.length - 1; // adjust for coinbase tx
-    let score = 0;
+    let matchRate = 0;
     if (numMatches <= 0 && numCensored <= 0) {
-      score = 1;
+      matchRate = 1;
     } else if (numMatches > 0) {
-      score = numMatches / (numMatches + numCensored);
+      matchRate = numMatches / (numMatches + numCensored);
     }
     const similarity = projectedSize ? matchedSize / projectedSize : 1;
 
@@ -178,7 +180,7 @@ class Audit {
       added,
       fresh,
       sigop: [],
-      score,
+      matchRate,
       similarity,
     };
   }

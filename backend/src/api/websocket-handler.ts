@@ -889,13 +889,8 @@ class WebsocketHandler {
       }
 
       if (Common.indexingEnabled()) {
-        const { unseen, censored, added, fresh, sigop, score, similarity } = Audit.auditBlock(
-          block.height,
-          blockTransactions,
-          projectedBlocks,
-          auditMempool
-        );
-        const matchRate = Math.round(score * 100 * 100) / 100;
+        const auditResult = Audit.auditBlock(block.height, blockTransactions, projectedBlocks, auditMempool);
+        const matchRatePercentage = Math.round(auditResult.matchRate * 100 * 100) / 100;
 
         const stripped = projectedBlocks[0]?.transactions ? projectedBlocks[0].transactions : [];
 
@@ -920,21 +915,21 @@ class WebsocketHandler {
           time: block.timestamp,
           height: block.height,
           hash: block.id,
-          unseenTxs: unseen,
-          addedTxs: added,
-          missingTxs: censored,
-          freshTxs: fresh,
-          sigopTxs: sigop,
-          matchRate: matchRate,
+          unseenTxs: auditResult.unseen,
+          addedTxs: auditResult.added,
+          missingTxs: auditResult.censored,
+          freshTxs: auditResult.fresh,
+          sigopTxs: auditResult.sigop,
+          matchRate: matchRatePercentage,
           expectedFees: totalFees,
           expectedSize: totalSize,
         });
 
         if (block.extras) {
-          block.extras.matchRate = matchRate;
+          block.extras.matchRate = matchRatePercentage;
           block.extras.expectedFees = totalFees;
           block.extras.expectedSize = totalSize;
-          block.extras.similarity = similarity;
+          block.extras.similarity = auditResult.similarity;
         }
       }
     } else if (block.extras) {
