@@ -293,7 +293,7 @@ export class PoolComponent implements OnInit {
         data: [
           {
             name: $localize`:@@79a9dc5b1caca3cbeb1733a19515edacc5fc7920:Hashrate`,
-            inactiveColor: 'var(--gray)',
+            inactiveColor: 'var(--grey)',
             textStyle: {
               color: 'var(--fg)',
             },
@@ -304,7 +304,7 @@ export class PoolComponent implements OnInit {
           },
           {
             name: $localize`:mining.pool-dominance:Pool Dominance`,
-            inactiveColor: 'var(--gray)',
+            inactiveColor: 'var(--grey)',
             textStyle: {
               color: 'var(--fg)',
             },
@@ -322,7 +322,7 @@ export class PoolComponent implements OnInit {
                 },
                 type: 'value',
                 axisLabel: {
-                  color: 'var(--gray)',
+                  color: 'var(--grey)',
                   formatter: (val) => {
                     return this.amountShortenerPipe
                       .transform(val, 3, 'H/s', false, true)
@@ -336,7 +336,7 @@ export class PoolComponent implements OnInit {
               {
                 type: 'value',
                 axisLabel: {
-                  color: 'var(--gray)',
+                  color: 'var(--grey)',
                   formatter: (val) => {
                     return `${val}%`;
                   },
