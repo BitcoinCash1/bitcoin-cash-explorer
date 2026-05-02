@@ -1015,7 +1015,7 @@
             </trans-unit>
             <trans-unit id="4948789143508999262">
                 <source xml:space="preserve">Transaction cannot be broadcasted because it&apos;s missing or has an invalid signature</source>
-                <target xml:space="preserve">Transaction cannot be broadcasted because it&apos;s missing or has an invalid signature</target>
+                <target xml:space="preserve">由於交易缺少簽名或簽名無效，因此無法廣播交易。</target>
             </trans-unit>
             <trans-unit id="4980628658981044012">
                 <source xml:space="preserve">nSequence</source>
