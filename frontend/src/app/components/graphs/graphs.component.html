@@ -46,6 +46,13 @@
       <a
         class="dropdown-item"
         routerLinkActive="active"
+        [routerLink]="['/graphs/mining/asert-deviation' | relativeUrl]"
+        i18n="mining.asert-deviation"
+        >Difficulty Adjustment Deviation</a
+      >
+      <a
+        class="dropdown-item"
+        routerLinkActive="active"
         [routerLink]="['/graphs/mining/block-fee-rates' | relativeUrl]"
         i18n="mining.block-fee-rates"
         >Block Fee Rates</a
@@ -77,13 +84,6 @@
         [routerLink]="['/graphs/mining/block-sizes' | relativeUrl]"
         i18n="mining.block-sizes"
         >Block Sizes</a
-      >
-      <a
-        class="dropdown-item"
-        routerLinkActive="active"
-        [routerLink]="['/graphs/mining/asert-deviation' | relativeUrl]"
-        i18n="mining.asert-deviation"
-        >Difficulty Adjustment Deviation</a
       >
       <a
         *ngIf="stateService.env.AUDIT"
