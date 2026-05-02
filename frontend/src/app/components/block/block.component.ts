@@ -1142,12 +1142,6 @@ export class BlockComponent implements OnInit, OnDestroy {
   }
 
   isAuditAvailableFromBlockHeight(blockHeight: number): boolean {
-    console.log(
-      'Compare it with MAINNET_BLOCK_AUDIT_START_HEIGHT:',
-      this.stateService.env.MAINNET_BLOCK_AUDIT_START_HEIGHT
-    );
-    console.log('Checking audit availability for block height:', blockHeight);
-    console.log('Current network:', this.stateService.network);
     if (!this.auditSupported) {
       return false;
     }
@@ -1170,11 +1164,9 @@ export class BlockComponent implements OnInit, OnDestroy {
         if (
           blockHeight < this.stateService.env.MAINNET_BLOCK_AUDIT_START_HEIGHT
         ) {
-          console.log('NOPE');
           return false;
         }
     }
-    console.log('Audit is available for this block height.');
     return true;
   }
 
