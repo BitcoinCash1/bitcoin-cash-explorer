@@ -339,7 +339,8 @@ class MiningRoutes {
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.header('X-total-count', blockCount.toString());
-      res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
+      const expiresMs = ['6m', '1y', '2y', '3y', '4y', 'all'].includes(interval) ? 1000 * 3600 : 1000 * 60;
+      res.setHeader('Expires', new Date(Date.now() + expiresMs).toUTCString());
       res.json({ timeDiffs: blockTimeDiffs });
     } catch (e) {
       handleError(req, res, 500, 'Failed to get historical block time diffs');
