@@ -213,6 +213,10 @@ export class BlockTimesGraphComponent implements OnInit {
                   icon: 'roundRect',
                 },
               ],
+              selected:
+                JSON.parse(
+                  this.storageService?.getValue('block_times_legend') || 'null'
+                ) ?? {},
             },
       grid: {
         top: 30,
@@ -401,6 +405,16 @@ export class BlockTimesGraphComponent implements OnInit {
       return;
     }
     this.chartInstance = ec;
+
+    this.chartInstance.on(
+      'legendselectchanged',
+      (e: { selected: Record<string, boolean> }) => {
+        this.storageService.setValue(
+          'block_times_legend',
+          JSON.stringify(e.selected)
+        );
+      }
+    );
   }
 
   isMobile() {
