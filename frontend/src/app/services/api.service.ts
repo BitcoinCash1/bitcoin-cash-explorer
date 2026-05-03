@@ -12,7 +12,7 @@ import {
   BlockSizes,
   BlockTimeDiffs,
   BlockTxCounts,
-  UtxoSetSize,
+  UtxoSize,
   BlockAudit,
   TestMempoolAcceptResult,
   WalletAddress,
@@ -517,13 +517,13 @@ export class ApiService {
     );
   }
 
-  getHistoricalUtxoSetSize$(
+  getHistoricalUtxoSize$(
     interval: string | undefined
-  ): Observable<HttpResponse<UtxoSetSize>> {
-    return this.httpClient.get<UtxoSetSize>(
+  ): Observable<HttpResponse<UtxoSize>> {
+    return this.httpClient.get<UtxoSize>(
       this.apiBaseUrl +
         this.apiBasePath +
-        `/api/v1/mining/blocks/utxo-set-size` +
+        `/api/v1/mining/blocks/utxo-size` +
         (interval !== undefined ? `/${interval}` : ''),
       { observe: 'response' }
     );

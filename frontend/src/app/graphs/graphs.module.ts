@@ -41,7 +41,7 @@ import { CommonModule } from '@angular/common';
 import { AsmStylerPipe } from '@app/shared/pipes/asm-styler/asm-styler.pipe';
 import { AsertDeviationGraphPageComponent } from '@components/asert-deviation-graph-page/asert-deviation-graph-page.component';
 import { BlockTxCountsGraphComponent } from '@components/block-tx-counts-graph/block-tx-counts-graph.component';
-import { UtxoSetSizeGraphComponent } from '@components/utxo-set-size-graph/utxo-set-size-graph.component';
+import { UtxoSizeGraphComponent } from '@app/components/utxo-size-graph/utxo-size-graph.component';
 
 @NgModule({
   declarations: [
@@ -82,7 +82,7 @@ import { UtxoSetSizeGraphComponent } from '@components/utxo-set-size-graph/utxo-
     AddressesTreemap,
     AsertDeviationGraphPageComponent,
     BlockTxCountsGraphComponent,
-    UtxoSetSizeGraphComponent,
+    UtxoSizeGraphComponent,
   ],
   imports: [
     CommonModule,

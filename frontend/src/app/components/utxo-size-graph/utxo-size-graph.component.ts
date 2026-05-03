@@ -21,9 +21,9 @@ import { download, formatterXAxis } from '@app/shared/graphs.utils';
 import { StateService } from '@app/services/state.service';
 
 @Component({
-  selector: 'app-utxo-set-size-graph',
-  templateUrl: './utxo-set-size-graph.component.html',
-  styleUrls: ['./utxo-set-size-graph.component.scss'],
+  selector: 'app-utxo-size-graph',
+  templateUrl: './utxo-size-graph.component.html',
+  styleUrls: ['./utxo-size-graph.component.scss'],
   styles: [
     `
       .loadingGraphs {
@@ -37,7 +37,7 @@ import { StateService } from '@app/services/state.service';
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class UtxoSetSizeGraphComponent implements OnInit {
+export class UtxoSizeGraphComponent implements OnInit {
   @Input() right: number | string = 45;
   @Input() left: number | string = 75;
 
@@ -51,7 +51,7 @@ export class UtxoSetSizeGraphComponent implements OnInit {
 
   @HostBinding('attr.dir') dir = 'ltr';
 
-  utxoSetSizeObservable$: Observable<any>;
+  utxoSizeObservable$: Observable<any>;
   isLoading = true;
   formatNumber = formatNumber;
   timespan = '';
@@ -105,7 +105,7 @@ export class UtxoSetSizeGraphComponent implements OnInit {
       }
     });
 
-    this.utxoSetSizeObservable$ = this.radioGroupForm
+    this.utxoSizeObservable$ = this.radioGroupForm
       .get('dateSpan')
       .valueChanges.pipe(
         startWith(this.radioGroupForm.controls['dateSpan'].value),
@@ -117,12 +117,12 @@ export class UtxoSetSizeGraphComponent implements OnInit {
           firstRun = false;
           this.miningWindowPreference = timespan;
           this.isLoading = true;
-          return this.apiService.getHistoricalUtxoSetSize$(timespan).pipe(
+          return this.apiService.getHistoricalUtxoSize$(timespan).pipe(
             tap((response) => {
               const raw = response.body.utxos;
               const utxos = raw.map((val: any) => [
                 val.timestamp * 1000,
-                val.avgUtxoSetSize / 1_000_000,
+                val.avgUtxoSize / 1_000_000,
                 val.avgHeight,
               ]);
               this.prepareChartOptions({ utxos });
@@ -312,7 +312,7 @@ export class UtxoSetSizeGraphComponent implements OnInit {
         pixelRatio: 2,
         excludeComponents: ['dataZoom'],
       }),
-      `utxo-set-size-${this.timespan}-${Math.round(now.getTime() / 1000)}.svg`
+      `utxo-size-${this.timespan}-${Math.round(now.getTime() / 1000)}.svg`
     );
     // @ts-ignore
     this.chartOptions.grid.bottom = prevBottom;

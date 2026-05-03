@@ -955,12 +955,12 @@ class BlocksRepository {
     }
   }
 
-  public async $getHistoricalUtxoSetSize(div: number, interval: string | null): Promise<any> {
+  public async $getHistoricalUtxoSize(div: number, interval: string | null): Promise<any> {
     try {
       let query = `SELECT
         CAST(AVG(height) as INT) as avgHeight,
         CAST(AVG(UNIX_TIMESTAMP(blockTimestamp)) as INT) as timestamp,
-        CAST(AVG(utxoset_size) as INT) as avgUtxoSetSize
+        CAST(AVG(utxoset_size) as INT) as avgUtxoSize
       FROM blocks
       WHERE stale = 0 AND utxoset_size IS NOT NULL`;
 

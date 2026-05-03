@@ -209,11 +209,11 @@ export interface BlockTxCounts {
   }[];
 }
 
-export interface UtxoSetSize {
+export interface UtxoSize {
   utxos: {
     timestamp: number;
     avgHeight: number;
-    avgUtxoSetSize: number;
+    avgUtxoSize: number;
   }[];
 }
 

@@ -5134,21 +5134,21 @@ export const restApiDocsData = [
     type: 'endpoint',
     category: 'mining',
     httpRequestMethod: 'GET',
-    fragment: 'get-utxo-set-size',
-    title: 'GET UTXO Set Size',
+    fragment: 'get-utxo-size',
+    title: 'GET UTXO',
     description: {
       default:
-        '<p>Returns the average UTXO set size (total unspent transaction outputs) per block for the specified <code>:timePeriod</code>, ordered oldest to newest. <code>:timePeriod</code> can be any of the following: ' +
+        '<p>Returns the average UTXO (total unspent transaction outputs) per block for the specified <code>:timePeriod</code>, ordered oldest to newest. <code>:timePeriod</code> can be any of the following: ' +
         miningTimeIntervals +
         '.</p><p>Only blocks with indexed coin stats data are included. For <code>24h</code> and <code>3d</code> time periods, every indexed block is included. For longer time periods, figures are averages per time bucket.</p>',
     },
-    urlString: '/v1/mining/blocks/utxo-set-size/:timePeriod',
+    urlString: '/v1/mining/blocks/utxo-size/:timePeriod',
     showConditions: bitcoinNetworks,
     showJsExamples: showJsExamplesDefaultFalse,
     codeExample: {
       default: {
         codeTemplate: {
-          curl: `/api/v1/mining/blocks/utxo-set-size/%{1}`,
+          curl: `/api/v1/mining/blocks/utxo-size/%{1}`,
           commonJS: ``,
           esModule: ``,
         },

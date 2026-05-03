@@ -105,11 +105,8 @@ class Mining {
     );
   }
 
-  public async $getHistoricalUtxoSetSize(interval: string | null = null): Promise<any> {
-    return await BlocksRepository.$getHistoricalUtxoSetSize(
-      this.getTimeRange(interval),
-      Common.getSqlInterval(interval)
-    );
+  public async $getHistoricalUtxoSize(interval: string | null = null): Promise<any> {
+    return await BlocksRepository.$getHistoricalUtxoSize(this.getTimeRange(interval), Common.getSqlInterval(interval));
   }
 
   /**
