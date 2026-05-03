@@ -269,6 +269,10 @@
                 <source xml:space="preserve">Hashrate (1w)</source>
                 <target xml:space="preserve">Prędkość haszowania (1t)</target>
             </trans-unit>
+            <trans-unit id="2206293708798473637">
+                <source xml:space="preserve">SMA 144</source>
+                <target xml:space="preserve">SMA 144</target>
+            </trans-unit>
             <trans-unit id="2207130182560822950">
                 <source xml:space="preserve">Winning</source>
                 <target xml:space="preserve">Zwycięski</target>
@@ -1442,6 +1446,10 @@
             <trans-unit id="6721450802285322732">
                 <source xml:space="preserve"> Included in block </source>
                 <target xml:space="preserve"> Included in block </target>
+            </trans-unit>
+            <trans-unit id="6723383211174802747">
+                <source xml:space="preserve">Median</source>
+                <target xml:space="preserve">Median</target>
             </trans-unit>
             <trans-unit id="6750241941765637299">
                 <source xml:space="preserve">Size</source>
