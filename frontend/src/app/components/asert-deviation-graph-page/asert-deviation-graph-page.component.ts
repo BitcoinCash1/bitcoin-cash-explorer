@@ -91,9 +91,19 @@ export class AsertDeviationGraphPageComponent implements OnInit {
 
     this.route.fragment.subscribe((fragment) => {
       if (
-        ['24h', '3d', '1w', '1m', '3m', '6m', '1y', '2y', '3y', 'all'].indexOf(
-          fragment
-        ) > -1
+        [
+          '24h',
+          '3d',
+          '1w',
+          '1m',
+          '3m',
+          '6m',
+          '1y',
+          '2y',
+          '3y',
+          '4y',
+          'all',
+        ].indexOf(fragment) > -1
       ) {
         this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
           emitEvent: false,
@@ -145,7 +155,7 @@ export class AsertDeviationGraphPageComponent implements OnInit {
   }
 
   private calculateFromHeight(timespan: string, currentHeight: number): number {
-    const blocksPerDay = 144;
+    const blocksPerDay = 144; // Just an approximation (the actual number can varies a lot)
     let blocksBack: number;
 
     switch (timespan) {
@@ -175,6 +185,9 @@ export class AsertDeviationGraphPageComponent implements OnInit {
         break;
       case '3y':
         blocksBack = blocksPerDay * 1095;
+        break;
+      case '4y':
+        blocksBack = blocksPerDay * 1460;
         break;
       case 'all':
         return ASERT_ANCHOR_HEIGHT;

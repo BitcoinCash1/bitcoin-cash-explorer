@@ -132,6 +132,18 @@
           />
           <label class="btn btn-purple btn-sm" for="asert-3y">3Y</label>
         </ng-container>
+        <ng-container *ngIf="stats.blockCount >= 200640">
+          <input
+            type="radio"
+            class="btn-check"
+            id="asert-4y"
+            [value]="'4y'"
+            fragment="4y"
+            [routerLink]="['/graphs/mining/asert-deviation' | relativeUrl]"
+            formControlName="dateSpan"
+          />
+          <label class="btn btn-purple btn-sm" for="asert-4y">4Y</label>
+        </ng-container>
         <input
           type="radio"
           class="btn-check"
