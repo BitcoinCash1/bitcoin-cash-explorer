@@ -405,10 +405,6 @@
                 <source xml:space="preserve">Actual</source>
                 <target xml:space="preserve">实际区块</target>
             </trans-unit>
-            <trans-unit id="2630099551214914146">
-                <source xml:space="preserve">UTXO Size</source>
-                <target xml:space="preserve">UTXO Size</target>
-            </trans-unit>
             <trans-unit id="2652050456833268583">
                 <source xml:space="preserve"> Recent Transactions </source>
                 <target xml:space="preserve"> 最近交易 </target>
@@ -1436,6 +1432,10 @@
             <trans-unit id="6673915014332700227">
                 <source xml:space="preserve">Amount (sats)</source>
                 <target xml:space="preserve">数量（聪）</target>
+            </trans-unit>
+            <trans-unit id="6685040638257748438">
+                <source xml:space="preserve">UTXO Count</source>
+                <target xml:space="preserve">UTXO Count</target>
             </trans-unit>
             <trans-unit id="6698602804540558682">
                 <source xml:space="preserve">Empty Blocks</source>
