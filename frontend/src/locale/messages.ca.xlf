@@ -217,6 +217,10 @@
                 <source xml:space="preserve"> Hide diagram </source>
                 <target xml:space="preserve"> Hide diagram </target>
             </trans-unit>
+            <trans-unit id="2014501481765374056">
+                <source xml:space="preserve">See the total number of unspent transaction outputs (UTXOs) on the Bitcoin Cash network over time.</source>
+                <target xml:space="preserve">See the total number of unspent transaction outputs (UTXOs) on the Bitcoin Cash network over time.</target>
+            </trans-unit>
             <trans-unit id="2041675390931385838">
                 <source xml:space="preserve">Health</source>
                 <target xml:space="preserve">Health</target>
@@ -280,6 +284,10 @@
             <trans-unit id="2238078017374559466">
                 <source xml:space="preserve">Pools Luck</source>
                 <target xml:space="preserve">Pools Luck</target>
+            </trans-unit>
+            <trans-unit id="2238469337972459496">
+                <source xml:space="preserve">Block Time</source>
+                <target xml:space="preserve">Block Time</target>
             </trans-unit>
             <trans-unit id="2256671562401574389">
                 <source xml:space="preserve">blocks earlier</source>
@@ -392,6 +400,10 @@
             <trans-unit id="2628961601867476622">
                 <source xml:space="preserve">Actual</source>
                 <target xml:space="preserve">Actual</target>
+            </trans-unit>
+            <trans-unit id="2630099551214914146">
+                <source xml:space="preserve">UTXO Size</source>
+                <target xml:space="preserve">UTXO Size</target>
             </trans-unit>
             <trans-unit id="2652050456833268583">
                 <source xml:space="preserve"> Recent Transactions </source>
@@ -532,6 +544,10 @@
             <trans-unit id="3088064334969042235">
                 <source xml:space="preserve">Special Blocks</source>
                 <target xml:space="preserve">Special Blocks</target>
+            </trans-unit>
+            <trans-unit id="3090889139796775910">
+                <source xml:space="preserve">See the average number of transactions per Bitcoin Cash block over time.</source>
+                <target xml:space="preserve">See the average number of transactions per Bitcoin Cash block over time.</target>
             </trans-unit>
             <trans-unit id="3112239269637020392">
                 <source xml:space="preserve">sats/tx</source>
@@ -696,6 +712,10 @@
             <trans-unit id="3750067297809998641">
                 <source xml:space="preserve">This transaction was missing from our mempool prior to mining</source>
                 <target xml:space="preserve">This transaction was missing from our mempool prior to mining</target>
+            </trans-unit>
+            <trans-unit id="3778096356145390312">
+                <source xml:space="preserve">Unspent Transaction Outputs</source>
+                <target xml:space="preserve">Unspent Transaction Outputs</target>
             </trans-unit>
             <trans-unit id="3781457392965972953">
                 <source xml:space="preserve">Hashrate</source>
@@ -1016,6 +1036,10 @@
                 <source xml:space="preserve">Transaction cannot be broadcasted because it&apos;s missing or has an invalid signature</source>
                 <target xml:space="preserve">Transaction cannot be broadcasted because it&apos;s missing or has an invalid signature</target>
             </trans-unit>
+            <trans-unit id="4966581410303731134">
+                <source xml:space="preserve">See Bitcoin Cash block time variation over time.</source>
+                <target xml:space="preserve">See Bitcoin Cash block time variation over time.</target>
+            </trans-unit>
             <trans-unit id="4980628658981044012">
                 <source xml:space="preserve">nSequence</source>
                 <target xml:space="preserve">nSequence</target>
@@ -1052,6 +1076,10 @@
                 <source xml:space="preserve">Change (30d)</source>
                 <target xml:space="preserve">Change (30d)</target>
             </trans-unit>
+            <trans-unit id="5143204595795749226">
+                <source xml:space="preserve">Block Time Variation</source>
+                <target xml:space="preserve">Block Time Variation</target>
+            </trans-unit>
             <trans-unit id="5151697515296180479">
                 <source xml:space="preserve">Either 2x the minimum, or the Low Priority rate (whichever is lower)</source>
                 <target xml:space="preserve">Either 2x the minimum, or the Low Priority rate (whichever is lower)</target>
@@ -1075,6 +1103,10 @@
             <trans-unit id="5183104988417550665">
                 <source xml:space="preserve"> Hash </source>
                 <target xml:space="preserve"> Hash </target>
+            </trans-unit>
+            <trans-unit id="5190281097971514213">
+                <source xml:space="preserve">Transactions Per Block</source>
+                <target xml:space="preserve">Transactions Per Block</target>
             </trans-unit>
             <trans-unit id="5246516893505114366">
                 <source xml:space="preserve">BCH Holdings</source>
