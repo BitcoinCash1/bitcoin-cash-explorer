@@ -59,11 +59,11 @@ class Mining {
 
   /**
    * Should we cache the result for this interval in Valkey? We cache only longer intervals that are not expected to change often and that are more expensive to compute.
-   * @param interval interval string (or null for 'all')
+   * @param interval interval string (e.g. '6m', '1y', 'all', etc.). All is the same as null in the end.
    * @returns true if the result should be cached (and valkey is enabled), false otherwise
    */
   private shouldCache(interval: string | null): boolean {
-    const cacheableIntervals = ['6m', '1y', '2y', '3y', '4y', null];
+    const cacheableIntervals = ['6m', '1y', '2y', '3y', '4y', 'all', null];
     return cacheableIntervals.includes(interval) && config.VALKEY.ENABLED;
   }
 

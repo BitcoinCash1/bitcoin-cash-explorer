@@ -13,14 +13,6 @@ import { handleError } from '../../utils/api';
 class MiningRoutes {
   private static readonly VALID_INTERVALS = ['24h', '3d', '1w', '1m', '3m', '6m', '1y', '2y', '3y', '4y', 'all'];
 
-  private static validateInterval(req: Request, res: Response): boolean {
-    if (!MiningRoutes.VALID_INTERVALS.includes(req.params.interval)) {
-      handleError(req, res, 400, 'Invalid interval');
-      return false;
-    }
-    return true;
-  }
-
   public initRoutes(app: Application) {
     app
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/pools', this.$listPools)
@@ -51,6 +43,23 @@ class MiningRoutes {
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/asert/:blockheight', this.$getAsertBlocks)
       .get(config.EXPLORER.API_URL_PREFIX + 'historical-price', this.$getHistoricalPrice)
       .get(config.EXPLORER.API_URL_PREFIX + 'internal/mining/hashrate/reindex', this.$reindexAllHashrate);
+  }
+
+  private static validateInterval(req: Request, res: Response): boolean {
+    // Interval can also be null / empty
+    if (!req.params.interval) {
+      return true;
+    } else if (!MiningRoutes.VALID_INTERVALS.includes(req.params.interval)) {
+      handleError(req, res, 400, 'Invalid interval');
+      return false;
+    }
+    return true;
+  }
+
+  private static getExpiresMsForInterval(interval: string): number {
+    // For intervals of 6 months or more, browser can cache for 30 minutes, otherwise cache for 1 minute
+    // Which is also more in line with the Valkey expire times for higher intervals.
+    return ['6m', '1y', '2y', '3y', '4y', 'all'].includes(interval) ? 1000 * 1800 : 1000 * 60;
   }
 
   private async $getHistoricalPrice(req: Request, res: Response): Promise<void> {
@@ -151,7 +160,7 @@ class MiningRoutes {
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.header('X-total-count', blockCount.toString());
-      res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
+      res.setHeader('Expires', new Date(Date.now() + MiningRoutes.getExpiresMsForInterval(interval)).toUTCString());
       res.json(stats);
     } catch (e) {
       handleError(req, res, 500, 'Failed to get pools');
@@ -241,7 +250,7 @@ class MiningRoutes {
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.header('X-total-count', blockCount.toString());
-      res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
+      res.setHeader('Expires', new Date(Date.now() + MiningRoutes.getExpiresMsForInterval(interval)).toUTCString());
       res.json(blockFees);
     } catch (e) {
       handleError(req, res, 500, 'Failed to get historical block fees');
@@ -281,7 +290,7 @@ class MiningRoutes {
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.header('X-total-count', blockCount.toString());
-      res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
+      res.setHeader('Expires', new Date(Date.now() + MiningRoutes.getExpiresMsForInterval(interval)).toUTCString());
       res.json(blockRewards);
     } catch (e) {
       handleError(req, res, 500, 'Failed to get historical block rewards');
@@ -300,7 +309,7 @@ class MiningRoutes {
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.header('X-total-count', blockCount.toString());
-      res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
+      res.setHeader('Expires', new Date(Date.now() + MiningRoutes.getExpiresMsForInterval(interval)).toUTCString());
       res.json(blockFeeRates);
     } catch (e) {
       handleError(req, res, 500, 'Failed to get historical block fee rates');
@@ -319,7 +328,7 @@ class MiningRoutes {
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.header('X-total-count', blockCount.toString());
-      res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
+      res.setHeader('Expires', new Date(Date.now() + MiningRoutes.getExpiresMsForInterval(interval)).toUTCString());
       res.json({
         sizes: blockSizes,
       });
@@ -339,8 +348,7 @@ class MiningRoutes {
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.header('X-total-count', blockCount.toString());
-      const expiresMs = ['6m', '1y', '2y', '3y', '4y', 'all'].includes(interval) ? 1000 * 3600 : 1000 * 60;
-      res.setHeader('Expires', new Date(Date.now() + expiresMs).toUTCString());
+      res.setHeader('Expires', new Date(Date.now() + MiningRoutes.getExpiresMsForInterval(interval)).toUTCString());
       res.json({ timeDiffs: blockTimeDiffs });
     } catch (e) {
       handleError(req, res, 500, 'Failed to get historical block time diffs');
@@ -358,7 +366,7 @@ class MiningRoutes {
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.header('X-total-count', blockCount.toString());
-      res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
+      res.setHeader('Expires', new Date(Date.now() + MiningRoutes.getExpiresMsForInterval(interval)).toUTCString());
       res.json({ transactions: txCounts });
     } catch (e) {
       handleError(req, res, 500, 'Failed to get historical block tx counts');
@@ -376,7 +384,7 @@ class MiningRoutes {
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.header('X-total-count', blockCount.toString());
-      res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
+      res.setHeader('Expires', new Date(Date.now() + MiningRoutes.getExpiresMsForInterval(interval)).toUTCString());
       res.json({ utxos: utxoData });
     } catch (e) {
       handleError(req, res, 500, 'Failed to get historical UTXO size');
@@ -422,7 +430,7 @@ class MiningRoutes {
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.header('X-total-count', blockCount.toString());
-      res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
+      res.setHeader('Expires', new Date(Date.now() + MiningRoutes.getExpiresMsForInterval(interval)).toUTCString());
       res.json(blocksHealth.map((health) => [health.time, health.height, health.match_rate]));
     } catch (e) {
       handleError(req, res, 500, 'Failed to get historical blocks health');
@@ -493,6 +501,7 @@ class MiningRoutes {
       handleError(req, res, 500, 'Failed to get block audit score');
     }
   }
+
   private async $reindexAllHashrate(req: Request, res: Response): Promise<void> {
     try {
       logger.info('Internal API: Triggering forced hashrate reindex from 1 year ago');
