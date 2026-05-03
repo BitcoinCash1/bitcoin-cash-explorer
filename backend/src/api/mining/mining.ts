@@ -72,9 +72,9 @@ class Mining {
    */
   public async $getBlocksHealthHistory(interval: string | null = null): Promise<any> {
     const shouldCache = this.shouldCache(interval);
+    const cacheKey = `mining:historical-blocks-health-${interval || 'all'}`;
 
     if (shouldCache) {
-      const cacheKey = `historical-blocks-health-${interval || 'all'}`;
       try {
         const cachedData = await valkeyCache.$getCache(cacheKey);
         if (cachedData) {
@@ -93,7 +93,6 @@ class Mining {
     );
 
     if (shouldCache) {
-      const cacheKey = `historical-blocks-health-${interval || 'all'}`;
       try {
         await valkeyCache.$setCache(cacheKey, JSON.stringify(data), this.getCacheTTL(interval));
       } catch (e) {
@@ -109,9 +108,9 @@ class Mining {
    */
   public async $getHistoricalBlockFees(interval: string | null = null): Promise<any> {
     const shouldCache = this.shouldCache(interval);
+    const cacheKey = `mining:historical-block-fees-${interval || 'all'}`;
 
     if (shouldCache) {
-      const cacheKey = `historical-block-fees-${interval || 'all'}`;
       try {
         const cachedData = await valkeyCache.$getCache(cacheKey);
         if (cachedData) {
@@ -130,7 +129,6 @@ class Mining {
     );
 
     if (shouldCache) {
-      const cacheKey = `historical-block-fees-${interval || 'all'}`;
       try {
         await valkeyCache.$setCache(cacheKey, JSON.stringify(data), this.getCacheTTL(interval));
       } catch (e) {
@@ -153,9 +151,9 @@ class Mining {
    */
   public async $getHistoricalBlockRewards(interval: string | null = null): Promise<any> {
     const shouldCache = this.shouldCache(interval);
+    const cacheKey = `mining:historical-block-rewards-${interval || 'all'}`;
 
     if (shouldCache) {
-      const cacheKey = `historical-block-rewards-${interval || 'all'}`;
       try {
         const cachedData = await valkeyCache.$getCache(cacheKey);
         if (cachedData) {
@@ -174,7 +172,6 @@ class Mining {
     );
 
     if (shouldCache) {
-      const cacheKey = `historical-block-rewards-${interval || 'all'}`;
       try {
         await valkeyCache.$setCache(cacheKey, JSON.stringify(data), this.getCacheTTL(interval));
       } catch (e) {
@@ -190,9 +187,9 @@ class Mining {
    */
   public async $getHistoricalBlockFeeRates(interval: string | null = null): Promise<any> {
     const shouldCache = this.shouldCache(interval);
+    const cacheKey = `mining:historical-block-fee-rates-${interval || 'all'}`;
 
     if (shouldCache) {
-      const cacheKey = `historical-block-fee-rates-${interval || 'all'}`;
       try {
         const cachedData = await valkeyCache.$getCache(cacheKey);
         if (cachedData) {
@@ -211,7 +208,6 @@ class Mining {
     );
 
     if (shouldCache) {
-      const cacheKey = `historical-block-fee-rates-${interval || 'all'}`;
       try {
         await valkeyCache.$setCache(cacheKey, JSON.stringify(data), this.getCacheTTL(interval));
       } catch (e) {
@@ -227,9 +223,9 @@ class Mining {
    */
   public async $getHistoricalBlockSizes(interval: string | null = null): Promise<any> {
     const shouldCache = this.shouldCache(interval);
+    const cacheKey = `mining:historical-block-sizes-${interval || 'all'}`;
 
     if (shouldCache) {
-      const cacheKey = `historical-block-sizes-${interval || 'all'}`;
       try {
         const cachedData = await valkeyCache.$getCache(cacheKey);
         if (cachedData) {
@@ -248,7 +244,6 @@ class Mining {
     );
 
     if (shouldCache) {
-      const cacheKey = `historical-block-sizes-${interval || 'all'}`;
       try {
         await valkeyCache.$setCache(cacheKey, JSON.stringify(data), this.getCacheTTL(interval));
       } catch (e) {
@@ -261,9 +256,9 @@ class Mining {
 
   public async $getHistoricalBlockTimeDiffs(interval: string | null = null): Promise<any> {
     const shouldCache = this.shouldCache(interval);
+    const cacheKey = `mining:historical-block-time-diffs-${interval || 'all'}`;
 
     if (shouldCache) {
-      const cacheKey = `historical-block-time-diffs-${interval || 'all'}`;
       try {
         const cachedData = await valkeyCache.$getCache(cacheKey);
         if (cachedData) {
@@ -282,7 +277,6 @@ class Mining {
     );
 
     if (shouldCache) {
-      const cacheKey = `historical-block-time-diffs-${interval || 'all'}`;
       try {
         await valkeyCache.$setCache(cacheKey, JSON.stringify(data), this.getCacheTTL(interval));
       } catch (e) {
@@ -295,9 +289,9 @@ class Mining {
 
   public async $getHistoricalBlockTxCounts(interval: string | null = null): Promise<any> {
     const shouldCache = this.shouldCache(interval);
+    const cacheKey = `mining:historical-block-tx-counts-${interval || 'all'}`;
 
     if (shouldCache) {
-      const cacheKey = `historical-block-tx-counts-${interval || 'all'}`;
       try {
         const cachedData = await valkeyCache.$getCache(cacheKey);
         if (cachedData) {
@@ -316,7 +310,6 @@ class Mining {
     );
 
     if (shouldCache) {
-      const cacheKey = `historical-block-tx-counts-${interval || 'all'}`;
       try {
         await valkeyCache.$setCache(cacheKey, JSON.stringify(data), this.getCacheTTL(interval));
       } catch (e) {
@@ -329,9 +322,9 @@ class Mining {
 
   public async $getHistoricalUtxoSize(interval: string | null = null): Promise<any> {
     const shouldCache = this.shouldCache(interval);
+    const cacheKey = `mining:historical-utxo-size-${interval || 'all'}`;
 
     if (shouldCache) {
-      const cacheKey = `historical-utxo-size-${interval || 'all'}`;
       try {
         const cachedData = await valkeyCache.$getCache(cacheKey);
         if (cachedData) {
@@ -348,7 +341,6 @@ class Mining {
     );
 
     if (shouldCache) {
-      const cacheKey = `historical-utxo-size-${interval || 'all'}`;
       try {
         await valkeyCache.$setCache(cacheKey, JSON.stringify(data), this.getCacheTTL(interval));
       } catch (e) {
@@ -364,9 +356,9 @@ class Mining {
    */
   public async $getPoolsStats(interval: string | null): Promise<object> {
     const shouldCache = this.shouldCache(interval);
+    const cacheKey = `mining:pools-stats-${interval || 'all'}`;
 
     if (shouldCache) {
-      const cacheKey = `pools-stats-${interval || 'all'}`;
       try {
         const cachedData = await valkeyCache.$getCache(cacheKey);
         if (cachedData) {
@@ -421,7 +413,6 @@ class Mining {
     }
 
     if (shouldCache) {
-      const cacheKey = `pools-stats-${interval || 'all'}`;
       try {
         await valkeyCache.$setCache(cacheKey, JSON.stringify(poolsStatistics), this.getCacheTTL(interval));
       } catch (e) {
@@ -1368,9 +1359,9 @@ class Mining {
     }
 
     const currentTipHeight = blocks.getCurrentBlockHeight();
+    const cacheKey = `mining:asert-blocks-${fromHeight}`;
 
     // Check Valkey cache first
-    const cacheKey = `asert-blocks-${fromHeight}`;
     if (config.VALKEY.ENABLED) {
       try {
         const cachedData = await valkeyCache.$getCache(cacheKey);
@@ -1400,7 +1391,10 @@ class Mining {
     // Cache the result in Valkey
     if (config.VALKEY.ENABLED) {
       try {
-        await valkeyCache.$setCache(cacheKey, JSON.stringify(finalData), 300);
+        // Cache duration logic: if we have <= 1000 blocks, cache for 1 minute. For every additional 1000 blocks, add 5 minutes, up to a max of 1 hour.
+        const cacheDuration =
+          blocksData.length <= 1000 ? 60 : Math.min(Math.ceil((blocksData.length - 1000) / 1000) * 300, 3600);
+        await valkeyCache.$setCache(cacheKey, JSON.stringify(finalData), cacheDuration);
       } catch (e) {
         logger.warn(`Failed to cache ASERT blocks in Valkey: ${e instanceof Error ? e.message : e}`);
       }
