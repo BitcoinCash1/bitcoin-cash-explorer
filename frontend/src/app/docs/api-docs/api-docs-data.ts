@@ -4954,6 +4954,96 @@ export const restApiDocsData = [
     type: 'endpoint',
     category: 'mining',
     httpRequestMethod: 'GET',
+    fragment: 'get-block-timestamps',
+    title: 'GET Block Time Diffs',
+    description: {
+      default:
+        '<p>Returns the time difference (in seconds) between consecutive blocks for the specified <code>:timePeriod</code>, ordered oldest to newest. <code>:timePeriod</code> can be any of the following: ' +
+        miningTimeIntervals +
+        '.</p><p>For <code>24h</code> and <code>3d</code> time periods, every block is included with exact time diffs. For longer time periods, the time diffs are averaged per time bucket.</p>',
+    },
+    urlString: '/v1/mining/blocks/timestamps/:timePeriod',
+    showConditions: bitcoinNetworks,
+    showJsExamples: showJsExamplesDefaultFalse,
+    codeExample: {
+      default: {
+        codeTemplate: {
+          curl: `/api/v1/mining/blocks/timestamps/%{1}`,
+          commonJS: ``,
+          esModule: ``,
+        },
+        codeSampleMainnet: {
+          esModule: [],
+          commonJS: [],
+          curl: [`3y`],
+          response: `{
+  "timeDiffs": [
+    {
+      "avgHeight": 576650,
+      "timestamp": 1558212081,
+      "avgTimeDiff": 598
+    },
+    {
+      "avgHeight": 576715,
+      "timestamp": 1558246272,
+      "avgTimeDiff": 612
+    },
+    {
+      "avgHeight": 576797,
+      "timestamp": 1558289379,
+      "avgTimeDiff": 605
+    },
+    ...
+  ]
+}`,
+        },
+        codeSampleTestnet: {
+          esModule: [],
+          commonJS: [],
+          curl: [`3y`],
+          response: `{
+  "timeDiffs": [
+    {
+      "avgHeight": 1517188,
+      "timestamp": 1558262730,
+      "avgTimeDiff": 588
+    },
+    {
+      "avgHeight": 1517275,
+      "timestamp": 1558290933,
+      "avgTimeDiff": 601
+    },
+    ...
+  ]
+}`,
+        },
+        codeSampleSignet: {
+          esModule: [],
+          commonJS: [],
+          curl: [`3y`],
+          response: `{
+  "timeDiffs": [
+    {
+      "avgHeight": 83,
+      "timestamp": 1598937527,
+      "avgTimeDiff": 613
+    },
+    {
+      "avgHeight": 266,
+      "timestamp": 1598982991,
+      "avgTimeDiff": 597
+    },
+    ...
+  ]
+}`,
+        },
+      },
+    },
+  },
+  {
+    type: 'endpoint',
+    category: 'mining',
+    httpRequestMethod: 'GET',
     fragment: 'get-block-predictions',
     title: 'GET Block Predictions',
     description: {
