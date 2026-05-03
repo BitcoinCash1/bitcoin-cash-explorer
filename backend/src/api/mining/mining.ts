@@ -1391,9 +1391,9 @@ class Mining {
     // Cache the result in Valkey
     if (config.VALKEY.ENABLED) {
       try {
-        // Cache duration logic: if we have <= 1000 blocks, cache for 1 minute. For every additional 1000 blocks, add 5 minutes, up to a max of 1 hour.
+        // Set cache duration based on data size: 1 min for <=1000 blocks, then increase by 3 min for every additional 1000 blocks, up to a max of 2 hours
         const cacheDuration =
-          blocksData.length <= 1000 ? 60 : Math.min(Math.ceil((blocksData.length - 1000) / 1000) * 300, 3600);
+          blocksData.length <= 1000 ? 60 : Math.min(60 + Math.ceil((blocksData.length - 1000) / 1000) * 180, 7200);
         await valkeyCache.$setCache(cacheKey, JSON.stringify(finalData), cacheDuration);
       } catch (e) {
         logger.warn(`Failed to cache ASERT blocks in Valkey: ${e instanceof Error ? e.message : e}`);
