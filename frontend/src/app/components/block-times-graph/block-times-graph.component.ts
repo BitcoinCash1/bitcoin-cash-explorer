@@ -58,6 +58,7 @@ export class BlockTimesGraphComponent implements OnInit {
   formatNumber = formatNumber;
   timespan = '';
   chartInstance: any = undefined;
+  private currentMedian = 0;
 
   constructor(
     @Inject(LOCALE_ID) public locale: string,
@@ -139,7 +140,37 @@ export class BlockTimesGraphComponent implements OnInit {
       );
   }
 
+  private computeSma(timeDiffs: number[][], window: number): number[][] {
+    return timeDiffs.map((point, i) => {
+      const start = Math.max(0, i - window + 1);
+      const slice = timeDiffs.slice(start, i + 1);
+      const avg = slice.reduce((sum, p) => sum + p[1], 0) / slice.length;
+      return [point[0], avg, point[2]];
+    });
+  }
+
+  private computeMedianLine(timeDiffs: number[][]): number[][] {
+    if (timeDiffs.length === 0) return [];
+    const sorted = timeDiffs.map((p) => p[1]).sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    this.currentMedian =
+      sorted.length % 2 === 0
+        ? (sorted[mid - 1] + sorted[mid]) / 2
+        : sorted[mid];
+    return [
+      [timeDiffs[0][0], this.currentMedian, timeDiffs[0][2]],
+      [
+        timeDiffs[timeDiffs.length - 1][0],
+        this.currentMedian,
+        timeDiffs[timeDiffs.length - 1][2],
+      ],
+    ];
+  }
+
   prepareChartOptions(data) {
+    const smaData = this.computeSma(data.timeDiffs, 144);
+    const medianData = this.computeMedianLine(data.timeDiffs);
+
     let title: object;
     if (data.timeDiffs.length === 0) {
       title = {
@@ -156,7 +187,33 @@ export class BlockTimesGraphComponent implements OnInit {
     this.chartOptions = {
       title: title,
       animation: false,
-      color: ['#FDD835'],
+      color: ['#FDD835', '#FF6B6B', '#4FC3F7'],
+      legend:
+        data.timeDiffs.length === 0
+          ? undefined
+          : {
+              top: 0,
+              data: [
+                {
+                  name: $localize`Block Time`,
+                  inactiveColor: 'rgb(110, 112, 121)',
+                  textStyle: { color: 'var(--fg)' },
+                  icon: 'roundRect',
+                },
+                {
+                  name: $localize`SMA 144`,
+                  inactiveColor: 'rgb(110, 112, 121)',
+                  textStyle: { color: 'var(--fg)' },
+                  icon: 'roundRect',
+                },
+                {
+                  name: $localize`Median`,
+                  inactiveColor: 'rgb(110, 112, 121)',
+                  textStyle: { color: 'var(--fg)' },
+                  icon: 'roundRect',
+                },
+              ],
+            },
       grid: {
         top: 30,
         bottom: 70,
@@ -185,14 +242,13 @@ export class BlockTimesGraphComponent implements OnInit {
           )}</b><br>`;
 
           for (const tick of ticks) {
-            if (tick.seriesIndex === 0) {
+            if ([0, 1].includes(tick.seriesIndex)) {
               tooltip += `${tick.marker} ${tick.seriesName}: ${formatNumber(
                 tick.data[1],
                 this.locale,
                 '1.2-2'
-              )} min`;
+              )} min<br>`;
             }
-            tooltip += `<br>`;
           }
 
           if (['24h', '3d'].includes(this.timespan)) {
@@ -262,7 +318,7 @@ export class BlockTimesGraphComponent implements OnInit {
                     type: 'solid',
                     color: 'var(--transparent-fg)',
                     opacity: 1,
-                    width: 1,
+                    width: 2,
                   },
                   data: [
                     {
@@ -275,6 +331,37 @@ export class BlockTimesGraphComponent implements OnInit {
                       },
                     },
                   ],
+                },
+              },
+              {
+                zlevel: 2,
+                name: $localize`SMA 144`,
+                showSymbol: false,
+                symbol: 'none',
+                data: smaData,
+                type: 'line',
+                lineStyle: {
+                  width: 2,
+                  color: '#FF6B6B',
+                },
+                itemStyle: {
+                  color: '#FF6B6B',
+                },
+              },
+              {
+                zlevel: 3,
+                name: $localize`Median`,
+                showSymbol: false,
+                symbol: 'none',
+                data: medianData,
+                type: 'line',
+                lineStyle: {
+                  width: 2,
+                  type: 'dashed',
+                  color: '#4FC3F7',
+                },
+                itemStyle: {
+                  color: '#4FC3F7',
                 },
               },
             ],
