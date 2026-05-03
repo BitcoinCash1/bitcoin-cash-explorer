@@ -71,10 +71,37 @@ class Mining {
    * Get historical blocks health
    */
   public async $getBlocksHealthHistory(interval: string | null = null): Promise<any> {
-    return await BlocksAuditsRepository.$getBlocksHealthHistory(
+    const shouldCache = this.shouldCache(interval);
+
+    if (shouldCache) {
+      const cacheKey = `historical-blocks-health-${interval || 'all'}`;
+      try {
+        const cachedData = await valkeyCache.$getCache(cacheKey);
+        if (cachedData) {
+          return JSON.parse(cachedData);
+        }
+      } catch (e) {
+        logger.warn(
+          `Failed to retrieve historical blocks health from Valkey cache: ${e instanceof Error ? e.message : e}`
+        );
+      }
+    }
+
+    const data = await BlocksAuditsRepository.$getBlocksHealthHistory(
       this.getTimeRange(interval),
       Common.getSqlInterval(interval)
     );
+
+    if (shouldCache) {
+      const cacheKey = `historical-blocks-health-${interval || 'all'}`;
+      try {
+        await valkeyCache.$setCache(cacheKey, JSON.stringify(data), this.getCacheTTL(interval));
+      } catch (e) {
+        logger.warn(`Failed to cache historical blocks health in Valkey: ${e instanceof Error ? e.message : e}`);
+      }
+    }
+
+    return data;
   }
 
   /**
@@ -162,10 +189,37 @@ class Mining {
    * Get historical block fee rates percentiles
    */
   public async $getHistoricalBlockFeeRates(interval: string | null = null): Promise<any> {
-    return await BlocksRepository.$getHistoricalBlockFeeRates(
+    const shouldCache = this.shouldCache(interval);
+
+    if (shouldCache) {
+      const cacheKey = `historical-block-fee-rates-${interval || 'all'}`;
+      try {
+        const cachedData = await valkeyCache.$getCache(cacheKey);
+        if (cachedData) {
+          return JSON.parse(cachedData);
+        }
+      } catch (e) {
+        logger.warn(
+          `Failed to retrieve historical block fee rates from Valkey cache: ${e instanceof Error ? e.message : e}`
+        );
+      }
+    }
+
+    const data = await BlocksRepository.$getHistoricalBlockFeeRates(
       this.getTimeRange(interval),
       Common.getSqlInterval(interval)
     );
+
+    if (shouldCache) {
+      const cacheKey = `historical-block-fee-rates-${interval || 'all'}`;
+      try {
+        await valkeyCache.$setCache(cacheKey, JSON.stringify(data), this.getCacheTTL(interval));
+      } catch (e) {
+        logger.warn(`Failed to cache historical block fee rates in Valkey: ${e instanceof Error ? e.message : e}`);
+      }
+    }
+
+    return data;
   }
 
   /**
@@ -240,14 +294,69 @@ class Mining {
   }
 
   public async $getHistoricalBlockTxCounts(interval: string | null = null): Promise<any> {
-    return await BlocksRepository.$getHistoricalBlockTxCounts(
+    const shouldCache = this.shouldCache(interval);
+
+    if (shouldCache) {
+      const cacheKey = `historical-block-tx-counts-${interval || 'all'}`;
+      try {
+        const cachedData = await valkeyCache.$getCache(cacheKey);
+        if (cachedData) {
+          return JSON.parse(cachedData);
+        }
+      } catch (e) {
+        logger.warn(
+          `Failed to retrieve historical block tx counts from Valkey cache: ${e instanceof Error ? e.message : e}`
+        );
+      }
+    }
+
+    const data = await BlocksRepository.$getHistoricalBlockTxCounts(
       this.getTimeRange(interval),
       Common.getSqlInterval(interval)
     );
+
+    if (shouldCache) {
+      const cacheKey = `historical-block-tx-counts-${interval || 'all'}`;
+      try {
+        await valkeyCache.$setCache(cacheKey, JSON.stringify(data), this.getCacheTTL(interval));
+      } catch (e) {
+        logger.warn(`Failed to cache historical block tx counts in Valkey: ${e instanceof Error ? e.message : e}`);
+      }
+    }
+
+    return data;
   }
 
   public async $getHistoricalUtxoSize(interval: string | null = null): Promise<any> {
-    return await BlocksRepository.$getHistoricalUtxoSize(this.getTimeRange(interval), Common.getSqlInterval(interval));
+    const shouldCache = this.shouldCache(interval);
+
+    if (shouldCache) {
+      const cacheKey = `historical-utxo-size-${interval || 'all'}`;
+      try {
+        const cachedData = await valkeyCache.$getCache(cacheKey);
+        if (cachedData) {
+          return JSON.parse(cachedData);
+        }
+      } catch (e) {
+        logger.warn(`Failed to retrieve historical UTXO size from Valkey cache: ${e instanceof Error ? e.message : e}`);
+      }
+    }
+
+    const data = await BlocksRepository.$getHistoricalUtxoSize(
+      this.getTimeRange(interval),
+      Common.getSqlInterval(interval)
+    );
+
+    if (shouldCache) {
+      const cacheKey = `historical-utxo-size-${interval || 'all'}`;
+      try {
+        await valkeyCache.$setCache(cacheKey, JSON.stringify(data), this.getCacheTTL(interval));
+      } catch (e) {
+        logger.warn(`Failed to cache historical UTXO size in Valkey: ${e instanceof Error ? e.message : e}`);
+      }
+    }
+
+    return data;
   }
 
   /**
