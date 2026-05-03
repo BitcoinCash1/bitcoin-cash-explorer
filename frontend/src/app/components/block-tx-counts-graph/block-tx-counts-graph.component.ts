@@ -7,7 +7,7 @@ import {
   OnInit,
   HostBinding,
 } from '@angular/core';
-import { EChartsOption } from '@app/graphs/echarts';
+import { echarts, EChartsOption } from '@app/graphs/echarts';
 import { Observable } from 'rxjs';
 import { map, share, startWith, switchMap, tap } from 'rxjs/operators';
 import { ApiService } from '@app/services/api.service';
@@ -154,7 +154,12 @@ export class BlockTxCountsGraphComponent implements OnInit {
     this.chartOptions = {
       title: title,
       animation: false,
-      color: ['#FDD835'],
+      color: [
+        new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: '#00E5FF' },
+          { offset: 1, color: '#0a4ed6' },
+        ]),
+      ],
       grid: {
         top: 30,
         bottom: 70,
