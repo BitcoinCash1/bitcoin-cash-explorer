@@ -211,8 +211,8 @@ class MiningRoutes {
     }
 
     try {
-      const hashrates = await HashratesRepository.$getNetworkDailyHashrate(req.params.interval);
-      const difficulty = await DifficultyAdjustmentsRepository.$getAdjustments(req.params.interval, false);
+      const hashrates = await HashratesRepository.$getNetworkDailyHashrate(interval);
+      const difficulty = await DifficultyAdjustmentsRepository.$getAdjustments(interval, false);
       const blockCount = await BlocksRepository.$blockCount(null, null);
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
@@ -270,8 +270,13 @@ class MiningRoutes {
   }
 
   private async $getHistoricalBlockRewards(req: Request, res: Response) {
+    const interval = req.params.interval;
+    if (!MiningRoutes.validateInterval(req, res)) {
+      return;
+    }
+
     try {
-      const blockRewards = await mining.$getHistoricalBlockRewards(req.params.interval);
+      const blockRewards = await mining.$getHistoricalBlockRewards(interval);
       const blockCount = await BlocksRepository.$blockCount(null, null);
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
@@ -284,8 +289,13 @@ class MiningRoutes {
   }
 
   private async $getHistoricalBlockFeeRates(req: Request, res: Response) {
+    const interval = req.params.interval;
+    if (!MiningRoutes.validateInterval(req, res)) {
+      return;
+    }
+
     try {
-      const blockFeeRates = await mining.$getHistoricalBlockFeeRates(req.params.interval);
+      const blockFeeRates = await mining.$getHistoricalBlockFeeRates(interval);
       const blockCount = await BlocksRepository.$blockCount(null, null);
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
@@ -298,8 +308,13 @@ class MiningRoutes {
   }
 
   private async $getHistoricalBlockSize(req: Request, res: Response) {
+    const interval = req.params.interval;
+    if (!MiningRoutes.validateInterval(req, res)) {
+      return;
+    }
+
     try {
-      const blockSizes = await mining.$getHistoricalBlockSizes(req.params.interval);
+      const blockSizes = await mining.$getHistoricalBlockSizes(interval);
       const blockCount = await BlocksRepository.$blockCount(null, null);
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
@@ -315,9 +330,7 @@ class MiningRoutes {
 
   private async $getHistoricalBlockTimeDiffs(req: Request, res: Response) {
     const interval = req.params.interval;
-    const validIntervals = ['24h', '3d', '1w', '1m', '3m', '6m', '1y', '2y', '3y', '4y', 'all'];
-    if (!validIntervals.includes(interval)) {
-      handleError(req, res, 400, 'Invalid interval');
+    if (!MiningRoutes.validateInterval(req, res)) {
       return;
     }
     try {
@@ -335,9 +348,7 @@ class MiningRoutes {
 
   private async $getHistoricalBlockTxCounts(req: Request, res: Response) {
     const interval = req.params.interval;
-    const validIntervals = ['24h', '3d', '1w', '1m', '3m', '6m', '1y', '2y', '3y', '4y', 'all'];
-    if (!validIntervals.includes(interval)) {
-      handleError(req, res, 400, 'Invalid interval');
+    if (!MiningRoutes.validateInterval(req, res)) {
       return;
     }
     try {
@@ -355,9 +366,7 @@ class MiningRoutes {
 
   private async $getHistoricalUtxoSize(req: Request, res: Response) {
     const interval = req.params.interval;
-    const validIntervals = ['24h', '3d', '1w', '1m', '3m', '6m', '1y', '2y', '3y', '4y', 'all'];
-    if (!validIntervals.includes(interval)) {
-      handleError(req, res, 400, 'Invalid interval');
+    if (!MiningRoutes.validateInterval(req, res)) {
       return;
     }
     try {
@@ -374,8 +383,13 @@ class MiningRoutes {
   }
 
   private async $getDifficultyAdjustments(req: Request, res: Response) {
+    const interval = req.params.interval;
+    if (!MiningRoutes.validateInterval(req, res)) {
+      return;
+    }
+
     try {
-      const difficulty = await DifficultyAdjustmentsRepository.$getRawAdjustments(req.params.interval, true);
+      const difficulty = await DifficultyAdjustmentsRepository.$getRawAdjustments(interval, true);
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.setHeader('Expires', new Date(Date.now() + 1000 * 300).toUTCString());
@@ -396,8 +410,13 @@ class MiningRoutes {
   }
 
   private async $getHistoricalBlocksHealth(req: Request, res: Response) {
+    const interval = req.params.interval;
+    if (!MiningRoutes.validateInterval(req, res)) {
+      return;
+    }
+
     try {
-      const blocksHealth = await mining.$getBlocksHealthHistory(req.params.interval);
+      const blocksHealth = await mining.$getBlocksHealthHistory(interval);
       const blockCount = await BlocksAuditsRepository.$getBlocksHealthCount();
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
