@@ -342,6 +342,10 @@
           <context context-type="linenumber">40,41</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.ts</context>
+          <context context-type="linenumber">248</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block/block.component.html</context>
           <context context-type="linenumber">878,879</context>
         </context-group>
@@ -674,6 +678,18 @@
           <context context-type="sourcefile">src/app/components/block-sizes-graph/block-sizes-graph.component.ts</context>
           <context context-type="linenumber">202</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
+          <context context-type="linenumber">200</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.ts</context>
+          <context context-type="linenumber">198</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/utxo-size-graph/utxo-size-graph.component.ts</context>
+          <context context-type="linenumber">198</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="8918254921747459635" datatype="html">
         <source>Around block: <x id="PH" equiv-text="data[0].data[2]"/></source>
@@ -688,6 +704,18 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-sizes-graph/block-sizes-graph.component.ts</context>
           <context context-type="linenumber">206</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
+          <context context-type="linenumber">204</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.ts</context>
+          <context context-type="linenumber">202</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/utxo-size-graph/utxo-size-graph.component.ts</context>
+          <context context-type="linenumber">202</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3316413479857864182" datatype="html">
@@ -735,6 +763,14 @@
           <context context-type="linenumber">151</context>
         </context-group>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
+          <context context-type="linenumber">150</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.ts</context>
+          <context context-type="linenumber">148</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/hashrate-chart/hashrate-chart.component.ts</context>
           <context context-type="linenumber">251</context>
         </context-group>
@@ -749,6 +785,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/price-chart/price-chart.component.ts</context>
           <context context-type="linenumber">241</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/utxo-size-graph/utxo-size-graph.component.ts</context>
+          <context context-type="linenumber">148</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7587252691654342708" datatype="html">
@@ -880,7 +920,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/graphs/graphs.component.html</context>
-          <context context-type="linenumber">94,99</context>
+          <context context-type="linenumber">115,120</context>
         </context-group>
         <note priority="1" from="description">mining.blocks-health</note>
       </trans-unit>
@@ -1165,6 +1205,59 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/mempool-graph/mempool-graph.component.ts</context>
           <context context-type="linenumber">384</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5143204595795749226" datatype="html">
+        <source>Block Time Variation</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.html</context>
+          <context context-type="linenumber">4,6</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
+          <context context-type="linenumber">76</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/graphs/graphs.component.html</context>
+          <context context-type="linenumber">93,96</context>
+        </context-group>
+        <note priority="1" from="description">mining.block-times</note>
+      </trans-unit>
+      <trans-unit id="4966581410303731134" datatype="html">
+        <source>See Bitcoin Cash block time variation over time.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
+          <context context-type="linenumber">78</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2238469337972459496" datatype="html">
+        <source>Block Time</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
+          <context context-type="linenumber">250</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5190281097971514213" datatype="html">
+        <source>Transactions Per Block</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.html</context>
+          <context context-type="linenumber">4,6</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.ts</context>
+          <context context-type="linenumber">74</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/graphs/graphs.component.html</context>
+          <context context-type="linenumber">100,103</context>
+        </context-group>
+        <note priority="1" from="description">mining.block-tx-counts</note>
+      </trans-unit>
+      <trans-unit id="3090889139796775910" datatype="html">
+        <source>See the average number of transactions per Bitcoin Cash block over time.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.ts</context>
+          <context context-type="linenumber">76</context>
         </context-group>
       </trans-unit>
       <trans-unit id="block.component.browser-title" datatype="html">
@@ -2186,7 +2279,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/graphs/graphs.component.html</context>
-          <context context-type="linenumber">107</context>
+          <context context-type="linenumber">128</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2574688541305190509" datatype="html">
@@ -2741,6 +2834,18 @@
           <context context-type="linenumber">32,34</context>
         </context-group>
         <note priority="1" from="description">mining.hashrate-difficulty</note>
+      </trans-unit>
+      <trans-unit id="3778096356145390312" datatype="html">
+        <source>Unspent Transaction Outputs</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/graphs/graphs.component.html</context>
+          <context context-type="linenumber">107,110</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/utxo-size-graph/utxo-size-graph.component.html</context>
+          <context context-type="linenumber">4,6</context>
+        </context-group>
+        <note priority="1" from="description">mining.utxo-size</note>
       </trans-unit>
       <trans-unit id="2186095762694867802" datatype="html">
         <source>Hashrate (1w)</source>
@@ -5274,6 +5379,24 @@
         <note priority="1" from="description">TX Fee Rating is Warning</note>
         <note priority="1" from="meaning">tx-fee-rating.overpaid.warning</note>
       </trans-unit>
+      <trans-unit id="5375662576432251600" datatype="html">
+        <source>UTXO Set Size</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/utxo-size-graph/utxo-size-graph.component.ts</context>
+          <context context-type="linenumber">74</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/utxo-size-graph/utxo-size-graph.component.ts</context>
+          <context context-type="linenumber">250</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2014501481765374056" datatype="html">
+        <source>See the total number of unspent transaction outputs (UTXOs) on the Bitcoin Cash network over time.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/utxo-size-graph/utxo-size-graph.component.ts</context>
+          <context context-type="linenumber">76</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="2666638972429865742" datatype="html">
         <source> Verify Address Ownership </source>
         <context-group purpose="location">
@@ -5621,11 +5744,11 @@
         <source>Unknown</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/api.service.ts</context>
-          <context context-type="linenumber">312</context>
+          <context context-type="linenumber">315</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/services/api.service.ts</context>
-          <context context-type="linenumber">328</context>
+          <context context-type="linenumber">331</context>
         </context-group>
       </trans-unit>
       <trans-unit id="date-base.immediately" datatype="html">
