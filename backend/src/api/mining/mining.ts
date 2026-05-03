@@ -91,6 +91,13 @@ class Mining {
     );
   }
 
+  public async $getHistoricalBlockTimeDiffs(interval: string | null = null): Promise<any> {
+    return await BlocksRepository.$getHistoricalBlockTimeDiffs(
+      this.getTimeRange(interval),
+      Common.getSqlInterval(interval)
+    );
+  }
+
   /**
    * Generate high level overview of the pool ranks and general stats
    */

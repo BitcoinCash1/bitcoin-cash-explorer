@@ -10,6 +10,7 @@ import {
   RewardStats,
   AuditScore,
   BlockSizes,
+  BlockTimeDiffs,
   BlockAudit,
   TestMempoolAcceptResult,
   WalletAddress,
@@ -485,6 +486,18 @@ export class ApiService {
       this.apiBaseUrl +
         this.apiBasePath +
         `/api/v1/mining/blocks/sizes` +
+        (interval !== undefined ? `/${interval}` : ''),
+      { observe: 'response' }
+    );
+  }
+
+  getHistoricalBlockTimeDiffs$(
+    interval: string | undefined
+  ): Observable<HttpResponse<BlockTimeDiffs>> {
+    return this.httpClient.get<BlockTimeDiffs>(
+      this.apiBaseUrl +
+        this.apiBasePath +
+        `/api/v1/mining/blocks/timestamps` +
         (interval !== undefined ? `/${interval}` : ''),
       { observe: 'response' }
     );

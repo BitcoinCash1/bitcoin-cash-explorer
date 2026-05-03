@@ -889,6 +889,49 @@ class BlocksRepository {
     }
   }
 
+  public async $getHistoricalBlockTimeDiffs(div: number, interval: string | null): Promise<any> {
+    try {
+      const whereClause =
+        interval !== null ? `AND b.blockTimestamp BETWEEN DATE_SUB(NOW(), INTERVAL ${interval}) AND NOW()` : '';
+
+      if (div === 1) {
+        const [rows]: any = await DB.query(`
+          SELECT
+            b.height,
+            UNIX_TIMESTAMP(b.blockTimestamp) as timestamp,
+            (UNIX_TIMESTAMP(b.blockTimestamp) - UNIX_TIMESTAMP(p.blockTimestamp)) as timeDiff
+          FROM blocks b
+          INNER JOIN blocks p ON p.height = b.height - 1 AND p.stale = 0
+          WHERE b.stale = 0 AND b.height > 0 ${whereClause}
+          ORDER BY b.height
+        `);
+        return rows;
+      } else {
+        const [rows]: any = await DB.query(`
+          SELECT
+            CAST(AVG(height) as INT) as avgHeight,
+            CAST(AVG(timestamp) as INT) as timestamp,
+            CAST(AVG(timeDiff) as INT) as avgTimeDiff
+          FROM (
+            SELECT
+              b.height,
+              UNIX_TIMESTAMP(b.blockTimestamp) as timestamp,
+              (UNIX_TIMESTAMP(b.blockTimestamp) - UNIX_TIMESTAMP(p.blockTimestamp)) as timeDiff
+            FROM blocks b
+            INNER JOIN blocks p ON p.height = b.height - 1 AND p.stale = 0
+            WHERE b.stale = 0 AND b.height > 0 ${whereClause}
+          ) sub
+          GROUP BY timestamp DIV ${div}
+          ORDER BY timestamp
+        `);
+        return rows;
+      }
+    } catch (e) {
+      logger.err('Cannot generate block time diff history. Reason: ' + (e instanceof Error ? e.message : e));
+      throw e;
+    }
+  }
+
   /**
    * Get a list of blocks that have been indexed
    * (includes stale blocks)

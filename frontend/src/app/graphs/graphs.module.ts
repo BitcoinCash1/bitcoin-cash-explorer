@@ -9,6 +9,7 @@ import { PriceChartComponent } from '@components/price-chart/price-chart.compone
 import { BlockRewardsGraphComponent } from '@components/block-rewards-graph/block-rewards-graph.component';
 import { BlockFeeRatesGraphComponent } from '@components/block-fee-rates-graph/block-fee-rates-graph.component';
 import { BlockSizesGraphComponent } from '@components/block-sizes-graph/block-sizes-graph.component';
+import { BlockTimesGraphComponent } from '@components/block-times-graph/block-times-graph.component';
 import { FeeDistributionGraphComponent } from '@components/fee-distribution-graph/fee-distribution-graph.component';
 import { IncomingTransactionsGraphComponent } from '@components/incoming-transactions-graph/incoming-transactions-graph.component';
 import { MempoolGraphComponent } from '@components/mempool-graph/mempool-graph.component';
@@ -63,6 +64,7 @@ import { AsertDeviationGraphPageComponent } from '@components/asert-deviation-gr
     BlockRewardsGraphComponent,
     BlockFeeRatesGraphComponent,
     BlockSizesGraphComponent,
+    BlockTimesGraphComponent,
     FeeDistributionGraphComponent,
     IncomingTransactionsGraphComponent,
     MempoolGraphComponent,

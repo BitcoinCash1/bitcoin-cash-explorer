@@ -193,6 +193,14 @@ export interface BlockSizes {
   }[];
 }
 
+export interface BlockTimeDiffs {
+  timeDiffs: {
+    timestamp: number;
+    avgHeight: number;
+    avgTimeDiff: number;
+  }[];
+}
+
 export interface AuditScore {
   hash: string;
   matchRate?: number;

@@ -86,6 +86,13 @@
         >Block Sizes</a
       >
       <a
+        class="dropdown-item"
+        routerLinkActive="active"
+        [routerLink]="['/graphs/mining/block-times' | relativeUrl]"
+        i18n="mining.block-times"
+        >Block Time Variation</a
+      >
+      <a
         *ngIf="stateService.env.AUDIT"
         class="dropdown-item"
         routerLinkActive="active"
