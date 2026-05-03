@@ -1378,4 +1378,5 @@ Disallow: /
 User-agent: *
 Allow: /
 Request-rate: 1/1s
+Crawl-delay: 5
 Disallow: /api/
