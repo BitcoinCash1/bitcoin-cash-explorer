@@ -7,7 +7,7 @@ import {
   OnInit,
   HostBinding,
 } from '@angular/core';
-import { EChartsOption } from '@app/graphs/echarts';
+import { echarts, EChartsOption } from '@app/graphs/echarts';
 import { Observable } from 'rxjs';
 import { map, share, startWith, switchMap, tap } from 'rxjs/operators';
 import { ApiService } from '@app/services/api.service';
@@ -154,7 +154,12 @@ export class UtxoSizeGraphComponent implements OnInit {
     this.chartOptions = {
       title: title,
       animation: false,
-      color: ['#FDD835'],
+      color: [
+        new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+          { offset: 0, color: '#00E676' },
+          { offset: 1, color: '#00796B' },
+        ]),
+      ],
       grid: {
         top: 30,
         bottom: 70,
@@ -254,6 +259,13 @@ export class UtxoSizeGraphComponent implements OnInit {
                 type: 'line',
                 lineStyle: {
                   width: 2,
+                  color: '#00E676',
+                },
+                areaStyle: {
+                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: 'rgba(0, 230, 118, 0.3)' },
+                    { offset: 1, color: 'rgba(0, 121, 107, 0.04)' },
+                  ]),
                 },
               },
             ],
