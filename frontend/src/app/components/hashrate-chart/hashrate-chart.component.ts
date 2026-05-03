@@ -156,7 +156,7 @@ export class HashrateChartComponent implements OnInit {
             data.currentDifficulty
         ) {
           data.difficulty.push({
-            timestamp: Date.now() / 1000,
+            time: Date.now() / 1000,
             difficulty: data.currentDifficulty,
           });
         }
