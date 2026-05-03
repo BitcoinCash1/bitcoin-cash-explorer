@@ -93,6 +93,20 @@
         >Block Time Variation</a
       >
       <a
+        class="dropdown-item"
+        routerLinkActive="active"
+        [routerLink]="['/graphs/mining/block-tx-counts' | relativeUrl]"
+        i18n="mining.block-tx-counts"
+        >Transactions Per Block</a
+      >
+      <a
+        class="dropdown-item"
+        routerLinkActive="active"
+        [routerLink]="['/graphs/mining/utxo-set-size' | relativeUrl]"
+        i18n="mining.utxo-set-size"
+        >Unspent Transaction Outputs</a
+      >
+      <a
         *ngIf="stateService.env.AUDIT"
         class="dropdown-item"
         routerLinkActive="active"

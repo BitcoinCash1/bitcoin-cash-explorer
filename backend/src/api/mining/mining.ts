@@ -98,6 +98,20 @@ class Mining {
     );
   }
 
+  public async $getHistoricalBlockTxCounts(interval: string | null = null): Promise<any> {
+    return await BlocksRepository.$getHistoricalBlockTxCounts(
+      this.getTimeRange(interval),
+      Common.getSqlInterval(interval)
+    );
+  }
+
+  public async $getHistoricalUtxoSetSize(interval: string | null = null): Promise<any> {
+    return await BlocksRepository.$getHistoricalUtxoSetSize(
+      this.getTimeRange(interval),
+      Common.getSqlInterval(interval)
+    );
+  }
+
   /**
    * Generate high level overview of the pool ranks and general stats
    */

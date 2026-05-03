@@ -25,6 +25,8 @@ import { AddressComponent } from '@components/address/address.component';
 import { WalletComponent } from '@components/wallet/wallet.component';
 import { TokenDetailsComponent } from '@components/token-details/token-details.component';
 import { AsertDeviationGraphPageComponent } from '@components/asert-deviation-graph-page/asert-deviation-graph-page.component';
+import { BlockTxCountsGraphComponent } from '@components/block-tx-counts-graph/block-tx-counts-graph.component';
+import { UtxoSetSizeGraphComponent } from '@components/utxo-set-size-graph/utxo-set-size-graph.component';
 
 const browserWindow = window || {};
 // @ts-ignore
@@ -148,6 +150,16 @@ const routes: Routes = [
             path: 'mining/block-times',
             data: { networks: ['bitcoin'] },
             component: BlockTimesGraphComponent,
+          },
+          {
+            path: 'mining/block-tx-counts',
+            data: { networks: ['bitcoin'] },
+            component: BlockTxCountsGraphComponent,
+          },
+          {
+            path: 'mining/utxo-set-size',
+            data: { networks: ['bitcoin'] },
+            component: UtxoSetSizeGraphComponent,
           },
           {
             path: 'mining/asert-deviation',

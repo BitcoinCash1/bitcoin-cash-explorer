@@ -11,6 +11,8 @@ import {
   AuditScore,
   BlockSizes,
   BlockTimeDiffs,
+  BlockTxCounts,
+  UtxoSetSize,
   BlockAudit,
   TestMempoolAcceptResult,
   WalletAddress,
@@ -498,6 +500,30 @@ export class ApiService {
       this.apiBaseUrl +
         this.apiBasePath +
         `/api/v1/mining/blocks/timestamps` +
+        (interval !== undefined ? `/${interval}` : ''),
+      { observe: 'response' }
+    );
+  }
+
+  getHistoricalBlockTxCounts$(
+    interval: string | undefined
+  ): Observable<HttpResponse<BlockTxCounts>> {
+    return this.httpClient.get<BlockTxCounts>(
+      this.apiBaseUrl +
+        this.apiBasePath +
+        `/api/v1/mining/blocks/tx-counts` +
+        (interval !== undefined ? `/${interval}` : ''),
+      { observe: 'response' }
+    );
+  }
+
+  getHistoricalUtxoSetSize$(
+    interval: string | undefined
+  ): Observable<HttpResponse<UtxoSetSize>> {
+    return this.httpClient.get<UtxoSetSize>(
+      this.apiBaseUrl +
+        this.apiBasePath +
+        `/api/v1/mining/blocks/utxo-set-size` +
         (interval !== undefined ? `/${interval}` : ''),
       { observe: 'response' }
     );

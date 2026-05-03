@@ -29,6 +29,8 @@ class MiningRoutes {
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/fee-rates/:interval', this.$getHistoricalBlockFeeRates)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/sizes/:interval', this.$getHistoricalBlockSize)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/timestamps/:interval', this.$getHistoricalBlockTimeDiffs)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/tx-counts/:interval', this.$getHistoricalBlockTxCounts)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/utxo-set-size/:interval', this.$getHistoricalUtxoSetSize)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/difficulty-adjustments/:interval', this.$getDifficultyAdjustments)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/predictions/:interval', this.$getHistoricalBlocksHealth)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/audit/scores', this.$getBlockAuditScores)
@@ -298,6 +300,46 @@ class MiningRoutes {
       res.json({ timeDiffs: blockTimeDiffs });
     } catch (e) {
       handleError(req, res, 500, 'Failed to get historical block time diffs');
+    }
+  }
+
+  private async $getHistoricalBlockTxCounts(req: Request, res: Response) {
+    const interval = req.params.interval;
+    const validIntervals = ['24h', '3d', '1w', '1m', '3m', '6m', '1y', '2y', '3y', '4y', 'all'];
+    if (!validIntervals.includes(interval)) {
+      handleError(req, res, 400, 'Invalid interval');
+      return;
+    }
+    try {
+      const txCounts = await mining.$getHistoricalBlockTxCounts(interval);
+      const blockCount = await BlocksRepository.$blockCount(null, null);
+      res.header('Pragma', 'public');
+      res.header('Cache-control', 'public');
+      res.header('X-total-count', blockCount.toString());
+      res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
+      res.json({ transactions: txCounts });
+    } catch (e) {
+      handleError(req, res, 500, 'Failed to get historical block tx counts');
+    }
+  }
+
+  private async $getHistoricalUtxoSetSize(req: Request, res: Response) {
+    const interval = req.params.interval;
+    const validIntervals = ['24h', '3d', '1w', '1m', '3m', '6m', '1y', '2y', '3y', '4y', 'all'];
+    if (!validIntervals.includes(interval)) {
+      handleError(req, res, 400, 'Invalid interval');
+      return;
+    }
+    try {
+      const utxoData = await mining.$getHistoricalUtxoSetSize(interval);
+      const blockCount = await BlocksRepository.$blockCount(null, null);
+      res.header('Pragma', 'public');
+      res.header('Cache-control', 'public');
+      res.header('X-total-count', blockCount.toString());
+      res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
+      res.json({ utxos: utxoData });
+    } catch (e) {
+      handleError(req, res, 500, 'Failed to get historical UTXO set size');
     }
   }
 

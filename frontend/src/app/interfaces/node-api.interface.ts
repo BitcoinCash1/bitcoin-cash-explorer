@@ -201,6 +201,22 @@ export interface BlockTimeDiffs {
   }[];
 }
 
+export interface BlockTxCounts {
+  transactions: {
+    timestamp: number;
+    avgHeight: number;
+    avgTxCount: number;
+  }[];
+}
+
+export interface UtxoSetSize {
+  utxos: {
+    timestamp: number;
+    avgHeight: number;
+    avgUtxoSetSize: number;
+  }[];
+}
+
 export interface AuditScore {
   hash: string;
   matchRate?: number;

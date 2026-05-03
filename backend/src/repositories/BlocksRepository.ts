@@ -932,6 +932,52 @@ class BlocksRepository {
     }
   }
 
+  public async $getHistoricalBlockTxCounts(div: number, interval: string | null): Promise<any> {
+    try {
+      let query = `SELECT
+        CAST(AVG(height) as INT) as avgHeight,
+        CAST(AVG(UNIX_TIMESTAMP(blockTimestamp)) as INT) as timestamp,
+        CAST(AVG(tx_count) as INT) as avgTxCount
+      FROM blocks
+      WHERE stale = 0`;
+
+      if (interval !== null) {
+        query += ` AND blockTimestamp BETWEEN DATE_SUB(NOW(), INTERVAL ${interval}) AND NOW()`;
+      }
+
+      query += ` GROUP BY UNIX_TIMESTAMP(blockTimestamp) DIV ${div}`;
+
+      const [rows]: any = await DB.query(query);
+      return rows;
+    } catch (e) {
+      logger.err('Cannot generate block tx count history. Reason: ' + (e instanceof Error ? e.message : e));
+      throw e;
+    }
+  }
+
+  public async $getHistoricalUtxoSetSize(div: number, interval: string | null): Promise<any> {
+    try {
+      let query = `SELECT
+        CAST(AVG(height) as INT) as avgHeight,
+        CAST(AVG(UNIX_TIMESTAMP(blockTimestamp)) as INT) as timestamp,
+        CAST(AVG(utxoset_size) as INT) as avgUtxoSetSize
+      FROM blocks
+      WHERE stale = 0 AND utxoset_size IS NOT NULL`;
+
+      if (interval !== null) {
+        query += ` AND blockTimestamp BETWEEN DATE_SUB(NOW(), INTERVAL ${interval}) AND NOW()`;
+      }
+
+      query += ` GROUP BY UNIX_TIMESTAMP(blockTimestamp) DIV ${div}`;
+
+      const [rows]: any = await DB.query(query);
+      return rows;
+    } catch (e) {
+      logger.err('Cannot generate UTXO set size history. Reason: ' + (e instanceof Error ? e.message : e));
+      throw e;
+    }
+  }
+
   /**
    * Get a list of blocks that have been indexed
    * (includes stale blocks)

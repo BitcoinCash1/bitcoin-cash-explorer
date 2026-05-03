@@ -5044,6 +5044,186 @@ export const restApiDocsData = [
     type: 'endpoint',
     category: 'mining',
     httpRequestMethod: 'GET',
+    fragment: 'get-block-tx-counts',
+    title: 'GET Block Transaction Counts',
+    description: {
+      default:
+        '<p>Returns the average transaction count per block for the specified <code>:timePeriod</code>, ordered oldest to newest. <code>:timePeriod</code> can be any of the following: ' +
+        miningTimeIntervals +
+        '.</p><p>For <code>24h</code> and <code>3d</code> time periods, every block is included with exact counts. For longer time periods, figures are averages per time bucket.</p>',
+    },
+    urlString: '/v1/mining/blocks/tx-counts/:timePeriod',
+    showConditions: bitcoinNetworks,
+    showJsExamples: showJsExamplesDefaultFalse,
+    codeExample: {
+      default: {
+        codeTemplate: {
+          curl: `/api/v1/mining/blocks/tx-counts/%{1}`,
+          commonJS: ``,
+          esModule: ``,
+        },
+        codeSampleMainnet: {
+          esModule: [],
+          commonJS: [],
+          curl: [`3y`],
+          response: `{
+  "transactions": [
+    {
+      "avgHeight": 576650,
+      "timestamp": 1558212081,
+      "avgTxCount": 2841
+    },
+    {
+      "avgHeight": 576715,
+      "timestamp": 1558246272,
+      "avgTxCount": 3102
+    },
+    {
+      "avgHeight": 576797,
+      "timestamp": 1558289379,
+      "avgTxCount": 2976
+    },
+    ...
+  ]
+}`,
+        },
+        codeSampleTestnet: {
+          esModule: [],
+          commonJS: [],
+          curl: [`3y`],
+          response: `{
+  "transactions": [
+    {
+      "avgHeight": 1517188,
+      "timestamp": 1558262730,
+      "avgTxCount": 12
+    },
+    {
+      "avgHeight": 1517275,
+      "timestamp": 1558290933,
+      "avgTxCount": 8
+    },
+    ...
+  ]
+}`,
+        },
+        codeSampleSignet: {
+          esModule: [],
+          commonJS: [],
+          curl: [`3y`],
+          response: `{
+  "transactions": [
+    {
+      "avgHeight": 83,
+      "timestamp": 1598937527,
+      "avgTxCount": 1
+    },
+    {
+      "avgHeight": 266,
+      "timestamp": 1598982991,
+      "avgTxCount": 2
+    },
+    ...
+  ]
+}`,
+        },
+      },
+    },
+  },
+  {
+    type: 'endpoint',
+    category: 'mining',
+    httpRequestMethod: 'GET',
+    fragment: 'get-utxo-set-size',
+    title: 'GET UTXO Set Size',
+    description: {
+      default:
+        '<p>Returns the average UTXO set size (total unspent transaction outputs) per block for the specified <code>:timePeriod</code>, ordered oldest to newest. <code>:timePeriod</code> can be any of the following: ' +
+        miningTimeIntervals +
+        '.</p><p>Only blocks with indexed coin stats data are included. For <code>24h</code> and <code>3d</code> time periods, every indexed block is included. For longer time periods, figures are averages per time bucket.</p>',
+    },
+    urlString: '/v1/mining/blocks/utxo-set-size/:timePeriod',
+    showConditions: bitcoinNetworks,
+    showJsExamples: showJsExamplesDefaultFalse,
+    codeExample: {
+      default: {
+        codeTemplate: {
+          curl: `/api/v1/mining/blocks/utxo-set-size/%{1}`,
+          commonJS: ``,
+          esModule: ``,
+        },
+        codeSampleMainnet: {
+          esModule: [],
+          commonJS: [],
+          curl: [`3y`],
+          response: `{
+  "utxos": [
+    {
+      "avgHeight": 576650,
+      "timestamp": 1558212081,
+      "avgUtxoSetSize": 42318940
+    },
+    {
+      "avgHeight": 576715,
+      "timestamp": 1558246272,
+      "avgUtxoSetSize": 42321105
+    },
+    {
+      "avgHeight": 576797,
+      "timestamp": 1558289379,
+      "avgUtxoSetSize": 42325872
+    },
+    ...
+  ]
+}`,
+        },
+        codeSampleTestnet: {
+          esModule: [],
+          commonJS: [],
+          curl: [`3y`],
+          response: `{
+  "utxos": [
+    {
+      "avgHeight": 1517188,
+      "timestamp": 1558262730,
+      "avgUtxoSetSize": 1284930
+    },
+    {
+      "avgHeight": 1517275,
+      "timestamp": 1558290933,
+      "avgUtxoSetSize": 1285014
+    },
+    ...
+  ]
+}`,
+        },
+        codeSampleSignet: {
+          esModule: [],
+          commonJS: [],
+          curl: [`3y`],
+          response: `{
+  "utxos": [
+    {
+      "avgHeight": 83,
+      "timestamp": 1598937527,
+      "avgUtxoSetSize": 183
+    },
+    {
+      "avgHeight": 266,
+      "timestamp": 1598982991,
+      "avgUtxoSetSize": 364
+    },
+    ...
+  ]
+}`,
+        },
+      },
+    },
+  },
+  {
+    type: 'endpoint',
+    category: 'mining',
+    httpRequestMethod: 'GET',
     fragment: 'get-block-predictions',
     title: 'GET Block Predictions',
     description: {
