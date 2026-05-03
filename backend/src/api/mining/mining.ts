@@ -97,7 +97,10 @@ class Mining {
       }
     }
 
-    const data = await BlocksRepository.$getHistoricalBlockFees(this.getTimeRange(interval), Common.getSqlInterval(interval));
+    const data = await BlocksRepository.$getHistoricalBlockFees(
+      this.getTimeRange(interval),
+      Common.getSqlInterval(interval)
+    );
 
     if (shouldCache) {
       const cacheKey = `historical-block-fees-${interval || 'all'}`;
