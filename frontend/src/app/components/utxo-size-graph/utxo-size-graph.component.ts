@@ -71,7 +71,7 @@ export class UtxoSizeGraphComponent implements OnInit {
   ngOnInit(): void {
     let firstRun = true;
 
-    this.seoService.setTitle($localize`UTXO Set Size`);
+    this.seoService.setTitle($localize`UTXO Size`);
     this.seoService.setDescription(
       $localize`See the total number of unspent transaction outputs (UTXOs) on the Bitcoin Cash network over time.`
     );
@@ -247,7 +247,7 @@ export class UtxoSizeGraphComponent implements OnInit {
           : [
               {
                 zlevel: 1,
-                name: $localize`UTXO Set Size`,
+                name: $localize`UTXO Size`,
                 showSymbol: false,
                 symbol: 'none',
                 data: data.utxos,
