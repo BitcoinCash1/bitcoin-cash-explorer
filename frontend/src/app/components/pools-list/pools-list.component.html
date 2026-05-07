@@ -24,6 +24,20 @@
         <th class="slug" i18n="pools.slug">Slug</th>
         <th class="blocks" i18n="pools.blocks">Blocks</th>
         <th class="empty-blocks" i18n="pools.empty-blocks">Empty Blocks</th>
+        <th
+          *ngIf="auditAvailable"
+          class="avg-health"
+          i18n="latest-blocks.avg_health"
+        >
+          Avg Health
+        </th>
+        <th
+          *ngIf="auditAvailable"
+          class="avg-fees d-none d-sm-table-cell"
+          i18n="mining.fees-per-block"
+        >
+          Avg Block Fees
+        </th>
         <th class="link" i18n="pools.link">Link</th>
       </thead>
       <tbody [style]="isLoading ? 'opacity: 0.75' : ''">
@@ -66,6 +80,35 @@
               }}%)</span
             >
           </td>
+          <td *ngIf="auditAvailable" class="avg-health">
+            <a
+              class="health-badge badge"
+              [class.bg-success]="pool.avgMatchRate >= 99"
+              [class.bg-warning]="
+                pool.avgMatchRate >= 75 && pool.avgMatchRate < 99
+              "
+              [class.bg-danger]="pool.avgMatchRate < 75"
+              *ngIf="pool.avgMatchRate != null; else nullHealth"
+              >{{ pool.avgMatchRate }}%</a
+            >
+            <ng-template #nullHealth>
+              <span class="health-badge badge bg-secondary" i18n="unknown"
+                >Unknown</span
+              >
+            </ng-template>
+          </td>
+          <td *ngIf="auditAvailable" class="avg-fees d-none d-sm-table-cell">
+            <span
+              *ngIf="pool.avgFeeDelta != null; else nullFeeDelta"
+              class="difference"
+              [class.positive]="pool.avgFeeDelta >= 0"
+              [class.negative]="pool.avgFeeDelta < 0"
+            >
+              {{ pool.avgFeeDelta > 0 ? "+" : ""
+              }}{{ pool.avgFeeDelta * 100 | amountShortener: 2 }}%
+            </span>
+            <ng-template #nullFeeDelta>-</ng-template>
+          </td>
           <td class="link">
             <a
               *ngIf="pool.link"
@@ -99,6 +142,20 @@
         <th class="slug" i18n="pools.slug">Slug</th>
         <th class="blocks" i18n="pools.blocks">Blocks</th>
         <th class="empty-blocks" i18n="pools.empty-blocks">Empty Blocks</th>
+        <th
+          *ngIf="auditAvailable"
+          class="avg-health"
+          i18n="latest-blocks.avg_health"
+        >
+          Avg Health
+        </th>
+        <th
+          *ngIf="auditAvailable"
+          class="avg-fees d-none d-sm-table-cell"
+          i18n="mining.fees-per-block"
+        >
+          Avg Block Fees
+        </th>
         <th class="link" i18n="pools.link">Link</th>
       </thead>
       <tbody>
@@ -122,6 +179,12 @@
             <span class="skeleton-loader"></span>
           </td>
           <td class="empty-blocks text-end">
+            <span class="skeleton-loader"></span>
+          </td>
+          <td *ngIf="auditAvailable" class="avg-health">
+            <span class="skeleton-loader"></span>
+          </td>
+          <td *ngIf="auditAvailable" class="avg-fees d-none d-sm-table-cell">
             <span class="skeleton-loader"></span>
           </td>
           <td class="link">

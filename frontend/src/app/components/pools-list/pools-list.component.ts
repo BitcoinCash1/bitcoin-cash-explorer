@@ -47,6 +47,7 @@ export class PoolsListComponent implements OnInit {
   isLoading = true;
   error: HttpErrorResponse | null = null;
   skeletonLines: number[] = [...Array(15).keys()];
+  auditAvailable = false;
 
   constructor(
     @Inject(LOCALE_ID) public locale: string,
@@ -56,6 +57,11 @@ export class PoolsListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.auditAvailable =
+      this.stateService.env.BASE_MODULE === 'explorer' &&
+      this.stateService.env.MINING_DASHBOARD === true &&
+      this.stateService.env.AUDIT === true;
+
     this.seoService.setTitle($localize`Mining Pools`);
     this.seoService.setDescription(
       $localize`Overview of the mining pools on Bitcoin Cash.`
