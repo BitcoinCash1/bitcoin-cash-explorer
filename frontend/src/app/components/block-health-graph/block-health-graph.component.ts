@@ -254,6 +254,7 @@ export class BlockHealthGraphComponent implements OnInit {
                 type: 'bar',
                 barWidth: '90%',
                 barMaxWidth: 50,
+                barMinHeight: 4,
               },
             ],
       dataZoom:
