@@ -26,6 +26,7 @@ import { WalletComponent } from '@components/wallet/wallet.component';
 import { TokenDetailsComponent } from '@components/token-details/token-details.component';
 import { AsertDeviationGraphPageComponent } from '@components/asert-deviation-graph-page/asert-deviation-graph-page.component';
 import { BlockTxCountsGraphComponent } from '@components/block-tx-counts-graph/block-tx-counts-graph.component';
+import { BlockVolumeGraphComponent } from '@components/block-volume-graph/block-volume-graph.component';
 import { UtxoSizeGraphComponent } from '@app/components/utxo-size-graph/utxo-size-graph.component';
 
 const browserWindow = window || {};
@@ -155,6 +156,11 @@ const routes: Routes = [
             path: 'mining/block-tx-counts',
             data: { networks: ['bitcoin'] },
             component: BlockTxCountsGraphComponent,
+          },
+          {
+            path: 'mining/block-volume',
+            data: { networks: ['bitcoin'] },
+            component: BlockVolumeGraphComponent,
           },
           {
             path: 'mining/utxo-size',

@@ -303,7 +303,7 @@ class Blocks {
       extras.avgTxSize = Math.round((stats.total_size / stats.txs) * 100) * 0.01;
       extras.totalInputs = stats.ins;
       extras.totalOutputs = stats.outs;
-      extras.totalOutputAmt = stats.total_out;
+      extras.totalOutputAmt = stats.total_out; // Maybe we need   Math.round(stats.total_out * multiplier) ?
       // TODO: Extend with more info like ABLA, but also minfee, subsidy, ... for example (and store it in the DB)
       // See also bitcoin-cli getblockstats
     }

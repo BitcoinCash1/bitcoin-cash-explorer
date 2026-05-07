@@ -517,6 +517,18 @@ export class ApiService {
     );
   }
 
+  getHistoricalBlockVolume$(
+    interval: string | undefined
+  ): Observable<HttpResponse<any>> {
+    return this.httpClient.get<any>(
+      this.apiBaseUrl +
+        this.apiBasePath +
+        `/api/v1/mining/blocks/volume` +
+        (interval !== undefined ? `/${interval}` : ''),
+      { observe: 'response' }
+    );
+  }
+
   getHistoricalUtxoSize$(
     interval: string | undefined
   ): Observable<HttpResponse<UtxoSize>> {

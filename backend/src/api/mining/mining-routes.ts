@@ -32,6 +32,7 @@ class MiningRoutes {
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/sizes/:interval', this.$getHistoricalBlockSize)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/timestamps/:interval', this.$getHistoricalBlockTimeDiffs)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/tx-counts/:interval', this.$getHistoricalBlockTxCounts)
+      .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/volume/:interval', this.$getHistoricalBlockVolume)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/utxo-size/:interval', this.$getHistoricalUtxoSize)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/difficulty-adjustments/:interval', this.$getDifficultyAdjustments)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/predictions/:interval', this.$getHistoricalBlocksHealth)
@@ -370,6 +371,24 @@ class MiningRoutes {
       res.json({ transactions: txCounts });
     } catch (e) {
       handleError(req, res, 500, 'Failed to get historical block tx counts');
+    }
+  }
+
+  private async $getHistoricalBlockVolume(req: Request, res: Response) {
+    const interval = req.params.interval;
+    if (!MiningRoutes.validateInterval(req, res)) {
+      return;
+    }
+    try {
+      const volumeData = await mining.$getHistoricalBlockVolume(interval);
+      const blockCount = await BlocksRepository.$blockCount(null, null);
+      res.header('Pragma', 'public');
+      res.header('Cache-control', 'public');
+      res.header('X-total-count', blockCount.toString());
+      res.setHeader('Expires', new Date(Date.now() + MiningRoutes.getExpiresMsForInterval(interval)).toUTCString());
+      res.json({ volume: volumeData });
+    } catch (e) {
+      handleError(req, res, 500, 'Failed to get historical block volume');
     }
   }
 

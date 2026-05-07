@@ -95,6 +95,13 @@
       <a
         class="dropdown-item"
         routerLinkActive="active"
+        [routerLink]="['/graphs/mining/block-volume' | relativeUrl]"
+        i18n="mining.block-volume"
+        >Block Volume</a
+      >
+      <a
+        class="dropdown-item"
+        routerLinkActive="active"
         [routerLink]="['/graphs/mining/block-tx-counts' | relativeUrl]"
         i18n="mining.block-tx-counts"
         >Transactions Per Block</a

@@ -320,6 +320,39 @@ class Mining {
     return data;
   }
 
+  public async $getHistoricalBlockVolume(interval: string | null = null): Promise<any> {
+    const shouldCache = this.shouldCache(interval);
+    const cacheKey = `mining:historical-block-volume-${interval || 'all'}`;
+
+    if (shouldCache) {
+      try {
+        const cachedData = await valkeyCache.$getCache(cacheKey);
+        if (cachedData) {
+          return JSON.parse(cachedData);
+        }
+      } catch (e) {
+        logger.warn(
+          `Failed to retrieve historical block volume from Valkey cache: ${e instanceof Error ? e.message : e}`
+        );
+      }
+    }
+
+    const data = await BlocksRepository.$getHistoricalBlockVolume(
+      this.getTimeRange(interval),
+      Common.getSqlInterval(interval)
+    );
+
+    if (shouldCache) {
+      try {
+        await valkeyCache.$setCache(cacheKey, JSON.stringify(data), this.getCacheTTL(interval));
+      } catch (e) {
+        logger.warn(`Failed to cache historical block volume in Valkey: ${e instanceof Error ? e.message : e}`);
+      }
+    }
+
+    return data;
+  }
+
   public async $getHistoricalUtxoSize(interval: string | null = null): Promise<any> {
     const shouldCache = this.shouldCache(interval);
     const cacheKey = `mining:historical-utxo-size-${interval || 'all'}`;

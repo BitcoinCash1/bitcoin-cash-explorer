@@ -955,6 +955,32 @@ class BlocksRepository {
     }
   }
 
+  public async $getHistoricalBlockVolume(div: number, interval: string | null): Promise<any> {
+    try {
+      let query = `SELECT
+        CAST(AVG(height) as INT) as avgHeight,
+        CAST(AVG(UNIX_TIMESTAMP(blockTimestamp)) as INT) as timestamp,
+        CAST(AVG(total_inputs) as INT) as avgTotalInputs,
+        CAST(AVG(total_outputs) as INT) as avgTotalOutputs,
+        CAST(AVG(total_input_amt) as UNSIGNED) as avgTotalInputAmt,
+        CAST(AVG(total_output_amt) as UNSIGNED) as avgTotalOutputAmt
+      FROM blocks
+      WHERE stale = 0`;
+
+      if (interval !== null) {
+        query += ` AND blockTimestamp BETWEEN DATE_SUB(NOW(), INTERVAL ${interval}) AND NOW()`;
+      }
+
+      query += ` GROUP BY UNIX_TIMESTAMP(blockTimestamp) DIV ${div}`;
+
+      const [rows]: any = await DB.query(query);
+      return rows;
+    } catch (e) {
+      logger.err('Cannot generate block volume history. Reason: ' + (e instanceof Error ? e.message : e));
+      throw e;
+    }
+  }
+
   public async $getHistoricalUtxoSize(div: number, interval: string | null): Promise<any> {
     try {
       let query = `SELECT
