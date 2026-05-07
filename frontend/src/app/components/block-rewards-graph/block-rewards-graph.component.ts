@@ -262,6 +262,12 @@ export class BlockRewardsGraphComponent implements OnInit {
                   icon: 'roundRect',
                 },
               ],
+              selected: JSON.parse(
+                this.storageService?.getValue('block_rewards_legend') || 'null'
+              ) ?? {
+                'Rewards BCH': true,
+                ['Rewards ' + this.currency]: true,
+              },
             },
       yAxis:
         data.blockRewards.length === 0
@@ -381,6 +387,16 @@ export class BlockRewardsGraphComponent implements OnInit {
 
   onChartInit(ec) {
     this.chartInstance = ec;
+
+    this.chartInstance.on(
+      'legendselectchanged',
+      (e: { selected: Record<string, boolean> }) => {
+        this.storageService.setValue(
+          'block_rewards_legend',
+          JSON.stringify(e.selected)
+        );
+      }
+    );
   }
 
   isMobile() {

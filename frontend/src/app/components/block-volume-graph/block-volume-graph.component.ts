@@ -237,6 +237,13 @@ export class BlockVolumeGraphComponent implements OnInit {
             icon: 'roundRect',
           },
         ],
+        selected: JSON.parse(
+          this.storageService?.getValue('block_volume_legend') || 'null'
+        ) ?? {
+          [$localize`Input Volume (BCH)`]: true,
+          [$localize`UTXO Inputs`]: true,
+          [$localize`UTXO Outputs`]: true,
+        },
       },
       xAxis:
         data.utxoInputs.length === 0
@@ -358,6 +365,16 @@ export class BlockVolumeGraphComponent implements OnInit {
       return;
     }
     this.chartInstance = ec;
+
+    this.chartInstance.on(
+      'legendselectchanged',
+      (e: { selected: Record<string, boolean> }) => {
+        this.storageService.setValue(
+          'block_volume_legend',
+          JSON.stringify(e.selected)
+        );
+      }
+    );
   }
 
   isMobile() {
