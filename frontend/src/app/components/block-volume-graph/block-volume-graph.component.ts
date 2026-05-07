@@ -193,11 +193,11 @@ export class BlockVolumeGraphComponent implements OnInit {
           )}</b><br>`;
 
           for (const tick of ticks) {
-            if (tick.seriesIndex === 0 || tick.seriesIndex === 1) {
-              tooltip += `${tick.marker} ${tick.seriesName}: ${formatNumber(tick.data[1], this.locale, '1.0-0')}`;
-            } else {
+            if (tick.seriesIndex === 0) {
               const bch = (tick.data[1] / 1e8).toFixed(2);
               tooltip += `${tick.marker} ${tick.seriesName}: ${formatNumber(parseFloat(bch), this.locale, '1.2-2')} BCH`;
+            } else {
+              tooltip += `${tick.marker} ${tick.seriesName}: ${formatNumber(tick.data[1], this.locale, '1.0-0')}`;
             }
             tooltip += `<br>`;
           }
@@ -219,6 +219,12 @@ export class BlockVolumeGraphComponent implements OnInit {
         top: 0,
         data: [
           {
+            name: $localize`Input Volume (BCH)`,
+            inactiveColor: 'var(--grey)',
+            textStyle: { color: 'var(--fg)' },
+            icon: 'roundRect',
+          },
+          {
             name: $localize`UTXO Inputs`,
             inactiveColor: 'var(--grey)',
             textStyle: { color: 'var(--fg)' },
@@ -226,12 +232,6 @@ export class BlockVolumeGraphComponent implements OnInit {
           },
           {
             name: $localize`UTXO Outputs`,
-            inactiveColor: 'var(--grey)',
-            textStyle: { color: 'var(--fg)' },
-            icon: 'roundRect',
-          },
-          {
-            name: $localize`Input Volume`,
             inactiveColor: 'var(--grey)',
             textStyle: { color: 'var(--fg)' },
             icon: 'roundRect',
@@ -258,7 +258,12 @@ export class BlockVolumeGraphComponent implements OnInit {
                 min: 0,
                 axisLabel: {
                   color: 'var(--grey)',
-                  formatter: (val) => val.toLocaleString(),
+                  formatter: (val) => {
+                    const bch = val / 1e8;
+                    if (bch >= 1e6) return (bch / 1e6).toFixed(1) + 'M BCH';
+                    if (bch >= 1e3) return (bch / 1e3).toFixed(1) + 'K BCH';
+                    return bch.toFixed(0) + ' BCH';
+                  },
                 },
                 splitLine: {
                   lineStyle: {
@@ -274,12 +279,7 @@ export class BlockVolumeGraphComponent implements OnInit {
                 min: 0,
                 axisLabel: {
                   color: 'var(--grey)',
-                  formatter: (val) => {
-                    const bch = val / 1e8;
-                    if (bch >= 1e6) return (bch / 1e6).toFixed(1) + 'M BCH';
-                    if (bch >= 1e3) return (bch / 1e3).toFixed(1) + 'K BCH';
-                    return bch.toFixed(0) + ' BCH';
-                  },
+                  formatter: (val: number) => val.toLocaleString(),
                 },
                 splitLine: { show: false },
               },
@@ -289,14 +289,25 @@ export class BlockVolumeGraphComponent implements OnInit {
           ? []
           : [
               {
-                zlevel: 1,
+                zlevel: 3,
+                name: $localize`Input Volume (BCH)`,
+                showSymbol: false,
+                symbol: 'none',
+                data: data.inputAmts,
+                type: 'line',
+                yAxisIndex: 0,
+                lineStyle: { width: 2, color: '#00b0ff' },
+                itemStyle: { color: '#00b0ff' },
+              },
+              {
+                zlevel: 2,
                 name: $localize`UTXO Inputs`,
                 showSymbol: false,
                 symbol: 'none',
                 data: data.utxoInputs,
                 type: 'line',
-                yAxisIndex: 0,
-                lineStyle: { width: 2, color: '#1fc35f' },
+                yAxisIndex: 1,
+                lineStyle: { width: 1, color: '#1fc35f' },
                 itemStyle: { color: '#1fc35f' },
               },
               {
@@ -306,20 +317,9 @@ export class BlockVolumeGraphComponent implements OnInit {
                 symbol: 'none',
                 data: data.utxoOutputs,
                 type: 'line',
-                yAxisIndex: 0,
-                lineStyle: { width: 2, color: '#fb8c00' },
-                itemStyle: { color: '#fb8c00' },
-              },
-              {
-                zlevel: 1,
-                name: $localize`Input Volume`,
-                showSymbol: false,
-                symbol: 'none',
-                data: data.inputAmts,
-                type: 'line',
                 yAxisIndex: 1,
-                lineStyle: { width: 2, color: '#00b0ff', type: 'dashed' },
-                itemStyle: { color: '#00b0ff' },
+                lineStyle: { width: 1, color: '#fb8c00' },
+                itemStyle: { color: '#fb8c00' },
               },
             ],
       dataZoom: [
