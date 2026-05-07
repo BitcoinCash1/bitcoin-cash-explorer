@@ -201,13 +201,13 @@ export class BlockTimesGraphComponent implements OnInit {
                   icon: 'roundRect',
                 },
                 {
-                  name: $localize`SMA 144`,
+                  name: $localize`Block time (SMA 144)`,
                   inactiveColor: 'rgb(110, 112, 121)',
                   textStyle: { color: 'var(--fg)' },
                   icon: 'roundRect',
                 },
                 {
-                  name: $localize`Median`,
+                  name: $localize`Block time (Median)`,
                   inactiveColor: 'rgb(110, 112, 121)',
                   textStyle: { color: 'var(--fg)' },
                   icon: 'roundRect',
@@ -339,7 +339,7 @@ export class BlockTimesGraphComponent implements OnInit {
               },
               {
                 zlevel: 2,
-                name: $localize`SMA 144`,
+                name: $localize`Block time (SMA 144)`,
                 showSymbol: false,
                 symbol: 'none',
                 data: smaData,
@@ -354,7 +354,7 @@ export class BlockTimesGraphComponent implements OnInit {
               },
               {
                 zlevel: 3,
-                name: $localize`Median`,
+                name: $localize`Block time (Median)`,
                 showSymbol: false,
                 symbol: 'none',
                 data: medianData,
