@@ -50,10 +50,11 @@ class Mining {
         return 21600; // 6 hours
       case '4y':
         return 28800; // 8 hours
+      case 'all':
       case null:
-        return 86400; // 24 hours for 'all'
+        return 86400; // 24 hours for 'all' and null intervals
       default:
-        return 0;
+        return 3600; // Default to 1 hour for any other intervals (e.g. '24h', '1w', etc.)
     }
   }
 
