@@ -962,7 +962,7 @@ class BlocksRepository {
         CAST(AVG(UNIX_TIMESTAMP(blockTimestamp)) as INT) as timestamp,
         CAST(AVG(total_inputs) as INT) as avgTotalInputs,
         CAST(AVG(total_outputs) as INT) as avgTotalOutputs,
-        CAST(AVG(CASE WHEN total_input_amt IS NOT NULL THEN total_input_amt END) as UNSIGNED) as avgTotalInputAmt,
+        CAST(AVG(total_input_amt) as UNSIGNED) as avgTotalInputAmt,
         CAST(AVG(total_output_amt) as UNSIGNED) as avgTotalOutputAmt
       FROM blocks
       WHERE stale = 0`;
