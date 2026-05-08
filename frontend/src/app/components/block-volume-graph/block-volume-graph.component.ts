@@ -130,12 +130,22 @@ export class BlockVolumeGraphComponent implements OnInit {
                 v.avgTotalOutputs,
                 v.avgHeight,
               ]);
-              const inputAmts = raw.map((v: any) => [
+              const outputAmts = raw.map((v: any) => [
                 v.timestamp * 1000,
-                v.avgTotalInputAmt,
+                v.avgTotalOutputAmt,
                 v.avgHeight,
               ]);
-              this.prepareChartOptions({ utxoInputs, utxoOutputs, inputAmts });
+              const inputAmts = raw.map((v: any) => [
+                v.timestamp * 1000,
+                v.avgTotalInputAmt != null ? v.avgTotalInputAmt / 1e8 : null,
+                v.avgHeight,
+              ]);
+              this.prepareChartOptions({
+                utxoInputs,
+                utxoOutputs,
+                outputAmts,
+                inputAmts,
+              });
               this.isLoading = false;
             }),
             map((response) => ({
@@ -193,9 +203,8 @@ export class BlockVolumeGraphComponent implements OnInit {
           )}</b><br>`;
 
           for (const tick of ticks) {
-            if (tick.seriesIndex === 0) {
-              const bch = (tick.data[1] / 1e8).toFixed(2);
-              tooltip += `${tick.marker} ${tick.seriesName}: ${formatNumber(parseFloat(bch), this.locale, '1.2-2')} BCH`;
+            if (tick.seriesIndex === 0 || tick.seriesIndex === 1) {
+              tooltip += `${tick.marker} ${tick.seriesName}: ${formatNumber(tick.data[1], this.locale, '1.2-2')} BCH`;
             } else {
               tooltip += `${tick.marker} ${tick.seriesName}: ${formatNumber(tick.data[1], this.locale, '1.0-0')}`;
             }
@@ -219,6 +228,12 @@ export class BlockVolumeGraphComponent implements OnInit {
         top: 0,
         data: [
           {
+            name: $localize`Output Volume (BCH)`,
+            inactiveColor: 'var(--grey)',
+            textStyle: { color: 'var(--fg)' },
+            icon: 'roundRect',
+          },
+          {
             name: $localize`Input Volume (BCH)`,
             inactiveColor: 'var(--grey)',
             textStyle: { color: 'var(--fg)' },
@@ -240,6 +255,7 @@ export class BlockVolumeGraphComponent implements OnInit {
         selected: JSON.parse(
           this.storageService?.getValue('block_volume_legend') || 'null'
         ) ?? {
+          [$localize`Output Volume (BCH)`]: true,
           [$localize`Input Volume (BCH)`]: true,
           [$localize`UTXO Inputs`]: true,
           [$localize`UTXO Outputs`]: true,
@@ -266,10 +282,9 @@ export class BlockVolumeGraphComponent implements OnInit {
                 axisLabel: {
                   color: 'var(--grey)',
                   formatter: (val) => {
-                    const bch = val / 1e8;
-                    if (bch >= 1e6) return (bch / 1e6).toFixed(1) + 'M BCH';
-                    if (bch >= 1e3) return (bch / 1e3).toFixed(1) + 'K BCH';
-                    return bch.toFixed(0) + ' BCH';
+                    if (val >= 1e6) return (val / 1e6).toFixed(1) + 'M BCH';
+                    if (val >= 1e3) return (val / 1e3).toFixed(1) + 'K BCH';
+                    return val.toFixed(0) + ' BCH';
                   },
                 },
                 splitLine: {
@@ -296,15 +311,26 @@ export class BlockVolumeGraphComponent implements OnInit {
           ? []
           : [
               {
+                name: $localize`Output Volume (BCH)`,
+                showSymbol: false,
+                symbol: 'none',
+                data: data.outputAmts,
+                type: 'line',
+                yAxisIndex: 0,
+                lineStyle: { width: 1.5, color: '#648FFF' },
+                itemStyle: { color: '#648FFF' },
+                areaStyle: { color: '#648FFF', opacity: 0.25 },
+              },
+              {
                 name: $localize`Input Volume (BCH)`,
                 showSymbol: false,
                 symbol: 'none',
                 data: data.inputAmts,
                 type: 'line',
                 yAxisIndex: 0,
-                lineStyle: { width: 1.5, color: '#00b0ff' },
-                itemStyle: { color: '#00b0ff' },
-                areaStyle: { color: '#00b0ff', opacity: 0.25 },
+                lineStyle: { width: 1, color: '#785EF0' },
+                itemStyle: { color: '#785EF0' },
+                areaStyle: { color: '#785EF0', opacity: 0.25 },
               },
               {
                 name: $localize`UTXO Inputs`,
