@@ -51,14 +51,11 @@ class Indexer {
       );
       updatedBCHNIndexes.push(newState);
 
-      if (indexName === 'coinstatsindex') {
-        if (newState.synced === true) {
-          this.runSingleTask('coinStatsIndex');
-        } else {
-          // Not synced yet; retry after a delay so we backfill once it catches up.
-          // We are not gonna wait 1 hour for the next run of the indexer to backfill, so we schedule a single task to check again after 30 seconds
-          this.scheduleSingleTask('coinStatsIndex', 30000);
-        }
+      if (indexName === 'coinstatsindex' && newState.synced === true) {
+        // const previousState = this.isBCHNIndexReady('coinstatsindex');
+        // if (!previousState || previousState.synced === false) {
+        this.runSingleTask('coinStatsIndex');
+        // }
       }
     }
 
@@ -163,11 +160,6 @@ class Indexer {
 
       case 'coinStatsIndex':
         {
-          if (!this.isBCHNIndexReady('coinstatsindex')) {
-            logger.warn(`coinstatsindex not synced yet, retrying in 30 seconds`);
-            this.scheduleSingleTask('coinStatsIndex', 30000);
-            break;
-          }
           logger.debug(`Indexing coinStatsIndex now`);
           try {
             await mining.$indexCoinStatsIndex();
