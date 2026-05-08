@@ -1047,10 +1047,10 @@ class Blocks {
 
           if (blockExtended.extras.totalInputAmt === null || blockExtended.extras.utxoSetSize === null) {
             logger.debug(
-              `Block ${blockExtended.height} missing coinStatsIndex data, scheduling backfill in 20 seconds.`,
+              `Block ${blockExtended.height} missing coinStatsIndex data, scheduling backfill in 10 seconds.`,
               logger.tags.mining
             );
-            indexer.scheduleSingleTask('coinStatsIndex', 20000);
+            indexer.scheduleSingleTask('coinStatsIndex', 10000);
           }
 
           // Save blocks summary for visualization if it's enabled
