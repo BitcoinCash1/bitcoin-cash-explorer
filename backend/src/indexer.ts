@@ -105,6 +105,7 @@ class Indexer {
    * @param {TaskName} task - the type of task
    * @param {number} timeout - delay in ms
    * @param {boolean} replace - `true` replaces any already scheduled task (works like a debounce), `false` ignores subsequent requests (works like a throttle)
+   * @param {number} height - optional target height for tasks that require a check on BCHN index (e.g. `coinStatsIndexWithCheck`), if provided the height will be stored and used when the task runs
    */
   public scheduleSingleTask(task: TaskName, timeout = 10000, replace = false, height?: number): void {
     if (this.tasksScheduled[task]) {
