@@ -231,7 +231,7 @@ export class BlockTxCountsGraphComponent implements OnInit {
               {
                 type: this.scaleType,
                 position: 'left',
-                ...(this.scaleType === 'log' && { logBase: 1.5 }),
+                ...(this.scaleType === 'log' && { logBase: 10 }),
                 ...(this.scaleType === 'value' && { min: 0 }),
                 axisLabel: {
                   color: 'var(--grey)',
