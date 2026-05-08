@@ -1050,7 +1050,7 @@ class Blocks {
               `Block ${blockExtended.height} missing coinStatsIndex data, scheduling backfill in 20 seconds.`,
               logger.tags.mining
             );
-            indexer.scheduleSingleTask('coinStatsIndexWithCheck', 20000, false, blockExtended.height);
+            indexer.scheduleSingleTask('coinStatsIndex', 20000);
           }
 
           // Save blocks summary for visualization if it's enabled
