@@ -34,7 +34,7 @@ class Indexer {
   /**
    * Check which BCHN index is available for indexing
    */
-  public async checkAvailableBCHNIndexes(): Promise<void> {
+  private async checkAvailableBCHNIndexes(): Promise<void> {
     const updatedBCHNIndexes: BCHNIndex[] = [];
 
     const indexes: any = await bitcoinClient.getIndexInfo();
