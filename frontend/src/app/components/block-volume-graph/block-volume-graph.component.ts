@@ -256,7 +256,7 @@ export class BlockVolumeGraphComponent implements OnInit {
           this.storageService?.getValue('block_volume_legend') || 'null'
         ) ?? {
           [$localize`Output Volume (BCH)`]: true,
-          [$localize`Input Volume (BCH)`]: true,
+          [$localize`Input Volume (BCH)`]: false,
           [$localize`UTXO Inputs`]: true,
           [$localize`UTXO Outputs`]: true,
         },
