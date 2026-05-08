@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
 })
 export class ThemeSelectorComponent implements OnInit {
   themeForm: UntypedFormGroup;
-  themes = ['default', 'bch', 'contrast', 'softsimon', 'bukele', 'light'];
+  themes = ['default', 'light', 'contrast', 'softsimon', 'bukele'];
   themeSubscription: Subscription;
 
   constructor(
