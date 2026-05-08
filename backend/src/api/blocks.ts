@@ -1045,6 +1045,14 @@ class Blocks {
             indexer.scheduleSingleTask('blocksPrices', 10000);
           }
 
+          if (blockExtended.extras.totalInputAmt === null || blockExtended.extras.utxoSetSize === null) {
+            logger.debug(
+              `Block ${blockExtended.height} missing coinStatsIndex data, scheduling backfill in 10 seconds.`,
+              logger.tags.mining
+            );
+            indexer.scheduleSingleTask('coinStatsIndex', 10000);
+          }
+
           // Save blocks summary for visualization if it's enabled
           if (Common.blocksSummariesIndexingEnabled() === true) {
             await this.$getStrippedBlockTransactions(blockExtended.id, true, false);
