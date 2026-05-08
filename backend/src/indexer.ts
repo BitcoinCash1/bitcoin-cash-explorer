@@ -17,13 +17,14 @@ export interface BCHNIndex {
   best_block_height: number;
 }
 
-type TaskName = 'blocksPrices' | 'coinStatsIndex';
+type TaskName = 'blocksPrices' | 'coinStatsIndex' | 'coinStatsIndexWithCheck';
 
 class Indexer {
   private runIndexer = true;
   private indexerRunning = false;
   private tasksRunning: { [key in TaskName]?: boolean } = {};
   private tasksScheduled: { [key in TaskName]?: NodeJS.Timeout } = {};
+  private taskHeights: { [key in TaskName]?: number } = {};
   private reindexTimeout: NodeJS.Timeout | undefined;
   private bchnIndexes: BCHNIndex[] = [];
 
@@ -105,7 +106,7 @@ class Indexer {
    * @param {number} timeout - delay in ms
    * @param {boolean} replace - `true` replaces any already scheduled task (works like a debounce), `false` ignores subsequent requests (works like a throttle)
    */
-  public scheduleSingleTask(task: TaskName, timeout = 10000, replace = false): void {
+  public scheduleSingleTask(task: TaskName, timeout = 10000, replace = false, height?: number): void {
     if (this.tasksScheduled[task]) {
       if (!replace) {
         //throttle
@@ -114,6 +115,9 @@ class Indexer {
         // debounce
         clearTimeout(this.tasksScheduled[task]);
       }
+    }
+    if (height !== undefined) {
+      this.taskHeights[task] = height;
     }
     this.tasksScheduled[task] = setTimeout(async () => {
       try {
@@ -165,6 +169,31 @@ class Indexer {
             await mining.$indexCoinStatsIndex();
           } catch (e) {
             logger.debug(`failed to index coinstatsindex: ` + (e instanceof Error ? e.message : e));
+          }
+        }
+        break;
+
+      case 'coinStatsIndexWithCheck':
+        {
+          const targetHeight = this.taskHeights['coinStatsIndexWithCheck'];
+          if (targetHeight === undefined) {
+            logger.err(`coinStatsIndexWithCheck scheduled without a target height`, logger.tags.mining);
+            break;
+          }
+          const indexes: any = await bitcoinClient.getIndexInfo();
+          const coinStatsInfo = indexes?.['coinstatsindex'];
+          if (coinStatsInfo?.synced === true && coinStatsInfo.best_block_height >= targetHeight) {
+            logger.debug(`Indexing coinStatsIndex (with check) now`, logger.tags.mining);
+            try {
+              await mining.$indexCoinStatsIndex();
+            } catch (e) {
+              logger.debug(`failed to index coinstatsindex: ` + (e instanceof Error ? e.message : e));
+            }
+          } else {
+            logger.warn(
+              `coinStatsIndex not ready for height ${targetHeight} (synced: ${coinStatsInfo?.synced ?? 'n/a'}, best: ${coinStatsInfo?.best_block_height ?? 'n/a'}), skipping until next reindex`,
+              logger.tags.mining
+            );
           }
         }
         break;
