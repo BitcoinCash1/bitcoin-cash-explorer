@@ -313,7 +313,7 @@ export class BlockTimesGraphComponent implements OnInit {
                 data: data.timeDiffs,
                 type: 'line',
                 lineStyle: {
-                  width: 2,
+                  width: 1.5,
                 },
                 markLine: {
                   silent: true,

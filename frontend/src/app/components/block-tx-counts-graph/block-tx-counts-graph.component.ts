@@ -43,6 +43,7 @@ export class BlockTxCountsGraphComponent implements OnInit {
 
   miningWindowPreference: string;
   radioGroupForm: UntypedFormGroup;
+  scaleType: 'value' | 'log' = 'value';
 
   chartOptions: EChartsOption = {};
   chartInitOptions = {
@@ -56,6 +57,7 @@ export class BlockTxCountsGraphComponent implements OnInit {
   formatNumber = formatNumber;
   timespan = '';
   chartInstance: any = undefined;
+  currentData: any = null;
 
   constructor(
     @Inject(LOCALE_ID) public locale: string,
@@ -125,7 +127,8 @@ export class BlockTxCountsGraphComponent implements OnInit {
                 val.avgTxCount,
                 val.avgHeight,
               ]);
-              this.prepareChartOptions({ txCounts });
+              this.currentData = { txCounts };
+              this.prepareChartOptions(this.currentData);
               this.isLoading = false;
             }),
             map((response) => ({
@@ -226,9 +229,10 @@ export class BlockTxCountsGraphComponent implements OnInit {
           ? undefined
           : [
               {
-                type: 'value',
+                type: this.scaleType,
                 position: 'left',
-                min: 0,
+                ...(this.scaleType === 'log' && { logBase: 1.5 }),
+                ...(this.scaleType === 'value' && { min: 0 }),
                 axisLabel: {
                   color: 'var(--grey)',
                   formatter: (val) => {
@@ -306,6 +310,13 @@ export class BlockTxCountsGraphComponent implements OnInit {
 
   isMobile() {
     return window.innerWidth <= 767.98;
+  }
+
+  toggleScale() {
+    this.scaleType = this.scaleType === 'value' ? 'log' : 'value';
+    if (this.currentData) {
+      this.prepareChartOptions(this.currentData);
+    }
   }
 
   onSaveChart() {
