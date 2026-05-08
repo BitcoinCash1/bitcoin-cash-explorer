@@ -1,5 +1,10 @@
 .title-address {
-  padding-bottom: 15px;
+  @media (min-width: 576px) {
+    display: flex;
+    flex-direction: row;
+    align-items: baseline;
+    flex-wrap: wrap;
+  }
 }
 
 .qr-wrapper {
@@ -49,9 +54,9 @@ h1 {
   padding: 0px;
   margin-right: 10px;
   font-size: 1.9rem;
+  flex-shrink: 0;
   @media (min-width: 576px) {
     font-size: 2rem;
-    float: left;
   }
   @media (min-width: 768px) {
     font-size: 2.5rem;
@@ -87,14 +92,9 @@ h1 {
 .tx-link {
   display: block;
   height: 100%;
-  top: 9px;
-  position: relative;
   @media (min-width: 576px) {
-    max-width: calc(100% - 180px);
-    top: 11px;
-  }
-  @media (min-width: 768px) {
-    top: 17px;
+    flex: 1;
+    min-width: 0;
   }
 }
 
@@ -122,11 +122,15 @@ h1 {
 }
 
 .address-toggle {
+  flex-shrink: 0;
   margin-left: auto;
-  margin-top: 10px;
+  align-self: center;
+  margin-top: 8px;
   display: block;
   @media (max-width: 575.98px) {
-    margin-left: 0;
     display: inline-flex;
+  }
+  @media (min-width: 768px) {
+    margin-top: 12px;
   }
 }
