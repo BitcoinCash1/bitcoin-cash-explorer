@@ -296,18 +296,17 @@ export class BlockVolumeGraphComponent implements OnInit {
           ? []
           : [
               {
-                zlevel: 3,
                 name: $localize`Input Volume (BCH)`,
                 showSymbol: false,
                 symbol: 'none',
                 data: data.inputAmts,
                 type: 'line',
                 yAxisIndex: 0,
-                lineStyle: { width: 2, color: '#00b0ff' },
+                lineStyle: { width: 1.5, color: '#00b0ff' },
                 itemStyle: { color: '#00b0ff' },
+                areaStyle: { color: '#00b0ff', opacity: 0.15 },
               },
               {
-                zlevel: 2,
                 name: $localize`UTXO Inputs`,
                 showSymbol: false,
                 symbol: 'none',
@@ -316,9 +315,9 @@ export class BlockVolumeGraphComponent implements OnInit {
                 yAxisIndex: 1,
                 lineStyle: { width: 1, color: '#1fc35f' },
                 itemStyle: { color: '#1fc35f' },
+                areaStyle: { color: '#1fc35f', opacity: 0.15 },
               },
               {
-                zlevel: 1,
                 name: $localize`UTXO Outputs`,
                 showSymbol: false,
                 symbol: 'none',
@@ -327,6 +326,7 @@ export class BlockVolumeGraphComponent implements OnInit {
                 yAxisIndex: 1,
                 lineStyle: { width: 1, color: '#fb8c00' },
                 itemStyle: { color: '#fb8c00' },
+                areaStyle: { color: '#fb8c00', opacity: 0.15 },
               },
             ],
       dataZoom: [
