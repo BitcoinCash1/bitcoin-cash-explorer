@@ -256,7 +256,13 @@ export class BlockTxCountsGraphComponent implements OnInit {
                 data: data.txCounts,
                 type: 'line',
                 lineStyle: {
-                  width: 2,
+                  width: 1.5,
+                },
+                areaStyle: {
+                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: 'rgba(0, 229, 255, 0.35)' },
+                    { offset: 1, color: 'rgba(10, 78, 214, 0.08)' },
+                  ]),
                 },
               },
             ],
