@@ -87,7 +87,8 @@ export class DifficultyComponent implements OnInit {
         const difficultyDriftPercentSinceAnchor =
           getDifficultyDriftPercentSinceAnchor(
             latestBlock.height,
-            latestBlock.timestamp
+            latestBlock.timestamp,
+            this.stateService.network
           );
 
         // Color for drift indicator
@@ -119,7 +120,11 @@ export class DifficultyComponent implements OnInit {
         // Build ASERT deviation points from all known blocks (relative to baseline)
         const absolutePoints = sorted.map((block) => ({
           height: block.height,
-          deviation: getScheduleOffsetSeconds(block.height, block.timestamp),
+          deviation: getScheduleOffsetSeconds(
+            block.height,
+            block.timestamp,
+            this.stateService.network
+          ),
           timestamp: block.timestamp,
         }));
         // Merge new points into raw rolling window (absolute values), dedup by height

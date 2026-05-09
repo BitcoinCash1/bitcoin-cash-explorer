@@ -15,7 +15,6 @@ export interface DifficultyAdjustment {
   currentBits: string;
   nextBits: string;
   timeAvg: number;
-  timeOffset: number;
 }
 
 export interface AddressInformation {

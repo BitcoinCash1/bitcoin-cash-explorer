@@ -1,13 +1,52 @@
 // --- ASERT (aserti3-2d) functions ---
 // Ported from: https://gist.github.com/A60AB5450353F40E/5607d5aeb9ba0e84a71ab8f55ebdd2ad
 
-const ASERT_ANCHOR_BITS = '1804dafe';
-const ASERT_ANCHOR_TICK = 396988200;
-export const ASERT_ANCHOR_TIMESTAMP = 1605447844;
 const ASERT_ANCHOR_IDEAL_BLOCK_TIME = 600;
-const ASERT_ANCHOR_TAU = 172800; // half-life = 2 days
+
+interface AsertAnchor {
+  bits: string;
+  tick: number; // anchor_height * 600
+  timestamp: number; // previous block timestamp at anchor
+  tau: number; // half-life in seconds
+}
+
+// Per-network ASERT anchor parameters from BCHN chainparams.cpp
+// scalenet has no hard-coded anchor (periodic reorgs); mainnet anchor used as proxy
+const ASERT_ANCHORS: Record<string, AsertAnchor> = {
+  mainnet: {
+    bits: '1804dafe',
+    tick: 396988200,
+    timestamp: 1605447844,
+    tau: 172800,
+  },
+  testnet4: {
+    bits: '1d00ffff',
+    tick: 10106400,
+    timestamp: 1605451779,
+    tau: 3600,
+  },
+  chipnet: {
+    bits: '1d00ffff',
+    tick: 10106400,
+    timestamp: 1605451779,
+    tau: 3600,
+  },
+  scalenet: {
+    bits: '1804dafe',
+    tick: 396988200,
+    timestamp: 1605447844,
+    tau: 172800,
+  },
+};
+
+export function getAsertAnchor(network: string): AsertAnchor {
+  return ASERT_ANCHORS[network] ?? ASERT_ANCHORS['mainnet'];
+}
+
+// Legacy exports kept for callers that assume mainnet anchor
+export const ASERT_ANCHOR_TIMESTAMP = ASERT_ANCHORS['mainnet'].timestamp;
 export const ASERT_ANCHOR_HEIGHT = Math.floor(
-  ASERT_ANCHOR_TICK / ASERT_ANCHOR_IDEAL_BLOCK_TIME
+  ASERT_ANCHORS['mainnet'].tick / ASERT_ANCHOR_IDEAL_BLOCK_TIME
 ); // 661647
 
 export function bitsToTarget(bits: string): number {
@@ -36,17 +75,18 @@ export function targetToBits(target: number): string {
 export function calculateTarget(
   heightTick: number,
   timestamp: number,
+  anchor: AsertAnchor,
   nextTargetBlockTime: number = 600
 ): number {
-  const anchorTarget = bitsToTarget(ASERT_ANCHOR_BITS);
+  const anchorTarget = bitsToTarget(anchor.bits);
 
-  const tickDelta = heightTick - ASERT_ANCHOR_TICK;
-  const timeDelta = timestamp - ASERT_ANCHOR_TIMESTAMP;
+  const tickDelta = heightTick - anchor.tick;
+  const timeDelta = timestamp - anchor.timestamp;
 
   const t = Math.trunc;
   const base = t(
     ((timeDelta - (tickDelta + ASERT_ANCHOR_IDEAL_BLOCK_TIME)) * 65536) /
-      ASERT_ANCHOR_TAU
+      anchor.tau
   );
   const hi = t(base / 65536) + (base < 0 ? -1 : 0);
   const lo = base - hi * 65536;
@@ -69,27 +109,32 @@ export function calculateTarget(
 export function calculateTargetLegacy(
   height: number,
   timestamp: number,
+  anchor: AsertAnchor,
   nextTargetBlockTime: number = 600
 ): number {
-  return calculateTarget(height * 600, timestamp, nextTargetBlockTime);
+  return calculateTarget(height * 600, timestamp, anchor, nextTargetBlockTime);
 }
 
 export function getScheduleOffsetSeconds(
   height: number,
-  timestamp: number
+  timestamp: number,
+  network: string = 'mainnet'
 ): number {
-  const idealElapsed =
-    (height - ASERT_ANCHOR_HEIGHT) * ASERT_ANCHOR_IDEAL_BLOCK_TIME;
-  const actualElapsed = timestamp - ASERT_ANCHOR_TIMESTAMP;
+  const anchor = getAsertAnchor(network);
+  const anchorHeight = Math.floor(anchor.tick / ASERT_ANCHOR_IDEAL_BLOCK_TIME);
+  const idealElapsed = (height - anchorHeight) * ASERT_ANCHOR_IDEAL_BLOCK_TIME;
+  const actualElapsed = timestamp - anchor.timestamp;
   return idealElapsed - actualElapsed;
 }
 
 export function getDifficultyDriftPercentSinceAnchor(
   height: number,
-  timestamp: number
+  timestamp: number,
+  network: string = 'mainnet'
 ): number {
-  const anchorTarget = bitsToTarget(ASERT_ANCHOR_BITS);
-  const currentTarget = calculateTargetLegacy(height, timestamp);
+  const anchor = getAsertAnchor(network);
+  const anchorTarget = bitsToTarget(anchor.bits);
+  const currentTarget = calculateTargetLegacy(height, timestamp, anchor);
   if (anchorTarget === 0) return 0;
   // Higher target = easier = difficulty decrease (negative drift)
   // Lower target = harder = difficulty increase (positive drift)

@@ -114,8 +114,7 @@ export const wsApiDocsData = [
     "previousRetarget": 4.429396745461176,
     "previousTime": 1734312810,
     "nextRetargetHeight": 876960,
-    "timeAvg": 596239,
-    "timeOffset": 0,
+    "timeAvg": 596239
     "expectedBlocks": 650.895
   }
 }`,
@@ -173,7 +172,6 @@ export const wsApiDocsData = [
     "previousTime": 1733564813,
     "nextRetargetHeight": 3538080,
     "timeAvg": 1200000,
-    "timeOffset": 0,
     "expectedBlocks": 1898.1033333333332
   }
 }`,
@@ -223,7 +221,6 @@ export const wsApiDocsData = [
     "previousTime": 1733848494,
     "nextRetargetHeight": 227808,
     "timeAvg": 618452,
-    "timeOffset": 0,
     "expectedBlocks": 1425.5333333333333
   },
   "fees": {
@@ -1407,8 +1404,7 @@ export const restApiDocsData = [
   "difficultyDriftPercent": 0.0347,
   "currentBits": "180154ce",
   "nextBits": "180154b2",
-  "timeAvg": 595000,
-  "timeOffset": 0
+  "timeAvg": 595000
 }`,
         },
         codeSampleTestnet: {
@@ -1420,8 +1416,7 @@ export const restApiDocsData = [
   difficultyDriftPercent: 0.012,
   currentBits: "180154ce",
   nextBits: "180154c0",
-  timeAvg: 302328,
-  timeOffset: 0
+  timeAvg: 302328
 }`,
         },
         codeSampleSignet: {
@@ -1433,8 +1428,7 @@ export const restApiDocsData = [
   difficultyDriftPercent: 0.012,
   currentBits: "180154ce",
   nextBits: "180154c0",
-  timeAvg: 302328,
-  timeOffset: 0
+  timeAvg: 302328
 }`,
         },
       },

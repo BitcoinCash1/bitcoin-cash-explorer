@@ -9,7 +9,7 @@ import { TrackerGuard } from '@app/route-guards';
 
 export const routes: Routes = [
   {
-    path: 'testnet',
+    path: 'scalenet',
     children: [
       {
         path: '',
@@ -51,7 +51,7 @@ export const routes: Routes = [
       },
       {
         path: '**',
-        redirectTo: '/testnet',
+        redirectTo: '/scalenet',
       },
     ],
   },
@@ -103,13 +103,8 @@ export const routes: Routes = [
     ],
   },
   {
-    path: 'signet',
+    path: 'chipnet',
     children: [
-      {
-        path: 'mining/blocks',
-        redirectTo: 'blocks',
-        pathMatch: 'full',
-      },
       {
         path: '',
         pathMatch: 'full',
@@ -150,7 +145,7 @@ export const routes: Routes = [
       },
       {
         path: '**',
-        redirectTo: '/signet',
+        redirectTo: '/chipnet',
       },
     ],
   },
@@ -192,17 +187,17 @@ export const routes: Routes = [
           import('@app/previews.module').then((m) => m.PreviewsModule),
       },
       {
-        path: 'testnet',
-        loadChildren: () =>
-          import('@app/previews.module').then((m) => m.PreviewsModule),
-      },
-      {
         path: 'testnet4',
         loadChildren: () =>
           import('@app/previews.module').then((m) => m.PreviewsModule),
       },
       {
-        path: 'signet',
+        path: 'scalenet',
+        loadChildren: () =>
+          import('@app/previews.module').then((m) => m.PreviewsModule),
+      },
+      {
+        path: 'chipnet',
         loadChildren: () =>
           import('@app/previews.module').then((m) => m.PreviewsModule),
       },

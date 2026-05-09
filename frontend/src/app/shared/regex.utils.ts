@@ -59,23 +59,23 @@ const ADDRESS_CHARS: {
         + `[13]` + BASE58_CHARS + `{26,33}` // Legacy base58 addresses
       + `)`,
   },
-  testnet: {
+  scalenet: {
     base58: `[mn2]` // Starts with a single m, n, or 2 (P2PKH is m or n, 2 is P2SH)
       + BASE58_CHARS
-      + `{33,34}`, // m|n is 34 length, 2 is 35 length (We match the first letter separately)
+      + `{33,34}`,
     bech32: `(?:`
         + `tb1` // Starts with tb1
         + BECH32_CHARS_LW
-        + `{6,100}` // As per bech32, 6 char checksum is minimum
+        + `{6,100}`
       + `|`
         + `TB1` // All upper case version
         + BECH32_CHARS_UP
         + `{6,100}`
       + `)`,
     bch: `(?:`
-        + `bchtest:` + CASHADDR_CHARS + `{20,100}` // Testnet CashAddr with prefix
+        + `bchtest:` + CASHADDR_CHARS + `{20,100}` // Scalenet CashAddr with prefix
       + `|`
-        + CASHADDR_CHARS + `{20,100}` // Testnet CashAddr without prefix (optional)
+        + CASHADDR_CHARS + `{20,100}` // Scalenet CashAddr without prefix (optional)
       + `|`
         + `[mn2]` + BASE58_CHARS + `{33,34}` // Legacy base58 addresses
       + `)`,
@@ -101,7 +101,7 @@ const ADDRESS_CHARS: {
         + `[mn2]` + BASE58_CHARS + `{33,34}` // Legacy base58 addresses
       + `)`,
   },
-  signet: {
+  chipnet: {
     base58: `[mn2]`
       + BASE58_CHARS
       + `{33,34}`,
@@ -115,9 +115,9 @@ const ADDRESS_CHARS: {
         + `{6,100}`
       + `)`,
     bch: `(?:`
-        + `bchreg:` + CASHADDR_CHARS + `{20,100}` // Regtest CashAddr with prefix
+        + `bchtest:` + CASHADDR_CHARS + `{20,100}` // Chipnet CashAddr with prefix
       + `|`
-        + CASHADDR_CHARS + `{20,100}` // Regtest CashAddr without prefix (optional)
+        + CASHADDR_CHARS + `{20,100}` // Chipnet CashAddr without prefix (optional)
       + `|`
         + `[mn2]` + BASE58_CHARS + `{33,34}` // Legacy base58 addresses
       + `)`,
@@ -130,7 +130,7 @@ type RegexTypeNoAddrNoBlockHash =
   | `timestamp`;
 export type RegexType = `address` | `blockhash` | RegexTypeNoAddrNoBlockHash;
 
-export const NETWORKS = [`mainnet`, `testnet4`, `testnet`, `signet`] as const;
+export const NETWORKS = [`mainnet`, `testnet4`, `scalenet`, `chipnet`] as const;
 export type Network = (typeof NETWORKS)[number]; // Turn const array into union type
 
 export const ADDRESS_REGEXES: [RegExp, Network][] = NETWORKS.map((network) => [
@@ -154,12 +154,12 @@ export function findOtherNetworks(
 
 function isNetworkAvailable(network: Network, env: Env): boolean {
   switch (network) {
-    case 'testnet':
-      return env.TESTNET_ENABLED === true;
     case 'testnet4':
       return env.TESTNET4_ENABLED === true;
-    case 'signet':
-      return env.SIGNET_ENABLED === true;
+    case 'scalenet':
+      return env.SCALENET_ENABLED === true;
+    case 'chipnet':
+      return env.CHIPNET_ENABLED === true;
     case 'mainnet':
       return true; // There is no "MAINNET_ENABLED" flag
     default:
@@ -177,9 +177,9 @@ export function needBaseModuleChange(
   if (fromBaseModule === 'explorer') {
     return (
       toNetwork !== 'mainnet' &&
-      toNetwork !== 'testnet' &&
       toNetwork !== 'testnet4' &&
-      toNetwork !== 'signet'
+      toNetwork !== 'scalenet' &&
+      toNetwork !== 'chipnet'
     );
   }
   return false;
@@ -193,9 +193,9 @@ export function getTargetUrl(
   let targetUrl = '';
   if (
     toNetwork === 'mainnet' ||
-    toNetwork === 'testnet' ||
     toNetwork === 'testnet4' ||
-    toNetwork === 'signet'
+    toNetwork === 'scalenet' ||
+    toNetwork === 'chipnet'
   ) {
     targetUrl = env.WEBSITE_URL;
     targetUrl += toNetwork === 'mainnet' ? '' : `/${toNetwork}`;
@@ -225,16 +225,10 @@ export function getRegex(type: RegexType, network?: Network): RegExp {
       let leadingZeroes: number;
       switch (network) {
         case `mainnet`:
-          leadingZeroes = 8; // Assumes at least 32 bits of difficulty
-          break;
-        case `testnet`:
-          leadingZeroes = 8; // Assumes at least 32 bits of difficulty
-          break;
         case `testnet4`:
+        case `scalenet`:
+        case `chipnet`:
           leadingZeroes = 8; // Assumes at least 32 bits of difficulty
-          break;
-        case `signet`:
-          leadingZeroes = 5;
           break;
         default:
           throw new Error(
@@ -274,12 +268,12 @@ export function getRegex(type: RegexType, network?: Network): RegExp {
           regex += `|`; // OR
           regex += `(?:02|03)${HEX_CHARS}{64}`; // Compressed pubkey
           break;
-        case `testnet`:
-          regex += ADDRESS_CHARS.testnet.base58;
+        case `scalenet`:
+          regex += ADDRESS_CHARS.scalenet.base58;
           regex += `|`; // OR
-          regex += ADDRESS_CHARS.testnet.bech32;
+          regex += ADDRESS_CHARS.scalenet.bech32;
           regex += `|`; // OR
-          regex += ADDRESS_CHARS.testnet.bch;
+          regex += ADDRESS_CHARS.scalenet.bch;
           regex += `|`; // OR
           regex += `04${HEX_CHARS}{128}`; // Uncompressed pubkey
           regex += `|`; // OR
@@ -296,12 +290,12 @@ export function getRegex(type: RegexType, network?: Network): RegExp {
           regex += `|`; // OR
           regex += `(?:02|03)${HEX_CHARS}{64}`; // Compressed pubkey
           break;
-        case `signet`:
-          regex += ADDRESS_CHARS.signet.base58;
+        case `chipnet`:
+          regex += ADDRESS_CHARS.chipnet.base58;
           regex += `|`; // OR
-          regex += ADDRESS_CHARS.signet.bech32;
+          regex += ADDRESS_CHARS.chipnet.bech32;
           regex += `|`; // OR
-          regex += ADDRESS_CHARS.signet.bch;
+          regex += ADDRESS_CHARS.chipnet.bch;
           regex += `|`; // OR
           regex += `04${HEX_CHARS}{128}`; // Uncompressed pubkey
           regex += `|`; // OR

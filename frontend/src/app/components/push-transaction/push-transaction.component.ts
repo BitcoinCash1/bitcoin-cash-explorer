@@ -167,18 +167,10 @@ export class PushTransactionComponent implements OnInit {
         if (this.stateService.network !== '' && !pushNetwork) {
           this.router.navigateByUrl(`/pushtx#${fragmentParams.toString()}`);
           return false;
-        } else if (
-          this.stateService.network !== 'testnet' &&
-          pushNetwork === 'XTN'
-        ) {
-          this.router.navigateByUrl(
-            `/testnet/pushtx#${fragmentParams.toString()}`
-          );
-          return false;
         } else if (pushNetwork === 'XRT') {
           this.error = 'Regtest is not supported';
           return false;
-        } else if (pushNetwork && !['XTN', 'XRT'].includes(pushNetwork)) {
+        } else if (pushNetwork && pushNetwork !== 'XRT') {
           this.error = 'Invalid network';
           return false;
         }

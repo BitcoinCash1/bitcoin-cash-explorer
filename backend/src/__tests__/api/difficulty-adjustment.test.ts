@@ -1,46 +1,73 @@
 import { calcBitsDifference, calcAsertDifficultyAdjustment } from '../../api/difficulty-adjustment';
 
 describe('Mempool Difficulty Adjustment', () => {
-  test('should calculate ASERT Difficulty Adjustments properly', () => {
-    // Test basic ASERT calculation with a known block
+  const recentBlocksFor = (blockTimestamp: number) => [
+    { timestamp: blockTimestamp - 3600 },
+    { timestamp: blockTimestamp - 3000 },
+    { timestamp: blockTimestamp - 2400 },
+    { timestamp: blockTimestamp - 1800 },
+    { timestamp: blockTimestamp - 1200 },
+    { timestamp: blockTimestamp - 600 },
+    { timestamp: blockTimestamp },
+  ];
+
+  test('should calculate ASERT Difficulty Adjustments properly for mainnet', () => {
     const blockHeight = 946905;
     const blockTimestamp = 1776280633;
-    const nowSeconds = blockTimestamp + 60; // 1 minute after the block
-    const recentBlocks = [
-      { timestamp: blockTimestamp - 3600 },
-      { timestamp: blockTimestamp - 3000 },
-      { timestamp: blockTimestamp - 2400 },
-      { timestamp: blockTimestamp - 1800 },
-      { timestamp: blockTimestamp - 1200 },
-      { timestamp: blockTimestamp - 600 },
-      { timestamp: blockTimestamp },
-    ];
+    const recentBlocks = recentBlocksFor(blockTimestamp);
 
-    const result = calcAsertDifficultyAdjustment(blockHeight, blockTimestamp, nowSeconds, 'mainnet', recentBlocks);
+    const result = calcAsertDifficultyAdjustment(blockHeight, blockTimestamp, 'mainnet', recentBlocks);
 
-    // Verify structure
     expect(result).toHaveProperty('scheduleOffsetSeconds');
     expect(result).toHaveProperty('difficultyDriftPercent');
     expect(result).toHaveProperty('currentBits');
     expect(result).toHaveProperty('nextBits');
     expect(result).toHaveProperty('timeAvg');
-    expect(result).toHaveProperty('timeOffset');
 
-    // scheduleOffsetSeconds should be a number
     expect(typeof result.scheduleOffsetSeconds).toBe('number');
-
-    // difficultyDriftPercent should be a small number (near zero for normal operation)
     expect(typeof result.difficultyDriftPercent).toBe('number');
+    expect(result.currentBits).toMatch(/^[0-9a-f]{8}$/);
+    expect(result.nextBits).toMatch(/^[0-9a-f]{8}$/);
+    expect(result.timeAvg).toBe(600000);
+  });
 
-    // bits should be valid hex strings (8 chars)
+  test('should use testnet4 anchor (height 16844, bits 1d00ffff, tau 3600) for testnet4', () => {
+    // testnet4 anchor is at height 16844, timestamp 1605451779 (Nov 2020).
+    // Use a block 200 blocks above anchor with ideal-pace timing to keep hi exponent small.
+    const blockHeight = 17044; // anchor + 200
+    const blockTimestamp = 1605451779 + 200 * 600; // ideal 10-min spacing
+    const recentBlocks = recentBlocksFor(blockTimestamp);
+
+    const result = calcAsertDifficultyAdjustment(blockHeight, blockTimestamp, 'testnet4', recentBlocks);
+
     expect(result.currentBits).toMatch(/^[0-9a-f]{8}$/);
     expect(result.nextBits).toMatch(/^[0-9a-f]{8}$/);
 
-    // timeAvg should be 600000ms (600s * 1000) for perfectly spaced blocks
-    expect(result.timeAvg).toBe(600000);
+    // testnet4 anchor bits (1d00ffff) differ from mainnet (1804dafe) — results must differ
+    const mainnetResult = calcAsertDifficultyAdjustment(blockHeight, blockTimestamp, 'mainnet', recentBlocks);
+    expect(result.currentBits).not.toEqual(mainnetResult.currentBits);
+  });
 
-    // timeOffset should be 0 for mainnet
-    expect(result.timeOffset).toBe(0);
+  test('chipnet should produce same result as testnet4 (identical anchor params)', () => {
+    // chipnet anchor is identical to testnet4: height 16844, bits 1d00ffff, tau 3600
+    const blockHeight = 17044; // anchor + 200
+    const blockTimestamp = 1605451779 + 200 * 600; // ideal 10-min spacing → scheduleOffset = 0
+    const recentBlocks = recentBlocksFor(blockTimestamp);
+
+    const testnet4Result = calcAsertDifficultyAdjustment(blockHeight, blockTimestamp, 'testnet4', recentBlocks);
+    const chipnetResult = calcAsertDifficultyAdjustment(blockHeight, blockTimestamp, 'chipnet', recentBlocks);
+
+    // Both networks share the same anchor — results must be identical
+    expect(chipnetResult.currentBits).toEqual(testnet4Result.currentBits);
+    expect(chipnetResult.nextBits).toEqual(testnet4Result.nextBits);
+    expect(chipnetResult.scheduleOffsetSeconds).toEqual(testnet4Result.scheduleOffsetSeconds);
+    expect(chipnetResult.difficultyDriftPercent).toEqual(testnet4Result.difficultyDriftPercent);
+    expect(chipnetResult.timeAvg).toEqual(testnet4Result.timeAvg);
+
+    // At ideal pace: bits hold steady at 1d00e417, schedule is exactly on time
+    expect(chipnetResult.currentBits).toBe('1d00e417');
+    expect(chipnetResult.scheduleOffsetSeconds).toBe(0);
+    expect(chipnetResult.timeAvg).toBe(600000);
   });
 
   test('should calculate Difficulty change from bits fields of two blocks', () => {

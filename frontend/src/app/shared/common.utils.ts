@@ -215,12 +215,10 @@ export function renderSats(
 ): string {
   let prefix = '';
   switch (network) {
-    case 'testnet':
     case 'testnet4':
+    case 'scalenet':
+    case 'chipnet':
       prefix = 't';
-      break;
-    case 'signet':
-      prefix = 's';
       break;
   }
   if (mode === 'bch' || (mode === 'auto' && value >= 1000000)) {

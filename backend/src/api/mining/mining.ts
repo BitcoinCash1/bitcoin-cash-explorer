@@ -1115,7 +1115,7 @@ class Mining {
 
       for (const block of blocksWithoutPrices) {
         // Quick optimisation, out mtgox feed only goes back to 2010-07-19 02:00:00, so skip the first 68951 blocks
-        if (['mainnet', 'testnet'].includes(config.EXPLORER.NETWORK) && block.height < 68951) {
+        if (config.EXPLORER.NETWORK === 'mainnet' && block.height < 68951) {
           blocksPrices.push({
             height: block.height,
             priceId: prices[0].id,

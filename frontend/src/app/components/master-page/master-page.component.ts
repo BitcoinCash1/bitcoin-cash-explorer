@@ -82,9 +82,9 @@ export class MasterPageComponent implements OnInit, OnDestroy {
 
   setDropdownVisibility(): void {
     const networks = [
-      this.env.TESTNET_ENABLED,
       this.env.TESTNET4_ENABLED,
-      this.env.SIGNET_ENABLED,
+      this.env.SCALENET_ENABLED,
+      this.env.CHIPNET_ENABLED,
       this.env.MAINNET_ENABLED,
     ];
     const enabledNetworksCount = networks.filter(

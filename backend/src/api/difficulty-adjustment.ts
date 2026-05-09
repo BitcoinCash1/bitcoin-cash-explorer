@@ -8,18 +8,28 @@ export interface DifficultyAdjustment {
   currentBits: string; // current block bits (hex)
   nextBits: string; // predicted next block bits (hex)
   timeAvg: number; // avg block time over recent 8 blocks (ms)
-  timeOffset: number; // time offset for testnet (ms)
 }
 
 // --- ASERT (aserti3-2d) functions ---
 // Ported from: https://gist.github.com/A60AB5450353F40E/5607d5aeb9ba0e84a71ab8f55ebdd2ad
 
-const ASERT_ANCHOR_BITS = '1804dafe';
-const ASERT_ANCHOR_TICK = 396988200;
-const ASERT_ANCHOR_TIMESTAMP = 1605447844;
 const ASERT_ANCHOR_IDEAL_BLOCK_TIME = 600;
-const ASERT_ANCHOR_TAU = 172800; // half-life = 2 days
-const ASERT_ANCHOR_HEIGHT = Math.floor(ASERT_ANCHOR_TICK / ASERT_ANCHOR_IDEAL_BLOCK_TIME); // 661647
+
+interface AsertAnchor {
+  bits: string;
+  tick: number; // anchor_height * 600
+  timestamp: number; // previous block timestamp at anchor
+  tau: number; // half-life in seconds
+}
+
+// Per-network ASERT anchor parameters from BCHN chainparams.cpp
+// scalenet has no hard-coded anchor (periodic reorgs); mainnet anchor used as proxy
+const ASERT_ANCHORS: Record<string, AsertAnchor> = {
+  mainnet: { bits: '1804dafe', tick: 396988200, timestamp: 1605447844, tau: 172800 },
+  testnet4: { bits: '1d00ffff', tick: 10106400, timestamp: 1605451779, tau: 3600 },
+  chipnet: { bits: '1d00ffff', tick: 10106400, timestamp: 1605451779, tau: 3600 },
+  scalenet: { bits: '1804dafe', tick: 396988200, timestamp: 1605447844, tau: 172800 },
+};
 
 function bitsToTarget(bits: string): number {
   const exponent = parseInt(bits.slice(0, 2), 16);
@@ -28,7 +38,9 @@ function bitsToTarget(bits: string): number {
 }
 
 function targetToBits(target: number): string {
-  if (target === 0) return '00000000';
+  if (target === 0) {
+    return '00000000';
+  }
 
   let exponent = Math.floor(Math.log2(target) / 8) + 1;
   let mantissa = Math.floor(target / Math.pow(2, (exponent - 3) * 8));
@@ -41,14 +53,19 @@ function targetToBits(target: number): string {
   return exponent.toString(16).padStart(2, '0') + mantissa.toString(16).padStart(6, '0');
 }
 
-function calculateTarget(heightTick: number, timestamp: number, nextTargetBlockTime: number = 600): number {
-  const anchorTarget = bitsToTarget(ASERT_ANCHOR_BITS);
+function calculateTarget(
+  heightTick: number,
+  timestamp: number,
+  anchor: AsertAnchor,
+  nextTargetBlockTime: number = 600
+): number {
+  const anchorTarget = bitsToTarget(anchor.bits);
 
-  const tickDelta = heightTick - ASERT_ANCHOR_TICK;
-  const timeDelta = timestamp - ASERT_ANCHOR_TIMESTAMP;
+  const tickDelta = heightTick - anchor.tick;
+  const timeDelta = timestamp - anchor.timestamp;
 
   const t = Math.trunc;
-  const base = t(((timeDelta - (tickDelta + ASERT_ANCHOR_IDEAL_BLOCK_TIME)) * 65536) / ASERT_ANCHOR_TAU);
+  const base = t(((timeDelta - (tickDelta + ASERT_ANCHOR_IDEAL_BLOCK_TIME)) * 65536) / anchor.tau);
   const hi = t(base / 65536) + (base < 0 ? -1 : 0);
   const lo = base - hi * 65536;
 
@@ -60,8 +77,13 @@ function calculateTarget(heightTick: number, timestamp: number, nextTargetBlockT
   );
 }
 
-function calculateTargetLegacy(height: number, timestamp: number, nextTargetBlockTime: number = 600): number {
-  return calculateTarget(height * 600, timestamp, nextTargetBlockTime);
+function calculateTargetLegacy(
+  height: number,
+  timestamp: number,
+  anchor: AsertAnchor,
+  nextTargetBlockTime: number = 600
+): number {
+  return calculateTarget(height * 600, timestamp, anchor, nextTargetBlockTime);
 }
 
 // function numericBitsToHex(bits: number): string {
@@ -143,26 +165,26 @@ export function calcBitsDifference(oldBits: number, newBits: number): number {
 export function calcAsertDifficultyAdjustment(
   blockHeight: number,
   latestBlockTimestamp: number,
-  nowSeconds: number,
   network: string,
   recentBlocks: { timestamp: number }[]
 ): DifficultyAdjustment {
   const BLOCK_SECONDS_TARGET = 600;
-  const TESTNET_MAX_BLOCK_SECONDS = 1200;
+  const anchor = ASERT_ANCHORS[network] ?? ASERT_ANCHORS.mainnet;
+  const anchorHeight = Math.floor(anchor.tick / ASERT_ANCHOR_IDEAL_BLOCK_TIME);
 
   // Schedule offset: how far ahead or behind the ideal schedule
   // Positive = network is ahead (blocks mined faster than 10min avg)
   // Negative = network is behind (blocks mined slower than 10min avg)
-  const idealElapsed = (blockHeight - ASERT_ANCHOR_HEIGHT) * BLOCK_SECONDS_TARGET;
-  const actualElapsed = latestBlockTimestamp - ASERT_ANCHOR_TIMESTAMP;
+  const idealElapsed = (blockHeight - anchorHeight) * BLOCK_SECONDS_TARGET;
+  const actualElapsed = latestBlockTimestamp - anchor.timestamp;
   const scheduleOffsetSeconds = idealElapsed - actualElapsed;
 
   // Current ASERT target and bits
-  const currentTarget = calculateTargetLegacy(blockHeight, latestBlockTimestamp);
+  const currentTarget = calculateTargetLegacy(blockHeight, latestBlockTimestamp, anchor);
   const currentBits = targetToBits(currentTarget);
 
   // Predicted next block target (assuming it arrives in exactly 600s)
-  const nextTarget = calculateTargetLegacy(blockHeight + 1, latestBlockTimestamp + BLOCK_SECONDS_TARGET);
+  const nextTarget = calculateTargetLegacy(blockHeight + 1, latestBlockTimestamp + BLOCK_SECONDS_TARGET, anchor);
   const nextBits = targetToBits(nextTarget);
 
   // Difficulty drift %: how much harder/easier the next block will be
@@ -178,19 +200,6 @@ export function calcAsertDifficultyAdjustment(
     timeAvgSecs = totalTime / (sorted.length - 1);
   }
 
-  // Testnet: cap block time at 20 minutes
-  let timeOffset = 0;
-  if (network === 'testnet') {
-    if (timeAvgSecs > TESTNET_MAX_BLOCK_SECONDS) {
-      timeAvgSecs = TESTNET_MAX_BLOCK_SECONDS;
-    }
-
-    const secondsSinceLastBlock = nowSeconds - latestBlockTimestamp;
-    if (secondsSinceLastBlock + timeAvgSecs > TESTNET_MAX_BLOCK_SECONDS) {
-      timeOffset = -Math.min(secondsSinceLastBlock, TESTNET_MAX_BLOCK_SECONDS) * 1000;
-    }
-  }
-
   const timeAvg = Math.floor(timeAvgSecs * 1000);
 
   return {
@@ -199,7 +208,6 @@ export function calcAsertDifficultyAdjustment(
     currentBits,
     nextBits,
     timeAvg,
-    timeOffset,
   };
 }
 
@@ -211,18 +219,10 @@ class DifficultyAdjustmentApi {
     if (!latestBlock) {
       return null;
     }
-    const nowSeconds = Math.floor(new Date().getTime() / 1000);
-
     // Use last ~8 blocks for average block time calculation (7 intervals)
     const recentBlocks = blocksCache.slice(-8).map((b) => ({ timestamp: b.timestamp }));
 
-    return calcAsertDifficultyAdjustment(
-      blockHeight,
-      latestBlock.timestamp,
-      nowSeconds,
-      config.EXPLORER.NETWORK,
-      recentBlocks
-    );
+    return calcAsertDifficultyAdjustment(blockHeight, latestBlock.timestamp, config.EXPLORER.NETWORK, recentBlocks);
   }
 }
 
