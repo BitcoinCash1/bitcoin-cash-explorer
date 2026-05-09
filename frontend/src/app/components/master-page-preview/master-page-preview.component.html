@@ -33,27 +33,27 @@
       </span>
 
       <div [ngSwitch]="network.val">
-        <span *ngSwitchCase="'signet'" class="network signet"
+        <span *ngSwitchCase="'chipnet'" class="network chipnet"
           ><app-svg-images
-            name="signet"
+            name="testnet4"
             width="35"
             height="35"
             viewBox="0 0 65 65"
             style="width: 40px; height: 48px"
             class="mainnet me-1"
           ></app-svg-images>
-          Signet</span
+          Chipnet</span
         >
-        <span *ngSwitchCase="'testnet'" class="network testnet"
+        <span *ngSwitchCase="'scalenet'" class="network testnet"
           ><app-svg-images
-            name="testnet"
+            name="testnet4"
             width="35"
             height="35"
             viewBox="0 0 65 65"
             style="width: 40px; height: 48px"
             class="mainnet me-1"
           ></app-svg-images>
-          Testnet3</span
+          Scalenet</span
         >
         <span *ngSwitchCase="'testnet4'" class="network testnet"
           ><app-svg-images

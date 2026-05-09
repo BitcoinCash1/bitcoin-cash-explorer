@@ -1,4 +1,4 @@
-const bitcoinNetworks = ['', 'testnet', 'testnet4', 'signet'];
+const bitcoinNetworks = ['', 'testnet4', 'scalenet', 'chipnet'];
 const miningTimeIntervals =
   '<code>24h</code>, <code>3d</code>, <code>1w</code>, <code>1m</code>, <code>3m</code>, <code>6m</code>, <code>1y</code>, <code>2y</code>, <code>3y</code>';
 
@@ -11,13 +11,13 @@ const emptyCodeSample = {
 
 const showJsExamplesDefault = {
   '': true,
-  testnet: true,
-  signet: true,
+  testnet4: true,
+  chipnet: true,
 };
 const showJsExamplesDefaultFalse = {
   '': false,
-  testnet: false,
-  signet: false,
+  testnet4: false,
+  chipnet: false,
 };
 
 export const wsApiDocsData = [

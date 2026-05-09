@@ -174,7 +174,11 @@ export function nextRoundNumber(num: number): number {
 }
 
 export function seoDescriptionNetwork(network: string): string {
-  if (network === 'signet' || network === 'testnet' || network === 'testnet4') {
+  if (
+    network === 'testnet4' ||
+    network === 'scalenet' ||
+    network === 'chipnet'
+  ) {
     return ' ' + network.charAt(0).toUpperCase() + network.slice(1);
   }
   return '';
