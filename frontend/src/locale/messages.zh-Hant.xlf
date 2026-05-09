@@ -219,7 +219,7 @@
             </trans-unit>
             <trans-unit id="2014501481765374056">
                 <source xml:space="preserve">See the total number of unspent transaction outputs (UTXOs) on the Bitcoin Cash network over time.</source>
-                <target xml:space="preserve">See the total number of unspent transaction outputs (UTXOs) on the Bitcoin Cash network over time.</target>
+                <target xml:space="preserve">查看比特幣現金網路上未花費交易輸出 (UTXO) 的總數隨時間的變化。</target>
             </trans-unit>
             <trans-unit id="2041675390931385838">
                 <source xml:space="preserve">Health</source>
@@ -251,7 +251,7 @@
             </trans-unit>
             <trans-unit id="2146875259140187057">
                 <source xml:space="preserve">Block Volume</source>
-                <target xml:space="preserve">Block Volume</target>
+                <target xml:space="preserve">區塊體積</target>
             </trans-unit>
             <trans-unit id="2157556037790858775">
                 <source xml:space="preserve"> TXs </source>
@@ -291,7 +291,7 @@
             </trans-unit>
             <trans-unit id="2238469337972459496">
                 <source xml:space="preserve">Block Time</source>
-                <target xml:space="preserve">Block Time</target>
+                <target xml:space="preserve">區塊時間</target>
             </trans-unit>
             <trans-unit id="2256671562401574389">
                 <source xml:space="preserve">blocks earlier</source>
@@ -443,7 +443,7 @@
             </trans-unit>
             <trans-unit id="2800260241472448717">
                 <source xml:space="preserve">Block time (SMA 144)</source>
-                <target xml:space="preserve">Block time (SMA 144)</target>
+                <target xml:space="preserve">區塊時間（SMA 144）</target>
             </trans-unit>
             <trans-unit id="2808581435762418449">
                 <source xml:space="preserve">This transaction was seen in the mempool prior to mining</source>
@@ -551,7 +551,7 @@
             </trans-unit>
             <trans-unit id="3090889139796775910">
                 <source xml:space="preserve">See the average number of transactions per Bitcoin Cash block over time.</source>
-                <target xml:space="preserve">See the average number of transactions per Bitcoin Cash block over time.</target>
+                <target xml:space="preserve">查看比特幣現金區塊的平均交易數量隨時間的變化。</target>
             </trans-unit>
             <trans-unit id="3112239269637020392">
                 <source xml:space="preserve">sats/tx</source>
@@ -571,7 +571,7 @@
             </trans-unit>
             <trans-unit id="3161675600359363856">
                 <source xml:space="preserve">UTXO Outputs</source>
-                <target xml:space="preserve">UTXO Outputs</target>
+                <target xml:space="preserve">UTXO 輸出</target>
             </trans-unit>
             <trans-unit id="3170961539582792521">
                 <source xml:space="preserve">(144 blocks)</source>
@@ -723,7 +723,7 @@
             </trans-unit>
             <trans-unit id="3778096356145390312">
                 <source xml:space="preserve">Unspent Transaction Outputs</source>
-                <target xml:space="preserve">Unspent Transaction Outputs</target>
+                <target xml:space="preserve">未花費的交易輸出</target>
             </trans-unit>
             <trans-unit id="3781457392965972953">
                 <source xml:space="preserve">Hashrate</source>
@@ -971,7 +971,7 @@
             </trans-unit>
             <trans-unit id="4686430954741576816">
                 <source xml:space="preserve">UTXO Inputs</source>
-                <target xml:space="preserve">UTXO Inputs</target>
+                <target xml:space="preserve">UTXO 輸入</target>
             </trans-unit>
             <trans-unit id="4701769218404429807">
                 <source xml:space="preserve"> TXID </source>
@@ -1051,7 +1051,7 @@
             </trans-unit>
             <trans-unit id="4966581410303731134">
                 <source xml:space="preserve">See Bitcoin Cash block time variation over time.</source>
-                <target xml:space="preserve">See Bitcoin Cash block time variation over time.</target>
+                <target xml:space="preserve">查看比特幣現金區塊時間隨時間的變化。</target>
             </trans-unit>
             <trans-unit id="4980628658981044012">
                 <source xml:space="preserve">nSequence</source>
@@ -1091,7 +1091,7 @@
             </trans-unit>
             <trans-unit id="5143204595795749226">
                 <source xml:space="preserve">Block Time Variation</source>
-                <target xml:space="preserve">Block Time Variation</target>
+                <target xml:space="preserve">區塊時間變化</target>
             </trans-unit>
             <trans-unit id="5151697515296180479">
                 <source xml:space="preserve">Either 2x the minimum, or the Low Priority rate (whichever is lower)</source>
@@ -1119,7 +1119,7 @@
             </trans-unit>
             <trans-unit id="5190281097971514213">
                 <source xml:space="preserve">Transactions Per Block</source>
-                <target xml:space="preserve">Transactions Per Block</target>
+                <target xml:space="preserve">每個區塊的交易量</target>
             </trans-unit>
             <trans-unit id="5246516893505114366">
                 <source xml:space="preserve">BCH Holdings</source>
@@ -1447,7 +1447,7 @@
             </trans-unit>
             <trans-unit id="6685040638257748438">
                 <source xml:space="preserve">UTXO Count</source>
-                <target xml:space="preserve">UTXO Count</target>
+                <target xml:space="preserve">UTXO計數</target>
             </trans-unit>
             <trans-unit id="6698602804540558682">
                 <source xml:space="preserve">Empty Blocks</source>
@@ -1495,7 +1495,7 @@
             </trans-unit>
             <trans-unit id="6871549308937900431">
                 <source xml:space="preserve">Input Volume (BCH)</source>
-                <target xml:space="preserve">Input Volume (BCH)</target>
+                <target xml:space="preserve">輸入音量（BCH）</target>
             </trans-unit>
             <trans-unit id="6888797559367695264">
                 <source xml:space="preserve">Balance</source>
@@ -1629,7 +1629,7 @@
             </trans-unit>
             <trans-unit id="7628391199372264619">
                 <source xml:space="preserve">See the total UTXO throughput and BCH transaction volume per Bitcoin Cash block over time.</source>
-                <target xml:space="preserve">See the total UTXO throughput and BCH transaction volume per Bitcoin Cash block over time.</target>
+                <target xml:space="preserve">查看比特幣現金區塊的總UTXO吞吐量和BCH交易量隨時間的變化。</target>
             </trans-unit>
             <trans-unit id="7633487631846436880">
                 <source xml:space="preserve"> Preview Coinbase </source>
@@ -1661,7 +1661,7 @@
             </trans-unit>
             <trans-unit id="7800492512361030674">
                 <source xml:space="preserve">Block time (Median)</source>
-                <target xml:space="preserve">Block time (Median)</target>
+                <target xml:space="preserve">區塊時間（中位數）</target>
             </trans-unit>
             <trans-unit id="7802842621993648216">
                 <source xml:space="preserve">Fetch missing prevouts</source>
@@ -1945,7 +1945,7 @@
             </trans-unit>
             <trans-unit id="8687630448632946420">
                 <source xml:space="preserve">Output Volume (BCH)</source>
-                <target xml:space="preserve">Output Volume (BCH)</target>
+                <target xml:space="preserve">輸出音量（BCH）</target>
             </trans-unit>
             <trans-unit id="8688298623006329710">
                 <source xml:space="preserve">Treasury</source>
@@ -2153,23 +2153,23 @@
             </trans-unit>
             <trans-unit id="block-sizes.block-size-label">
                 <source xml:space="preserve">Block Size</source>
-                <target xml:space="preserve">Block Size</target>
+                <target xml:space="preserve">區塊大小</target>
             </trans-unit>
             <trans-unit id="block-sizes.linear">
                 <source xml:space="preserve">Linear</source>
-                <target xml:space="preserve">Linear</target>
+                <target xml:space="preserve">線性</target>
             </trans-unit>
             <trans-unit id="block-sizes.logarithmic">
                 <source xml:space="preserve">Logarithmic</source>
-                <target xml:space="preserve">Logarithmic</target>
+                <target xml:space="preserve">對數</target>
             </trans-unit>
             <trans-unit id="block-tx-counts.linear">
                 <source xml:space="preserve">Linear</source>
-                <target xml:space="preserve">Linear</target>
+                <target xml:space="preserve">線性</target>
             </trans-unit>
             <trans-unit id="block-tx-counts.logarithmic">
                 <source xml:space="preserve">Logarithmic</source>
-                <target xml:space="preserve">Logarithmic</target>
+                <target xml:space="preserve">對數</target>
             </trans-unit>
             <trans-unit id="block.component.browser-title">
                 <source xml:space="preserve">Block <x equiv-text="block.height" id="BLOCK_HEIGHT"/>: <x equiv-text="block.id" id="BLOCK_ID"/></source>
