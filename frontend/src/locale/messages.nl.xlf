@@ -249,6 +249,10 @@
                 <source xml:space="preserve">Indexing network hashrate</source>
                 <target xml:space="preserve">Netwerkhashrate indexeren</target>
             </trans-unit>
+            <trans-unit id="2146875259140187057">
+                <source xml:space="preserve">Block Volume</source>
+                <target xml:space="preserve">Blokvolume</target>
+            </trans-unit>
             <trans-unit id="2157556037790858775">
                 <source xml:space="preserve"> TXs </source>
                 <target xml:space="preserve"> TXs </target>
@@ -268,10 +272,6 @@
             <trans-unit id="2186095762694867802">
                 <source xml:space="preserve">Hashrate (1w)</source>
                 <target xml:space="preserve">Hashrate (1 week)</target>
-            </trans-unit>
-            <trans-unit id="2206293708798473637">
-                <source xml:space="preserve">SMA 144</source>
-                <target xml:space="preserve">SMA 144</target>
             </trans-unit>
             <trans-unit id="2207130182560822950">
                 <source xml:space="preserve">Winning</source>
@@ -441,6 +441,10 @@
                 <source xml:space="preserve">Transaction fee</source>
                 <target xml:space="preserve">Transactievergoeding</target>
             </trans-unit>
+            <trans-unit id="2800260241472448717">
+                <source xml:space="preserve">Block time (SMA 144)</source>
+                <target xml:space="preserve">Bloktijd (SMA 144)</target>
+            </trans-unit>
             <trans-unit id="2808581435762418449">
                 <source xml:space="preserve">This transaction was seen in the mempool prior to mining</source>
                 <target xml:space="preserve">Deze transactie werd vóór mining in de mempool gezien</target>
@@ -564,6 +568,10 @@
             <trans-unit id="3156305053014230404">
                 <source xml:space="preserve">other outputs</source>
                 <target xml:space="preserve">andere outputs</target>
+            </trans-unit>
+            <trans-unit id="3161675600359363856">
+                <source xml:space="preserve">UTXO Outputs</source>
+                <target xml:space="preserve">UTXO-uitgangen</target>
             </trans-unit>
             <trans-unit id="3170961539582792521">
                 <source xml:space="preserve">(144 blocks)</source>
@@ -958,6 +966,10 @@
             <trans-unit id="4662281448215873743">
                 <source xml:space="preserve">How to host my own instance?</source>
                 <target xml:space="preserve">Hoe draait ik mijn eigen instantie?</target>
+            </trans-unit>
+            <trans-unit id="4686430954741576816">
+                <source xml:space="preserve">UTXO Inputs</source>
+                <target xml:space="preserve">UTXO-ingangen</target>
             </trans-unit>
             <trans-unit id="4701769218404429807">
                 <source xml:space="preserve"> TXID </source>
@@ -1447,10 +1459,6 @@
                 <source xml:space="preserve"> Included in block </source>
                 <target xml:space="preserve"> Opgenomen in blok </target>
             </trans-unit>
-            <trans-unit id="6723383211174802747">
-                <source xml:space="preserve">Median</source>
-                <target xml:space="preserve">Mediaan</target>
-            </trans-unit>
             <trans-unit id="6750241941765637299">
                 <source xml:space="preserve">Size</source>
                 <target xml:space="preserve">Grootte</target>
@@ -1482,6 +1490,10 @@
             <trans-unit id="6867140695271970529">
                 <source xml:space="preserve">Mining Pools</source>
                 <target xml:space="preserve">Miningpools</target>
+            </trans-unit>
+            <trans-unit id="6871549308937900431">
+                <source xml:space="preserve">Input Volume (BCH)</source>
+                <target xml:space="preserve">Ingangsvolume (BCH)</target>
             </trans-unit>
             <trans-unit id="6888797559367695264">
                 <source xml:space="preserve">Balance</source>
@@ -1612,6 +1624,10 @@
                 <source xml:space="preserve">Block Sizes</source>
                 <target xml:space="preserve">Blokgroottes</target>
             </trans-unit>
+            <trans-unit id="7628391199372264619">
+                <source xml:space="preserve">See the total UTXO throughput and BCH transaction volume per Bitcoin Cash block over time.</source>
+                <target xml:space="preserve">Bekijk de totale UTXO-doorvoer en het BCH-transactievolume per Bitcoin Cash-blok in de loop van de tijd.</target>
+            </trans-unit>
             <trans-unit id="7633487631846436880">
                 <source xml:space="preserve"> Preview Coinbase </source>
                 <target xml:space="preserve"> Coinbase-voorbeeld </target>
@@ -1639,6 +1655,10 @@
             <trans-unit id="7745628778646339380">
                 <source xml:space="preserve"> Stale </source>
                 <target xml:space="preserve"> Rot </target>
+            </trans-unit>
+            <trans-unit id="7800492512361030674">
+                <source xml:space="preserve">Block time (Median)</source>
+                <target xml:space="preserve">Bloktijd (mediaan)</target>
             </trans-unit>
             <trans-unit id="7802842621993648216">
                 <source xml:space="preserve">Fetch missing prevouts</source>
@@ -1920,6 +1940,10 @@
                 <source xml:space="preserve">Valid Fork</source>
                 <target xml:space="preserve">Geldige Fork</target>
             </trans-unit>
+            <trans-unit id="8687630448632946420">
+                <source xml:space="preserve">Output Volume (BCH)</source>
+                <target xml:space="preserve">Uitgangsvolume (BCH)</target>
+            </trans-unit>
             <trans-unit id="8688298623006329710">
                 <source xml:space="preserve">Treasury</source>
                 <target xml:space="preserve">Schatkist</target>
@@ -2117,6 +2141,26 @@
             <trans-unit id="bisq.transaction.browser-title">
                 <source xml:space="preserve">Transaction: <x equiv-text="this.txId" id="INTERPOLATION"/></source>
                 <target xml:space="preserve">Transactie: <x equiv-text="this.txId" id="INTERPOLATION"/></target>
+            </trans-unit>
+            <trans-unit id="block-sizes.block-size-label">
+                <source xml:space="preserve">Block Size</source>
+                <target xml:space="preserve">Blokgrootte</target>
+            </trans-unit>
+            <trans-unit id="block-sizes.linear">
+                <source xml:space="preserve">Linear</source>
+                <target xml:space="preserve">Lineair</target>
+            </trans-unit>
+            <trans-unit id="block-sizes.logarithmic">
+                <source xml:space="preserve">Logarithmic</source>
+                <target xml:space="preserve">Logaritmisch</target>
+            </trans-unit>
+            <trans-unit id="block-tx-counts.linear">
+                <source xml:space="preserve">Linear</source>
+                <target xml:space="preserve">Lineair</target>
+            </trans-unit>
+            <trans-unit id="block-tx-counts.logarithmic">
+                <source xml:space="preserve">Logarithmic</source>
+                <target xml:space="preserve">Logaritmisch</target>
             </trans-unit>
             <trans-unit id="block.component.browser-title">
                 <source xml:space="preserve">Block <x equiv-text="block.height" id="BLOCK_HEIGHT"/>: <x equiv-text="block.id" id="BLOCK_ID"/></source>
