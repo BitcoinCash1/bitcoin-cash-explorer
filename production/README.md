@@ -198,9 +198,7 @@ rpcservertimeout=60
 # Fulcrum options
 # Set zmqpubhashblock to listen on port 8433 for better performance
 zmqpubhashblock=tcp://0.0.0.0:8433
-```
 
-<!-- 
 datadir=/bitcoin
 server=1
 txindex=1
@@ -219,13 +217,23 @@ rpcpassword=bar
 [main]
 bind=127.0.0.1:8333
 rpcbind=127.0.0.1:8332
-whitelist=bloomfilter@127.0.0.1
+whitelist=127.0.0.1
 
-[test]
+[test4]
 daemon=1
-bind=127.0.0.1:18333
-rpcbind=127.0.0.1:18332
--->
+bind=127.0.0.1:28333
+rpcbind=127.0.0.1:28332
+
+[scale]
+daemon=1
+bind=127.0.0.1:38333
+rpcbind=127.0.0.1:38332
+
+[chip]
+daemon=1
+bind=127.0.0.1:48333
+rpcbind=127.0.0.1:48332
+```
 
 ### Fulcrum
 
@@ -292,14 +300,14 @@ And I deploy the frontend directly to Nginx/Angie, since the frontend is a stati
 <!-- After all 3 ~~electrs~~ Fulcrum instances are fully indexed, install your 3 BCH Explorer nodes:
 
 ```
-./mempool-install-all
-./mempool-upgrade-all
+./bch-explorer-install-all
+./bch-explorer-upgrade-all
 ```
 
 Finally, start your 3 BCH Explorer backends:
 
 ```
-./mempool-start-all
+./bch-explorer-start-all
 ```
 -->
 
