@@ -3,8 +3,9 @@ const PROXY_CONFIG = [
     context: [
       "/api/**",
       "/testnet/api/**",
-      "/signet/api/**",
       "/testnet4/api/**",
+      "/chipnet/api/**",
+      "/scalenet/api/**",
     ],
     target: "https://bchexplorer.cash",
     ws: true,
