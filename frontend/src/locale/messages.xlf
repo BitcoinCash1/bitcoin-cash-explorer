@@ -343,7 +343,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.ts</context>
-          <context context-type="linenumber">253</context>
+          <context context-type="linenumber">257</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block/block.component.html</context>
@@ -676,15 +676,19 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-sizes-graph/block-sizes-graph.component.ts</context>
-          <context context-type="linenumber">202</context>
+          <context context-type="linenumber">205</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
-          <context context-type="linenumber">256</context>
+          <context context-type="linenumber">260</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.ts</context>
-          <context context-type="linenumber">203</context>
+          <context context-type="linenumber">206</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.ts</context>
+          <context context-type="linenumber">216</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/utxo-size-graph/utxo-size-graph.component.ts</context>
@@ -703,15 +707,19 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-sizes-graph/block-sizes-graph.component.ts</context>
-          <context context-type="linenumber">206</context>
+          <context context-type="linenumber">209</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
-          <context context-type="linenumber">260</context>
+          <context context-type="linenumber">264</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.ts</context>
-          <context context-type="linenumber">207</context>
+          <context context-type="linenumber">210</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.ts</context>
+          <context context-type="linenumber">220</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/utxo-size-graph/utxo-size-graph.component.ts</context>
@@ -760,7 +768,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-sizes-graph/block-sizes-graph.component.ts</context>
-          <context context-type="linenumber">151</context>
+          <context context-type="linenumber">154</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
@@ -768,7 +776,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.ts</context>
-          <context context-type="linenumber">148</context>
+          <context context-type="linenumber">151</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.ts</context>
+          <context context-type="linenumber">168</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/hashrate-chart/hashrate-chart.component.ts</context>
@@ -920,7 +932,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/graphs/graphs.component.html</context>
-          <context context-type="linenumber">115,120</context>
+          <context context-type="linenumber">122,127</context>
         </context-group>
         <note priority="1" from="description">mining.blocks-health</note>
       </trans-unit>
@@ -1177,7 +1189,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-sizes-graph/block-sizes-graph.component.ts</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">76</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/graphs/graphs.component.html</context>
@@ -1185,26 +1197,36 @@
         </context-group>
         <note priority="1" from="description">mining.block-sizes</note>
       </trans-unit>
+      <trans-unit id="block-sizes.logarithmic" datatype="html">
+        <source>Logarithmic</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-sizes-graph/block-sizes-graph.component.html</context>
+          <context context-type="linenumber">34,36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="block-sizes.linear" datatype="html">
+        <source>Linear</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-sizes-graph/block-sizes-graph.component.html</context>
+          <context context-type="linenumber">37,39</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="4482088243387794106" datatype="html">
         <source>See Bitcoin Cash block sizes (MB) visualized over time.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-sizes-graph/block-sizes-graph.component.ts</context>
-          <context context-type="linenumber">76</context>
+          <context context-type="linenumber">78</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7faaaa08f56427999f3be41df1093ce4089bbd75" datatype="html">
-        <source>Size</source>
+      <trans-unit id="block-sizes.block-size-label" datatype="html">
+        <source>Block Size</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-sizes-graph/block-sizes-graph.component.ts</context>
-          <context context-type="linenumber">231</context>
+          <context context-type="linenumber">234</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-sizes-graph/block-sizes-graph.component.ts</context>
-          <context context-type="linenumber">271</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/mempool-graph/mempool-graph.component.ts</context>
-          <context context-type="linenumber">384</context>
+          <context context-type="linenumber">275</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5143204595795749226" datatype="html">
@@ -1238,29 +1260,29 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
-          <context context-type="linenumber">306</context>
+          <context context-type="linenumber">310</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="2206293708798473637" datatype="html">
-        <source>SMA 144</source>
+      <trans-unit id="2800260241472448717" datatype="html">
+        <source>Block time (SMA 144)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
           <context context-type="linenumber">204</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
-          <context context-type="linenumber">338</context>
+          <context context-type="linenumber">342</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="6723383211174802747" datatype="html">
-        <source>Median</source>
+      <trans-unit id="7800492512361030674" datatype="html">
+        <source>Block time (Median)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
           <context context-type="linenumber">210</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
-          <context context-type="linenumber">353</context>
+          <context context-type="linenumber">357</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5190281097971514213" datatype="html">
@@ -1271,19 +1293,33 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.ts</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">76</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/graphs/graphs.component.html</context>
-          <context context-type="linenumber">100,103</context>
+          <context context-type="linenumber">107,110</context>
         </context-group>
         <note priority="1" from="description">mining.block-tx-counts</note>
+      </trans-unit>
+      <trans-unit id="block-tx-counts.logarithmic" datatype="html">
+        <source>Logarithmic</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.html</context>
+          <context context-type="linenumber">34,36</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="block-tx-counts.linear" datatype="html">
+        <source>Linear</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.html</context>
+          <context context-type="linenumber">37,39</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="3090889139796775910" datatype="html">
         <source>See the average number of transactions per Bitcoin Cash block over time.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.ts</context>
-          <context context-type="linenumber">76</context>
+          <context context-type="linenumber">78</context>
         </context-group>
       </trans-unit>
       <trans-unit id="block.component.browser-title" datatype="html">
@@ -1308,6 +1344,89 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-view/block-view.component.ts</context>
           <context context-type="linenumber">137,139</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2146875259140187057" datatype="html">
+        <source>Block Volume</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.html</context>
+          <context context-type="linenumber">4,6</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.ts</context>
+          <context context-type="linenumber">74</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/graphs/graphs.component.html</context>
+          <context context-type="linenumber">100,103</context>
+        </context-group>
+        <note priority="1" from="description">mining.block-volume</note>
+      </trans-unit>
+      <trans-unit id="7628391199372264619" datatype="html">
+        <source>See the total UTXO throughput and BCH transaction volume per Bitcoin Cash block over time.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.ts</context>
+          <context context-type="linenumber">76</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="8687630448632946420" datatype="html">
+        <source>Output Volume (BCH)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.ts</context>
+          <context context-type="linenumber">231</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.ts</context>
+          <context context-type="linenumber">258</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.ts</context>
+          <context context-type="linenumber">314</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6871549308937900431" datatype="html">
+        <source>Input Volume (BCH)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.ts</context>
+          <context context-type="linenumber">237</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.ts</context>
+          <context context-type="linenumber">259</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.ts</context>
+          <context context-type="linenumber">325</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="4686430954741576816" datatype="html">
+        <source>UTXO Inputs</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.ts</context>
+          <context context-type="linenumber">243</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.ts</context>
+          <context context-type="linenumber">260</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.ts</context>
+          <context context-type="linenumber">336</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3161675600359363856" datatype="html">
+        <source>UTXO Outputs</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.ts</context>
+          <context context-type="linenumber">249</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.ts</context>
+          <context context-type="linenumber">261</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-volume-graph/block-volume-graph.component.ts</context>
+          <context context-type="linenumber">347</context>
         </context-group>
       </trans-unit>
       <trans-unit id="420763834450076269" datatype="html">
@@ -1582,6 +1701,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/pool/pool.component.html</context>
           <context context-type="linenumber">739,740</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/pools-list/pools-list.component.html</context>
+          <context context-type="linenumber">96,97</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/address-type/address-type.component.html</context>
@@ -1913,7 +2036,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/pools-list/pools-list.component.html</context>
-          <context context-type="linenumber">100,101</context>
+          <context context-type="linenumber">143,144</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/special-blocks/special-blocks.component.html</context>
@@ -2009,7 +2132,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/pools-list/pools-list.component.html</context>
-          <context context-type="linenumber">98,99</context>
+          <context context-type="linenumber">141,142</context>
         </context-group>
         <note priority="1" from="description">mining.pool-name</note>
       </trans-unit>
@@ -2305,7 +2428,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/graphs/graphs.component.html</context>
-          <context context-type="linenumber">128</context>
+          <context context-type="linenumber">135</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2574688541305190509" datatype="html">
@@ -2865,7 +2988,7 @@
         <source>Unspent Transaction Outputs</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/graphs/graphs.component.html</context>
-          <context context-type="linenumber">107,110</context>
+          <context context-type="linenumber">114,117</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/utxo-size-graph/utxo-size-graph.component.html</context>
@@ -3065,6 +3188,13 @@
           <context context-type="linenumber">383</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="7faaaa08f56427999f3be41df1093ce4089bbd75" datatype="html">
+        <source>Size</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/mempool-graph/mempool-graph.component.ts</context>
+          <context context-type="linenumber">384</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="1033261550402895380" datatype="html">
         <source>Sum</source>
         <context-group purpose="location">
@@ -3239,7 +3369,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/pools-list/pools-list.component.html</context>
-          <context context-type="linenumber">97,98</context>
+          <context context-type="linenumber">140,141</context>
         </context-group>
         <note priority="1" from="description">mining.rank</note>
       </trans-unit>
@@ -3277,6 +3407,14 @@
           <context context-type="sourcefile">src/app/components/pool/pool.component.html</context>
           <context context-type="linenumber">977</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/pools-list/pools-list.component.html</context>
+          <context context-type="linenumber">32,35</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/pools-list/pools-list.component.html</context>
+          <context context-type="linenumber">150,153</context>
+        </context-group>
         <note priority="1" from="description">latest-blocks.avg_health</note>
       </trans-unit>
       <trans-unit id="6121516646370385817" datatype="html">
@@ -3284,6 +3422,14 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/pool-ranking/pool-ranking.component.html</context>
           <context context-type="linenumber">299,301</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/pools-list/pools-list.component.html</context>
+          <context context-type="linenumber">39,41</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/pools-list/pools-list.component.html</context>
+          <context context-type="linenumber">157,159</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/reward-stats/reward-stats.component.html</context>
@@ -3654,7 +3800,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/pools-list/pools-list.component.html</context>
-          <context context-type="linenumber">139,141</context>
+          <context context-type="linenumber">202,204</context>
         </context-group>
         <note priority="1" from="description">pool.error.loading-pool-data</note>
       </trans-unit>
@@ -3696,7 +3842,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/pools-list/pools-list.component.ts</context>
-          <context context-type="linenumber">59</context>
+          <context context-type="linenumber">65</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/search-form/search-results/search-results.component.html</context>
@@ -3712,7 +3858,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/pools-list/pools-list.component.html</context>
-          <context context-type="linenumber">99,100</context>
+          <context context-type="linenumber">142,143</context>
         </context-group>
         <note priority="1" from="description">pools.slug</note>
       </trans-unit>
@@ -3720,11 +3866,11 @@
         <source>Empty Blocks</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/pools-list/pools-list.component.html</context>
-          <context context-type="linenumber">26,27</context>
+          <context context-type="linenumber">26,28</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/pools-list/pools-list.component.html</context>
-          <context context-type="linenumber">101,102</context>
+          <context context-type="linenumber">144,146</context>
         </context-group>
         <note priority="1" from="description">pools.empty-blocks</note>
       </trans-unit>
@@ -3732,11 +3878,11 @@
         <source>Link</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/pools-list/pools-list.component.html</context>
-          <context context-type="linenumber">27,29</context>
+          <context context-type="linenumber">41,43</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/pools-list/pools-list.component.html</context>
-          <context context-type="linenumber">102,104</context>
+          <context context-type="linenumber">159,161</context>
         </context-group>
         <note priority="1" from="description">pools.link</note>
       </trans-unit>
@@ -3744,7 +3890,7 @@
         <source>Overview of the mining pools on Bitcoin Cash.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/pools-list/pools-list.component.ts</context>
-          <context context-type="linenumber">61</context>
+          <context context-type="linenumber">67</context>
         </context-group>
       </trans-unit>
       <trans-unit id="956069346153233991" datatype="html">
