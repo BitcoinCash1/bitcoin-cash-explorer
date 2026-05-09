@@ -410,7 +410,7 @@ describe('Mainnet', () => {
       //TODO(knorrium): add a check for the proxied server
       // cy.changeNetwork('testnet4');
 
-      cy.changeNetwork('signet');
+      cy.changeNetwork('chipnet');
       cy.changeNetwork('mainnet');
     });
 

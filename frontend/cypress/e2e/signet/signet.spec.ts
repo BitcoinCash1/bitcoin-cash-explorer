@@ -2,7 +2,7 @@ import { emitMempoolInfo } from '../../support/websocket';
 
 const baseModule = Cypress.env('BASE_MODULE');
 
-describe('Signet', () => {
+describe('Chipnet', () => {
   beforeEach(() => {
     cy.intercept('/api/block-height/*').as('block-height');
     cy.intercept('/api/block/*').as('block');
@@ -13,7 +13,7 @@ describe('Signet', () => {
 
   if (baseModule === 'explorer') {
     it('loads the dashboard', () => {
-      cy.visit('/signet');
+      cy.visit('/chipnet');
       cy.waitForSkeletonGone();
     });
 
@@ -25,7 +25,7 @@ describe('Signet', () => {
 
     it.skip('loads the dashboard with the skeleton blocks', () => {
       cy.mockMempoolSocket();
-      cy.visit('/signet');
+      cy.visit('/chipnet');
       cy.get(':nth-child(1) > #bitcoin-block-0').should('be.visible');
       cy.get(':nth-child(2) > #bitcoin-block-0').should('be.visible');
       cy.get(':nth-child(3) > #bitcoin-block-0').should('be.visible');
@@ -35,7 +35,7 @@ describe('Signet', () => {
 
       emitMempoolInfo({
         'params': {
-          'network': 'signet'
+          'network': 'chipnet'
         }
       });
 
@@ -45,7 +45,7 @@ describe('Signet', () => {
     });
 
     it('loads the pools screen', () => {
-      cy.visit('/signet');
+      cy.visit('/chipnet');
       cy.waitForSkeletonGone();
       cy.get('#btn-pools').click().then(() => {
         cy.wait(1000);
@@ -53,7 +53,7 @@ describe('Signet', () => {
     });
 
     it('loads the graphs screen', () => {
-      cy.visit('/signet');
+      cy.visit('/chipnet');
       cy.waitForSkeletonGone();
       cy.get('#btn-graphs').click().then(() => {
         cy.wait(1000);
@@ -61,7 +61,7 @@ describe('Signet', () => {
     });
 
     it('loads the api screen', () => {
-      cy.visit('/signet');
+      cy.visit('/chipnet');
       cy.waitForSkeletonGone();
       cy.get('#btn-docs').click().then(() => {
         cy.wait(1000);
@@ -69,15 +69,8 @@ describe('Signet', () => {
     });
 
     describe('blocks', () => {
-      it('shows empty blocks properly', () => {
-        cy.visit('/signet/block/00000133d54e4589f6436703b067ec23209e0a21b8a9b12f57d0592fd85f7a42');
-        cy.get('.pagination').scrollIntoView({ offset: { top: 200, left: 0 } });
-        cy.waitForSkeletonGone();
-        cy.get('h2').invoke('text').should('equal', '1 transaction');
-      });
-
       it('expands and collapses the block details', () => {
-        cy.visit('/signet/block/0');
+        cy.visit('/chipnet/block/0');
         cy.get('.pagination').scrollIntoView({ offset: { top: 200, left: 0 } });
         cy.waitForSkeletonGone();
         cy.get('.btn.btn-outline-info').click().then(() => {
@@ -86,28 +79,6 @@ describe('Signet', () => {
 
         cy.get('.btn.btn-outline-info').click().then(() => {
           cy.get('#details').should('not.be.visible');
-        });
-      });
-
-      it('shows blocks with no pagination', () => {
-        cy.visit('/signet/block/00000078f920a96a69089877b934ce7fd009ab55e3170920a021262cb258e7cc');
-        cy.get('.pagination').scrollIntoView({ offset: { top: 200, left: 0 } });
-        cy.waitForSkeletonGone();
-        cy.get('h2').invoke('text').should('equal', '13 transactions');
-        cy.get('ul.pagination').first().children().should('have.length', 5);
-      });
-
-      it('supports pagination on the block screen', () => {
-        // 43 txs
-        cy.visit('/signet/block/00000094bd52f73bdbfc4bece3a94c21fec2dc968cd54210496e69e4059d66a6');
-        cy.get('.pagination').scrollIntoView({ offset: { top: 200, left: 0 } });
-        cy.waitForSkeletonGone();
-        cy.get('.header-bg.box > a').invoke('text').then((text1) => {
-          cy.get('.active + li').first().click().then(() => {
-            cy.get('.header-bg.box > a').invoke('text').then((text2) => {
-              expect(text1).not.to.eq(text2);
-            });
-          });
         });
       });
     });
