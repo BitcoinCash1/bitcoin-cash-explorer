@@ -7,7 +7,7 @@ import {
   OnInit,
   HostBinding,
 } from '@angular/core';
-import { EChartsOption } from '@app/graphs/echarts';
+import { echarts, EChartsOption } from '@app/graphs/echarts';
 import { Observable } from 'rxjs';
 import { map, share, startWith, switchMap, tap } from 'rxjs/operators';
 import { ApiService } from '@app/services/api.service';
@@ -43,6 +43,7 @@ export class BlockSizesGraphComponent implements OnInit {
 
   miningWindowPreference: string;
   radioGroupForm: UntypedFormGroup;
+  scaleType: 'value' | 'log' = 'value';
 
   chartOptions: EChartsOption = {};
   chartInitOptions = {
@@ -56,6 +57,7 @@ export class BlockSizesGraphComponent implements OnInit {
   formatNumber = formatNumber;
   timespan = '';
   chartInstance: any = undefined;
+  currentData: any = null;
 
   constructor(
     @Inject(LOCALE_ID) public locale: string,
@@ -120,13 +122,14 @@ export class BlockSizesGraphComponent implements OnInit {
           return this.apiService.getHistoricalBlockSizes$(timespan).pipe(
             tap((response) => {
               const data = response.body;
-              this.prepareChartOptions({
+              this.currentData = {
                 sizes: data.sizes.map((val) => [
                   val.timestamp * 1000,
                   val.avgSize / 1000000,
                   val.avgHeight,
                 ]),
-              });
+              };
+              this.prepareChartOptions(this.currentData);
               this.isLoading = false;
             }),
             map((response) => {
@@ -228,7 +231,7 @@ export class BlockSizesGraphComponent implements OnInit {
               padding: 10,
               data: [
                 {
-                  name: $localize`:@@7faaaa08f56427999f3be41df1093ce4089bbd75:Size`,
+                  name: $localize`:@@block-sizes.block-size-label:Block Size`,
                   inactiveColor: 'var(--grey)',
                   textStyle: {
                     color: 'var(--fg)',
@@ -242,11 +245,12 @@ export class BlockSizesGraphComponent implements OnInit {
           ? undefined
           : [
               {
-                type: 'value',
+                type: this.scaleType,
                 position: 'left',
-                min: (value) => {
-                  return value.min * 0.9;
-                },
+                ...(this.scaleType === 'log' && { logBase: 10 }),
+                ...(this.scaleType === 'value' && {
+                  min: (value) => value.min * 0.9,
+                }),
                 axisLabel: {
                   color: 'var(--grey)',
                   formatter: (val) => {
@@ -268,13 +272,19 @@ export class BlockSizesGraphComponent implements OnInit {
           : [
               {
                 zlevel: 1,
-                name: $localize`:@@7faaaa08f56427999f3be41df1093ce4089bbd75:Size`,
+                name: $localize`:@@block-sizes.block-size-label:Block Size`,
                 showSymbol: false,
                 symbol: 'none',
                 data: data.sizes,
                 type: 'line',
                 lineStyle: {
                   width: 2,
+                },
+                areaStyle: {
+                  color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                    { offset: 0, color: 'rgba(253, 216, 53, 0.35)' },
+                    { offset: 1, color: 'rgba(253, 216, 53, 0.05)' },
+                  ]),
                 },
                 markLine: {
                   silent: true,
@@ -347,6 +357,13 @@ export class BlockSizesGraphComponent implements OnInit {
 
   isMobile() {
     return window.innerWidth <= 767.98;
+  }
+
+  toggleScale() {
+    this.scaleType = this.scaleType === 'value' ? 'log' : 'value';
+    if (this.currentData) {
+      this.prepareChartOptions(this.currentData);
+    }
   }
 
   onSaveChart() {
