@@ -1042,24 +1042,24 @@ class DatabaseMigration {
   // Couple of wrappers to clean the main logic
   private getShiftStatisticsQuery(): string {
     return `UPDATE statistics SET
-      vsize_1 = vsize_1 + vsize_2, vsize_2 = vsize_3,
-      vsize_3 = vsize_4, vsize_4 = vsize_5,
-      vsize_5 = vsize_6, vsize_6 = vsize_8,
-      vsize_8 = vsize_10, vsize_10 = vsize_12,
-      vsize_12 = vsize_15, vsize_15 = vsize_20,
-      vsize_20 = vsize_30, vsize_30 = vsize_40,
-      vsize_40 = vsize_50, vsize_50 = vsize_60,
-      vsize_60 = vsize_70, vsize_70 = vsize_80,
-      vsize_80 = vsize_90, vsize_90 = vsize_100,
-      vsize_100 = vsize_125, vsize_125 = vsize_150,
-      vsize_150 = vsize_175, vsize_175 = vsize_200,
-      vsize_200 = vsize_250, vsize_250 = vsize_300,
-      vsize_300 = vsize_350, vsize_350 = vsize_400,
-      vsize_400 = vsize_500, vsize_500 = vsize_600,
-      vsize_600 = vsize_700, vsize_700 = vsize_800,
-      vsize_800 = vsize_900, vsize_900 = vsize_1000,
-      vsize_1000 = vsize_1200, vsize_1200 = vsize_1400,
-      vsize_1400 = vsize_1800, vsize_1800 = vsize_2000, vsize_2000 = 0;`;
+      size_1 = size_1 + size_2, size_2 = size_3,
+      size_3 = size_4, size_4 = size_5,
+      size_5 = size_6, size_6 = size_8,
+      size_8 = size_10, size_10 = size_12,
+      size_12 = size_15, size_15 = size_20,
+      size_20 = size_30, size_30 = size_40,
+      size_40 = size_50, size_50 = size_60,
+      size_60 = size_70, size_70 = size_80,
+      size_80 = size_90, size_90 = size_100,
+      size_100 = size_125, size_125 = size_150,
+      size_150 = size_175, size_175 = size_200,
+      size_200 = size_250, size_250 = size_300,
+      size_300 = size_350, size_350 = size_400,
+      size_400 = size_500, size_500 = size_600,
+      size_600 = size_700, size_700 = size_800,
+      size_800 = size_900, size_900 = size_1000,
+      size_1000 = size_1200, size_1200 = size_1400,
+      size_1400 = size_1800, size_1800 = size_2000, size_2000 = 0;`;
   }
 
   private getCreateStatisticsQuery(): string {
