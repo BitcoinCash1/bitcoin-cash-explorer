@@ -153,13 +153,15 @@
             >Recent Blocks</a
           >
         </p>
-        <p>
-          <a
-            [routerLink]="['/blocks/special' | relativeUrl]"
-            i18n="footer.special-blocks"
-            >Special Blocks</a
-          >
-        </p>
+        @if (currentNetwork === "mainnet") {
+          <p>
+            <a
+              [routerLink]="['/blocks/special' | relativeUrl]"
+              i18n="footer.special-blocks"
+              >Special Blocks</a
+            >
+          </p>
+        }
         <p>
           <a
             [routerLink]="['/blocks/stale' | relativeUrl]"

@@ -17,13 +17,15 @@
       i18n="master-page.blocks"
       >Blocks</a
     >
-    <a
-      routerLinkActive="active"
-      class="btn btn-purple"
-      [routerLink]="['/blocks/special' | relativeUrl]"
-      i18n="special-blocks.title"
-      >Special Blocks</a
-    >
+    @if (stateService.network === "mainnet" || stateService.network === "") {
+      <a
+        routerLinkActive="active"
+        class="btn btn-purple"
+        [routerLink]="['/blocks/special' | relativeUrl]"
+        i18n="special-blocks.title"
+        >Special Blocks</a
+      >
+    }
     <a
       routerLinkActive="active"
       class="btn btn-purple"
