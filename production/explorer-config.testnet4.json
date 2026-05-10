@@ -21,7 +21,7 @@
     "MIN_PRIORITY": "debug"
   },
   "CORE_RPC": {
-    "PORT": 48332,
+    "PORT": 38332,
     "USERNAME": "__BITCOIN_RPC_USER__",
     "PASSWORD": "__BITCOIN_RPC_PASS__"
   },
