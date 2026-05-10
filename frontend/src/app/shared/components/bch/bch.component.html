@@ -3,7 +3,8 @@
   >&lrm;{{ addPlus && satoshis >= 0 ? "+" : "" }}{{ value | number }}
 </span>
 <span class="symbol">
-  <ng-template [ngIf]="network === 'testnet'">t-</ng-template>
-  <ng-template [ngIf]="network === 'testnet4'">t-</ng-template>
-  <ng-template [ngIf]="network === 'signet'">s-</ng-template>{{ unit }}
+  <ng-template [ngIf]="network === 'testnet4' || network === 'scalenet'"
+    >t-</ng-template
+  >
+  <ng-template [ngIf]="network === 'chipnet'">c-</ng-template>{{ unit }}
 </span>

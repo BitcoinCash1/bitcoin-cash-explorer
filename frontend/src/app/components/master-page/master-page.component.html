@@ -138,35 +138,35 @@
           >
           <a
             ngbDropdownItem
-            *ngIf="env.SIGNET_ENABLED"
-            class="signet"
-            [class.active]="network.val === 'signet'"
-            [routerLink]="networkPaths['signet'] || '/signet'"
+            *ngIf="env.SCALENET_ENABLED"
+            class="scalenet"
+            [class.active]="network.val === 'scalenet'"
+            [routerLink]="networkPaths['scalenet'] || '/scalenet'"
             ><app-svg-images
-              name="signet"
+              name="scalenet"
               width="22"
               height="22"
               viewBox="0 0 65 65"
               style="width: 25px; height: 25px"
               class="mainnet me-1"
             ></app-svg-images>
-            Signet</a
+            Scalenet</a
           >
           <a
             ngbDropdownItem
-            *ngIf="env.TESTNET_ENABLED"
-            class="testnet"
-            [class.active]="network.val === 'testnet'"
-            [routerLink]="networkPaths['testnet'] || '/testnet'"
+            *ngIf="env.CHIPNET_ENABLED"
+            class="chipnet"
+            [class.active]="network.val === 'chipnet'"
+            [routerLink]="networkPaths['chipnet'] || '/chipnet'"
             ><app-svg-images
-              name="testnet"
+              name="chipnet"
               width="22"
               height="22"
               viewBox="0 0 65 65"
               style="width: 25px; height: 25px"
               class="mainnet me-1"
             ></app-svg-images>
-            Testnet3</a
+            Chipnet</a
           >
           <a
             ngbDropdownItem
@@ -351,9 +351,9 @@
     <div class="flex-grow-1 d-flex flex-column">
       <app-testnet-alert
         *ngIf="
-          network.val === 'testnet' ||
           network.val === 'testnet4' ||
-          network.val === 'signet'
+          network.val === 'scalenet' ||
+          network.val === 'chipnet'
         "
       ></app-testnet-alert>
 

@@ -105,22 +105,14 @@ export class CodeTemplateComponent implements OnInit {
           code.codeSampleMainnet.esModule
         );
       }
-      if (this.network === 'testnet') {
+      if (
+        this.network === 'testnet4' ||
+        this.network === 'scalenet' ||
+        this.network === 'chipnet'
+      ) {
         codeText = this.replaceJSPlaceholder(
           codeText,
           code.codeSampleTestnet.esModule
-        );
-      }
-      if (this.network === 'testnet4') {
-        codeText = this.replaceJSPlaceholder(
-          codeText,
-          code.codeSampleTestnet.esModule
-        );
-      }
-      if (this.network === 'signet') {
-        codeText = this.replaceJSPlaceholder(
-          codeText,
-          code.codeSampleSignet.esModule
         );
       }
 
@@ -148,22 +140,14 @@ init();`;
           code.codeSampleMainnet.esModule
         );
       }
-      if (this.network === 'testnet') {
+      if (
+        this.network === 'testnet4' ||
+        this.network === 'scalenet' ||
+        this.network === 'chipnet'
+      ) {
         codeText = this.replaceJSPlaceholder(
           codeText,
           code.codeSampleTestnet.esModule
-        );
-      }
-      if (this.network === 'testnet4') {
-        codeText = this.replaceJSPlaceholder(
-          codeText,
-          code.codeSampleTestnet.esModule
-        );
-      }
-      if (this.network === 'signet') {
-        codeText = this.replaceJSPlaceholder(
-          codeText,
-          code.codeSampleSignet.esModule
         );
       }
 
@@ -211,22 +195,14 @@ yarn add @mempool/mempool.js`;
 
   wrapCurlTemplate(code: any) {
     if (code.codeTemplate) {
-      if (this.network === 'testnet') {
+      if (
+        this.network === 'testnet4' ||
+        this.network === 'scalenet' ||
+        this.network === 'chipnet'
+      ) {
         return this.replaceCurlPlaceholder(
           code.codeTemplate.curl,
           code.codeSampleTestnet
-        );
-      }
-      if (this.network === 'testnet4') {
-        return this.replaceCurlPlaceholder(
-          code.codeTemplate.curl,
-          code.codeSampleTestnet
-        );
-      }
-      if (this.network === 'signet') {
-        return this.replaceCurlPlaceholder(
-          code.codeTemplate.curl,
-          code.codeSampleSignet
         );
       }
       if (this.network === '' || this.network === 'main') {
@@ -243,22 +219,20 @@ yarn add @mempool/mempool.js`;
     if (this.method === 'websocket') {
       return '';
     }
-    if (this.network === 'testnet') {
+    if (
+      this.network === 'testnet4' ||
+      this.network === 'scalenet' ||
+      this.network === 'chipnet'
+    ) {
       return code.codeSampleTestnet.response;
-    }
-    if (this.network === 'testnet4') {
-      return code.codeSampleTestnet.response;
-    }
-    if (this.network === 'signet') {
-      return code.codeSampleSignet.response;
     }
     return code.codeSampleMainnet.response;
   }
 
   wrapPythonTemplate(code: any) {
-    return this.network === 'testnet' ||
-      this.network === 'testnet4' ||
-      this.network === 'signet'
+    return this.network === 'testnet4' ||
+      this.network === 'scalenet' ||
+      this.network === 'chipnet'
       ? code.codeTemplate.python.replace(
           'wss://bchexplorer.cash/api/v1/ws',
           'wss://bchexplorer.cash/' + this.network + '/api/v1/ws'

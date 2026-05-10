@@ -113,9 +113,9 @@ export class GlobalFooterComponent implements OnInit, OnDestroy, OnChanges {
     if (
       network === '' ||
       network === 'mainnet' ||
-      network === 'testnet' ||
       network === 'testnet4' ||
-      network === 'signet'
+      network === 'scalenet' ||
+      network === 'chipnet'
     ) {
       return (
         (this.env.BASE_MODULE === 'explorer'

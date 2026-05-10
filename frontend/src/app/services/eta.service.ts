@@ -109,7 +109,7 @@ export class EtaService {
     const wait = da.timeAvg * (mempoolPosition.block + 1);
     return {
       now,
-      time: wait + now + da.timeOffset,
+      time: wait + now,
       wait,
       blocks,
     };
@@ -161,7 +161,7 @@ export class EtaService {
 
     return {
       now,
-      time: eta + now + da.timeOffset,
+      time: eta + now,
       wait: eta,
       blocks: Math.ceil(eta / da.timeAvg),
     };
@@ -195,7 +195,7 @@ export class EtaService {
     const wait = da.timeAvg * (mempoolPosition.block + 1);
     return {
       now,
-      time: wait + now + da.timeOffset,
+      time: wait + now,
       wait,
       blocks,
     };

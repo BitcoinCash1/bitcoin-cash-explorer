@@ -15,10 +15,10 @@
         </a>
         @if (!enterpriseInfo || !enterpriseInfo.dualLogo) {
           <div [ngSwitch]="network" class="network-label">
-            <span *ngSwitchCase="'signet'" class="network signet"
-              ><span class="name">Bitcoin Signet</span
+            <span *ngSwitchCase="'chipnet'" class="network chipnet"
+              ><span class="name">Bitcoin Cash Chipnet</span
               ><app-svg-images
-                name="signet"
+                name="testnet4"
                 width="35"
                 height="35"
                 viewBox="0 0 65 65"
@@ -26,10 +26,10 @@
                 class="mainnet ms-2"
               ></app-svg-images
             ></span>
-            <span *ngSwitchCase="'testnet'" class="network testnet"
-              ><span class="name">Bitcoin Testnet3</span
+            <span *ngSwitchCase="'scalenet'" class="network testnet"
+              ><span class="name">Bitcoin Cash Scalenet</span
               ><app-svg-images
-                name="testnet"
+                name="testnet4"
                 width="35"
                 height="35"
                 viewBox="0 0 65 65"

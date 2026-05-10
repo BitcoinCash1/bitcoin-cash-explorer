@@ -125,14 +125,11 @@ export class SeoService {
   }
 
   getTitle(): string {
-    if (this.network === 'testnet') {
-      return this.baseTitle + ' - Bitcoin Cash Testnet3';
-    }
     if (this.network === 'testnet4') {
       return this.baseTitle + ' - Bitcoin Cash Testnet4';
     }
-    if (this.network === 'signet') {
-      return this.baseTitle + ' - Bitcoin Cash Signet';
+    if (this.network === 'chipnet') {
+      return this.baseTitle + ' - Bitcoin Cash Chipnet';
     }
 
     return (

@@ -41,9 +41,9 @@ export class ClockComponent implements OnInit {
 
   gradientColors = {
     '': ['var(--mainnet-alt)', 'var(--primary)'],
-    testnet: ['var(--testnet)', 'var(--testnet-alt)'],
     testnet4: ['var(--testnet)', 'var(--testnet-alt)'],
-    signet: ['var(--signet)', 'var(--signet-alt)'],
+    scalenet: ['var(--scalenet)', 'var(--scalenet-alt)'],
+    chipnet: ['var(--chipnet)', 'var(--chipnet-alt)'],
   };
 
   constructor(

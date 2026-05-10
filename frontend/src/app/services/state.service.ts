@@ -69,9 +69,9 @@ export type SignaturesMode = 'all' | 'interesting' | 'none' | null;
 
 export interface Env {
   MAINNET_ENABLED: boolean;
-  TESTNET_ENABLED: boolean;
   TESTNET4_ENABLED: boolean;
-  SIGNET_ENABLED: boolean;
+  SCALENET_ENABLED: boolean;
+  CHIPNET_ENABLED: boolean;
   ITEMS_PER_PAGE: number;
   KEEP_BLOCKS_AMOUNT: number;
   OFFICIAL_BCH_EXPLORER: boolean;
@@ -90,13 +90,13 @@ export interface Env {
   MINING_DASHBOARD: boolean;
   AUDIT: boolean;
   MAINNET_BLOCK_AUDIT_START_HEIGHT: number;
-  TESTNET_BLOCK_AUDIT_START_HEIGHT: number;
   TESTNET4_BLOCK_AUDIT_START_HEIGHT: number;
-  SIGNET_BLOCK_AUDIT_START_HEIGHT: number;
+  SCALENET_BLOCK_AUDIT_START_HEIGHT: number;
+  CHIPNET_BLOCK_AUDIT_START_HEIGHT: number;
   MAINNET_TX_FIRST_SEEN_START_HEIGHT: number;
-  TESTNET_TX_FIRST_SEEN_START_HEIGHT: number;
   TESTNET4_TX_FIRST_SEEN_START_HEIGHT: number;
-  SIGNET_TX_FIRST_SEEN_START_HEIGHT: number;
+  SCALENET_TX_FIRST_SEEN_START_HEIGHT: number;
+  CHIPNET_TX_FIRST_SEEN_START_HEIGHT: number;
   HISTORICAL_PRICE: boolean;
   ADDITIONAL_CURRENCIES: boolean;
   STRATUM_ENABLED: boolean;
@@ -108,9 +108,9 @@ export interface Env {
 
 const defaultEnv: Env = {
   MAINNET_ENABLED: true,
-  TESTNET_ENABLED: false,
   TESTNET4_ENABLED: false,
-  SIGNET_ENABLED: false,
+  SCALENET_ENABLED: false,
+  CHIPNET_ENABLED: false,
   BASE_MODULE: 'explorer',
   ROOT_NETWORK: '',
   ITEMS_PER_PAGE: 10,
@@ -127,13 +127,13 @@ const defaultEnv: Env = {
   MINING_DASHBOARD: true,
   AUDIT: false,
   MAINNET_BLOCK_AUDIT_START_HEIGHT: 0,
-  TESTNET_BLOCK_AUDIT_START_HEIGHT: 0,
   TESTNET4_BLOCK_AUDIT_START_HEIGHT: 0,
-  SIGNET_BLOCK_AUDIT_START_HEIGHT: 0,
+  SCALENET_BLOCK_AUDIT_START_HEIGHT: 0,
+  CHIPNET_BLOCK_AUDIT_START_HEIGHT: 0,
   MAINNET_TX_FIRST_SEEN_START_HEIGHT: 0,
-  TESTNET_TX_FIRST_SEEN_START_HEIGHT: 0,
   TESTNET4_TX_FIRST_SEEN_START_HEIGHT: 0,
-  SIGNET_TX_FIRST_SEEN_START_HEIGHT: 0,
+  SCALENET_TX_FIRST_SEEN_START_HEIGHT: 0,
+  CHIPNET_TX_FIRST_SEEN_START_HEIGHT: 0,
   HISTORICAL_PRICE: true,
   ADDITIONAL_CURRENCIES: false,
   STRATUM_ENABLED: false,
@@ -457,10 +457,10 @@ export class StateService {
     // /^\/                                         starts with a forward slash...
     // (?:[a-z]{2}(?:-[A-Z]{2})?\/)?                optional locale prefix (non-capturing)
     // (?:preview\/)?                               optional "preview" prefix (non-capturing)
-    // (testnet|signet)/                            network string (captured as networkMatches[1])
+    // (testnet4|scalenet|chipnet)/                 network string (captured as networkMatches[1])
     // ($|\/)                                       network string must end or end with a slash
     let networkMatches: object = url.match(
-      /^\/(?:[a-z]{2}(?:-[A-Z]{2})?\/)?(?:preview\/)?(testnet4?|signet)($|\/)/
+      /^\/(?:[a-z]{2}(?:-[A-Z]{2})?\/)?(?:preview\/)?(testnet4|scalenet|chipnet)($|\/)/
     );
 
     if (!networkMatches && this.env.ROOT_NETWORK) {
@@ -468,22 +468,22 @@ export class StateService {
     }
 
     switch (networkMatches && networkMatches[1]) {
-      case 'signet':
-        if (this.network !== 'signet') {
-          this.network = 'signet';
-          this.networkChanged$.next('signet');
-        }
-        return;
-      case 'testnet':
-        if (this.network !== 'testnet') {
-          this.network = 'testnet';
-          this.networkChanged$.next('testnet');
-        }
-        return;
       case 'testnet4':
         if (this.network !== 'testnet4') {
           this.network = 'testnet4';
           this.networkChanged$.next('testnet4');
+        }
+        return;
+      case 'scalenet':
+        if (this.network !== 'scalenet') {
+          this.network = 'scalenet';
+          this.networkChanged$.next('scalenet');
+        }
+        return;
+      case 'chipnet':
+        if (this.network !== 'chipnet') {
+          this.network = 'chipnet';
+          this.networkChanged$.next('chipnet');
         }
         return;
       default:
@@ -529,7 +529,7 @@ export class StateService {
   }
 
   isAnyTestnet(): boolean {
-    return ['testnet', 'testnet4', 'signet'].includes(this.network);
+    return ['testnet4', 'scalenet', 'chipnet'].includes(this.network);
   }
 
   resetChainTip() {

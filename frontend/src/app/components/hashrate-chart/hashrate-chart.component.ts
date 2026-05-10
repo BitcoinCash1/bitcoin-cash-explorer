@@ -475,9 +475,6 @@ export class HashrateChartComponent implements OnInit {
                 axisLabel: {
                   color: 'rgb(110, 112, 121)',
                   formatter: (val): string => {
-                    if (this.stateService.network === 'signet') {
-                      return `${val}`;
-                    }
                     return this.amountShortenerPipe
                       .transform(val, 3, '', false, true)
                       .toString();

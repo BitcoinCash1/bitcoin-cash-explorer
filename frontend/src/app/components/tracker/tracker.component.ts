@@ -490,16 +490,23 @@ export class TrackerComponent implements OnInit, OnDestroy {
       return false;
     }
     switch (this.stateService.network) {
-      case 'testnet':
+      case 'testnet4':
         if (
-          blockHeight < this.stateService.env.TESTNET_BLOCK_AUDIT_START_HEIGHT
+          blockHeight < this.stateService.env.TESTNET4_BLOCK_AUDIT_START_HEIGHT
         ) {
           return false;
         }
         break;
-      case 'signet':
+      case 'scalenet':
         if (
-          blockHeight < this.stateService.env.SIGNET_BLOCK_AUDIT_START_HEIGHT
+          blockHeight < this.stateService.env.SCALENET_BLOCK_AUDIT_START_HEIGHT
+        ) {
+          return false;
+        }
+        break;
+      case 'chipnet':
+        if (
+          blockHeight < this.stateService.env.CHIPNET_BLOCK_AUDIT_START_HEIGHT
         ) {
           return false;
         }

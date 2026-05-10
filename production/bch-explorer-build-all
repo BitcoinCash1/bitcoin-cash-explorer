@@ -118,8 +118,8 @@ export NVM_DIR="${HOME}/.nvm"
 source "${NVM_DIR}/nvm.sh"
 
 # what to look for
-frontends=(mainnet onbtc bitb meta river strategy xxi)
-backends=(mainnet testnet testnet4 signet onbtc bitb)
+frontends=(mainnet)
+backends=(mainnet testnet4 scalenet chipnet)
 frontend_repos=()
 backend_repos=()
 
@@ -131,7 +131,6 @@ done
 # find which backend repos we have
 for repo in $backends;do
     [ -d "${repo}" ] && backend_repos+="${repo}"
-    [ -d "${repo}-lightning" ] && backend_repos+="${repo}-lightning"
 done
 
 # update all repos

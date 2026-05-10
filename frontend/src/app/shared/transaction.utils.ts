@@ -458,12 +458,12 @@ export function isNonStandard(
 
 // Individual versioned standardness rules
 
-const V3_STANDARDNESS_ACTIVATION_HEIGHT = {
-  testnet4: 42_000,
-  testnet: 2_900_000,
-  signet: 211_000,
-  '': 863_500,
-};
+// const V3_STANDARDNESS_ACTIVATION_HEIGHT = {
+//   testnet4: 42_000,
+//   testnet: 2_900_000,
+//   chipnet: 211_000,
+//   '': 863_500,
+// };
 function isNonStandardVersion(
   tx: Transaction,
   height?: number,
@@ -490,8 +490,6 @@ function isNonStandardVersion(
 
 const ANCHOR_STANDARDNESS_ACTIVATION_HEIGHT = {
   testnet4: 42_000,
-  testnet: 2_900_000,
-  signet: 211_000,
   '': 863_500,
 };
 function isNonStandardAnchor(
@@ -515,8 +513,6 @@ function isNonStandardAnchor(
 // OP_RETURN size & count limits were lifted in v28.3/v29.2/v30.0
 const OP_RETURN_STANDARDNESS_ACTIVATION_HEIGHT = {
   testnet4: 108_000,
-  testnet: 4_750_000,
-  signet: 276_500,
   '': 921_000,
 };
 const MAX_DATACARRIER_BYTES = 83;
@@ -541,8 +537,6 @@ function isStandardOpReturn(
 // New legacy sigops limit started to be enforced in v30.0
 const LEGACY_SIGOPS_STANDARDNESS_ACTIVATION_HEIGHT = {
   testnet4: 108_000,
-  testnet: 4_750_000,
-  signet: 276_500,
   '': 921_000,
 };
 function isNonStandardLegacySigops(
@@ -2184,21 +2178,21 @@ function checkSigopsBIP54(
 }
 
 function p2pkh(pubKeyHash: string, network: string): string {
-  const isTestnet = ['testnet', 'testnet4', 'signet'].includes(network);
+  const isTestnet = ['testnet4', 'scalenet', 'chipnet'].includes(network);
   const prefix = isTestnet ? 'bchtest' : 'bitcoincash';
   const hashBytes = hexStringToUint8Array(pubKeyHash);
   return cashaddrEncode(prefix, 0x00, hashBytes);
 }
 
 function p2sh(scriptHash: string, network: string): string {
-  const isTestnet = ['testnet', 'testnet4', 'signet'].includes(network);
+  const isTestnet = ['testnet4', 'scalenet', 'chipnet'].includes(network);
   const prefix = isTestnet ? 'bchtest' : 'bitcoincash';
   const hashBytes = hexStringToUint8Array(scriptHash);
   return cashaddrEncode(prefix, 0x08, hashBytes);
 }
 
 function p2sh32(scriptHash: string, network: string): string {
-  const isTestnet = ['testnet', 'testnet4', 'signet'].includes(network);
+  const isTestnet = ['testnet4', 'scalenet', 'chipnet'].includes(network);
   const prefix = isTestnet ? 'bchtest' : 'bitcoincash';
   const hashBytes = hexStringToUint8Array(scriptHash);
   return cashaddrEncode(prefix, 0x0b, hashBytes);
@@ -2206,7 +2200,9 @@ function p2sh32(scriptHash: string, network: string): string {
 
 function p2a(network: string): string {
   const pubkeyHashArray = hexStringToUint8Array('4e73');
-  const hrp = ['testnet', 'testnet4', 'signet'].includes(network) ? 'tb' : 'bc';
+  const hrp = ['testnet4', 'scalenet', 'chipnet'].includes(network)
+    ? 'tb'
+    : 'bc';
   const version = 1;
   const words = [version].concat(toWords(pubkeyHashArray));
   const bech32Address = bech32Encode(hrp, words, 'bech32m');
@@ -2298,7 +2294,7 @@ function base58ToSpk(address: string, network: string): string | null {
     const payloadHex = uint8ArrayToHexString(payload);
 
     // P2PKH
-    const p2pkhVersion = ['testnet', 'testnet4', 'signet'].includes(network)
+    const p2pkhVersion = ['testnet4', 'scalenet', 'chipnet'].includes(network)
       ? 0x6f
       : 0x00;
     if (version === p2pkhVersion) {
@@ -2306,7 +2302,7 @@ function base58ToSpk(address: string, network: string): string | null {
     }
 
     // P2SH
-    const p2shVersion = ['testnet', 'testnet4', 'signet'].includes(network)
+    const p2shVersion = ['testnet4', 'scalenet', 'chipnet'].includes(network)
       ? 0xc4
       : 0x05;
     if (version === p2shVersion) {
@@ -2367,7 +2363,7 @@ function bech32Decode(address: string): {
 }
 
 function bech32ToSpk(address: string, network: string): string | null {
-  const expectedHrp = ['testnet', 'testnet4', 'signet'].includes(network)
+  const expectedHrp = ['testnet4', 'scalenet', 'chipnet'].includes(network)
     ? 'tb'
     : 'bc';
   try {

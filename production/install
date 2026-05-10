@@ -42,7 +42,8 @@ BITCOIN_MAINNET_ENABLE=ON
 BITCOIN_MAINNET_MINFEE_ENABLE=ON
 BITCOIN_TESTNET_ENABLE=ON
 BITCOIN_TESTNET4_ENABLE=ON
-BITCOIN_SIGNET_ENABLE=ON
+BITCOIN_CHIPNET_ENABLE=ON
+BITCOIN_SCALENET_ENABLE=ON
 
 # automaitcally configure firewall
 FIREWALL_CONFIGURE=ON
@@ -83,20 +84,30 @@ BITCOIN_TESTNET_RPC_PORT=18332
 
 # used for firewall configuration
 BITCOIN_TESTNET4_P2P_HOST=127.0.0.1
-BITCOIN_TESTNET4_P2P_PORT=48333
+BITCOIN_TESTNET4_P2P_PORT=28333
 # used for RPC communication
 BITCOIN_TESTNET4_RPC_HOST=127.0.0.1
-BITCOIN_TESTNET4_RPC_PORT=48332
+BITCOIN_TESTNET4_RPC_PORT=28332
 
 # used for firewall configuration
-BITCOIN_SIGNET_P2P_HOST=127.0.0.1
-BITCOIN_SIGNET_P2P_PORT=18333
+BITCOIN_CHIPNET_P2P_HOST=127.0.0.1
+BITCOIN_CHIPNET_P2P_PORT=48333
 # used for RPC communication
-BITCOIN_SIGNET_RPC_HOST=127.0.0.1
-BITCOIN_SIGNET_RPC_PORT=18332
+BITCOIN_CHIPNET_RPC_HOST=127.0.0.1
+BITCOIN_CHIPNET_RPC_PORT=48332
 # generate random hex string
-BITCOIN_SIGNET_RPC_USER=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
-BITCOIN_SIGNET_RPC_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
+BITCOIN_CHIPNET_RPC_USER=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
+BITCOIN_CHIPNET_RPC_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
+
+# used for firewall configuration
+BITCOIN_SCALENET_P2P_HOST=127.0.0.1
+BITCOIN_SCALENET_P2P_PORT=38333
+# used for RPC communication
+BITCOIN_SCALENET_RPC_HOST=127.0.0.1
+BITCOIN_SCALENET_RPC_PORT=38332
+# generate random hex string
+BITCOIN_SCALENET_RPC_USER=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
+BITCOIN_SCALENET_RPC_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
 
 # set either socket or TCP host/port, not both
 #EXPLORER_MAINNET_HTTP_SOCK=/tmp/bitcoin.mainnet.mempool
@@ -114,14 +125,14 @@ EXPLORER_TESTNET4_HTTP_HOST=127.0.0.1
 EXPLORER_TESTNET4_HTTP_PORT=8990
 
 # set either socket or TCP host/port, not both
-#EXPLORER_SIGNET_HTTP_SOCK=/tmp/bitcoin.bisq.mempool
-EXPLORER_SIGNET_HTTP_HOST=127.0.0.1
-EXPLORER_SIGNET_HTTP_PORT=8995
+#EXPLORER_CHIPNET_HTTP_SOCK=/tmp/bitcoin.chipnet.mempool
+EXPLORER_CHIPNET_HTTP_HOST=127.0.0.1
+EXPLORER_CHIPNET_HTTP_PORT=8995
 
 # set either socket or TCP host/port, not both
-#EXPLORER_LIQUIDTESTNET_HTTP_SOCK=/tmp/bitcoin.bisq.mempool
-EXPLORER_LIQUIDTESTNET_HTTP_HOST=127.0.0.1
-EXPLORER_LIQUIDTESTNET_HTTP_PORT=8994
+#EXPLORER_SCALENET_HTTP_SOCK=/tmp/bitcoin.scalenet.mempool
+EXPLORER_SCALENET_HTTP_HOST=127.0.0.1
+EXPLORER_SCALENET_HTTP_PORT=8997
 
 ##### OS options, should be automatically detected
 
@@ -175,12 +186,14 @@ MYSQL_GROUP=mysql
 EXPLORER_MAINNET_USER='mempool'
 EXPLORER_TESTNET_USER='mempool_testnet'
 EXPLORER_TESTNET4_USER='mempool_testnet4'
-EXPLORER_SIGNET_USER='mempool_signet'
+EXPLORER_CHIPNET_USER='mempool_chipnet'
+EXPLORER_SCALENET_USER='mempool_scalenet'
 # generate random hex string
 EXPLORER_MAINNET_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
 EXPLORER_TESTNET_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
 EXPLORER_TESTNET4_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
-EXPLORER_SIGNET_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
+EXPLORER_CHIPNET_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
+EXPLORER_SCALENET_PASS=$(head -150 /dev/urandom | ${MD5} | awk '{print $1}')
 
 # mempool data folder and user/group
 EXPLORER_HOME=/mempool
@@ -205,8 +218,10 @@ CKPOOL_GROUP=ckpool
 BITCOIN_TESTNET_DATA=${BITCOIN_HOME}/testnet3
 # bitcoin testnet4 data
 BITCOIN_TESTNET4_DATA=${BITCOIN_HOME}/testnet4
-# bitcoin signet data
-BITCOIN_SIGNET_DATA=${BITCOIN_HOME}/signet
+# bitcoin chipnet data
+BITCOIN_CHIPNET_DATA=${BITCOIN_HOME}/chipnet
+# bitcoin scalenet data
+BITCOIN_SCALENET_DATA=${BITCOIN_HOME}/scalenet
 
 # minfee user/group
 MINFEE_USER=minfee
@@ -416,12 +431,21 @@ zfsCreateFilesystems()
         done
     fi
 
-    # Bitcoin Signet
-    if [ "${BITCOIN_SIGNET_ENABLE}" = ON ];then
-        zfs create -o "mountpoint=${BITCOIN_SIGNET_DATA}" "${ZPOOL}/bitcoin/signet"
+    # Bitcoin Chipnet
+    if [ "${BITCOIN_CHIPNET_ENABLE}" = ON ];then
+        zfs create -o "mountpoint=${BITCOIN_CHIPNET_DATA}" "${ZPOOL}/bitcoin/chipnet"
         for folder in chainstate indexes blocks
         do
-            zfs create -o "mountpoint=${BITCOIN_SIGNET_DATA}/${folder}" "${ZPOOL}/bitcoin/signet/${folder}"
+            zfs create -o "mountpoint=${BITCOIN_CHIPNET_DATA}/${folder}" "${ZPOOL}/bitcoin/chipnet/${folder}"
+        done
+    fi
+
+    # Bitcoin Scalenet
+    if [ "${BITCOIN_SCALENET_ENABLE}" = ON ];then
+        zfs create -o "mountpoint=${BITCOIN_SCALENET_DATA}" "${ZPOOL}/bitcoin/scalenet"
+        for folder in chainstate indexes blocks
+        do
+            zfs create -o "mountpoint=${BITCOIN_SCALENET_DATA}/${folder}" "${ZPOOL}/bitcoin/scalenet/${folder}"
         done
     fi
 }
@@ -456,12 +480,21 @@ ext4CreateDir()
         done
     fi
 
-    # Bitcoin Signet
-    if [ "${BITCOIN_SIGNET_ENABLE}" = ON ];then
-        mkdir -p "${BITCOIN_SIGNET_DATA}"
+    # Bitcoin Chipnet
+    if [ "${BITCOIN_CHIPNET_ENABLE}" = ON ];then
+        mkdir -p "${BITCOIN_CHIPNET_DATA}"
         for folder in chainstate indexes blocks
         do
-            mkdir -p "${BITCOIN_SIGNET_DATA}/${folder}"
+            mkdir -p "${BITCOIN_CHIPNET_DATA}/${folder}"
+        done
+    fi
+
+    # Bitcoin Scalenet
+    if [ "${BITCOIN_SCALENET_ENABLE}" = ON ];then
+        mkdir -p "${BITCOIN_SCALENET_DATA}"
+        for folder in chainstate indexes blocks
+        do
+            mkdir -p "${BITCOIN_SCALENET_DATA}/${folder}"
         done
     fi
 }
@@ -520,7 +553,8 @@ Mainnet:Enable Bitcoin Mainnet:ON
 Mainnet-Minfee:Enable Bitcoin Mainnet Minfee:ON
 Testnet:Enable Bitcoin Testnet:ON
 Testnet4:Enable Bitcoin Testnet4:ON
-Signet:Enable Bitcoin Signet:ON
+Chipnet:Enable Bitcoin Chipnet:ON
+Scalenet:Enable Bitcoin Scalenet:ON
 Unfurl:Enable Unfurl:ON
 EOF
 
@@ -572,13 +606,19 @@ else
     BITCOIN_TESTNET4_ENABLE=OFF
 fi
 
-if grep Signet $tempfile >/dev/null 2>&1;then
-    BITCOIN_SIGNET_ENABLE=ON
+if grep Chipnet $tempfile >/dev/null 2>&1;then
+    BITCOIN_CHIPNET_ENABLE=ON
 else
-    BITCOIN_SIGNET_ENABLE=OFF
+    BITCOIN_CHIPNET_ENABLE=OFF
 fi
 
-if [ "${BITCOIN_MAINNET_ENABLE}" = ON -o "${BITCOIN_MAINNET_MINFEE_ENABLE}" = ON -o "${BITCOIN_TESTNET_ENABLE}" = ON -o "${BITCOIN_TESTNET4_ENABLE}" = ON -o "${BITCOIN_SIGNET_ENABLE}" = ON ];then
+if grep Scalenet $tempfile >/dev/null 2>&1;then
+    BITCOIN_SCALENET_ENABLE=ON
+else
+    BITCOIN_SCALENET_ENABLE=OFF
+fi
+
+if [ "${BITCOIN_MAINNET_ENABLE}" = ON -o "${BITCOIN_MAINNET_MINFEE_ENABLE}" = ON -o "${BITCOIN_TESTNET_ENABLE}" = ON -o "${BITCOIN_TESTNET4_ENABLE}" = ON -o "${BITCOIN_CHIPNET_ENABLE}" = ON -o "${BITCOIN_SCALENET_ENABLE}" = ON ];then
     BITCOIN_INSTALL=ON
 else
     BITCOIN_INSTALL=OFF
@@ -681,10 +721,10 @@ echo "[*] Cloning Mempool repo from ${EXPLORER_REPO_URL}"
 osSudo "${EXPLORER_USER}" git config --global pull.rebase true
 osSudo "${EXPLORER_USER}" git config --global advice.detachedHead false
 osSudo "${EXPLORER_USER}" git clone --branch "${EXPLORER_REPO_BRANCH}" "${EXPLORER_REPO_URL}" "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}"
-osSudo "${EXPLORER_USER}" ln -s mempool/production/mempool-build-all upgrade
-osSudo "${EXPLORER_USER}" ln -s mempool/production/mempool-kill-all stop
-osSudo "${EXPLORER_USER}" ln -s mempool/production/mempool-start-all start
-osSudo "${EXPLORER_USER}" ln -s mempool/production/mempool-reset-all reset
+osSudo "${EXPLORER_USER}" ln -s explorer/production/mempool-build-all upgrade
+osSudo "${EXPLORER_USER}" ln -s explorer/production/mempool-kill-all stop
+osSudo "${EXPLORER_USER}" ln -s explorer/production/mempool-start-all start
+osSudo "${EXPLORER_USER}" ln -s explorer/production/mempool-reset-all reset
 
 case $OS in
     FreeBSD)
@@ -956,26 +996,43 @@ if [ "${BITCOIN_TESTNET4_ENABLE}" = ON ];then
     esac
 fi
 
-###############################
-# Bitcoin instance for Signet #
-###############################
+################################
+# Bitcoin instance for Chipnet #
+################################
 
-if [ "${BITCOIN_SIGNET_ENABLE}" = ON ];then
-    echo "[*] Installing Bitcoin Signet service"
+if [ "${BITCOIN_CHIPNET_ENABLE}" = ON ];then
+    echo "[*] Installing Bitcoin Chipnet service"
     case $OS in
 
         FreeBSD)
         ;;
 
         Debian)
-            osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/linux/bitcoin-signet.service" "${DEBIAN_SERVICE_HOME}"
+            osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/linux/bitcoin-chipnet.service" "${DEBIAN_SERVICE_HOME}"
+        ;;
+    esac
+fi
+
+#################################
+# Bitcoin instance for Scalenet #
+#################################
+
+if [ "${BITCOIN_SCALENET_ENABLE}" = ON ];then
+    echo "[*] Installing Bitcoin Scalenet service"
+    case $OS in
+
+        FreeBSD)
+        ;;
+
+        Debian)
+            osSudo "${ROOT_USER}" install -c -o "${ROOT_USER}" -g "${ROOT_GROUP}" -m 644 "${EXPLORER_HOME}/${EXPLORER_REPO_NAME}/production/linux/bitcoin-scalenet.service" "${DEBIAN_SERVICE_HOME}"
         ;;
     esac
 fi
 
 ##### Mempool -> Bitcoin Mainnet instance
 
-if [ "${BITCOIN_MAINNET_ENABLE}" = ON -o "${BITCOIN_TESTNET_ENABLE}" = ON -o "${BITCOIN_TESTNET4_ENABLE}" = ON -o "${BITCOIN_SIGNET_ENABLE}" = ON ];then
+if [ "${BITCOIN_MAINNET_ENABLE}" = ON -o "${BITCOIN_TESTNET_ENABLE}" = ON -o "${BITCOIN_TESTNET4_ENABLE}" = ON -o "${BITCOIN_CHIPNET_ENABLE}" = ON -o "${BITCOIN_SCALENET_ENABLE}" = ON ];then
     echo "[*] Creating Mempool instance for Bitcoin Mainnet"
     osSudo "${EXPLORER_USER}" git config --global advice.detachedHead false
     osSudo "${EXPLORER_USER}" git clone --branch "${EXPLORER_REPO_BRANCH}" "${EXPLORER_REPO_URL}" "${EXPLORER_HOME}/mainnet"
@@ -1003,13 +1060,22 @@ if [ "${BITCOIN_TESTNET4_ENABLE}" = ON ];then
 fi
 
 
-if [ "${BITCOIN_SIGNET_ENABLE}" = ON ];then
-    echo "[*] Creating Mempool instance for Bitcoin Signet"
+if [ "${BITCOIN_CHIPNET_ENABLE}" = ON ];then
+    echo "[*] Creating Mempool instance for Bitcoin Chipnet"
     osSudo "${EXPLORER_USER}" git config --global advice.detachedHead false
-    osSudo "${EXPLORER_USER}" git clone --branch "${EXPLORER_REPO_BRANCH}" "${EXPLORER_REPO_URL}" "${EXPLORER_HOME}/signet"
+    osSudo "${EXPLORER_USER}" git clone --branch "${EXPLORER_REPO_BRANCH}" "${EXPLORER_REPO_URL}" "${EXPLORER_HOME}/chipnet"
 
-    echo "[*] Checking out Mempool ${EXPLORER_LATEST_RELEASE} for Bitcoin Signet"
-    osSudo "${EXPLORER_USER}" sh -c "cd ${EXPLORER_HOME}/signet && git checkout ${EXPLORER_LATEST_RELEASE}"
+    echo "[*] Checking out Mempool ${EXPLORER_LATEST_RELEASE} for Bitcoin Chipnet"
+    osSudo "${EXPLORER_USER}" sh -c "cd ${EXPLORER_HOME}/chipnet && git checkout ${EXPLORER_LATEST_RELEASE}"
+fi
+
+if [ "${BITCOIN_SCALENET_ENABLE}" = ON ];then
+    echo "[*] Creating Mempool instance for Bitcoin Scalenet"
+    osSudo "${EXPLORER_USER}" git config --global advice.detachedHead false
+    osSudo "${EXPLORER_USER}" git clone --branch "${EXPLORER_REPO_BRANCH}" "${EXPLORER_REPO_URL}" "${EXPLORER_HOME}/scalenet"
+
+    echo "[*] Checking out Mempool ${EXPLORER_LATEST_RELEASE} for Bitcoin Scalenet"
+    osSudo "${EXPLORER_USER}" sh -c "cd ${EXPLORER_HOME}/scalenet && git checkout ${EXPLORER_LATEST_RELEASE}"
 fi
 
 
@@ -1039,8 +1105,11 @@ grant all on mempool_testnet.* to '${EXPLORER_TESTNET_USER}'@'localhost' identif
 create database if not exists mempool_testnet4;
 grant all on mempool_testnet4.* to '${EXPLORER_TESTNET4_USER}'@'localhost' identified by '${EXPLORER_TESTNET4_PASS}';
 
-create database if not exists mempool_signet;
-grant all on mempool_signet.* to '${EXPLORER_SIGNET_USER}'@'localhost' identified by '${EXPLORER_SIGNET_PASS}';
+create database if not exists explorer_chipnet;
+grant all on explorer_chipnet.* to '${EXPLORER_CHIPNET_USER}'@'localhost' identified by '${EXPLORER_CHIPNET_PASS}';
+
+create database if not exists explorer_scalenet;
+grant all on explorer_scalenet.* to '${EXPLORER_SCALENET_USER}'@'localhost' identified by '${EXPLORER_SCALENET_PASS}';
 
 _EOF_
 
@@ -1052,8 +1121,10 @@ declare -x EXPLORER_TESTNET_USER="${EXPLORER_TESTNET_USER}"
 declare -x EXPLORER_TESTNET_PASS="${EXPLORER_TESTNET_PASS}"
 declare -x EXPLORER_TESTNET4_USER="${EXPLORER_TESTNET4_USER}"
 declare -x EXPLORER_TESTNET4_PASS="${EXPLORER_TESTNET4_PASS}"
-declare -x EXPLORER_SIGNET_USER="${EXPLORER_SIGNET_USER}"
-declare -x EXPLORER_SIGNET_PASS="${EXPLORER_SIGNET_PASS}"
+declare -x EXPLORER_CHIPNET_USER="${EXPLORER_CHIPNET_USER}"
+declare -x EXPLORER_CHIPNET_PASS="${EXPLORER_CHIPNET_PASS}"
+declare -x EXPLORER_SCALENET_USER="${EXPLORER_SCALENET_USER}"
+declare -x EXPLORER_SCALENET_PASS="${EXPLORER_SCALENET_PASS}"
 _EOF_
 chown "${EXPLORER_USER}:${EXPLORER_GROUP}" "${EXPLORER_MYSQL_CREDENTIALS}"
 
@@ -1133,8 +1204,11 @@ EOF
         if [ "${BITCOIN_TESTNET4_ENABLE}" = ON ];then
             osSudo "${ROOT_USER}" systemctl enable bitcoin-testnet4.service
         fi
-        if [ "${BITCOIN_SIGNET_ENABLE}" = ON ];then
-            osSudo "${ROOT_USER}" systemctl enable bitcoin-signet.service
+        if [ "${BITCOIN_CHIPNET_ENABLE}" = ON ];then
+            osSudo "${ROOT_USER}" systemctl enable bitcoin-chipnet.service
+        fi
+        if [ "${BITCOIN_SCALENET_ENABLE}" = ON ];then
+            osSudo "${ROOT_USER}" systemctl enable bitcoin-scalenet.service
         fi
     ;;
 esac

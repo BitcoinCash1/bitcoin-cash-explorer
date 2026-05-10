@@ -42,9 +42,9 @@ export class EnterpriseService {
   }
 
   disableSubnetworks(): void {
-    this.stateService.env.TESTNET_ENABLED = false;
     this.stateService.env.TESTNET4_ENABLED = false;
-    this.stateService.env.SIGNET_ENABLED = false;
+    this.stateService.env.SCALENET_ENABLED = false;
+    this.stateService.env.CHIPNET_ENABLED = false;
   }
 
   fetchSubdomainInfo(): void {

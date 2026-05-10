@@ -208,7 +208,11 @@ export class AsertDeviationGraphPageComponent implements OnInit {
 
     const absolutePoints = sorted.map((block) => ({
       height: block.h,
-      deviation: getScheduleOffsetSeconds(block.h, block.t),
+      deviation: getScheduleOffsetSeconds(
+        block.h,
+        block.t,
+        this.stateService.network
+      ),
       timestamp: block.t,
     }));
 

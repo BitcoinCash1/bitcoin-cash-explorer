@@ -161,8 +161,12 @@ nav {
   background-color: var(--testnet);
 }
 
-.signet.active {
-  background-color: var(--signet);
+.scalenet.active {
+  background-color: var(--scalenet);
+}
+
+.chipnet.active {
+  background-color: var(--chipnet);
 }
 
 .dropdown-divider {

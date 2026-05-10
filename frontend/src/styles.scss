@@ -149,11 +149,13 @@ input[type="checkbox"].form-control {
   --address-chunk-color: #119d90;
 
   --testnet: #1d486f;
-  --signet: #6f1d5d;
+  --scalenet: #c25a00;
+  --chipnet: #8b2fc9;
 
   --mainnet-alt: #27915c;
   --testnet-alt: #183550;
-  --signet-alt: #471850;
+  --scalenet-alt: #7a3800;
+  --chipnet-alt: #5a1a8a;
 
   --green: #0fd378;
   --red: #dc3545;
@@ -238,8 +240,12 @@ main {
   background-color: var(--testnet) !important;
 }
 
-.navbar-nav.signet > .active {
-  background-color: var(--signet) !important;
+.navbar-nav.scalenet > .active {
+  background-color: var(--scalenet) !important;
+}
+
+.navbar-nav.chipnet > .active {
+  background-color: var(--chipnet) !important;
 }
 
 .form-control {
@@ -874,13 +880,23 @@ h3 {
   );
 }
 
-.progress-mempool.signet {
+.progress-mempool.scalenet {
   background: repeating-linear-gradient(
     to right,
     var(--secondary),
     var(--secondary) 0%,
-    var(--signet) 0%,
-    var(--signet-alt) 100%
+    var(--scalenet) 0%,
+    var(--scalenet-alt) 100%
+  );
+}
+
+.progress-mempool.chipnet {
+  background: repeating-linear-gradient(
+    to right,
+    var(--secondary),
+    var(--secondary) 0%,
+    var(--chipnet) 0%,
+    var(--chipnet-alt) 100%
   );
 }
 

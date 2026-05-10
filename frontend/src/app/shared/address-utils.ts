@@ -38,14 +38,6 @@ const ADDRESS_PREFIXES: Record<string, NetworkConfig> = {
     bech32: 'bc1',
     bch: 'bitcoincash:',
   },
-  testnet: {
-    base58: {
-      pubkey: ['m', 'n'],
-      script: '2',
-    },
-    bech32: 'tb1',
-    bch: 'bchtest:',
-  },
   testnet4: {
     base58: {
       pubkey: ['m', 'n'],
@@ -54,13 +46,21 @@ const ADDRESS_PREFIXES: Record<string, NetworkConfig> = {
     bech32: 'tb1',
     bch: 'bchtest:',
   },
-  signet: {
+  scalenet: {
     base58: {
       pubkey: ['m', 'n'],
       script: '2',
     },
     bech32: 'tb1',
-    bch: 'bchreg:',
+    bch: 'bchtest:',
+  },
+  chipnet: {
+    base58: {
+      pubkey: ['m', 'n'],
+      script: '2',
+    },
+    bech32: 'tb1',
+    bch: 'bchtest:',
   },
 };
 
@@ -756,7 +756,7 @@ function base58ToSpk(address: string, network: string): string | null {
     const payloadHex = uint8ArrayToHexString(payload);
 
     // P2PKH
-    const p2pkhVersion = ['testnet', 'testnet4', 'signet'].includes(network)
+    const p2pkhVersion = ['testnet4', 'scalenet', 'chipnet'].includes(network)
       ? 0x6f
       : 0x00;
     if (version === p2pkhVersion) {
@@ -764,7 +764,7 @@ function base58ToSpk(address: string, network: string): string | null {
     }
 
     // P2SH
-    const p2shVersion = ['testnet', 'testnet4', 'signet'].includes(network)
+    const p2shVersion = ['testnet4', 'scalenet', 'chipnet'].includes(network)
       ? 0xc4
       : 0x05;
     if (version === p2shVersion) {
@@ -777,7 +777,7 @@ function base58ToSpk(address: string, network: string): string | null {
 }
 
 function bech32ToSpk(address: string, network: string): string | null {
-  const expectedHrp = ['testnet', 'testnet4', 'signet'].includes(network)
+  const expectedHrp = ['testnet4', 'scalenet', 'chipnet'].includes(network)
     ? 'tb'
     : 'bc';
   try {
@@ -798,7 +798,9 @@ function bech32ToSpk(address: string, network: string): string | null {
 }
 
 function p2a(network: string): string {
-  const hrp = ['testnet', 'testnet4', 'signet'].includes(network) ? 'tb' : 'bc';
+  const hrp = ['testnet4', 'scalenet', 'chipnet'].includes(network)
+    ? 'tb'
+    : 'bc';
   const pubkeyHashArray = hexStringToUint8Array('4e73');
   const version = 1;
   const words = [version].concat(toWords(pubkeyHashArray));
@@ -957,7 +959,7 @@ export function legacyToCashAddr(address: string, network?: string): string {
     }
   }
 
-  const isTestnet = ['testnet', 'testnet4', 'signet'].includes(net);
+  const isTestnet = ['testnet4', 'scalenet', 'chipnet'].includes(net);
   const p2pkhVersion = isTestnet ? 0x6f : 0x00;
   const p2shVersion = isTestnet ? 0xc4 : 0x05;
   const prefix = isTestnet ? 'bchtest' : 'bitcoincash';
@@ -976,7 +978,7 @@ export function legacyToCashAddr(address: string, network?: string): string {
 
 export function cashAddrToLegacy(address: string, network?: string): string {
   const net = network || 'mainnet';
-  const isTestnet = ['testnet', 'testnet4', 'signet'].includes(net);
+  const isTestnet = ['testnet4', 'scalenet', 'chipnet'].includes(net);
   const prefix = isTestnet ? 'bchtest' : 'bitcoincash';
 
   const normalized = address.includes(':') ? address : `${prefix}:${address}`;

@@ -82,7 +82,6 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
   isTabHiddenSubscription: Subscription;
   network = '';
   now = new Date().getTime();
-  timeOffset = 0;
   timeLtrSubscription: Subscription;
   timeLtr: boolean;
   animateEntry: boolean = false;

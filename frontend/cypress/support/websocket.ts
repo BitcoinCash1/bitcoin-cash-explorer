@@ -124,8 +124,8 @@ export const emitMempoolInfo = ({
 		//TODO: Refactor to take into account different parameterized mocking scenarios
 		switch (params.network) {
 			//TODO: Use network specific mocks
-			case 'signet':
-			case 'testnet':
+			case 'chipnet':
+			case 'scalenet':
 			case 'mainnet':
 			default:
 				break;

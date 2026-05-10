@@ -35,10 +35,7 @@ export class DifficultyAdjustmentsTable implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    let decimals = 2;
-    if (this.stateService.network === 'signet') {
-      decimals = 5;
-    }
+    const decimals = 2;
 
     this.hashrateObservable$ = this.apiService
       .getDifficultyAdjustments$('3m')

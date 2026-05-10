@@ -185,8 +185,7 @@ export class PoolComponent implements OnInit {
               ((poolStat.estimatedHashrate || 0) /
                 (miningStats.lastEstimatedHashrate *
                   1_000_000_000_000_000_000)) +
-            Date.now() +
-            da.timeOffset
+            Date.now()
           );
         })
       );

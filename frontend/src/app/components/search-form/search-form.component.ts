@@ -192,9 +192,9 @@ export class SearchFormComponent implements OnInit {
 
         const isNetworkBitcoin =
           this.network === '' ||
-          this.network === 'testnet' ||
           this.network === 'testnet4' ||
-          this.network === 'signet';
+          this.network === 'scalenet' ||
+          this.network === 'chipnet';
 
         const matchesBlockHeight =
           this.regexBlockheight.test(searchText) &&

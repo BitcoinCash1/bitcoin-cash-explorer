@@ -24,13 +24,6 @@ export class NavigationService {
         subnets: [
           { name: 'mainnet', path: '' },
           {
-            name: 'testnet',
-            path:
-              this.stateService.env.ROOT_NETWORK === 'testnet'
-                ? '/'
-                : '/testnet',
-          },
-          {
             name: 'testnet4',
             path:
               this.stateService.env.ROOT_NETWORK === 'testnet4'
@@ -38,9 +31,18 @@ export class NavigationService {
                 : '/testnet4',
           },
           {
-            name: 'signet',
+            name: 'scalenet',
             path:
-              this.stateService.env.ROOT_NETWORK === 'signet' ? '/' : '/signet',
+              this.stateService.env.ROOT_NETWORK === 'scalenet'
+                ? '/'
+                : '/scalenet',
+          },
+          {
+            name: 'chipnet',
+            path:
+              this.stateService.env.ROOT_NETWORK === 'chipnet'
+                ? '/'
+                : '/chipnet',
           },
         ],
       },
@@ -120,7 +122,8 @@ export class NavigationService {
             .map((segment) => segment.path)
             .filter((path) => {
               return (
-                path.length && !['testnet', 'testnet4', 'signet'].includes(path)
+                path.length &&
+                !['testnet4', 'scalenet', 'chipnet'].includes(path)
               );
             }),
         ].join('/');

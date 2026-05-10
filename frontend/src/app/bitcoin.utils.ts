@@ -146,16 +146,13 @@ const featureActivation = {
     // segwit: 477120,
     // taproot: 709632,
   },
-  testnet: {
-    bla: 32,
-    // rbf: 720255,
-    // segwit: 872730,
-    // taproot: 2032291,
-  },
   testnet4: {
     bla: 0,
   },
-  signet: {
+  scalenet: {
+    bla: 0,
+  },
+  chipnet: {
     bla: 0,
   },
 };

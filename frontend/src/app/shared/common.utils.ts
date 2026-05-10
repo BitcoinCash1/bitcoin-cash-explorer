@@ -174,7 +174,11 @@ export function nextRoundNumber(num: number): number {
 }
 
 export function seoDescriptionNetwork(network: string): string {
-  if (network === 'signet' || network === 'testnet' || network === 'testnet4') {
+  if (
+    network === 'testnet4' ||
+    network === 'scalenet' ||
+    network === 'chipnet'
+  ) {
     return ' ' + network.charAt(0).toUpperCase() + network.slice(1);
   }
   return '';
@@ -215,12 +219,12 @@ export function renderSats(
 ): string {
   let prefix = '';
   switch (network) {
-    case 'testnet':
     case 'testnet4':
+    case 'scalenet':
       prefix = 't';
       break;
-    case 'signet':
-      prefix = 's';
+    case 'chipnet':
+      prefix = 'c';
       break;
   }
   if (mode === 'bch' || (mode === 'auto' && value >= 1000000)) {

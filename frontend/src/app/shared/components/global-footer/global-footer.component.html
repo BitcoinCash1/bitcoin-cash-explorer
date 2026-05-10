@@ -253,7 +253,7 @@
       <div
         class="links"
         *ngIf="
-          env.TESTNET_ENABLED || env.TESTNET4_ENABLED || env.SIGNET_ENABLED
+          env.TESTNET4_ENABLED || env.SCALENET_ENABLED || env.CHIPNET_ENABLED
         "
       >
         <p class="category" i18n="footer.networks">Networks</p>
@@ -271,17 +271,6 @@
         <p
           *ngIf="
             (officialBCHExplorerSite || env.BASE_MODULE === 'explorer') &&
-            currentNetwork !== 'testnet' &&
-            env.TESTNET_ENABLED
-          "
-        >
-          <a [href]="networkLink('testnet')" i18n="footer.testnet3-explorer"
-            >Testnet3 Explorer</a
-          >
-        </p>
-        <p
-          *ngIf="
-            (officialBCHExplorerSite || env.BASE_MODULE === 'explorer') &&
             currentNetwork !== 'testnet4' &&
             env.TESTNET4_ENABLED
           "
@@ -293,12 +282,23 @@
         <p
           *ngIf="
             (officialBCHExplorerSite || env.BASE_MODULE === 'explorer') &&
-            currentNetwork !== 'signet' &&
-            env.SIGNET_ENABLED
+            currentNetwork !== 'scalenet' &&
+            env.SCALENET_ENABLED
           "
         >
-          <a [href]="networkLink('signet')" i18n="footer.signet-explorer"
-            >Signet Explorer</a
+          <a [href]="networkLink('scalenet')" i18n="footer.scalenet-explorer"
+            >Scalenet Explorer</a
+          >
+        </p>
+        <p
+          *ngIf="
+            (officialBCHExplorerSite || env.BASE_MODULE === 'explorer') &&
+            currentNetwork !== 'chipnet' &&
+            env.CHIPNET_ENABLED
+          "
+        >
+          <a [href]="networkLink('chipnet')" i18n="footer.chipnet-explorer"
+            >Chipnet Explorer</a
           >
         </p>
       </div>

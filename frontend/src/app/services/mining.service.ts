@@ -99,8 +99,9 @@ export class MiningService {
     // If we want to support the mining dashboard for testnet, we can hardcode it too
     let selectedPower = 18;
     if (
-      this.stateService.network === 'testnet' ||
-      this.stateService.network === 'testnet4'
+      this.stateService.network === 'testnet4' ||
+      this.stateService.network === 'scalenet' ||
+      this.stateService.network === 'chipnet'
     ) {
       selectedPower = 12;
     }
