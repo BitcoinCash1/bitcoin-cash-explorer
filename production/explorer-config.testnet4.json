@@ -21,13 +21,13 @@
     "MIN_PRIORITY": "debug"
   },
   "CORE_RPC": {
-    "PORT": 38332,
+    "PORT": 28332,
     "USERNAME": "__BITCOIN_RPC_USER__",
     "PASSWORD": "__BITCOIN_RPC_PASS__"
   },
   "ELECTRUM": {
     "HOST": "127.0.0.1",
-    "PORT": 50005,
+    "PORT": 60001,
     "//": "What about running electrum for testnet4?",
     "TLS_ENABLED": false
   },

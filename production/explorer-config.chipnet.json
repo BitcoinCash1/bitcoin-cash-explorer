@@ -27,7 +27,7 @@
   },
   "ELECTRUM": {
     "HOST": "127.0.0.1",
-    "PORT": 50007,
+    "PORT": 60005,
     "TLS_ENABLED": false
   },
   "DATABASE": {
