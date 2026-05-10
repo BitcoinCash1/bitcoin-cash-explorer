@@ -18,7 +18,7 @@ import { download } from '@app/shared/graphs.utils';
 import { StateService } from '@app/services/state.service';
 import {
   getScheduleOffsetSeconds,
-  ASERT_ANCHOR_HEIGHT,
+  getAsertAnchorHeight,
 } from '@app/shared/asert.utils';
 import { AsertPoint } from '@app/components/asert-deviation-graph/asert-deviation-graph.component';
 import { EChartsOption } from '@app/graphs/echarts';
@@ -129,7 +129,9 @@ export class AsertDeviationGraphPageComponent implements OnInit {
               // radio buttons stay visible regardless of selected span.
               const currentHeight = this.stateService.latestBlockHeight || 0;
               return {
-                blockCount: currentHeight - ASERT_ANCHOR_HEIGHT,
+                blockCount:
+                  currentHeight -
+                  getAsertAnchorHeight(this.stateService.network),
               };
             })
           );
@@ -190,13 +192,16 @@ export class AsertDeviationGraphPageComponent implements OnInit {
         blocksBack = blocksPerDay * 1460;
         break;
       case 'all':
-        return ASERT_ANCHOR_HEIGHT;
+        return getAsertAnchorHeight(this.stateService.network);
       default:
         blocksBack = blocksPerDay * 30;
     }
 
     const fromHeight = currentHeight - blocksBack;
-    return Math.max(fromHeight, ASERT_ANCHOR_HEIGHT);
+    return Math.max(
+      fromHeight,
+      getAsertAnchorHeight(this.stateService.network)
+    );
   }
 
   private calculateAsertDeviation(blocks: any[]): AsertPoint[] {

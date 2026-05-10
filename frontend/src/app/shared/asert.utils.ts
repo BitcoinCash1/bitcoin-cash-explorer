@@ -43,6 +43,11 @@ export function getAsertAnchor(network: string): AsertAnchor {
   return ASERT_ANCHORS[network] ?? ASERT_ANCHORS['mainnet'];
 }
 
+export function getAsertAnchorHeight(network: string): number {
+  const anchor = getAsertAnchor(network);
+  return Math.floor(anchor.tick / ASERT_ANCHOR_IDEAL_BLOCK_TIME);
+}
+
 // Legacy exports kept for callers that assume mainnet anchor
 export const ASERT_ANCHOR_TIMESTAMP = ASERT_ANCHORS['mainnet'].timestamp;
 export const ASERT_ANCHOR_HEIGHT = Math.floor(
