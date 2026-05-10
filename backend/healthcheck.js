@@ -165,7 +165,7 @@ function checkBackendItself(timeoutMs = 2000) {
   return new Promise((resolve, reject) => {
     const options = {
       host: "localhost",
-      port: "8999",
+      port: configFromFile.EXPLORER.HTTP_PORT,
       path: "/api/v1/mining/pools/24h",
       timeout: timeoutMs,
     };
