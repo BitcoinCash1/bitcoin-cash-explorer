@@ -28,7 +28,6 @@
   "ELECTRUM": {
     "HOST": "127.0.0.1",
     "PORT": 60001,
-    "//": "What about running electrum for testnet4?",
     "TLS_ENABLED": false
   },
   "DATABASE": {
