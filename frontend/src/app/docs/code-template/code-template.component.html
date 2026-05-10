@@ -52,15 +52,7 @@
         <pre><code [innerText]="wrapEsModule(code)"></code></pre>
       </ng-template>
     </li>
-    <li
-      ngbNavItem
-      *ngIf="
-        code.codeTemplate.python &&
-        network !== 'liquid' &&
-        network !== 'liquidtestnet'
-      "
-      role="presentation"
-    >
+    <li ngbNavItem *ngIf="code.codeTemplate.python" role="presentation">
       <a ngbNavLink (click)="adjustContainerHeight($event)" role="tab"
         >Python</a
       >

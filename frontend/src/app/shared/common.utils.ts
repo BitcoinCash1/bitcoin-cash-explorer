@@ -221,8 +221,10 @@ export function renderSats(
   switch (network) {
     case 'testnet4':
     case 'scalenet':
-    case 'chipnet':
       prefix = 't';
+      break;
+    case 'chipnet':
+      prefix = 'c';
       break;
   }
   if (mode === 'bch' || (mode === 'auto' && value >= 1000000)) {

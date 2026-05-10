@@ -119,7 +119,7 @@ source "${NVM_DIR}/nvm.sh"
 
 # what to look for
 frontends=(mainnet)
-backends=(mainnet testnet4 signet chipnet)
+backends=(mainnet testnet4 scalenet chipnet)
 frontend_repos=()
 backend_repos=()
 
