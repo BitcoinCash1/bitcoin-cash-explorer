@@ -149,12 +149,14 @@ input[type="checkbox"].form-control {
   --address-chunk-color: #119d90;
 
   --testnet: #1d486f;
-  --scalenet: #c25a00;
+  --testnet4: #b99a0f;
+  --scalenet: #c23700;
   --chipnet: #8b2fc9;
 
   --mainnet-alt: #27915c;
   --testnet-alt: #183550;
-  --scalenet-alt: #7a3800;
+  --testnet4-alt: #cca910;
+  --scalenet-alt: #692308;
   --chipnet-alt: #5a1a8a;
 
   --green: #0fd378;
@@ -238,6 +240,10 @@ main {
 
 .navbar-nav.testnet > .active {
   background-color: var(--testnet) !important;
+}
+
+.navbar-nav.testnet4 > .active {
+  background-color: var(--testnet4) !important;
 }
 
 .navbar-nav.scalenet > .active {
@@ -877,6 +883,16 @@ h3 {
     var(--secondary) 0%,
     var(--testnet) 0%,
     var(--testnet-alt) 100%
+  );
+}
+
+.progress-mempool.testnet4 {
+  background: repeating-linear-gradient(
+    to right,
+    var(--secondary),
+    var(--secondary) 0%,
+    var(--testnet4) 0%,
+    var(--testnet4-alt) 100%
   );
 }
 

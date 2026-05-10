@@ -23,7 +23,7 @@ export class StaleList implements OnInit {
 
   gradientColors = {
     '': ['var(--mainnet-alt)', 'var(--primary)'],
-    testnet4: ['var(--testnet)', 'var(--testnet-alt)'],
+    testnet4: ['var(--testnet4)', 'var(--testnet4-alt)'],
     scalenet: ['var(--scalenet)', 'var(--scalenet-alt)'],
     chipnet: ['var(--chipnet)', 'var(--chipnet-alt)'],
   };
