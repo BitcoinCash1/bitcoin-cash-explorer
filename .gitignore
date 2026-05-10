@@ -1,6 +1,10 @@
 sitemap
 data
 backend/explorer-config.json
+backend/explorer-config-mainnet.json
+backend/explorer-config-chipnet.json
+backend/explorer-config-testnet4.json
+
 *.swp
 frontend/src/resources/config.template.js
 frontend/src/resources/config.js
