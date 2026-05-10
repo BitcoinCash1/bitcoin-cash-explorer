@@ -45,14 +45,8 @@ export function getAsertAnchor(network: string): AsertAnchor {
 
 export function getAsertAnchorHeight(network: string): number {
   const anchor = getAsertAnchor(network);
-  return Math.floor(anchor.tick / ASERT_ANCHOR_IDEAL_BLOCK_TIME);
+  return Math.floor(anchor.tick / ASERT_ANCHOR_IDEAL_BLOCK_TIME); // 661647 for mainnet
 }
-
-// Legacy exports kept for callers that assume mainnet anchor
-export const ASERT_ANCHOR_TIMESTAMP = ASERT_ANCHORS['mainnet'].timestamp;
-export const ASERT_ANCHOR_HEIGHT = Math.floor(
-  ASERT_ANCHORS['mainnet'].tick / ASERT_ANCHOR_IDEAL_BLOCK_TIME
-); // 661647
 
 export function bitsToTarget(bits: string): number {
   const exponent = parseInt(bits.slice(0, 2), 16);

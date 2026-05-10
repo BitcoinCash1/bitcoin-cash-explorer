@@ -11,8 +11,8 @@ import { map } from 'rxjs/operators';
 import {
   getScheduleOffsetSeconds,
   getDifficultyDriftPercentSinceAnchor,
-  ASERT_ANCHOR_HEIGHT,
-  ASERT_ANCHOR_TIMESTAMP,
+  getAsertAnchorHeight,
+  getAsertAnchor,
 } from '@app/shared/asert.utils';
 import { StateService } from '@app/services/state.service';
 import { AsertPoint } from '@app/components/asert-deviation-graph/asert-deviation-graph.component';
@@ -51,8 +51,13 @@ export class DifficultyComponent implements OnInit {
   asertData: AsertPoint[] = [];
   private asertRawData: AsertPoint[] = [];
 
-  readonly ASERT_ANCHOR_HEIGHT = ASERT_ANCHOR_HEIGHT;
-  readonly ASERT_ANCHOR_TIMESTAMP = ASERT_ANCHOR_TIMESTAMP;
+  get asertAnchorHeight(): number {
+    return getAsertAnchorHeight(this.stateService.network);
+  }
+
+  get asertAnchorTimestamp(): number {
+    return getAsertAnchor(this.stateService.network).timestamp;
+  }
 
   constructor(
     public stateService: StateService,
