@@ -93,6 +93,17 @@ function calculateTargetLegacy(
 // --- End ASERT functions ---
 
 /**
+ * Returns the ASERT anchor block height for the given network.
+ *
+ * @param {string} network - Network name (e.g. 'mainnet', 'testnet4', 'chipnet', 'scalenet').
+ * @returns {number} The anchor block height derived from the network's anchor tick.
+ */
+export function getAsertAnchorHeight(network: string): number {
+  const anchor = ASERT_ANCHORS[network] ?? ASERT_ANCHORS.mainnet;
+  return Math.floor(anchor.tick / ASERT_ANCHOR_IDEAL_BLOCK_TIME); // Eg. 661647 for mainnet
+}
+
+/**
  * Calculate the difficulty increase/decrease by using the `bits` integer contained in two
  * block headers.
  *

@@ -9,6 +9,7 @@ import bitcoinClient from '../bitcoin/bitcoin-client';
 import mining from './mining';
 import PricesRepository from '../../repositories/PricesRepository';
 import { handleError } from '../../utils/api';
+import { getAsertAnchorHeight } from '../difficulty-adjustment';
 
 class MiningRoutes {
   private static readonly VALID_INTERVALS = ['24h', '3d', '1w', '1m', '3m', '6m', '1y', '2y', '3y', '4y', 'all'];
@@ -552,7 +553,7 @@ class MiningRoutes {
   private async $getAsertBlocks(req: Request, res: Response): Promise<void> {
     try {
       const blockHeight = parseInt(req.params.blockheight, 10);
-      const ASERT_ANCHOR_HEIGHT = 661647;
+      const asertAnchorHeight = getAsertAnchorHeight(config.EXPLORER.NETWORK);
 
       // Validate block height parameter
       if (isNaN(blockHeight)) {
@@ -561,8 +562,8 @@ class MiningRoutes {
       }
 
       // Validate that block height is not before ASERT anchor
-      if (blockHeight < ASERT_ANCHOR_HEIGHT) {
-        handleError(req, res, 400, `Block height must be >= ${ASERT_ANCHOR_HEIGHT} (ASERT anchor height)`);
+      if (blockHeight < asertAnchorHeight) {
+        handleError(req, res, 400, `Block height must be >= ${asertAnchorHeight} (ASERT anchor height)`);
         return;
       }
 

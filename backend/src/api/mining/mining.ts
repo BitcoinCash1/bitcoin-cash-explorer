@@ -15,6 +15,7 @@ import { IPublicApi } from '../bitcoin/public-api.interface';
 import database from '../../database';
 import blocks from '../blocks';
 import valkeyCache from '../valkey-cache';
+import { getAsertAnchorHeight } from '../difficulty-adjustment';
 
 interface DifficultyBlock {
   timestamp: number;
@@ -1380,16 +1381,16 @@ class Mining {
 
   /**
    * Get minimal ASERT blocks data (height and timestamp) from a given height to current tip
-   * @param fromHeight Starting block height (must be >= 661647, the ASERT anchor height)
+   * @param fromHeight Starting block height (must be >= the ASERT anchor height for the active network)
    * @returns Array of objects with abbreviated keys: {h: height, t: timestamp}
    */
   public async $getAsertBlocks(fromHeight: number): Promise<{ h: number; t: number }[]> {
-    const ASERT_ANCHOR_HEIGHT = 661647;
+    const asertAnchorHeight = getAsertAnchorHeight(config.EXPLORER.NETWORK);
     const DOWNSAMPLE_THRESHOLD = 5000;
 
     // Validate that fromHeight is not before ASERT anchor
-    if (fromHeight < ASERT_ANCHOR_HEIGHT) {
-      throw new Error(`Block height must be >= ${ASERT_ANCHOR_HEIGHT} (ASERT anchor height)`);
+    if (fromHeight < asertAnchorHeight) {
+      throw new Error(`Block height must be >= ${asertAnchorHeight} (ASERT anchor height)`);
     }
 
     const currentTipHeight = blocks.getCurrentBlockHeight();
