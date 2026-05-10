@@ -409,6 +409,10 @@
                 <source xml:space="preserve"> Recent Transactions </source>
                 <target xml:space="preserve"> Senaste transaktionerna </target>
             </trans-unit>
+            <trans-unit id="2658168326869003675">
+                <source xml:space="preserve">Scalenet Explorer</source>
+                <target xml:space="preserve">Scalenet Explorer</target>
+            </trans-unit>
             <trans-unit id="2666638972429865742">
                 <source xml:space="preserve"> Verify Address Ownership </source>
                 <target xml:space="preserve"> Verify Address Ownership </target>
@@ -524,6 +528,10 @@
             <trans-unit id="2991117117362614880">
                 <source xml:space="preserve"> Proof </source>
                 <target xml:space="preserve"> Bevis </target>
+            </trans-unit>
+            <trans-unit id="2995325202955798324">
+                <source xml:space="preserve">Chipnet Explorer</source>
+                <target xml:space="preserve">Chipnet Explorer</target>
             </trans-unit>
             <trans-unit id="302660251728612874">
                 <source xml:space="preserve"> Avg Health </source>
@@ -1003,10 +1011,6 @@
                 <source xml:space="preserve">My Account</source>
                 <target xml:space="preserve">Mitt konto</target>
             </trans-unit>
-            <trans-unit id="4836017282886157702">
-                <source xml:space="preserve">Testnet3 is deprecated, and will soon be replaced by <x ctype="x-a" equiv-text="&lt;a href=&quot;/testnet4&quot;&gt;" id="START_LINK"/>Testnet4<x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/></source>
-                <target xml:space="preserve">Testnet3 är utfasad och kommer snart att ersättas av <x ctype="x-a" equiv-text="&lt;a href=&quot;/testnet4&quot;&gt;" id="START_LINK"/>Testnet4<x ctype="x-a" equiv-text="&lt;/a&gt;" id="CLOSE_LINK"/></target>
-            </trans-unit>
             <trans-unit id="4839842223418106812">
                 <source xml:space="preserve"> Recent Blocks </source>
                 <target xml:space="preserve"> Senaste blocken </target>
@@ -1255,10 +1259,6 @@
                 <source xml:space="preserve">blocks later</source>
                 <target xml:space="preserve">block senare</target>
             </trans-unit>
-            <trans-unit id="5971155226990207381">
-                <source xml:space="preserve">Signet Explorer</source>
-                <target xml:space="preserve">Signet-utforskare</target>
-            </trans-unit>
             <trans-unit id="5d4f792f048fcaa6df5948575d7cb325c9393383">
                 <source xml:space="preserve">Graphs</source>
                 <target xml:space="preserve">Grafer</target>
@@ -1314,10 +1314,6 @@
             <trans-unit id="6252070156626006029">
                 <source xml:space="preserve">None</source>
                 <target xml:space="preserve">Ingen</target>
-            </trans-unit>
-            <trans-unit id="6259719754414304364">
-                <source xml:space="preserve">Testnet3 Explorer</source>
-                <target xml:space="preserve">Testnet3-utforskare</target>
             </trans-unit>
             <trans-unit id="6275418453915189813">
                 <source xml:space="preserve">Cap outliers</source>
