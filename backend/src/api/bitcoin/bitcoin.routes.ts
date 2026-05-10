@@ -22,7 +22,12 @@ import chainTips from '../chain-tips';
 
 const TXID_REGEX = /^[a-f0-9]{64}$/i;
 const BLOCK_HASH_REGEX = /^[a-f0-9]{64}$/i;
-const ADDRESS_REGEX = /^(?:bitcoincash:)?[a-z0-9]{2,120}$/i;
+const ADDRESS_REGEX_MAINNET = /^(?:bitcoincash:)?[a-z0-9]{2,120}$/i;
+const ADDRESS_REGEX_TESTNET = /^(?:bchtest:)?[a-z0-9]{2,120}$/i;
+
+function getAddressRegex(): RegExp {
+  return config.EXPLORER.NETWORK === 'mainnet' ? ADDRESS_REGEX_MAINNET : ADDRESS_REGEX_TESTNET;
+}
 const SCRIPT_HASH_REGEX = /^([a-f0-9]{2})+$/i;
 
 class BitcoinRoutes {
@@ -562,7 +567,7 @@ class BitcoinRoutes {
       handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
       return;
     }
-    if (!ADDRESS_REGEX.test(req.params.address)) {
+    if (!getAddressRegex().test(req.params.address)) {
       handleError(req, res, 501, `Invalid address`);
       return;
     }
@@ -592,7 +597,7 @@ class BitcoinRoutes {
       handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
       return;
     }
-    if (!ADDRESS_REGEX.test(req.params.address)) {
+    if (!getAddressRegex().test(req.params.address)) {
       handleError(req, res, 501, `Invalid address`);
       return;
     }
@@ -627,7 +632,7 @@ class BitcoinRoutes {
       handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
       return;
     }
-    if (!ADDRESS_REGEX.test(req.params.address)) {
+    if (!getAddressRegex().test(req.params.address)) {
       handleError(req, res, 501, `Invalid address`);
       return;
     }
@@ -662,7 +667,7 @@ class BitcoinRoutes {
       handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
       return;
     }
-    if (!ADDRESS_REGEX.test(req.params.address)) {
+    if (!getAddressRegex().test(req.params.address)) {
       handleError(req, res, 501, `Invalid address`);
       return;
     }
@@ -676,7 +681,7 @@ class BitcoinRoutes {
       handleError(req, res, 405, 'Address lookups cannot be used with bitcoind as backend.');
       return;
     }
-    if (!ADDRESS_REGEX.test(req.params.address)) {
+    if (!getAddressRegex().test(req.params.address)) {
       handleError(req, res, 501, `Invalid address`);
       return;
     }
@@ -960,7 +965,7 @@ class BitcoinRoutes {
   }
 
   private async validateAddress(req: Request, res: Response) {
-    if (!ADDRESS_REGEX.test(req.params.address)) {
+    if (!getAddressRegex().test(req.params.address)) {
       handleError(req, res, 501, `Invalid address`);
       return;
     }
