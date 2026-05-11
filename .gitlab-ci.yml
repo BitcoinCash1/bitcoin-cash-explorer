@@ -143,13 +143,13 @@ deploy-frontend:
     name: production
     url: https://bchexplorer.cash
   script:
-    # Make this the official site + Enable testnet4 and Chipnet + enable audit
+    # Enable testnet4 and Chipnet + official site + enable audit + more...
     - CONFIG=frontend/dist/explorer/browser/resources/config.js
+    - sed -i "s/window.__env.TESTNET4_ENABLED = false;/window.__env.TESTNET4_ENABLED = true;/" $CONFIG
+    - sed -i "s/window.__env.CHIPNET_ENABLED = false;/window.__env.CHIPNET_ENABLED = true;/" $CONFIG
     - sed -i "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.OFFICIAL_BCH_EXPLORER = true;" $CONFIG
     - sed -i "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.AUDIT = true;" $CONFIG
     - sed -i "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.MAINNET_ENABLED = true;" $CONFIG
-    - sed -i "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.TESTNET4_ENABLED = true;" $CONFIG
-    - sed -i "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.CHIPNET_ENABLED = true;" $CONFIG
     - sed -i "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.MEMPOOL_BLOCKS_AMOUNT = 1;" $CONFIG
     - sed -i "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.MAINNET_BLOCK_AUDIT_START_HEIGHT = 949237;" $CONFIG
     - sed -i "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.TESTNET4_BLOCK_AUDIT_START_HEIGHT = 305189;" $CONFIG
