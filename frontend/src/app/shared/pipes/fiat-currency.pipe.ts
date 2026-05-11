@@ -68,7 +68,7 @@ export class FiatCurrencyPipe implements PipeTransform, OnDestroy {
           options.maximumFractionDigits = Math.min(2, currencyMaxFrac);
         } else {
           options.minimumFractionDigits = Math.min(minFrac, currencyMaxFrac);
-          options.maximumFractionDigits = Math.min(maxFrac, currencyMaxFrac);
+          options.maximumFractionDigits = Math.max(maxFrac, Math.min(minFrac, currencyMaxFrac));
         }
       }
     }
