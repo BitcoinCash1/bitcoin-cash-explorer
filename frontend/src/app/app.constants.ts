@@ -244,7 +244,7 @@ export const specialBlocks = {
   '74637': {
     labelEvent: 'Value overflow incident & rollback',
     labelEventCompleted:
-      'This block contained an integer overflow bug that allowed the creation of 184 billion BTC. Satoshi himself rolled back this block, marking the first and only time he intervened. Within a day, the revised chain regained its status as the main chain.',
+      'Block 74638 contained a critical integer overflow exploit that allowed for the creation of 184 billion BTC. Satoshi Nakamoto coordinated an emergency patch, using block 74637 as the pivot point for a deliberate rollback—the only intentional intervention of its kind in Bitcoin’s history. Within 24 hours, the corrected chain overtook the exploit at block 74691, permanently orphaning the fraudulent branch.',
     networks: ['mainnet'],
   },
   '124721': {
