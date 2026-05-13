@@ -69,6 +69,16 @@
                 <input
                   type="radio"
                   class="btn-check"
+                  id="stats-3d"
+                  [value]="'3d'"
+                  [routerLink]="['/graphs' | relativeUrl]"
+                  fragment="3d"
+                  formControlName="dateSpan"
+                />
+                <label class="btn btn-purple btn-sm" for="stats-3d">3D</label>
+                <input
+                  type="radio"
+                  class="btn-check"
                   id="stats-1w"
                   [value]="'1w'"
                   [routerLink]="['/graphs' | relativeUrl]"

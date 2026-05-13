@@ -95,6 +95,7 @@ export class StatisticsComponent implements OnInit {
         [
           '2h',
           '24h',
+          '3d',
           '1w',
           '1m',
           '3m',
@@ -128,6 +129,9 @@ export class StatisticsComponent implements OnInit {
           this.websocketService.want(['blocks']);
           if (this.radioGroupForm.controls['dateSpan'].value === '24h') {
             return this.apiService.list24HStatistics$();
+          }
+          if (this.radioGroupForm.controls['dateSpan'].value === '3d') {
+            return this.apiService.list3DStatistics$();
           }
           if (this.radioGroupForm.controls['dateSpan'].value === '1w') {
             return this.apiService.list1WStatistics$();

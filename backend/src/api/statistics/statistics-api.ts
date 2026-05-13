@@ -312,6 +312,17 @@ class StatisticsApi {
     }
   }
 
+  public async $list3D(): Promise<OptimizedStatistic[]> {
+    try {
+      const query = this.getQueryForDaysAvg(120, '3 DAY'); // 2m interval
+      const [rows] = await DB.query({ sql: query, timeout: this.queryTimeout });
+      return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
+    } catch (e) {
+      logger.err('$list3D() error' + (e instanceof Error ? e.message : e));
+      return [];
+    }
+  }
+
   public async $list1W(): Promise<OptimizedStatistic[]> {
     try {
       const query = this.getQueryForDaysAvg(300, '1 WEEK'); // 5m interval

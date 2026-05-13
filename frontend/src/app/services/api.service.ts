@@ -138,6 +138,12 @@ export class ApiService {
     );
   }
 
+  list3DStatistics$(): Observable<OptimizedMempoolStats[]> {
+    return this.httpClient.get<OptimizedMempoolStats[]>(
+      this.apiBaseUrl + this.apiBasePath + '/api/v1/statistics/3d'
+    );
+  }
+
   list1WStatistics$(): Observable<OptimizedMempoolStats[]> {
     return this.httpClient.get<OptimizedMempoolStats[]>(
       this.apiBaseUrl + this.apiBasePath + '/api/v1/statistics/1w'

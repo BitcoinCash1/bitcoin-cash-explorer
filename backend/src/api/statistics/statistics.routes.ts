@@ -7,6 +7,7 @@ class StatisticsRoutes {
     app
       .get(config.EXPLORER.API_URL_PREFIX + 'statistics/2h', this.$getStatisticsByTime.bind(this, '2h'))
       .get(config.EXPLORER.API_URL_PREFIX + 'statistics/24h', this.$getStatisticsByTime.bind(this, '24h'))
+      .get(config.EXPLORER.API_URL_PREFIX + 'statistics/3d', this.$getStatisticsByTime.bind(this, '3d'))
       .get(config.EXPLORER.API_URL_PREFIX + 'statistics/1w', this.$getStatisticsByTime.bind(this, '1w'))
       .get(config.EXPLORER.API_URL_PREFIX + 'statistics/1m', this.$getStatisticsByTime.bind(this, '1m'))
       .get(config.EXPLORER.API_URL_PREFIX + 'statistics/3m', this.$getStatisticsByTime.bind(this, '3m'))
@@ -19,7 +20,7 @@ class StatisticsRoutes {
   }
 
   private async $getStatisticsByTime(
-    time: '2h' | '24h' | '1w' | '1m' | '3m' | '6m' | '1y' | '2y' | '3y' | '4y' | 'all',
+    time: '2h' | '24h' | '3d' | '1w' | '1m' | '3m' | '6m' | '1y' | '2y' | '3y' | '4y' | 'all',
     req: Request,
     res: Response
   ) {
@@ -33,6 +34,9 @@ class StatisticsRoutes {
         case '24h':
           result = await statisticsApi.$list24H();
           res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
+          break;
+        case '3d':
+          result = await statisticsApi.$list3D();
           break;
         case '1w':
           result = await statisticsApi.$list1W();
