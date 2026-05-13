@@ -37,33 +37,43 @@ class StatisticsRoutes {
           break;
         case '3d':
           result = await statisticsApi.$list3D();
+          res.setHeader('Expires', new Date(Date.now() + 1000 * 300).toUTCString());
           break;
         case '1w':
           result = await statisticsApi.$list1W();
+          res.setHeader('Expires', new Date(Date.now() + 1000 * 600).toUTCString());
           break;
         case '1m':
           result = await statisticsApi.$list1M();
+          res.setHeader('Expires', new Date(Date.now() + 1000 * 1800).toUTCString());
           break;
         case '3m':
           result = await statisticsApi.$list3M();
+          res.setHeader('Expires', new Date(Date.now() + 1000 * 3600).toUTCString());
           break;
         case '6m':
           result = await statisticsApi.$list6M();
+          res.setHeader('Expires', new Date(Date.now() + 1000 * 7200).toUTCString());
           break;
         case '1y':
           result = await statisticsApi.$list1Y();
+          res.setHeader('Expires', new Date(Date.now() + 1000 * 14400).toUTCString());
           break;
         case '2y':
           result = await statisticsApi.$list2Y();
+          res.setHeader('Expires', new Date(Date.now() + 1000 * 86400).toUTCString());
           break;
         case '3y':
           result = await statisticsApi.$list3Y();
+          res.setHeader('Expires', new Date(Date.now() + 1000 * 86400).toUTCString());
           break;
         case '4y':
           result = await statisticsApi.$list4Y();
+          res.setHeader('Expires', new Date(Date.now() + 1000 * 86400).toUTCString());
           break;
         case 'all':
           result = await statisticsApi.$listAll();
+          res.setHeader('Expires', new Date(Date.now() + 1000 * 86400).toUTCString());
           break;
         default:
           result = await statisticsApi.$list2H();
