@@ -147,6 +147,7 @@ deploy-frontend:
     - CONFIG=frontend/dist/explorer/browser/resources/config.js
     - sed -i "s/window.__env.TESTNET4_ENABLED = false;/window.__env.TESTNET4_ENABLED = true;/" $CONFIG
     - sed -i "s/window.__env.CHIPNET_ENABLED = false;/window.__env.CHIPNET_ENABLED = true;/" $CONFIG
+    - sed -i "s/window.__env.NOTIFICATION_MESSAGE = '';/window.__env.NOTIFICATION_MESSAGE = 'Upcoming BCH network upgrade on May 15, 2026. Please upgrade your node to the latest version (e.g. BCHN v29).';/" $CONFIG
     - sed -i "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.OFFICIAL_BCH_EXPLORER = true;" $CONFIG
     - sed -i "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.AUDIT = true;" $CONFIG
     - sed -i "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.MAINNET_ENABLED = true;" $CONFIG
