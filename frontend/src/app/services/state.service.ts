@@ -104,6 +104,7 @@ export interface Env {
   BCMR_API: string;
   customize?: Customization;
   PROD_DOMAINS: string[];
+  NOTIFICATION_MESSAGE: string;
 }
 
 const defaultEnv: Env = {
@@ -140,6 +141,7 @@ const defaultEnv: Env = {
   SERVICES_API: 'https://bchexplorer.cash/api/v1/services',
   BCMR_API: 'https://bcmr.paytaca.com/api',
   PROD_DOMAINS: [],
+  NOTIFICATION_MESSAGE: '',
 };
 
 @Injectable({

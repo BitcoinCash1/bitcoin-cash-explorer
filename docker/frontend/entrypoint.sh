@@ -47,6 +47,7 @@ __SERVICES_API__=${SERVICES_API:=https://bchexplorer.cash/api/v1/services}
 __HISTORICAL_PRICE__=${HISTORICAL_PRICE:=true}
 __ADDITIONAL_CURRENCIES__=${ADDITIONAL_CURRENCIES:=false}
 __STRATUM_ENABLED__=${STRATUM_ENABLED:=false}
+__NOTIFICATION_MESSAGE__=${NOTIFICATION_MESSAGE:=}
 
 # Export as environment variables to be used by envsubst
 export __MAINNET_ENABLED__
@@ -77,6 +78,7 @@ export __SERVICES_API__
 export __HISTORICAL_PRICE__
 export __ADDITIONAL_CURRENCIES__
 export __STRATUM_ENABLED__
+export __NOTIFICATION_MESSAGE__
 
 folder=$(find /var/www/explorer -name "config.js" | xargs dirname)
 echo ${folder}

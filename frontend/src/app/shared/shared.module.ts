@@ -181,6 +181,7 @@ import { ConfirmationsComponent } from '@app/shared/components/confirmations/con
 import { ToggleComponent } from '@app/shared/components/toggle/toggle.component';
 import { GeolocationComponent } from '@app/shared/components/geolocation/geolocation.component';
 import { TestnetAlertComponent } from '@app/shared/components/testnet-alert/testnet-alert.component';
+import { NotificationComponent } from '@app/shared/components/notification/notification.component';
 import { GlobalFooterComponent } from '@app/shared/components/global-footer/global-footer.component';
 import { MempoolErrorComponent } from '@app/shared/components/mempool-error/mempool-error.component';
 import { MiningPoolComponent } from '@app/shared/components/mining-pool/mining-pool.component';
@@ -296,6 +297,7 @@ import { AddressConverterComponent } from '@components/address-converter/address
     ToggleComponent,
     GeolocationComponent,
     TestnetAlertComponent,
+    NotificationComponent,
     GlobalFooterComponent,
     MiningPoolComponent,
     CalculatorComponent,
@@ -442,6 +444,7 @@ import { AddressConverterComponent } from '@components/address-converter/address
     ToggleComponent,
     GeolocationComponent,
     TestnetAlertComponent,
+    NotificationComponent,
     MiningPoolComponent,
     PreviewTitleComponent,
     GlobalFooterComponent,

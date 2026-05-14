@@ -12,5 +12,6 @@
   "ITEMS_PER_PAGE": 25,
   "PUBLIC_ACCELERATIONS": true,
   "AUDIT": true,
-  "PROD_DOMAINS": "reference.tld"
+  "PROD_DOMAINS": "reference.tld",
+  "NOTIFICATION_MESSAGE": ""
 }
