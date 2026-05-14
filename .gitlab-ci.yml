@@ -154,7 +154,7 @@ deploy-frontend:
     - sed -i "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.MAINNET_BLOCK_AUDIT_START_HEIGHT = 949237;" $CONFIG
     - sed -i "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.TESTNET4_BLOCK_AUDIT_START_HEIGHT = 305189;" $CONFIG
     - sed -i "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.CHIPNET_BLOCK_AUDIT_START_HEIGHT = 305194;" $CONFIG
-    - sed -i "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.NOTIFICATION_MESSAGE = 'Upcoming BCH network upgrade on May 15, 2026. Please upgrade your node to the latest version (e.g. BCHN v29).';/" $CONFIG
+    - sed -i "/window.__env.BASE_MODULE = 'explorer';/a \ \ \ \ window.__env.NOTIFICATION_MESSAGE = 'Upcoming BCH network upgrade on May 15, 2026. Please upgrade your node to the latest version (e.g. BCHN v29).';" $CONFIG
   artifacts:
     name: "Frontend"
     expire_in: 3 months
