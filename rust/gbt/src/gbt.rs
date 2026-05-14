@@ -1,5 +1,5 @@
 use std::{collections::VecDeque, mem::ManuallyDrop};
-use tracing::{info, trace};
+use tracing::{debug, info, warn};
 
 use crate::{
     audit_transaction::AuditTransaction,
@@ -39,25 +39,30 @@ pub fn gbt(
     let mempool_len = mempool.len();
     let mut audit_pool: AuditPool = Vec::with_capacity(max_uid + 1);
     audit_pool.resize(max_uid + 1, None);
-    let mut uid_list: Vec<u32> = Vec::with_capacity(mempool_len);
+    let mut  mempool_stack: Vec<u32> = Vec::with_capacity(mempool_len);
 
     // Phase 1: populate audit pool
     info!("Building audit pool");
     for (uid, tx) in &mut *mempool {
         let audit_tx = AuditTransaction::from_thread_transaction(tx);
+        // Safety: audit_pool and mempool_stack must always contain the same transactions
         audit_pool[*uid as usize] = Some(ManuallyDrop::new(audit_tx));
-        uid_list.push(*uid);
+        mempool_stack.push(*uid);
     }
 
     // Phase 2: build children sets and initialize missing_parent_count
     info!("Building parent→child relationships");
-    for &txid in &uid_list {
-        // Collect inputs first to avoid borrowing audit_pool mutably and immutably at once
-        let inputs: Vec<u32> = if let Some(Some(tx)) = audit_pool.get(txid as usize) {
+    for &txid in & mempool_stack {
+        // Collect inputs first to avoid borrowing audit_pool mutably and immutably at once.
+        // Deduplicate so a tx spending multiple outputs of the same parent doesn't inflate
+        // missing_parent_count beyond what the parent can decrement via its children HashSet.
+        let mut inputs: Vec<u32> = if let Some(Some(tx)) = audit_pool.get(txid as usize) {
             tx.inputs.clone()
         } else {
             continue;
         };
+        inputs.sort_unstable();
+        inputs.dedup();
 
         for parent_uid in inputs {
             if let Some(Some(_parent)) = audit_pool.get(parent_uid as usize) {
@@ -74,7 +79,7 @@ pub fn gbt(
 
     // Phase 3: sort by descending fee_per_size; tie-break by ascending order (partial txid)
     info!("Sorting by descending fee rate");
-    let mut sorted: Vec<u32> = uid_list;
+    let mut sorted: Vec<u32> =  mempool_stack;
     sorted.sort_unstable_by(|&a, &b| {
         let ta = audit_pool[a as usize].as_ref().expect("uid in audit_pool");
         let tb = audit_pool[b as usize].as_ref().expect("uid in audit_pool");
@@ -207,11 +212,46 @@ pub fn gbt(
 
     // Phase 5: collect remaining unused transactions as overflow
     info!("Collecting overflow transactions");
+
+    // Any uid still in skipped_uids with missing_parent_count > 0 will never be included.
+    // These are in-mempool children whose parents were also never included (e.g. pruned before
+    // the algorithm reached them, or part of a cycle). Log them so we can diagnose gaps.
+    let stuck_count = skipped_uids.iter().filter(|&&uid| {
+        audit_pool
+            .get(uid as usize)
+            .and_then(Option::as_ref)
+            .map_or(false, |tx| tx.missing_parent_count > 0 && !tx.used)
+    }).count();
+    if stuck_count > 0 {
+        warn!(
+            "{} tx(s) stuck in skipped_uids with unresolved parents (included in overflow)",
+            stuck_count
+        );
+        for &uid in &skipped_uids {
+            if let Some(Some(tx)) = audit_pool.get(uid as usize) {
+                if tx.missing_parent_count > 0 && !tx.used {
+                    debug!(
+                        "  stuck uid={} missing_parent_count={} inputs={:?}",
+                        uid, tx.missing_parent_count, tx.inputs
+                    );
+                }
+            }
+        }
+    }
+
+    // Collect all unused transactions: remaining sorted list, backlog, and any transactions
+    // stuck in skipped_uids (e.g. due to duplicate parent UIDs inflating missing_parent_count).
+    // Use a seen-set to deduplicate across the three sources.
+    let mut seen = u32hashset_new();
     let overflow: Vec<u32> = sorted[sorted_idx..]
         .iter()
         .chain(backlog.iter())
+        .chain(skipped_uids.iter())
         .copied()
         .filter(|&uid| {
+            if !seen.insert(uid) {
+                return false;
+            }
             audit_pool
                 .get(uid as usize)
                 .and_then(Option::as_ref)
@@ -219,8 +259,18 @@ pub fn gbt(
         })
         .collect();
 
-    trace!("blocks: {:#?}", blocks);
-    trace!("overflow count: {}", overflow.len());
+    let total_accounted = blocks.iter().map(|b| b.len()).sum::<usize>() + overflow.len();
+    debug!(
+        "gbt summary: mempool={} placed_in_blocks={} overflow={} total_accounted={} unaccounted={}",
+        mempool_len,
+        blocks.iter().map(|b| b.len()).sum::<usize>(),
+        overflow.len(),
+        total_accounted,
+        mempool_len.saturating_sub(total_accounted),
+    );
+
+    debug!("blocks: {:#?}", blocks);
+    debug!("overflow count: {}", overflow.len());
 
     // Drop all ManuallyDrop<AuditTransaction> allocations
     for (uid, _thread_tx) in mempool.iter() {

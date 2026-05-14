@@ -326,15 +326,36 @@ class MempoolBlocks {
     }
 
     const transactions = txids.map((txid) => newMempool[txid]).filter((tx) => tx);
+    const missingFromMempool = txids.length - transactions.length;
+    if (missingFromMempool > 0) {
+      logger.debug(
+        `RUST makeBlockTemplates: ${missingFromMempool} txid(s) in txids list not found in newMempool (dropped before Rust): ${txids
+          .filter((txid) => !newMempool[txid])
+          .join(', ')}`
+      );
+    }
     // set missing short ids
     for (const tx of transactions) {
       this.setUid(tx, !saveResults);
     }
-    // set short ids for transaction inputs
+    // set short ids for transaction inputs (deduplicate: a tx may spend multiple outputs of the
+    // same parent, which must count as only one dependency to avoid inflating missing_parent_count)
     for (const tx of transactions) {
-      tx.inputs = tx.vin
-        .map((v) => this.getUid(newMempool[v.txid]))
-        .filter((uid) => uid !== null && uid !== undefined) as number[];
+      tx.inputs = [
+        ...new Set(
+          tx.vin
+            .map((v) => this.getUid(newMempool[v.txid]))
+            .filter((uid): uid is number => uid !== null && uid !== undefined)
+        ),
+      ];
+    }
+    const txsWithNoUid = transactions.filter((tx) => !tx.uid);
+    if (txsWithNoUid.length > 0) {
+      logger.debug(
+        `RUST makeBlockTemplates: ${txsWithNoUid.length} tx(s) have no uid after setUid (will be skipped by Rust): ${txsWithNoUid
+          .map((tx) => tx.txid)
+          .join(', ')}`
+      );
     }
 
     // run the block construction algorithm in a separate thread, and wait for a result
@@ -408,11 +429,28 @@ class MempoolBlocks {
     for (const tx of added) {
       this.setUid(tx, false);
     }
-    // set short ids for transaction inputs
+    // set short ids for transaction inputs (deduplicate: a tx may spend multiple outputs of the
+    // same parent, which must count as only one dependency to avoid inflating missing_parent_count)
     for (const tx of added) {
-      tx.inputs = tx.vin.map((v) => this.getUid(newMempool[v.txid])).filter((uid) => uid) as number[];
+      tx.inputs = [
+        ...new Set(tx.vin.map((v) => this.getUid(newMempool[v.txid])).filter((uid): uid is number => !!uid)),
+      ];
     }
     const removedTxs = removed.filter((tx) => tx.uid) as VerboseMempoolTransactionExtended[];
+    const removedWithoutUid = removed.length - removedTxs.length;
+    if (removedWithoutUid > 0) {
+      logger.debug(
+        `RUST updateBlockTemplates: ${removedWithoutUid} removed tx(s) had no uid (not forwarded to Rust remove list)`
+      );
+    }
+    const addedWithNoUid = added.filter((tx) => !tx.uid);
+    if (addedWithNoUid.length > 0) {
+      logger.debug(
+        `RUST updateBlockTemplates: ${addedWithNoUid.length} added tx(s) have no uid after setUid (will be skipped by Rust): ${addedWithNoUid
+          .map((tx) => tx.txid)
+          .join(', ')}`
+      );
+    }
 
     // run the block construction algorithm in a separate thread, and wait for a result
     try {

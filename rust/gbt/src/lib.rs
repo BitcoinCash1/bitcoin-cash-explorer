@@ -9,7 +9,7 @@
 use napi::bindgen_prelude::Result;
 use napi_derive::napi;
 use thread_transaction::ThreadTransaction;
-use tracing::{debug, info, trace};
+use tracing::{debug, info};
 use tracing_log::LogTracer;
 use tracing_subscriber::{EnvFilter, FmtSubscriber};
 
@@ -83,7 +83,7 @@ impl GbtGenerator {
         mempool: Vec<ThreadTransaction>,
         max_uid: u32,
     ) -> Result<GbtResult> {
-        trace!("make: Current State {:#?}", self.thread_transactions);
+        debug!("make: Current State {:#?}", self.thread_transactions);
         run_task(
             Arc::clone(&self.thread_transactions),
             max_uid as usize,
@@ -108,7 +108,7 @@ impl GbtGenerator {
         remove_txs: Vec<u32>,
         max_uid: u32,
     ) -> Result<GbtResult> {
-        trace!("update: Current State {:#?}", self.thread_transactions);
+        debug!("update: Current State {:#?}", self.thread_transactions);
         run_task(
             Arc::clone(&self.thread_transactions),
             max_uid as usize,
