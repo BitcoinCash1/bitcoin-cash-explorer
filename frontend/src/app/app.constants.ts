@@ -390,7 +390,7 @@ export const specialBlocks = {
   '951144': {
     labelEvent: 'May 2026 Upgrade',
     labelEventCompleted:
-      ' (https://upgradespecs.bitcoincashnode.org/2026-05-15-upgrade/)',
+      'CHIP-2024-12 P2S: Pay to Script. CHIP-2021-05 Loops: Bounded Looping Operations. CHIP-2025-05 Functions: Function Definition and Invocation Operations. CHIP-2025-05 Bitwise: Re-Enable Bitwise Operations. This marks the first block mined to satisfy upgraded consensus rules. (https://upgradespecs.bitcoincashnode.org/2026-05-15-upgrade/)',
     networks: ['mainnet'],
   },
   '1050000': {
