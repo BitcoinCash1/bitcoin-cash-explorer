@@ -6,7 +6,7 @@
     <div class="inner b"></div>
     <div class="inner c"></div>
   </div>
-  <div class="warning-label">{{ eventName }}</div>
+  <div class="warning-label" [innerHTML]="eventName | linkify"></div>
 </ng-container>
 
 <div *ngIf="countdown > 0" class="warning-label">

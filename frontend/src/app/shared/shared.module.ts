@@ -130,6 +130,7 @@ import { BrowserOnlyDirective } from '@app/shared/directives/browser-only.direct
 import { ServerOnlyDirective } from '@app/shared/directives/server-only.directive';
 import { ColoredPriceDirective } from '@app/shared/directives/colored-price.directive';
 import { NoSanitizePipe } from '@app/shared/pipes/no-sanitize.pipe';
+import { LinkifyPipe } from '@app/shared/pipes/linkify.pipe';
 import { MempoolBlocksComponent } from '@components/mempool-blocks/mempool-blocks.component';
 import { BlockchainBlocksComponent } from '@components/blockchain-blocks/blockchain-blocks.component';
 import { AmountComponent } from '@components/amount/amount.component';
@@ -226,6 +227,7 @@ import { AddressConverterComponent } from '@components/address-converter/address
     ScriptpubkeyTypePipe,
     RelativeUrlPipe,
     NoSanitizePipe,
+    LinkifyPipe,
     Hex2asciiPipe,
     AsmStylerPipe,
     AsmComponent,
@@ -394,6 +396,7 @@ import { AddressConverterComponent } from '@components/address-converter/address
     BrowserOnlyDirective,
     ServerOnlyDirective,
     NoSanitizePipe,
+    LinkifyPipe,
     BlockchainComponent,
     MempoolBlocksComponent,
     BlockchainBlocksComponent,

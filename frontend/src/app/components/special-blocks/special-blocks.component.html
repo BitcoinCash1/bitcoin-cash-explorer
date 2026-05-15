@@ -63,9 +63,10 @@
             <span class="event-label">{{ block.labelEvent }}</span>
           </td>
           <td class="description">
-            <span class="description-text">{{
-              block.labelEventCompleted
-            }}</span>
+            <span
+              class="description-text"
+              [innerHTML]="block.labelEventCompleted | linkify"
+            ></span>
           </td>
         </tr>
       </tbody>
