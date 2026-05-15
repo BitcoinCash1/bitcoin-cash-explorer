@@ -44,6 +44,7 @@ import { seoDescriptionNetwork } from '@app/shared/common.utils';
 import { PriceService, Price } from '@app/services/price.service';
 import { CacheService } from '@app/services/cache.service';
 import { PreloadService } from '@app/services/preload.service';
+import { specialBlocks } from '@app/app.constants';
 
 interface ComparisonStats {
   totalFees: number;
@@ -133,6 +134,8 @@ export class BlockComponent implements OnInit, OnDestroy {
   staleTransactions: TransactionStripped[];
   staleStats: ComparisonStats | null = null;
   canonicalStats: ComparisonStats | null = null;
+  specialEventLabel: string | null = null;
+  specialEventDescription: string | null = null;
 
   @ViewChildren('blockGraphProjected')
   blockGraphProjected: QueryList<BlockOverviewGraphComponent>;
@@ -336,6 +339,10 @@ export class BlockComponent implements OnInit, OnDestroy {
         this.blockHeight = block.height;
         this.lastBlockHeight = this.blockHeight;
         this.nextBlockHeight = block.height + 1;
+        this.specialEventLabel =
+          specialBlocks[block.height]?.labelEvent ?? null;
+        this.specialEventDescription =
+          specialBlocks[block.height]?.labelEventCompleted ?? null;
         this.setNextAndPreviousBlockLink();
 
         this.seoService.setTitle(

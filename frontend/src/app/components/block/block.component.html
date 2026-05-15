@@ -376,6 +376,28 @@
           </span>
         </td>
       </tr>
+      @if (specialEventLabel) {
+        <tr>
+          <td>
+            <span i18n="block.special-block">Special Block</span>
+            <span
+              class="abla-info-link"
+              i18n-ngbTooltip="block.special-block-tooltip"
+              ngbTooltip="This is a special block"
+              placement="bottom"
+              aria-label="This is a special block"
+            >
+              <fa-icon
+                [icon]="['fas', 'info-circle']"
+                [fixedWidth]="true"
+              ></fa-icon>
+            </span>
+          </td>
+          <td [ngbTooltip]="specialEventDescription" placement="bottom">
+            {{ specialEventLabel }}
+          </td>
+        </tr>
+      }
     </ng-container>
     <ng-template #loadingRest>
       <tr>
