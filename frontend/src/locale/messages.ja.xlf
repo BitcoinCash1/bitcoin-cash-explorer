@@ -1175,6 +1175,10 @@
                 <source xml:space="preserve"> Amount </source>
                 <target xml:space="preserve"> 金額 </target>
             </trans-unit>
+            <trans-unit id="5523115287719193824">
+                <source xml:space="preserve">This is a special block</source>
+                <target xml:space="preserve">This is a special block</target>
+            </trans-unit>
             <trans-unit id="5530507757130071978">
                 <source xml:space="preserve"> ScriptPubKey (ASM) </source>
                 <target xml:space="preserve"> ScriptPubKey (ASM) </target>
@@ -1507,6 +1511,10 @@
                 <source xml:space="preserve">First seen</source>
                 <target xml:space="preserve">First seen</target>
             </trans-unit>
+            <trans-unit id="6903541721714103747">
+                <source xml:space="preserve">Special Block</source>
+                <target xml:space="preserve">Special Block</target>
+            </trans-unit>
             <trans-unit id="6903945166576780156">
                 <source xml:space="preserve"> Bitcoin Cash Supply
 </source>
@@ -1764,6 +1772,10 @@
             <trans-unit id="808338231320400904">
                 <source xml:space="preserve">This transaction was projected to be included in the block</source>
                 <target xml:space="preserve">この取引はブロックに含まれると予測されていた</target>
+            </trans-unit>
+            <trans-unit id="8097247056335527144">
+                <source xml:space="preserve">Median Time</source>
+                <target xml:space="preserve">Median Time</target>
             </trans-unit>
             <trans-unit id="8105367655277227191">
                 <source xml:space="preserve"> Expected </source>
