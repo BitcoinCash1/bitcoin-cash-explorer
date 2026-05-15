@@ -319,6 +319,9 @@ export class Common {
           case 'p2sh':
             flags |= TransactionFlags.p2sh;
             break;
+          case 'p2s':
+            flags |= TransactionFlags.p2s;
+            break;
         }
       }
 
@@ -368,6 +371,9 @@ export class Common {
           break;
         case 'p2sh':
           flags |= TransactionFlags.p2sh;
+          break;
+        case 'p2s':
+          flags |= TransactionFlags.p2s;
           break;
         case 'op_return':
           flags |= TransactionFlags.op_return;

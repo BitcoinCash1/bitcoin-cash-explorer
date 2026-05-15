@@ -760,7 +760,7 @@ class TransactionUtils {
     return { prioritized, deprioritized };
   }
 
-  // Copied from https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/-/blob/main/backend/src/api/bitcoin/bitcoin-api.ts?ref_type=heads#L378
+  // Copied from https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer/-/blob/main/backend/src/api/bitcoin/bitcoin-api.ts?ref_type=heads#L388
   public translateScriptPubKeyType(outputType: string): string {
     const map = {
       pubkey: 'p2pk',

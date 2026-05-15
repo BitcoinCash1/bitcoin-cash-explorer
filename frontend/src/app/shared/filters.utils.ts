@@ -31,6 +31,7 @@ export const TransactionFlags = {
   p2ms: 0b00000010_00000000n,
   p2pkh: 0b00000100_00000000n,
   p2sh: 0b00001000_00000000n,
+  p2s: 0b00010000_00000000n, // pay-to-script (new since May 2026 upgrade)
   // behavior, BCH doesn't have behaviors
   // data
   op_return: 0b00000001_00000000_00000000_00000000n,
@@ -135,6 +136,13 @@ export const TransactionFilters: { [key: string]: Filter } = {
     important: true,
     tooltip: false,
   },
+  p2s: {
+    key: 'p2s',
+    label: 'P2S',
+    flag: TransactionFlags.p2s,
+    important: true,
+    tooltip: false,
+  },
   /* behavior (in BTC this would be cpfp, cpfp_hold, replacement, acceleration, with their appropriate flags) */
   /* BCH doesn't have all of these */
   /* data */
@@ -221,7 +229,7 @@ export const FilterGroups: { label: string; filters: Filter[] }[] = [
   },
   {
     label: $localize`Address Types`,
-    filters: ['p2pk', 'p2ms', 'p2pkh', 'p2sh'],
+    filters: ['p2pk', 'p2ms', 'p2pkh', 'p2sh', 'p2s'],
   },
   // {
   //   label: $localize`Behavior`,

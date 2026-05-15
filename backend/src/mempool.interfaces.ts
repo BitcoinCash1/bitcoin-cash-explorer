@@ -229,6 +229,7 @@ export const TransactionFlags = {
   p2ms: 0b00000010_00000000n,
   p2pkh: 0b00000100_00000000n,
   p2sh: 0b00001000_00000000n, // In BCH this can be both p2sh and p2sh32. Since currently this flag is set if type is scripthash
+  p2s: 0b00010000_00000000n, // pay-to-script (new since May 2026 upgrade)
   // behavior, BCH doesn't have behaviors (used to be cpfp_parent, cpfp_child and replacement)
   // data
   op_return: 0b00000001_00000000_00000000_00000000n,
