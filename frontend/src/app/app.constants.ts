@@ -387,6 +387,12 @@ export const specialBlocks = {
       'CHIP-2021-05 VM Limits: Targeted Virtual Machine Limits. CHIP-2024-07 BigInt: High-Precision Arithmetic for Bitcoin Cash. This marks the first block mined to satisfy upgraded consensus rules. (https://upgradespecs.bitcoincashnode.org/2025-05-15-upgrade/)',
     networks: ['mainnet'],
   },
+  '951144': {
+    labelEvent: 'May 2026 Upgrade',
+    labelEventCompleted:
+      ' (https://upgradespecs.bitcoincashnode.org/2026-05-15-upgrade/)',
+    networks: ['mainnet'],
+  },
   '1050000': {
     labelEvent: "Bitcoin Cash's 5th Halving",
     labelEventCompleted: 'Block Subsidy has halved to 1.5625 BCH per block',
