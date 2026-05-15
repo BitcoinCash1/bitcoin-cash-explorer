@@ -389,11 +389,14 @@ class BitcoinApi implements AbstractBitcoinApi {
       pubkey: 'p2pk',
       pubkeyhash: 'p2pkh',
       scripthash: 'p2sh',
+      script: 'p2s', // pay-to-script (new since May 2026 upgrade)
       nonstandard: 'nonstandard',
       multisig: 'multisig',
       anchor: 'anchor',
       nulldata: 'op_return',
     };
+
+    console.log('!!!!!!!!!! Translating scriptPubKey type !!!!!!!!!!!', outputType);
 
     if (map[outputType]) {
       return map[outputType];

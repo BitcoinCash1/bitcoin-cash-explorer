@@ -766,6 +766,7 @@ class TransactionUtils {
       pubkey: 'p2pk',
       pubkeyhash: 'p2pkh',
       scripthash: 'p2sh',
+      script: 'p2s', // pay-to-script (new since May 2026 upgrade)
       nonstandard: 'nonstandard',
       multisig: 'multisig',
       anchor: 'anchor',
