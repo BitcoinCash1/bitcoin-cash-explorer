@@ -147,6 +147,7 @@ export interface Block {
   height: number;
   version: number;
   timestamp: number;
+  mediantime: number;
   bits: number;
   nonce: number;
   difficulty: number;
