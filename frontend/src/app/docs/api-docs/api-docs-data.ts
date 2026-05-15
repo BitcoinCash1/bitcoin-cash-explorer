@@ -7227,6 +7227,13 @@ export const faqData = [
     type: 'endpoint',
     category: 'advanced',
     showConditions: bitcoinNetworks,
+    fragment: 'what-is-p2s',
+    title: 'What is P2S (Pay to Script)?',
+  },
+  {
+    type: 'endpoint',
+    category: 'advanced',
+    showConditions: bitcoinNetworks,
     fragment: 'what-is-zero-confirmation',
     title: 'What is 0-conf?',
   },

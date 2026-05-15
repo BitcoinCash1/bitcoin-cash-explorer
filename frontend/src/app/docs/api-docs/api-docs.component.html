@@ -685,6 +685,50 @@
   </p>
 </ng-template>
 
+<ng-template type="what-is-p2s">
+  <p>
+    <strong>P2S (Pay to Script)</strong> is a new output type introduced in
+    Bitcoin Cash's <strong>May 2026 network upgrade</strong>. It allows the full
+    locking script to be embedded directly in the output; without a hash
+    wrapper, up to 201 bytes in length.
+  </p>
+  <p>
+    <strong>How it differs from P2SH:</strong>
+  </p>
+  <ul>
+    <li>
+      <strong>No hash indirection.</strong> P2SH outputs lock funds to a hash of
+      a redeem script; the actual script is only revealed at spend time. P2S
+      outputs contain the locking script directly, making the spending
+      conditions immediately visible on-chain.
+    </li>
+    <li>
+      <strong>No payable CashAddress.</strong> Because P2S outputs don't follow
+      the standard address format, wallets won't generate a CashAddress for
+      them. This makes P2S safer for contract use. Users can't accidentally send
+      funds to a contract output that may be unrecoverable.
+    </li>
+    <li>
+      <strong>More byte-efficient.</strong> By skipping the hash/verify overhead
+      of P2SH, P2S reduces the size of many covenant and multi-party contract
+      outputs by around 34 bytes per output.
+    </li>
+  </ul>
+  <p>
+    <strong>Use cases:</strong> P2S is primarily aimed at developers building
+    vaults, multi-party covenants, decentralized exchanges, and other on-chain
+    applications where the locking conditions should be transparent and directly
+    inspectable by the contract itself.
+  </p>
+  <p>
+    <strong>Learn more:</strong> See the
+    <a href="https://github.com/bitjson/bch-p2s" target="_blank"
+      >CHIP-2024-12 P2S specification</a
+    >
+    for full technical details.
+  </p>
+</ng-template>
+
 <ng-template type="what-is-zero-confirmation">
   <p>
     Zero-confirmation (0-conf) transactions are Bitcoin Cash transactions that
@@ -1061,7 +1105,7 @@
     to highlight different types of transactions.
   </p>
   <p>
-    There are currently 25 different Explorer Goggles filters, grouped into six
+    There are currently 26 different Explorer Goggles filters, grouped into six
     categories:
   </p>
   <dl>
@@ -1100,6 +1144,13 @@
         <dd>
           Pay-to-script-hash. A address type that locks outputs to a
           <em>redeem script</em>.
+        </dd>
+        <dt>P2S</dt>
+        <dd>
+          Pay-to-script. Introduced in the May 2026 upgrade, P2S outputs embed
+          the full locking script directly, without a hash wrapper, up to 201
+          bytes. Unlike P2SH, P2S outputs have no payable CashAddress, making
+          them safer for contract use.
         </dd>
       </dl>
     </dd>
