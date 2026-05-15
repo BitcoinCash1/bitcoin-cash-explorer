@@ -396,8 +396,6 @@ class BitcoinApi implements AbstractBitcoinApi {
       nulldata: 'op_return',
     };
 
-    console.log('!!!!!!!!!! Translating scriptPubKey type !!!!!!!!!!!', outputType);
-
     if (map[outputType]) {
       return map[outputType];
     } else {
