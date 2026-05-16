@@ -1708,7 +1708,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/address-type/address-type.component.html</context>
-          <context context-type="linenumber">24,26</context>
+          <context context-type="linenumber">27,29</context>
         </context-group>
         <note priority="1" from="description">unknown</note>
       </trans-unit>
@@ -2695,7 +2695,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/filters.utils.ts</context>
-          <context context-type="linenumber">174</context>
+          <context context-type="linenumber">182</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7816493330657272952" datatype="html">
@@ -2710,7 +2710,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/filters.utils.ts</context>
-          <context context-type="linenumber">166</context>
+          <context context-type="linenumber">174</context>
         </context-group>
       </trans-unit>
       <trans-unit id="146442697456175258" datatype="html">
@@ -2725,7 +2725,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/filters.utils.ts</context>
-          <context context-type="linenumber">231</context>
+          <context context-type="linenumber">239</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3033623772164647792" datatype="html">
@@ -6292,7 +6292,7 @@
         <source>provably unspendable</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/address-type/address-type.component.html</context>
-          <context context-type="linenumber">15,18</context>
+          <context context-type="linenumber">18,21</context>
         </context-group>
         <note priority="1" from="description">address.provably-unspendable</note>
       </trans-unit>
@@ -6300,7 +6300,7 @@
         <source>bare multisig</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/components/address-type/address-type.component.html</context>
-          <context context-type="linenumber">18,21</context>
+          <context context-type="linenumber">21,24</context>
         </context-group>
         <note priority="1" from="description">address.bare-multisig</note>
       </trans-unit>
@@ -6598,35 +6598,35 @@
         <source>Batch payment</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/filters.utils.ts</context>
-          <context context-type="linenumber">181</context>
+          <context context-type="linenumber">189</context>
         </context-group>
       </trans-unit>
       <trans-unit id="885666551418fd59011ceb09d5c481095940193b" datatype="html">
         <source>Features</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/filters.utils.ts</context>
-          <context context-type="linenumber">219</context>
+          <context context-type="linenumber">227</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3399131819685362332" datatype="html">
         <source>Address Types</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/filters.utils.ts</context>
-          <context context-type="linenumber">223</context>
+          <context context-type="linenumber">231</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6290595884142884507" datatype="html">
         <source>Heuristics</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/filters.utils.ts</context>
-          <context context-type="linenumber">235</context>
+          <context context-type="linenumber">243</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2259944601214794924" datatype="html">
         <source>Sighash Flags</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/shared/filters.utils.ts</context>
-          <context context-type="linenumber">239</context>
+          <context context-type="linenumber">247</context>
         </context-group>
       </trans-unit>
       <trans-unit id="date-base.year" datatype="html">
