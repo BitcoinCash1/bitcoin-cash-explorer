@@ -1,5 +1,12 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
+// Max indent levels that are visually rendered. True nesting depth is tracked
+// uncapped so block matching stays correct for very deeply nested scripts; only
+// the left padding is clamped so deep scripts stay readable / don't overflow.
+// Depth is emitted as a class (asm-indent-N) rather than an inline style because
+// Angular's [innerHTML] sanitizer strips inline style attributes.
+const MAX_VISUAL_DEPTH = 10;
+
 @Pipe({
   name: 'asmStyler',
   standalone: false,
@@ -9,6 +16,7 @@ export class AsmStylerPipe implements PipeTransform {
     const instructions = asm.split('OP_');
     let out = '';
     let chars = -3;
+    let depth = 0;
     for (const instruction of instructions) {
       if (instruction === '') {
         continue;
@@ -17,12 +25,33 @@ export class AsmStylerPipe implements PipeTransform {
         break;
       }
       chars += instruction.length + 3;
-      out += this.addStyling(instruction);
+
+      const opcode = instruction.split(' ')[0];
+      let renderDepth = depth;
+      switch (opcode) {
+        case 'IF':
+        case 'NOTIF':
+        case 'BEGIN':
+          renderDepth = depth;
+          depth += 1;
+          break;
+        case 'ELSE':
+          renderDepth = Math.max(depth - 1, 0);
+          break;
+        case 'ENDIF':
+        case 'UNTIL':
+          depth = Math.max(depth - 1, 0);
+          renderDepth = depth;
+          break;
+      }
+
+      const visualDepth = Math.min(renderDepth, MAX_VISUAL_DEPTH);
+      out += this.addStyling(instruction, visualDepth);
     }
     return out;
   }
 
-  addStyling(instruction: string): string {
+  addStyling(instruction: string, visualDepth: number = 0): string {
     const opcode = instruction.split(' ')[0];
     let style = '';
     switch (opcode) {
@@ -327,6 +356,6 @@ export class AsmStylerPipe implements PipeTransform {
     if (args === opcode) {
       args = '';
     }
-    return `<span class='${style}'>OP_${opcode}</span> ${args}<br>`;
+    return `<div class='asm-line asm-indent-${visualDepth}'><span class='${style}'>OP_${opcode}</span> ${args}</div>`;
   }
 }

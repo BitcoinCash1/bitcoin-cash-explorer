@@ -1002,6 +1002,16 @@ th {
   color: #ff8c00;
 }
 
+.asm-line {
+  line-height: 1.4;
+
+  @for $i from 0 through 10 {
+    &.asm-indent-#{$i} {
+      padding-left: #{$i * 0.75}em;
+    }
+  }
+}
+
 .shortable-address {
   font-family: monospace;
 }
