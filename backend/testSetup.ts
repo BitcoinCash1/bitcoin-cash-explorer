@@ -15,6 +15,12 @@ jest.mock('./src/logger.ts', () => ({
     goggles: 'goggles',
   },
 }), { virtual: true });
+jest.mock('./src/api/backend-info.ts', () => ({
+  default: {
+    getBackendInfo: jest.fn().mockReturnValue({}),
+    getShortCommitHash: jest.fn().mockReturnValue(''),
+  },
+}), { virtual: true });
 jest.mock('./src/api/rbf-cache.ts', () => ({}), { virtual: true });
 jest.mock('./src/api/mempool.ts', () => ({}), { virtual: true });
 jest.mock('./src/api/memory-cache.ts', () => ({}), { virtual: true });
