@@ -38,6 +38,9 @@ lint-format-test-backend:
     - cd backend
     - mkdir rust-gbt # Placeholder directory (even if pnpm install is triggered during preinstall)
     - pnpm preinstall
+    - ls -laha
+    - ls -lha rust-gbt
+    - 
     - pnpm install --prefer-offline --prefer-frozen-lockfile
     #- pnpm run lint
     - pnpm prettier:check
