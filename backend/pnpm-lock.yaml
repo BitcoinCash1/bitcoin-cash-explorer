@@ -34,7 +34,7 @@ importers:
         version: 5.12.1
       rust-gbt:
         specifier: file:rust-gbt
-        version: file:rust-gbt
+        version: gbt@file:rust-gbt
       socks-proxy-agent:
         specifier: ~8.0.5
         version: 8.0.5
@@ -48,6 +48,9 @@ importers:
       '@eslint/js':
         specifier: ^10.0.1
         version: 10.0.1(eslint@10.4.0(jiti@2.7.0))
+      '@jest/types':
+        specifier: ^30.4.1
+        version: 30.4.1
       '@types/compression':
         specifier: ^1.8.1
         version: 1.8.1
@@ -1465,6 +1468,10 @@ packages:
   function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
 
+  gbt@file:rust-gbt:
+    resolution: {directory: rust-gbt, type: directory}
+    engines: {node: '>= 12'}
+
   generate-function@2.3.1:
     resolution: {integrity: sha512-eeB5GfMNeevm/GRYq20ShmsaGcmI81kIX2K9XQx5miC8KdHaC6Jm0qQ8ZNeGOi7wYB8OsdxKs+Y2oVuTFuVwKQ==}
 
@@ -2096,9 +2103,6 @@ packages:
   resolve-from@5.0.0:
     resolution: {integrity: sha512-qYg9KP24dD5qka9J47d0aVky0N+b4fTU89LN9iDnjB5waksiC49rvMB0PrUJQGoTmH50XPiqOvAjDfaijGxYZw==}
     engines: {node: '>=8'}
-
-  rust-gbt@file:rust-gbt:
-    resolution: {directory: rust-gbt, type: directory}
 
   safe-buffer@5.2.1:
     resolution: {integrity: sha512-rp3So07KcdmmKbGvgaNxQSJr7bGVSVk5S9Eq1F+ppbRo70+YeaDxkw5Dd8NPN+GD6bjnYm2VuPuCXmpuYvmCXQ==}
@@ -3932,6 +3936,8 @@ snapshots:
 
   function-bind@1.1.2: {}
 
+  gbt@file:rust-gbt: {}
+
   generate-function@2.3.1:
     dependencies:
       is-property: 1.0.2
@@ -4692,8 +4698,6 @@ snapshots:
       resolve-from: 5.0.0
 
   resolve-from@5.0.0: {}
-
-  rust-gbt@file:rust-gbt: {}
 
   safe-buffer@5.2.1: {}
 

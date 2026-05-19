@@ -61,6 +61,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@jest/types": "^30.4.1",
     "@types/compression": "^1.8.1",
     "@types/crypto-js": "^4.2.2",
     "@types/express": "^4.17.25",
