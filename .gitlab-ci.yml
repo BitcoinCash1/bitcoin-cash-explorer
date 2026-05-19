@@ -38,8 +38,8 @@ lint-format-test-backend:
     - cd backend
     - mkdir rust-gbt # Placeholder directory (even if pnpm install is triggered during preinstall)
     - pnpm preinstall
-    - ls -laha
-    - ls -lha rust-gbt
+    # Remove the cached virtual-store entry for rust-gbt so pnpm re-links the freshly built binary
+    - rm -rf node_modules/.pnpm/rust-gbt* node_modules/rust-gbt
     - pnpm install --prefer-offline --prefer-frozen-lockfile
     #- pnpm run lint
     - pnpm prettier:check
@@ -81,6 +81,8 @@ build-backend:
     - cd backend
     - mkdir rust-gbt # Placeholder directory (even if pnpm install is triggered during preinstall)
     - pnpm preinstall
+    # Remove the cached virtual-store entry for rust-gbt so pnpm re-links the freshly built binary
+    - rm -rf node_modules/.pnpm/rust-gbt* node_modules/rust-gbt
     - pnpm install --prefer-offline --prefer-frozen-lockfile
     - pnpm package
   artifacts:
