@@ -40,7 +40,6 @@ lint-format-test-backend:
     - pnpm preinstall
     - ls -laha
     - ls -lha rust-gbt
-    - 
     - pnpm install --prefer-offline --prefer-frozen-lockfile
     #- pnpm run lint
     - pnpm prettier:check
