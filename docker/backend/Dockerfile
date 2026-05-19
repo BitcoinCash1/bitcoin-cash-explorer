@@ -14,6 +14,9 @@ COPY --chown=user:user --from=backend . .
 COPY --chown=user:user --from=rustgbt . ../rust/
 ENV FD=/build/rust-gbt
 
+# Create the rust-gbt directory placeholder, before running pnpm preinstall, which could also trigger a pnpm install
+RUN mkdir rust-gbt
+
 RUN pnpm preinstall
 RUN pnpm install --prod
 RUN pnpm package
