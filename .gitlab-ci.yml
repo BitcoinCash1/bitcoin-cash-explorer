@@ -36,7 +36,7 @@ lint-format-test-backend:
   interruptible: true
   script:
     - cd backend
-    - mkdir rust-gbt # Placeholder directory (even if pnpm install is triggered during preinstall)
+    - mkdir rust-gbt # Placeholder directory (if pnpm install is triggered during preinstall)
     - pnpm preinstall
     # pnpm v11 caches install state here; deleting it forces re-linking of the freshly built rust-gbt binary.
     - rm -rf node_modules/.pnpm-workspace-state-v1.json
@@ -79,7 +79,7 @@ build-backend:
   interruptible: true
   script:
     - cd backend
-    - mkdir rust-gbt # Placeholder directory (even if pnpm install is triggered during preinstall)
+    - mkdir rust-gbt # Placeholder directory (if pnpm install is triggered during preinstall)
     - pnpm preinstall
     # pnpm v11 caches install state here; deleting it forces re-linking of the freshly built rust-gbt binary.
     - rm -rf node_modules/.pnpm-workspace-state-v1.json
