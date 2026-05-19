@@ -5,7 +5,7 @@
   "license": "AGPL-3.0-or-later",
   "homepage": "https://bchexplorer.cash",
   "author": "Melroy van den Berg <melroy@melroy.org> (https://melroy.org)",
-  "packageManager": "pnpm@10.33.2",
+  "packageManager": "pnpm@11.1.2",
   "repository": {
     "type": "git",
     "url": "git+https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer"
@@ -66,16 +66,16 @@
     "@types/express": "^4.17.25",
     "@types/jest": "^30.0.0",
     "@types/ws": "~8.18.1",
-    "eslint": "^10.3.0",
+    "eslint": "^10.4.0",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.6.0",
     "jest": "^30.4.2",
     "jiti": "^2.7.0",
     "prettier": "^3.8.3",
-    "ts-jest": "^29.4.9",
+    "ts-jest": "^29.4.10",
     "ts-node": "^10.9.2",
-    "tsx": "^4.22.0",
-    "typescript-eslint": "^8.59.3"
+    "tsx": "^4.22.3",
+    "typescript-eslint": "^8.59.4"
   },
   "overrides": {
     "js-yaml": "^4.1.1",
