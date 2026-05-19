@@ -15,7 +15,7 @@
     "prepublishOnly": "napi prepublish -t npm",
     "test": "cargo test"
   },
-  "author": "mononaut",
+  "author": "Melroy van den Berg <melroy@melroy.org> (https://melroy.org)",
   "napi": {
     "name": "gbt",
     "triples": {
