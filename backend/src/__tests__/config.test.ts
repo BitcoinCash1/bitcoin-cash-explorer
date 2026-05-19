@@ -187,9 +187,6 @@ describe('BCH Explorer Backend Config', () => {
         for (const [key, value] of Object.entries(jsonObj)) {
           // We have a few cases where we can't follow the pattern
           if (root === 'EXPLORER' && key === 'HTTP_PORT') {
-            if (process.env.CI) {
-              console.log('skipping check for EXPLORER_HTTP_PORT');
-            }
             continue;
           }
 
@@ -204,25 +201,16 @@ describe('BCH Explorer Backend Config', () => {
             //The string used as the default value, to be checked as a regex, i.e, __EXPLORER_ENABLED__=${EXPLORER_ENABLED:=(.*)}
             if (Array.isArray(value)) {
               defaultEntry = `${replaceStr}=\${${envVarStr}:=[]}`;
-              if (process.env.CI) {
-                console.log(`looking for ${defaultEntry} in the start.sh script`);
-              }
               //Regex matching does not work with the array values
               expect(startSh).toContain(defaultEntry);
             } else {
               defaultEntry = replaceStr + '=' + '\\${' + envVarStr + ':=(.*)' + '}';
-              if (process.env.CI) {
-                console.log(`looking for ${defaultEntry} in the start.sh script`);
-              }
               const re = new RegExp(defaultEntry);
               expect(startSh).toMatch(re);
             }
 
             //The string that actually replaces the values in the config file
             const sedStr = 'sed -i "s!' + replaceStr + '!${' + replaceStr + '}!g" explorer-config.json';
-            if (process.env.CI) {
-              console.log(`looking for ${sedStr} in the start.sh script`);
-            }
             expect(startSh).toContain(sedStr);
           } else {
             parseJson(value, key);
