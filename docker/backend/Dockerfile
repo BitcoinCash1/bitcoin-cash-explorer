@@ -18,6 +18,8 @@ ENV FD=/build/rust-gbt
 RUN mkdir rust-gbt
 
 RUN pnpm preinstall
+# pnpm v11 caches install state here; deleting it forces re-linking of the freshly built rust-gbt binary.
+RUN rm -rf node_modules/.pnpm-workspace-state-v1.json
 RUN pnpm install --prod
 RUN pnpm package
 
