@@ -79,7 +79,10 @@ export class BchWebringComponent implements OnInit, OnDestroy {
         this.current = sites[index];
         this.prev = sites[index === 0 ? sites.length - 1 : index - 1];
         this.next = sites[index === sites.length - 1 ? 0 : index + 1];
-        this.random = sites[Math.floor(Math.random() * sites.length)];
+        const randomIndex = sites.length > 1
+          ? this.randomExcluding(index, sites.length)
+          : index;
+        this.random = sites[randomIndex];
       }
       this.cd.markForCheck();
     });
@@ -87,5 +90,10 @@ export class BchWebringComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
+  }
+
+  private randomExcluding(exclude: number, length: number): number {
+    const r = Math.floor(Math.random() * (length - 1));
+    return r >= exclude ? r + 1 : r;
   }
 }
