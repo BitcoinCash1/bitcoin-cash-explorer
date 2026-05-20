@@ -1,13 +1,10 @@
 .webring {
-  border: 2px solid #09ba8a;
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
   padding: 1.25rem 1.5rem;
-  background: light-dark(#f0fdf8, #0d2b22);
-  color: light-dark(#0a3d2e, #d1f5ea);
+  background: var(--box-bg);
+  color: var(--fg);
   text-align: center;
-  font:
-    100% system-ui,
-    sans-serif;
 
   h2 {
     margin: 0 0 0.5rem;
@@ -15,7 +12,7 @@
     font-weight: 600;
     letter-spacing: 0.05em;
     text-transform: uppercase;
-    color: #09ba8a;
+    color: var(--primary);
   }
 
   p {
@@ -24,11 +21,12 @@
   }
 
   a {
-    color: #09ba8a;
+    color: var(--link-color);
     text-decoration: none;
     font-weight: 500;
 
     &:hover {
+      color: var(--link-hover-color);
       text-decoration: underline;
     }
   }
@@ -40,14 +38,15 @@
     gap: 1rem;
 
     a {
-      background: #09ba8a;
-      color: #fff;
+      background: var(--primary);
+      color: var(--fg);
       padding: 0.3rem 0.85rem;
       border-radius: 4px;
       font-size: 0.875rem;
+      text-decoration: none;
 
       &:hover {
-        background: #07a377;
+        background: var(--tertiary);
         text-decoration: none;
       }
     }
