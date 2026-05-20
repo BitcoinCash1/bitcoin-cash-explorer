@@ -1,5 +1,14 @@
-import { Component, Input, OnInit } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+  Component,
+  Input,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable, Subscription } from 'rxjs';
+import { shareReplay } from 'rxjs/operators';
 
 interface WebringSite {
   url: string;
@@ -7,29 +16,39 @@ interface WebringSite {
   owner: string;
 }
 
+const WEBRING_DATA_URL = `https://raw.githubusercontent.com/BitcoinCash1/bch-webring/refs/heads/main/webring.json`;
+
+// Shared across all instances — fetched once for the lifetime of the app.
+let sites$: Observable<WebringSite[]> | null = null;
+
 @Component({
   selector: 'app-bch-webring',
   standalone: false,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="webring" *ngIf="current">
-      <h2>BCH Webring</h2>
-      <p>
-        You are visiting <a [href]="current.url">{{ current.name }}</a> by
-        {{ current.owner }}
-      </p>
-      <nav class="nav">
-        <a [href]="prev?.url">&#8592; Prev</a>
-        <a [href]="random?.url">Random</a>
-        <a [href]="next?.url">Next &#8594;</a>
-      </nav>
-    </div>
-    <div class="webring" *ngIf="notFound">
-      <p>Site not found in the webring.</p>
-    </div>
+    @if (current) {
+      <div class="webring">
+        <h2>BCH Webring</h2>
+        <p>
+          You are visiting <a [href]="current.url">{{ current.name }}</a> by
+          {{ current.owner }}
+        </p>
+        <nav class="nav">
+          <a [href]="prev?.url">&#8592; Prev</a>
+          <a [href]="random?.url">Random</a>
+          <a [href]="next?.url">Next &#8594;</a>
+        </nav>
+      </div>
+    }
+    @if (notFound) {
+      <div class="webring">
+        <p>Site not found in the webring.</p>
+      </div>
+    }
   `,
   styleUrls: ['./bch-webring.component.scss'],
 })
-export class BchWebringComponent implements OnInit {
+export class BchWebringComponent implements OnInit, OnDestroy {
   @Input() site: string;
 
   current: WebringSite | null = null;
@@ -38,21 +57,35 @@ export class BchWebringComponent implements OnInit {
   random: WebringSite | null = null;
   notFound = false;
 
-  private readonly dataUrl = `https://raw.githubusercontent.com/BitcoinCash1/bch-webring/refs/heads/main/webring.json`;
+  private sub: Subscription;
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private cd: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
-    this.http.get<WebringSite[]>(this.dataUrl).subscribe((sites) => {
+    if (!sites$) {
+      sites$ = this.http
+        .get<WebringSite[]>(WEBRING_DATA_URL)
+        .pipe(shareReplay(1));
+    }
+
+    this.sub = sites$.subscribe((sites) => {
       const index = sites.findIndex((s) => s.url === this.site);
       if (index === -1) {
         this.notFound = true;
-        return;
+      } else {
+        this.current = sites[index];
+        this.prev = sites[index === 0 ? sites.length - 1 : index - 1];
+        this.next = sites[index === sites.length - 1 ? 0 : index + 1];
+        this.random = sites[Math.floor(Math.random() * sites.length)];
       }
-      this.current = sites[index];
-      this.prev = sites[index === 0 ? sites.length - 1 : index - 1];
-      this.next = sites[index === sites.length - 1 ? 0 : index + 1];
-      this.random = sites[Math.floor(Math.random() * sites.length)];
+      this.cd.markForCheck();
     });
+  }
+
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
   }
 }
