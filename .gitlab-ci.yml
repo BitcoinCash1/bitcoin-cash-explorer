@@ -136,6 +136,31 @@ docker-build-deploy:
         ./$SERVICE/
     - docker push $CI_REGISTRY_IMAGE/explorer-$SERVICE:$CI_COMMIT_TAG
 
+# Triggers BitcoinCash1/bch-explorer-startos on GitHub to build Start9 packages for this release.
+# Requires GITHUB_START9_TOKEN CI variable (GitHub PAT with repo scope on BitcoinCash1/bch-explorer-startos).
+trigger-start9-build:
+  stage: deploy
+  image: curlimages/curl:latest
+  needs:
+    - job: docker-build-deploy
+  rules:
+    - if: '$CI_PROJECT_NAMESPACE == "bitcoincash" && $CI_COMMIT_TAG && $GITHUB_START9_TOKEN'
+  script:
+    - |
+      HTTP_STATUS=$(curl -o /dev/null -w "%{http_code}" -fsSL \
+        -X POST \
+        -H "Accept: application/vnd.github+json" \
+        -H "Authorization: Bearer $GITHUB_START9_TOKEN" \
+        -H "X-GitHub-Api-Version: 2022-11-28" \
+        "https://api.github.com/repos/BitcoinCash1/bch-explorer-startos/dispatches" \
+        -d "{\"event_type\":\"upstream-release\",\"client_payload\":{\"tag\":\"$CI_COMMIT_TAG\"}}")
+      if [ "$HTTP_STATUS" = "204" ]; then
+        echo "Start9 build triggered for $CI_COMMIT_TAG"
+      else
+        echo "Warning: dispatch returned HTTP $HTTP_STATUS"
+        exit 1
+      fi
+
 # Deploy frontend via Artifactory Deployer: https://gitlab.melroy.org/melroy/gitlab-artifact-deployer-go
 deploy-frontend:
   stage: deploy
