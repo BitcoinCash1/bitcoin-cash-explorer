@@ -1,0 +1,55 @@
+.webring {
+  border: 2px solid #09ba8a;
+  border-radius: 8px;
+  padding: 1.25rem 1.5rem;
+  background: light-dark(#f0fdf8, #0d2b22);
+  color: light-dark(#0a3d2e, #d1f5ea);
+  text-align: center;
+  font:
+    100% system-ui,
+    sans-serif;
+
+  h2 {
+    margin: 0 0 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #09ba8a;
+  }
+
+  p {
+    margin: 0.25rem 0;
+    font-size: 0.95rem;
+  }
+
+  a {
+    color: #09ba8a;
+    text-decoration: none;
+    font-weight: 500;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .nav {
+    margin-top: 0.75rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+
+    a {
+      background: #09ba8a;
+      color: #fff;
+      padding: 0.3rem 0.85rem;
+      border-radius: 4px;
+      font-size: 0.875rem;
+
+      &:hover {
+        background: #07a377;
+        text-decoration: none;
+      }
+    }
+  }
+}

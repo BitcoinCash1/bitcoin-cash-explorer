@@ -209,6 +209,7 @@ import { GithubLogin } from '@components/github-login.component/github-login.com
 import { MempoolProgressBarComponent } from '@components/mempool-progress-bar/mempool-progress-bar.component';
 import { SpecialBlocksComponent } from '@components/special-blocks/special-blocks.component';
 import { AddressConverterComponent } from '@components/address-converter/address-converter.component';
+import { BchWebringComponent } from '@app/shared/components/bch-webring/bch-webring.component';
 
 @NgModule({
   declarations: [
@@ -324,6 +325,7 @@ import { AddressConverterComponent } from '@components/address-converter/address
     SpecialBlocksComponent,
     AddressConverterComponent,
     AsertDeviationGraphComponent,
+    BchWebringComponent,
   ],
   imports: [
     CommonModule,
@@ -464,6 +466,7 @@ import { AddressConverterComponent } from '@components/address-converter/address
     SpecialBlocksComponent,
     AddressConverterComponent,
     AsertDeviationGraphComponent,
+    BchWebringComponent,
 
     MempoolBlockOverviewComponent,
     ClockchainComponent,

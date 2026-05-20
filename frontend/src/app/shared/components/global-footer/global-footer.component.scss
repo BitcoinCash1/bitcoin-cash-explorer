@@ -102,6 +102,14 @@ footer .row.link-tree {
   }
 }
 
+footer .row.web-ring {
+  display: flex;
+  flex-wrap: wrap;
+  width: fit-content;
+  margin: 1rem auto;
+  max-width: 450px;
+}
+
 footer .row.social-links {
   text-align: center;
   display: flex;
