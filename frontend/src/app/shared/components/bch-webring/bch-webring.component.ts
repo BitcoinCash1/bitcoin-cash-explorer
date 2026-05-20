@@ -79,9 +79,8 @@ export class BchWebringComponent implements OnInit, OnDestroy {
         this.current = sites[index];
         this.prev = sites[index === 0 ? sites.length - 1 : index - 1];
         this.next = sites[index === sites.length - 1 ? 0 : index + 1];
-        const randomIndex = sites.length > 1
-          ? this.randomExcluding(index, sites.length)
-          : index;
+        const randomIndex =
+          sites.length > 1 ? this.randomExcluding(index, sites.length) : index;
         this.random = sites[randomIndex];
       }
       this.cd.markForCheck();
