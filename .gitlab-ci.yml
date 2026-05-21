@@ -143,6 +143,7 @@ docker-build-deploy:
         --build-context rustgbt=./rust \
         --build-context backend=./backend \
         --tag $CI_REGISTRY_IMAGE/$IMAGE_NAME \
+        --tag $GHCR_REGISTRY/$GHCR_ORG/$IMAGE_NAME \
         ./$SERVICE/
     # Publishes to GitLab Container Registry
     - docker push $CI_REGISTRY_IMAGE/$IMAGE_NAME
