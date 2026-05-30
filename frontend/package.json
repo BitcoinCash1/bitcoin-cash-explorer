@@ -41,7 +41,7 @@
     "start:parameterized": "pnpm run generate-config && pnpm run sync-assets-dev && ng serve --no-hmr -c parameterized",
     "start:local-prod": "pnpm run generate-config && pnpm run sync-assets-dev && ng serve --no-hmr -c local-prod",
     "start:mixed": "pnpm run generate-config && pnpm run sync-assets-dev &&ng serve --no-hmr -c mixed",
-    "build": "pnpm run generate-config && ng build --localize && pnpm run sync-assets-dev && pnpm run sync-assets",
+    "build": "pnpm run generate-config && ng build && pnpm run sync-assets-dev && pnpm run sync-assets",
     "watch": "pnpm run generate-config && ng build --watch --configuration development",
     "sync-assets": "rsync -av ./src/resources ./dist/explorer/browser && node sync-assets.js 'dist/explorer/browser/resources/'",
     "sync-assets-dev": "node sync-assets.js 'src/resources/'",
