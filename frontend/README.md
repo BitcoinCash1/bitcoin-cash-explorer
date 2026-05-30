@@ -137,22 +137,13 @@ By default `ng serve` will serve the BCH Explorer with the English language (def
 pnpm serve:nl
 ```
 
-*Note:* I didn't implemented a configuration for all languages to use with `ng serve`, but you can easily extend the `angular.json` file to add more configurations.
+_Note:_ I didn't implemented a configuration for all languages to use with `ng serve`, but you can easily extend the `angular.json` file to add more configurations.
 
 ---
 
 The `ng extract-i18n` command is now (temporarily?) replaced by the [`ng-extract-i18n-merge`](https://github.com/daniel-sc/ng-extract-i18n-merge) package. Which merges the extracted translations into an existing XLF file instead of overwriting it, this was needed due to the large amount of changes we made to the code base.
 
-By default it uses the `src/locale/messages.xlf` file as the base file to merge the extracted translations into. The orginal `angular.json` configuration was:
-
-```json
-"extract-i18n": {
-  "builder": "@angular/build:extract-i18n",
-  "options": {
-    "buildTarget": "explorer:build"
-  }
-}
-```
+By default it uses the `src/locale/messages.xlf` file as the base file to merge the extracted translations into.
 
 ### Translators
 
@@ -170,7 +161,7 @@ By default it uses the `src/locale/messages.xlf` file as the base file to merge 
 - Hebrew @rapidlab309
 - Georgian @wyd_idk
 - Hungarian @btcdragonlord
-- Dutch @m\_\_btc
+- Dutch @melroy89
 - Japanese @wiz @japananon
 - Norwegian @T82771355
 - Polish @maciejsoltysiak
