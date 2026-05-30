@@ -24,8 +24,8 @@
   ],
   "main": "dist/index.js",
   "scripts": {
-    "tsc": "tsc -p tsconfig.build.json",
-    "build": "pnpm run tsc && pnpm run create-resources",
+    "typecheck": "tsc -p tsconfig.build.json",
+    "build": "pnpm run typecheck && pnpm run create-resources",
     "clean": "rm -rf ./dist/ ./node_modules/ ./package/ ./rust-gbt/",
     "create-resources": "cp ./src/tasks/price-feeds/mtgox-weekly.json ./dist/tasks && node dist/api/fetch-version.js",
     "dev": "tsx watch src/index.ts",
@@ -73,10 +73,10 @@
     "jest": "^30.4.2",
     "jiti": "^2.7.0",
     "prettier": "^3.8.3",
-    "ts-jest": "^29.4.10",
+    "ts-jest": "^29.4.11",
     "ts-node": "^10.9.2",
     "tsx": "^4.22.3",
-    "typescript-eslint": "^8.59.4"
+    "typescript-eslint": "^8.60.0"
   },
   "overrides": {
     "js-yaml": "^4.1.1",
