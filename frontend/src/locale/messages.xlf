@@ -5,100 +5,100 @@
       <trans-unit id="ngb.datepicker.select-month" datatype="html">
         <source>Select month</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.13_@angular+core@21.2.13_@angula_58718a600fd21153c9bb72832a44ea7b/node_modules/src/datepicker/datepicker-navigation-select.ts</context>
+          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.15_@angular+core@21.2.15_@angula_e5df60a93005562681582c734c9c4604/node_modules/src/datepicker/datepicker-navigation-select.ts</context>
           <context context-type="linenumber">91</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.13_@angular+core@21.2.13_@angula_58718a600fd21153c9bb72832a44ea7b/node_modules/src/datepicker/datepicker-navigation-select.ts</context>
+          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.15_@angular+core@21.2.15_@angula_e5df60a93005562681582c734c9c4604/node_modules/src/datepicker/datepicker-navigation-select.ts</context>
           <context context-type="linenumber">91</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ngb.datepicker.select-year" datatype="html">
         <source>Select year</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.13_@angular+core@21.2.13_@angula_58718a600fd21153c9bb72832a44ea7b/node_modules/src/datepicker/datepicker-navigation-select.ts</context>
+          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.15_@angular+core@21.2.15_@angula_e5df60a93005562681582c734c9c4604/node_modules/src/datepicker/datepicker-navigation-select.ts</context>
           <context context-type="linenumber">91</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.13_@angular+core@21.2.13_@angula_58718a600fd21153c9bb72832a44ea7b/node_modules/src/datepicker/datepicker-navigation-select.ts</context>
+          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.15_@angular+core@21.2.15_@angula_e5df60a93005562681582c734c9c4604/node_modules/src/datepicker/datepicker-navigation-select.ts</context>
           <context context-type="linenumber">91</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ngb.datepicker.previous-month" datatype="html">
         <source>Previous month</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.13_@angular+core@21.2.13_@angula_58718a600fd21153c9bb72832a44ea7b/node_modules/src/datepicker/datepicker-navigation.ts</context>
+          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.15_@angular+core@21.2.15_@angula_e5df60a93005562681582c734c9c4604/node_modules/src/datepicker/datepicker-navigation.ts</context>
           <context context-type="linenumber">83,85</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.13_@angular+core@21.2.13_@angula_58718a600fd21153c9bb72832a44ea7b/node_modules/src/datepicker/datepicker-navigation.ts</context>
+          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.15_@angular+core@21.2.15_@angula_e5df60a93005562681582c734c9c4604/node_modules/src/datepicker/datepicker-navigation.ts</context>
           <context context-type="linenumber">112</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ngb.datepicker.next-month" datatype="html">
         <source>Next month</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.13_@angular+core@21.2.13_@angula_58718a600fd21153c9bb72832a44ea7b/node_modules/src/datepicker/datepicker-navigation.ts</context>
+          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.15_@angular+core@21.2.15_@angula_e5df60a93005562681582c734c9c4604/node_modules/src/datepicker/datepicker-navigation.ts</context>
           <context context-type="linenumber">112</context>
         </context-group>
         <context-group purpose="location">
-          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.13_@angular+core@21.2.13_@angula_58718a600fd21153c9bb72832a44ea7b/node_modules/src/datepicker/datepicker-navigation.ts</context>
+          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.15_@angular+core@21.2.15_@angula_e5df60a93005562681582c734c9c4604/node_modules/src/datepicker/datepicker-navigation.ts</context>
           <context context-type="linenumber">112</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ngb.pagination.first" datatype="html">
         <source>««</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.13_@angular+core@21.2.13_@angula_58718a600fd21153c9bb72832a44ea7b/node_modules/src/pagination/pagination.ts</context>
+          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.15_@angular+core@21.2.15_@angula_e5df60a93005562681582c734c9c4604/node_modules/src/pagination/pagination.ts</context>
           <context context-type="linenumber">296</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ngb.pagination.previous" datatype="html">
         <source>«</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.13_@angular+core@21.2.13_@angula_58718a600fd21153c9bb72832a44ea7b/node_modules/src/pagination/pagination.ts</context>
+          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.15_@angular+core@21.2.15_@angula_e5df60a93005562681582c734c9c4604/node_modules/src/pagination/pagination.ts</context>
           <context context-type="linenumber">323</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ngb.pagination.next" datatype="html">
         <source>»</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.13_@angular+core@21.2.13_@angula_58718a600fd21153c9bb72832a44ea7b/node_modules/src/pagination/pagination.ts</context>
+          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.15_@angular+core@21.2.15_@angula_e5df60a93005562681582c734c9c4604/node_modules/src/pagination/pagination.ts</context>
           <context context-type="linenumber">353</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ngb.pagination.last" datatype="html">
         <source>»»</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.13_@angular+core@21.2.13_@angula_58718a600fd21153c9bb72832a44ea7b/node_modules/src/pagination/pagination.ts</context>
+          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.15_@angular+core@21.2.15_@angula_e5df60a93005562681582c734c9c4604/node_modules/src/pagination/pagination.ts</context>
           <context context-type="linenumber">389,393</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ngb.pagination.first-aria" datatype="html">
         <source>First</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.13_@angular+core@21.2.13_@angula_58718a600fd21153c9bb72832a44ea7b/node_modules/src/pagination/pagination.ts</context>
+          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.15_@angular+core@21.2.15_@angula_e5df60a93005562681582c734c9c4604/node_modules/src/pagination/pagination.ts</context>
           <context context-type="linenumber">411</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ngb.pagination.previous-aria" datatype="html">
         <source>Previous</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.13_@angular+core@21.2.13_@angula_58718a600fd21153c9bb72832a44ea7b/node_modules/src/pagination/pagination.ts</context>
+          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.15_@angular+core@21.2.15_@angula_e5df60a93005562681582c734c9c4604/node_modules/src/pagination/pagination.ts</context>
           <context context-type="linenumber">436,438</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ngb.pagination.next-aria" datatype="html">
         <source>Next</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.13_@angular+core@21.2.13_@angula_58718a600fd21153c9bb72832a44ea7b/node_modules/src/pagination/pagination.ts</context>
+          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.15_@angular+core@21.2.15_@angula_e5df60a93005562681582c734c9c4604/node_modules/src/pagination/pagination.ts</context>
           <context context-type="linenumber">466</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ngb.pagination.last-aria" datatype="html">
         <source>Last</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.13_@angular+core@21.2.13_@angula_58718a600fd21153c9bb72832a44ea7b/node_modules/src/pagination/pagination.ts</context>
+          <context context-type="sourcefile">node_modules/.pnpm/@ng-bootstrap+ng-bootstrap@20.0.0_@angular+common@21.2.15_@angular+core@21.2.15_@angula_e5df60a93005562681582c734c9c4604/node_modules/src/pagination/pagination.ts</context>
           <context context-type="linenumber">496,498</context>
         </context-group>
       </trans-unit>
