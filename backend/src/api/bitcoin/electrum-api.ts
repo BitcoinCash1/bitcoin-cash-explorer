@@ -35,7 +35,10 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
         logger.info(`Disconnected from Electrum Server at ${config.ELECTRUM.HOST}:${config.ELECTRUM.PORT}`);
       },
       onError: (err) => {
-        logger.err(`Electrum error: ${JSON.stringify(err)}`);
+        // Error objects stringify to "{}" (message/stack are non-enumerable),
+        // so extract the message explicitly and fall back to JSON for plain objects.
+        const detail = err instanceof Error ? err.stack || err.message : JSON.stringify(err);
+        logger.err(`Electrum error: ${detail}`);
       },
       onLog: (str) => {
         logger.debug(str);
