@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@bitcoincash/electrum-client':
-        specifier: ^1.2.3
-        version: 1.2.3
+        specifier: ^1.2.4
+        version: 1.2.4
       '@types/node':
         specifier: ^24.12.4
         version: 24.12.4
@@ -264,8 +264,8 @@ packages:
   '@bcoe/v8-coverage@0.2.3':
     resolution: {integrity: sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==}
 
-  '@bitcoincash/electrum-client@1.2.3':
-    resolution: {integrity: sha512-mwYbfkKCyzTgmS46nqEyjmuw0PwAqEwS7k/au6hqbgEgTqxgYR3Z4ipZ+0WbNRYMCj4wq8I5uil/8UAT1C3Ofw==}
+  '@bitcoincash/electrum-client@1.2.4':
+    resolution: {integrity: sha512-sDaGRJeEaVjFQcXu3goSjQydpH00PlEZ31+WsP3oDnU4NPeWbFuVZiI2nJtQw+CV4HrTvc22fBzxluq/lmYsJA==}
     engines: {node: '>=14'}
 
   '@cspotcode/source-map-support@0.8.1':
@@ -2680,7 +2680,7 @@ snapshots:
 
   '@bcoe/v8-coverage@0.2.3': {}
 
-  '@bitcoincash/electrum-client@1.2.3': {}
+  '@bitcoincash/electrum-client@1.2.4': {}
 
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
