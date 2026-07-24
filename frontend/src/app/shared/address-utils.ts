@@ -273,9 +273,7 @@ export interface AddressSimilarity {
   right: AddressMatch;
 }
 export type AddressSimilarityResult =
-  | { status: 'identical' }
-  | { status: 'incomparable' }
-  | AddressSimilarity;
+  { status: 'identical' } | { status: 'incomparable' } | AddressSimilarity;
 
 export const ADDRESS_SIMILARITY_THRESHOLD = 1_000_000; // 1 false positive per ~1 million comparisons
 

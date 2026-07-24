@@ -99,8 +99,7 @@ export class BlockchainBlocksComponent implements OnInit, OnChanges, OnDestroy {
     this.emptyBlocks = this.mountEmptyBlocks();
 
     this.blockDisplayMode = this.stateService.blockDisplayMode$.value as
-      | 'size'
-      | 'fees';
+      'size' | 'fees';
     this.blockDisplayModeSubscription = this.stateService.blockDisplayMode$
       .pipe(
         filter((mode: 'size' | 'fees') => mode !== this.blockDisplayMode),

@@ -137,11 +137,7 @@ export interface BlockExtension {
     height: number;
     hash: string;
     status:
-      | 'invalid'
-      | 'active'
-      | 'valid-fork'
-      | 'valid-headers'
-      | 'headers-only';
+      'invalid' | 'active' | 'valid-fork' | 'valid-headers' | 'headers-only';
     prevhash: string;
   }[];
 }
@@ -290,11 +286,7 @@ export interface ChainTip {
   hash: string;
   branchlen: number;
   status:
-    | 'invalid'
-    | 'active'
-    | 'valid-fork'
-    | 'valid-headers'
-    | 'headers-only';
+    'invalid' | 'active' | 'valid-fork' | 'valid-headers' | 'headers-only';
 }
 
 export interface StaleTip extends ChainTip {

@@ -314,51 +314,47 @@ class BitcoinApi implements AbstractBitcoinApi {
       status: { confirmed: false },
     };
 
-    publicTransaction.vin = transaction.vin.map(
-      (vin): IPublicApi.VerboseVin => ({
-        txid: vin.txid || '',
-        vout: vin.vout || 0,
-        value: vin.value ? Math.round(vin.value * 100000000) : null,
-        is_coinbase: !!vin.coinbase,
-        prevout: null,
-        scriptsig: (vin.scriptSig && vin.scriptSig.hex) || vin.coinbase || '',
-        scriptsig_asm: vin.scriptSig
-          ? transactionUtils.convertScriptSigAsm(vin.scriptSig.hex)
-          : vin.coinbase
-            ? transactionUtils.convertScriptSigAsm(vin.coinbase)
-            : '',
-        inner_redeemscript_asm: vin.scriptSig?.redeemScript ? vin.scriptSig.redeemScript.asm : '',
-        scriptsig_byte_code_pattern: vin.scriptSig?.byteCodePattern?.pattern || '',
-        scriptsig_byte_code: vin.scriptSig?.byteCodePattern?.data || [],
-        scriptpubkey: (vin.scriptPubKey && vin.scriptPubKey.hex) || '',
-        scriptpubkey_address: vin.scriptPubKey && vin.scriptPubKey.address ? vin.scriptPubKey.address : '',
-        scriptpubkey_asm: vin.scriptPubKey?.asm ? transactionUtils.convertScriptSigAsm(vin.scriptPubKey.hex) : '', // TODO: Why would you call convertScriptSigAsm, if you already have the asm?
-        scriptpubkey_type: vin.scriptPubKey ? this.translateScriptPubKeyType(vin.scriptPubKey.type) : '',
-        scriptpubkey_byte_code_pattern: vin.scriptPubKey?.byteCodePattern?.pattern || '',
-        scriptpubkey_byte_code: vin.scriptPubKey?.byteCodePattern?.data || [],
-        sequence: vin.sequence,
-        ...(vin.tokenData?.category !== undefined && { token_category: vin.tokenData.category }),
-        ...(vin.tokenData?.amount !== undefined && { token_amount: vin.tokenData.amount }),
-        ...(vin.tokenData?.nft?.capability !== undefined && { token_nft_capability: vin.tokenData.nft.capability }),
-        ...(vin.tokenData?.nft?.commitment !== undefined && { token_nft_commitment: vin.tokenData.nft.commitment }),
-      })
-    );
+    publicTransaction.vin = transaction.vin.map((vin): IPublicApi.VerboseVin => ({
+      txid: vin.txid || '',
+      vout: vin.vout || 0,
+      value: vin.value ? Math.round(vin.value * 100000000) : null,
+      is_coinbase: !!vin.coinbase,
+      prevout: null,
+      scriptsig: (vin.scriptSig && vin.scriptSig.hex) || vin.coinbase || '',
+      scriptsig_asm: vin.scriptSig
+        ? transactionUtils.convertScriptSigAsm(vin.scriptSig.hex)
+        : vin.coinbase
+          ? transactionUtils.convertScriptSigAsm(vin.coinbase)
+          : '',
+      inner_redeemscript_asm: vin.scriptSig?.redeemScript ? vin.scriptSig.redeemScript.asm : '',
+      scriptsig_byte_code_pattern: vin.scriptSig?.byteCodePattern?.pattern || '',
+      scriptsig_byte_code: vin.scriptSig?.byteCodePattern?.data || [],
+      scriptpubkey: (vin.scriptPubKey && vin.scriptPubKey.hex) || '',
+      scriptpubkey_address: vin.scriptPubKey && vin.scriptPubKey.address ? vin.scriptPubKey.address : '',
+      scriptpubkey_asm: vin.scriptPubKey?.asm ? transactionUtils.convertScriptSigAsm(vin.scriptPubKey.hex) : '', // TODO: Why would you call convertScriptSigAsm, if you already have the asm?
+      scriptpubkey_type: vin.scriptPubKey ? this.translateScriptPubKeyType(vin.scriptPubKey.type) : '',
+      scriptpubkey_byte_code_pattern: vin.scriptPubKey?.byteCodePattern?.pattern || '',
+      scriptpubkey_byte_code: vin.scriptPubKey?.byteCodePattern?.data || [],
+      sequence: vin.sequence,
+      ...(vin.tokenData?.category !== undefined && { token_category: vin.tokenData.category }),
+      ...(vin.tokenData?.amount !== undefined && { token_amount: vin.tokenData.amount }),
+      ...(vin.tokenData?.nft?.capability !== undefined && { token_nft_capability: vin.tokenData.nft.capability }),
+      ...(vin.tokenData?.nft?.commitment !== undefined && { token_nft_commitment: vin.tokenData.nft.commitment }),
+    }));
 
-    publicTransaction.vout = transaction.vout.map(
-      (vout): IPublicApi.VerboseVout => ({
-        value: Math.round(vout.value * 100000000),
-        scriptpubkey: vout.scriptPubKey.hex,
-        scriptpubkey_address: vout.scriptPubKey && vout.scriptPubKey.addresses ? vout.scriptPubKey.addresses[0] : '',
-        scriptpubkey_asm: vout.scriptPubKey.asm ? transactionUtils.convertScriptSigAsm(vout.scriptPubKey.hex) : '', // TODO: Why would you call convertScriptSigAsm, if you already have the asm?
-        scriptpubkey_type: this.translateScriptPubKeyType(vout.scriptPubKey.type),
-        scriptpubkey_byte_code_pattern: vout.scriptPubKey?.byteCodePattern?.pattern || '',
-        scriptpubkey_byte_code: vout.scriptPubKey?.byteCodePattern?.data || [],
-        ...(vout.tokenData?.category !== undefined && { token_category: vout.tokenData.category }),
-        ...(vout.tokenData?.amount !== undefined && { token_amount: vout.tokenData.amount }),
-        ...(vout.tokenData?.nft?.capability !== undefined && { token_nft_capability: vout.tokenData.nft.capability }),
-        ...(vout.tokenData?.nft?.commitment !== undefined && { token_nft_commitment: vout.tokenData.nft.commitment }),
-      })
-    );
+    publicTransaction.vout = transaction.vout.map((vout): IPublicApi.VerboseVout => ({
+      value: Math.round(vout.value * 100000000),
+      scriptpubkey: vout.scriptPubKey.hex,
+      scriptpubkey_address: vout.scriptPubKey && vout.scriptPubKey.addresses ? vout.scriptPubKey.addresses[0] : '',
+      scriptpubkey_asm: vout.scriptPubKey.asm ? transactionUtils.convertScriptSigAsm(vout.scriptPubKey.hex) : '', // TODO: Why would you call convertScriptSigAsm, if you already have the asm?
+      scriptpubkey_type: this.translateScriptPubKeyType(vout.scriptPubKey.type),
+      scriptpubkey_byte_code_pattern: vout.scriptPubKey?.byteCodePattern?.pattern || '',
+      scriptpubkey_byte_code: vout.scriptPubKey?.byteCodePattern?.data || [],
+      ...(vout.tokenData?.category !== undefined && { token_category: vout.tokenData.category }),
+      ...(vout.tokenData?.amount !== undefined && { token_amount: vout.tokenData.amount }),
+      ...(vout.tokenData?.nft?.capability !== undefined && { token_nft_capability: vout.tokenData.nft.capability }),
+      ...(vout.tokenData?.nft?.commitment !== undefined && { token_nft_commitment: vout.tokenData.nft.commitment }),
+    }));
 
     if (transaction.confirmations) {
       publicTransaction.status = {

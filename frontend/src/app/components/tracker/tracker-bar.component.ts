@@ -9,12 +9,7 @@ import {
 } from '@angular/core';
 
 export type TrackerStage =
-  | 'waiting'
-  | 'pending'
-  | 'soon'
-  | 'next'
-  | 'confirmed'
-  | 'replaced';
+  'waiting' | 'pending' | 'soon' | 'next' | 'confirmed' | 'replaced';
 
 @Component({
   selector: 'app-tracker-bar',

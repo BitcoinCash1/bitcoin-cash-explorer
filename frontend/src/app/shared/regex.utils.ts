@@ -124,10 +124,7 @@ const ADDRESS_CHARS: {
   },
 };
 type RegexTypeNoAddrNoBlockHash =
-  | `transaction`
-  | `blockheight`
-  | `date`
-  | `timestamp`;
+  `transaction` | `blockheight` | `date` | `timestamp`;
 export type RegexType = `address` | `blockhash` | RegexTypeNoAddrNoBlockHash;
 
 export const NETWORKS = [`mainnet`, `testnet4`, `scalenet`, `chipnet`] as const;

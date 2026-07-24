@@ -20,13 +20,7 @@ export class TimestampComponent implements OnChanges {
   @Input() hideTimeSince: boolean = false;
   @Input() precision: number = 0;
   @Input() minUnit:
-    | 'year'
-    | 'month'
-    | 'week'
-    | 'day'
-    | 'hour'
-    | 'minute'
-    | 'second' = 'second';
+    'year' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second' = 'second';
 
   seconds: number | undefined = undefined;
 

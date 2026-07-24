@@ -129,8 +129,7 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
     this.widthChange.emit(this.mempoolWidth);
 
     this.blockDisplayMode = this.stateService.blockDisplayMode$.value as
-      | 'size'
-      | 'fees';
+      'size' | 'fees';
     this.blockDisplayModeSubscription = this.stateService.blockDisplayMode$
       .pipe(
         filter((mode: 'size' | 'fees') => mode !== this.blockDisplayMode),

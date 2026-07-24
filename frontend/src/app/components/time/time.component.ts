@@ -41,13 +41,7 @@ export class TimeComponent implements OnInit, OnChanges, OnDestroy {
     'second',
   ];
   @Input() minUnit:
-    | 'year'
-    | 'month'
-    | 'week'
-    | 'day'
-    | 'hour'
-    | 'minute'
-    | 'second' = 'second';
+    'year' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'second' = 'second';
   @Input() fractionDigits: number = 0;
   @Input() lowercaseStart = false;
 

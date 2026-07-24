@@ -160,13 +160,11 @@ class TransactionUtils {
         },
       ],
       vout: tx.vout
-        .map(
-          (vout): VoutStrippedToScriptPubkey => ({
-            scriptpubkey_address: vout.scriptpubkey_address,
-            scriptpubkey_asm: vout.scriptpubkey_asm,
-            value: vout.value,
-          })
-        )
+        .map((vout): VoutStrippedToScriptPubkey => ({
+          scriptpubkey_address: vout.scriptpubkey_address,
+          scriptpubkey_asm: vout.scriptpubkey_asm,
+          value: vout.value,
+        }))
         .filter((vout) => vout.value),
     };
   }
@@ -323,56 +321,52 @@ class TransactionUtils {
   // Generic method to strip verbosity from any verbose transaction type
   private stripVerbosity<T extends IPublicApi.VerboseTransaction>(transaction: T): IPublicApi.Transaction {
     // Convert verbose vin/vout to non-verbose versions
-    const vin = transaction.vin.map(
-      (v): IPublicApi.Vin => ({
-        txid: v.txid,
-        vout: v.vout,
-        value: v.value,
-        is_coinbase: v.is_coinbase,
-        scriptsig: v.scriptsig,
-        scriptsig_asm: v.scriptsig_asm,
-        inner_redeemscript_asm: v.inner_redeemscript_asm,
-        scriptsig_byte_code: v.scriptsig_byte_code,
-        scriptpubkey_byte_code_pattern: v.scriptpubkey_byte_code_pattern,
-        ...(v.token_category !== undefined && { token_category: v.token_category }),
-        ...(v.token_amount !== undefined && { token_amount: v.token_amount }),
-        ...(v.token_nft_capability !== undefined && { token_nft_capability: v.token_nft_capability }),
-        ...(v.token_nft_commitment !== undefined && { token_nft_commitment: v.token_nft_commitment }),
-        sequence: v.sequence,
-        prevout: v.prevout
-          ? {
-              scriptpubkey: v.prevout.scriptpubkey,
-              scriptpubkey_asm: v.prevout.scriptpubkey_asm,
-              scriptpubkey_type: v.prevout.scriptpubkey_type,
-              scriptpubkey_address: v.prevout.scriptpubkey_address,
-              ...(v.prevout.token_category !== undefined && { token_category: v.prevout.token_category }),
-              ...(v.prevout.token_amount !== undefined && { token_amount: v.prevout.token_amount }),
-              ...(v.prevout.token_nft_capability !== undefined && {
-                token_nft_capability: v.prevout.token_nft_capability,
-              }),
-              ...(v.prevout.token_nft_commitment !== undefined && {
-                token_nft_commitment: v.prevout.token_nft_commitment,
-              }),
-              value: v.prevout.value,
-            }
-          : null,
-        lazy: v.lazy,
-      })
-    );
+    const vin = transaction.vin.map((v): IPublicApi.Vin => ({
+      txid: v.txid,
+      vout: v.vout,
+      value: v.value,
+      is_coinbase: v.is_coinbase,
+      scriptsig: v.scriptsig,
+      scriptsig_asm: v.scriptsig_asm,
+      inner_redeemscript_asm: v.inner_redeemscript_asm,
+      scriptsig_byte_code: v.scriptsig_byte_code,
+      scriptpubkey_byte_code_pattern: v.scriptpubkey_byte_code_pattern,
+      ...(v.token_category !== undefined && { token_category: v.token_category }),
+      ...(v.token_amount !== undefined && { token_amount: v.token_amount }),
+      ...(v.token_nft_capability !== undefined && { token_nft_capability: v.token_nft_capability }),
+      ...(v.token_nft_commitment !== undefined && { token_nft_commitment: v.token_nft_commitment }),
+      sequence: v.sequence,
+      prevout: v.prevout
+        ? {
+            scriptpubkey: v.prevout.scriptpubkey,
+            scriptpubkey_asm: v.prevout.scriptpubkey_asm,
+            scriptpubkey_type: v.prevout.scriptpubkey_type,
+            scriptpubkey_address: v.prevout.scriptpubkey_address,
+            ...(v.prevout.token_category !== undefined && { token_category: v.prevout.token_category }),
+            ...(v.prevout.token_amount !== undefined && { token_amount: v.prevout.token_amount }),
+            ...(v.prevout.token_nft_capability !== undefined && {
+              token_nft_capability: v.prevout.token_nft_capability,
+            }),
+            ...(v.prevout.token_nft_commitment !== undefined && {
+              token_nft_commitment: v.prevout.token_nft_commitment,
+            }),
+            value: v.prevout.value,
+          }
+        : null,
+      lazy: v.lazy,
+    }));
 
-    const vout = transaction.vout.map(
-      (v): IPublicApi.Vout => ({
-        scriptpubkey: v.scriptpubkey,
-        scriptpubkey_asm: v.scriptpubkey_asm,
-        scriptpubkey_type: v.scriptpubkey_type,
-        scriptpubkey_address: v.scriptpubkey_address,
-        value: v.value,
-        ...(v.token_category !== undefined && { token_category: v.token_category }),
-        ...(v.token_amount !== undefined && { token_amount: v.token_amount }),
-        ...(v.token_nft_capability !== undefined && { token_nft_capability: v.token_nft_capability }),
-        ...(v.token_nft_commitment !== undefined && { token_nft_commitment: v.token_nft_commitment }),
-      })
-    );
+    const vout = transaction.vout.map((v): IPublicApi.Vout => ({
+      scriptpubkey: v.scriptpubkey,
+      scriptpubkey_asm: v.scriptpubkey_asm,
+      scriptpubkey_type: v.scriptpubkey_type,
+      scriptpubkey_address: v.scriptpubkey_address,
+      value: v.value,
+      ...(v.token_category !== undefined && { token_category: v.token_category }),
+      ...(v.token_amount !== undefined && { token_amount: v.token_amount }),
+      ...(v.token_nft_capability !== undefined && { token_nft_capability: v.token_nft_capability }),
+      ...(v.token_nft_commitment !== undefined && { token_nft_commitment: v.token_nft_commitment }),
+    }));
 
     const result: IPublicApi.Transaction = { ...transaction };
     result.vin = vin;

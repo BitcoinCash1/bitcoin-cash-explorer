@@ -31,14 +31,12 @@ export class BytesPipe implements PipeTransform {
     plaintext = false,
     sigfigs?: number
   ): any {
-    if (
-      !(
-        isNumberFinite(input) &&
-        isNumberFinite(decimal) &&
-        isInteger(decimal) &&
-        isPositive(decimal)
-      )
-    ) {
+    if (!(
+      isNumberFinite(input) &&
+      isNumberFinite(decimal) &&
+      isInteger(decimal) &&
+      isPositive(decimal)
+    )) {
       return input;
     }
 

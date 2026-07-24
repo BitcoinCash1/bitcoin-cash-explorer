@@ -72,8 +72,7 @@ export class BlockchainComponent implements OnInit, OnDestroy, OnChanges {
     });
     this.blockDisplayMode =
       (this.StorageService.getValue('block-display-mode-preference') as
-        | 'size'
-        | 'fees') || 'fees';
+        'size' | 'fees') || 'fees';
   }
 
   ngOnDestroy(): void {

@@ -511,17 +511,13 @@ export function isPoint(pointHex: string): boolean {
   if (!pointHex?.length) {
     return false;
   }
-  if (
-    !(
-      // is uncompressed
-      (
-        (pointHex.length === 130 && pointHex.startsWith('04')) ||
-        // OR is compressed
-        (pointHex.length === 66 &&
-          (pointHex.startsWith('02') || pointHex.startsWith('03')))
-      )
-    )
-  ) {
+  if (!(
+    // is uncompressed
+    (pointHex.length === 130 && pointHex.startsWith('04')) ||
+    // OR is compressed
+    (pointHex.length === 66 &&
+      (pointHex.startsWith('02') || pointHex.startsWith('03')))
+  )) {
     return false;
   }
 
