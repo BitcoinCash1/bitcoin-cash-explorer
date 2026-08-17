@@ -77,8 +77,8 @@ describe('GuardianChallengeInterceptor', () => {
     const browser = browserDocument();
     const mockStateService = {
       env: {
-        OFFICIAL_BCH_EXPLORER: false
-      }
+        OFFICIAL_BCH_EXPLORER: false,
+      },
     } as StateService;
     const interceptor = new GuardianChallengeInterceptor(
       mockStateService,
@@ -108,8 +108,8 @@ describe('GuardianChallengeInterceptor', () => {
     const browser = browserDocument();
     const mockStateService = {
       env: {
-        OFFICIAL_BCH_EXPLORER: false
-      }
+        OFFICIAL_BCH_EXPLORER: false,
+      },
     } as StateService;
     const interceptor = new GuardianChallengeInterceptor(
       mockStateService,
@@ -134,8 +134,8 @@ describe('GuardianChallengeInterceptor', () => {
     const browser = browserDocument(storage);
     const mockStateService = {
       env: {
-        OFFICIAL_BCH_EXPLORER: false
-      }
+        OFFICIAL_BCH_EXPLORER: false,
+      },
     } as StateService;
     const interceptor = new GuardianChallengeInterceptor(
       mockStateService,
@@ -163,8 +163,8 @@ describe('GuardianChallengeInterceptor', () => {
     const browser = browserDocument(storage);
     const mockStateService = {
       env: {
-        OFFICIAL_BCH_EXPLORER: false
-      }
+        OFFICIAL_BCH_EXPLORER: false,
+      },
     } as StateService;
     const interceptor = new GuardianChallengeInterceptor(
       mockStateService,
@@ -187,8 +187,8 @@ describe('GuardianChallengeInterceptor', () => {
     const browser = browserDocument();
     const mockStateService = {
       env: {
-        OFFICIAL_BCH_EXPLORER: false
-      }
+        OFFICIAL_BCH_EXPLORER: false,
+      },
     } as StateService;
     const interceptor = new GuardianChallengeInterceptor(
       mockStateService,
@@ -216,8 +216,8 @@ describe('GuardianChallengeInterceptor', () => {
     const browser = browserDocument();
     const mockStateService = {
       env: {
-        OFFICIAL_BCH_EXPLORER: false
-      }
+        OFFICIAL_BCH_EXPLORER: false,
+      },
     } as StateService;
     const interceptor = new GuardianChallengeInterceptor(
       mockStateService,
@@ -248,8 +248,8 @@ describe('GuardianChallengeInterceptor', () => {
     const browser = browserDocument(storage);
     const mockStateService = {
       env: {
-        OFFICIAL_BCH_EXPLORER: false
-      }
+        OFFICIAL_BCH_EXPLORER: false,
+      },
     } as StateService;
     const interceptor = new GuardianChallengeInterceptor(
       mockStateService,
@@ -278,8 +278,8 @@ describe('GuardianChallengeInterceptor', () => {
     const browser = browserDocument();
     const mockStateService = {
       env: {
-        OFFICIAL_BCH_EXPLORER: false
-      }
+        OFFICIAL_BCH_EXPLORER: false,
+      },
     } as StateService;
     const interceptor = new GuardianChallengeInterceptor(
       mockStateService,
