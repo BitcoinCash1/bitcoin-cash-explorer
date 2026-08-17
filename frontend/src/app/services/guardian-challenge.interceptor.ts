@@ -10,6 +10,7 @@ import {
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Observable, throwError } from 'rxjs';
 import { catchError, tap } from 'rxjs/operators';
+import { StateService } from '@app/services/state.service';
 
 export const GUARDIAN_DOCUMENT_REQUIRED =
   'proof-of-work challenge requires a same-origin document request';
@@ -21,19 +22,27 @@ const GUARDIAN_RELOAD_COOLDOWN_MS = 30_000;
 export class GuardianChallengeInterceptor implements HttpInterceptor {
   private readonly isBrowser: boolean;
   private reloadInProgress = false;
+  private officialBCHExplorer = false;
 
   constructor(
+    private stateService: StateService,
     @Inject(PLATFORM_ID)
     platformId: Parameters<typeof isPlatformBrowser>[0],
     @Inject(DOCUMENT) private readonly document: Document
   ) {
     this.isBrowser = isPlatformBrowser(platformId);
+    this.officialBCHExplorer = this.stateService.env.OFFICIAL_BCH_EXPLORER;
   }
 
   intercept(
     request: HttpRequest<unknown>,
     next: HttpHandler
   ): Observable<HttpEvent<unknown>> {
+    // Bypass the interceptor if the app is not running on the official BCH explorer, as Guardian challenges are only relevant in that context.
+    if (!this.stateService.env.OFFICIAL_BCH_EXPLORER) {
+      return next.handle(request);
+    }
+
     return next.handle(request).pipe(
       tap((event) => {
         if (

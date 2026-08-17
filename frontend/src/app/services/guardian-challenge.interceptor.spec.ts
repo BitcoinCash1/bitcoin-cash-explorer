@@ -13,6 +13,7 @@ import {
   GUARDIAN_DOCUMENT_REQUIRED,
   GuardianChallengeInterceptor,
 } from './guardian-challenge.interceptor';
+import { StateService } from './state.service';
 
 class MemoryStorage implements Storage {
   private readonly values = new Map<string, string>();
@@ -74,7 +75,13 @@ describe('GuardianChallengeInterceptor', () => {
 
   it("reloads the current document for Guardian's XHR refusal", async () => {
     const browser = browserDocument();
+    const mockStateService = {
+      env: {
+        OFFICIAL_BCH_EXPLORER: false
+      }
+    } as StateService;
     const interceptor = new GuardianChallengeInterceptor(
+      mockStateService,
       'browser',
       browser.document
     );
@@ -99,7 +106,13 @@ describe('GuardianChallengeInterceptor', () => {
     ['a generic Angie denial', '<html><body>403 Forbidden</body></html>'],
   ])('does not reload for %s', async (_description, responseBody) => {
     const browser = browserDocument();
+    const mockStateService = {
+      env: {
+        OFFICIAL_BCH_EXPLORER: false
+      }
+    } as StateService;
     const interceptor = new GuardianChallengeInterceptor(
+      mockStateService,
       'browser',
       browser.document
     );
@@ -119,7 +132,13 @@ describe('GuardianChallengeInterceptor', () => {
     const storage = new MemoryStorage();
     storage.setItem('guardian-challenge-reload-pending', Date.now().toString());
     const browser = browserDocument(storage);
+    const mockStateService = {
+      env: {
+        OFFICIAL_BCH_EXPLORER: false
+      }
+    } as StateService;
     const interceptor = new GuardianChallengeInterceptor(
+      mockStateService,
       'browser',
       browser.document
     );
@@ -142,7 +161,13 @@ describe('GuardianChallengeInterceptor', () => {
       (Date.now() - 30_001).toString()
     );
     const browser = browserDocument(storage);
+    const mockStateService = {
+      env: {
+        OFFICIAL_BCH_EXPLORER: false
+      }
+    } as StateService;
     const interceptor = new GuardianChallengeInterceptor(
+      mockStateService,
       'browser',
       browser.document
     );
@@ -160,7 +185,13 @@ describe('GuardianChallengeInterceptor', () => {
 
   it('reloads at most once when requests fail concurrently', async () => {
     const browser = browserDocument();
+    const mockStateService = {
+      env: {
+        OFFICIAL_BCH_EXPLORER: false
+      }
+    } as StateService;
     const interceptor = new GuardianChallengeInterceptor(
+      mockStateService,
       'browser',
       browser.document
     );
@@ -183,7 +214,13 @@ describe('GuardianChallengeInterceptor', () => {
 
   it('does not reload the site for a refusal from another origin', async () => {
     const browser = browserDocument();
+    const mockStateService = {
+      env: {
+        OFFICIAL_BCH_EXPLORER: false
+      }
+    } as StateService;
     const interceptor = new GuardianChallengeInterceptor(
+      mockStateService,
       'browser',
       browser.document
     );
@@ -209,7 +246,13 @@ describe('GuardianChallengeInterceptor', () => {
     const storage = new MemoryStorage();
     storage.setItem('guardian-challenge-reload-pending', Date.now().toString());
     const browser = browserDocument(storage);
+    const mockStateService = {
+      env: {
+        OFFICIAL_BCH_EXPLORER: false
+      }
+    } as StateService;
     const interceptor = new GuardianChallengeInterceptor(
+      mockStateService,
       'browser',
       browser.document
     );
@@ -233,7 +276,13 @@ describe('GuardianChallengeInterceptor', () => {
 
   it('does not reload during server-side rendering', async () => {
     const browser = browserDocument();
+    const mockStateService = {
+      env: {
+        OFFICIAL_BCH_EXPLORER: false
+      }
+    } as StateService;
     const interceptor = new GuardianChallengeInterceptor(
+      mockStateService,
       'server',
       browser.document
     );
