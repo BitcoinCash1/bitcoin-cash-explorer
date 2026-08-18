@@ -9,7 +9,8 @@ import { take } from 'rxjs/operators';
 import { TransferState, makeStateKey } from '@angular/core';
 import { uncompressDeltaChange, uncompressTx } from '@app/shared/common.utils';
 
-const OFFLINE_RETRY_AFTER_MS = 2000;
+const BASE_RETRY_DELAY_MS = 1000;
+const MAX_RETRY_DELAY_MS = 30000;
 const OFFLINE_PING_CHECK_AFTER_MS = 30000;
 const EXPECT_PING_RESPONSE_AFTER_MS = 5000;
 
@@ -48,6 +49,8 @@ export class WebsocketService {
   private onlineCheckTimeoutTwo: number;
   private subscription: Subscription;
   private network = '';
+  private retryCount = 0;
+  private reconnectTimeoutId: any = null;
 
   constructor(
     private stateService: StateService,
@@ -110,8 +113,19 @@ export class WebsocketService {
 
   reconnectWebsocket(retrying = false, hasInitData = false) {
     console.log('reconnecting websocket');
-    this.websocketSubject.complete();
-    this.subscription.unsubscribe();
+
+    if (this.reconnectTimeoutId) {
+      clearTimeout(this.reconnectTimeoutId);
+      this.reconnectTimeoutId = null;
+    }
+
+    if (this.websocketSubject) {
+      this.websocketSubject.complete();
+    }
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+
     this.websocketSubject = webSocket<WebsocketResponse>(
       this.webSocketUrl.replace(
         '{network}',
@@ -132,6 +146,7 @@ export class WebsocketService {
     }
     this.subscription = this.websocketSubject.subscribe(
       (response: WebsocketResponse) => {
+        this.retryCount = 0;
         this.stateService.isLoadingWebSocket$.next(false);
         this.handleResponse(response);
 
@@ -168,8 +183,7 @@ export class WebsocketService {
         this.startOnlineCheck();
       },
       (err: Error) => {
-        console.log(err);
-        console.log(`WebSocket error`);
+        console.error('WebSocket error:', err);
         this.goOffline();
       }
     );
@@ -290,12 +304,26 @@ export class WebsocketService {
   }
 
   goOffline() {
-    const retryDelay =
-      OFFLINE_RETRY_AFTER_MS + Math.random() * OFFLINE_RETRY_AFTER_MS;
-    console.log(`trying to reconnect websocket in ${retryDelay} seconds`);
+    if (this.reconnectTimeoutId) {
+      clearTimeout(this.reconnectTimeoutId);
+      this.reconnectTimeoutId = null;
+    }
+
     this.goneOffline = true;
     this.stateService.connectionState$.next(0);
-    window.setTimeout(() => {
+
+    const exponentialDelay = Math.min(
+      MAX_RETRY_DELAY_MS,
+      BASE_RETRY_DELAY_MS * Math.pow(2, this.retryCount)
+    );
+    const retryDelay = Math.floor(Math.random() * exponentialDelay);
+
+    this.retryCount++;
+    console.warn(
+      `WebSocket offline. Retrying in ${retryDelay}ms (Attempt #${this.retryCount})`
+    );
+
+    this.reconnectTimeoutId = window.setTimeout(() => {
       this.reconnectWebsocket(true);
     }, retryDelay);
   }
