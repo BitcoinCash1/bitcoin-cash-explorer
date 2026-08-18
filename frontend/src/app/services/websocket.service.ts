@@ -1,12 +1,16 @@
-import { Injectable } from '@angular/core';
+import {
+  Injectable,
+  OnDestroy,
+  TransferState,
+  makeStateKey,
+} from '@angular/core';
 import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
 import { WebsocketResponse } from '@interfaces/websocket.interface';
 import { StateService } from '@app/services/state.service';
 import { Transaction } from '@app/interfaces/backend-api.interface';
-import { Subscription } from 'rxjs';
+import { Subscription, fromEvent, merge } from 'rxjs';
 import { ApiService } from '@app/services/api.service';
-import { take } from 'rxjs/operators';
-import { TransferState, makeStateKey } from '@angular/core';
+import { take, filter } from 'rxjs/operators';
 import { uncompressDeltaChange, uncompressTx } from '@app/shared/common.utils';
 
 const BASE_RETRY_DELAY_MS = 1000;
@@ -19,7 +23,7 @@ const initData = makeStateKey('/api/v1/init-data');
 @Injectable({
   providedIn: 'root',
 })
-export class WebsocketService {
+export class WebsocketService implements OnDestroy {
   private webSocketProtocol =
     document.location.protocol === 'https:' ? 'wss:' : 'ws:';
   private webSocketUrl =
@@ -51,6 +55,7 @@ export class WebsocketService {
   private network = '';
   private retryCount = 0;
   private reconnectTimeoutId: any = null;
+  private windowEventsSubscription: Subscription;
 
   constructor(
     private stateService: StateService,
@@ -91,6 +96,8 @@ export class WebsocketService {
         this.startSubscription();
       }
 
+      this.setupBrowserEventListeners();
+
       this.stateService.networkChanged$.subscribe((network) => {
         if (
           network === this.network ||
@@ -109,6 +116,23 @@ export class WebsocketService {
         this.reconnectWebsocket();
       });
     }
+  }
+
+  private setupBrowserEventListeners(): void {
+    this.windowEventsSubscription = merge(
+      fromEvent(window, 'online'),
+      fromEvent(document, 'visibilitychange').pipe(
+        filter(() => document.visibilityState === 'visible')
+      )
+    ).subscribe(() => {
+      if (this.goneOffline || this.stateService.connectionState$.value === 0) {
+        console.log(
+          'Browser back online/visible: reconnecting WebSocket immediately'
+        );
+        this.retryCount = 0;
+        this.reconnectWebsocket(true);
+      }
+    });
   }
 
   reconnectWebsocket(retrying = false, hasInitData = false) {
@@ -554,6 +578,26 @@ export class WebsocketService {
 
     if (reinitBlocks) {
       this.websocketSubject.next({ 'refresh-blocks': true });
+    }
+  }
+
+  ngOnDestroy(): void {
+    clearTimeout(this.onlineCheckTimeout);
+    clearTimeout(this.onlineCheckTimeoutTwo);
+    if (this.reconnectTimeoutId) {
+      clearTimeout(this.reconnectTimeoutId);
+    }
+    if (this.stoppingTrackMempoolBlock) {
+      clearTimeout(this.stoppingTrackMempoolBlock);
+    }
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
+    if (this.windowEventsSubscription) {
+      this.windowEventsSubscription.unsubscribe();
+    }
+    if (this.websocketSubject) {
+      this.websocketSubject.complete();
     }
   }
 }
