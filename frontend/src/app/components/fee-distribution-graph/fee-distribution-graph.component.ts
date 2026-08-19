@@ -193,7 +193,9 @@ export class FeeDistributionGraphComponent
             textShadowBlur: 0,
             fontSize: this.smallScreen ? 10 : 12,
             formatter: (label: CallbackDataParams): string => {
-              const value = Array.isArray(label.data) ? Number(label.data[1]) : 0;
+              const value = Array.isArray(label.data)
+                ? Number(label.data[1])
+                : 0;
               const selectedPowerOfTen = selectPowerOfTen(value);
               const scaledValue = value / selectedPowerOfTen.divider;
               const newVal =
