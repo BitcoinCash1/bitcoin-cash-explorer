@@ -1,12 +1,12 @@
 import config from '../../config';
 import { ElectrumClient } from '@bitcoincash/electrum-client';
 import { ElectrumConfig, PersistencePolicy } from '@bitcoincash/electrum-client/dist/types';
+import { createHash } from 'node:crypto';
 import { AbstractBitcoinApi } from './bitcoin-api-abstract-factory';
 import { IPublicApi } from './public-api.interface';
 import { IElectrumApi } from './electrum-api.interface';
 import BitcoinApi from './bitcoin-api';
 import logger from '../../logger';
-import crypto from 'crypto-js';
 import loadingIndicators from '../loading-indicators';
 import memoryCache from '../memory-cache';
 
@@ -443,8 +443,9 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
   }
 
   private encodeScriptHash(scriptPubKey: string): string {
-    const addrScripthash = crypto.enc.Hex.stringify(crypto.SHA256(crypto.enc.Hex.parse(scriptPubKey)));
-    return addrScripthash!.match(/.{2}/g)!.reverse().join('');
+    return Buffer.from(createHash('sha256').update(Buffer.from(scriptPubKey, 'hex')).digest())
+      .reverse()
+      .toString('hex');
   }
 }
 
