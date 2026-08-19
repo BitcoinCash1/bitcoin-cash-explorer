@@ -15,6 +15,7 @@ import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pip
 import { StateService } from '@app/services/state.service';
 import { Address } from '@app/interfaces/backend-api.interface';
 import { formatNumber } from '@angular/common';
+import { EChartsInitOpts } from 'echarts/types/dist/echarts';
 
 @Component({
   selector: 'app-addresses-treemap',
@@ -29,7 +30,7 @@ export class AddressesTreemap implements OnChanges {
 
   chartInstance: any;
   chartOptions: EChartsOption = {};
-  chartInitOptions = {
+  chartInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
 

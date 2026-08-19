@@ -22,6 +22,7 @@ import {
 import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pipe';
 import { download } from '@app/shared/graphs.utils';
 import { isMobile } from '@app/shared/common.utils';
+import { EChartsInitOpts } from 'echarts/types/dist/echarts';
 
 @Component({
   selector: 'app-pool-ranking',
@@ -41,7 +42,7 @@ export class PoolRankingComponent implements OnInit {
   indexingAvailable = false;
   isLoading = true;
   chartOptions: EChartsOption = {};
-  chartInitOptions = {
+  chartInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
   timespan = '';

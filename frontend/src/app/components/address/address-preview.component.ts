@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { ElectrsApiService } from '@app/services/backend-api.service';
 import { switchMap, filter, catchError, map, tap } from 'rxjs/operators';
@@ -27,6 +27,7 @@ export class AddressPreviewComponent implements OnInit, OnDestroy {
   isLoadingAddress = true;
   error: any;
   mainSubscription: Subscription;
+  networkChangeSubscription: Subscription;
   addressLoadingStatus$: Observable<number>;
 
   totalConfirmedTxCount = 0;
@@ -44,13 +45,16 @@ export class AddressPreviewComponent implements OnInit, OnDestroy {
     private stateService: StateService,
     private apiService: ApiService,
     private seoService: SeoService,
-    private openGraphService: OpenGraphService
+    private openGraphService: OpenGraphService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
-    this.stateService.networkChanged$.subscribe(
-      (network) => (this.network = network)
-    );
+    this.networkChangeSubscription =
+      this.stateService.networkChanged$.subscribe((network) => {
+        this.network = network;
+        this.cdr.markForCheck();
+      });
 
     this.addressLoadingStatus$ = this.route.paramMap.pipe(
       switchMap(() => this.stateService.loadingIndicators$),
@@ -72,6 +76,8 @@ export class AddressPreviewComponent implements OnInit, OnDestroy {
           this.isLoadingAddress = true;
           this.loadedConfirmedTxCount = 0;
           this.address = null;
+          this.cdr.markForCheck();
+
           this.addressString = params.get('id') || '';
           if (
             /^[A-Z]{2,5}1[AC-HJ-NP-Z02-9]{8,100}|04[a-fA-F0-9]{128}|(02|03)[a-fA-F0-9]{64}$/.test(
@@ -104,6 +110,7 @@ export class AddressPreviewComponent implements OnInit, OnDestroy {
                 event: 'address-data-' + this.rawAddress,
                 sessionId: this.ogSession,
               });
+              this.cdr.markForCheck();
               return of(null);
             })
           );
@@ -119,11 +126,12 @@ export class AddressPreviewComponent implements OnInit, OnDestroy {
             event: 'address-data-' + this.rawAddress,
             sessionId: this.ogSession,
           });
+          this.cdr.markForCheck();
         })
       )
-      .subscribe(
-        () => {},
-        (error) => {
+      .subscribe({
+        next: () => {},
+        error: (error) => {
           console.log(error);
           this.error = error;
           this.isLoadingAddress = false;
@@ -131,8 +139,9 @@ export class AddressPreviewComponent implements OnInit, OnDestroy {
             event: 'address-data-' + this.rawAddress,
             sessionId: this.ogSession,
           });
-        }
-      );
+          this.cdr.markForCheck();
+        },
+      });
   }
 
   updateChainStats() {
@@ -151,6 +160,7 @@ export class AddressPreviewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.mainSubscription.unsubscribe();
+    this.mainSubscription?.unsubscribe();
+    this.networkChangeSubscription?.unsubscribe();
   }
 }

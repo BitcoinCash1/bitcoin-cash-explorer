@@ -1,4 +1,10 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  HostListener,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { ElectrsApiService } from '@app/services/backend-api.service';
 import { switchMap, filter, catchError, map, tap } from 'rxjs/operators';
@@ -166,7 +172,8 @@ export class AddressComponent implements OnInit, OnDestroy {
     public stateService: StateService,
     private audioService: AudioService,
     private apiService: ApiService,
-    private seoService: SeoService
+    private seoService: SeoService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -174,6 +181,7 @@ export class AddressComponent implements OnInit, OnDestroy {
     this.networkChangeSubscription =
       this.stateService.networkChanged$.subscribe((network) => {
         this.network = network;
+        this.cdr.markForCheck();
       });
     this.websocketService.want(['blocks']);
 
@@ -200,6 +208,7 @@ export class AddressComponent implements OnInit, OnDestroy {
           this.utxos = null;
           this.addressInfo = null;
           this.exampleChannel = null;
+          this.cdr.markForCheck();
           document.body.scrollTo(0, 0);
           this.addressString = params.get('id') || '';
           if (
@@ -273,6 +282,7 @@ export class AddressComponent implements OnInit, OnDestroy {
                   this.error = err;
                   this.seoService.logSoft404();
                   console.log(err);
+                  this.cdr.markForCheck();
                   return of(null);
                 })
               )
@@ -290,6 +300,7 @@ export class AddressComponent implements OnInit, OnDestroy {
           this.updateChainStats();
           this.isLoadingAddress = false;
           this.isLoadingTransactions = true;
+          this.cdr.markForCheck();
           const utxoCount = this.chainStats.utxos + this.mempoolStats.utxos;
           return forkJoin([
             address.is_pubkey
@@ -319,14 +330,14 @@ export class AddressComponent implements OnInit, OnDestroy {
           this.utxos = utxos;
 
           this.tempTransactions = transactions;
-          if (transactions.length) {
+          if (transactions?.length) {
             this.lastTransactionTxId =
               transactions[transactions.length - 1].txid;
           }
 
           const fetchTxs: string[] = [];
           this.timeTxIndexes = [];
-          transactions.forEach((tx, index) => {
+          transactions?.forEach((tx, index) => {
             if (!tx.status.confirmed) {
               fetchTxs.push(tx.txid);
               this.timeTxIndexes.push(index);
@@ -342,81 +353,95 @@ export class AddressComponent implements OnInit, OnDestroy {
               this.error = err;
               this.seoService.logSoft404();
               console.log(err);
+              this.cdr.markForCheck();
               return of([]);
             })
           );
         })
       )
-      .subscribe(
-        (times: number[] | null) => {
-          if (!times) {
-            return;
-          }
-          times.forEach((time, index) => {
-            this.tempTransactions[this.timeTxIndexes[index]].firstSeen = time;
-          });
-          this.tempTransactions.sort((a, b) => {
-            if (b.status.confirmed) {
-              if (b.status.block_height === a.status.block_height) {
-                return b.status.block_time - a.status.block_time;
-              }
-              return b.status.block_height - a.status.block_height;
-            }
-            return b.firstSeen - a.firstSeen;
-          });
-
-          this.transactions = this.tempTransactions;
-          if (
-            this.transactions.length ===
-            this.mempoolStats.tx_count + this.chainStats.tx_count
-          ) {
-            this.fullyLoaded = true;
-          }
-          this.isLoadingTransactions = false;
-
-          const addressVin: Vin[] = [];
-          const vinIds: string[] = [];
-          for (const tx of this.transactions) {
-            tx.vin.forEach((v, index) => {
-              if (v.prevout?.scriptpubkey_address === this.address.address) {
-                addressVin.push(v);
-                vinIds.push(`${tx.txid}:${index}`);
+      .subscribe({
+        next: (times: number[] | null) => {
+          if (times && this.tempTransactions) {
+            times.forEach((time, index) => {
+              if (
+                this.timeTxIndexes[index] !== undefined &&
+                this.tempTransactions[this.timeTxIndexes[index]]
+              ) {
+                this.tempTransactions[this.timeTxIndexes[index]].firstSeen =
+                  time;
               }
             });
-          }
-          this.addressTypeInfo.processInputs(addressVin, vinIds);
-          // hack to trigger change detection
-          this.addressTypeInfo = this.addressTypeInfo.clone();
+            this.tempTransactions.sort((a, b) => {
+              if (b.status.confirmed) {
+                if (b.status.block_height === a.status.block_height) {
+                  return b.status.block_time - a.status.block_time;
+                }
+                return b.status.block_height - a.status.block_height;
+              }
+              return (b.firstSeen || 0) - (a.firstSeen || 0);
+            });
 
-          if (!this.showBalancePeriod()) {
-            this.setBalancePeriod('all');
-          } else {
-            this.setBalancePeriod('1m');
+            this.transactions = this.tempTransactions;
+            if (
+              this.transactions.length ===
+              this.mempoolStats.tx_count + this.chainStats.tx_count
+            ) {
+              this.fullyLoaded = true;
+            }
+
+            const addressVin: Vin[] = [];
+            const vinIds: string[] = [];
+            for (const tx of this.transactions) {
+              tx.vin.forEach((v, index) => {
+                if (v.prevout?.scriptpubkey_address === this.address.address) {
+                  addressVin.push(v);
+                  vinIds.push(`${tx.txid}:${index}`);
+                }
+              });
+            }
+            if (this.addressTypeInfo) {
+              this.addressTypeInfo.processInputs(addressVin, vinIds);
+              this.addressTypeInfo = this.addressTypeInfo.clone();
+            }
+
+            if (!this.showBalancePeriod()) {
+              this.setBalancePeriod('all');
+            } else {
+              this.setBalancePeriod('1m');
+            }
           }
+
+          this.isLoadingAddress = false;
+          this.isLoadingTransactions = false;
+          this.cdr.markForCheck();
         },
-        (error) => {
+        error: (error) => {
           console.log(error);
           this.error = error;
           this.seoService.logSoft404();
           this.isLoadingAddress = false;
-        }
-      );
+          this.isLoadingTransactions = false;
+          this.cdr.markForCheck();
+        },
+      });
 
     this.mempoolTxSubscription =
       this.stateService.mempoolTransactions$.subscribe((tx) => {
         this.addTransaction(tx);
         this.mempoolStats.addTx(tx);
+        this.cdr.markForCheck();
       });
 
     this.mempoolRemovedTxSubscription =
       this.stateService.mempoolRemovedTransactions$.subscribe((tx) => {
         this.removeTransaction(tx);
         this.mempoolStats.removeTx(tx);
+        this.cdr.markForCheck();
       });
 
     this.blockTxSubscription = this.stateService.blockTransactions$.subscribe(
       (transaction) => {
-        const tx = this.transactions.find((t) => t.txid === transaction.txid);
+        const tx = this.transactions?.find((t) => t.txid === transaction.txid);
         if (tx) {
           tx.status = transaction.status;
           this.transactions = this.transactions.slice();
@@ -429,12 +454,16 @@ export class AddressComponent implements OnInit, OnDestroy {
           }
         }
         this.chainStats.addTx(transaction);
+        this.cdr.markForCheck();
       }
     );
   }
 
   addTransaction(transaction: Transaction, playSound: boolean = true): boolean {
-    if (this.transactions.some((t) => t.txid === transaction.txid)) {
+    if (
+      !this.transactions ||
+      this.transactions.some((t) => t.txid === transaction.txid)
+    ) {
       return false;
     }
 
@@ -484,6 +513,9 @@ export class AddressComponent implements OnInit, OnDestroy {
   }
 
   removeTransaction(transaction: Transaction): boolean {
+    if (!this.transactions) {
+      return false;
+    }
     const index = this.transactions.findIndex(
       (tx) => tx.txid === transaction.txid
     );
@@ -503,7 +535,7 @@ export class AddressComponent implements OnInit, OnDestroy {
             txid: vin.txid,
             vout: vin.vout,
             value: vin.prevout.value,
-            status: { confirmed: true }, // Assuming the input was confirmed
+            status: { confirmed: true },
           });
           utxosChanged = true;
         }
@@ -569,6 +601,8 @@ export class AddressComponent implements OnInit, OnDestroy {
     }
     this.isLoadingTransactions = true;
     this.retryLoadMore = false;
+    this.cdr.markForCheck();
+
     (this.address.is_pubkey
       ? this.electrsApiService.getScriptHashTransactions$(
           (this.address.address.length === 66 ? '21' : '41') +
@@ -580,25 +614,26 @@ export class AddressComponent implements OnInit, OnDestroy {
           this.address.address,
           this.lastTransactionTxId
         )
-    ).subscribe(
-      (transactions: Transaction[]) => {
+    ).subscribe({
+      next: (transactions: Transaction[]) => {
         if (transactions && transactions.length) {
           this.lastTransactionTxId = transactions[transactions.length - 1].txid;
-          this.transactions = this.transactions.concat(transactions);
+          this.transactions = (this.transactions || []).concat(transactions);
         } else {
           this.fullyLoaded = true;
         }
         this.isLoadingTransactions = false;
+        this.cdr.markForCheck();
       },
-      (error) => {
+      error: (error) => {
         this.isLoadingTransactions = false;
         this.retryLoadMore = true;
-        // In the unlikely event of the txid wasn't found in the mempool anymore and we must reload the page.
+        this.cdr.markForCheck();
         if (error.status === 422) {
           window.location.reload();
         }
-      }
-    );
+      },
+    });
   }
 
   updateChainStats(): void {
@@ -619,7 +654,7 @@ export class AddressComponent implements OnInit, OnDestroy {
 
   showBalancePeriod(): boolean {
     return (
-      this.transactions?.length &&
+      !!this.transactions?.length &&
       (!this.transactions[0].status?.confirmed ||
         this.transactions[0].status.block_time > this.now - 60 * 60 * 24 * 30)
     );

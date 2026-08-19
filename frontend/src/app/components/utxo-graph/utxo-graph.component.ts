@@ -22,6 +22,7 @@ import {
 } from '@components/block-overview-graph/utils';
 import { TimeService } from '@app/services/time.service';
 import { WebsocketService } from '@app/services/websocket.service';
+import { EChartsInitOpts } from 'echarts/types/dist/echarts';
 
 const newColorHex = '1BF4AF';
 const oldColorHex = '3C39F4';
@@ -85,7 +86,7 @@ export class UtxoGraphComponent implements OnChanges, OnDestroy {
   updateInterval;
 
   chartOptions: EChartsOption = {};
-  chartInitOptions = {
+  chartInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
 

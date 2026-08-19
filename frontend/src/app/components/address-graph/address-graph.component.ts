@@ -30,6 +30,7 @@ import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pip
 import { StateService } from '@app/services/state.service';
 import { PriceService } from '@app/services/price.service';
 import { FiatCurrencyPipe } from '@app/shared/pipes/fiat-currency.pipe';
+import { EChartsInitOpts } from 'echarts/types/dist/echarts';
 
 const periodSeconds = {
   '1d': 60 * 60 * 24,
@@ -90,7 +91,7 @@ export class AddressGraphComponent implements OnChanges, OnDestroy {
   redraw$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   chartOptions: EChartsOption = {};
-  chartInitOptions = {
+  chartInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
 

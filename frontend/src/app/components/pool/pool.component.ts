@@ -33,6 +33,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { StratumJob } from '@interfaces/websocket.interface';
 import { WebsocketService } from '@app/services/websocket.service';
 import { MiningService } from '@app/services/mining.service';
+import { EChartsInitOpts } from 'echarts/types/dist/echarts';
 
 @Component({
   selector: 'app-pool',
@@ -59,7 +60,7 @@ export class PoolComponent implements OnInit {
   error: HttpErrorResponse | null = null;
 
   chartOptions: EChartsOption = {};
-  chartInitOptions = {
+  chartInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
 
