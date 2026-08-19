@@ -96,7 +96,20 @@ export class StatisticsComponent implements OnInit {
 
     // 1. Listen for URL fragments and update the form state (allows API trigger)
     this.route.fragment.subscribe((fragment) => {
-      const validSpans = ['2h', '24h', '3d', '1w', '1m', '3m', '6m', '1y', '2y', '3y', '4y', 'all'];
+      const validSpans = [
+        '2h',
+        '24h',
+        '3d',
+        '1w',
+        '1m',
+        '3m',
+        '6m',
+        '1y',
+        '2y',
+        '3y',
+        '4y',
+        'all',
+      ];
       const targetSpan = validSpans.includes(fragment) ? fragment : '2h';
 
       if (this.radioGroupForm.controls['dateSpan'].value !== targetSpan) {
@@ -121,19 +134,31 @@ export class StatisticsComponent implements OnInit {
 
           this.websocketService.want(['blocks']);
 
-          switch(timespan) {
-            case '24h': return this.apiService.list24HStatistics$();
-            case '3d': return this.apiService.list3DStatistics$();
-            case '1w': return this.apiService.list1WStatistics$();
-            case '1m': return this.apiService.list1MStatistics$();
-            case '3m': return this.apiService.list3MStatistics$();
-            case '6m': return this.apiService.list6MStatistics$();
-            case '1y': return this.apiService.list1YStatistics$();
-            case '2y': return this.apiService.list2YStatistics$();
-            case '3y': return this.apiService.list3YStatistics$();
-            case '4y': return this.apiService.list4YStatistics$();
-            case 'all': return this.apiService.listAllTimeStatistics$();
-            default: return this.apiService.list2HStatistics$();
+          switch (timespan) {
+            case '24h':
+              return this.apiService.list24HStatistics$();
+            case '3d':
+              return this.apiService.list3DStatistics$();
+            case '1w':
+              return this.apiService.list1WStatistics$();
+            case '1m':
+              return this.apiService.list1MStatistics$();
+            case '3m':
+              return this.apiService.list3MStatistics$();
+            case '6m':
+              return this.apiService.list6MStatistics$();
+            case '1y':
+              return this.apiService.list1YStatistics$();
+            case '2y':
+              return this.apiService.list2YStatistics$();
+            case '3y':
+              return this.apiService.list3YStatistics$();
+            case '4y':
+              return this.apiService.list4YStatistics$();
+            case 'all':
+              return this.apiService.listAllTimeStatistics$();
+            default:
+              return this.apiService.list2HStatistics$();
           }
         })
       )
