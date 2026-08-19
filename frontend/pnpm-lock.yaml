@@ -173,6 +173,12 @@ importers:
         specifier: ~2.1.5
         version: 2.1.5(supports-color@8.1.1)
 
+  .angular/cache/angular-cli-tmp-packages-2BQhI7:
+    dependencies:
+      '@angular/cli':
+        specifier: ^22.1.4
+        version: 22.1.4(@types/node@24.13.3)(chokidar@5.0.0)(supports-color@8.1.1)
+
   .angular/cache/angular-cli-tmp-packages-QaJQHA:
     dependencies:
       '@angular/cli':
