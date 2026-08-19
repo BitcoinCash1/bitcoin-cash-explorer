@@ -9,6 +9,7 @@ import { TransactionStripped } from '@interfaces/node-api.interface';
 import { StateService } from '@app/services/state.service';
 import { selectPowerOfTen } from '@app/bitcoin.utils';
 import { EChartsInitOpts, EChartsOption } from 'echarts/types/dist/echarts';
+import { CallbackDataParams } from 'echarts/types/dist/shared';
 
 @Component({
   selector: 'app-fee-distribution-graph',
@@ -137,7 +138,7 @@ export class FeeDistributionGraphComponent
           interval: (index: number): boolean => {
             return index && index % this.labelInterval === 0;
           },
-          formatter: (value: number): string => {
+          formatter: (value: string | number): string => {
             return Number(value).toFixed(0);
           },
         },
@@ -191,8 +192,8 @@ export class FeeDistributionGraphComponent
             color: 'var(--fg)',
             textShadowBlur: 0,
             fontSize: this.smallScreen ? 10 : 12,
-            formatter: (label: { data: number[] }): string => {
-              const value = label.data[1];
+            formatter: (label: CallbackDataParams): string => {
+              const value = Array.isArray(label.data) ? Number(label.data[1]) : 0;
               const selectedPowerOfTen = selectPowerOfTen(value);
               const scaledValue = value / selectedPowerOfTen.divider;
               const newVal =
