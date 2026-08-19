@@ -48,7 +48,7 @@
   "dependencies": {
     "@bitcoincash/electrum-client": "^1.2.4",
     "@types/node": "^24.13.3",
-    "axios": "1.14.0",
+    "axios": "1.19.0",
     "bitcoinjs-lib": "~7.0.1",
     "express": "~4.22.2",
     "mysql2": "~3.20.0",
@@ -56,7 +56,7 @@
     "rust-gbt": "file:rust-gbt",
     "socks-proxy-agent": "~8.0.5",
     "typescript": "~5.9.3",
-    "ws": "~8.20.1"
+    "ws": "~8.21.3"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

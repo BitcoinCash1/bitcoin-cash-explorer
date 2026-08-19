@@ -15,8 +15,8 @@ importers:
         specifier: ^24.13.3
         version: 24.13.3
       axios:
-        specifier: 1.14.0
-        version: 1.14.0(debug@4.4.3(supports-color@8.1.1))
+        specifier: 1.19.0
+        version: 1.19.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
       bitcoinjs-lib:
         specifier: ~7.0.1
         version: 7.0.1(typescript@5.9.3)
@@ -39,8 +39,8 @@ importers:
         specifier: ~5.9.3
         version: 5.9.3
       ws:
-        specifier: ~8.20.1
-        version: 8.20.1
+        specifier: ~8.21.3
+        version: 8.21.3
     devDependencies:
       '@eslint/js':
         specifier: ^10.0.1
@@ -966,6 +966,10 @@ packages:
     engines: {node: '>=0.4.0'}
     hasBin: true
 
+  agent-base@6.0.2:
+    resolution: {integrity: sha512-RZNwNclF7+MS/8bDg70amg32dyeZGZxiDuQmZxKLAlQjr3jGyLx+4Kkk58UO7D2QdgFIQCovuSuZESne6RG6XQ==}
+    engines: {node: '>= 6.0.0'}
+
   agent-base@7.1.4:
     resolution: {integrity: sha512-MnA+YT8fwfJPgBx3m60MNqakm30XOkyIoH1y6huTQvC0PwZG7ki8NacLBcrPbNoo8vEZy7Jpuk7+jMO+CUovTQ==}
     engines: {node: '>= 14'}
@@ -1017,8 +1021,8 @@ packages:
     resolution: {integrity: sha512-NZKeq9AfyQvEeNlN0zSYAaWrmBffJh3IELMZfRpJVWgrpEbtEpnjvzqBPf+mxoI287JohRDoa+/nsfqqiZmF6g==}
     engines: {node: '>= 6.0.0'}
 
-  axios@1.14.0:
-    resolution: {integrity: sha512-3Y8yrqLSwjuzpXuZ0oIYZ/XGgLwUIBU3uLvbcpb0pidD9ctpShJd43KSlEEkVQg6DS0G9NKyzOvBfUtDKEyHvQ==}
+  axios@1.19.0:
+    resolution: {integrity: sha512-ht/iuYZXEjFxLH/Hkezgd7m6JKlHHXEUSneaDz8uZe1Gj5QZtCnpyDsckvAiEnT89OEbCLmnte4R4sn7P0EKFw==}
 
   babel-jest@30.4.1:
     resolution: {integrity: sha512-fATAbM8piYxkiXQp3RBXmZHxZVNJZAVXXfyeyCN2Tida3+qJ8ea9UxhiJ2y4fLO90ZImKt6k9FlcH2+rLkJGhw==}
@@ -1559,6 +1563,10 @@ packages:
   http-errors@2.0.1:
     resolution: {integrity: sha512-4FbRdAX+bSdmo4AUFuS0WNiPz8NgFt+r8ThgNWmlrjQjt1Q7ZR9+zTlce2859x4KSXrwIsaeTqDoKQmtP8pLmQ==}
     engines: {node: '>= 0.8'}
+
+  https-proxy-agent@5.0.1:
+    resolution: {integrity: sha512-dFcAjpTQFgoLMzC2VwU+C/CbS7uRL0lWmxDITmqm7C+7F0Odmj6s9l6alZc6AELXhrnggM2CeWSXHGOdX2YtwA==}
+    engines: {node: '>= 6'}
 
   human-signals@2.1.0:
     resolution: {integrity: sha512-B4FFZ6q/T2jhhksgkbEW3HBvWIfDW85snkQgawt07S7J5QXTk6BkNV+0yAeZrM5QpMAdYlocGoljn0sJ/WQkFw==}
@@ -2443,8 +2451,8 @@ packages:
     resolution: {integrity: sha512-+QU2zd6OTD8XWIJCbffaiQeH9U73qIqafo1x6V1snCWYGJf6cVE0cDR4D8xRzcEnfI21IFrUPzPGtcPf8AC+Rw==}
     engines: {node: ^14.17.0 || ^16.13.0 || >=18.0.0}
 
-  ws@8.20.1:
-    resolution: {integrity: sha512-It4dO0K5v//JtTXuPkfEOaI3uUN87iYPnqo/ZzqCoG3g8uhA66QUMs/SrM0YK7/NAu+r4LMh/9dq2A7k+rHs+w==}
+  ws@8.21.3:
+    resolution: {integrity: sha512-201TZ/kPWxoPr/OKWjquZR1SWKXcvxdH+e1xrx89b3YbmzLMFCLfnaG1HFIgWzJOEWZ7MvpK++odZufgYR50Rw==}
     engines: {node: '>=10.0.0'}
     peerDependencies:
       bufferutil: ^4.0.1
@@ -3384,6 +3392,12 @@ snapshots:
 
   acorn@8.18.0: {}
 
+  agent-base@6.0.2(supports-color@8.1.1):
+    dependencies:
+      debug: 4.4.3(supports-color@8.1.1)
+    transitivePeerDependencies:
+      - supports-color
+
   agent-base@7.1.4: {}
 
   ajv@6.15.0:
@@ -3426,13 +3440,15 @@ snapshots:
 
   aws-ssl-profiles@1.1.2: {}
 
-  axios@1.14.0(debug@4.4.3(supports-color@8.1.1)):
+  axios@1.19.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1):
     dependencies:
       follow-redirects: 1.16.0(debug@4.4.3(supports-color@8.1.1))
       form-data: 4.0.6
+      https-proxy-agent: 5.0.1(supports-color@8.1.1)
       proxy-from-env: 2.1.0
     transitivePeerDependencies:
       - debug
+      - supports-color
 
   babel-jest@30.4.1(@babel/core@7.29.7(supports-color@8.1.1))(supports-color@8.1.1):
     dependencies:
@@ -4049,6 +4065,13 @@ snapshots:
       setprototypeof: 1.2.0
       statuses: 2.0.2
       toidentifier: 1.0.1
+
+  https-proxy-agent@5.0.1(supports-color@8.1.1):
+    dependencies:
+      agent-base: 6.0.2(supports-color@8.1.1)
+      debug: 4.4.3(supports-color@8.1.1)
+    transitivePeerDependencies:
+      - supports-color
 
   human-signals@2.1.0: {}
 
@@ -5069,7 +5092,7 @@ snapshots:
       imurmurhash: 0.1.4
       signal-exit: 4.1.0
 
-  ws@8.20.1: {}
+  ws@8.21.3: {}
 
   y18n@5.0.8: {}
 
