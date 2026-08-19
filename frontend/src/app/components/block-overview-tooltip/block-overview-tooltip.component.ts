@@ -9,11 +9,7 @@ import {
 import { Position } from '@components/block-overview-graph/sprite-types.js';
 import { Price } from '@app/services/price.service';
 import { TransactionStripped } from '@interfaces/node-api.interface.js';
-import {
-  Filter,
-  FilterMode,
-  toFilters,
-} from '@app/shared/filters.utils';
+import { Filter, FilterMode, toFilters } from '@app/shared/filters.utils';
 
 @Component({
   selector: 'app-block-overview-tooltip',

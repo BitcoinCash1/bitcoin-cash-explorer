@@ -38,7 +38,7 @@ export class FeeDistributionGraphComponent
   smallScreen: boolean = window.innerWidth < 450;
 
   mempoolSizeFeesOptions: EChartsOption = {};
-  mempoolSizeFeesInitOptions: EChartsInitOpts  = {
+  mempoolSizeFeesInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
 

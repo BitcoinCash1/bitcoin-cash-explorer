@@ -52,7 +52,7 @@ export class PriceChartComponent implements OnInit {
   scaleType: 'value' | 'log' = 'value';
 
   chartOptions: EChartsOption = {};
-  chartInitOptions: EChartsInitOpts  = {
+  chartInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
 

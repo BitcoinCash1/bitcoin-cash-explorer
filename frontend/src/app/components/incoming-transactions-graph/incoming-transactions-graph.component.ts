@@ -48,7 +48,7 @@ export class IncomingTransactionsGraphComponent implements OnInit, OnChanges {
   @Input() isLoading: boolean;
 
   mempoolStatsChartOption: EChartsOption = {};
-  mempoolStatsChartInitOption: EChartsInitOpts  = {
+  mempoolStatsChartInitOption: EChartsInitOpts = {
     renderer: 'svg',
   };
   windowPreference: string;

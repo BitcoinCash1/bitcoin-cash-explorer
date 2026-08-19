@@ -60,7 +60,7 @@ export class PoolComponent implements OnInit {
   error: HttpErrorResponse | null = null;
 
   chartOptions: EChartsOption = {};
-  chartInitOptions: EChartsInitOpts  = {
+  chartInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
 
