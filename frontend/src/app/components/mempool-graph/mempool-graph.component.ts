@@ -20,6 +20,7 @@ import {
   formatterXAxis,
   formatterXAxisLabel,
 } from '@app/shared/graphs.utils';
+import { EChartsInitOpts } from 'echarts/types/dist/echarts';
 
 @Component({
   selector: 'app-mempool-graph',
@@ -53,7 +54,7 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
 
   mempoolSizeFeesData: any;
   mempoolSizeFeesOptions: EChartsOption;
-  mempoolSizeFeesInitOptions = {
+  mempoolSizeFeesInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
   windowPreference: string;

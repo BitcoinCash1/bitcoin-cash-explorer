@@ -19,6 +19,7 @@ import { MiningService } from '@app/services/mining.service';
 import { ActivatedRoute } from '@angular/router';
 import { download, formatterXAxis } from '@app/shared/graphs.utils';
 import { StateService } from '@app/services/state.service';
+import { EChartsInitOpts } from 'echarts/types/dist/echarts';
 
 @Component({
   selector: 'app-utxo-size-graph',
@@ -45,7 +46,7 @@ export class UtxoSizeGraphComponent implements OnInit {
   radioGroupForm: UntypedFormGroup;
 
   chartOptions: EChartsOption = {};
-  chartInitOptions = {
+  chartInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
 

@@ -19,6 +19,7 @@ import { MiningService } from '@app/services/mining.service';
 import { ActivatedRoute } from '@angular/router';
 import { download, formatterXAxis } from '@app/shared/graphs.utils';
 import { StateService } from '@app/services/state.service';
+import { EChartsInitOpts } from 'echarts/types/dist/echarts';
 
 const TARGET_BLOCK_TIME_SECONDS = 600; // BCH target block interval; update if consensus changes
 
@@ -47,7 +48,7 @@ export class BlockTimesGraphComponent implements OnInit {
   radioGroupForm: UntypedFormGroup;
 
   chartOptions: EChartsOption = {};
-  chartInitOptions = {
+  chartInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
 

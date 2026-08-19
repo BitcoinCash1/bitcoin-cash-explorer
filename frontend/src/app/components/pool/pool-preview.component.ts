@@ -15,6 +15,7 @@ import { StateService } from '@app/services/state.service';
 import { formatNumber } from '@angular/common';
 import { SeoService } from '@app/services/seo.service';
 import { OpenGraphService } from '@app/services/opengraph.service';
+import { EChartsInitOpts } from 'echarts/types/dist/echarts';
 
 @Component({
   selector: 'app-pool-preview',
@@ -31,7 +32,7 @@ export class PoolPreviewComponent implements OnInit {
   lastImgSrc: string = '';
 
   chartOptions: EChartsOption = {};
-  chartInitOptions = {
+  chartInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
 

@@ -11,6 +11,7 @@ import {
 } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { EChartsOption } from '@app/graphs/echarts';
+import { EChartsInitOpts } from 'echarts/types/dist/echarts';
 
 export interface AsertPoint {
   height: number;
@@ -32,7 +33,7 @@ export class AsertDeviationGraphComponent implements OnChanges {
   @Output() chartOptionsChange = new EventEmitter<EChartsOption>();
 
   chartOption: EChartsOption = {};
-  initOpts = { renderer: 'svg' };
+  initOpts: EChartsInitOpts = { renderer: 'svg' };
 
   private chartInstance: any;
 

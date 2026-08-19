@@ -29,6 +29,7 @@ import { ActivatedRoute } from '@angular/router';
 import { StateService } from '@app/services/state.service';
 import { seoDescriptionNetwork } from '@app/shared/common.utils';
 import { AmountShortenerPipe } from '@app/shared/pipes/amount-shortener.pipe';
+import { EChartsInitOpts } from 'echarts/types/dist/echarts';
 
 @Component({
   selector: 'app-hashrate-chart',
@@ -58,7 +59,7 @@ export class HashrateChartComponent implements OnInit {
   radioGroupForm: UntypedFormGroup;
 
   chartOptions: EChartsOption = {};
-  chartInitOptions = {
+  chartInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
 

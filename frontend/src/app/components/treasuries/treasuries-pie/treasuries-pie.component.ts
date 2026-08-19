@@ -20,6 +20,7 @@ import { AddressTxSummary } from '@app/interfaces/backend-api.interface';
 import { originalChartColors as chartColors } from '@app/app.constants';
 import { formatNumber } from '@angular/common';
 import { Treasury } from '@interfaces/node-api.interface';
+import { EChartsInitOpts } from 'echarts/types/dist/echarts';
 
 @Component({
   selector: 'app-treasuries-pie',
@@ -38,7 +39,7 @@ export class TreasuriesPieComponent implements OnChanges {
   @Output() navigateToTreasury: EventEmitter<Treasury> = new EventEmitter();
 
   chartOptions: EChartsOption = {};
-  chartInitOptions = {
+  chartInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
   chartInstance: any = undefined;

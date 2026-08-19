@@ -16,7 +16,7 @@ import { tap } from 'rxjs/operators';
 import { AddressTxSummary } from '@app/interfaces/backend-api.interface';
 import { AmountShortenerPipe } from '@app/shared/pipes/amount-shortener.pipe';
 import { StateService } from '@app/services/state.service';
-import { SeriesOption } from 'echarts/types/dist/echarts';
+import { EChartsInitOpts, SeriesOption } from 'echarts/types/dist/echarts';
 import { WalletStats } from '@app/shared/wallet-stats';
 import { originalChartColors as chartColors } from '@app/app.constants';
 import { Treasury } from '@interfaces/node-api.interface';
@@ -75,7 +75,7 @@ export class TreasuriesGraphComponent implements OnInit, OnChanges, OnDestroy {
   redraw$: BehaviorSubject<boolean> = new BehaviorSubject(false);
 
   chartOptions: EChartsOption = {};
-  chartInitOptions = {
+  chartInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
 

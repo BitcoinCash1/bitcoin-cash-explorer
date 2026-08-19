@@ -8,6 +8,7 @@ import {
 import { TransactionStripped } from '@interfaces/node-api.interface';
 import { StateService } from '@app/services/state.service';
 import { selectPowerOfTen } from '@app/bitcoin.utils';
+import { EChartsInitOpts, EChartsOption } from 'echarts/types/dist/echarts';
 
 @Component({
   selector: 'app-fee-distribution-graph',
@@ -36,8 +37,8 @@ export class FeeDistributionGraphComponent
   labelInterval: number = 50;
   smallScreen: boolean = window.innerWidth < 450;
 
-  mempoolSizeFeesOptions: any;
-  mempoolSizeFeesInitOptions = {
+  mempoolSizeFeesOptions: EChartsOption = {};
+  mempoolSizeFeesInitOptions: EChartsInitOpts  = {
     renderer: 'svg',
   };
 

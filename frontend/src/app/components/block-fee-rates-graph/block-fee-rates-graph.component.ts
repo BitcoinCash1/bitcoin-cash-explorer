@@ -28,6 +28,7 @@ import { selectPowerOfTen } from '@app/bitcoin.utils';
 import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pipe';
 import { StateService } from '@app/services/state.service';
 import { ActivatedRoute, Router } from '@angular/router';
+import { EChartsInitOpts } from 'echarts/types/dist/echarts';
 
 @Component({
   selector: 'app-block-fee-rates-graph',
@@ -55,7 +56,7 @@ export class BlockFeeRatesGraphComponent implements OnInit {
   radioGroupForm: UntypedFormGroup;
 
   chartOptions: EChartsOption = {};
-  chartInitOptions = {
+  chartInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
 

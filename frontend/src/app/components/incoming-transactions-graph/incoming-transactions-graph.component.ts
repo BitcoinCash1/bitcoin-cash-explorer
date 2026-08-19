@@ -16,6 +16,7 @@ import {
 } from '@app/shared/graphs.utils';
 import { formatNumber } from '@angular/common';
 import { StateService } from '@app/services/state.service';
+import { EChartsInitOpts } from 'echarts/types/dist/echarts';
 const OUTLIERS_MEDIAN_MULTIPLIER = 4;
 
 @Component({
@@ -47,7 +48,7 @@ export class IncomingTransactionsGraphComponent implements OnInit, OnChanges {
   @Input() isLoading: boolean;
 
   mempoolStatsChartOption: EChartsOption = {};
-  mempoolStatsChartInitOption = {
+  mempoolStatsChartInitOption: EChartsInitOpts  = {
     renderer: 'svg',
   };
   windowPreference: string;
@@ -272,7 +273,7 @@ export class IncomingTransactionsGraphComponent implements OnInit, OnChanges {
             this.template === 'advanced'
               ? 'tx-wrapper-tooltip-chart-advanced'
               : ''
-          }" 
+          }"
                   style="width: ${
                     this.windowPreference === '2h' || this.template === 'widget'
                       ? '125px'

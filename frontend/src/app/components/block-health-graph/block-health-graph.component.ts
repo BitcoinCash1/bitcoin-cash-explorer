@@ -24,6 +24,7 @@ import { StorageService } from '@app/services/storage.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pipe';
 import { StateService } from '@app/services/state.service';
+import { EChartsInitOpts } from 'echarts/types/dist/echarts';
 
 @Component({
   selector: 'app-block-health-graph',
@@ -50,7 +51,7 @@ export class BlockHealthGraphComponent implements OnInit {
   radioGroupForm: UntypedFormGroup;
 
   chartOptions: EChartsOption = {};
-  chartInitOptions = {
+  chartInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
 

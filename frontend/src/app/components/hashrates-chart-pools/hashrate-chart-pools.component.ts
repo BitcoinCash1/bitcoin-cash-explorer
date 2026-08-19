@@ -31,6 +31,7 @@ import { MiningService } from '@app/services/mining.service';
 import { download } from '@app/shared/graphs.utils';
 import { ActivatedRoute } from '@angular/router';
 import { StateService } from '@app/services/state.service';
+import { EChartsInitOpts } from 'echarts/types/dist/echarts';
 
 interface Hashrate {
   timestamp: number;
@@ -65,7 +66,7 @@ export class HashrateChartPoolsComponent implements OnInit {
 
   hashrates: Hashrate[];
   chartOptions: EChartsOption = {};
-  chartInitOptions = {
+  chartInitOptions: EChartsInitOpts = {
     renderer: 'svg',
   };
 
