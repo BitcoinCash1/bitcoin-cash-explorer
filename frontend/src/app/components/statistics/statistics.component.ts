@@ -5,11 +5,11 @@ import {
   Inject,
   ViewChild,
   ElementRef,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
-import { of, merge } from 'rxjs';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, startWith, distinctUntilChanged } from 'rxjs/operators';
 
 import { OptimizedMempoolStats } from '@interfaces/node-api.interface';
 import { WebsocketService } from '@app/services/websocket.service';
@@ -63,7 +63,8 @@ export class StatisticsComponent implements OnInit {
     private apiService: ApiService,
     public stateService: StateService,
     private seoService: SeoService,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private cdr: ChangeDetectorRef // Injected to manually trigger UI updates
   ) {}
 
   ngOnInit() {
@@ -75,9 +76,12 @@ export class StatisticsComponent implements OnInit {
     this.seoService.setDescription(
       $localize`See mempool size (in MB) and transactions per second (in B/s) visualized over time.`
     );
-    this.stateService.networkChanged$.subscribe(
-      (network) => (this.network = network)
-    );
+
+    this.stateService.networkChanged$.subscribe((network) => {
+      this.network = network;
+      this.cdr.markForCheck();
+    });
+
     this.graphWindowPreference = this.storageService.getValue(
       'graphWindowPreference'
     )
@@ -90,92 +94,65 @@ export class StatisticsComponent implements OnInit {
       dateSpan: this.graphWindowPreference,
     });
 
+    // 1. Listen for URL fragments and update the form state (allows API trigger)
     this.route.fragment.subscribe((fragment) => {
-      if (
-        [
-          '2h',
-          '24h',
-          '3d',
-          '1w',
-          '1m',
-          '3m',
-          '6m',
-          '1y',
-          '2y',
-          '3y',
-          '4y',
-          'all',
-        ].indexOf(fragment) > -1
-      ) {
-        this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
-          emitEvent: false,
-        });
-      } else {
-        this.radioGroupForm.controls['dateSpan'].setValue('2h', {
-          emitEvent: false,
-        });
+      const validSpans = ['2h', '24h', '3d', '1w', '1m', '3m', '6m', '1y', '2y', '3y', '4y', 'all'];
+      const targetSpan = validSpans.includes(fragment) ? fragment : '2h';
+
+      if (this.radioGroupForm.controls['dateSpan'].value !== targetSpan) {
+        this.radioGroupForm.controls['dateSpan'].setValue(targetSpan);
       }
     });
 
-    merge(of(''), this.radioGroupForm.controls['dateSpan'].valueChanges)
+    // 2. React to form changes properly, fetching data when the URL/selection changes
+    this.radioGroupForm.controls['dateSpan'].valueChanges
       .pipe(
-        switchMap(() => {
-          this.timespan = this.radioGroupForm.controls['dateSpan'].value;
+        startWith(this.radioGroupForm.controls['dateSpan'].value),
+        distinctUntilChanged(), // Prevent duplicate API calls for the same timespan
+        switchMap((timespan) => {
+          this.timespan = timespan;
           this.isLoading = true;
-          if (this.radioGroupForm.controls['dateSpan'].value === '2h') {
+          this.cdr.markForCheck(); // Show spinner in UI immediately
+
+          if (timespan === '2h') {
             this.websocketService.want(['blocks', 'live-2h-chart']);
             return this.apiService.list2HStatistics$();
           }
+
           this.websocketService.want(['blocks']);
-          if (this.radioGroupForm.controls['dateSpan'].value === '24h') {
-            return this.apiService.list24HStatistics$();
+
+          switch(timespan) {
+            case '24h': return this.apiService.list24HStatistics$();
+            case '3d': return this.apiService.list3DStatistics$();
+            case '1w': return this.apiService.list1WStatistics$();
+            case '1m': return this.apiService.list1MStatistics$();
+            case '3m': return this.apiService.list3MStatistics$();
+            case '6m': return this.apiService.list6MStatistics$();
+            case '1y': return this.apiService.list1YStatistics$();
+            case '2y': return this.apiService.list2YStatistics$();
+            case '3y': return this.apiService.list3YStatistics$();
+            case '4y': return this.apiService.list4YStatistics$();
+            case 'all': return this.apiService.listAllTimeStatistics$();
+            default: return this.apiService.list2HStatistics$();
           }
-          if (this.radioGroupForm.controls['dateSpan'].value === '3d') {
-            return this.apiService.list3DStatistics$();
-          }
-          if (this.radioGroupForm.controls['dateSpan'].value === '1w') {
-            return this.apiService.list1WStatistics$();
-          }
-          if (this.radioGroupForm.controls['dateSpan'].value === '1m') {
-            return this.apiService.list1MStatistics$();
-          }
-          if (this.radioGroupForm.controls['dateSpan'].value === '3m') {
-            return this.apiService.list3MStatistics$();
-          }
-          if (this.radioGroupForm.controls['dateSpan'].value === '6m') {
-            return this.apiService.list6MStatistics$();
-          }
-          if (this.radioGroupForm.controls['dateSpan'].value === '1y') {
-            return this.apiService.list1YStatistics$();
-          }
-          if (this.radioGroupForm.controls['dateSpan'].value === '2y') {
-            return this.apiService.list2YStatistics$();
-          }
-          if (this.radioGroupForm.controls['dateSpan'].value === '3y') {
-            return this.apiService.list3YStatistics$();
-          }
-          if (this.radioGroupForm.controls['dateSpan'].value === '4y') {
-            return this.apiService.list4YStatistics$();
-          }
-          if (this.radioGroupForm.controls['dateSpan'].value === 'all') {
-            return this.apiService.listAllTimeStatistics$();
-          }
-          return this.apiService.list2HStatistics$();
         })
       )
       .subscribe((mempoolStats: any) => {
         this.mempoolStats = mempoolStats;
-        this.handleNewMempoolData(this.mempoolStats.concat([]));
+        this.handleNewMempoolData([...this.mempoolStats]); // Modern shallow copy
         this.isLoading = false;
+        this.cdr.markForCheck(); // Force Angular to evaluate the template and hide spinner
       });
 
+    // 3. Keep live web-socket chart updates strictly synced with the UI
     this.stateService.live2Chart$.subscribe((mempoolStats) => {
       this.mempoolStats.unshift(mempoolStats);
       this.mempoolStats = this.mempoolStats.slice(
         0,
         this.mempoolStats.length - 1
       );
-      this.handleNewMempoolData(this.mempoolStats.concat([]));
+      this.handleNewMempoolData([...this.mempoolStats]);
+      this.cdr.markForCheck(); // Push updated options to ngx-echarts
     });
   }
 
