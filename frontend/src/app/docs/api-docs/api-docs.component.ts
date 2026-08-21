@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   OnInit,
   Input,
@@ -50,21 +51,24 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
 
   constructor(
     private stateService: StateService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private changeDetectorRef: ChangeDetectorRef
   ) {
     this.timeLtr = this.stateService.timeLtr.value;
   }
 
   ngAfterContentChecked() {
-    if (this.faqTemplates) {
-      this.faqTemplates.forEach((x) => (this.dict[x.type] = x.template));
-    }
     this.desktopDocsNavPosition =
       window.pageYOffset > 115 ? 'fixed' : 'relative';
     this.mobileViewport = window.innerWidth <= 992;
   }
 
   ngAfterViewInit() {
+    this.faqTemplates.forEach((template) => {
+      this.dict[template.type] = template.template;
+    });
+    this.changeDetectorRef.detectChanges();
+
     const that = this;
     setTimeout(() => {
       if (this.route.snapshot.fragment) {
