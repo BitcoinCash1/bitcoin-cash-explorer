@@ -14,7 +14,11 @@ const MAX_BLOCK_SIGOPS_COST = 80_000;
 const MAX_STANDARD_TX_SIGOPS_COST = MAX_BLOCK_SIGOPS_COST / 5;
 const MIN_STANDARD_TX_SIZE = 65; /// TODO: Check for BCH
 const MAX_P2SH_SIGOPS = 15;
-const MAX_STANDARD_SCRIPTSIG_SIZE = 1650;
+// BCHN: src/policy/policy.h and src/script/vm_limits.h.
+const MAX_STANDARD_SCRIPTSIG_SIZE_LEGACY = 1_650;
+const MAX_SCRIPT_SIZE = 10_000;
+// CHIP-2024-12 Pay-to-Script and BCHN src/script/standard.h.
+const MAX_P2S_SCRIPT_SIZE = 201;
 const DUST_RELAY_TX_FEE = 3;
 const MAX_OP_RETURN_RELAY = 83;
 
@@ -370,7 +374,10 @@ export function isNonStandard(
       return false;
     }
     // scriptsig-size
-    if (vin.scriptsig.length / 2 > MAX_STANDARD_SCRIPTSIG_SIZE) {
+    if (
+      vin.scriptsig.length / 2 >
+      getMaxStandardScriptSigSize(height, network)
+    ) {
       return true;
     }
     // scriptsig-not-pushonly
@@ -389,6 +396,11 @@ export function isNonStandard(
       if (sigops > MAX_P2SH_SIGOPS) {
         return true;
       }
+    } else if (
+      vin.prevout?.scriptpubkey_type === 'p2s' &&
+      !isMay2026Active(height, network)
+    ) {
+      return true;
     } else if (
       ['unknown', 'provably_unspendable', 'empty'].includes(
         vin.prevout?.scriptpubkey_type || ''
@@ -414,6 +426,11 @@ export function isNonStandard(
       )
     ) {
       // (non-standard output type)
+      return true;
+    } else if (
+      vout.scriptpubkey_type === 'p2s' &&
+      !isMay2026Active(height, network)
+    ) {
       return true;
     } else if (vout.scriptpubkey_type === 'unknown') {
       // undefined segwit version/length combinations are actually standard in outputs
@@ -457,6 +474,31 @@ export function isNonStandard(
 }
 
 // Individual versioned standardness rules
+
+// BCHN src/chainparams.cpp stores the height of the last pre-upgrade block.
+// These are the first blocks for which SCRIPT_ENABLE_MAY2026 is active.
+const MAY_2026_FIRST_ACTIVE_BLOCK: Record<string, number> = {
+  mainnet: 951_145,
+  testnet4: 305_848,
+  scalenet: 10_007,
+  chipnet: 279_792,
+};
+function getMaxStandardScriptSigSize(
+  height?: number,
+  network?: string
+): number {
+  return isMay2026Active(height, network)
+    ? MAX_SCRIPT_SIZE
+    : MAX_STANDARD_SCRIPTSIG_SIZE_LEGACY;
+}
+function isMay2026Active(height?: number, network?: string): boolean {
+  const firstActiveBlock = network
+    ? MAY_2026_FIRST_ACTIVE_BLOCK[network]
+    : undefined;
+  return (
+    height == null || firstActiveBlock == null || height >= firstActiveBlock
+  );
+}
 
 // const V3_STANDARDNESS_ACTIVATION_HEIGHT = {
 //   testnet4: 42_000,
@@ -644,6 +686,9 @@ export function getTransactionFlags(
       case 'p2sh':
         flags |= TransactionFlags.p2sh;
         break;
+      case 'p2s':
+        flags |= TransactionFlags.p2s;
+        break;
     }
 
     // sighash flags
@@ -690,6 +735,9 @@ export function getTransactionFlags(
         break;
       case 'p2sh':
         flags |= TransactionFlags.p2sh;
+        break;
+      case 'p2s':
+        flags |= TransactionFlags.p2s;
         break;
       case 'op_return':
         flags |= TransactionFlags.op_return;
@@ -2132,6 +2180,11 @@ export function scriptPubKeyToAddress(
   // op_return
   if (/^6a/.test(scriptPubKey)) {
     return { address: null, type: 'op_return' };
+  }
+  // Since May 2026, all other non-data-carrier locking bytecode up to 201
+  // bytes is standard pay-to-script. P2S intentionally has no address format.
+  if (scriptPubKey.length / 2 <= MAX_P2S_SCRIPT_SIZE) {
+    return { address: null, type: 'p2s' };
   }
   return { address: null, type: 'unknown' };
 }
