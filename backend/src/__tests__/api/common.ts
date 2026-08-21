@@ -6,6 +6,13 @@ const randomTransactions = require('./test-data/transactions-random.json');
 const standardTransactions = require('./test-data/standard-txs.json');
 const nonStandardTransactions = require('./test-data/btc-txs.json');
 
+// Actual input bytecode lengths reported by chipnet.bch.ninja for this tx:
+// 00f81b99421ce2433603efee1b8dc94608d14182bec2f5121685d0ec71b9b0cc
+const REPORTED_CHIPNET_SCRIPTSIG_BYTES = [
+  2_725, 6_294, 6_294, 6_294, 6_294, 6_294, 6_294, 4_801, 4_808, 4_808, 4_808, 2_622, 301, 301, 1_684, 3_084, 5_036,
+  5_128, 5_128, 5_128, 100,
+];
+
 describe('Common', () => {
   describe('Mempool Goggles', () => {
     const originalNetwork = config.EXPLORER.NETWORK;
@@ -63,12 +70,18 @@ describe('Common', () => {
       expect(Common.isNonStandard(transactionWithScriptSigSize(10_001))).toEqual(true);
     });
 
-    test('should not mark the reported May 2026 chipnet transaction as nonstandard', () => {
+    test('should accept the reported May 2026 chipnet scriptSig length profile', () => {
       config.EXPLORER.NETWORK = 'chipnet';
       const tx = transactionWithScriptSigSize(
-        2_000,
+        REPORTED_CHIPNET_SCRIPTSIG_BYTES[0],
         '00f81b99421ce2433603efee1b8dc94608d14182bec2f5121685d0ec71b9b0cc'
       );
+      tx.vin = REPORTED_CHIPNET_SCRIPTSIG_BYTES.map((bytes, index) => {
+        const vin = structuredClone(tx.vin[0]);
+        vin.txid = index.toString(16).padStart(64, '0');
+        vin.scriptsig = '00'.repeat(bytes);
+        return vin;
+      });
       tx.version = 2;
       tx.size = 89_378;
 

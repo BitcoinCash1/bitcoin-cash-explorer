@@ -52,6 +52,13 @@ const transactionWithScriptSigSize = (
   status: { confirmed: true },
 });
 
+// Actual input bytecode lengths reported by chipnet.bch.ninja for this tx:
+// 00f81b99421ce2433603efee1b8dc94608d14182bec2f5121685d0ec71b9b0cc
+const REPORTED_CHIPNET_SCRIPTSIG_BYTES = [
+  2_725, 6_294, 6_294, 6_294, 6_294, 6_294, 6_294, 4_801, 4_808, 4_808, 4_808,
+  2_622, 301, 301, 1_684, 3_084, 5_036, 5_128, 5_128, 5_128, 100,
+];
+
 describe('May 2026 P2S standardness', () => {
   it.each([
     ['mainnet', 951_145],
@@ -97,11 +104,16 @@ describe('May 2026 P2S standardness', () => {
     expect(isNonStandard(transactionWithScriptSigSize(10_001))).toBe(true);
   });
 
-  it('does not mark the reported chipnet transaction as nonstandard', () => {
+  it('accepts the reported May 2026 chipnet scriptSig length profile', () => {
     const tx = transactionWithScriptSigSize(
-      2_000,
+      REPORTED_CHIPNET_SCRIPTSIG_BYTES[0],
       '00f81b99421ce2433603efee1b8dc94608d14182bec2f5121685d0ec71b9b0cc'
     );
+    tx.vin = REPORTED_CHIPNET_SCRIPTSIG_BYTES.map((bytes, index) => ({
+      ...structuredClone(tx.vin[0]),
+      txid: index.toString(16).padStart(64, '0'),
+      scriptsig: '00'.repeat(bytes),
+    }));
     tx.size = 89_378;
 
     expect(isNonStandard(tx, 320_053, 'chipnet')).toBe(false);

@@ -14,8 +14,10 @@ const MAX_BLOCK_SIGOPS_COST = 80_000;
 const MAX_STANDARD_TX_SIGOPS_COST = MAX_BLOCK_SIGOPS_COST / 5;
 const MIN_STANDARD_TX_SIZE = 65; /// TODO: Check for BCH
 const MAX_P2SH_SIGOPS = 15;
+// BCHN: src/policy/policy.h and src/script/vm_limits.h.
 const MAX_STANDARD_SCRIPTSIG_SIZE_LEGACY = 1_650;
 const MAX_SCRIPT_SIZE = 10_000;
+// CHIP-2024-12 Pay-to-Script and BCHN src/script/standard.h.
 const MAX_P2S_SCRIPT_SIZE = 201;
 const DUST_RELAY_TX_FEE = 3;
 const MAX_OP_RETURN_RELAY = 83;
@@ -473,8 +475,8 @@ export function isNonStandard(
 
 // Individual versioned standardness rules
 
-// BCHN stores the height of the last pre-upgrade block. These are the first
-// blocks for which SCRIPT_ENABLE_MAY2026 is active.
+// BCHN src/chainparams.cpp stores the height of the last pre-upgrade block.
+// These are the first blocks for which SCRIPT_ENABLE_MAY2026 is active.
 const MAY_2026_FIRST_ACTIVE_BLOCK: Record<string, number> = {
   mainnet: 951_145,
   testnet4: 305_848,
