@@ -21,12 +21,12 @@ const MAX_STANDARD_TX_SIZE = 32_000_000; // Max. tx size (actually min.) without
 const MAX_BLOCK_SIGOPS_COST = 80_000;
 const MAX_STANDARD_TX_SIGOPS_COST = MAX_BLOCK_SIGOPS_COST / 5;
 const MAX_P2SH_SIGOPS = 15;
-const MAX_STANDARD_SCRIPTSIG_SIZE = 1650;
+const MAX_STANDARD_SCRIPTSIG_SIZE_LEGACY = 1_650;
+const MAX_SCRIPT_SIZE = 10_000;
 const DUST_RELAY_TX_FEE = 3;
 const DEFAULT_PERMIT_BAREMULTISIG = true;
 const MAX_TX_LEGACY_SIGOPS = 20_000; // Before 2020-MAY-15 upgrade
 const MAX_TX_BYTES = 1_000_000;
-const MAX_SCRIPT_SIZE = 1650;
 const VALID_VERSIONS = new Set([1, 2]);
 
 export class Common {
@@ -112,7 +112,7 @@ export class Common {
         return false;
       }
       // scriptsig-size
-      if (vin.scriptsig.length / 2 > MAX_STANDARD_SCRIPTSIG_SIZE) {
+      if (vin.scriptsig.length / 2 > this.getMaxStandardScriptSigSize(height)) {
         return true;
       }
       // scriptsig-not-pushonly
@@ -132,6 +132,8 @@ export class Common {
         if (sigops > MAX_P2SH_SIGOPS) {
           return true;
         }
+      } else if (vin.prevout?.scriptpubkey_type === 'p2s' && !this.isMay2026Active(height)) {
+        return true;
       } else if (['unknown', 'provably_unspendable', 'empty'].includes(vin.prevout?.scriptpubkey_type || '')) {
         return true;
       } else if (vin.prevout?.scriptpubkey_type === 'anchor' && this.isNonStandardAnchor(vin, height)) {
@@ -146,6 +148,8 @@ export class Common {
       // scriptpubkey
       if (['nonstandard', 'provably_unspendable', 'empty'].includes(vout.scriptpubkey_type)) {
         // (non-standard output type)
+        return true;
+      } else if (vout.scriptpubkey_type === 'p2s' && !this.isMay2026Active(height)) {
         return true;
       } else if (vout.scriptpubkey_type === 'multisig') {
         if (!DEFAULT_PERMIT_BAREMULTISIG) {
@@ -187,6 +191,22 @@ export class Common {
   }
 
   // Individual versioned standardness rules
+  // BCHN stores the height of the last pre-upgrade block. These are the first
+  // blocks for which SCRIPT_ENABLE_MAY2026 is active.
+  static MAY_2026_FIRST_ACTIVE_BLOCK = {
+    mainnet: 951_145,
+    testnet4: 305_848,
+    scalenet: 10_007,
+    chipnet: 279_792,
+  };
+  static getMaxStandardScriptSigSize(height?: number): number {
+    return this.isMay2026Active(height) ? MAX_SCRIPT_SIZE : MAX_STANDARD_SCRIPTSIG_SIZE_LEGACY;
+  }
+  static isMay2026Active(height?: number): boolean {
+    const firstActiveBlock = this.MAY_2026_FIRST_ACTIVE_BLOCK[config.EXPLORER.NETWORK];
+    return height == null || height >= firstActiveBlock;
+  }
+
   // TODO: Update for BCH.
   static V2_STANDARDNESS_ACTIVATION_HEIGHT = {
     testnet4: 209_919,
@@ -795,7 +815,7 @@ export class Common {
       }
 
       for (const input of tx.inputs) {
-        // Check ScriptSig size (BCH policy/consensus limit check)
+        // Unlocking bytecode is limited to the consensus script size.
         if (input.scriptSig.length > MAX_SCRIPT_SIZE) {
           throw new Error(`input script too large (${input.scriptSig.length} bytes)`);
         }
@@ -807,7 +827,8 @@ export class Common {
       }
 
       for (const output of tx.outputs) {
-        // Check LockingScript size
+        // Keep oversized locking bytecode out of this submission path. This is
+        // distinct from the 201-byte standard P2S locking bytecode limit.
         if (output.lockingScript.length > MAX_SCRIPT_SIZE) {
           throw new Error(`output script too large (${output.lockingScript.length} bytes)`);
         }

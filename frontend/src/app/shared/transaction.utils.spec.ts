@@ -1,4 +1,180 @@
-import { decodeRawTransaction } from '@app/shared/transaction.utils';
+import {
+  decodeRawTransaction,
+  getTransactionFlags,
+  isNonStandard,
+  scriptPubKeyToAddress,
+} from '@app/shared/transaction.utils';
+import { Transaction } from '@app/interfaces/backend-api.interface';
+import { TransactionFlags } from '@app/shared/filters.utils';
+
+const transactionWithScriptSigSize = (
+  bytes: number,
+  txid = '00'.repeat(32)
+): Transaction => ({
+  txid,
+  version: 2,
+  locktime: 0,
+  size: bytes + 100,
+  fee: 1_000,
+  sigops: 0,
+  vin: [
+    {
+      txid: '11'.repeat(32),
+      vout: 0,
+      value: 20_000,
+      is_coinbase: false,
+      scriptsig: '00'.repeat(bytes),
+      scriptsig_asm: '',
+      inner_redeemscript_asm: '',
+      scriptsig_byte_code: [],
+      scriptpubkey_byte_code_pattern: '',
+      sequence: 0xffffffff,
+      prevout: {
+        scriptpubkey: `76a914${'22'.repeat(20)}88ac`,
+        scriptpubkey_asm:
+          `OP_DUP OP_HASH160 OP_PUSHBYTES_20 ${'22'.repeat(20)} ` +
+          'OP_EQUALVERIFY OP_CHECKSIG',
+        scriptpubkey_type: 'p2pkh',
+        value: 20_000,
+      },
+    },
+  ],
+  vout: [
+    {
+      scriptpubkey: `76a914${'33'.repeat(20)}88ac`,
+      scriptpubkey_asm:
+        `OP_DUP OP_HASH160 OP_PUSHBYTES_20 ${'33'.repeat(20)} ` +
+        'OP_EQUALVERIFY OP_CHECKSIG',
+      scriptpubkey_type: 'p2pkh',
+      value: 19_000,
+    },
+  ],
+  status: { confirmed: true },
+});
+
+describe('May 2026 P2S standardness', () => {
+  it.each([
+    ['mainnet', 951_145],
+    ['testnet4', 305_848],
+    ['scalenet', 10_007],
+    ['chipnet', 279_792],
+  ])(
+    'activates the 10,000-byte scriptSig limit on %s at height %i',
+    (network, firstActiveBlock) => {
+      expect(
+        isNonStandard(
+          transactionWithScriptSigSize(1_650),
+          Number(firstActiveBlock) - 1,
+          String(network)
+        )
+      ).toBe(false);
+      expect(
+        isNonStandard(
+          transactionWithScriptSigSize(1_651),
+          Number(firstActiveBlock) - 1,
+          String(network)
+        )
+      ).toBe(true);
+      expect(
+        isNonStandard(
+          transactionWithScriptSigSize(10_000),
+          Number(firstActiveBlock),
+          String(network)
+        )
+      ).toBe(false);
+      expect(
+        isNonStandard(
+          transactionWithScriptSigSize(10_001),
+          Number(firstActiveBlock),
+          String(network)
+        )
+      ).toBe(true);
+    }
+  );
+
+  it('applies current policy when no block height is available', () => {
+    expect(isNonStandard(transactionWithScriptSigSize(10_000))).toBe(false);
+    expect(isNonStandard(transactionWithScriptSigSize(10_001))).toBe(true);
+  });
+
+  it('does not mark the reported chipnet transaction as nonstandard', () => {
+    const tx = transactionWithScriptSigSize(
+      2_000,
+      '00f81b99421ce2433603efee1b8dc94608d14182bec2f5121685d0ec71b9b0cc'
+    );
+    tx.size = 89_378;
+
+    expect(isNonStandard(tx, 320_053, 'chipnet')).toBe(false);
+  });
+
+  it('sets the P2S flag for both inputs and outputs', () => {
+    const tx = transactionWithScriptSigSize(100);
+    tx.vin[0].prevout.scriptpubkey = '51';
+    tx.vin[0].prevout.scriptpubkey_asm = 'OP_PUSHNUM_1';
+    tx.vin[0].prevout.scriptpubkey_type = 'p2s';
+    tx.vout[0].scriptpubkey = '51';
+    tx.vout[0].scriptpubkey_asm = 'OP_PUSHNUM_1';
+    tx.vout[0].scriptpubkey_type = 'p2s';
+    const flags = getTransactionFlags(tx, 320_053, 'chipnet');
+
+    expect(flags & TransactionFlags.p2s).toBe(TransactionFlags.p2s);
+    expect(flags & TransactionFlags.nonstandard).toBe(0n);
+  });
+
+  it('keeps P2S non-standard before activation', () => {
+    const tx = transactionWithScriptSigSize(100);
+    tx.vin[0].prevout.scriptpubkey_type = 'p2s';
+    tx.vout[0].scriptpubkey_type = 'p2s';
+
+    expect(isNonStandard(tx, 279_791, 'chipnet')).toBe(true);
+    expect(isNonStandard(tx, 279_792, 'chipnet')).toBe(false);
+  });
+
+  it('classifies addressless P2S locking bytecode through 201 bytes', () => {
+    expect(scriptPubKeyToAddress('51', 'chipnet')).toEqual({
+      address: null,
+      type: 'p2s',
+    });
+    expect(scriptPubKeyToAddress('51'.repeat(201), 'chipnet')).toEqual({
+      address: null,
+      type: 'p2s',
+    });
+    expect(scriptPubKeyToAddress('51'.repeat(202), 'chipnet')).toEqual({
+      address: null,
+      type: 'unknown',
+    });
+  });
+
+  it('decodes a 128-byte CashToken NFT commitment', () => {
+    const commitment = 'ab'.repeat(128);
+    const tokenScript = [
+      'ef',
+      '22'.repeat(32),
+      '61', // mutable NFT with a commitment
+      '80', // 128-byte commitment
+      commitment,
+      '51', // addressless P2S locking bytecode
+    ].join('');
+    const rawTransaction = [
+      '02000000',
+      '01',
+      '00'.repeat(32),
+      '00000000',
+      '00',
+      'ffffffff',
+      '01',
+      'e803000000000000',
+      'a4', // 164-byte token-prefixed output script
+      tokenScript,
+      '00000000',
+    ].join('');
+
+    const result = decodeRawTransaction(rawTransaction, 'chipnet');
+    expect(result.tx.vout[0].token_nft_commitment).toBe(commitment);
+    expect(result.tx.vout[0].scriptpubkey_type).toBe('p2s');
+    expect(result.tx.vout[0].scriptpubkey_address).toBeNull();
+  });
+});
 
 /**
  * Raw BCH mainnet transaction (version 2, 1 input, 2 outputs, no segwit).
