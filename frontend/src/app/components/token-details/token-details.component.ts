@@ -1,4 +1,10 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  HostListener,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import { BcmrService } from '@app/services/bcmr.service';
 import {
@@ -11,6 +17,7 @@ import { switchMap, catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { SeoService } from '@app/services/seo.service';
 import { StateService } from '@app/services/state.service';
+import { resolveBcmrIconUrl } from '@app/shared/bcmr.utils';
 
 interface TokenInfo {
   category: string;
@@ -36,7 +43,6 @@ interface TokenInfo {
   standalone: false,
 })
 export class TokenDetailsComponent implements OnInit, OnDestroy {
-  private readonly IPFS_GATEWAY = 'https://ipfs.io/ipfs/';
   category: string;
   metadata: BcmrMetadata | null = null;
   isLoading = true;
@@ -50,7 +56,8 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private bcmrService: BcmrService,
     private seoService: SeoService,
-    private stateService: StateService
+    private stateService: StateService,
+    private changeDetectorRef: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -85,6 +92,7 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
       .subscribe((metadata: BcmrMetadata | null) => {
         this.metadata = metadata;
         this.isLoading = false;
+        this.changeDetectorRef.detectChanges();
       });
   }
 
@@ -121,11 +129,7 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
   }
 
   resolveIconUrl(icon?: string): string | null {
-    if (!icon) return null;
-    if (icon.startsWith('ipfs://')) {
-      return this.IPFS_GATEWAY + icon.slice('ipfs://'.length);
-    }
-    return icon; // http(s) already fine
+    return resolveBcmrIconUrl(icon);
   }
 
   improveUri(uri?: string): string | null {
