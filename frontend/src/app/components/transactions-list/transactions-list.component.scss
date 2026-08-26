@@ -243,6 +243,11 @@ td.amount.large {
     min-width: 0;
     max-width: 100%;
   }
+
+  @media (min-width: 992px) {
+    // Use a small part of the amount column's empty left edge before wrapping.
+    width: calc(100% + 2rem);
+  }
 }
 
 @media (max-width: 576px) {
