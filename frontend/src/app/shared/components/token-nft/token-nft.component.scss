@@ -1,3 +1,17 @@
 span {
+  display: block;
+  min-width: 0;
+  max-width: 100%;
+  margin-left: 0 !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
   vertical-align: middle;
+}
+
+:host {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 0.5rem;
+  min-width: 0;
+  max-width: 100%;
 }

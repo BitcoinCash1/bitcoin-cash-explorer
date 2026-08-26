@@ -230,6 +230,28 @@ td.amount.large {
   }
 }
 
+.token-metadata {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.125rem 0.5rem;
+  min-width: 0;
+  white-space: normal;
+
+  app-token-nft {
+    flex-shrink: 0;
+    min-width: 0;
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .token-amount {
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+}
+
 .extra-info {
   display: none;
   @media (min-width: 576px) {

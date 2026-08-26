@@ -296,7 +296,10 @@
                       </ng-container>
                     </div>
                     <ng-container *ngIf="vin.token_category">
-                      <div *ngIf="bcmrMetadata$ | async as meta">
+                      <div
+                        *ngIf="bcmrMetadata$ | async as meta"
+                        class="token-metadata"
+                      >
                         <app-token-icon-and-text
                           [metadata]="meta.get(vin.token_category)"
                           [category]="vin.token_category"
@@ -319,7 +322,10 @@
                       [satoshis]="vin.prevout.value"
                     ></app-amount>
                     <ng-container *ngIf="vin.token_category">
-                      <div *ngIf="bcmrMetadata$ | async as meta">
+                      <div
+                        *ngIf="bcmrMetadata$ | async as meta"
+                        class="token-amount"
+                      >
                         <span>{{
                           formatTokenAmount(
                             vin.token_amount,
@@ -717,7 +723,10 @@
                       }}</ng-template>
                     </ng-template>
                     <ng-container *ngIf="vout.token_category">
-                      <div *ngIf="bcmrMetadata$ | async as meta">
+                      <div
+                        *ngIf="bcmrMetadata$ | async as meta"
+                        class="token-metadata"
+                      >
                         <app-token-icon-and-text
                           [metadata]="meta.get(vout.token_category)"
                           [category]="vout.token_category"
@@ -738,7 +747,10 @@
                       [satoshis]="vout.value"
                     ></app-amount>
                     <ng-container *ngIf="vout.token_category">
-                      <div *ngIf="bcmrMetadata$ | async as meta">
+                      <div
+                        *ngIf="bcmrMetadata$ | async as meta"
+                        class="token-amount"
+                      >
                         <span>{{
                           formatTokenAmount(
                             vout.token_amount,
