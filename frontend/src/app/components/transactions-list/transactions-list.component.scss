@@ -247,6 +247,12 @@ td.amount.large {
   @media (min-width: 992px) {
     // Use a small part of the amount column's empty left edge before wrapping.
     width: calc(100% + 2rem);
+
+    // Inputs lose another column to signature data. Give that space back, but
+    // cap it below the width at which long commitments could overlap amounts.
+    .table-tx-vin & {
+      width: min(calc(100% + 2.5rem), 279px);
+    }
   }
 }
 
