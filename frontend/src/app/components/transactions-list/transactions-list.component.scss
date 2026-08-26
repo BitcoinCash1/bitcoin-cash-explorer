@@ -251,7 +251,7 @@ td.amount.large {
     // Inputs lose another column to signature data. Give that space back, but
     // cap it below the width at which long commitments could overlap amounts.
     .table-tx-vin & {
-      width: min(calc(100% + 2.5rem), 279px);
+      width: min(calc(100% + 2.5rem), 280px);
     }
   }
 }
