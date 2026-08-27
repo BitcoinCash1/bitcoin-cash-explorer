@@ -9,6 +9,7 @@ import BitcoinApi from './bitcoin-api';
 import logger from '../../logger';
 import loadingIndicators from '../loading-indicators';
 import memoryCache from '../memory-cache';
+import { compareElectrumHistoryNewestFirst } from './electrum-history';
 
 class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
   private electrumClient: ElectrumClient;
@@ -106,7 +107,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
 
       const transactions: IPublicApi.VerboseTransaction[] = [];
       const history = await this.$getScriptHashHistory(addressInfo.scriptPubKey);
-      history.sort((a, b) => (b.height || 9999999) - (a.height || 9999999));
+      history.sort(compareElectrumHistoryNewestFirst);
 
       let startingIndex = 0;
       if (lastSeenTxId) {
@@ -226,7 +227,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       if (!history) {
         throw new Error('failed to get scripthash history');
       }
-      history.sort((a, b) => (b.height || 9999999) - (a.height || 9999999));
+      history.sort(compareElectrumHistoryNewestFirst);
 
       let startingIndex = 0;
       if (lastSeenTxId) {
