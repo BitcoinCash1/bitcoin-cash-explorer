@@ -22,6 +22,7 @@ class DB {
     password: config.DATABASE.PASSWORD,
     connectionLimit: config.DATABASE.POOL_SIZE,
     supportBigNumbers: true,
+    jsonStrings: true,
     timezone: '+00:00',
   };
 
