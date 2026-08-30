@@ -5,7 +5,6 @@ import {
   provideHttpClient,
   withInterceptorsFromDi,
 } from '@angular/common/http';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { RouterModule } from '@angular/router';
 import { ZONE_SERVICE } from '@app/injection-tokens';
 import { App } from '@app/app';
@@ -73,7 +72,6 @@ const providers = [
   bootstrap: [App],
   imports: [
     BrowserModule,
-    BrowserAnimationsModule,
     SharedModule,
     RouterModule.forRoot(routes, {
       initialNavigation: 'enabledNonBlocking',

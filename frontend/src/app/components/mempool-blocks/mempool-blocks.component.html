@@ -22,8 +22,7 @@
           [style.right]="mempoolBlockStyles[i].right"
         ></div>
         <div
-          @blockEntryTrigger
-          [@.disabled]="i > 0 || !animateEntry"
+          [animate.enter]="i === 0 && animateEntry ? 'mempool-block-enter' : ''"
           [attr.data-cy]="'mempool-block-' + i"
           class="bitcoin-block text-center mempool-block"
           [class.hide-block]="count && i >= count"

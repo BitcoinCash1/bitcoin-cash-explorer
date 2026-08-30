@@ -27,21 +27,12 @@ import {
   DifficultyAdjustment,
   MempoolPosition,
 } from '@interfaces/node-api.interface';
-import { animate, style, transition, trigger } from '@angular/animations';
 import { ThemeService } from '@app/services/theme.service';
 
 @Component({
   selector: 'app-mempool-blocks',
   templateUrl: './mempool-blocks.component.html',
   styleUrls: ['./mempool-blocks.component.scss'],
-  animations: [
-    trigger('blockEntryTrigger', [
-      transition(':enter', [
-        style({ transform: 'translateX(-155px)' }),
-        animate('2s 0s ease', style({ transform: '' })),
-      ]),
-    ]),
-  ],
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
