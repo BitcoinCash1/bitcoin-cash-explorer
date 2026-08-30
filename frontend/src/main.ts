@@ -1,10 +1,10 @@
 import { provideZoneChangeDetection } from '@angular/core';
 /// <reference types="@angular/localize" />
 
-import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
+import { platformBrowser } from '@angular/platform-browser';
 import { AppModule } from './app/app.module';
 
-platformBrowserDynamic()
+platformBrowser()
   .bootstrapModule(AppModule, {
     applicationProviders: [provideZoneChangeDetection()],
   })

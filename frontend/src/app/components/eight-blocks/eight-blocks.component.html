@@ -15,7 +15,12 @@
           [relativeTime]="blockInfo[i]?.timestamp"
           (txClickEvent)="onTxClick($event)"
         ></app-block-overview-graph>
-        <div *ngIf="showInfo && blockInfo[i]" class="info" @infoChange>
+        <div
+          *ngIf="showInfo && blockInfo[i]"
+          class="info"
+          animate.enter="info-enter"
+          animate.leave="info-leave"
+        >
           <h1 class="height">{{ blockInfo[i].height }}</h1>
           <h2 class="mined-by">
             by {{ blockInfo[i].extras.pool.name || "Unknown" }}

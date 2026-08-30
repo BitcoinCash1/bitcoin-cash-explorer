@@ -18,7 +18,6 @@ import {
 import { ApiService } from '@app/services/api.service';
 import { BlockOverviewGraphComponent } from '@components/block-overview-graph/block-overview-graph.component';
 import { detectWebGL } from '@app/shared/graphs.utils';
-import { animate, style, transition, trigger } from '@angular/animations';
 import { BytesPipe } from '@app/shared/pipes/bytes-pipe/bytes.pipe';
 
 function bestFitResolution(min, max, n): number {
@@ -47,15 +46,6 @@ interface BlockInfo extends BlockExtended {
   selector: 'app-eight-blocks',
   templateUrl: './eight-blocks.component.html',
   styleUrls: ['./eight-blocks.component.scss'],
-  animations: [
-    trigger('infoChange', [
-      transition(':enter', [
-        style({ opacity: 0 }),
-        animate('1000ms', style({ opacity: 1 })),
-      ]),
-      transition(':leave', [animate('1000ms 500ms', style({ opacity: 0 }))]),
-    ]),
-  ],
   standalone: false,
 })
 export class EightBlocksComponent implements OnInit, OnDestroy {

@@ -36,6 +36,20 @@
   top: 0;
 }
 
+.mempool-block-enter {
+  animation: mempool-block-enter 2s ease;
+}
+
+@keyframes mempool-block-enter {
+  from {
+    transform: translateX(-155px);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
 .block-body {
   text-align: center;
   transition: transform 1s;

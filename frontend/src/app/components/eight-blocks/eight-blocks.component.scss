@@ -67,3 +67,27 @@
     overflow: hidden;
   }
 }
+
+.info-enter {
+  animation: info-enter 1s;
+}
+
+.info-leave {
+  animation: info-leave 1s 500ms;
+}
+
+@keyframes info-enter {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes info-leave {
+  to {
+    opacity: 0;
+  }
+}
