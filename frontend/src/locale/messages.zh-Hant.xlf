@@ -411,7 +411,7 @@
             </trans-unit>
             <trans-unit id="2658168326869003675">
                 <source xml:space="preserve">Scalenet Explorer</source>
-                <target xml:space="preserve">Scalenet Explorer</target>
+                <target xml:space="preserve">Scalenet 瀏覽器</target>
             </trans-unit>
             <trans-unit id="2666638972429865742">
                 <source xml:space="preserve"> Verify Address Ownership </source>
@@ -531,7 +531,7 @@
             </trans-unit>
             <trans-unit id="2995325202955798324">
                 <source xml:space="preserve">Chipnet Explorer</source>
-                <target xml:space="preserve">Chipnet Explorer</target>
+                <target xml:space="preserve">Chipnet 瀏覽器</target>
             </trans-unit>
             <trans-unit id="302660251728612874">
                 <source xml:space="preserve"> Avg Health </source>
@@ -679,7 +679,7 @@
             </trans-unit>
             <trans-unit id="3609315297931950072">
                 <source xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> Block </source>
-                <target xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> 块 </target>
+                <target xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> 區塊 </target>
             </trans-unit>
             <trans-unit id="3618113914737563350">
                 <source xml:space="preserve"><x equiv-text="{{ x }}" id="INTERPOLATION"/> remaining</source>
@@ -1179,7 +1179,7 @@
             </trans-unit>
             <trans-unit id="5523115287719193824">
                 <source xml:space="preserve">This is a special block</source>
-                <target xml:space="preserve">This is a special block</target>
+                <target xml:space="preserve">這是一個特殊區塊</target>
             </trans-unit>
             <trans-unit id="5530507757130071978">
                 <source xml:space="preserve"> ScriptPubKey (ASM) </source>
@@ -1515,7 +1515,7 @@
             </trans-unit>
             <trans-unit id="6903541721714103747">
                 <source xml:space="preserve">Special Block</source>
-                <target xml:space="preserve">Special Block</target>
+                <target xml:space="preserve">特殊區塊</target>
             </trans-unit>
             <trans-unit id="6903945166576780156">
                 <source xml:space="preserve"> Bitcoin Cash Supply
@@ -1777,7 +1777,7 @@
             </trans-unit>
             <trans-unit id="8097247056335527144">
                 <source xml:space="preserve">Median Time</source>
-                <target xml:space="preserve">Median Time</target>
+                <target xml:space="preserve">中位數時間</target>
             </trans-unit>
             <trans-unit id="8105367655277227191">
                 <source xml:space="preserve"> Expected </source>

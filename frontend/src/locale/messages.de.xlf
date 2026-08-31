@@ -23,7 +23,7 @@
             </trans-unit>
             <trans-unit id="1063462873103909661">
                 <source xml:space="preserve">Difficulty</source>
-                <target xml:space="preserve">Difficulty</target>
+                <target xml:space="preserve">Schwierigkeit</target>
             </trans-unit>
             <trans-unit id="1130652265542107236">
                 <source xml:space="preserve">Age</source>
@@ -39,7 +39,7 @@
             </trans-unit>
             <trans-unit id="1178696012353613358">
                 <source xml:space="preserve">Headers Only</source>
-                <target xml:space="preserve">Headers Only</target>
+                <target xml:space="preserve">Nur Überschriften</target>
             </trans-unit>
             <trans-unit id="1187919775034823182">
                 <source xml:space="preserve"> X Timeline </source>
@@ -59,7 +59,7 @@
             </trans-unit>
             <trans-unit id="1250839334786630849">
                 <source xml:space="preserve"> Preview Transaction </source>
-                <target xml:space="preserve"> Preview Transaction </target>
+                <target xml:space="preserve"> Vorschau der Transaktion </target>
             </trans-unit>
             <trans-unit id="1257024413147889019">
                 <source xml:space="preserve">Balance (USD)</source>
@@ -79,7 +79,7 @@
             </trans-unit>
             <trans-unit id="1375913333051334272">
                 <source xml:space="preserve"> Timestamp </source>
-                <target xml:space="preserve"> Timestamp </target>
+                <target xml:space="preserve"> Zeitstempel </target>
             </trans-unit>
             <trans-unit id="1386306711019304612">
                 <source xml:space="preserve">Input</source>
@@ -171,7 +171,7 @@
             </trans-unit>
             <trans-unit id="179958430736909593">
                 <source xml:space="preserve">beta</source>
-                <target xml:space="preserve">beta</target>
+                <target xml:space="preserve">Beta</target>
             </trans-unit>
             <trans-unit id="1802871584001127867">
                 <source xml:space="preserve"> in treasuries </source>
@@ -179,7 +179,7 @@
             </trans-unit>
             <trans-unit id="1863028041776311445">
                 <source xml:space="preserve">Preview Transaction</source>
-                <target xml:space="preserve">Preview Transaction</target>
+                <target xml:space="preserve"> Vorschau der Transaktion </target>
             </trans-unit>
             <trans-unit id="1877523490807676946">
                 <source xml:space="preserve">Testnet4 Faucet</source>
@@ -207,7 +207,7 @@
             </trans-unit>
             <trans-unit id="1986319458172810942">
                 <source xml:space="preserve"> CashToken Amount </source>
-                <target xml:space="preserve"> CashToken Amount </target>
+                <target xml:space="preserve"> CashToken Betrag </target>
             </trans-unit>
             <trans-unit id="1989794001571603400">
                 <source xml:space="preserve">High sigop count</source>
@@ -219,11 +219,11 @@
             </trans-unit>
             <trans-unit id="2014501481765374056">
                 <source xml:space="preserve">See the total number of unspent transaction outputs (UTXOs) on the Bitcoin Cash network over time.</source>
-                <target xml:space="preserve">See the total number of unspent transaction outputs (UTXOs) on the Bitcoin Cash network over time.</target>
+                <target xml:space="preserve">Sehen Sie die Gesamtzahl der nicht ausgegebenen Transaktions Outputs (UTXOs) im Bitcoin Cash-Netzwerk im Zeitverlauf.</target>
             </trans-unit>
             <trans-unit id="2041675390931385838">
                 <source xml:space="preserve">Health</source>
-                <target xml:space="preserve">Health</target>
+                <target xml:space="preserve">Gesundheit</target>
             </trans-unit>
             <trans-unit id="2046433062734007708">
                 <source xml:space="preserve">Added</source>
@@ -239,7 +239,6 @@
             </trans-unit>
             <trans-unit id="2091542449422385206">
                 <source xml:space="preserve">Broadcast Transaction</source>
-                <target xml:space="preserve">Broadcast Transaction</target>
             </trans-unit>
             <trans-unit id="2098028765268782950">
                 <source xml:space="preserve">Difficulty Adjustment Deviation</source>
@@ -255,7 +254,7 @@
             </trans-unit>
             <trans-unit id="2157556037790858775">
                 <source xml:space="preserve"> TXs </source>
-                <target xml:space="preserve"> TXs </target>
+                <target xml:space="preserve">Transaktionen</target>
             </trans-unit>
             <trans-unit id="2159027050798400355">
                 <source xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> Transaction </source>
@@ -279,7 +278,7 @@
             </trans-unit>
             <trans-unit id="2216215688309811676">
                 <source xml:space="preserve"> Size </source>
-                <target xml:space="preserve"> Size </target>
+                <target xml:space="preserve"> Größe </target>
             </trans-unit>
             <trans-unit id="2220751863806291374">
                 <source xml:space="preserve">Backend is synchronizing</source>
@@ -287,11 +286,11 @@
             </trans-unit>
             <trans-unit id="2238078017374559466">
                 <source xml:space="preserve">Pools Luck</source>
-                <target xml:space="preserve">Pools Luck</target>
+                <target xml:space="preserve">Poolglück</target>
             </trans-unit>
             <trans-unit id="2238469337972459496">
                 <source xml:space="preserve">Block Time</source>
-                <target xml:space="preserve">Block Time</target>
+                <target xml:space="preserve">Blockzeit</target>
             </trans-unit>
             <trans-unit id="2256671562401574389">
                 <source xml:space="preserve">blocks earlier</source>
@@ -343,7 +342,7 @@
             </trans-unit>
             <trans-unit id="2390412373676968256">
                 <source xml:space="preserve"> Size </source>
-                <target xml:space="preserve"> Size </target>
+                <target xml:space="preserve"> Größe </target>
             </trans-unit>
             <trans-unit id="2436785490931696482">
                 <source xml:space="preserve"> Previous output type </source>
@@ -351,11 +350,11 @@
             </trans-unit>
             <trans-unit id="2451851156281438935">
                 <source xml:space="preserve"> Reward </source>
-                <target xml:space="preserve"> Reward </target>
+                <target xml:space="preserve">Belohnung</target>
             </trans-unit>
             <trans-unit id="2461929428984657289">
                 <source xml:space="preserve">Recent Blocks</source>
-                <target xml:space="preserve">Recent Blocks</target>
+                <target xml:space="preserve">Neueste Blöcke</target>
             </trans-unit>
             <trans-unit id="2471195790491528944">
                 <source xml:space="preserve"> Broadcasted </source>
@@ -367,7 +366,7 @@
             </trans-unit>
             <trans-unit id="2499150228957542782">
                 <source xml:space="preserve">Unspent TXOs</source>
-                <target xml:space="preserve">Unspent TXOs</target>
+                <target xml:space="preserve">Nicht ausgegebene Transaktions Outputs</target>
             </trans-unit>
             <trans-unit id="25148835d92465353fc5fe8897c27d5369978e5a">
                 <source xml:space="preserve">Difficulty</source>
@@ -383,7 +382,7 @@
             </trans-unit>
             <trans-unit id="2575486924758487590">
                 <source xml:space="preserve">Wallet</source>
-                <target xml:space="preserve">Wallet</target>
+                <target xml:space="preserve">Geldbörse</target>
             </trans-unit>
             <trans-unit id="2611475427610660053">
                 <source xml:space="preserve">Transactions</source>
@@ -399,7 +398,7 @@
             </trans-unit>
             <trans-unit id="2620731225742999598">
                 <source xml:space="preserve">Verify Ownership (PSBT)</source>
-                <target xml:space="preserve">Verify Ownership (PSBT)</target>
+                <target xml:space="preserve">Eigentumsnachweis (PSBT)</target>
             </trans-unit>
             <trans-unit id="2628961601867476622">
                 <source xml:space="preserve">Actual</source>
@@ -447,7 +446,7 @@
             </trans-unit>
             <trans-unit id="2800260241472448717">
                 <source xml:space="preserve">Block time (SMA 144)</source>
-                <target xml:space="preserve">Block time (SMA 144)</target>
+                <target xml:space="preserve">Blockzeit (SMA 144)</target>
             </trans-unit>
             <trans-unit id="2808581435762418449">
                 <source xml:space="preserve">This transaction was seen in the mempool prior to mining</source>
@@ -487,7 +486,7 @@
             </trans-unit>
             <trans-unit id="2870197155512312836">
                 <source xml:space="preserve"> Transactions </source>
-                <target xml:space="preserve"> Transactions </target>
+                <target xml:space="preserve"> Transaktionen </target>
             </trans-unit>
             <trans-unit id="2876711679148961149">
                 <source xml:space="preserve">Removed</source>
@@ -507,7 +506,7 @@
             </trans-unit>
             <trans-unit id="2935684390377275172">
                 <source xml:space="preserve">Significant Bitcoin Cash blocks, including halvings, hard forks, protocol upgrades, and other milestones — past and future.</source>
-                <target xml:space="preserve">Significant Bitcoin Cash blocks, including halvings, hard forks, protocol upgrades, and other milestones — past and future.</target>
+                <target xml:space="preserve">Wichtige Bitcoin Cash-Blöcke, einschließlich Halvings, Hard Forks, Protokoll-Upgrades und anderer Meilensteine ​​– vergangene und zukünftige.</target>
             </trans-unit>
             <trans-unit id="2946624699882754313">
                 <source xml:space="preserve">Show all</source>
@@ -535,7 +534,7 @@
             </trans-unit>
             <trans-unit id="302660251728612874">
                 <source xml:space="preserve"> Avg Health </source>
-                <target xml:space="preserve"> Avg Health </target>
+                <target xml:space="preserve"> Durchschnittliche Gesundheit </target>
             </trans-unit>
             <trans-unit id="3033623772164647792">
                 <source xml:space="preserve">Height</source>
@@ -555,15 +554,15 @@
             </trans-unit>
             <trans-unit id="3088064334969042235">
                 <source xml:space="preserve">Special Blocks</source>
-                <target xml:space="preserve">Special Blocks</target>
+                <target xml:space="preserve">Spezielle Blöcke</target>
             </trans-unit>
             <trans-unit id="3090889139796775910">
                 <source xml:space="preserve">See the average number of transactions per Bitcoin Cash block over time.</source>
-                <target xml:space="preserve">See the average number of transactions per Bitcoin Cash block over time.</target>
+                <target xml:space="preserve">Sehen Sie die durchschnittliche Anzahl der Transaktionen pro Bitcoin Cash-Block im Zeitverlauf.</target>
             </trans-unit>
             <trans-unit id="3112239269637020392">
                 <source xml:space="preserve">sats/tx</source>
-                <target xml:space="preserve">sats/tx</target>
+                <target xml:space="preserve">Sats/Tx</target>
             </trans-unit>
             <trans-unit id="312539377512157124">
                 <source xml:space="preserve"><x equiv-text="i" id="INTERPOLATION"/> blocks</source>
@@ -595,11 +594,11 @@
             </trans-unit>
             <trans-unit id="3304972143698843178">
                 <source xml:space="preserve">Event</source>
-                <target xml:space="preserve">Event</target>
+                <target xml:space="preserve">Ereignis</target>
             </trans-unit>
             <trans-unit id="3316413479857864182">
                 <source xml:space="preserve">Block Fees</source>
-                <target xml:space="preserve">Block Fees</target>
+                <target xml:space="preserve">Blockgebühren</target>
             </trans-unit>
             <trans-unit id="3320061433231160997">
                 <source xml:space="preserve">Actual Block</source>
@@ -627,7 +626,7 @@
             </trans-unit>
             <trans-unit id="3388418238806768867">
                 <source xml:space="preserve"> CashToken Category </source>
-                <target xml:space="preserve"> CashToken Category </target>
+                <target xml:space="preserve"> CashToken Kategorie </target>
             </trans-unit>
             <trans-unit id="3399131819685362332">
                 <source xml:space="preserve">Address Types</source>
@@ -667,7 +666,7 @@
             </trans-unit>
             <trans-unit id="3533694482361206673">
                 <source xml:space="preserve"> 1w </source>
-                <target xml:space="preserve"> 1w </target>
+                <target xml:space="preserve"> 1W </target>
             </trans-unit>
             <trans-unit id="3563823504206575540">
                 <source xml:space="preserve"> Description </source>
@@ -1153,7 +1152,7 @@
             </trans-unit>
             <trans-unit id="5417840158792309126">
                 <source xml:space="preserve"> If you like this project and use the explorer on a regular basis, please consider <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Donate to support BCH Explorer&quot;         &gt;" id="START_LINK"/>donating<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/>. </source>
-                <target xml:space="preserve"> If you like this project and use the explorer on a regular basis, please consider <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Donate to support BCH Explorer&quot;         &gt;" id="START_LINK"/>donating<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/>. </target>
+                <target xml:space="preserve"> Wenn Ihnen dieses Projekt gefällt und Sie den Explorer regelmäßig nutzen, erwägen Sie bitte <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://melroy.org/donate.html&quot;         target=&quot;_blank&quot;         aria-label=&quot;Donate to support BCH Explorer&quot;         &gt;" id="START_LINK"/>eine Spende<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/>. </target>
             </trans-unit>
             <trans-unit id="5458697026988984634">
                 <source xml:space="preserve">Cheap</source>
@@ -1253,7 +1252,10 @@
             </trans-unit>
             <trans-unit id="590117958379793860">
                 <source xml:space="preserve"> Maintaining, improving and creating this BCH explorer costs <x ctype="x-i" equiv-text="&lt;i&gt;" id="START_ITALIC_TEXT"/>a lot of time and effort<x ctype="x-i" equiv-text="&lt;/i&gt;" id="CLOSE_ITALIC_TEXT"/>. As a one-man operation, I spend a lot of personal time working on this project. </source>
-                <target xml:space="preserve"> Maintaining, improving and creating this BCH explorer costs <x ctype="x-i" equiv-text="&lt;i&gt;" id="START_ITALIC_TEXT"/>a lot of time and effort<x ctype="x-i" equiv-text="&lt;/i&gt;" id="CLOSE_ITALIC_TEXT"/>. As a one-man operation, I spend a lot of personal time working on this project. </target>
+                <target xml:space="preserve">Die Pflege, Verbesserung und Weiterentwicklung dieses BCH-Explorers kostet
+<x ctype="x-i" equiv-text="&amp;lt;i&amp;gt;" id="START_ITALIC_TEXT"/>viel Zeit und Aufwand
+<x ctype="x-i" equiv-text="&amp;lt;/i&amp;gt;" id="CLOSE_ITALIC_TEXT"/>.
+Da ich das Projekt alleine betreibe, investiere ich viel meiner Freizeit.</target>
             </trans-unit>
             <trans-unit id="5952169083806719170">
                 <source xml:space="preserve">1 block earlier</source>
