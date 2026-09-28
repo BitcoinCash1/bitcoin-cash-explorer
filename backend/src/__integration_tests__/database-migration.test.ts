@@ -63,6 +63,19 @@ describe('Database Migration Integration Tests', () => {
     expect(result[0].count).toBe(1);
   });
 
+  test('should create the Goggles rollup table with a 64 bit size total', async () => {
+    const [columns] = await DB.query<any>(
+      `SELECT COLUMN_NAME, DATA_TYPE
+       FROM information_schema.COLUMNS
+       WHERE TABLE_SCHEMA = 'mempool_test'
+       AND TABLE_NAME = 'flag_values'`
+    );
+    expect(columns.map((column: any) => column.COLUMN_NAME)).toEqual(
+      expect.arrayContaining(['bucket_size', 'start_height', 'flag_value', 'tx_count', 'size_total'])
+    );
+    expect(columns.find((column: any) => column.COLUMN_NAME === 'size_total')?.DATA_TYPE).toBe('bigint');
+  });
+
   test('blocks table should have required columns', async () => {
     const [columns] = await DB.query<any>(
       `SELECT COLUMN_NAME 
