@@ -1097,8 +1097,10 @@ class BitcoinRoutes {
       const startHeight = presets[interval].retentionSpan !== -1 ? tip - presets[interval].retentionSpan : -1;
       const txsCount = await FlagValueRepository.$queryTxCountBasedOnMask(mask, bucketSize, op, startHeight);
       res.header('X-total-count', totalCount.toString());
-      // New buckets can appear while historical summaries are backfilling.
-      res.header('Expires', new Date(Date.now() + 1000 * 60 * 5).toUTCString());
+      res.header(
+        'Expires',
+        new Date(Date.now() + 1000 * 3600 * 24 * (presets[interval].bucketSizes[0] / 144)).toUTCString()
+      );
       res.send(txsCount);
     } catch (e: any) {
       handleError(req, res, 500, e instanceof Error ? e.message : 'Failed to get flag values');
