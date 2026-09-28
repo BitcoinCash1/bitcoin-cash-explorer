@@ -74,6 +74,14 @@ export class BlockGogglesGraphComponent implements OnInit {
   allLabel = $localize`All transactions`;
   transactionsLabel = $localize`Transactions`;
   matchedLabel = $localize`Matched`;
+  historicalIndexingLabel = $localize`Historical Goggles data is still indexing`;
+  historicalIntervals = [
+    { value: '6m', label: '6M' },
+    { value: '1y', label: '1Y' },
+    { value: '2y', label: '2Y' },
+    { value: '3y', label: '3Y' },
+    { value: 'all', label: 'ALL' },
+  ];
 
   chartOptions: EChartsOption = {};
   chartInitOptions = {
@@ -129,7 +137,7 @@ export class BlockGogglesGraphComponent implements OnInit {
       this.miningWindowPreference = '6m';
     } else {
       this.seoService.setTitle($localize`Explorer Goggles`);
-      this.seoService.setDescription($localize`:@@meta.description.bitcoin.graphs.goggles:See Bitcoin transactions matching Explorer Goggles filters visualized over time.`);
+      this.seoService.setDescription($localize`:@@meta.description.bitcoin.graphs.goggles:See Bitcoin Cash transactions matching Explorer Goggles filters visualized over time.`);
       this.miningWindowPreference = this.miningService.getDefaultTimespan('24h');
     }
     if (!this.intervals.includes(this.miningWindowPreference)) {
@@ -270,7 +278,7 @@ export class BlockGogglesGraphComponent implements OnInit {
             const body: GogglesRollup[] = response.body || [];
             const headerCount = parseInt(response.headers.get('x-total-count'), 10);
             return {
-              blockCount: Number.isFinite(headerCount) ? headerCount : Number.MAX_SAFE_INTEGER,
+              blockCount: Number.isFinite(headerCount) ? headerCount : 0,
               txCount: body.reduce((acc, row) => acc + row.txCount, 0),
             };
           }),
@@ -278,7 +286,7 @@ export class BlockGogglesGraphComponent implements OnInit {
             this.prepareChartOptions([], [], [], err);
             this.isLoading = false;
             this.cd.markForCheck();
-            return of({ blockCount: Number.MAX_SAFE_INTEGER, txCount: 0 });
+            return of({ blockCount: 0, txCount: 0 });
           }),
         );
       }),
