@@ -540,7 +540,10 @@ class Blocks {
 
       // Logging
       let newlyIndexed = 0;
-      let totalIndexed = indexedBlockSummariesHashesArray.length;
+      let totalIndexed = indexedBlocks.reduce(
+        (count, block) => count + (indexedBlockSummariesHashes[block.hash] === true ? 1 : 0),
+        0
+      );
       let indexedThisRun = 0;
       let timer = Date.now() / 1000;
       const startedAt = Date.now() / 1000;
