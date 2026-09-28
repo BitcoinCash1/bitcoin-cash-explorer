@@ -110,7 +110,7 @@ const routes: Routes = [
           },
           {
             path: 'goggles',
-            data: { networks: [ 'bitcoin' ]},
+            data: { networks: ['bitcoin'] },
             component: BlockGogglesGraphComponent,
           },
           {

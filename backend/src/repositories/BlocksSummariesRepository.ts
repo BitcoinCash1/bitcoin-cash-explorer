@@ -238,7 +238,9 @@ class BlocksSummariesRepository {
       return null;
     }
     try {
-      const [row]: any[] = await DB.query('SELECT MAX(bs.height) as tip FROM blocks_summaries bs JOIN blocks b ON bs.id = b.hash WHERE bs.version >= 1 AND b.stale = 0');
+      const [row]: any[] = await DB.query(
+        'SELECT MAX(bs.height) as tip FROM blocks_summaries bs JOIN blocks b ON bs.id = b.hash WHERE bs.version >= 1 AND b.stale = 0'
+      );
 
       if (row !== null && row.length > 0) {
         return row[0].tip;
@@ -249,13 +251,21 @@ class BlocksSummariesRepository {
     return null;
   }
 
-  public async $getSummariesBetweenHeights(startHeight: number, latestHeight: number): Promise<{height: number, transactions: string, timestamp: number}[]> {
+  public async $getSummariesBetweenHeights(
+    startHeight: number,
+    latestHeight: number
+  ): Promise<{ height: number; transactions: string; timestamp: number }[]> {
     try {
-      const [rows]: any[] = await DB.query(`SELECT bs.height, bs.transactions, UNIX_TIMESTAMP(b.blockTimestamp) as timestamp FROM blocks_summaries bs JOIN blocks b ON bs.id = b.hash WHERE bs.height <= ? AND bs.height > ? AND b.stale = 0 AND bs.version >= 1 ORDER BY height DESC`, [startHeight, latestHeight]);
+      const [rows]: any[] = await DB.query(
+        `SELECT bs.height, bs.transactions, UNIX_TIMESTAMP(b.blockTimestamp) as timestamp FROM blocks_summaries bs JOIN blocks b ON bs.id = b.hash WHERE bs.height <= ? AND bs.height > ? AND b.stale = 0 AND bs.version >= 1 ORDER BY height DESC`,
+        [startHeight, latestHeight]
+      );
 
       return rows;
     } catch (e) {
-      logger.err(`Cannot get blocks between ${startHeight} and ${latestHeight}. Reason: ` + (e instanceof Error ? e.message : e));
+      logger.err(
+        `Cannot get blocks between ${startHeight} and ${latestHeight}. Reason: ` + (e instanceof Error ? e.message : e)
+      );
       throw e;
     }
   }

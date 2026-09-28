@@ -1074,22 +1074,35 @@ class BitcoinRoutes {
         return;
       }
 
-      const op = (req.params.op) as 'and' | 'or' | 'nor' | undefined;
+      const op = req.params.op as 'and' | 'or' | 'nor' | undefined;
       const mask = BigInt(req.params.mask ?? 0n);
 
-      const { tip, tail }  = await FlagValueRepository.$getTipAndTailIndexedByBucketSize(bucketSize) || { tip: undefined, tail: undefined };
+      const { tip, tail } = (await FlagValueRepository.$getTipAndTailIndexedByBucketSize(bucketSize)) || {
+        tip: undefined,
+        tail: undefined,
+      };
 
       if (tip === undefined || tail === undefined) {
-        handleError(req, res, 503, `Historical Goggles data is unavailable: no complete ${bucketSize}-block bucket is indexed`);
+        handleError(
+          req,
+          res,
+          503,
+          `Historical Goggles data is unavailable: no complete ${bucketSize}-block bucket is indexed`
+        );
         return;
       }
 
-      const totalCount = await FlagValueRepository.$getTotalBlocksIndexedByBucketSize(bucketSize === 1 ? 1008 : bucketSize) ?? tip - tail;
+      const totalCount =
+        (await FlagValueRepository.$getTotalBlocksIndexedByBucketSize(bucketSize === 1 ? 1008 : bucketSize)) ??
+        tip - tail;
 
-      const startHeight = presets[interval].retentionSpan !== -1 ? (tip - presets[interval].retentionSpan) : -1;
+      const startHeight = presets[interval].retentionSpan !== -1 ? tip - presets[interval].retentionSpan : -1;
       const txsCount = await FlagValueRepository.$queryTxCountBasedOnMask(mask, bucketSize, op, startHeight);
       res.header('X-total-count', totalCount.toString());
-      res.header('Expires', new Date(Date.now() + 1000 * 3600 * 24 * (presets[interval].bucketSizes[0] / 144)).toUTCString());
+      res.header(
+        'Expires',
+        new Date(Date.now() + 1000 * 3600 * 24 * (presets[interval].bucketSizes[0] / 144)).toUTCString()
+      );
       res.send(txsCount);
     } catch (e: any) {
       handleError(req, res, 500, e instanceof Error ? e.message : 'Failed to get flag values');

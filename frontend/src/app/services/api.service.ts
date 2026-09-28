@@ -557,10 +557,17 @@ export class ApiService {
     );
   }
 
-  getHistoricalTxCountByFlags$(interval: string, bucketSize: string, op?: string, mask?: string): Observable<HttpResponse<any[]>> {
+  getHistoricalTxCountByFlags$(
+    interval: string,
+    bucketSize: string,
+    op?: string,
+    mask?: string
+  ): Observable<HttpResponse<any[]>> {
     return this.httpClient.get<any[]>(
-      this.apiBaseUrl + this.apiBasePath + `/api/v1/goggles/${interval}/${bucketSize}` +
-      (op !== undefined && mask !== undefined ? `/${op}/${mask}` : ''),
+      this.apiBaseUrl +
+        this.apiBasePath +
+        `/api/v1/goggles/${interval}/${bucketSize}` +
+        (op !== undefined && mask !== undefined ? `/${op}/${mask}` : ''),
       { observe: 'response' }
     );
   }
