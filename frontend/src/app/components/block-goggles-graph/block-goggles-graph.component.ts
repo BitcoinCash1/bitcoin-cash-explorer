@@ -74,7 +74,7 @@ export class BlockGogglesGraphComponent implements OnInit {
   allLabel = $localize`All transactions`;
   transactionsLabel = $localize`Transactions`;
   matchedLabel = $localize`Matched`;
-  historicalIndexingLabel = $localize`Historical Goggles data is still indexing`;
+  historicalIndexingLabel = $localize`Historical Goggles data is unavailable on this instance`;
   historicalIntervals = [
     { value: '6m', label: '6M' },
     { value: '1y', label: '1Y' },
@@ -339,13 +339,15 @@ export class BlockGogglesGraphComponent implements OnInit {
     const filtered = !!this.goggle$.value.mask;
     const perBlock = totalData.length > 0 && totalData[0].bucketSize === 1;
     let title: object;
-    if (totalData.length === 0 ) {
+    if (totalData.length === 0) {
       title = {
         textStyle: {
           color: 'grey',
           fontSize: 15
         },
-        text: $localize`:@@23555386d8af1ff73f297e89dd4af3f4689fb9dd:Indexing blocks`,
+        text: this.timespan === '24h'
+          ? $localize`Recent Goggles data is not indexed yet`
+          : $localize`Historical Goggles data is not indexed yet`,
         left: 'center',
         top: 'center'
       };
@@ -357,6 +359,21 @@ export class BlockGogglesGraphComponent implements OnInit {
           fontSize: 15
         },
         text: $localize`Block summaries indexing is required for this graph`,
+        left: 'center',
+        top: 'center'
+      };
+    } else if (error) {
+      title = {
+        textStyle: {
+          color: 'grey',
+          fontSize: 15
+        },
+        text: error.status === 503 || error.status === 400
+          ? $localize`Historical Goggles data is unavailable`
+          : $localize`Unable to load Goggles data`,
+        subtext: error.status === 503 || error.status === 400
+          ? $localize`More indexed block history is required for this interval`
+          : '',
         left: 'center',
         top: 'center'
       };

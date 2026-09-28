@@ -29,6 +29,7 @@ class FlagValuesRepository {
       }
     } catch (e) {
       logger.err(`Cannot get tip and tail indexed from flag_values. Reason: ` + (e instanceof Error ? e.message : e));
+      throw e;
     }
     return null;
   }
@@ -103,7 +104,8 @@ class FlagValuesRepository {
         return rows;
       }
     } catch (e) {
-      logger.debug(`Cannot get tx counts. Reason: ${e instanceof Error ? e.message : e}`);
+      logger.err(`Cannot get tx counts. Reason: ${e instanceof Error ? e.message : e}`);
+      throw e;
     }
     return [];
   }

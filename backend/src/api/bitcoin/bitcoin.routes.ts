@@ -1080,7 +1080,7 @@ class BitcoinRoutes {
       const { tip, tail }  = await FlagValueRepository.$getTipAndTailIndexedByBucketSize(bucketSize) || { tip: undefined, tail: undefined };
 
       if (tip === undefined || tail === undefined) {
-        handleError(req, res, 400, `Failed to get latest indexed flag values for ${interval}`);
+        handleError(req, res, 503, `Historical Goggles data is unavailable: no complete ${bucketSize}-block bucket is indexed`);
         return;
       }
 
@@ -1092,7 +1092,7 @@ class BitcoinRoutes {
       res.header('Expires', new Date(Date.now() + 1000 * 3600 * 24 * (presets[interval].bucketSizes[0] / 144)).toUTCString());
       res.send(txsCount);
     } catch (e: any) {
-      handleError(req, res, 400, e instanceof Error ? e.message : 'Failed to get flag values');
+      handleError(req, res, 500, e instanceof Error ? e.message : 'Failed to get flag values');
     }
   }
 
