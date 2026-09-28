@@ -4,7 +4,7 @@ import logger from '../logger';
 import { Common } from './common';
 
 class DatabaseMigration {
-  private static currentVersion = 108;
+  private static currentVersion = 109;
   private queryTimeout = 3600_000;
   private statisticsAddedIndexed = false;
   private uniqueLogs: string[] = [];
@@ -874,6 +874,25 @@ class DatabaseMigration {
     if (databaseSchemaVersion < 108) {
       await this.$executeQuery(this.getCreateFlagsValuesTableQuery(), await this.$checkIfTableExists('flag_values'));
       await this.updateToSchemaVersion(108);
+    }
+
+    if (databaseSchemaVersion < 109) {
+      // Older installations can report a current schema while still using height as the
+      // primary key. That prevents a canonical block from replacing a stale block at
+      // the same height and leaves permanent gaps in Goggles rollups.
+      const [primaryKey]: any[] = await this.$executeQuery(
+        `SELECT COLUMN_NAME FROM information_schema.KEY_COLUMN_USAGE
+         WHERE TABLE_SCHEMA = '${config.DATABASE.DATABASE}' AND TABLE_NAME = 'blocks'
+           AND CONSTRAINT_NAME = 'PRIMARY' ORDER BY ORDINAL_POSITION`,
+        true
+      );
+      if (primaryKey.length !== 1 || !['height', 'hash'].includes(primaryKey[0].COLUMN_NAME)) {
+        throw new Error('Unexpected blocks primary key; expected height or hash');
+      }
+      if (primaryKey[0].COLUMN_NAME === 'height') {
+        await this.$executeQuery('ALTER TABLE blocks DROP PRIMARY KEY, ADD PRIMARY KEY (hash), ADD INDEX (height)');
+      }
+      await this.updateToSchemaVersion(109);
     }
   }
 

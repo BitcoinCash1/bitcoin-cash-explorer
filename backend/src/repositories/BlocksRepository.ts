@@ -1006,12 +1006,12 @@ class BlocksRepository {
 
   /**
    * Get a list of blocks that have been indexed
-   * (includes stale blocks)
+   * Only canonical blocks are used for block summary indexing.
    */
   public async $getIndexedBlocks(): Promise<{ height: number; hash: string; stale: boolean }[]> {
     try {
       const [rows] = (await DB.query(
-        `SELECT height, hash, stale FROM blocks ORDER BY height DESC`
+        `SELECT height, hash, stale FROM blocks WHERE stale = 0 ORDER BY height DESC`
       )) as RowDataPacket[][];
       return rows as { height: number; hash: string; stale: boolean }[];
     } catch (e) {
