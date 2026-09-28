@@ -1041,8 +1041,8 @@ class BitcoinRoutes {
 
   private async getTxCountPerFlagValue(req: Request, res: Response) {
     try {
-      if (!Common.blocksSummariesIndexingEnabled()) {
-        handleError(req, res, 404, `Block summaries indexing is required for this API`);
+      if (!Common.gogglesIndexingEnabled()) {
+        handleError(req, res, 404, `Goggles indexing is required for this API`);
         return;
       }
 

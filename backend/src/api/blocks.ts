@@ -600,7 +600,7 @@ class Blocks {
       return;
     }
 
-    if (Common.blocksSummariesIndexingEnabled() === false) {
+    if (Common.gogglesIndexingEnabled() === false) {
       return;
     }
 

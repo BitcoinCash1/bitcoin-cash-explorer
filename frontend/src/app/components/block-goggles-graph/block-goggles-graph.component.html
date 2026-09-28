@@ -17,7 +17,7 @@
       <form
         [formGroup]="radioGroupForm"
         class="formRadioGroup interval-group"
-        *ngIf="statsObservable$ | async as stats"
+        *ngIf="statsObservable$ | async"
       >
         <div class="btn-group" role="group" name="radioBasic">
           <input
@@ -36,7 +36,6 @@
               class="btn-check"
               [id]="'goggles-' + interval.value"
               [value]="interval.value"
-              [attr.disabled]="stats.blockCount === 0 ? '' : null"
               [fragment]="getFragment(interval.value)"
               [routerLink]="['/graphs/goggles' | relativeUrl]"
               formControlName="dateSpan"
@@ -44,7 +43,6 @@
             <label
               class="btn btn-primary btn-sm"
               [for]="'goggles-' + interval.value"
-              [title]="stats.blockCount === 0 ? historicalIndexingLabel : ''"
               >{{ interval.label }}</label
             >
           </ng-container>

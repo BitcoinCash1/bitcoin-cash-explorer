@@ -676,7 +676,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">616</context>
+          <context context-type="linenumber">615</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-health-graph/block-health-graph.component.ts</context>
@@ -940,7 +940,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">174</context>
+          <context context-type="linenumber">173</context>
         </context-group>
         <note priority="1" from="description">mining.mempool-goggles</note>
       </trans-unit>
@@ -948,7 +948,7 @@
         <source>Absolute</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.html</context>
-          <context context-type="linenumber">119,121</context>
+          <context context-type="linenumber">117,119</context>
         </context-group>
         <note priority="1" from="description">mining.absolute</note>
       </trans-unit>
@@ -956,7 +956,7 @@
         <source>Relative</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.html</context>
-          <context context-type="linenumber">132,134</context>
+          <context context-type="linenumber">130,132</context>
         </context-group>
         <note priority="1" from="description">mining.relative</note>
       </trans-unit>
@@ -989,144 +989,137 @@
           <context context-type="linenumber">107</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5399584347204224113" datatype="html">
-        <source>Historical Goggles data is unavailable on this instance</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">108</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="meta.description.bitcoin.graphs.goggles" datatype="html">
         <source>See Bitcoin Cash transactions matching Explorer Goggles filters visualized over time.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">176</context>
+          <context context-type="linenumber">175</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1571987793005765970" datatype="html">
         <source>Recent Goggles data is not indexed yet</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">479</context>
+          <context context-type="linenumber">478</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4741499275883076849" datatype="html">
         <source>Historical Goggles data is not indexed yet</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">480</context>
+          <context context-type="linenumber">479</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="5854945220284529687" datatype="html">
-        <source>Block summaries indexing is required for this graph</source>
+      <trans-unit id="4948327672903382079" datatype="html">
+        <source>Goggles indexing is required for this graph</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">491</context>
+          <context context-type="linenumber">490</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7100682569130055450" datatype="html">
         <source>Historical Goggles data is unavailable</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">503</context>
+          <context context-type="linenumber">502</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7379502371151001203" datatype="html">
         <source>Unable to load Goggles data</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">504</context>
+          <context context-type="linenumber">503</context>
         </context-group>
       </trans-unit>
       <trans-unit id="437528108502186964" datatype="html">
         <source>More indexed block history is required for this interval</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">507</context>
+          <context context-type="linenumber">506</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6692790334231877872" datatype="html">
         <source>Share of bytes (%)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">517</context>
+          <context context-type="linenumber">516</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7588360653697178739" datatype="html">
         <source>Share of txs (%)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">518</context>
+          <context context-type="linenumber">517</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7156679713701409170" datatype="html">
         <source>Total size (B)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">520</context>
+          <context context-type="linenumber">519</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2329414200589920187" datatype="html">
         <source>Total txs (Count)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">521</context>
+          <context context-type="linenumber">520</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7419704019640008953" datatype="html">
         <source>Share</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">604</context>
+          <context context-type="linenumber">603</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7981396798858761045" datatype="html">
         <source>*On average between blocks <x id="PH" equiv-text="startHeight"/> - <x id="PH_1" equiv-text="startHeight + bucketSize - 1"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">612</context>
+          <context context-type="linenumber">611</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4401611379108367393" datatype="html">
         <source>Weekly average</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">849</context>
+          <context context-type="linenumber">848</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5868129569955318876" datatype="html">
         <source>Monthly average</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">851</context>
+          <context context-type="linenumber">850</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3629811700647770560" datatype="html">
         <source>matching none of: </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">856</context>
+          <context context-type="linenumber">855</context>
         </context-group>
       </trans-unit>
       <trans-unit id="94192612217457160" datatype="html">
         <source>matching any of: </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">858</context>
+          <context context-type="linenumber">857</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4777086504104566868" datatype="html">
         <source>matching all of: </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">860</context>
+          <context context-type="linenumber">859</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3705814444030703471" datatype="html">
         <source>of transactions</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-goggles-graph/block-goggles-graph.component.ts</context>
-          <context context-type="linenumber">864</context>
+          <context context-type="linenumber">863</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3935190348395891735" datatype="html">

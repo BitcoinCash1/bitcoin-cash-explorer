@@ -105,7 +105,6 @@ export class BlockGogglesGraphComponent implements OnInit {
   allLabel = $localize`All transactions`;
   transactionsLabel = $localize`Transactions`;
   matchedLabel = $localize`Matched`;
-  historicalIndexingLabel = $localize`Historical Goggles data is unavailable on this instance`;
   historicalIntervals = [
     { value: '6m', label: '6M' },
     { value: '1y', label: '1Y' },
@@ -488,7 +487,7 @@ export class BlockGogglesGraphComponent implements OnInit {
           color: 'grey',
           fontSize: 15,
         },
-        text: $localize`Block summaries indexing is required for this graph`,
+        text: $localize`Goggles indexing is required for this graph`,
         left: 'center',
         top: 'center',
       };
