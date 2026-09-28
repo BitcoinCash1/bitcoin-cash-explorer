@@ -763,7 +763,7 @@ class Blocks {
   }
 
   public async $indexBlockSummary(hash: string, height: number, stale?: boolean): Promise<void> {
-    await this.$getStrippedBlockTransactions(hash, true, true); // This will index the block summary
+    await this.$getStrippedBlockTransactions(hash, true, true, height); // This will index the block summary
   }
 
   /**
@@ -1491,11 +1491,6 @@ class Blocks {
     }
 
     let height = blockHeight;
-    let summaryVersion = 0;
-    const txs = (await bitcoinApi.$getTxsForBlock(hash, true)).map((tx) => transactionUtils.extendTransaction(tx));
-    const summary = this.summarizeBlockTransactions(hash, height || 0, txs);
-    summaryVersion = 1;
-
     if (height == null) {
       // If the block is orphaned, use the height from the chaintips cache
       const orphanedBlock = chainTips.getOrphanedBlock(hash);
@@ -1507,9 +1502,12 @@ class Blocks {
       }
     }
 
+    const txs = (await bitcoinApi.$getTxsForBlock(hash, true)).map((tx) => transactionUtils.extendTransaction(tx));
+    const summary = this.summarizeBlockTransactions(hash, height, txs);
+
     // Index the response if needed
     if (Common.blocksSummariesIndexingEnabled() === true) {
-      await BlocksSummariesRepository.$saveTransactions(height, hash, summary.transactions, summaryVersion);
+      await BlocksSummariesRepository.$saveTransactions(height, hash, summary.transactions, 1);
     }
 
     return summary.transactions;

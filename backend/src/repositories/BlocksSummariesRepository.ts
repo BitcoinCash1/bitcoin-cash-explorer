@@ -84,7 +84,7 @@ class BlocksSummariesRepository {
 
   public async $getIndexedSummariesId(): Promise<string[]> {
     try {
-      const [rows] = (await DB.query(`SELECT id from blocks_summaries`)) as RowDataPacket[][];
+      const [rows] = (await DB.query(`SELECT id from blocks_summaries WHERE version >= 1`)) as RowDataPacket[][];
       return rows.map((row) => row.id);
     } catch (e) {
       logger.err(`Cannot get block summaries id list. Reason: ` + (e instanceof Error ? e.message : e));
