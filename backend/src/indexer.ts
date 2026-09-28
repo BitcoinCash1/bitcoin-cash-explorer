@@ -226,6 +226,7 @@ class Indexer {
       await mining.$generateNetworkHashrateHistory();
       await mining.$generatePoolHashrateHistory();
       await blocks.$generateBlocksSummariesDatabase();
+      await blocks.$generateFlagValuesDatabase();
       await blocks.$generateAuditStats();
       await auditReplicator.$sync();
       await statisticsReplicator.$sync();

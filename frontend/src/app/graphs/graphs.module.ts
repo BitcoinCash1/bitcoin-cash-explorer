@@ -8,6 +8,7 @@ import { BlockFeesSubsidyGraphComponent } from '@components/block-fees-subsidy-g
 import { PriceChartComponent } from '@components/price-chart/price-chart.component';
 import { BlockRewardsGraphComponent } from '@components/block-rewards-graph/block-rewards-graph.component';
 import { BlockFeeRatesGraphComponent } from '@components/block-fee-rates-graph/block-fee-rates-graph.component';
+import { BlockGogglesGraphComponent } from '@components/block-goggles-graph/block-goggles-graph.component';
 import { BlockSizesGraphComponent } from '@components/block-sizes-graph/block-sizes-graph.component';
 import { BlockTimesGraphComponent } from '@components/block-times-graph/block-times-graph.component';
 import { FeeDistributionGraphComponent } from '@components/fee-distribution-graph/fee-distribution-graph.component';
@@ -66,6 +67,7 @@ import { UtxoSizeGraphComponent } from '@app/components/utxo-size-graph/utxo-siz
     PriceChartComponent,
     BlockRewardsGraphComponent,
     BlockFeeRatesGraphComponent,
+    BlockGogglesGraphComponent,
     BlockSizesGraphComponent,
     BlockTimesGraphComponent,
     FeeDistributionGraphComponent,

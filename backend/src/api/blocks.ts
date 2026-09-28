@@ -40,6 +40,7 @@ import valkeyCache from './valkey-cache';
 import { calcBitsDifference } from './difficulty-adjustment';
 import { parseDATUMTemplateCreator } from '../utils/bitcoin-script';
 import database from '../database';
+import FlagValueRepository, { INDEXING_PRESETS } from '../repositories/FlagValueRepository';
 
 class Blocks {
   private blocks: BlockExtended[] = [];
@@ -59,6 +60,8 @@ class Blocks {
   // private classifyingBlocks = false;
 
   private mainLoopTimeout = 120000;
+  private indexingFlagValues = false;
+  private flagValuesDeleteQueue: number[] = [];
 
   public getBlocks(): BlockExtended[] {
     return this.blocks;
@@ -537,7 +540,10 @@ class Blocks {
 
       // Logging
       let newlyIndexed = 0;
-      let totalIndexed = indexedBlockSummariesHashesArray.length;
+      let totalIndexed = indexedBlocks.reduce(
+        (count, block) => count + (indexedBlockSummariesHashes[block.hash] === true ? 1 : 0),
+        0
+      );
       let indexedThisRun = 0;
       let timer = Date.now() / 1000;
       const startedAt = Date.now() / 1000;
@@ -586,8 +592,181 @@ class Blocks {
     }
   }
 
+  /**
+   * [INDEXING] Index all blocks flag values for the goggles graph rendering
+   *
+   *  @asyncSafe
+   */
+  public async $generateFlagValuesDatabase(): Promise<void> {
+    const MAX_BLOCKS_PERQUERY = 144;
+    if (this.indexingFlagValues) {
+      return;
+    }
+
+    if (Common.gogglesIndexingEnabled() === false) {
+      return;
+    }
+
+    this.indexingFlagValues = true;
+
+    try {
+      const tipOfSummaries = await BlocksSummariesRepository.$getTipIndexed();
+      if (!tipOfSummaries) {
+        return;
+      }
+
+      let newlyIndexedBuckets = 0;
+
+      while (this.flagValuesDeleteQueue.length > 0) {
+        // Deletion of in-queue heights due to reorg
+        const deletionHeight = this.flagValuesDeleteQueue[0];
+        if (deletionHeight === undefined) {
+          this.flagValuesDeleteQueue.shift();
+          continue;
+        }
+        await FlagValueRepository.$deleteFlagValuesFromHeight(deletionHeight);
+        this.flagValuesDeleteQueue.shift();
+      }
+
+      for (const preset of INDEXING_PRESETS) {
+        let seedHeight = preset.retentionSpan > -1 ? tipOfSummaries - preset.retentionSpan : 0;
+        if (config.EXPLORER.INDEXING_BLOCKS_AMOUNT > 0) {
+          seedHeight = Math.max(seedHeight, tipOfSummaries - config.EXPLORER.INDEXING_BLOCKS_AMOUNT + 1);
+        }
+        const firstBucket =
+          Math.floor((tipOfSummaries + 1) / preset.bucketSize) * preset.bucketSize - preset.bucketSize;
+        const lastBucket = Math.max(0, Math.floor(seedHeight / preset.bucketSize) * preset.bucketSize);
+
+        // Deletion of flag values out of retention span
+        const tipAndTailOfFlagValues = await FlagValueRepository.$getTipAndTailIndexedByBucketSize(preset.bucketSize);
+        if (tipAndTailOfFlagValues && lastBucket > tipAndTailOfFlagValues.tail) {
+          // Drop buckets that fell out of block span
+          logger.debug(`Deleting all the flag values ${preset.name} below height #${lastBucket}`, logger.tags.goggles);
+          await FlagValueRepository.$deleteFlagValuesBelowHeight(lastBucket, preset.bucketSize);
+        }
+
+        if (firstBucket < lastBucket) {
+          continue; // no complete bucket in range
+        }
+
+        const indexedBuckets = await FlagValueRepository.$getIndexedStartHeights(
+          preset.bucketSize,
+          firstBucket,
+          lastBucket
+        );
+        const isBucketIndexed = {};
+        // We map the buckets that are already indexed to skip them
+        for (const startHeight of indexedBuckets) {
+          isBucketIndexed[startHeight] = true;
+        }
+
+        logger.debug(
+          `Processing and indexing flag values from #${firstBucket} to #${lastBucket} ${preset.name}`,
+          logger.tags.goggles
+        );
+
+        let timer = Date.now() / 1000;
+        const startedAt = Date.now() / 1000;
+        let blocksComputedInTotal = 0;
+        let blocksComputedThisRun = 0;
+        const blocksToCompute =
+          firstBucket + preset.bucketSize - lastBucket - indexedBuckets.length * preset.bucketSize;
+        for (let bucketStart = firstBucket; bucketStart >= lastBucket; bucketStart -= preset.bucketSize) {
+          if (isBucketIndexed[bucketStart]) {
+            continue; // already indexed
+          }
+          try {
+            const bucketFirstHeight = bucketStart + preset.bucketSize - 1;
+            const bucketLastHeight = bucketStart - 1;
+
+            let step = bucketFirstHeight;
+
+            const dataPerFlag: Record<string, Record<string, number>> = {};
+            let sumTimestamps = 0;
+            let nBlocks = 0;
+            let incomplete = false;
+
+            // Incrementalized logic capped by max blocks per query, not bucket size
+            while (step > bucketLastHeight) {
+              const blocksPerQuery = Math.min(step - bucketLastHeight, MAX_BLOCKS_PERQUERY);
+              const cappedLastHeight = step - blocksPerQuery;
+
+              const blocks = await BlocksSummariesRepository.$getSummariesBetweenHeights(step, cappedLastHeight);
+              await Common.sleep$(250); // Don't query/index flag values too fast
+
+              if (!blocks || blocks.length < blocksPerQuery) {
+                incomplete = true;
+                break; // Incomplete bucket
+              }
+
+              // Flag values processing
+              for (const block of blocks) {
+                const txData = JSON.parse(block.transactions).map((tx) => ({ flags: tx.flags, size: tx.size }));
+                for (const data of txData) {
+                  if (dataPerFlag[data.flags] === undefined || Object.keys(dataPerFlag[data.flags]).length === 0) {
+                    dataPerFlag[data.flags] = {
+                      txCount: 0,
+                      sizeTotal: 0,
+                    };
+                  }
+                  dataPerFlag[data.flags].txCount = dataPerFlag[data.flags].txCount + 1;
+                  dataPerFlag[data.flags].sizeTotal = dataPerFlag[data.flags].sizeTotal + data.size;
+                }
+                sumTimestamps += block.timestamp;
+                blocksComputedInTotal++;
+                blocksComputedThisRun++;
+                nBlocks++;
+              }
+
+              // Logging
+              const elapsedSeconds = Date.now() / 1000 - timer;
+              if (elapsedSeconds > 5) {
+                const runningFor = Date.now() / 1000 - startedAt;
+                const blocksPerSecond = blocksComputedThisRun / elapsedSeconds;
+                const completion = (blocksComputedInTotal / blocksToCompute) * 100;
+                logger.debug(
+                  `Indexing flag values ${preset.name} | ${blocksComputedInTotal}/${blocksToCompute} (${completion.toFixed(2)}%) | ~${blocksPerSecond.toFixed(2)} blocks/sec | elapsed: ${runningFor.toFixed(2)} seconds`,
+                  logger.tags.goggles
+                );
+                timer = Date.now() / 1000;
+                blocksComputedThisRun = 0;
+              }
+
+              step -= blocksPerQuery;
+            }
+
+            if (incomplete) {
+              continue;
+            }
+
+            const avgTimestamp = sumTimestamps / nBlocks;
+            await FlagValueRepository.$saveBatchFlagValues(preset.bucketSize, bucketStart, dataPerFlag, avgTimestamp);
+            nBlocks = 0;
+            newlyIndexedBuckets++;
+          } catch (e) {
+            logger.err(
+              `Failed to index flag values between #${bucketStart} and #${bucketStart + preset.bucketSize - 1}. Reason: ${e instanceof Error ? e.message : e}`,
+              logger.tags.goggles
+            );
+          }
+        }
+        logger.debug(
+          `Successfully indexed #${blocksComputedInTotal} blocks ${preset.name} in ${(Date.now() / 1000 - startedAt).toFixed(2)} seconds`,
+          logger.tags.goggles
+        );
+      }
+      if (newlyIndexedBuckets > 0) {
+        logger.notice(`Flag values indexing completed: indexed ${newlyIndexedBuckets} buckets`, logger.tags.goggles);
+      } else {
+        logger.debug(`Flag values indexing completed: indexed ${newlyIndexedBuckets} buckets`, logger.tags.goggles);
+      }
+    } finally {
+      this.indexingFlagValues = false;
+    }
+  }
+
   public async $indexBlockSummary(hash: string, height: number, stale?: boolean): Promise<void> {
-    await this.$getStrippedBlockTransactions(hash, true, true); // This will index the block summary
+    await this.$getStrippedBlockTransactions(hash, true, true, height); // This will index the block summary
   }
 
   /**
@@ -1209,6 +1388,7 @@ class Blocks {
       // force re-indexing of block-related data
       await HashratesRepository.$deleteHashratesFromTimestamp(forkTail.timestamp - 604800);
       await DifficultyAdjustmentsRepository.$deleteAdjustementsFromHeight(forkTail.height);
+      this.flagValuesDeleteQueue.push(forkTail.height);
       chainTips.clearOrphanCacheAboveHeight(forkTail.height);
       this.updateTimerProgress(timer, `deleted stale block data`);
 
@@ -1314,11 +1494,6 @@ class Blocks {
     }
 
     let height = blockHeight;
-    let summaryVersion = 0;
-    const txs = (await bitcoinApi.$getTxsForBlock(hash, true)).map((tx) => transactionUtils.extendTransaction(tx));
-    const summary = this.summarizeBlockTransactions(hash, height || 0, txs);
-    summaryVersion = 1;
-
     if (height == null) {
       // If the block is orphaned, use the height from the chaintips cache
       const orphanedBlock = chainTips.getOrphanedBlock(hash);
@@ -1330,9 +1505,12 @@ class Blocks {
       }
     }
 
+    const txs = (await bitcoinApi.$getTxsForBlock(hash, true)).map((tx) => transactionUtils.extendTransaction(tx));
+    const summary = this.summarizeBlockTransactions(hash, height, txs);
+
     // Index the response if needed
     if (Common.blocksSummariesIndexingEnabled() === true) {
-      await BlocksSummariesRepository.$saveTransactions(height, hash, summary.transactions, summaryVersion);
+      await BlocksSummariesRepository.$saveTransactions(height, hash, summary.transactions, 1);
     }
 
     return summary.transactions;

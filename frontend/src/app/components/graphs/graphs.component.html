@@ -7,12 +7,20 @@
 >
   <a
     routerLinkActive="active"
-    class="btn btn-purple w-50"
+    class="btn btn-purple flex-fill"
     [routerLink]="['/graphs/mempool' | relativeUrl]"
     >Mempool</a
   >
 
-  <div ngbDropdown class="w-50" *ngIf="stateService.env.MINING_DASHBOARD">
+  <a
+    routerLinkActive="active"
+    class="btn btn-purple flex-fill"
+    [routerLink]="['/graphs/goggles' | relativeUrl]"
+    i18n="mining.goggles"
+    >Goggles</a
+  >
+
+  <div ngbDropdown class="flex-fill" *ngIf="stateService.env.MINING_DASHBOARD">
     <button
       class="btn btn-purple w-100"
       id="dropdownBasic1"

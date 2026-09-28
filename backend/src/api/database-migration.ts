@@ -4,7 +4,7 @@ import logger from '../logger';
 import { Common } from './common';
 
 class DatabaseMigration {
-  private static currentVersion = 107;
+  private static currentVersion = 109;
   private queryTimeout = 3600_000;
   private statisticsAddedIndexed = false;
   private uniqueLogs: string[] = [];
@@ -870,6 +870,30 @@ class DatabaseMigration {
       await this.$executeQuery(`DELETE FROM state WHERE name = 'last_elements_block'`);
       await this.updateToSchemaVersion(107);
     }
+
+    if (databaseSchemaVersion < 108) {
+      await this.$executeQuery(this.getCreateFlagsValuesTableQuery(), await this.$checkIfTableExists('flag_values'));
+      await this.updateToSchemaVersion(108);
+    }
+
+    if (databaseSchemaVersion < 109) {
+      // Older installations can report a current schema while still using height as the
+      // primary key. That prevents a canonical block from replacing a stale block at
+      // the same height and leaves permanent gaps in Goggles rollups.
+      const [primaryKey]: any[] = await this.$executeQuery(
+        `SELECT COLUMN_NAME FROM information_schema.KEY_COLUMN_USAGE
+         WHERE TABLE_SCHEMA = '${config.DATABASE.DATABASE}' AND TABLE_NAME = 'blocks'
+           AND CONSTRAINT_NAME = 'PRIMARY' ORDER BY ORDINAL_POSITION`,
+        true
+      );
+      if (primaryKey.length !== 1 || !['height', 'hash'].includes(primaryKey[0].COLUMN_NAME)) {
+        throw new Error('Unexpected blocks primary key; expected height or hash');
+      }
+      if (primaryKey[0].COLUMN_NAME === 'height') {
+        await this.$executeQuery('ALTER TABLE blocks DROP PRIMARY KEY, ADD PRIMARY KEY (hash), ADD INDEX (height)');
+      }
+      await this.updateToSchemaVersion(109);
+    }
   }
 
   /**
@@ -1246,6 +1270,18 @@ class DatabaseMigration {
       PRIMARY KEY (height),
       INDEX (price_id)
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`;
+  }
+
+  private getCreateFlagsValuesTableQuery(): string {
+    return `CREATE TABLE IF NOT EXISTS flag_values (
+      bucket_size enum('1', '1008', '4032') NOT NULL,
+      start_height int unsigned NOT NULL,
+      avg_timestamp timestamp NOT NULL,
+      flag_value bigint unsigned NOT NULL,
+      tx_count int unsigned NOT NULL,
+      size_total bigint unsigned NOT NULL,
+      PRIMARY KEY (bucket_size, start_height, flag_value)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8`;
   }
 
   public async $blocksReindexingTruncate(): Promise<void> {

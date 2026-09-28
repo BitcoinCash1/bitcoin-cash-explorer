@@ -24,6 +24,7 @@ import { TreasuriesComponent } from '@components/treasuries/treasuries.component
 import { AddressComponent } from '@components/address/address.component';
 import { WalletComponent } from '@components/wallet/wallet.component';
 import { TokenDetailsComponent } from '@components/token-details/token-details.component';
+import { BlockGogglesGraphComponent } from '@components/block-goggles-graph/block-goggles-graph.component';
 import { AsertDeviationGraphPageComponent } from '@components/asert-deviation-graph-page/asert-deviation-graph-page.component';
 import { BlockTxCountsGraphComponent } from '@components/block-tx-counts-graph/block-tx-counts-graph.component';
 import { BlockVolumeGraphComponent } from '@components/block-volume-graph/block-volume-graph.component';
@@ -106,6 +107,11 @@ const routes: Routes = [
             path: 'mempool',
             data: { networks: ['bitcoin'] },
             component: StatisticsComponent,
+          },
+          {
+            path: 'goggles',
+            data: { networks: ['bitcoin'] },
+            component: BlockGogglesGraphComponent,
           },
           {
             path: 'mining/hashrate-difficulty',
