@@ -133,8 +133,14 @@ docker-build-deploy:
   script:
     - docker/init.sh "$CI_COMMIT_TAG"
 
-    #--cache-from "type=local,src=/tmp/.buildx-cache" \
-    #--cache-to "type=local,dest=/tmp/.buildx-cache,mode=max" \
+    # Populate the Docker image store explicitly after runner cache/image cleanup.
+    # This avoids the default builder's "unlazy requires an applier" failure.
+    # Current Dockerfiles use literal external image references in every FROM.
+    - |
+      awk 'toupper($1) == "FROM" && !seen[$2]++ { print $2 }' "docker/$SERVICE/Dockerfile" |
+        while IFS= read -r base_image; do
+          docker pull "$base_image" || exit 1
+        done
 
     - export IMAGE_NAME="bch-explorer-$SERVICE:$CI_COMMIT_TAG"
     - |
