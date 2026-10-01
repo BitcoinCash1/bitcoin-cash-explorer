@@ -548,6 +548,11 @@ class Blocks {
       let timer = Date.now() / 1000;
       const startedAt = Date.now() / 1000;
 
+      logger.debug(
+        `Block summaries indexing: ${totalIndexed}/${indexedBlocks.length} already indexed, ${indexedBlocks.length - totalIndexed} remaining`,
+        logger.tags.mining
+      );
+
       for (const block of indexedBlocks) {
         if (indexedBlockSummariesHashes[block.hash] === true) {
           continue;
@@ -725,7 +730,7 @@ class Blocks {
                 const blocksPerSecond = blocksComputedThisRun / elapsedSeconds;
                 const completion = (blocksComputedInTotal / blocksToCompute) * 100;
                 logger.debug(
-                  `Indexing flag values ${preset.name} | ${blocksComputedInTotal}/${blocksToCompute} (${completion.toFixed(2)}%) | ~${blocksPerSecond.toFixed(2)} blocks/sec | elapsed: ${runningFor.toFixed(2)} seconds`,
+                  `Indexing flag values ${preset.name} | ${blocksComputedInTotal}/${blocksToCompute} (${completion.toFixed(2)}%) | ~${blocksPerSecond.toFixed(2)} blocks/sec | elapsed: ${runningFor.toFixed(2)} seconds | new buckets written: ${newlyIndexedBuckets}`,
                   logger.tags.goggles
                 );
                 timer = Date.now() / 1000;
