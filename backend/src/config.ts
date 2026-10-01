@@ -23,6 +23,7 @@ interface IConfig {
     INDEXING_BLOCKS_AMOUNT: number;
     BLOCKS_SUMMARIES_INDEXING: boolean;
     GOGGLES_INDEXING: boolean;
+    BLOCK_SUMMARIES_PREVOUT_CACHE: boolean;
     USE_SECOND_NODE_FOR_MINFEE: boolean;
     EXTERNAL_ASSETS: string[];
     EXTERNAL_MAX_RETRY: number;
@@ -154,6 +155,7 @@ const defaults: IConfig = {
     INDEXING_BLOCKS_AMOUNT: 11000, // 0 = disable indexing, -1 = index all blocks
     BLOCKS_SUMMARIES_INDEXING: false,
     GOGGLES_INDEXING: false,
+    BLOCK_SUMMARIES_PREVOUT_CACHE: false,
     USE_SECOND_NODE_FOR_MINFEE: false,
     EXTERNAL_ASSETS: [],
     EXTERNAL_MAX_RETRY: 1,

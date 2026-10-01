@@ -342,3 +342,27 @@ Corresponding `docker-compose.yml` overrides:
       SOCKS5PROXY_PASSWORD: ""
       ...
 ```
+
+### Historical summary reindexing cache
+
+To reduce repeated BCHN parent-transaction RPC requests while rebuilding block
+summaries, enable the optional cache on the backend service:
+
+```yaml
+services:
+  api:
+    environment:
+      EXPLORER_BLOCK_SUMMARIES_PREVOUT_CACHE: "true"
+```
+
+The corresponding backend configuration is
+`EXPLORER.BLOCK_SUMMARIES_PREVOUT_CACHE`. It defaults to `false`. Recreate the
+backend container to apply changes. Set the environment variable to `"false"`
+and recreate it again to disable the cache after backfilling.
+
+The cache applies only to summary indexing. Each block conversion owns its cache
+and clears it on success or failure. Normal transaction and frontend API requests
+retain their existing behaviour. Only referenced outputs from repeated, confirmed
+parents are retained, with limits of 1,024 parent entries and 8 MiB of serialized
+output projections. Candidate metadata is limited to 4,096 parent IDs and 32,768
+outpoints. These byte limits describe retained projections, not total process RSS.

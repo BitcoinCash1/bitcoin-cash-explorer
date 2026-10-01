@@ -771,7 +771,13 @@ class Blocks {
   }
 
   public async $indexBlockSummary(hash: string, height: number, stale?: boolean): Promise<void> {
-    await this.$getStrippedBlockTransactions(hash, true, true, height); // This will index the block summary
+    await this.$getStrippedBlockTransactions(
+      hash,
+      true,
+      true,
+      height,
+      config.EXPLORER.BLOCK_SUMMARIES_PREVOUT_CACHE === true
+    ); // This will index the block summary
   }
 
   /**
@@ -1480,7 +1486,8 @@ class Blocks {
     hash: string,
     skipMemoryCache = false,
     skipDBLookup = false,
-    blockHeight?: number
+    blockHeight?: number,
+    reusePrevouts = false
   ): Promise<TransactionClassified[]> {
     if (skipMemoryCache === false) {
       // Check the memory cache
@@ -1510,7 +1517,9 @@ class Blocks {
       }
     }
 
-    const txs = (await bitcoinApi.$getTxsForBlock(hash, true)).map((tx) => transactionUtils.extendTransaction(tx));
+    const txs = (await bitcoinApi.$getTxsForBlock(hash, true, { reusePrevouts })).map((tx) =>
+      transactionUtils.extendTransaction(tx)
+    );
     const summary = this.summarizeBlockTransactions(hash, height, txs);
 
     // Index the response if needed

@@ -2,6 +2,10 @@ import { SubmitPackageResult, TestMempoolAcceptResult } from './bitcoin-api.inte
 import { IPublicApi } from './public-api.interface';
 import { IBitcoinApi } from './bitcoin-api.interface';
 
+export interface BlockTransactionFetchOptions {
+  reusePrevouts?: boolean;
+}
+
 export interface AbstractBitcoinApi {
   $getRawMempool(): Promise<IPublicApi.Transaction['txid'][]>;
   $getRawTransaction(
@@ -18,7 +22,11 @@ export interface AbstractBitcoinApi {
   $getBlockHeightTip(): Promise<number>;
   $getBlockHashTip(): Promise<string>;
   $getTxIdsForBlock(hash: string, fallbackToCore?: boolean): Promise<string[]>;
-  $getTxsForBlock(hash: string, fallbackToCore?: boolean): Promise<IPublicApi.VerboseTransaction[]>;
+  $getTxsForBlock(
+    hash: string,
+    fallbackToCore?: boolean,
+    options?: BlockTransactionFetchOptions
+  ): Promise<IPublicApi.VerboseTransaction[]>;
   $getBlockHash(height: number): Promise<string>;
   $getBlockHeader(hash: string): Promise<string>;
   $getBlock(hash: string): Promise<IPublicApi.Block>;

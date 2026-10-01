@@ -1,4 +1,4 @@
-import { AbstractBitcoinApi } from './bitcoin-api-abstract-factory';
+import { AbstractBitcoinApi, BlockTransactionFetchOptions } from './bitcoin-api-abstract-factory';
 import { IBitcoinApi, SubmitPackageResult, TestMempoolAcceptResult } from './bitcoin-api.interface';
 import { IPublicApi } from './public-api.interface';
 import blocks from '../blocks';
@@ -6,6 +6,8 @@ import mempool from '../mempool';
 import { VerboseTransactionExtended } from '../../mempool.interfaces';
 import transactionUtils from '../transaction-utils';
 import { Common } from '../common';
+
+import { PrevoutCache, PrevoutResolver } from './prevout-cache';
 
 class BitcoinApi implements AbstractBitcoinApi {
   private rawMempoolCache: IBitcoinApi.RawMempool | null = null;
@@ -124,21 +126,37 @@ class BitcoinApi implements AbstractBitcoinApi {
     return this.bitcoindClient.getBlock(hash, 1).then((rpcBlock: IBitcoinApi.Block) => rpcBlock.tx);
   }
 
-  async $getTxsForBlock(hash: string): Promise<IPublicApi.VerboseTransaction[]> {
+  async $getTxsForBlock(
+    hash: string,
+    _fallbackToCore = false,
+    options: BlockTransactionFetchOptions = {}
+  ): Promise<IPublicApi.VerboseTransaction[]> {
     // This is using the convertTransaction with requires verbosity 2 + patterns
     const verboseBlock: IBitcoinApi.VerboseBlock = await this.bitcoindClient.getBlock(hash, 2, true);
+    const cache =
+      options.reusePrevouts === true && verboseBlock.confirmations !== -1
+        ? new PrevoutCache(
+            verboseBlock,
+            async (id) => this.$getRawTransaction(id, false, false) as Promise<IPublicApi.VerboseTransaction>
+          )
+        : undefined;
+    const resolver = cache?.eligible ? cache.resolve : undefined;
     const transactions: IPublicApi.VerboseTransaction[] = [];
-    for (const tx of verboseBlock.tx) {
-      const converted = await this.$convertTransaction(tx, true, false, verboseBlock.confirmations === -1);
-      converted.status = {
-        confirmed: true,
-        block_height: verboseBlock.height,
-        block_hash: hash,
-        block_time: verboseBlock.time,
-      };
-      transactions.push(converted);
+    try {
+      for (const tx of verboseBlock.tx) {
+        const converted = await this.$convertTransaction(tx, true, false, verboseBlock.confirmations === -1, resolver);
+        converted.status = {
+          confirmed: true,
+          block_height: verboseBlock.height,
+          block_hash: hash,
+          block_time: verboseBlock.time,
+        };
+        transactions.push(converted);
+      }
+      return transactions;
+    } finally {
+      cache?.clear();
     }
-    return transactions;
   }
 
   $getRawBlock(hash: string): Promise<Buffer> {
@@ -301,7 +319,8 @@ class BitcoinApi implements AbstractBitcoinApi {
     transaction: IBitcoinApi.VerboseTransaction,
     addPrevout: boolean,
     lazyPrevouts = false,
-    allowMissingPrevouts = false
+    allowMissingPrevouts = false,
+    prevoutResolver?: PrevoutResolver
   ): Promise<IPublicApi.VerboseTransaction> {
     let publicTransaction: IPublicApi.VerboseTransaction = {
       txid: transaction.txid,
@@ -367,7 +386,7 @@ class BitcoinApi implements AbstractBitcoinApi {
 
     if (addPrevout) {
       try {
-        publicTransaction = await this.$calculateFeeFromInputs(publicTransaction, false, lazyPrevouts);
+        publicTransaction = await this.$calculateFeeFromInputs(publicTransaction, false, lazyPrevouts, prevoutResolver);
       } catch (e) {
         if (!allowMissingPrevouts) {
           throw e;
@@ -466,7 +485,8 @@ class BitcoinApi implements AbstractBitcoinApi {
   private async $calculateFeeFromInputs(
     transaction: IPublicApi.VerboseTransaction,
     addPrevout: boolean,
-    lazyPrevouts: boolean
+    lazyPrevouts: boolean,
+    prevoutResolver?: PrevoutResolver
   ): Promise<IPublicApi.VerboseTransaction> {
     if (transaction.vin[0].is_coinbase) {
       transaction.fee = 0;
@@ -479,14 +499,13 @@ class BitcoinApi implements AbstractBitcoinApi {
         transaction.vin[i].lazy = true;
         continue;
       }
-      const innerTx = (await this.$getRawTransaction(
-        transaction.vin[i].txid,
-        false,
-        false
-      )) as IPublicApi.VerboseTransaction;
-      transaction.vin[i].prevout = innerTx.vout[transaction.vin[i].vout];
-      transactionUtils.addInnerScriptsToVin(transaction.vin[i]);
-      totalIn += innerTx.vout[transaction.vin[i].vout].value;
+      const vin = transaction.vin[i];
+      const prevout = prevoutResolver
+        ? await prevoutResolver(vin.txid, vin.vout)
+        : ((await this.$getRawTransaction(vin.txid, false, false)) as IPublicApi.VerboseTransaction).vout[vin.vout];
+      vin.prevout = prevout;
+      transactionUtils.addInnerScriptsToVin(vin);
+      totalIn += prevout.value;
     }
     if (lazyPrevouts && transaction.vin.length > 12) {
       transaction.fee = -1;

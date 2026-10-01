@@ -19,6 +19,7 @@ describe('BCH Explorer Backend Config', () => {
         BACKEND: 'none',
         BLOCKS_SUMMARIES_INDEXING: false,
         GOGGLES_INDEXING: false,
+        BLOCK_SUMMARIES_PREVOUT_CACHE: false,
         HTTP_PORT: 8999,
         UNIX_SOCKET_PATH: '',
         SPAWN_CLUSTER_PROCS: 0,
