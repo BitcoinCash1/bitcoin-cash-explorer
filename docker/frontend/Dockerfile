@@ -1,4 +1,4 @@
-FROM registry.melroy.org/melroy/docker-images/debian-pnpm:24.20.0-trixie AS builder
+FROM registry.melroy.org/melroy/docker-images/debian-pnpm:24.22.1-trixie AS builder
 
 ARG commitHash
 ENV DOCKER_COMMIT_HASH=${commitHash}
@@ -14,7 +14,7 @@ RUN pnpm install
 
 RUN pnpm build
 
-FROM nginx:1.29.4-alpine
+FROM nginx:1.31.8-alpine
 
 WORKDIR /patch
 
