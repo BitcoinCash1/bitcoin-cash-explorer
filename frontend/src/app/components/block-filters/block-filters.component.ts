@@ -30,7 +30,7 @@ export class BlockFiltersComponent implements OnInit, OnChanges, OnDestroy {
   @Input() cssWidth: number = 800;
   @Input() excludeFilters: string[] = [];
   @Input() showTint: boolean = true;
-  @Output() onFilterChanged: EventEmitter<ActiveFilter | null> =
+  @Output() filterChanged: EventEmitter<ActiveFilter | null> =
     new EventEmitter();
 
   filterSubscription: Subscription;
@@ -63,7 +63,7 @@ export class BlockFiltersComponent implements OnInit, OnChanges, OnDestroy {
         this.activeFilters = [
           ...active.filters.filter((key) => !this.disabledFilters[key]),
         ];
-        this.onFilterChanged.emit({
+        this.filterChanged.emit({
           mode: active.mode,
           filters: this.activeFilters,
           gradient: this.gradientMode,
@@ -86,7 +86,7 @@ export class BlockFiltersComponent implements OnInit, OnChanges, OnDestroy {
 
   setFilterMode(mode): void {
     this.filterMode = mode;
-    this.onFilterChanged.emit({
+    this.filterChanged.emit({
       mode: this.filterMode,
       filters: this.activeFilters,
       gradient: this.gradientMode,
@@ -100,7 +100,7 @@ export class BlockFiltersComponent implements OnInit, OnChanges, OnDestroy {
 
   setGradientMode(mode): void {
     this.gradientMode = mode;
-    this.onFilterChanged.emit({
+    this.filterChanged.emit({
       mode: this.filterMode,
       filters: this.activeFilters,
       gradient: this.gradientMode,
@@ -134,7 +134,7 @@ export class BlockFiltersComponent implements OnInit, OnChanges, OnDestroy {
       this.activeFilters = this.activeFilters.filter((f) => f != key);
     }
     const booleanFlags = this.getBooleanFlags();
-    this.onFilterChanged.emit({
+    this.filterChanged.emit({
       mode: this.filterMode,
       filters: this.activeFilters,
       gradient: this.gradientMode,

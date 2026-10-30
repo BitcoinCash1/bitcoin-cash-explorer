@@ -15,7 +15,12 @@
     <h1>
       @if (!block?.stale) {
         <ng-container
-          *ngIf="blockHeight == null || blockHeight > 0; else genesis"
+          *ngIf="
+            blockHeight === null ||
+              blockHeight === undefined ||
+              blockHeight > 0;
+            else genesis
+          "
           i18n="shared.block-title"
           >Block</ng-container
         >
@@ -149,7 +154,8 @@
                     "
                     [class.bg-danger]="blockAudit?.matchRate < 75"
                     *ngIf="
-                      blockAudit?.matchRate != null &&
+                      blockAudit?.matchRate !== null &&
+                        blockAudit?.matchRate !== undefined &&
                         blockAudit?.id === block.id;
                       else nullHealth
                     "
@@ -257,7 +263,12 @@
           - <app-fee-rate [fee]="block.extras?.maxFee"></app-fee-rate>
         </td>
       </tr>
-      <tr *ngIf="block.extras?.medianFee != undefined">
+      <tr
+        *ngIf="
+          block.extras?.medianFee !== null &&
+          block.extras?.medianFee !== undefined
+        "
+      >
         <td class="td-width" i18n="block.median-fee">Median fee</td>
         <td>
           ~<app-fee-rate
@@ -342,7 +353,7 @@
               class="miner-name"
               *ngIf="
                 block.extras.pool.minerNames?.length > 1 &&
-                block.extras.pool.minerNames[1] != ''
+                block.extras.pool.minerNames[1] !== ''
               "
             >
               @if (block.extras.pool.minerNames[1].length > 16) {
@@ -429,39 +440,45 @@
   <div class="box" *ngIf="!error && webGlEnabled && showComparison">
     @if (block?.stale) {
       <div class="nav nav-tabs" *ngIf="isMobile">
-        <a
+        <button
+          type="button"
           class="nav-link"
           [class.active]="mode === 'stale'"
           fragment="stale"
           (click)="changeMode('stale')"
-          ><ng-container i18n="block.stale">Stale</ng-container></a
         >
-        <a
+          <ng-container i18n="block.stale">Stale</ng-container>
+        </button>
+        <button
+          type="button"
           class="nav-link"
           [class.active]="mode === 'actual'"
-          i18n="block.actual"
           fragment="actual"
           (click)="changeMode('actual')"
-          >Winning</a
         >
+          <ng-container i18n="block.actual">Winning</ng-container>
+        </button>
       </div>
     } @else {
       <div class="nav nav-tabs" *ngIf="isMobile && showAudit">
-        <a
+        <button
+          type="button"
           class="nav-link"
           [class.active]="mode === 'projected'"
           fragment="projected"
           (click)="changeMode('projected')"
-          ><ng-container i18n="block.expected">Expected</ng-container></a
         >
-        <a
+          <ng-container i18n="block.expected">Expected</ng-container>
+        </button>
+        <button
+          type="button"
           class="nav-link"
           [class.active]="mode === 'actual'"
-          i18n="block.actual"
           fragment="actual"
           (click)="changeMode('actual')"
-          >Actual</a
         >
+          <ng-container i18n="block.actual">Actual</ng-container>
+        </button>
       </div>
     }
     <div class="row">
@@ -882,7 +899,12 @@
 
 <ng-template #expectedDetails>
   <table
-    *ngIf="block && blockAudit && blockAudit.expectedFees != null"
+    *ngIf="
+      block &&
+      blockAudit &&
+      blockAudit.expectedFees !== null &&
+      blockAudit.expectedFees !== undefined
+    "
     class="table table-borderless table-striped audit-details-table"
   >
     <tbody>
@@ -910,7 +932,12 @@
 
 <ng-template #actualDetails>
   <table
-    *ngIf="block && blockAudit && blockAudit.expectedFees != null"
+    *ngIf="
+      block &&
+      blockAudit &&
+      blockAudit.expectedFees !== null &&
+      blockAudit.expectedFees !== undefined
+    "
     class="table table-borderless table-striped audit-details-table"
   >
     <tbody>

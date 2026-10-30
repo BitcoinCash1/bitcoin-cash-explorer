@@ -189,7 +189,7 @@ export class BlockGogglesGraphComponent implements OnInit {
     this.radioGroupForm.controls['dateSpan'].setValue(
       this.miningWindowPreference
     );
-    let storedPrefs: any = {};
+    let storedPrefs: any;
     try {
       storedPrefs =
         JSON.parse(this.storageService.getValue('goggles_prefs')) ?? {};

@@ -24,6 +24,9 @@
   position: relative;
 
   .reset-scroll {
+    border: 0;
+    padding: 0;
+    color: inherit;
     position: absolute;
     top: 50%;
     transform: translateY(-50%);

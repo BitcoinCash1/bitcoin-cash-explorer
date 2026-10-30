@@ -633,3 +633,33 @@ describe('decodeRawTransaction — BCH CashToken tx (2 in, 2 out)', () => {
     });
   });
 });
+
+describe('unsigned transaction input-value sentinel', () => {
+  const originalInputValue = 'feffffff0d9af30100000000';
+
+  it.each([
+    [0xfffffffeffffffffn, false],
+    [0xffffffffffffffefn, false],
+    [0xfffffffffffffff0n, true],
+    [0xffffffffffffffffn, true],
+  ])(
+    'decodes input value %s without rounding across the sentinel',
+    (value, extended) => {
+      const bytes = new Uint8Array(8);
+      new DataView(bytes.buffer).setBigUint64(0, value, true);
+      const encoded = Array.from(bytes, (byte) =>
+        byte.toString(16).padStart(2, '0')
+      ).join('');
+      // An extended input includes compact-size real value and token-slice length.
+      const inputValue = 'feffffff' + encoded + (extended ? '0000' : '');
+      const raw = RAW_TX3_HEX.replace(originalInputValue, inputValue);
+      expect(raw).not.toBe(RAW_TX3_HEX);
+      const baseline = decodeRawTransaction(RAW_TX3_HEX, 'mainnet');
+      const result = decodeRawTransaction(raw, 'mainnet');
+      expect(result.hex).toBe(baseline.hex);
+      expect(result.tx.txid).toBe(baseline.tx.txid);
+      expect(result.tx.vout).toEqual(baseline.tx.vout);
+      expect(result.warnings).toEqual(baseline.warnings);
+    }
+  );
+});

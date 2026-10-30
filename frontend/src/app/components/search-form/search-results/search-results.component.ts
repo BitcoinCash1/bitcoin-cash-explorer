@@ -1,5 +1,7 @@
+import type { OnInit } from '@angular/core';
 import {
   Component,
+  ChangeDetectorRef,
   EventEmitter,
   Input,
   OnChanges,
@@ -13,7 +15,7 @@ import { StateService } from '@app/services/state.service';
   styleUrls: ['./search-results.component.scss'],
   standalone: false,
 })
-export class SearchResultsComponent implements OnChanges {
+export class SearchResultsComponent implements OnChanges, OnInit {
   @Input() results: any = {};
   @Output() selectedResult = new EventEmitter();
 
@@ -23,7 +25,10 @@ export class SearchResultsComponent implements OnChanges {
   focusFirst = true;
   networkName = '';
 
-  constructor(public stateService: StateService) {}
+  constructor(
+    public stateService: StateService,
+    private changeDetectorRef: ChangeDetectorRef
+  ) {}
 
   ngOnInit() {
     this.networkName =
@@ -78,6 +83,8 @@ export class SearchResultsComponent implements OnChanges {
         this.results = null;
         break;
     }
+    // The parent search input forwards these events to this component.
+    this.changeDetectorRef.markForCheck();
   }
 
   clickItem(id: number) {

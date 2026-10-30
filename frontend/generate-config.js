@@ -9,7 +9,7 @@ const GENERATED_CUSTOMIZATION_FILE_NAME = 'src/resources/customize.js';
 let settings = [];
 let configContent = {};
 let gitCommitHash = '';
-let packetJsonVersion = '';
+let packetJsonVersion;
 let customConfig;
 let customConfigContent;
 
@@ -19,7 +19,7 @@ try {
   console.log(`${CONFIG_FILE_NAME} file found, using provided config`);
 } catch (e) {
   if (e.code !== 'ENOENT') {
-    throw new Error(e);
+    throw new Error(e, { cause: e });
   } else {
     console.log(`${CONFIG_FILE_NAME} file not found, using default config`);
   }
@@ -43,7 +43,7 @@ try {
   console.log('Copied ' + indexFilePath + ' to src/index.html');
 } catch (e) {
   console.error('Error copying the index file');
-  throw new Error(e);
+  throw new Error(e, { cause: e });
 }
 
 try {
@@ -52,7 +52,7 @@ try {
   console.log(`BCH explorer version ${packetJsonVersion}`);
 } catch (e) {
   console.error('Error reading package.json');
-  throw new Error(e);
+  throw new Error(e, { cause: e });
 }
 
 for (const setting in configContent) {
@@ -111,7 +111,7 @@ function writeConfig(path, config) {
     fs.writeFileSync(path, config, 'utf8');
   } catch (e) {
     console.error('Error writing config file');
-    throw new Error(e);
+    throw new Error(e, { cause: e });
   }
 }
 
@@ -120,7 +120,7 @@ function writeConfigTemplate(path, config) {
     fs.writeFileSync(path, config, 'utf8');
   } catch (e) {
     console.error('Error writing config template file');
-    throw new Error(e);
+    throw new Error(e, { cause: e });
   }
 }
 

@@ -243,7 +243,11 @@
             [ngClass]="{ widget: widget, legacy: !isMempoolModule }"
           >
             <a
-              *ngIf="block?.extras?.matchRate != null; else nullHealth"
+              *ngIf="
+                block?.extras?.matchRate !== null &&
+                  block?.extras?.matchRate !== undefined;
+                else nullHealth
+              "
               class="health-badge badge"
               [class.bg-success]="block.extras.matchRate >= 99"
               [class.bg-warning]="
@@ -251,7 +255,8 @@
               "
               [class.bg-danger]="block.extras.matchRate < 75"
               [routerLink]="
-                block.extras.matchRate != null
+                block.extras.matchRate !== null &&
+                block.extras.matchRate !== undefined
                   ? ['/block/' | relativeUrl, block.id]
                   : null
               "

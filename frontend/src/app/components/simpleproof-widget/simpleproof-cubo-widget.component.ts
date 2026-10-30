@@ -1,3 +1,4 @@
+import type { OnInit } from '@angular/core';
 import {
   Component,
   Input,
@@ -28,7 +29,7 @@ export type SortDirection = 'asc' | 'desc';
   styleUrls: ['./simpleproof-widget.component.scss'],
   standalone: false,
 })
-export class SimpleProofCuboWidgetComponent implements OnChanges {
+export class SimpleProofCuboWidgetComponent implements OnChanges, OnInit {
   @Input() key: string =
     window['__env']?.customize?.dashboard.widgets?.find(
       (w) => w.component === 'simpleproof_cubo'

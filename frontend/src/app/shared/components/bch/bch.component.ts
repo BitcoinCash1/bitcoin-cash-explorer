@@ -1,3 +1,4 @@
+import type { OnDestroy } from '@angular/core';
 import {
   Component,
   Input,
@@ -14,7 +15,7 @@ import { StateService } from '@app/services/state.service';
   styleUrls: ['./bch.component.scss'],
   standalone: false,
 })
-export class BchComponent implements OnInit, OnChanges {
+export class BchComponent implements OnInit, OnChanges, OnDestroy {
   @Input() satoshis: number;
   @Input() addPlus = false;
   @Input() valueOverride: string | undefined = undefined;

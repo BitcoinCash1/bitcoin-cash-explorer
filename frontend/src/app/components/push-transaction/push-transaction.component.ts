@@ -110,7 +110,7 @@ export class PushTransactionComponent implements OnInit {
   }
 
   submitTxs() {
-    let txs: string[] = [];
+    let txs: string[];
     try {
       txs = (this.submitTxsForm.get('txs')?.value as string)
         .split(',')

@@ -1,3 +1,4 @@
+import type { OnChanges } from '@angular/core';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -41,7 +42,9 @@ interface VerifyShare {
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TreasuriesVerifyProgressComponent implements OnInit, OnDestroy {
+export class TreasuriesVerifyProgressComponent
+  implements OnInit, OnDestroy, OnChanges
+{
   @Input() walletStats: Record<string, WalletStats>;
   @Input() treasuries: Treasury[] = [];
   @Input() showTitle = true;

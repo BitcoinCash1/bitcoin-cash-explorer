@@ -124,7 +124,7 @@
       </p>
     </ng-container>
   </ng-container>
-  <p *ngIf="line.displayValue != null">
+  <p *ngIf="line.displayValue !== null && line.displayValue !== undefined">
     <app-amount
       [blockConversion]="
         isConnector

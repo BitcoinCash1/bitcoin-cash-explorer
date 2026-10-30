@@ -1,3 +1,4 @@
+import type { OnChanges, OnInit } from '@angular/core';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -15,7 +16,7 @@ import { SigInfo, SighashLabels } from '@app/shared/transaction.utils';
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AsmComponent {
+export class AsmComponent implements OnChanges, OnInit {
   @Input() asm: string;
   @Input() crop: number = 0;
   @Input() annotations: {

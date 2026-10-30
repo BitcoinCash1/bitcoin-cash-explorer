@@ -67,7 +67,7 @@ try {
     console.log(`${CONFIG_FILE_NAME} file found, using provided config`);
   } catch (e) {
     if (e.code !== 'ENOENT') {
-      throw new Error(e);
+      throw new Error(e, { cause: e });
     } else {
 
       if (fs.existsSync(GENERATED_CONFIG_FILE_NAME)) {

@@ -313,7 +313,7 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
             const progressPercentageSum =
               (totalValueArray[index] / totalValue) * 100;
             let activeItemClass = '';
-            let hoverActive = 0;
+            let hoverActive: number;
             if (this.inverted) {
               hoverActive = Math.abs(
                 this.feeLevelsOrdered.length -

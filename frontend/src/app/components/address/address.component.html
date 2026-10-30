@@ -8,6 +8,15 @@
         [link]="['/address/' | relativeUrl, addressString]"
       >
         <span
+          (focus)="showQR = true"
+          tabindex="0"
+          role="button"
+          aria-label="Show QR code"
+          [attr.aria-expanded]="showQR"
+          (keydown.enter)="showQR = true"
+          (keydown.space)="$event.preventDefault(); showQR = true"
+          (keydown.escape)="showQR = false"
+          (blur)="showQR = false"
           class="qrSpan"
           (mouseover)="showQR = true"
           (mouseout)="showQR = false"

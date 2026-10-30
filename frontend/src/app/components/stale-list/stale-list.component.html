@@ -117,8 +117,10 @@
                   </ng-template>
                   <div
                     *ngIf="
-                      chainTip.stale?.extras?.minFee != null &&
-                        chainTip.stale?.extras?.maxFee != null;
+                      chainTip.stale?.extras?.minFee !== null &&
+                        chainTip.stale?.extras?.minFee !== undefined &&
+                        chainTip.stale?.extras?.maxFee !== null &&
+                        chainTip.stale?.extras?.maxFee !== undefined;
                       else emptyStaleBlockFeeSpan
                     "
                     class="fee-span"
@@ -170,13 +172,16 @@
               </div>
               <div
                 class="animated"
-                *ngIf="chainTip.stale?.extras?.pool != undefined"
+                *ngIf="
+                  chainTip.stale?.extras?.pool !== null &&
+                  chainTip.stale?.extras?.pool !== undefined
+                "
               >
                 <a
                   class="badge"
                   [class.miner-name]="
                     chainTip.stale.extras.pool.minerNames?.length > 1 &&
-                    chainTip.stale.extras.pool.minerNames[1] != ''
+                    chainTip.stale.extras.pool.minerNames[1] !== ''
                   "
                   [routerLink]="[
                     '/mining/pool/' + chainTip.stale.extras.pool.slug
@@ -186,7 +191,7 @@
                   <ng-container
                     *ngIf="
                       chainTip.stale.extras.pool.minerNames?.length > 1 &&
-                        chainTip.stale.extras.pool.minerNames[1] != '';
+                        chainTip.stale.extras.pool.minerNames[1] !== '';
                       else staleBlockCentralisedPool
                     "
                   >
@@ -240,8 +245,10 @@
                   </ng-template>
                   <div
                     *ngIf="
-                      chainTip.canonical?.extras?.minFee != null &&
-                        chainTip.canonical?.extras?.maxFee != null;
+                      chainTip.canonical?.extras?.minFee !== null &&
+                        chainTip.canonical?.extras?.minFee !== undefined &&
+                        chainTip.canonical?.extras?.maxFee !== null &&
+                        chainTip.canonical?.extras?.maxFee !== undefined;
                       else emptyCanonicalBlockFeeSpan
                     "
                     class="fee-span"
@@ -293,13 +300,16 @@
               </div>
               <div
                 class="animated"
-                *ngIf="chainTip.canonical?.extras?.pool != undefined"
+                *ngIf="
+                  chainTip.canonical?.extras?.pool !== null &&
+                  chainTip.canonical?.extras?.pool !== undefined
+                "
               >
                 <a
                   class="badge"
                   [class.miner-name]="
                     chainTip.canonical.extras.pool.minerNames?.length > 1 &&
-                    chainTip.canonical.extras.pool.minerNames[1] != ''
+                    chainTip.canonical.extras.pool.minerNames[1] !== ''
                   "
                   [routerLink]="[
                     '/mining/pool/' + chainTip.canonical.extras.pool.slug
@@ -309,7 +319,7 @@
                   <ng-container
                     *ngIf="
                       chainTip.canonical.extras.pool.minerNames?.length > 1 &&
-                        chainTip.canonical.extras.pool.minerNames[1] != '';
+                        chainTip.canonical.extras.pool.minerNames[1] !== '';
                       else canonicalBlockCentralisedPool
                     "
                   >

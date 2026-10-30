@@ -108,7 +108,10 @@
               "
               class="fee-span"
               *ngIf="
-                block?.extras?.minFee != null && block?.extras?.maxFee != null;
+                block?.extras?.minFee !== null &&
+                  block?.extras?.minFee !== undefined &&
+                  block?.extras?.maxFee !== null &&
+                  block?.extras?.maxFee !== undefined;
                 else emptyfeespan
               "
             >
@@ -209,14 +212,18 @@
         </div>
         <div
           class="animated"
-          *ngIf="block.extras?.pool != undefined && showPools"
+          *ngIf="
+            block.extras?.pool !== null &&
+            block.extras?.pool !== undefined &&
+            showPools
+          "
         >
           <a
             [attr.data-cy]="'bitcoin-block-' + offset + '-index-' + i + '-pool'"
             class="badge"
             [class.miner-name]="
               block.extras.pool.minerNames?.length > 1 &&
-              block.extras.pool.minerNames[1] != ''
+              block.extras.pool.minerNames[1] !== ''
             "
             [routerLink]="[
               '/mining/pool/' + block.extras.pool.slug | relativeUrl,
@@ -225,7 +232,7 @@
             <ng-container
               *ngIf="
                 block.extras.pool.minerNames?.length > 1 &&
-                  block.extras.pool.minerNames[1] != '';
+                  block.extras.pool.minerNames[1] !== '';
                 else centralisedPool
               "
             >

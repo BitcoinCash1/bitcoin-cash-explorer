@@ -62,7 +62,6 @@
           <ul
             class="nav flex-column menu-click"
             *ngFor="let item of group.items"
-            (click)="onLinkClick(item.link)"
           >
             <li
               class="nav-item d-flex justify-content-start align-items-center menu-click"
@@ -76,7 +75,7 @@
                 *ngIf="item.link === 'logout'"
                 class="btn nav-link menu-click"
                 role="tab"
-                (click)="logout()"
+                (click)="logout(); onLinkClick(item.link)"
               >
                 {{ item.title }}
               </button>
@@ -84,6 +83,7 @@
                 *ngIf="item.title !== 'Logout'"
                 class="nav-link menu-click"
                 [routerLink]="[item.link]"
+                (click)="onLinkClick(item.link)"
                 role="tab"
               >
                 {{ item.title }}

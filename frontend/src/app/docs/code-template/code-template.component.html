@@ -5,7 +5,14 @@
       *ngIf="code.codeTemplate.curl && method !== 'websocket'"
       role="presentation"
     >
-      <a ngbNavLink (click)="adjustContainerHeight($event)" role="tab">cURL</a>
+      <button
+        type="button"
+        ngbNavLink
+        (click)="adjustContainerHeight($event)"
+        role="tab"
+      >
+        cURL
+      </button>
       <ng-template ngbNavContent>
         <div class="subtitle">
           <ng-container i18n="API Docs code example">Code Example</ng-container>
@@ -15,9 +22,14 @@
       </ng-template>
     </li>
     <li ngbNavItem *ngIf="showCodeExample[network]" role="presentation">
-      <a ngbNavLink (click)="adjustContainerHeight($event)" role="tab"
-        >CommonJS</a
+      <button
+        type="button"
+        ngbNavLink
+        (click)="adjustContainerHeight($event)"
+        role="tab"
       >
+        CommonJS
+      </button>
       <ng-template ngbNavContent>
         <div class="subtitle">
           <ng-container i18n="API Docs code example">Code Example</ng-container>
@@ -30,9 +42,14 @@
       </ng-template>
     </li>
     <li ngbNavItem *ngIf="showCodeExample[network]" role="presentation">
-      <a ngbNavLink (click)="adjustContainerHeight($event)" role="tab"
-        >ES Module</a
+      <button
+        type="button"
+        ngbNavLink
+        (click)="adjustContainerHeight($event)"
+        role="tab"
       >
+        ES Module
+      </button>
       <ng-template ngbNavContent>
         <div class="subtitle">
           <ng-container i18n="API Docs install lib"
@@ -53,9 +70,14 @@
       </ng-template>
     </li>
     <li ngbNavItem *ngIf="code.codeTemplate.python" role="presentation">
-      <a ngbNavLink (click)="adjustContainerHeight($event)" role="tab"
-        >Python</a
+      <button
+        type="button"
+        ngbNavLink
+        (click)="adjustContainerHeight($event)"
+        role="tab"
       >
+        Python
+      </button>
       <ng-template ngbNavContent>
         <div class="subtitle">
           <ng-container i18n="API Docs code example">Code Example</ng-container>

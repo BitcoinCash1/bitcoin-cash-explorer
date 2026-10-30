@@ -1,3 +1,4 @@
+import type { OnDestroy } from '@angular/core';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -42,7 +43,7 @@ import { EChartsInitOpts } from 'echarts/types/dist/echarts';
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PoolComponent implements OnInit {
+export class PoolComponent implements OnInit, OnDestroy {
   @Input() right: number | string = 45;
   @Input() left: number | string = 75;
 

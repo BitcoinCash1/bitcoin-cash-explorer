@@ -1,5 +1,6 @@
 <div
   class="dropdown-menu show"
+  role="listbox"
   *ngIf="results"
   [hidden]="
     !results.hashQuickMatch &&
@@ -14,6 +15,7 @@
       {{ networkName }} Block Height
     </div>
     <button
+      [attr.aria-selected]="0 === activeIdx"
       (click)="clickItem(0)"
       [class.active]="0 === activeIdx"
       type="button"
@@ -28,6 +30,7 @@
   <ng-template [ngIf]="results.dateTime">
     <div class="card-title" i18n="search.bitcoin-block-date">Date</div>
     <button
+      [attr.aria-selected]="0 === activeIdx"
       (click)="clickItem(0)"
       [class.active]="0 === activeIdx"
       type="button"
@@ -44,6 +47,7 @@
       Timestamp
     </div>
     <button
+      [attr.aria-selected]="0 === activeIdx"
       (click)="clickItem(0)"
       [class.active]="0 === activeIdx"
       type="button"
@@ -60,6 +64,7 @@
       {{ networkName }} Transaction
     </div>
     <button
+      [attr.aria-selected]="0 === activeIdx"
       (click)="clickItem(0)"
       [class.active]="0 === activeIdx"
       type="button"
@@ -79,6 +84,13 @@
       {{ networkName }} CashToken
     </div>
     <button
+      [attr.aria-selected]="
+        results.hashQuickMatch +
+          results.addresses.length +
+          results.pools.length +
+          results.otherNetworks.length ===
+        activeIdx
+      "
       (click)="
         clickItem(
           results.hashQuickMatch +
@@ -111,6 +123,7 @@
       {{ networkName }} Address
     </div>
     <button
+      [attr.aria-selected]="0 === activeIdx"
       (click)="clickItem(0)"
       [class.active]="0 === activeIdx"
       type="button"
@@ -132,6 +145,7 @@
       {{ networkName }} Block
     </div>
     <button
+      [attr.aria-selected]="0 === activeIdx"
       (click)="clickItem(0)"
       [class.active]="0 === activeIdx"
       type="button"
@@ -152,6 +166,7 @@
     </div>
     <ng-template ngFor [ngForOf]="results.addresses" let-address let-i="index">
       <button
+        [attr.aria-selected]="results.hashQuickMatch + i === activeIdx"
         (click)="clickItem(results.hashQuickMatch + i)"
         [class.active]="results.hashQuickMatch + i === activeIdx"
         type="button"
@@ -169,6 +184,9 @@
     <div class="card-title" i18n="search.mining-pools">Mining Pools</div>
     <ng-template ngFor [ngForOf]="results.pools" let-pool let-i="index">
       <button
+        [attr.aria-selected]="
+          results.hashQuickMatch + results.addresses.length + i === activeIdx
+        "
         (click)="
           clickItem(results.hashQuickMatch + results.addresses.length + i)
         "
@@ -200,6 +218,13 @@
       let-i="index"
     >
       <button
+        [attr.aria-selected]="
+          results.hashQuickMatch +
+            results.addresses.length +
+            results.pools.length +
+            i ===
+          activeIdx
+        "
         (click)="
           clickItem(
             results.hashQuickMatch +
@@ -243,6 +268,7 @@
       {{ networkName }} Address
     </div>
     <button
+      [attr.aria-selected]="0 === activeIdx"
       (click)="clickItem(0)"
       [class.active]="0 === activeIdx"
       type="button"

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { FeeRoundingPipe } from '@app/shared/pipes/fee-rounding/fee-rounding.pipe';
 
 @Component({
@@ -7,7 +7,7 @@ import { FeeRoundingPipe } from '@app/shared/pipes/fee-rounding/fee-rounding.pip
   styleUrls: ['./fee-rate.component.scss'],
   standalone: false,
 })
-export class FeeRateComponent implements OnInit {
+export class FeeRateComponent {
   @Input() fee: number | undefined;
   @Input() size: number = 1;
   @Input() rounding: string = null;
@@ -18,8 +18,6 @@ export class FeeRateComponent implements OnInit {
   @Input() unitStyle: any;
 
   constructor(private feeRoundingPipe: FeeRoundingPipe) {}
-
-  ngOnInit() {}
 
   getIntegerPart(rate: number): string {
     const formatted = this.feeRoundingPipe.transform(

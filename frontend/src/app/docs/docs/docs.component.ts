@@ -1,3 +1,4 @@
+import type { DoCheck, OnDestroy } from '@angular/core';
 import { Component, OnInit, HostBinding } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Env, StateService } from '@app/services/state.service';
@@ -11,7 +12,7 @@ import { OpenGraphService } from '@app/services/opengraph.service';
   styleUrls: ['./docs.component.scss'],
   standalone: false,
 })
-export class DocsComponent implements OnInit {
+export class DocsComponent implements OnInit, DoCheck, OnDestroy {
   activeTab = 0;
   env: Env;
   showWebSocketTab = true;

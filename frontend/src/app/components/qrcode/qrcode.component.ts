@@ -1,3 +1,4 @@
+import type { OnChanges } from '@angular/core';
 import {
   Component,
   Input,
@@ -16,7 +17,7 @@ import { StateService } from '@app/services/state.service';
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class QrcodeComponent implements AfterViewInit {
+export class QrcodeComponent implements AfterViewInit, OnChanges {
   @Input() data: string;
   @Input() size = 125;
   @Input() imageUrl: string;

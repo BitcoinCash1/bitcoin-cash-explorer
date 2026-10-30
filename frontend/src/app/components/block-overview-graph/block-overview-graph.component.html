@@ -40,7 +40,7 @@
       *ngIf="webGlEnabled && showFilters && filtersAvailable"
       [excludeFilters]="excludeFilters"
       [cssWidth]="cssWidth"
-      (onFilterChanged)="setFilterFlags($event)"
+      (filterChanged)="setFilterFlags($event)"
     ></app-block-filters>
     <div *ngIf="!webGlEnabled" class="placeholder">
       <span i18n="webgl-disabled"

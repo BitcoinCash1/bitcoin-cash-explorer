@@ -262,7 +262,8 @@
                             "
                             [class.bg-danger]="poolStats.avgBlockHealth < 75"
                             *ngIf="
-                              poolStats.avgBlockHealth != null;
+                              poolStats.avgBlockHealth !== null &&
+                                poolStats.avgBlockHealth !== undefined;
                               else nullHealth
                             "
                             >{{ poolStats.avgBlockHealth }}%</span
@@ -726,12 +727,17 @@
               "
               [class.bg-danger]="block.extras.matchRate < 75"
               [routerLink]="
-                block.extras.matchRate != null
+                block.extras.matchRate !== null &&
+                block.extras.matchRate !== undefined
                   ? ['/block/' | relativeUrl, block.id]
                   : null
               "
               [state]="{ data: { block: block } }"
-              *ngIf="block.extras.matchRate != null; else nullHealth"
+              *ngIf="
+                block.extras.matchRate !== null &&
+                  block.extras.matchRate !== undefined;
+                else nullHealth
+              "
               >{{ block.extras.matchRate }}%</a
             >
             <ng-template #nullHealth>

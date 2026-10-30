@@ -71,7 +71,7 @@ lint-format-test-frontend:
     - cd frontend
     - pnpm install --prefer-offline --prefer-frozen-lockfile
     - pnpm config:defaults:explorer
-    #- pnpm run lint
+    - pnpm run lint
     - pnpm prettier:check
     - pnpm test:unit
 

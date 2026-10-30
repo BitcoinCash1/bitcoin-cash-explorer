@@ -1,3 +1,4 @@
+import type { OnDestroy } from '@angular/core';
 import {
   Component,
   OnInit,
@@ -44,7 +45,7 @@ import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pip
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class BlocksList implements OnInit {
+export class BlocksList implements OnInit, OnDestroy {
   @Input() widget: boolean = false;
 
   blocks$: Observable<BlockExtended[]> = undefined;

@@ -353,7 +353,7 @@
             >
               <span
                 class="miner-name"
-                *ngIf="pool.minerNames?.length > 1 && pool.minerNames[1] != ''"
+                *ngIf="pool.minerNames?.length > 1 && pool.minerNames[1] !== ''"
               >
                 @if (pool.minerNames[1].length > 16) {
                   {{ pool.minerNames[1].slice(0, 15) }}…

@@ -1,3 +1,4 @@
+import type { AfterViewInit } from '@angular/core';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -27,7 +28,7 @@ import { EnterpriseService } from '@app/services/enterprise.service';
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AboutComponent implements OnInit, OnDestroy {
+export class AboutComponent implements OnInit, OnDestroy, AfterViewInit {
   // @ViewChild('promoVideo') promoVideo: ElementRef;
   backendInfo$: Observable<IBackendInfo>;
   frontendGitCommitHash: string;

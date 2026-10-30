@@ -43,7 +43,7 @@ export class TestTransactionsComponent implements OnInit {
   }
 
   testTxs() {
-    let txs: string[] = [];
+    let txs: string[];
     try {
       txs = (this.testTxsForm.get('txs')?.value as string)
         .split(',')

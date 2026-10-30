@@ -1,3 +1,4 @@
+import type { OnDestroy } from '@angular/core';
 import {
   Component,
   ElementRef,
@@ -34,7 +35,9 @@ interface Xput {
   styleUrls: ['./tx-bowtie-graph-tooltip.component.scss'],
   standalone: false,
 })
-export class TxBowtieGraphTooltipComponent implements OnChanges {
+export class TxBowtieGraphTooltipComponent
+  implements OnChanges, OnDestroy, OnInit
+{
   @Input() line: Xput | void;
   @Input() cursorPosition: { x: number; y: number };
   @Input() isConnector: boolean = false;

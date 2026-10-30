@@ -359,7 +359,10 @@
                 pool.avgMatchRate >= 75 && pool.avgMatchRate < 99
               "
               [class.bg-danger]="pool.avgMatchRate < 75"
-              *ngIf="pool.avgMatchRate != null; else nullHealth"
+              *ngIf="
+                pool.avgMatchRate !== null && pool.avgMatchRate !== undefined;
+                else nullHealth
+              "
               >{{ pool.avgMatchRate }}%</a
             >
             <ng-template #nullHealth>
@@ -370,7 +373,10 @@
           </td>
           <td *ngIf="auditAvailable" class="d-none d-sm-table-cell">
             <span
-              *ngIf="pool.avgFeeDelta != null; else nullFeeDelta"
+              *ngIf="
+                pool.avgFeeDelta !== null && pool.avgFeeDelta !== undefined;
+                else nullFeeDelta
+              "
               class="difference"
               [class.positive]="pool.avgFeeDelta >= 0"
               [class.negative]="pool.avgFeeDelta < 0"

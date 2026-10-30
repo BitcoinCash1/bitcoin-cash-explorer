@@ -150,9 +150,9 @@
         </div>
 
         <div class="mb-1 mt-3">
-          <label class="form-label">
+          <div class="form-label">
             <strong>UTXO</strong>
-          </label>
+          </div>
           <div
             *ngIf="isLoadingUtxos"
             class="spinner-border spinner-border-sm text-light ms-2"
@@ -233,6 +233,15 @@
                 ></app-clipboard>
               </button>
               <span
+                (focus)="showQR = true"
+                tabindex="0"
+                role="button"
+                aria-label="Show QR code"
+                [attr.aria-expanded]="showQR"
+                (keydown.enter)="showQR = true"
+                (keydown.space)="$event.preventDefault(); showQR = true"
+                (keydown.escape)="showQR = false"
+                (blur)="showQR = false"
                 class="btn btn-outline-secondary qrSpan"
                 (mouseover)="showQR = true"
                 (mouseout)="showQR = false"

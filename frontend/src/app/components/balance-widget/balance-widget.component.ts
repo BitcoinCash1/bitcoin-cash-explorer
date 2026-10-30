@@ -4,7 +4,6 @@ import {
   Component,
   Input,
   OnChanges,
-  OnInit,
   SimpleChanges,
 } from '@angular/core';
 import { StateService } from '@app/services/state.service';
@@ -22,7 +21,7 @@ import { Observable, catchError, of } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class BalanceWidgetComponent implements OnInit, OnChanges {
+export class BalanceWidgetComponent implements OnChanges {
   @Input() address: string;
   @Input() addressInfo: Address;
   @Input() addressSummary$: Observable<AddressTxSummary[]> | null;
@@ -40,8 +39,6 @@ export class BalanceWidgetComponent implements OnInit, OnChanges {
     private electrsApiService: ElectrsApiService,
     private cd: ChangeDetectorRef
   ) {}
-
-  ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
     this.isLoading = true;

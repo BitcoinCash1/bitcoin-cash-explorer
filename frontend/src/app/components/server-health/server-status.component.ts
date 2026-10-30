@@ -37,8 +37,8 @@ export class ServerStatusComponent implements OnInit, OnDestroy {
         map((hosts) => {
           const subpath = window.location.pathname.slice(0, -6);
           for (const host of hosts) {
-            let statusUrl = '';
-            let linkHost = '';
+            let statusUrl: string;
+            let linkHost: string;
             if (host.socket) {
               statusUrl =
                 'https://' + window.location.hostname + subpath + '/status';

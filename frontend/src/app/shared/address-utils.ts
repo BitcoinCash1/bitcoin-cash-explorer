@@ -518,7 +518,7 @@ function cashaddrDecode(address: string): {
   hash: Uint8Array;
 } {
   // Remove prefix if present
-  let prefix = '';
+  let prefix: string;
   let addr = address;
   const colonIndex = address.indexOf(':');
   if (colonIndex !== -1) {

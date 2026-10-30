@@ -1,3 +1,4 @@
+import type { OnDestroy } from '@angular/core';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { ThemeService } from '@app/services/theme.service';
@@ -10,7 +11,7 @@ import { Subscription } from 'rxjs';
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ThemeSelectorComponent implements OnInit {
+export class ThemeSelectorComponent implements OnInit, OnDestroy {
   themeForm: UntypedFormGroup;
   themes = ['default', 'light', 'contrast', 'softsimon', 'bukele'];
   themeSubscription: Subscription;

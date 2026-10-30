@@ -1,3 +1,4 @@
+import type { OnInit } from '@angular/core';
 import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { StateService } from '@app/services/state.service';
@@ -10,7 +11,7 @@ import { ThemeService } from '@app/services/theme.service';
   templateUrl: './terms-of-service.component.html',
   standalone: false,
 })
-export class TermsOfServiceComponent implements OnDestroy {
+export class TermsOfServiceComponent implements OnDestroy, OnInit {
   officialBCHExplorer = false;
   themeSubscription: Subscription;
   loadedTheme: string;

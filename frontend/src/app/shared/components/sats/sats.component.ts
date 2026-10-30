@@ -1,3 +1,4 @@
+import type { OnDestroy } from '@angular/core';
 import { Component, Input, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { StateService } from '@app/services/state.service';
@@ -8,7 +9,7 @@ import { StateService } from '@app/services/state.service';
   styleUrls: ['./sats.component.scss'],
   standalone: false,
 })
-export class SatsComponent implements OnInit {
+export class SatsComponent implements OnInit, OnDestroy {
   @Input() satoshis: number;
   @Input() digitsInfo = '1.0-0';
   @Input() addPlus = false;

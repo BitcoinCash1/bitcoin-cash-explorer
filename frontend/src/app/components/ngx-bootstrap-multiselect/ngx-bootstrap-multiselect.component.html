@@ -20,7 +20,7 @@
     #scroller
     *ngIf="isVisible"
     class="dropdown-menu"
-    [ngClass]="{ 'chunkydropdown-menu': settings.checkedStyle == 'visual' }"
+    [ngClass]="{ 'chunkydropdown-menu': settings.checkedStyle === 'visual' }"
     (scroll)="settings.isLazyLoad ? checkScrollPosition($event) : null"
     (wheel)="
       settings.stopScrollPropagation
@@ -188,12 +188,12 @@
           >
             <div class="slider" [ngClass]="{ slideron: isSelected(option) }">
               <img
-                *ngIf="option.image != null"
+                *ngIf="(option.image !== null && option.image !== undefined)"
                 [src]="option.image"
                 style="height: 100%; width: 100%; object-fit: contain"
               />
               <div
-                *ngIf="option.image == null"
+                *ngIf="(option.image === null || option.image === undefined)"
                 style="
                   height: 100%;
                   width: 100%;
@@ -213,7 +213,7 @@
           </span>
         </ng-container>
         <span
-          [ngClass]="{ chunkyrow: settings.checkedStyle == 'visual' }"
+          [ngClass]="{ chunkyrow: settings.checkedStyle === 'visual' }"
           [class.disabled]="isCheckboxDisabled(option)"
           [ngClass]="settings.itemClasses"
           [style.font-weight]="

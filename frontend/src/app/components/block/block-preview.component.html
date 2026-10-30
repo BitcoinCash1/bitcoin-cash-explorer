@@ -36,7 +36,12 @@
             <td i18n="block.size">Size</td>
             <td [innerHTML]="'&lrm;' + (block?.size | bytes: 2)"></td>
           </tr>
-          <tr *ngIf="block?.extras?.medianFee != undefined">
+          <tr
+            *ngIf="
+              block?.extras?.medianFee !== null &&
+              block?.extras?.medianFee !== undefined
+            "
+          >
             <td class="td-width" i18n="block.median-fee">Median fee</td>
             <td>
               ~<app-fee-rate
@@ -73,7 +78,7 @@
                   class="miner-name"
                   *ngIf="
                     block.extras.pool.minerNames?.length > 1 &&
-                    block.extras.pool.minerNames[1] != ''
+                    block.extras.pool.minerNames[1] !== ''
                   "
                 >
                   @if (block.extras.pool.minerNames[1].length > 16) {
@@ -114,7 +119,7 @@
                   class="miner-name"
                   *ngIf="
                     block.extras.pool.minerNames?.length > 1 &&
-                    block.extras.pool.minerNames[1] != ''
+                    block.extras.pool.minerNames[1] !== ''
                   "
                 >
                   @if (block.extras.pool.minerNames[1].length > 16) {

@@ -100,7 +100,7 @@
                   [ngClass]="{
                     focus:
                       (!vin.is_coinbase &&
-                        vin.prevout.scriptpubkey_address &&
+                        vin.prevout?.scriptpubkey_address &&
                         tx._unblinded) ||
                       inputIndex === vindex,
                     highlight:
@@ -196,6 +196,14 @@
                     <td class="token-td">
                       <span style="position: relative">
                         <span
+                          #copyInputToken
+                          tabindex="0"
+                          role="button"
+                          (keydown.enter)="copyInputToken.click()"
+                          (keydown.space)="
+                            $event.preventDefault(); copyInputToken.click()
+                          "
+                          aria-label="Copy token ID"
                           class="token"
                           ngbTooltip="Cash Token"
                           (click)="
@@ -604,6 +612,14 @@
                     <td class="token-td">
                       <span style="position: relative">
                         <span
+                          #copyOutputToken
+                          tabindex="0"
+                          role="button"
+                          (keydown.enter)="copyOutputToken.click()"
+                          (keydown.space)="
+                            $event.preventDefault(); copyOutputToken.click()
+                          "
+                          aria-label="Copy token ID"
                           class="token"
                           ngbTooltip="Cash Token"
                           (click)="
@@ -674,6 +690,13 @@
                             (vout.scriptpubkey_asm | hex2ascii).length > 200
                           ) {
                             <span
+                              #opReturnPreview
+                              tabindex="0"
+                              role="button"
+                              (keydown.enter)="opReturnPreview.click()"
+                              (keydown.space)="
+                                $event.preventDefault(); opReturnPreview.click()
+                              "
                               *ngIf="vout.scriptpubkey_asm !== 'OP_RETURN'"
                               class="badge bg-secondary scriptmessage opreturn-msg"
                               (click)="toggleShowFullOpReturnPreview(vindex)"
@@ -691,6 +714,14 @@
                               ) {
                                 @if (!showFullOpReturnPreview[vindex]) {
                                   <span
+                                    #expandOpReturn
+                                    tabindex="0"
+                                    role="button"
+                                    (keydown.enter)="expandOpReturn.click()"
+                                    (keydown.space)="
+                                      $event.preventDefault();
+                                      expandOpReturn.click()
+                                    "
                                     class="badge bg-primary"
                                     (click)="
                                       toggleShowFullOpReturnPreview(vindex)
@@ -699,6 +730,14 @@
                                   >
                                 } @else {
                                   <span
+                                    #collapseOpReturn
+                                    tabindex="0"
+                                    role="button"
+                                    (keydown.enter)="collapseOpReturn.click()"
+                                    (keydown.space)="
+                                      $event.preventDefault();
+                                      collapseOpReturn.click()
+                                    "
                                     class="badge bg-primary"
                                     (click)="
                                       toggleShowFullOpReturnPreview(vindex)
@@ -800,6 +839,14 @@
                       </span>
                       <ng-template #spent>
                         <a
+                          #spendingTransaction
+                          tabindex="0"
+                          role="button"
+                          (keydown.enter)="spendingTransaction.click()"
+                          (keydown.space)="
+                            $event.preventDefault(); spendingTransaction.click()
+                          "
+                          aria-label="Show spending transaction"
                           *ngIf="
                             !hasOutspendError(tx.txid, vindex);
                             else outputNoTxId
@@ -817,6 +864,14 @@
                         </a>
                         <ng-template #outputNoTxId>
                           <span
+                            #retryOutspend
+                            tabindex="0"
+                            role="button"
+                            (keydown.enter)="retryOutspend.click()"
+                            (keydown.space)="
+                              $event.preventDefault(); retryOutspend.click()
+                            "
+                            aria-label="Retry spending transaction"
                             class="red"
                             (click)="clearOutspendError()"
                             style="cursor: pointer"
@@ -895,7 +950,8 @@
                               <span *ngIf="!showFullScriptPubkeyAsm[vindex]"
                                 >...</span
                               >
-                              <label
+                              <button
+                                type="button"
                                 class="btn btn-sm btn-purple mt-2"
                                 (click)="toggleShowFullScriptPubkeyAsm(vindex)"
                                 style="margin-left: auto"
@@ -910,7 +966,7 @@
                                   i18n="show-less"
                                   >Show less</span
                                 >
-                              </label>
+                              </button>
                             </div>
                           </td>
                         </tr>
@@ -936,7 +992,8 @@
                               <span *ngIf="!showFullScriptPubkeyHex[vindex]"
                                 >...</span
                               >
-                              <label
+                              <button
+                                type="button"
                                 class="btn btn-sm btn-purple mt-2"
                                 (click)="toggleShowFullScriptPubkeyHex(vindex)"
                                 style="margin-left: auto"
@@ -951,11 +1008,11 @@
                                   i18n="show-less"
                                   >Show less</span
                                 >
-                              </label>
+                              </button>
                             </div>
                           </td>
                         </tr>
-                        <tr *ngIf="vout.scriptpubkey_type == 'op_return'">
+                        <tr *ngIf="vout.scriptpubkey_type === 'op_return'">
                           <td>OP_RETURN <span>data</span></td>
                           <td
                             style="
@@ -983,7 +1040,8 @@
                               <span *ngIf="!showFullOpReturnData[vindex]"
                                 >...</span
                               >
-                              <label
+                              <button
+                                type="button"
                                 class="btn btn-sm btn-purple mt-2"
                                 (click)="toggleShowFullOpReturnData(vindex)"
                                 style="margin-left: auto"
@@ -998,7 +1056,7 @@
                                   i18n="show-less"
                                   >Show less</span
                                 >
-                              </label>
+                              </button>
                             </div>
                           </td>
                         </tr>

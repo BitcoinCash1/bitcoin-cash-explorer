@@ -42,13 +42,16 @@
       (mempoolOffsetChange)="onMempoolOffsetChange($event)"
     ></app-blockchain>
   </div>
-  <div
+  <button
+    type="button"
+    aria-label="Return to latest blocks"
+    [disabled]="pageIndex === 0"
     class="reset-scroll"
     [class.hidden]="pageIndex === 0"
     (click)="resetScroll()"
   >
     <fa-icon [icon]="['fas', 'circle-left']" [fixedWidth]="true"></fa-icon>
-  </div>
+  </button>
 </div>
 
 <ng-container *serverOnly>

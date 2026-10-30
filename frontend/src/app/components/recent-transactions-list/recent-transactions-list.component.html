@@ -1,5 +1,7 @@
 <button
-  *ngIf="!widget && (bufferedCount$ | async) > 0 && !(manualPaused$ | async)"
+  *ngIf="
+    !widget && (bufferedCount$ | async) > 0 && (manualPaused$ | async) !== true
+  "
   type="button"
   class="new-tx-pill"
   (click)="scrollToTop()"

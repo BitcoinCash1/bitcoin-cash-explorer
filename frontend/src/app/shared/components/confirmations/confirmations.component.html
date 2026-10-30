@@ -7,7 +7,7 @@
   >
     <ng-container
       *ngTemplateOutlet="
-        confirmations == 1 ? confirmationSingular : confirmationPlural;
+        confirmations === 1 ? confirmationSingular : confirmationPlural;
         context: { $implicit: confirmations }
       "
     ></ng-container>
@@ -19,7 +19,7 @@
     >
       <ng-container
         *ngTemplateOutlet="
-          confirmations == 1 ? confirmationSingular : confirmationPlural;
+          confirmations === 1 ? confirmationSingular : confirmationPlural;
           context: { $implicit: confirmations }
         "
       ></ng-container>
@@ -42,7 +42,7 @@
     >{{ i }} confirmations</ng-template
   >
 </ng-template>
-<ng-template [ngIf]="!confirmations && height != null">
+<ng-template [ngIf]="!confirmations && height !== null && height !== undefined">
   <a
     *ngIf="blockHash; else confirmedButton"
     [routerLink]="['/block' | relativeUrl, blockHash]"
@@ -62,7 +62,11 @@
     </button>
   </ng-template>
 </ng-template>
-<ng-template [ngIf]="chainTip != null && !confirmations && !confirmed">
+<ng-template
+  [ngIf]="
+    chainTip !== null && chainTip !== undefined && !confirmations && !confirmed
+  "
+>
   <button
     type="button"
     class="btn btn-sm btn-danger no-cursor {{ buttonClass }}"

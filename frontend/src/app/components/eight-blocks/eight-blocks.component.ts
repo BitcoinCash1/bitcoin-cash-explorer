@@ -1,3 +1,4 @@
+import type { AfterViewInit } from '@angular/core';
 import {
   Component,
   OnInit,
@@ -48,7 +49,7 @@ interface BlockInfo extends BlockExtended {
   styleUrls: ['./eight-blocks.component.scss'],
   standalone: false,
 })
-export class EightBlocksComponent implements OnInit, OnDestroy {
+export class EightBlocksComponent implements OnInit, OnDestroy, AfterViewInit {
   network = '';
   latestBlocks: BlockExtended[] = [];
   isLoadingTransactions = true;

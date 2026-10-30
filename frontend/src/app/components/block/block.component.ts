@@ -1,3 +1,4 @@
+import type { AfterViewInit } from '@angular/core';
 import {
   Component,
   OnInit,
@@ -71,7 +72,7 @@ interface ComparisonStats {
     `,
   ],
 })
-export class BlockComponent implements OnInit, OnDestroy {
+export class BlockComponent implements OnInit, OnDestroy, AfterViewInit {
   network = '';
   block: BlockExtended;
   blockAudit: BlockAudit = undefined;

@@ -45,8 +45,8 @@ export class ServerHealthComponent implements OnInit {
       map((hosts) => {
         const subpath = window.location.pathname.slice(0, -11);
         for (const host of hosts) {
-          let statusUrl = '';
-          let linkHost = '';
+          let statusUrl: string;
+          let linkHost: string;
           if (host.socket) {
             statusUrl =
               'https://' + window.location.hostname + subpath + '/status';

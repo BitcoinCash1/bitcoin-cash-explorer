@@ -31,7 +31,7 @@
         aria-label="Search"
       >
         <fa-icon
-          *ngIf="!(isTypeaheading$ | async); else searchLoading"
+          *ngIf="(isTypeaheading$ | async) !== true; else searchLoading"
           [icon]="['fas', 'search']"
           [fixedWidth]="true"
           i18n-title="search-form.search-title"

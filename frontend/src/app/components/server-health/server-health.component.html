@@ -34,12 +34,12 @@
             <td class="updated only-large">{{ getLastUpdateSeconds(host) }}</td>
             <td class="rtt only-small">
               {{ host.rtt / 1000 | number: "1.1-1" }}
-              {{ host.rtt == null ? "" : "s" }}
+              {{ host.rtt === null || host.rtt === undefined ? "" : "s" }}
               {{ !host.checked ? "⏳" : host.unreachable ? "🔥" : "✅" }}
             </td>
             <td class="rtt only-large">
               {{ host.rtt | number: "1.0-0" }}
-              {{ host.rtt == null ? "" : "ms" }}
+              {{ host.rtt === null || host.rtt === undefined ? "" : "ms" }}
               {{ !host.checked ? "⏳" : host.unreachable ? "🔥" : "✅" }}
             </td>
             <td class="height">

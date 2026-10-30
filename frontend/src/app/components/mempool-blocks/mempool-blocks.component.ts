@@ -426,7 +426,7 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   median(numbers: number[]) {
-    let medianNr = 0;
+    let medianNr: number;
     const numsLen = numbers.length;
     if (numsLen % 2 === 0) {
       medianNr = (numbers[numsLen / 2 - 1] + numbers[numsLen / 2]) / 2;

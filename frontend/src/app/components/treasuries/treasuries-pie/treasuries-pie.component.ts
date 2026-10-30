@@ -1,3 +1,4 @@
+import type { OnInit } from '@angular/core';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -29,7 +30,7 @@ import { EChartsInitOpts } from 'echarts/types/dist/echarts';
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TreasuriesPieComponent implements OnChanges {
+export class TreasuriesPieComponent implements OnChanges, OnInit {
   @Input() height: number = 300;
   @Input() mode: 'relative' | 'all' = 'relative';
   @Input() walletStats: Record<string, WalletStats>;

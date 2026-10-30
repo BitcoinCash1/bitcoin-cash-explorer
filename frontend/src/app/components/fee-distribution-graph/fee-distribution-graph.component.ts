@@ -1,4 +1,4 @@
-import { HostListener, OnChanges, OnDestroy } from '@angular/core';
+import { HostListener, OnChanges } from '@angular/core';
 import {
   Component,
   Input,
@@ -18,9 +18,7 @@ import { CallbackDataParams } from 'echarts/types/dist/shared';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class FeeDistributionGraphComponent
-  implements OnInit, OnChanges, OnDestroy
-{
+export class FeeDistributionGraphComponent implements OnInit, OnChanges {
   @Input() feeRange: number[];
   @Input() size: number;
   @Input() transactions: TransactionStripped[];
@@ -166,7 +164,6 @@ export class FeeDistributionGraphComponent
           formatter: (value: number): string => {
             const selectedPowerOfTen = selectPowerOfTen(value);
             const scaledValue = value / selectedPowerOfTen.divider;
-            const newVal = '';
             switch (true) {
               case scaledValue >= 100:
                 return Math.round(scaledValue).toString();
@@ -175,7 +172,6 @@ export class FeeDistributionGraphComponent
               default:
                 return scaledValue.toFixed(2);
             }
-            return `${newVal}${selectedPowerOfTen.unit}`;
           },
         },
         axisTick: {
@@ -235,6 +231,4 @@ export class FeeDistributionGraphComponent
       this.mountChart();
     }
   }
-
-  ngOnDestroy(): void {}
 }

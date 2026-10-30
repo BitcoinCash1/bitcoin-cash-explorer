@@ -222,7 +222,7 @@ export function extractDERSignaturesASM(script_asm: string): SigInfo[] {
 
 export function processInputSignatures(vin: Vin): SigInfo[] {
   const addressType = vin.prevout?.scriptpubkey_type as AddressType;
-  let signatures: SigInfo[] = [];
+  const signatures: SigInfo[] = [];
   // Only switch on BCH supported types
   switch (addressType) {
     case 'p2pk':
@@ -275,8 +275,8 @@ export function fillUnsignedInput(vin: Vin): {
   let bytes = 0;
 
   const addressType = vin.prevout?.scriptpubkey_type as AddressType;
-  let signatures: SigInfo[] = [];
-  let multisig: { m: number; n: number } | null = null;
+  let signatures: SigInfo[];
+  let multisig: { m: number; n: number } | null;
   // Only switch on BCH supported types
   switch (addressType) {
     case 'p2pk':
@@ -905,7 +905,7 @@ function extractScriptsigByteCode(scriptsig: string): string[] {
   let i = 0;
   while (i < buf.length) {
     const op = buf[i++];
-    let len = 0;
+    let len: number;
     if (op === 0x00) {
       // OP_0 / OP_FALSE — zero-length push, skip
       continue;
@@ -1824,12 +1824,11 @@ function fromBufferWithInputValues(
       (buffer[offset + 5] << 8) |
       (buffer[offset + 6] << 16) |
       (buffer[offset + 7] << 24);
-    const valueUnsigned = (valueHigh >>> 0) * 0x100000000 + (valueLow >>> 0);
     offset += 8;
 
     // Detect extended unsigned tx format: sentinel value >= 0xfffffffffffffff0
     // Lower nibble 0x0f = extension version 0, meaning a real value + optional token data follow
-    if (valueUnsigned >= 0xfffffffffffffff0) {
+    if (valueHigh >>> 0 === 0xffffffff && valueLow >>> 0 >= 0xfffffff0) {
       // read real satoshi value (varint)
       const [_realValue, afterValue] = readVarInt(buffer, offset);
       offset = afterValue;

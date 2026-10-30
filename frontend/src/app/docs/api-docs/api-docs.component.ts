@@ -1,3 +1,4 @@
+import type { AfterContentChecked, OnDestroy } from '@angular/core';
 import {
   ChangeDetectorRef,
   Component,
@@ -24,7 +25,9 @@ import { FaqTemplateDirective } from '@app/docs/faq-template/faq-template.compon
   styleUrls: ['./api-docs.component.scss'],
   standalone: false,
 })
-export class ApiDocsComponent implements OnInit, AfterViewInit {
+export class ApiDocsComponent
+  implements OnInit, AfterViewInit, AfterContentChecked, OnDestroy
+{
   private destroy$: Subject<any> = new Subject<any>();
   plainHostname = document.location.hostname;
   hostname = document.location.hostname;
@@ -48,6 +51,10 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   @ViewChildren(FaqTemplateDirective)
   faqTemplates: QueryList<FaqTemplateDirective>;
   dict = {};
+
+  get pagePath(): string {
+    return document.location.pathname;
+  }
 
   constructor(
     private stateService: StateService,
@@ -130,6 +137,7 @@ export class ApiDocsComponent implements OnInit, AfterViewInit {
   }
 
   anchorLinkClick(e) {
+    e.event.preventDefault();
     const targetId = e.fragment;
     const vOffset = window.innerWidth <= 992 ? 100 : 60;
     window.scrollTo({

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-indexing-progress',
@@ -6,8 +6,6 @@ import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class IndexingProgressComponent implements OnInit {
+export class IndexingProgressComponent {
   constructor() {}
-
-  ngOnInit() {}
 }

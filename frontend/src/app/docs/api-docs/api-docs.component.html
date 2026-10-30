@@ -80,6 +80,7 @@
               id="{{ item.fragment }}"
             >
               <a
+                [href]="pagePath + '#' + item.fragment"
                 id="{{ item.fragment + '-tab-header' }}"
                 class="section-header"
                 (click)="
@@ -156,6 +157,7 @@
               id="{{ item.fragment }}"
             >
               <a
+                [href]="pagePath + '#' + item.fragment"
                 id="{{ item.fragment + '-tab-header' }}"
                 class="section-header"
                 (click)="
@@ -298,6 +300,7 @@
               id="{{ item.fragment }}"
             >
               <a
+                [href]="pagePath + '#' + item.fragment"
                 id="{{ item.fragment + '-tab-header' }}"
                 class="section-header"
                 (click)="

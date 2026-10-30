@@ -1,3 +1,4 @@
+import type { OnChanges } from '@angular/core';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -34,7 +35,7 @@ interface SupplyShare {
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TreasuriesSupplyComponent implements OnInit, OnDestroy {
+export class TreasuriesSupplyComponent implements OnInit, OnDestroy, OnChanges {
   @Input() walletStats: Record<string, WalletStats>;
   @Input() walletSummaries$: Observable<Record<string, AddressTxSummary[]>>;
   @Input() treasuries: Treasury[] = [];
@@ -175,7 +176,6 @@ export class TreasuriesSupplyComponent implements OnInit, OnDestroy {
       label: 'Lost',
       type: 'lost',
     });
-    runningTotal += lost;
     this.loadingTreasurySupply = false;
   }
 

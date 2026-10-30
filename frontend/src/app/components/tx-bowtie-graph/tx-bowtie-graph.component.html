@@ -218,7 +218,9 @@
         [attr.d]="input.path"
         class="line {{ input.class }}"
         [class.highlight]="
-          inputIndex != null && inputData[i].index === inputIndex
+          inputIndex !== null &&
+          inputIndex !== undefined &&
+          inputData[i].index === inputIndex
         "
         [style]="input.style"
         attr.marker-start="url(#{{ input.class }}-arrow)"
@@ -231,7 +233,9 @@
         [attr.d]="input.path"
         class="line {{ input.class }} zerovalue"
         [class.highlight]="
-          inputIndex != null && inputData[i].index === inputIndex
+          inputIndex !== null &&
+          inputIndex !== undefined &&
+          inputData[i].index === inputIndex
         "
         [class.zerovalue]="input.zeroValue"
         [style]="input.style"
@@ -264,7 +268,9 @@
         [attr.d]="output.path"
         class="line {{ output.class }}"
         [class.highlight]="
-          outputIndex != null && outputData[i].index === outputIndex
+          outputIndex !== null &&
+          outputIndex !== undefined &&
+          outputData[i].index === outputIndex
         "
         [style]="output.style"
         attr.marker-start="url(#{{ output.class }}-arrow)"
@@ -277,7 +283,9 @@
         [attr.d]="output.path"
         class="line {{ output.class }} zerovalue"
         [class.highlight]="
-          outputIndex != null && outputData[i].index === outputIndex
+          outputIndex !== null &&
+          outputIndex !== undefined &&
+          outputData[i].index === outputIndex
         "
         [class.zerovalue]="output.zeroValue"
         [style]="output.style"

@@ -61,7 +61,7 @@ export class TimeService {
     }
 
     let seconds: number;
-    let tooltip: string = '';
+    let tooltip: string;
     switch (kind) {
       case 'since':
         seconds = Math.floor(

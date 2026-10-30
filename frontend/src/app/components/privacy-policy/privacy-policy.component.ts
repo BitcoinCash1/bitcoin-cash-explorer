@@ -1,3 +1,4 @@
+import type { OnInit } from '@angular/core';
 import { Component, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { StateService } from '@app/services/state.service';
@@ -11,7 +12,7 @@ import { ThemeService } from '@app/services/theme.service';
   styleUrls: ['./privacy-policy.component.scss'],
   standalone: false,
 })
-export class PrivacyPolicyComponent implements OnDestroy {
+export class PrivacyPolicyComponent implements OnDestroy, OnInit {
   officialBCHExplorer = false;
   themeSubscription: Subscription;
   loadedTheme: string;

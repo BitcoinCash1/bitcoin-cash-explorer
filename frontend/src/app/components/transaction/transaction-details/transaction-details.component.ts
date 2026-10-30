@@ -1,9 +1,4 @@
-import {
-  Component,
-  OnInit,
-  Input,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Transaction } from '@app/interfaces/backend-api.interface';
 import {
   Pool,
@@ -21,7 +16,7 @@ import { Filter } from '@app/shared/filters.utils';
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TransactionDetailsComponent implements OnInit {
+export class TransactionDetailsComponent {
   @Input() network: string;
   @Input() tx: Transaction;
   @Input() isLoadingTx: boolean;
@@ -37,6 +32,4 @@ export class TransactionDetailsComponent implements OnInit {
   @Input() unbroadcasted: boolean;
 
   constructor() {}
-
-  ngOnInit(): void {}
 }

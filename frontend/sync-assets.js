@@ -333,7 +333,8 @@ const downloadMiningPoolLogos = async () => {
     );
   } catch (e) {
     throw new Error(
-      `Unable to download mining pool logos. Trying again at next restart. Reason: ${e instanceof Error ? e.message : e}`
+      `Unable to download mining pool logos. Trying again at next restart. Reason: ${e instanceof Error ? e.message : e}`,
+      { cause: e }
     );
   }
 };
@@ -379,7 +380,8 @@ const downloadPromoVideoSubtitles = async () => {
     );
   } catch (e) {
     throw new Error(
-      `Unable to download video subtitles. Trying again at next restart. Reason: ${e instanceof Error ? e.message : e}`
+      `Unable to download video subtitles. Trying again at next restart. Reason: ${e instanceof Error ? e.message : e}`,
+      { cause: e }
     );
   }
 };
@@ -401,7 +403,7 @@ const downloadPromoVideo = async () => {
 
     const downloadUrl = `https://gitlab.melroy.org/bitcoincash/mempool-promo/-/raw/main/promo.mp4`;
 
-    const downloaded = await processFileItem(videoItem, {
+    await processFileItem(videoItem, {
       filePath: `${ASSETS_PATH}/promo-video/mempool-promo.mp4`,
       remoteHash: videoItem.id,
       downloadUrl: downloadUrl,
@@ -414,10 +416,15 @@ const downloadPromoVideo = async () => {
     });
   } catch (e) {
     throw new Error(
-      `Unable to download video. Trying again at next restart. Reason: ${e instanceof Error ? e.message : e}`
+      `Unable to download video. Trying again at next restart. Reason: ${e instanceof Error ? e.message : e}`,
+      { cause: e }
     );
   }
 };
+
+// Retained for optional promotional assets; intentionally not invoked.
+void downloadPromoVideoSubtitles;
+void downloadPromoVideo;
 
 // Main execution
 (async () => {

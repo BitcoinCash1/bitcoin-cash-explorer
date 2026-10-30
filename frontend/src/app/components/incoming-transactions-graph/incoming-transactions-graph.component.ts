@@ -111,10 +111,9 @@ export class IncomingTransactionsGraphComponent implements OnInit, OnChanges {
     //update const variables that are not changed
     const ma: number[][] = [];
     let sum = 0;
-    let i = 0;
 
     //calculate the centered moving average
-    for (i = 0; i < data.length; i++) {
+    for (let i = 0; i < data.length; i++) {
       sum += data[i][1];
       if (i >= windowSize) {
         sum -= data[i - windowSize][1];

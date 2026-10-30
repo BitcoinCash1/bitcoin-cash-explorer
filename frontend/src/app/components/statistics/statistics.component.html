@@ -24,7 +24,7 @@
             [formGroup]="radioGroupForm"
             class="formRadioGroup"
             [class]="stateService.env.MINING_DASHBOARD ? 'mining' : 'no-menu'"
-            (click)="saveGraphPreference()"
+            (change)="saveGraphPreference()"
           >
             <div class="small-buttons">
               <a
@@ -193,6 +193,14 @@
                 >
                   <ul>
                     <li
+                      #toggleTransactionCount
+                      tabindex="0"
+                      role="button"
+                      (keydown.enter)="toggleTransactionCount.click()"
+                      (keydown.space)="
+                        $event.preventDefault(); toggleTransactionCount.click()
+                      "
+                      [attr.aria-pressed]="showCount"
                       (click)="this.showCount = !this.showCount"
                       [class]="this.showCount ? '' : 'inactive'"
                     >
@@ -211,6 +219,13 @@
                     >
                       <ng-template [ngIf]="feeData.fee <= 400">
                         <li
+                          #selectFeeLevel
+                          tabindex="0"
+                          role="button"
+                          (keydown.enter)="selectFeeLevel.click()"
+                          (keydown.space)="
+                            $event.preventDefault(); selectFeeLevel.click()
+                          "
                           (click)="filterFeeIndex = feeData.fee"
                           [class]="
                             filterFeeIndex > feeData.fee ? 'inactive' : ''

@@ -76,10 +76,19 @@
             </td>
             <td class="rate">
               <app-fee-rate
-                *ngIf="result.fees?.['feerate'] != null"
+                *ngIf="
+                  result.fees?.['feerate'] !== null &&
+                  result.fees?.['feerate'] !== undefined
+                "
                 [fee]="result.fees?.['feerate'] * 100000"
               ></app-fee-rate>
-              <span *ngIf="result.fees?.['feerate'] == null">-</span>
+              <span
+                *ngIf="
+                  result.fees?.['feerate'] === null ||
+                  result.fees?.['feerate'] === undefined
+                "
+                >-</span
+              >
             </td>
             <td class="reason">
               {{ result["reject-reason"] || "-" }}

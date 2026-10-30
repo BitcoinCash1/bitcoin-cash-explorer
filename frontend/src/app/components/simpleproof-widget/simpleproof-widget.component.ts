@@ -1,3 +1,4 @@
+import type { OnInit } from '@angular/core';
 import {
   Component,
   Input,
@@ -27,7 +28,7 @@ export interface SimpleProof {
   styleUrls: ['./simpleproof-widget.component.scss'],
   standalone: false,
 })
-export class SimpleProofWidgetComponent implements OnChanges {
+export class SimpleProofWidgetComponent implements OnChanges, OnInit {
   @Input() key: string =
     window['__env']?.customize?.dashboard.widgets?.find(
       (w) => w.component === 'simpleproof'

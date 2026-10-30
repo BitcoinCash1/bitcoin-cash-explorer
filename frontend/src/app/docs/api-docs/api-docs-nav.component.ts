@@ -22,6 +22,10 @@ export class ApiDocsNavComponent implements OnInit {
   officialMempoolInstance: boolean;
   isOfficialSiteBuild: boolean;
 
+  get pagePath(): string {
+    return document.location.pathname;
+  }
+
   constructor(private stateService: StateService) {}
 
   ngOnInit(): void {

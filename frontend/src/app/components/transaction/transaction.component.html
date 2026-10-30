@@ -218,7 +218,7 @@
                 <td i18n="transaction.locktime">Locktime</td>
                 <td [innerHTML]="'&lrm;' + (tx.locktime | number)"></td>
               </tr>
-              <tr *ngIf="sigops != null">
+              <tr *ngIf="sigops !== null && sigops !== undefined">
                 <td>
                   <ng-container i18n="transaction.sigops|Transaction Sigops"
                     >Sigops</ng-container

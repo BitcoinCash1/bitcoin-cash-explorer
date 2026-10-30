@@ -21,6 +21,7 @@
     {{ item.title }}
   </p>
   <a
+    [href]="pagePath + '#' + item.fragment"
     *ngIf="
       item.type !== 'category' &&
       item.showConditions.indexOf(network.val) > -1 &&

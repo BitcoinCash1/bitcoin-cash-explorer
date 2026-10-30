@@ -48,6 +48,8 @@ function parseTag(scriptSig: string): string {
     .decode(Uint8Array.from(bytes))
     .replace(/\uFFFD/g, '')
     .replace(/\\0/g, '')
+    // Coinbase text must omit embedded control characters.
+    // eslint-disable-next-line no-control-regex
     .replace(/[\x00-\x1F\x7F-\x9F]/g, '');
   if (ascii.includes('/ViaBTC/')) {
     return '/ViaBTC/';
