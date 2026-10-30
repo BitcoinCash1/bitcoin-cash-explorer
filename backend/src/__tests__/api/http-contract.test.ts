@@ -137,6 +137,46 @@ test('invalid JSON body shape is rejected before RPC access', async () => {
   expect(await response.json()).toEqual({ error: 'Invalid outpoints format' });
 });
 
+test.each([
+  ['null entry', [null]],
+  ['number entry', [0]],
+  ['string entry', ['invalid']],
+  ['boolean entry', [true]],
+  ['array entry', [[]]],
+  ['missing fields', [{}]],
+  ['array transaction ID', [{ txid: [txid], vout: 0 }]],
+  ['string output index', [{ txid, vout: '0' }]],
+  ['null after a valid entry', [{ txid, vout: 0 }, null]],
+])('invalid prevout %s returns 400', async (_name, body) => {
+  const response = await fetch(`${baseUrl}/prevouts`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+  expect(response.status).toBe(400);
+  expect(await response.json()).toEqual({ error: 'Invalid outpoints format' });
+});
+
+test('a valid outpoint still returns 200 when the prevout is unavailable', async () => {
+  const response = await fetch(`${baseUrl}/prevouts`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify([{ txid, vout: 0 }]),
+  });
+  expect(response.status).toBe(200);
+  expect(await response.json()).toEqual([null]);
+});
+
+test('oversized batches retain the existing 400 error contract', async () => {
+  const response = await fetch(`${baseUrl}/prevouts`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(Array.from({ length: 251 }, () => ({ txid, vout: 0 }))),
+  });
+  expect(response.status).toBe(400);
+  expect(await response.json()).toEqual({ error: 'Too many outpoints requested' });
+});
+
 test('HEAD retains headers and omits the response body', async () => {
   const response = await fetch(`${baseUrl}/backend-info`, { method: 'HEAD' });
   expect(response.status).toBe(200);

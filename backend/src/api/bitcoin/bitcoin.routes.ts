@@ -1184,7 +1184,15 @@ class BitcoinRoutes {
       const outpoints = req.body;
       if (
         !Array.isArray(outpoints) ||
-        outpoints.some((item) => !/^[a-fA-F0-9]{64}$/.test(item.txid) || typeof item.vout !== 'number')
+        outpoints.some(
+          (item) =>
+            item === null ||
+            typeof item !== 'object' ||
+            Array.isArray(item) ||
+            typeof item.txid !== 'string' ||
+            !/^[a-fA-F0-9]{64}$/.test(item.txid) ||
+            typeof item.vout !== 'number'
+        )
       ) {
         handleError(req, res, 400, 'Invalid outpoints format');
         return;
