@@ -4,7 +4,7 @@ import config from '../config';
 import DB from '../database';
 import backendInfo from '../api/backend-info';
 import logger from '../logger';
-import { SocksProxyAgent } from 'socks-proxy-agent';
+import { getSocksProxyOptions } from '../utils/socks-proxy';
 import * as https from 'https';
 import { Common } from '../api/common';
 
@@ -211,27 +211,7 @@ class PoolsUpdater {
 
     while (retry < config.EXPLORER.EXTERNAL_MAX_RETRY) {
       try {
-        if (config.SOCKS5PROXY.ENABLED) {
-          const socksOptions: any = {
-            agentOptions: {
-              keepAlive: true,
-            },
-            hostname: config.SOCKS5PROXY.HOST,
-            port: config.SOCKS5PROXY.PORT,
-          };
-
-          if (config.SOCKS5PROXY.USERNAME && config.SOCKS5PROXY.PASSWORD) {
-            socksOptions.username = config.SOCKS5PROXY.USERNAME;
-            socksOptions.password = config.SOCKS5PROXY.PASSWORD;
-          } else {
-            // Retry with different tor circuits https://stackoverflow.com/a/64960234
-            socksOptions.username = `circuit${retry}`;
-          }
-
-          axiosOptions.httpsAgent = new SocksProxyAgent(socksOptions);
-        }
-
-        const data: AxiosResponse = await axios.get(path, axiosOptions);
+        const data: AxiosResponse = await axios.get(path, { ...axiosOptions, ...getSocksProxyOptions(retry) });
         if (data.statusText === 'error' || !data.data) {
           throw new Error(`Could not fetch data from ${path}, Error: ${data.status}`);
         }

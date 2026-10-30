@@ -3,7 +3,8 @@ import * as fs from 'fs';
 import config from './config';
 import backendInfo from './api/backend-info';
 import logger from './logger';
-import { SocksProxyAgent } from 'socks-proxy-agent';
+import { getSocksProxyOptions } from './utils/socks-proxy';
+import { pipeline } from 'stream/promises';
 
 const PATH = './';
 
@@ -13,80 +14,28 @@ class SyncAssets {
       try {
         await this.downloadFile$(url);
       } catch (e) {
-        throw new Error(`Failed to download external asset. ` + (e instanceof Error ? e.message : e));
+        throw new Error(`Failed to download external asset. ` + (e instanceof Error ? e.message : e), { cause: e });
       }
     }
   }
 
-  private async downloadFile$(url: string) {
-    return new Promise((resolve, reject) => {
-      const fileName = url.split('/').slice(-1)[0];
-
-      try {
-        if (config.SOCKS5PROXY.ENABLED) {
-          const socksOptions: any = {
-            agentOptions: {
-              keepAlive: true,
-            },
-            hostname: config.SOCKS5PROXY.HOST,
-            port: config.SOCKS5PROXY.PORT,
-          };
-
-          if (config.SOCKS5PROXY.USERNAME && config.SOCKS5PROXY.PASSWORD) {
-            socksOptions.username = config.SOCKS5PROXY.USERNAME;
-            socksOptions.password = config.SOCKS5PROXY.PASSWORD;
-          }
-
-          const agent = new SocksProxyAgent(socksOptions);
-
-          logger.info(`Downloading external asset ${fileName} over the Tor network...`);
-          return axios
-            .get(url, {
-              headers: {
-                'User-Agent':
-                  config.EXPLORER.USER_AGENT === 'explorer'
-                    ? `BCHExplorer/v${backendInfo.getBackendInfo().version}`
-                    : `${config.EXPLORER.USER_AGENT}`,
-              },
-              httpAgent: agent,
-              httpsAgent: agent,
-              responseType: 'stream',
-              timeout: 30000,
-            })
-            .then(function (response) {
-              const writer = fs.createWriteStream(PATH + fileName);
-              writer.on('finish', () => {
-                logger.info(`External asset ${fileName} saved to ${PATH + fileName}`);
-                resolve(0);
-              });
-              response.data.pipe(writer);
-            });
-        } else {
-          logger.info(`Downloading external asset ${fileName} over clearnet...`);
-          return axios
-            .get(url, {
-              headers: {
-                'User-Agent':
-                  config.EXPLORER.USER_AGENT === 'explorer'
-                    ? `BCHExplorer/v${backendInfo.getBackendInfo().version}`
-                    : `${config.EXPLORER.USER_AGENT}`,
-              },
-              responseType: 'stream',
-              timeout: 30000,
-            })
-            .then(function (response) {
-              const writer = fs.createWriteStream(PATH + fileName);
-              writer.on('finish', () => {
-                logger.info(`External asset ${fileName} saved to ${PATH + fileName}`);
-                resolve(0);
-              });
-              response.data.pipe(writer);
-            });
-        }
-      } catch (e: any) {
-        reject(e);
-      }
+  private async downloadFile$(url: string): Promise<void> {
+    const fileName = url.split('/').slice(-1)[0];
+    const viaTor = config.SOCKS5PROXY.ENABLED;
+    logger.info(`Downloading external asset ${fileName} over ${viaTor ? 'the Tor network' : 'clearnet'}...`);
+    const response = await axios.get(url, {
+      headers: {
+        'User-Agent':
+          config.EXPLORER.USER_AGENT === 'explorer'
+            ? `BCHExplorer/v${backendInfo.getBackendInfo().version}`
+            : `${config.EXPLORER.USER_AGENT}`,
+      },
+      ...getSocksProxyOptions(),
+      responseType: 'stream',
+      timeout: 30000,
     });
+    await pipeline(response.data, fs.createWriteStream(PATH + fileName));
+    logger.info(`External asset ${fileName} saved to ${PATH + fileName}`);
   }
 }
 

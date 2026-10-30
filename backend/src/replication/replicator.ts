@@ -1,7 +1,7 @@
 import config from '../config';
 import backendInfo from '../api/backend-info';
 import axios, { AxiosResponse } from 'axios';
-import { SocksProxyAgent, SocksProxyAgentOptions } from 'socks-proxy-agent';
+import { getSocksProxyOptions } from '../utils/socks-proxy';
 import * as https from 'https';
 
 export async function $sync(path): Promise<{ data?: any; exists: boolean; server?: string }> {
@@ -51,15 +51,7 @@ export async function query(path): Promise<object> {
     timeout: config.SOCKS5PROXY.ENABLED ? 30000 : 10000,
   };
 
-  if (config.SOCKS5PROXY.ENABLED) {
-    const url = `socks://${config.SOCKS5PROXY.USERNAME || 'circuit0'}:${config.SOCKS5PROXY.PASSWORD}@${config.SOCKS5PROXY.HOST}:${config.SOCKS5PROXY.PORT}`;
-    const socksAgentOptions: SocksProxyAgentOptions = {
-      keepAlive: true,
-    };
-    axiosOptions.httpsAgent = new SocksProxyAgent(url, socksAgentOptions);
-  }
-
-  const data: AxiosResponse = await axios.get(path, axiosOptions);
+  const data: AxiosResponse = await axios.get(path, { ...axiosOptions, ...getSocksProxyOptions() });
   if (data.statusText === 'error' || !data.data) {
     throw new Error(`${data.status}`);
   }
