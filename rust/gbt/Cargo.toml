@@ -12,17 +12,17 @@ crate-type = ["cdylib"]
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-priority-queue = "2.0.2"
-bytes = "1.4.0"
-napi = { version = "2", features = ["napi8", "tokio_rt"] }
-napi-derive = "2"
-bytemuck = "1.13.1"
-tracing = "0.1.36"
+priority-queue = "2.7.0"
+bytes = "1.12.1"
+napi = { version = "3.16.0", features = ["napi8", "tokio_rt"] }
+napi-derive = "3.7.0"
+bytemuck = "1.25.2"
+tracing = "0.1.44"
 tracing-log = "0.2.0"
-tracing-subscriber = { version = "0.3.15", features = ["env-filter"]}
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"]}
 
 [build-dependencies]
-napi-build = "2"
+napi-build = "2.6.0"
 
 [profile.release]
 lto = true
