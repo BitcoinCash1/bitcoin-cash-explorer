@@ -43,6 +43,8 @@ lint-format-test-backend:
     - cd backend
     - mkdir rust-gbt # Placeholder directory (if pnpm install is triggered during preinstall)
     - pnpm preinstall
+    - (cd ../rust/gbt && cargo test --locked)
+    - (cd ../rust/gbt && npm run test:bindings)
     # pnpm v11 caches install state here; deleting it forces re-linking of the freshly built rust-gbt binary.
     - rm -rf node_modules/.pnpm-workspace-state-v1.json
     - pnpm install --prefer-offline --prefer-frozen-lockfile
