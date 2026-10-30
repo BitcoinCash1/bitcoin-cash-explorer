@@ -78,7 +78,7 @@ Query OK, 0 rows affected (0.00 sec)
 
 #### Build
 
-_Use Node.js 24.15.0 or newer in the 24.x LTS series and the pinned [pnpm 11.24.0](https://pnpm.io/installation) from `package.json`. CI uses Node.js 24.22.1._
+_Use Node.js 24.15.0 or newer in the 24.x LTS series and the pinned [pnpm 11.16.0](https://pnpm.io/installation) from `package.json`. CI uses Node.js 24.22.1._
 
 _The build process requires [Rust](https://www.rust-lang.org/tools/install) to be installed._
 
