@@ -13,6 +13,7 @@ export const INTERVAL_PRESETS = {
   '1y': { retentionSpan: 48384, bucketSizes: [1008, 4032] },
   '2y': { retentionSpan: 96768, bucketSizes: [1008, 4032] },
   '3y': { retentionSpan: 145152, bucketSizes: [1008, 4032] },
+  '4y': { retentionSpan: 193536, bucketSizes: [1008, 4032] },
   all: { retentionSpan: -1, bucketSizes: [1008, 4032] },
 };
 

@@ -71,6 +71,7 @@ const INTERVAL_PRESETS: Record<string, number[]> = {
   '1y': [1008, 4032],
   '2y': [1008, 4032],
   '3y': [1008, 4032],
+  '4y': [1008, 4032],
   all: [1008, 4032],
 };
 
@@ -110,6 +111,7 @@ export class BlockGogglesGraphComponent implements OnInit {
     { value: '1y', label: '1Y' },
     { value: '2y', label: '2Y' },
     { value: '3y', label: '3Y' },
+    { value: '4y', label: '4Y' },
     { value: 'all', label: 'ALL' },
   ];
 
