@@ -33,7 +33,7 @@ $ pnpm config:defaults:explorer
 
 ### 3. Run the Frontend
 
-_Make sure to use Node.js 24.x and [pnpm 10.x](https://pnpm.io/installation) or newer._
+_Use Node.js 24.15.0 or newer in the 24.x LTS series and the pinned [pnpm 11.24.0](https://pnpm.io/installation) from `package.json`. CI uses Node.js 24.22.1._
 
 Install project dependencies and run the frontend server:
 
@@ -45,6 +45,23 @@ $ pnpm serve:local-prod
 The frontend will be available at http://localhost:4200/ and all API requests will be proxied to the production server at https://bchexplorer.cash.
 
 ### 4. Test
+
+Run the local checks from the frontend directory:
+
+```sh
+pnpm lint
+pnpm prettier:check
+pnpm test:unit
+pnpm build
+```
+
+ESLint uses `eslint.config.mjs` with Angular template checks. Existing warnings
+remain allowed; errors fail CI. Keep TypeScript within Angular's supported
+range (currently `~6.0.3`); do not upgrade it independently of Angular.
+
+The Cypress suite requires the frontend development server to be running at
+`http://localhost:4200`. It is separate from the unit tests and is not currently
+run by GitLab CI.
 
 After making your changes, you can run our end-to-end automation suite and check for possible regressions.
 
@@ -70,7 +87,7 @@ Set up the [BCH Explorer backend](../backend/) first, if you haven't already.
 
 ### 1. Build the Frontend
 
-_Make sure to use Node.js 24.x and [pnpm 10.x](https://pnpm.io/installation) or newer._
+_Use Node.js 24.15.0 or newer in the 24.x LTS series and the pinned [pnpm 11.24.0](https://pnpm.io/installation) from `package.json`. CI uses Node.js 24.22.1._
 
 Build the frontend:
 
@@ -100,7 +117,7 @@ pnpm serve
 
 #### Production
 
-The `pnpm build` command from step 1 above should have generated a `dist` directory. Put the contents of `dist/` onto your web server.
+The `pnpm build` command from step 1 above should have generated a `dist` directory. Deploy the contents of `dist/explorer/browser/` to your web server, preserving the locale subdirectories.
 
 You will probably want to set up a reverse proxy, TLS, etc. There are sample nginx configuration files in the top level of the repository for reference, but note that support for such tasks is outside the scope of this project.
 

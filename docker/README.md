@@ -56,7 +56,7 @@ rpcpassword=explorer
 If you want to use different credentials, specify them in the `docker-compose.yml` file:
 
 ```yaml
-api:
+bch-explorer-api:
   environment:
     EXPLORER_BACKEND: "none"
     CORE_RPC_HOST: "172.27.0.1"
@@ -85,11 +85,11 @@ First, configure `bitcoind` as specified above, and make sure your Electrum Serv
 Then, set the following variables in `docker-compose.yml` so BCH Explorer can connect to your Electrum Server:
 
 ```yaml
-api:
+bch-explorer-api:
   environment:
     EXPLORER_BACKEND: "electrum"
     ELECTRUM_HOST: "172.27.0.1"
-    ELECTRUM_PORT: "50002"
+    ELECTRUM_PORT: "50001"
     ELECTRUM_TLS_ENABLED: "false"
 ```
 
@@ -110,7 +110,7 @@ docker compose up
 
 Optionally, you can override any other backend settings from `explorer-config.json`.
 
-Below we list all settings from `explorer-config.json` and the corresponding overrides you can make in the `api` > `environment` section of `docker-compose.yml`.
+Below we list selected settings from `explorer-config.json` and the corresponding overrides you can make in the `bch-explorer-api` > `environment` section of `docker-compose.yml`.
 
 <br/>
 
@@ -150,7 +150,7 @@ Below we list all settings from `explorer-config.json` and the corresponding ove
 Corresponding `docker-compose.yml` overrides:
 
 ```yaml
-  api:
+  bch-explorer-api:
     environment:
       EXPLORER_NETWORK: ""
       EXPLORER_BACKEND: ""
@@ -200,7 +200,7 @@ Corresponding `docker-compose.yml` overrides:
 Corresponding `docker-compose.yml` overrides:
 
 ```yaml
-  api:
+  bch-explorer-api:
     environment:
       CORE_RPC_HOST: ""
       CORE_RPC_PORT: ""
@@ -227,7 +227,7 @@ Corresponding `docker-compose.yml` overrides:
 Corresponding `docker-compose.yml` overrides:
 
 ```yaml
-  api:
+  bch-explorer-api:
     environment:
       ELECTRUM_HOST: ""
       ELECTRUM_PORT: ""
@@ -254,7 +254,7 @@ Corresponding `docker-compose.yml` overrides:
 Corresponding `docker-compose.yml` overrides:
 
 ```yaml
-  api:
+  bch-explorer-api:
     environment:
       SECOND_CORE_RPC_HOST: ""
       SECOND_CORE_RPC_PORT: ""
@@ -284,7 +284,7 @@ Corresponding `docker-compose.yml` overrides:
 Corresponding `docker-compose.yml` overrides:
 
 ```yaml
-  api:
+  bch-explorer-api:
     environment:
       DATABASE_ENABLED: ""
       DATABASE_HOST: ""
@@ -314,7 +314,7 @@ Corresponding `docker-compose.yml` overrides:
 Corresponding `docker-compose.yml` overrides:
 
 ```yaml
-  api:
+  bch-explorer-api:
     environment:
       SYSLOG_ENABLED: ""
       SYSLOG_HOST: ""
@@ -338,7 +338,7 @@ Corresponding `docker-compose.yml` overrides:
 Corresponding `docker-compose.yml` overrides:
 
 ```yaml
-  api:
+  bch-explorer-api:
     environment:
       STATISTICS_ENABLED: ""
       STATISTICS_TX_PER_SECOND_SAMPLE_PERIOD: ""
@@ -362,7 +362,7 @@ Corresponding `docker-compose.yml` overrides:
 Corresponding `docker-compose.yml` overrides:
 
 ```yaml
-  api:
+  bch-explorer-api:
     environment:
       SOCKS5PROXY_ENABLED: ""
       SOCKS5PROXY_HOST: ""
@@ -379,7 +379,7 @@ summaries, enable the optional cache on the backend service:
 
 ```yaml
 services:
-  api:
+  bch-explorer-api:
     environment:
       EXPLORER_BLOCK_SUMMARIES_PREVOUT_CACHE: "true"
 ```

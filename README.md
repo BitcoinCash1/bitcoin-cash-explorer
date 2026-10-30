@@ -10,31 +10,9 @@ Looking ahead, I plan to introduce sponsorship opportunities to ensure the long-
 
 # Installation Methods
 
-**Note:** Currently we are not yet listed on any of these "one-click installation" methods. For now, use the <a href="#advanced-installation-methods">Advanced Installation Methods</a>.
-
----
-
-BCH Explorer can be self-hosted on a wide variety of your own hardware, ranging from a simple one-click installation on a Raspberry Pi full-node distro all the way to a robust production instance on a powerful Linux or FreeBSD server.
-
-Most people should use a <a href="#one-click-installation">one-click install method</a>.
-
-Other install methods are meant for developers and others with experience managing servers. If you want support for your own production instance of BCH Explorer.
-
-We do **not** offer any paid Enterprise versions, everything is open-source and you will need to host it yourself, if you wish to run your own instance and having fun!
-
-<a id="one-click-installation"></a>
-
-## One-Click Installation
-
-~~BCH Explorer can be conveniently installed on the following full-node distros:~~
-
-<!-- - [Umbrel](https://github.com/getumbrel/umbrel)
-- [StartOS](https://github.com/Start9Labs/start-os)
-- [nix-bitcoin](https://github.com/fort-nix/nix-bitcoin/blob/a1eacce6768ca4894f365af8f79be5bbd594e1c3/examples/configuration.nix#L129)
-- [myNode](https://github.com/mynodebtc/mynode)
--->
-
-No matter which option you pick, you'll be able to get your own fully-sovereign instance of BCH Explorer up quickly without needing to fiddle with any settings.
+BCH Explorer can be self-hosted on Linux or FreeBSD. Use one of the
+[advanced installation methods](#advanced-installation-methods) below.
+One-click distribution packages are not currently listed here.
 
 ## Advanced Installation Methods
 
@@ -49,3 +27,10 @@ BCH Explorer can be installed in other ways too, but we only recommend doing so 
 The BCH Explorer frontend is translated into 30+ different languages.
 
 We use Localazy for translation management, go to: [https://localazy.com/p/bch-explorer](https://localazy.com/p/bch-explorer) and help us improve the translations!
+
+## Development and CI
+
+Build and test instructions are maintained in the [backend](./backend/README.md),
+[frontend](./frontend/README.md), and [Rust addon](./rust/gbt/README.md) READMEs.
+[GitLab CI](./.gitlab-ci.yml) runs the configured checks and builds. Release tags
+publish backend and frontend container images to the GitLab registry and GHCR.

@@ -1,6 +1,8 @@
-# Deploying an Production Instance
+# Deploying a Production Instance
 
-These instructions are for setting up a serious production BCH Explorer for Bitcoin Cash (mainnet, testnet3).
+These deployment notes describe the BCH Explorer infrastructure. Adapt paths,
+network access and resource limits to your host. Supported network configuration
+examples below include mainnet, testnet4, scalenet and chipnet.
 
 <!-- Users should use [one of the other installation methods](../#installation-methods). -->
 
@@ -36,48 +38,48 @@ Below is an example of the filesystem layout on my Proxmox instance running Debi
 
 ```sh
 NAME                              FSTYPE            FSVER    LABEL       UUID                                   FSAVAIL FSUSE% MOUNTPOINTS
-sda                                                                                                                            
-└─sda1                            ext4              1.0                  d735981d-599b-4ebd-8818-d467567d03ee                  
-sdb                                                                                                                            
-├─sdb1                                                                                                                         
-├─sdb2                            vfat              FAT32                5322-BE17                                             
-└─sdb3                            linux_raid_member 1.2      pve:2       5206d460-2cdb-457c-03c3-1a4e90eb5787                  
-  └─md2                           LVM2_member       LVM2 001             EIldm3-urYS-aNRq-M5Z9-Fq0k-7735-AjCNQ0                
+sda
+└─sda1                            ext4              1.0                  d735981d-599b-4ebd-8818-d467567d03ee
+sdb
+├─sdb1
+├─sdb2                            vfat              FAT32                5322-BE17
+└─sdb3                            linux_raid_member 1.2      pve:2       5206d460-2cdb-457c-03c3-1a4e90eb5787
+  └─md2                           LVM2_member       LVM2 001             EIldm3-urYS-aNRq-M5Z9-Fq0k-7735-AjCNQ0
     ├─pve-swap                    swap              1                    b4ae2e49-687e-401f-a330-62061abfc2a3                  [SWAP]
     └─pve-root                    ext4              1.0                  41a5882a-9e0d-495a-b426-cc25f07d28ea    700,5G    19% /
-sdc                                                                                                                            
-├─sdc1                                                                                                                         
+sdc
+├─sdc1
 ├─sdc2                            vfat              FAT32                5322-BE17                              1013,2M     1% /boot/efi
-└─sdc3                            linux_raid_member 1.2      pve:2       5206d460-2cdb-457c-03c3-1a4e90eb5787                  
-  └─md2                           LVM2_member       LVM2 001             EIldm3-urYS-aNRq-M5Z9-Fq0k-7735-AjCNQ0                
+└─sdc3                            linux_raid_member 1.2      pve:2       5206d460-2cdb-457c-03c3-1a4e90eb5787
+  └─md2                           LVM2_member       LVM2 001             EIldm3-urYS-aNRq-M5Z9-Fq0k-7735-AjCNQ0
     ├─pve-swap                    swap              1                    b4ae2e49-687e-401f-a330-62061abfc2a3                  [SWAP]
     └─pve-root                    ext4              1.0                  41a5882a-9e0d-495a-b426-cc25f07d28ea    700,5G    19% /
-nvme3n1                                                                                                                        
-└─nvme3n1p1                       linux_raid_member 1.2      server:data bd5fca6c-99e2-0681-47d2-d1607df645c5                  
-nvme2n1                                                                                                                        
-└─nvme2n1p1                       linux_raid_member 1.2      server:data bd5fca6c-99e2-0681-47d2-d1607df645c5                  
-nvme0n1                                                                                                                        
-└─nvme0n1p1                       linux_raid_member 1.2      pve:lvmdata 251a7c75-4e3a-62b0-eaa4-d48fcd8fd697                  
-  └─md127                         LVM2_member       LVM2 001             UZRvRF-6UR3-Gd7i-2xHy-WRkv-3ahP-snteKb                
-    ├─vmdata-vmstore_tmeta                                                                                                     
-    │ └─vmdata-vmstore-tpool                                                                                                   
-    │   ├─vmdata-vmstore                                                                                                       
-    │   └─vmdata-vm--100--disk--0                                                                                              
-    └─vmdata-vmstore_tdata                                                                                                     
-      └─vmdata-vmstore-tpool                                                                                                   
-        ├─vmdata-vmstore                                                                                                       
-        └─vmdata-vm--100--disk--0                                                                                              
-nvme1n1                                                                                                                        
-└─nvme1n1p1                       linux_raid_member 1.2      pve:lvmdata 251a7c75-4e3a-62b0-eaa4-d48fcd8fd697                  
-  └─md127                         LVM2_member       LVM2 001             UZRvRF-6UR3-Gd7i-2xHy-WRkv-3ahP-snteKb                
-    ├─vmdata-vmstore_tmeta                                                                                                     
-    │ └─vmdata-vmstore-tpool                                                                                                   
-    │   ├─vmdata-vmstore                                                                                                       
-    │   └─vmdata-vm--100--disk--0                                                                                              
-    └─vmdata-vmstore_tdata                                                                                                     
-      └─vmdata-vmstore-tpool                                                                                                   
-        ├─vmdata-vmstore                                                                                                       
-        └─vmdata-vm--100--disk--0  
+nvme3n1
+└─nvme3n1p1                       linux_raid_member 1.2      server:data bd5fca6c-99e2-0681-47d2-d1607df645c5
+nvme2n1
+└─nvme2n1p1                       linux_raid_member 1.2      server:data bd5fca6c-99e2-0681-47d2-d1607df645c5
+nvme0n1
+└─nvme0n1p1                       linux_raid_member 1.2      pve:lvmdata 251a7c75-4e3a-62b0-eaa4-d48fcd8fd697
+  └─md127                         LVM2_member       LVM2 001             UZRvRF-6UR3-Gd7i-2xHy-WRkv-3ahP-snteKb
+    ├─vmdata-vmstore_tmeta
+    │ └─vmdata-vmstore-tpool
+    │   ├─vmdata-vmstore
+    │   └─vmdata-vm--100--disk--0
+    └─vmdata-vmstore_tdata
+      └─vmdata-vmstore-tpool
+        ├─vmdata-vmstore
+        └─vmdata-vm--100--disk--0
+nvme1n1
+└─nvme1n1p1                       linux_raid_member 1.2      pve:lvmdata 251a7c75-4e3a-62b0-eaa4-d48fcd8fd697
+  └─md127                         LVM2_member       LVM2 001             UZRvRF-6UR3-Gd7i-2xHy-WRkv-3ahP-snteKb
+    ├─vmdata-vmstore_tmeta
+    │ └─vmdata-vmstore-tpool
+    │   ├─vmdata-vmstore
+    │   └─vmdata-vm--100--disk--0
+    └─vmdata-vmstore_tdata
+      └─vmdata-vmstore-tpool
+        ├─vmdata-vmstore
+        └─vmdata-vm--100--disk--0
 ```
 
 For maximum flexibility of configuration, you could use separate partitions for each data folder, if you wish (below is an example of `show system storage` command in FreeBDS):
@@ -110,7 +112,8 @@ Or you use `nvm` to select a pre-built version of Node.js:
 ```sh
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.0/install.sh | zsh
 source $HOME/.zshrc
-nvm install v24.14.0 --shared-zlib
+nvm install 24
+# Use Node.js 24.15.0 or newer; CI currently uses 24.22.1.
 nvm alias default node
 ```
 
@@ -144,12 +147,12 @@ HiddenServiceVersion 3
 
 ### Bitcoin Cash Node
 
-Download the Bitcoin Cash Node (BCHM) from the [official website](https://github.com/bitcoin-cash-node/bitcoin-cash-node/releases) or better yet use the [Ubuntu PPA](https://bitcoincashnode.org/download/ubuntu).
+Download the Bitcoin Cash Node (BCHN) from the [official website](https://github.com/bitcoin-cash-node/bitcoin-cash-node/releases) or better yet use the [Ubuntu PPA](https://bitcoincashnode.org/download/ubuntu).
 
 ```sh
 sudo add-apt-repository ppa:bitcoin-cash-node/ppa
 sudo apt-get update
-sudo apt-get install bitcoind 
+sudo apt-get install bitcoind
 ```
 
 Then see the [bitcoind.service](./bitcoind.service) file for the systemd service file, where I also set the `-datadir` parameter (see the service file for more details).
@@ -157,47 +160,14 @@ Then see the [bitcoind.service](./bitcoind.service) file for the systemd service
 Configure your `bitcoin.conf` like this:
 
 ```sh
-# Disable listening, this has nothing to do with the RPC calls.
-listen=0
-
-# Limit the number of connections to the node, this has nothing to do with the RPC calls.
-maxconnections=6
-# Max upload target (in MB), reducing the bandwidth usage.
-# This option has nothing to do with the RPC calls.
-maxuploadtarget=20
-
-# Transaction index (full index)
-txindex=1
-
-# Enable coin stats index as well (for gettxoutsetinfo RPC calls)
+# Examples below bind RPC to localhost. Set your own credentials.
+# Full transaction and UTXO statistics indexes:
 coinstatsindex=1
-
-# Enable server RPC commands
-server=1
-
-# To bind to all interfaces, use 0.0.0.0 (default)
-rpcbind=0.0.0.0
-
-# Note: you can have multiple lines of rpcallowip
-# Limit to localhost ideally for security reasons
-rpcallowip=127.0.0.1
-# In case of Docker setup that uses IPV6 allow all IPv6 addresses
-rpcallowip=::/0
-
-#rpcport=8332 (default port)
-
-# Setup authentication
-rpcauth=username:hashedpassword
-
-# RPC options
+# Fulcrum block notifications (not the RPC port):
+zmqpubhashblock=tcp://127.0.0.1:8433
 rpcworkqueue=1024
-# Increase the number of threads to handle RPC calls
 rpcthreads=10
 rpcservertimeout=60
-
-# Fulcrum options
-# Set zmqpubhashblock to listen on port 8433 for better performance
-zmqpubhashblock=tcp://0.0.0.0:8433
 
 datadir=/bitcoin
 server=1
@@ -211,8 +181,8 @@ mempoolexpiry=999999
 maxconnections=42
 onion=127.0.0.1:9050
 rpcallowip=127.0.0.1
-rpcuser=foo
-rpcpassword=bar
+rpcuser=explorer
+rpcpassword=REPLACE_WITH_RPC_PASSWORD
 
 [main]
 bind=127.0.0.1:8333
@@ -244,13 +214,13 @@ Fulcrum has a configuration file `fulcrum.conf` that you can use to configure th
 datadir = /media/my_extra_drive_mount_point/fulcrum/
 
 # Bitcoin daemon RPC host:port
-rpc = 127.0.0.1:8433
+rpc = 127.0.0.1:8332
 
-# RPC Username 
-rpcuser = username
+# RPC Username
+rpcuser = explorer
 
 # RPC Password
-rpcpassword = secret
+rpcpassword = REPLACE_WITH_RPC_PASSWORD
 
 # TCP bind
 tcp = 0.0.0.0:50001

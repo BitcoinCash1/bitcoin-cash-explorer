@@ -78,11 +78,11 @@ Query OK, 0 rows affected (0.00 sec)
 
 #### Build
 
-_Make sure to use Node.js 24.x and [pnpm 10.x or newer](https://pnpm.io/installation)_
+_Use Node.js 24.15.0 or newer in the 24.x LTS series and the pinned [pnpm 11.24.0](https://pnpm.io/installation) from `package.json`. CI uses Node.js 24.22.1._
 
 _The build process requires [Rust](https://www.rust-lang.org/tools/install) to be installed._
 
-Install dependencies with `pnpm`, run the preinstall script, then install and finally build the backend:
+Build and copy the native Rust addon first, then install dependencies and build the backend:
 
 ```sh
 cd backend
@@ -154,23 +154,25 @@ With the backend configured and running, proceed to set up the [BCH Explorer fro
 
 ### Set Up Backend Watchers
 
-The BCH Explorer backend is static. TypeScript scripts are compiled into the `dist` folder and served through a Node.js web server.
-
-As a result, for development purposes, you may find it helpful to set up backend watchers to avoid the manual shutdown/recompile/restart command-line cycle.
-
-First, install `nodemon` and `ts-node`:
+For development, use the project's installed `tsx` watcher:
 
 ```sh
-pnpm install -g ts-node nodemon
+pnpm dev
 ```
 
-Then, run the watcher:
+For validation, run:
 
 ```sh
-nodemon src/index.ts --ignore cache/
+pnpm lint
+pnpm prettier:check
+pnpm test:ci --runInBand
+pnpm build
 ```
 
-`nodemon` should be in pnpm's global binary folder. If needed, you can determine where that is with `pnpm -g bin`.
+The GitLab backend test job also runs Rust and native-binding tests; see the
+[Rust README](../rust/gbt/README.md). Database integration tests are separate
+from the default Jest suite; use `pnpm test:with-db` for the isolated database
+setup provided by the project.
 
 ### Useful Regtest Commands
 
