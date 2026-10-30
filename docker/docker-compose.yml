@@ -3,7 +3,7 @@ services:
     environment:
       FRONTEND_HTTP_PORT: "8080"
       BACKEND_MAINNET_HTTP_HOST: "bch-explorer-api"
-    image: registry.melroy.org/bitcoincash/bitcoin-cash-explorer/bch-explorer-frontend:3.11.12
+    image: registry.melroy.org/bitcoincash/bitcoin-cash-explorer/bch-explorer-frontend:3.14.6
     user: 1000:1000
     container_name: bch-explorer-web
     restart: always
@@ -28,9 +28,9 @@ services:
       DATABASE_HOST: "bch-explorer-db"
       DATABASE_DATABASE: "explorer"
       DATABASE_USERNAME: "explorer"
-      DATABASE_PASSWORD: "admin"
+      DATABASE_PASSWORD: "${DATABASE_PASSWORD:-explorer}"
       STATISTICS_ENABLED: "true"
-    image: registry.melroy.org/bitcoincash/bitcoin-cash-explorer/bch-explorer-backend:3.11.12
+    image: registry.melroy.org/bitcoincash/bitcoin-cash-explorer/bch-explorer-backend:3.14.6
     user: 1000:1000
     container_name: bch-explorer-api
     restart: always
@@ -49,11 +49,11 @@ services:
     environment:
       MYSQL_DATABASE: "explorer"
       MYSQL_USER: "explorer"
-      MYSQL_PASSWORD: "explorer"
-      MYSQL_ROOT_PASSWORD: "admin"
+      MYSQL_PASSWORD: "${DATABASE_PASSWORD:-explorer}"
+      MYSQL_ROOT_PASSWORD: "${DATABASE_ROOT_PASSWORD:-admin}"
       MARIADB_AUTO_UPGRADE: "1"
-    image: mariadb:12.2.1
-    user: 1000:1000
+    image: mariadb:11.8.9
+    # Let the official entrypoint prepare ownership, then drop to the mysql user.
     container_name: bch-explorer-db
     restart: always
     stop_grace_period: 1m

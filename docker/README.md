@@ -12,6 +12,34 @@ Jump to a section in this doc:
 - [Configure with Bitcoin Cash Node + Electrum Server](#configure-with-bitcoin-cash-node--electrum-server)
 - [Further Configuration](#further-configuration)
 
+## Database and persistent storage
+
+The bundled database uses TCP on the private Compose network. Set
+`DATABASE_PASSWORD` and `DATABASE_ROOT_PASSWORD` in a local `.env` file beside
+`docker-compose.yml` before deployment. The application password is shared by
+both services; the root password is separate. The defaults are examples only.
+Changing these variables does not change passwords in an existing database.
+
+The sample pins MariaDB 11.8 LTS, compatible with the published backend's
+initial schema migrations. Do not point this image at a data directory created
+by a newer MariaDB version; keep your existing server version and use a tested
+backup/restore migration when changing database versions.
+
+The MariaDB entrypoint prepares `./mysql/data` ownership before running as its
+own database user. The backend runs as UID/GID 1000, so prepare its cache directory
+from this directory before starting the stack:
+
+```bash
+sudo install -d -o 1000 -g 1000 data
+```
+
+For an external database accessed through a Unix socket, keep your existing
+`DATABASE_SOCKET`, database name, username and password settings, and mount the
+socket directory into the backend at the configured path. The backend user must
+have permission to access the socket. The bundled database and its TCP wait
+command are unnecessary in that setup; override the backend command with
+`./start.sh` if removing the bundled database service.
+
 ## Configure with Bitcoin Cash Node Only
 
 _Note: address lookups require an Electrum Server and will not work with this configuration. [Add an Electrum Server](#configure-with-bitcoin-cash-node--electrum-server) to your backend for full functionality._
@@ -45,7 +73,7 @@ Make sure `bitcoind` is running and synced.
 Now, run:
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 Your BCH Explorer instance should be running at http://localhost. The graphs will be populated as new transactions are detected.
@@ -75,7 +103,7 @@ Of course, if your Docker host IP address is different, update accordingly.
 With `bitcoind` (BCHN) and Electrum Server set up, run BCH Explorer with:
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 ## Further Configuration
@@ -260,6 +288,7 @@ Corresponding `docker-compose.yml` overrides:
     environment:
       DATABASE_ENABLED: ""
       DATABASE_HOST: ""
+      DATABASE_SOCKET: ""
       DATABASE_PORT: ""
       DATABASE_DATABASE: ""
       DATABASE_USERNAME: ""

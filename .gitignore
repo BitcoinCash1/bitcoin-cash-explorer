@@ -12,3 +12,6 @@ target
 docker/backend/start_ci.sh
 # pid file
 bch-explorer.pid
+
+# Local Compose database credentials
+/docker/.env
