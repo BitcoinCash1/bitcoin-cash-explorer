@@ -67,9 +67,9 @@
     "HOST": "127.0.0.1",
     "PORT": 33306,
     "SOCKET": "",
-    "DATABASE": "explorer_test",
-    "USERNAME": "explorer_test",
-    "PASSWORD": "explorer_test",
+    "DATABASE": "mempool_test",
+    "USERNAME": "mempool_test",
+    "PASSWORD": "mempool_test",
     "TIMEOUT": 180000,
     "PID_DIR": ""
   },

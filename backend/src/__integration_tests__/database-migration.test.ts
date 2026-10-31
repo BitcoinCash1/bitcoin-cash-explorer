@@ -118,7 +118,7 @@ describe('Database Migration Integration Tests', () => {
     expect(columnNames).toContain('hash');
     expect(columnNames).toContain('blockTimestamp');
     expect(columnNames).toContain('size');
-    expect(columnNames).toContain('weight');
+    expect(columnNames).not.toContain('weight');
     expect(columnNames).toContain('tx_count');
   });
 

@@ -127,33 +127,29 @@ export async function insertTestBlock(blockData: {
   hash: string;
   blockTimestamp?: Date;
   size?: number;
-  weight?: number;
   tx_count?: number;
   difficulty?: number;
   poolId?: number | null;
 }) {
   const timestamp = blockData.blockTimestamp || new Date();
   const size = blockData.size || 1000000;
-  const weight = blockData.weight || 4000000;
   const txCount = blockData.tx_count || 2000;
 
   await DB.query(
     `INSERT INTO blocks (
-      height, hash, blockTimestamp, size, weight, tx_count, 
+      height, hash, blockTimestamp, size, tx_count, 
       difficulty, pool_id, version, bits, nonce, merkle_root, 
       previous_block_hash, median_timestamp, stale,
       fees, fee_span, median_fee,
       avg_tx_size, total_inputs, total_outputs, total_output_amt,
-      segwit_total_txs, segwit_total_size, segwit_total_weight,
       header, utxoset_change
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       blockData.height,
       blockData.hash,
       timestamp,
       size,
-      weight,
       txCount,
       blockData.difficulty || 1.0,
       blockData.poolId !== undefined ? blockData.poolId : null,
@@ -172,9 +168,6 @@ export async function insertTestBlock(blockData: {
       txCount * 2, // total_inputs (estimate)
       txCount * 2, // total_outputs (estimate)
       2100000000000000, // total_output_amt (21M BTC in sats, estimate)
-      txCount, // segwit_total_txs (assume all segwit for test)
-      size, // segwit_total_size
-      weight, // segwit_total_weight
       '00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000', // header (160 chars)
       0, // utxoset_change
     ]

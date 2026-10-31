@@ -33,7 +33,6 @@ describe('BlocksRepository Integration Tests', () => {
       hash: blockHash,
       blockTimestamp: new Date('2023-07-16T00:00:00Z'),
       size: 1500000,
-      weight: 3999000,
       tx_count: 3000,
       difficulty: 53911173001054.59,
       poolId: defaultPoolId,

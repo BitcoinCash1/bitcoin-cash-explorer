@@ -12,3 +12,5 @@
 // - mempool.ts (might be used by repositories)
 // - memory-cache.ts (might be used by repositories)
 
+// The RPC boundary is unused by database tests; keep the ESM-only client out of Jest's CJS runtime.
+jest.mock('@bitcoincash/electrum-client', () => ({ ElectrumClient: jest.fn() }), { virtual: true });

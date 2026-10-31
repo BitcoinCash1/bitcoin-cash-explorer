@@ -527,7 +527,7 @@ class BlocksRepository {
     const params: any[] = [];
     let query = `
       SELECT ${BLOCK_DB_FIELDS}
-      FROM blocks
+      FROM blocks FORCE INDEX (pool_stale_height)
       JOIN pools ON blocks.pool_id = pools.id
       WHERE pool_id = ? AND stale = 0`;
     params.push(pool.id);
