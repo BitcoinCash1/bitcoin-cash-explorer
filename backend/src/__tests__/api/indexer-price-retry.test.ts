@@ -30,3 +30,16 @@ test('deduplicates heights, retains failed work, and schedules again after compl
   await jest.advanceTimersByTimeAsync(10000);
   expect(run).toHaveBeenNthCalledWith(3, [11]);
 });
+
+test('retries after an unexpected task failure and releases the running guard', async () => {
+  const run = mining.$indexBlockPrices as jest.Mock;
+  run
+    .mockReset()
+    .mockRejectedValueOnce(new Error('unexpected failure'))
+    .mockImplementation(async (heights) => heights);
+  indexer.queueBlockPrice(12);
+  await jest.advanceTimersByTimeAsync(10000);
+  await jest.advanceTimersByTimeAsync(10000);
+  expect(run).toHaveBeenCalledTimes(2);
+  expect(run).toHaveBeenLastCalledWith([12]);
+});

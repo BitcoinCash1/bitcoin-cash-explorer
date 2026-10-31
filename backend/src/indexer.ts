@@ -128,6 +128,9 @@ class Indexer {
         await this.runSingleTask(task);
       } catch (e) {
         logger.err(`Unexpected error in scheduled task ${task}: ` + (e instanceof Error ? e.message : e));
+        if (task === 'blocksPrices' && this.pendingBlockPrices.size) {
+          this.scheduleSingleTask(task, 10000);
+        }
       }
     }, timeout);
   }
@@ -155,7 +158,7 @@ class Indexer {
               } catch (e) {
                 logger.debug('failed to fetch latest price id from db: ' + (e instanceof Error ? e.message : e));
               }
-              if (priceUpdater.historyInserted === false || lastestPriceId === null) {
+              if (priceUpdater.historyInserted === false || lastestPriceId === null || lastestPriceId === undefined) {
                 logger.debug(`Blocks prices indexer is waiting for the price updater to complete`, logger.tags.mining);
                 this.scheduleSingleTask(task, 10000);
               } else {
