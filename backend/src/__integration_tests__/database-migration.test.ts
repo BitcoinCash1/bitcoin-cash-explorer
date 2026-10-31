@@ -1,4 +1,5 @@
 import DB from '../database';
+import migration from '../api/database-migration';
 import { setupTestDatabase, waitForDatabase } from './test-helpers';
 
 describe('Database Migration Integration Tests', () => {
@@ -40,6 +41,25 @@ describe('Database Migration Integration Tests', () => {
          AND CONSTRAINT_NAME = 'PRIMARY' ORDER BY ORDINAL_POSITION`
     );
     expect(columns.map((column: any) => column.COLUMN_NAME)).toEqual(['hash']);
+  });
+
+  test('should resume the composite index migration after a partial upgrade', async () => {
+    await DB.query('ALTER TABLE blocks DROP INDEX stale_height');
+    await DB.query("UPDATE state SET number = 109 WHERE name = 'schema_version'");
+    await migration.$initializeOrMigrateDatabase();
+    const [indexes] = await DB.query<any>(
+      `SELECT INDEX_NAME, COLUMN_NAME FROM information_schema.STATISTICS
+       WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'blocks'
+       AND INDEX_NAME IN ('pool_stale_height', 'stale_height') ORDER BY INDEX_NAME, SEQ_IN_INDEX`
+    );
+    expect(indexes.map((row: any) => [row.INDEX_NAME, row.COLUMN_NAME])).toEqual([
+      ['pool_stale_height', 'pool_id'],
+      ['pool_stale_height', 'stale'],
+      ['pool_stale_height', 'height'],
+      ['stale_height', 'stale'],
+      ['stale_height', 'height'],
+    ]);
+    await migration.$initializeOrMigrateDatabase();
   });
 
   test('should create pools table', async () => {

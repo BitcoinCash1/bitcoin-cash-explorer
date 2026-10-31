@@ -239,7 +239,7 @@ class BlocksSummariesRepository {
     }
     try {
       const [row]: any[] = await DB.query(
-        'SELECT MAX(bs.height) as tip FROM blocks_summaries bs JOIN blocks b ON bs.id = b.hash WHERE bs.version >= 1 AND b.stale = 0'
+        'SELECT bs.height as tip FROM blocks_summaries bs FORCE INDEX (height) STRAIGHT_JOIN blocks b ON bs.id = b.hash WHERE bs.version >= 1 AND b.stale = 0 ORDER BY bs.height DESC LIMIT 1'
       );
 
       if (row !== null && row.length > 0) {

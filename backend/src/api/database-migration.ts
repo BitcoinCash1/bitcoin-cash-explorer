@@ -4,7 +4,7 @@ import logger from '../logger';
 import { Common } from './common';
 
 class DatabaseMigration {
-  private static currentVersion = 109;
+  private static currentVersion = 110;
   private queryTimeout = 3600_000;
   private statisticsAddedIndexed = false;
   private uniqueLogs: string[] = [];
@@ -893,6 +893,33 @@ class DatabaseMigration {
         await this.$executeQuery('ALTER TABLE blocks DROP PRIMARY KEY, ADD PRIMARY KEY (hash), ADD INDEX (height)');
       }
       await this.updateToSchemaVersion(109);
+    }
+    if (databaseSchemaVersion < 110) {
+      for (const [name, columns] of [
+        ['pool_stale_height', ['pool_id', 'stale', 'height']],
+        ['stale_height', ['stale', 'height']],
+      ] as const) {
+        const [indexes]: any[] = await this.$executeQuery(
+          `SELECT INDEX_NAME, COLUMN_NAME, SEQ_IN_INDEX, SUB_PART, NON_UNIQUE
+           FROM information_schema.STATISTICS WHERE TABLE_SCHEMA = DATABASE()
+           AND TABLE_NAME = 'blocks' ORDER BY INDEX_NAME, SEQ_IN_INDEX`,
+          true
+        );
+        const definitions = new Map<string, any[]>();
+        for (const index of indexes) {
+          definitions.set(index.INDEX_NAME, [...(definitions.get(index.INDEX_NAME) || []), index]);
+        }
+        const matches = (parts: any[]) =>
+          parts.length === columns.length &&
+          parts.every((part, i) => part.COLUMN_NAME === columns[i] && part.SUB_PART === null && part.NON_UNIQUE === 1);
+        if (definitions.has(name) && !matches(definitions.get(name)!)) {
+          throw new Error(`Conflicting blocks index definition: ${name}`);
+        }
+        if (![...definitions.values()].some(matches)) {
+          await this.$executeQuery(`ALTER TABLE blocks ADD INDEX ${name} (${columns.join(', ')})`);
+        }
+      }
+      await this.updateToSchemaVersion(110);
     }
   }
 
