@@ -19,7 +19,7 @@ class PoolStatisticsCache {
     if (!config.VALKEY.ENABLED) return null;
     let token = await valkey.$getCache(`${this.prefix}:generation`);
     if (!token) {
-      await this.invalidate();
+      await valkey.$setCache(`${this.prefix}:generation`, randomUUID());
       token = await valkey.$getCache(`${this.prefix}:generation`);
     }
     return token;

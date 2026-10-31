@@ -59,3 +59,10 @@ test('computes without persistent caching when Valkey is disabled', async () => 
   await cache.get(1, compute);
   expect(compute).toHaveBeenCalledTimes(2);
 });
+
+test('unavailable Valkey does not cause duplicate fallback computations', async () => {
+  (valkey.$getCache as jest.Mock).mockResolvedValue(null);
+  const compute = jest.fn(async () => ({ count: 1 }));
+  expect(await cache.get(1, compute)).toEqual({ count: 1 });
+  expect(compute).toHaveBeenCalledTimes(1);
+});
