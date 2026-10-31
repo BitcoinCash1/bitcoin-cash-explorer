@@ -1,3 +1,4 @@
+import poolStatisticsCache from '../api/mining/pool-statistics-cache';
 import bitcoinApi from '../api/bitcoin/bitcoin-api-factory';
 import { BlockExtended, BlockExtension, BlockPrice } from '../mempool.interfaces';
 import DB from '../database';
@@ -204,6 +205,7 @@ class BlocksRepository {
       ];
 
       await DB.query(query, params);
+      await poolStatisticsCache.invalidate();
     } catch (e: any) {
       if (e.errno === 1062) {
         // ER_DUP_ENTRY - This scenario is possible upon node backend restart or if a stale block is reconnected
@@ -358,6 +360,24 @@ class BlocksRepository {
       logger.err(`Cannot count blocks for this pool (using offset). Reason: ` + (e instanceof Error ? e.message : e));
       throw e;
     }
+  }
+
+  public async $poolStatisticsCounts(poolId: number): Promise<any> {
+    const [rows]: any[] = await DB.query(
+      `SELECT COUNT(*) AS allCount, SUM(reward) AS totalReward,
+      COALESCE(SUM(blockTimestamp BETWEEN DATE_SUB(NOW(), INTERVAL 24 HOUR) AND NOW()), 0) AS dayCount,
+      COALESCE(SUM(blockTimestamp BETWEEN DATE_SUB(NOW(), INTERVAL 1 WEEK) AND NOW()), 0) AS weekCount
+      FROM blocks WHERE pool_id = ? AND stale = 0`,
+      [poolId]
+    );
+    return rows[0];
+  }
+
+  public async $networkStatisticsCounts(): Promise<any> {
+    const [rows]: any[] = await DB.query(`SELECT COUNT(*) AS weekCount,
+      COALESCE(SUM(blockTimestamp BETWEEN DATE_SUB(NOW(), INTERVAL 24 HOUR) AND NOW()), 0) AS dayCount
+      FROM blocks WHERE stale = 0 AND blockTimestamp BETWEEN DATE_SUB(NOW(), INTERVAL 1 WEEK) AND NOW()`);
+    return rows[0];
   }
 
   /**
@@ -1183,6 +1203,7 @@ class BlocksRepository {
         WHERE hash = ?`,
         [poolId, poolsUpdater.currentSha, id]
       );
+      await poolStatisticsCache.invalidate();
     } catch (e) {
       logger.err(`Cannot update block pool. Reason: ` + (e instanceof Error ? e.message : e));
       throw e;
@@ -1232,6 +1253,7 @@ class BlocksRepository {
         WHERE height = ? AND hash != ?`,
         [height, hash ?? '']
       );
+      await poolStatisticsCache.invalidate();
     } catch (e) {
       logger.err(`Cannot set canonical block at height. Reason: ` + (e instanceof Error ? e.message : e));
       throw e;

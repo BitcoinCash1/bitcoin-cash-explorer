@@ -1,3 +1,4 @@
+import poolStatisticsCache from './pool-statistics-cache';
 import { BlockPrice, PoolInfo, PoolStats, RewardStats } from '../../mempool.interfaces';
 import BlocksRepository from '../../repositories/BlocksRepository';
 import PoolsRepository from '../../repositories/PoolsRepository';
@@ -467,42 +468,43 @@ class Mining {
       throw new Error('This mining pool does not exist');
     }
 
-    const blockCount: number = await BlocksRepository.$blockCount(pool.id);
-    const totalBlock: number = await BlocksRepository.$blockCount(null, null);
+    return poolStatisticsCache.get(pool.id, async () => {
+      const poolCounts = await BlocksRepository.$poolStatisticsCounts(pool.id);
+      const networkCounts = await BlocksRepository.$networkStatisticsCounts();
+      const blockCount = Number(poolCounts.allCount);
+      const totalBlock = await BlocksRepository.$blockCount(null, null);
+      const blockCount24h = Number(poolCounts.dayCount);
+      const totalBlock24h = Number(networkCounts.dayCount);
+      const blockCount1w = Number(poolCounts.weekCount);
+      const totalBlock1w = Number(networkCounts.weekCount);
+      const avgHealth = await BlocksRepository.$getAvgBlockHealthPerPoolId(pool.id);
+      const totalReward = poolCounts.totalReward || 0;
 
-    const blockCount24h: number = await BlocksRepository.$blockCount(pool.id, '24h');
-    const totalBlock24h: number = await BlocksRepository.$blockCount(null, '24h');
+      let currentEstimatedHashrate = 0;
+      try {
+        currentEstimatedHashrate = await bitcoinClient.getNetworkHashPs(totalBlock24h);
+      } catch (e) {
+        logger.debug('Bitcoin Cash Node is not available, using zeroed value for current hashrate', logger.tags.mining);
+      }
 
-    const blockCount1w: number = await BlocksRepository.$blockCount(pool.id, '1w');
-    const totalBlock1w: number = await BlocksRepository.$blockCount(null, '1w');
-
-    const avgHealth = await BlocksRepository.$getAvgBlockHealthPerPoolId(pool.id);
-    const totalReward = await BlocksRepository.$getTotalRewardForPoolId(pool.id);
-
-    let currentEstimatedHashrate = 0;
-    try {
-      currentEstimatedHashrate = await bitcoinClient.getNetworkHashPs(totalBlock24h);
-    } catch (e) {
-      logger.debug('Bitcoin Cash Node is not available, using zeroed value for current hashrate', logger.tags.mining);
-    }
-
-    return {
-      pool: pool,
-      blockCount: {
-        all: blockCount,
-        '24h': blockCount24h,
-        '1w': blockCount1w,
-      },
-      blockShare: {
-        all: blockCount / totalBlock,
-        '24h': blockCount24h / totalBlock24h,
-        '1w': blockCount1w / totalBlock1w,
-      },
-      estimatedHashrate: currentEstimatedHashrate * (blockCount24h / totalBlock24h),
-      reportedHashrate: null,
-      avgBlockHealth: avgHealth,
-      totalReward: totalReward,
-    };
+      return {
+        pool: pool,
+        blockCount: {
+          all: blockCount,
+          '24h': blockCount24h,
+          '1w': blockCount1w,
+        },
+        blockShare: {
+          all: blockCount / totalBlock,
+          '24h': blockCount24h / totalBlock24h,
+          '1w': blockCount1w / totalBlock1w,
+        },
+        estimatedHashrate: currentEstimatedHashrate * (blockCount24h / totalBlock24h),
+        reportedHashrate: null,
+        avgBlockHealth: avgHealth,
+        totalReward: totalReward,
+      };
+    });
   }
 
   /**
