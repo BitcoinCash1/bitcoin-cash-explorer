@@ -82,6 +82,27 @@ class BlocksSummariesRepository {
     return undefined;
   }
 
+  public async $getMissingSummaries(
+    minHeight: number,
+    maxHeight: number,
+    cursor?: { height: number; hash: string }
+  ): Promise<{ height: number; hash: string; stale: boolean }[]> {
+    const params: (number | string)[] = [minHeight, maxHeight];
+    let after = '';
+    if (cursor) {
+      after = ' AND (b.height < ? OR (b.height = ? AND b.hash < ?))';
+      params.push(cursor.height, cursor.height, cursor.hash);
+    }
+    const [rows]: any[] = await DB.query(
+      `SELECT b.height, b.hash, b.stale FROM blocks b
+      LEFT JOIN blocks_summaries bs ON bs.id = b.hash AND bs.version >= 1
+      WHERE b.stale = 0 AND b.height BETWEEN ? AND ? AND bs.id IS NULL ${after}
+      ORDER BY b.height DESC, b.hash DESC LIMIT 1000`,
+      params
+    );
+    return rows;
+  }
+
   public async $getIndexedSummariesId(): Promise<string[]> {
     try {
       const [rows] = (await DB.query(`SELECT id from blocks_summaries WHERE version >= 1`)) as RowDataPacket[][];

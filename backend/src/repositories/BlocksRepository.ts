@@ -1063,17 +1063,20 @@ class BlocksRepository {
   /**
    * Get all blocks which have not be linked to a price yet
    */
-  public async $getBlocksWithoutPrice(): Promise<object[]> {
+  public async $getBlocksWithoutPrice(heights?: number[]): Promise<object[]> {
+    if (heights && !heights.length) return [];
     try {
-      const [rows]: any[] = await DB.query(`
+      const [rows]: any[] = await DB.query(
+        `
         SELECT UNIX_TIMESTAMP(blocks.blockTimestamp) as timestamp, blocks.height
         FROM blocks
         LEFT JOIN blocks_prices ON blocks.height = blocks_prices.height
         LEFT JOIN prices ON blocks_prices.price_id = prices.id
-        WHERE blocks_prices.height IS NULL
-          OR prices.id IS NULL
+        WHERE ${heights ? `blocks.height IN (${heights.map(() => '?').join(',')})` : '(blocks_prices.height IS NULL OR prices.id IS NULL)'}
         ORDER BY blocks.height
-      `);
+      `,
+        heights || []
+      );
       return rows;
     } catch (e) {
       logger.err('Cannot get blocks height and timestamp from the db. Reason: ' + (e instanceof Error ? e.message : e));

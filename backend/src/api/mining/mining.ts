@@ -517,7 +517,7 @@ class Mining {
   /**
    * Generate weekly mining pool hashrate history
    */
-  public async $generatePoolHashrateHistory(): Promise<void> {
+  public async $generatePoolHashrateHistory(boundary?: DifficultyBlock | null): Promise<void> {
     const now = new Date();
 
     // Run only if:
@@ -532,7 +532,9 @@ class Mining {
     }
 
     try {
-      const oldestConsecutiveBlockTimestamp = 1000 * (await BlocksRepository.$getOldestConsecutiveBlock()).timestamp;
+      if (boundary === null) return;
+      const oldestConsecutiveBlockTimestamp =
+        1000 * (boundary === undefined ? await BlocksRepository.$getOldestConsecutiveBlock() : boundary)!.timestamp;
 
       const genesisData = await this.getGenesisData();
       const genesisTimestamp = genesisData.timestamp * 1000;
@@ -659,7 +661,7 @@ class Mining {
   /**
    * Generate daily hashrate data
    */
-  public async $generateNetworkHashrateHistory(): Promise<void> {
+  public async $generateNetworkHashrateHistory(boundary?: DifficultyBlock | null): Promise<void> {
     // If a re-index was requested, truncate first
     if (this.reindexHashrateRequested === true) {
       logger.notice(`hashrates will now be re-indexed`);
@@ -676,7 +678,9 @@ class Mining {
       return;
     }
 
-    const oldestConsecutiveBlockTimestamp = 1000 * (await BlocksRepository.$getOldestConsecutiveBlock()).timestamp;
+    if (boundary === null) return;
+    const oldestConsecutiveBlockTimestamp =
+      1000 * (boundary === undefined ? await BlocksRepository.$getOldestConsecutiveBlock() : boundary)!.timestamp;
 
     try {
       const genesisData = await this.getGenesisData();
@@ -1011,7 +1015,7 @@ class Mining {
   /**
    * Index difficulty adjustments
    */
-  public async $indexDifficultyAdjustments(): Promise<void> {
+  public async $indexDifficultyAdjustments(): Promise<DifficultyBlock | null> {
     // If a re-index was requested, truncate first
     if (this.reindexDifficultyAdjustmentRequested === true) {
       logger.notice(`difficulty_adjustments will now be re-indexed`);
@@ -1043,7 +1047,7 @@ class Mining {
 
     if (!blocks?.length) {
       // no blocks in database yet
-      return;
+      return null;
     }
 
     const oldestConsecutiveBlock = this.getOldestConsecutiveBlock(blocks);
@@ -1098,21 +1102,23 @@ class Mining {
     } else {
       logger.debug(`Indexed ${totalIndexed} difficulty adjustments`, logger.tags.mining);
     }
+    return oldestConsecutiveBlock;
   }
 
   /**
    * Create a link between blocks and the latest price at when they were mined
    */
-  public async $indexBlockPrices(): Promise<void> {
+  public async $indexBlockPrices(heights?: number[]): Promise<number[]> {
     if (this.blocksPriceIndexingRunning === true) {
-      return;
+      return [];
     }
     this.blocksPriceIndexingRunning = true;
 
+    const saved: number[] = [];
     let totalInserted = 0;
     try {
       const prices: any[] = await PricesRepository.$getPricesTimesAndId();
-      const blocksWithoutPrices: any[] = await BlocksRepository.$getBlocksWithoutPrice();
+      const blocksWithoutPrices: any[] = await BlocksRepository.$getBlocksWithoutPrice(heights);
 
       const blocksPrices: BlockPrice[] = [];
 
@@ -1143,6 +1149,7 @@ class Mining {
           }
           logger.debug(logStr, logger.tags.mining);
           await BlocksRepository.$saveBlockPrices(blocksPrices);
+          saved.push(...blocksPrices.map((block) => block.height));
           blocksPrices.length = 0;
         }
       }
@@ -1155,6 +1162,7 @@ class Mining {
         }
         logger.debug(logStr, logger.tags.mining);
         await BlocksRepository.$saveBlockPrices(blocksPrices);
+        saved.push(...blocksPrices.map((block) => block.height));
       }
     } catch (e) {
       this.blocksPriceIndexingRunning = false;
@@ -1168,6 +1176,7 @@ class Mining {
     }
 
     this.blocksPriceIndexingRunning = false;
+    return saved;
   }
 
   /**
