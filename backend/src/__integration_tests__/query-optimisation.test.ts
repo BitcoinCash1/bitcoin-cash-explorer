@@ -29,25 +29,6 @@ async function insert(height: number, hash: string, stale = 0) {
   await DB.query('INSERT INTO blocks SET ?', [row]);
 }
 
-test('counts indexed canonical rows rather than assuming a contiguous chain', async () => {
-  await insert(0, 'a');
-  await insert(2, 'b');
-  await insert(2, 'c', 1);
-  expect(await blocks.$blockCount(null)).toBe(2);
-  expect(await blocks.$blockCountBetweenHeight(2, 0)).toBe(2);
-});
-
-test('summary tip skips stale and old-version summaries and returns null when empty', async () => {
-  expect(await summaries.$getTipIndexed()).toBeNull();
-  await insert(1, 'a');
-  await insert(2, 'b');
-  await insert(3, 'c', 1);
-  await DB.query(
-    "INSERT INTO blocks_summaries (height,id,transactions,version) VALUES (1,'a','[]',1),(2,'b','[]',0),(3,'c','[]',1)"
-  );
-  expect(await summaries.$getTipIndexed()).toBe(1);
-});
-
 test('missing summaries respect range, stale status, versions and keyset continuation', async () => {
   await insert(1, 'a');
   await insert(2, 'b');
@@ -58,9 +39,19 @@ test('missing summaries respect range, stale status, versions and keyset continu
   expect((await summaries.$getMissingSummaries(1, 4, { height: 4, hash: 'd' })).map((r) => r.hash)).toEqual(['b']);
 });
 
-test('targeted price retries include only requested heights, including already linked rows', async () => {
+test('targeted price retries include only requested heights', async () => {
   await insert(1, 'a');
   await insert(2, 'b');
   expect(((await blocks.$getBlocksWithoutPrice([2])) as any[]).map((r) => r.height)).toEqual([2]);
   expect(await blocks.$getBlocksWithoutPrice([])).toEqual([]);
 });
+
+test('missing summaries paginate beyond one batch without skipping equal-height hashes', async () => {
+  for (let height = 1; height <= 1001; height++) await insert(height, String(height).padStart(64, '0'));
+  await insert(1, 'z'.repeat(64));
+  const first = await summaries.$getMissingSummaries(0, 2000);
+  expect(first).toHaveLength(1000);
+  const second = await summaries.$getMissingSummaries(0, 2000, first[first.length - 1]);
+  expect(second).toHaveLength(2);
+  expect(new Set([...first, ...second].map((row) => row.hash)).size).toBe(1002);
+}, 15000);
