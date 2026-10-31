@@ -4,7 +4,7 @@ import logger from '../logger';
 import { Common } from './common';
 
 class DatabaseMigration {
-  private static currentVersion = 110;
+  private static currentVersion = 111;
   private queryTimeout = 3600_000;
   private statisticsAddedIndexed = false;
   private uniqueLogs: string[] = [];
@@ -921,6 +921,26 @@ class DatabaseMigration {
         }
       }
       await this.updateToSchemaVersion(110);
+    }
+    if (databaseSchemaVersion < 111) {
+      // Avoid reading clustered summary rows (including large JSON payloads) during reconciliation.
+      const [parts]: any[] = await this.$executeQuery(
+        `SELECT COLUMN_NAME, SUB_PART, NON_UNIQUE FROM information_schema.STATISTICS
+         WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'blocks_summaries'
+         AND INDEX_NAME = 'id_version' ORDER BY SEQ_IN_INDEX`,
+        true
+      );
+      if (!parts.length) {
+        await this.$executeQuery('ALTER TABLE blocks_summaries ADD INDEX id_version (id, version)');
+      } else if (
+        parts.length !== 2 ||
+        parts.some(
+          (part, i) => part.COLUMN_NAME !== ['id', 'version'][i] || part.SUB_PART !== null || part.NON_UNIQUE !== 1
+        )
+      ) {
+        throw new Error('Conflicting blocks_summaries index definition: id_version');
+      }
+      await this.updateToSchemaVersion(111);
     }
   }
 

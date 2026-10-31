@@ -95,7 +95,7 @@ class BlocksSummariesRepository {
     }
     const [rows]: any[] = await DB.query(
       `SELECT b.height, b.hash, b.stale FROM blocks b
-      LEFT JOIN blocks_summaries bs ON bs.id = b.hash AND bs.version >= 1
+      LEFT JOIN blocks_summaries bs FORCE INDEX (id_version) ON bs.id = b.hash AND bs.version >= 1
       WHERE b.stale = 0 AND b.height BETWEEN ? AND ? AND bs.id IS NULL ${after}
       ORDER BY b.height DESC, b.hash DESC LIMIT 1000`,
       params

@@ -1,3 +1,4 @@
+import migration from '../api/database-migration';
 import DB from '../database';
 import config from '../config';
 import blocks from '../repositories/BlocksRepository';
@@ -55,3 +56,14 @@ test('missing summaries paginate beyond one batch without skipping equal-height 
   expect(second).toHaveLength(2);
   expect(new Set([...first, ...second].map((row) => row.hash)).size).toBe(1002);
 }, 15000);
+
+test('summary covering index migration can resume after DDL completed before version update', async () => {
+  await DB.query("UPDATE state SET number = 110 WHERE name = 'schema_version'");
+  await migration.$initializeOrMigrateDatabase();
+  const [parts]: any[] = await DB.query(`SELECT COLUMN_NAME FROM information_schema.STATISTICS
+    WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'blocks_summaries' AND INDEX_NAME = 'id_version'
+    ORDER BY SEQ_IN_INDEX`);
+  expect(parts.map((row: any) => row.COLUMN_NAME)).toEqual(['id', 'version']);
+  const [version]: any[] = await DB.query("SELECT number FROM state WHERE name = 'schema_version'");
+  expect(version[0].number).toBe(111);
+});
