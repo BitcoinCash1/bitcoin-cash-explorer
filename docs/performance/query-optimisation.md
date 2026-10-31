@@ -16,3 +16,7 @@ The pool listing therefore explicitly selects `pool_stale_height`. A separate fo
 These are single-run synthetic measurements, not production latency guarantees. Production plans must be read back after the additive migration. Concurrent requests, cold startup, index storage growth, and application peak memory still require deployment-scale validation.
 
 The integration harness previously referenced a missing config filename, used credentials inconsistent with its Compose database, loaded an ESM RPC dependency under CommonJS Jest, and inserted removed Bitcoin-specific columns. The test-only repairs allow actual BCH schema tests to execute without mocking database operations.
+
+## Complete-stack follow-up
+
+See [local stack validation](stack-validation.md) for concurrent HTTP, indexing-cycle, memory, cache-failure and migration results. It also documents the summary-query regression found with wider JSON and the migration 111 covering-index fix.
