@@ -11,7 +11,7 @@ On local MariaDB 10.11.19, single warm executions measured:
 - Summary tip via `MAX` join: 1,362 ms; ordered, height-index-first join: 0.31 ms.
 - Building both indexes: 1.39 seconds on this synthetic table.
 
-The pool listing therefore explicitly selects `pool_stale_height`. Its plan uses equality on pool and stale status, then index order for the limit. This is a targeted hint, not a global optimizer setting.
+The pool listing therefore explicitly selects `pool_stale_height`. A separate forced-index execution measured 0.74 ms. Its plan uses equality on pool and stale status, then index order for the limit. This is a targeted hint, not a global optimizer setting.
 
 These are single-run synthetic measurements, not production latency guarantees. Production plans must be read back after the additive migration. Concurrent requests, cold startup, index storage growth, and application peak memory still require deployment-scale validation.
 

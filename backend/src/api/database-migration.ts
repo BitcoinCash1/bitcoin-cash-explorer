@@ -915,7 +915,8 @@ class DatabaseMigration {
         if (definitions.has(name) && !matches(definitions.get(name)!)) {
           throw new Error(`Conflicting blocks index definition: ${name}`);
         }
-        if (![...definitions.values()].some(matches)) {
+        // Query hints require these stable names, even if an equivalent differently named index exists.
+        if (!definitions.has(name)) {
           await this.$executeQuery(`ALTER TABLE blocks ADD INDEX ${name} (${columns.join(', ')})`);
         }
       }
