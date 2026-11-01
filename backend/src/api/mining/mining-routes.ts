@@ -95,10 +95,17 @@ class MiningRoutes {
   private async $getPool(req: Request, res: Response): Promise<void> {
     try {
       const stats = await mining.$getPoolStat(req.params.slug);
-      res.header('Pragma', 'public');
-      res.header('Cache-control', 'public');
-      res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
-      res.json(stats);
+      if (stats.cacheable) {
+        res.header('Pragma', 'public');
+        res.header('Cache-control', 'public');
+        res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
+      } else {
+        // A failed RPC lookup must not outlive recovery in browser or proxy caches.
+        res.header('Cache-control', 'no-store');
+        res.removeHeader('Expires');
+        res.removeHeader('Pragma');
+      }
+      res.json(stats.value);
     } catch (e) {
       if (e instanceof Error && e.message.indexOf('This mining pool does not exist') > -1) {
         handleError(req, res, 404, e.message);

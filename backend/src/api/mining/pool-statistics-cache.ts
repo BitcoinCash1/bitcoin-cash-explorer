@@ -2,9 +2,14 @@ import { randomUUID } from 'crypto';
 import config from '../../config';
 import valkey from '../valkey-cache';
 
+export interface PoolStatisticsResult {
+  value: object;
+  cacheable: boolean;
+}
+
 // Shared generation invalidates every pool and worker, including computations already in flight.
 class PoolStatisticsCache {
-  private pending = new Map<string, Promise<object>>();
+  private pending = new Map<string, Promise<PoolStatisticsResult>>();
   private revision = 0;
   private get prefix(): string {
     return `mining:pool-statistics:${config.EXPLORER.NETWORK}:${config.DATABASE.DATABASE}`;
@@ -25,7 +30,7 @@ class PoolStatisticsCache {
     return token;
   }
 
-  public async get(pool: number, compute: () => Promise<object>): Promise<object> {
+  public async get(pool: number, compute: () => Promise<PoolStatisticsResult>): Promise<PoolStatisticsResult> {
     const token = await this.generation();
     const revision = this.revision;
     const key = `${this.prefix}:${token}:${revision}:${pool}`;
@@ -44,16 +49,17 @@ class PoolStatisticsCache {
     pool: number,
     token: string | null,
     revision: number,
-    compute: () => Promise<object>
-  ): Promise<object> {
+    compute: () => Promise<PoolStatisticsResult>
+  ): Promise<PoolStatisticsResult> {
     for (let attempt = 0; attempt < 2; attempt++) {
-      const key = `${this.prefix}:${token}:${pool}`;
+      // Version response keys so older workers cannot supply cached RPC fallbacks.
+      const key = `${this.prefix}:v2:${token}:${pool}`;
       if (token) {
         const cached = await valkey.$getCache(key);
         if (cached) {
           try {
             const value = JSON.parse(cached);
-            if (revision === this.revision && token === (await this.generation())) return value;
+            if (revision === this.revision && token === (await this.generation())) return { value, cacheable: true };
           } catch {
             /* Recompute malformed cached responses. */
           }
@@ -62,7 +68,7 @@ class PoolStatisticsCache {
       const result = await compute();
       const current = await this.generation();
       if (revision === this.revision && token === current) {
-        if (token) await valkey.$setCache(key, JSON.stringify(result), 120);
+        if (token && result.cacheable) await valkey.$setCache(key, JSON.stringify(result.value), 120);
         return result;
       }
       if (attempt === 1) return result;
