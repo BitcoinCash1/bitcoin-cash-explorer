@@ -1061,7 +1061,7 @@ class BlocksRepository {
   }
 
   /**
-   * Get all blocks which have not be linked to a price yet
+   * Get canonical blocks needing a price, or canonical blocks at explicit retry heights.
    */
   public async $getBlocksWithoutPrice(heights?: number[]): Promise<object[]> {
     if (heights && !heights.length) return [];
@@ -1072,7 +1072,7 @@ class BlocksRepository {
         FROM blocks
         LEFT JOIN blocks_prices ON blocks.height = blocks_prices.height
         LEFT JOIN prices ON blocks_prices.price_id = prices.id
-        WHERE ${heights ? `blocks.height IN (${heights.map(() => '?').join(',')})` : '(blocks_prices.height IS NULL OR prices.id IS NULL)'}
+        WHERE blocks.stale = 0 AND ${heights ? `blocks.height IN (${heights.map(() => '?').join(',')})` : '(blocks_prices.height IS NULL OR prices.id IS NULL)'}
         ORDER BY blocks.height
       `,
         heights || []

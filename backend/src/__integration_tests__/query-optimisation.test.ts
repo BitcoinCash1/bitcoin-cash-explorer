@@ -116,3 +116,20 @@ test('the real difficulty boundary backfills missing daily and weekly hashrate r
     mining.lastWeeklyHashrateIndexingDate = originalWeekly;
   }
 });
+
+test.each([false, true])('price reconciliation excludes stale forks (targeted: %s)', async (targeted) => {
+  await insert(100000, 'a-canonical');
+  await insert(100000, 'z-stale', 1);
+  await insert(100001, 'stale-only', 1);
+  await DB.query("UPDATE blocks SET blockTimestamp='2026-10-31 00:00:00' WHERE hash='a-canonical'");
+  await DB.query("UPDATE blocks SET blockTimestamp='2026-10-29 00:00:00' WHERE stale=1");
+  await DB.query("INSERT INTO prices(id,time,USD) VALUES (1,'2026-10-30 00:00:00',100),(2,'2026-11-01 00:00:00',200)");
+  if (targeted) {
+    // A retry must preserve an existing correct link even when a stale fork shares its height.
+    await DB.query('INSERT INTO blocks_prices(height,price_id) VALUES (100000,2)');
+  }
+  const heights = targeted ? [100000, 100001] : undefined;
+  expect(await mining.$indexBlockPrices(heights)).toEqual([100000]);
+  const [rows]: any[] = await DB.query('SELECT height, price_id FROM blocks_prices ORDER BY height');
+  expect(rows).toEqual([{ height: 100000, price_id: 2 }]);
+});
