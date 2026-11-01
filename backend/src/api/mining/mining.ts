@@ -1030,7 +1030,7 @@ class Mining {
     }
 
     // gets {time, height, difficulty, bits} of blocks in ascending order of height
-    const blocks: any = await BlocksRepository.$getBlocksDifficulty();
+    const blocks = await BlocksRepository.$getBlocksDifficulty();
     const genesisData = await this.getGenesisData();
     let currentDifficulty = genesisData.difficulty;
     let currentBits = genesisData.bits;
@@ -1102,7 +1102,13 @@ class Mining {
     } else {
       logger.debug(`Indexed ${totalIndexed} difficulty adjustments`, logger.tags.mining);
     }
-    return oldestConsecutiveBlock;
+    // Difficulty rows use `time`; history generators share the boundary's `timestamp` contract.
+    return {
+      timestamp: oldestConsecutiveBlock.time,
+      height: oldestConsecutiveBlock.height,
+      difficulty: oldestConsecutiveBlock.difficulty,
+      bits: oldestConsecutiveBlock.bits,
+    };
   }
 
   /**
@@ -1142,26 +1148,30 @@ class Mining {
         }
 
         if (blocksPrices.length >= 100000) {
-          totalInserted += blocksPrices.length;
           let logStr = `Linking ${blocksPrices.length} blocks to their closest price`;
           if (blocksWithoutPrices.length > 200000) {
-            logStr += ` | Progress ${Math.round((totalInserted / blocksWithoutPrices.length) * 100)}%`;
+            logStr += ` | Progress ${Math.round(((totalInserted + blocksPrices.length) / blocksWithoutPrices.length) * 100)}%`;
           }
           logger.debug(logStr, logger.tags.mining);
-          await BlocksRepository.$saveBlockPrices(blocksPrices);
+          if (!(await BlocksRepository.$saveBlockPrices(blocksPrices))) {
+            throw new Error('Failed to save block prices; retaining pending retries');
+          }
+          totalInserted += blocksPrices.length;
           saved.push(...blocksPrices.map((block) => block.height));
           blocksPrices.length = 0;
         }
       }
 
       if (blocksPrices.length > 0) {
-        totalInserted += blocksPrices.length;
         let logStr = `Linking ${blocksPrices.length} blocks to their closest price`;
         if (blocksWithoutPrices.length > 200000) {
-          logStr += ` | Progress ${Math.round((totalInserted / blocksWithoutPrices.length) * 100)}%`;
+          logStr += ` | Progress ${Math.round(((totalInserted + blocksPrices.length) / blocksWithoutPrices.length) * 100)}%`;
         }
         logger.debug(logStr, logger.tags.mining);
-        await BlocksRepository.$saveBlockPrices(blocksPrices);
+        if (!(await BlocksRepository.$saveBlockPrices(blocksPrices))) {
+          throw new Error('Failed to save block prices; retaining pending retries');
+        }
+        totalInserted += blocksPrices.length;
         saved.push(...blocksPrices.map((block) => block.height));
       }
     } catch (e) {
@@ -1303,7 +1313,7 @@ class Mining {
 
   // Finds the oldest block in a consecutive chain back from the tip
   // assumes `blocks` is sorted in ascending height order
-  private getOldestConsecutiveBlock(blocks: DifficultyBlock[]): DifficultyBlock {
+  private getOldestConsecutiveBlock<T extends { height: number }>(blocks: T[]): T {
     for (let i = blocks.length - 1; i > 0; i--) {
       if (blocks[i].height - blocks[i - 1].height > 1) {
         return blocks[i];

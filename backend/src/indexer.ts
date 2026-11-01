@@ -26,6 +26,7 @@ class Indexer {
   private tasksScheduled: { [key in TaskName]?: NodeJS.Timeout } = {};
   private reindexTimeout: NodeJS.Timeout | undefined;
   private bchnIndexes: BCHNIndex[] = [];
+  private pendingBlockPrices = new Set<number>();
 
   public indexerIsRunning(): boolean {
     return this.indexerRunning;
@@ -97,6 +98,15 @@ class Indexer {
     }
   }
 
+  public queueBlockPrice(height: number): void {
+    // These configurations never run price indexing, so they must not retain retry work.
+    if (!Common.indexingEnabled() || !config.FIAT_PRICE.ENABLED || config.EXPLORER.NETWORK !== 'mainnet') {
+      return;
+    }
+    this.pendingBlockPrices.add(height);
+    this.scheduleSingleTask('blocksPrices', 10000);
+  }
+
   /**
    * schedules a single task to run in `timeout` ms
    * only one task of each type may be scheduled
@@ -105,13 +115,6 @@ class Indexer {
    * @param {number} timeout - delay in ms
    * @param {boolean} replace - `true` replaces any already scheduled task (works like a debounce), `false` ignores subsequent requests (works like a throttle)
    */
-  private pendingBlockPrices = new Set<number>();
-
-  public queueBlockPrice(height: number): void {
-    this.pendingBlockPrices.add(height);
-    this.scheduleSingleTask('blocksPrices', 10000);
-  }
-
   public scheduleSingleTask(task: TaskName, timeout = 10000, replace = false): void {
     if (this.tasksScheduled[task]) {
       if (!replace) {

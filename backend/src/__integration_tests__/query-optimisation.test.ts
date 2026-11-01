@@ -3,7 +3,10 @@ import DB from '../database';
 import config from '../config';
 import blocks from '../repositories/BlocksRepository';
 import summaries from '../repositories/BlocksSummariesRepository';
-import { setupTestDatabase, cleanupTestData, waitForDatabase } from './test-helpers';
+import mining from '../api/mining/mining';
+import bitcoinApi from '../api/bitcoin/bitcoin-api-factory';
+import bitcoinClient from '../api/bitcoin/bitcoin-client';
+import { setupTestDatabase, cleanupTestData, waitForDatabase, insertTestPool } from './test-helpers';
 
 beforeAll(async () => {
   await waitForDatabase();
@@ -66,4 +69,50 @@ test('summary covering index migration can resume after DDL completed before ver
   expect(parts.map((row: any) => row.COLUMN_NAME)).toEqual(['id', 'version']);
   const [version]: any[] = await DB.query("SELECT number FROM state WHERE name = 'schema_version'");
   expect(version[0].number).toBe(111);
+});
+
+test('the real difficulty boundary backfills missing daily and weekly hashrate rows', async () => {
+  const poolId = await insertTestPool({ id: 1, name: 'Fixture', slug: 'fixture' });
+  const oldestTime = Math.floor(Date.now() / 1000) - 15 * 86400;
+  const originalAmount = config.EXPLORER.INDEXING_BLOCKS_AMOUNT;
+  const originalDaily = mining.lastHashrateIndexingDate;
+  const originalWeekly = mining.lastWeeklyHashrateIndexingDate;
+  jest.spyOn(bitcoinApi, '$getBlockHash').mockResolvedValue('genesis');
+  jest.spyOn(bitcoinApi, '$getBlock').mockResolvedValue({
+    timestamp: oldestTime - 86400,
+    difficulty: 1,
+    bits: 486604799,
+  } as never);
+  jest.spyOn(bitcoinClient, 'getNetworkHashPs').mockResolvedValue(100);
+  try {
+    config.EXPLORER.INDEXING_BLOCKS_AMOUNT = 100;
+    mining.lastHashrateIndexingDate = null;
+    mining.lastWeeklyHashrateIndexingDate = null;
+    for (let height = 1; height <= 3; height++) {
+      await insert(height, `history-${height}`);
+      await DB.query(
+        'UPDATE blocks SET blockTimestamp = FROM_UNIXTIME(?), pool_id = ?, difficulty = 1, bits = 486604799 WHERE height = ?',
+        [oldestTime + (height - 1) * 7 * 86400, poolId, height]
+      );
+    }
+    const boundary = await mining.$indexDifficultyAdjustments();
+    expect(Number(boundary?.timestamp)).toBe(oldestTime);
+    await mining.$generateNetworkHashrateHistory(boundary);
+    await mining.$generatePoolHashrateHistory(boundary);
+    const [rows]: any[] = await DB.query(
+      'SELECT type, COUNT(*) AS count, MIN(avg_hashrate) AS minimum FROM hashrates GROUP BY type'
+    );
+    expect(rows).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ type: 'daily', count: expect.any(Number) }),
+        expect.objectContaining({ type: 'weekly', minimum: 100 }),
+      ])
+    );
+    expect(rows.every((row) => row.count > 0)).toBe(true);
+  } finally {
+    jest.restoreAllMocks();
+    config.EXPLORER.INDEXING_BLOCKS_AMOUNT = originalAmount;
+    mining.lastHashrateIndexingDate = originalDaily;
+    mining.lastWeeklyHashrateIndexingDate = originalWeekly;
+  }
 });

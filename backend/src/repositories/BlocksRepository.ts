@@ -628,7 +628,7 @@ class BlocksRepository {
   /**
    * Return blocks difficulty
    */
-  public async $getBlocksDifficulty(): Promise<object[]> {
+  public async $getBlocksDifficulty(): Promise<{ time: number; height: number; difficulty: number; bits: number }[]> {
     try {
       const [rows]: any[] = await DB.query(
         `SELECT UNIX_TIMESTAMP(blockTimestamp) as time, height, difficulty, bits FROM blocks WHERE stale = 0 ORDER BY height ASC`
@@ -1087,7 +1087,7 @@ class BlocksRepository {
   /**
    * Save block price by batch
    */
-  public async $saveBlockPrices(blockPrices: BlockPrice[]): Promise<void> {
+  public async $saveBlockPrices(blockPrices: BlockPrice[]): Promise<boolean> {
     try {
       let query = `INSERT INTO blocks_prices(height, price_id) VALUES`;
       for (const price of blockPrices) {
@@ -1096,6 +1096,7 @@ class BlocksRepository {
       query = query.slice(0, -1);
       query += ` ON DUPLICATE KEY UPDATE price_id = VALUES(price_id)`;
       await DB.query(query);
+      return true;
     } catch (e: any) {
       if (e.errno === 1062) {
         // ER_DUP_ENTRY - This scenario is possible upon node backend restart
@@ -1111,6 +1112,7 @@ class BlocksRepository {
           }] into db. Reason: ` + (e instanceof Error ? e.message : e)
         );
       }
+      return false;
     }
   }
 
