@@ -137,7 +137,7 @@ export async function insertTestBlock(blockData: {
 
   await DB.query(
     `INSERT INTO blocks (
-      height, hash, blockTimestamp, size, tx_count, 
+      height, hash, blockTimestamp, size, tx_count,
       difficulty, pool_id, version, bits, nonce, merkle_root, 
       previous_block_hash, median_timestamp, stale,
       fees, fee_span, median_fee,
