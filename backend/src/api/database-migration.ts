@@ -927,8 +927,12 @@ class DatabaseMigration {
       }
       await this.updateToSchemaVersion(110);
     }
+
     if (databaseSchemaVersion < 111) {
-      // Avoid reading clustered summary rows (including large JSON payloads) during reconciliation.
+      // Add a covering (id, version) index so summary reconciliation can find missing or
+      // outdated summaries by block hash without reading rows containing large transaction JSON.
+      // The repository forces the id_version index; validate its definition on retries
+      // so an interrupted migration is safe to resume without accepting a conflicting index.
       const [parts]: any[] = await this.$executeQuery(
         `SELECT COLUMN_NAME, SUB_PART, NON_UNIQUE FROM information_schema.STATISTICS
          WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'blocks_summaries'
