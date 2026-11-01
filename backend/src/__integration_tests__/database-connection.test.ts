@@ -11,7 +11,7 @@ describe('Database Connection Integration Tests', () => {
   test('should connect to the test database', async () => {
     const dbConfig = getTestDatabaseConfig();
     expect(dbConfig.enabled).toBe(true);
-    expect(dbConfig.database).toBe('mempool_test');
+    expect(dbConfig.database).toBe('explorer_test');
     expect(dbConfig.port).toBe(33306);
   });
 
@@ -37,8 +37,8 @@ describe('Database Connection Integration Tests', () => {
 
   test('should have correct database configuration', () => {
     expect(config.DATABASE.HOST).toBe('127.0.0.1');
-    expect(config.DATABASE.USERNAME).toBe('mempool_test');
-    expect(config.DATABASE.PASSWORD).toBe('mempool_test');
-    expect(config.DATABASE.DATABASE).toBe('mempool_test');
+    expect(config.DATABASE.USERNAME).toBe('explorer_test');
+    expect(config.DATABASE.PASSWORD).toBe('explorer_test');
+    expect(config.DATABASE.DATABASE).toBe('explorer_test');
   });
 });

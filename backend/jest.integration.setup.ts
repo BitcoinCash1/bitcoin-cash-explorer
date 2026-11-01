@@ -5,7 +5,7 @@ import { execSync } from 'child_process';
 
 // Set the config file path if not already set
 if (!process.env.EXPLORER_CONFIG_FILE) {
-  process.env.EXPLORER_CONFIG_FILE = path.join(__dirname, 'mempool-config.test.json');
+  process.env.EXPLORER_CONFIG_FILE = path.join(__dirname, 'explorer-config.test.json');
 }
 
 // Helper to get docker compose command (v1 or v2)
@@ -49,7 +49,7 @@ module.exports = async () => {
 
     while (attempts < maxAttempts) {
       try {
-        execSync(`${dockerComposeCmd} -f "${composeFile}" exec -T db-test mysqladmin ping -h localhost -u mempool_test -pmempool_test --silent`, {
+        execSync(`${dockerComposeCmd} -f "${composeFile}" exec -T db-test mysqladmin ping -h localhost -u explorer_test -pexplorer_test --silent`, {
           cwd: __dirname,
           stdio: 'pipe'
         });

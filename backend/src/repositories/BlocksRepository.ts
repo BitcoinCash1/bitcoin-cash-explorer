@@ -322,7 +322,7 @@ class BlocksRepository {
     interval = Common.getSqlInterval(interval);
 
     const params: any[] = [];
-    let query = `SELECT count(height) as count, pools.id as poolId
+    let query = `SELECT count(*) as count, pools.id as poolId
       FROM blocks
       JOIN pools on pools.id = blocks.pool_id
       WHERE tx_count = 1 AND stale = 0`;
@@ -367,7 +367,7 @@ class BlocksRepository {
     interval = Common.getSqlInterval(interval);
 
     const params: any[] = [];
-    let query = `SELECT count(height) as blockCount
+    let query = `SELECT count(*) as blockCount
       FROM blocks
       WHERE stale = 0`;
 
@@ -399,7 +399,7 @@ class BlocksRepository {
   public async $blockCountBetweenTimestamp(poolId: number | null, from: number, to: number): Promise<number> {
     const params: any[] = [];
     let query = `SELECT
-      count(height) as blockCount,
+      count(*) as blockCount,
       max(height) as lastBlockHeight
       FROM blocks
       WHERE stale = 0`;
@@ -427,7 +427,7 @@ class BlocksRepository {
    */
   public async $blockCountBetweenHeight(startHeight: number, endHeight: number): Promise<number> {
     const params: any[] = [];
-    const query = `SELECT count(height) as blockCount
+    const query = `SELECT count(*) as blockCount
       FROM blocks
       WHERE height <= ${startHeight} AND height >= ${endHeight} AND stale = 0`;
 
@@ -527,7 +527,7 @@ class BlocksRepository {
     const params: any[] = [];
     let query = `
       SELECT ${BLOCK_DB_FIELDS}
-      FROM blocks
+      FROM blocks FORCE INDEX (pool_stale_height)
       JOIN pools ON blocks.pool_id = pools.id
       WHERE pool_id = ? AND stale = 0`;
     params.push(pool.id);
