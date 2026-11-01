@@ -894,7 +894,12 @@ class DatabaseMigration {
       }
       await this.updateToSchemaVersion(109);
     }
+
     if (databaseSchemaVersion < 110) {
+      // Add composite blocks indexes: (pool_id, stale, height) supports canonical pool
+      // pagination in height order; (stale, height) supports canonical counts and height lookups.
+      // Reuse matching named indexes after an interrupted migration, but reject conflicting
+      // definitions so repository query hints cannot silently select an unsuitable index.
       for (const [name, columns] of [
         ['pool_stale_height', ['pool_id', 'stale', 'height']],
         ['stale_height', ['stale', 'height']],
