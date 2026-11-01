@@ -17,12 +17,12 @@ beforeEach(async () => {
   await cache.invalidate();
 });
 
-test('shares pending computations and caches for 30 seconds', async () => {
+test('shares pending computations and caches for two minutes', async () => {
   const compute = jest.fn(async () => ({ count: 10 }));
   expect(await Promise.all([cache.get(1, compute), cache.get(1, compute)])).toEqual([{ count: 10 }, { count: 10 }]);
   await cache.get(1, compute);
   expect(compute).toHaveBeenCalledTimes(1);
-  expect(valkey.$setCache).toHaveBeenCalledWith(expect.any(String), expect.any(String), 30);
+  expect(valkey.$setCache).toHaveBeenCalledWith(expect.any(String), expect.any(String), 120);
 });
 
 test('invalidates all pools and isolates pool keys', async () => {
