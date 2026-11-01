@@ -117,6 +117,18 @@ test('the real difficulty boundary backfills missing daily and weekly hashrate r
   }
 });
 
+test('price reconciliation preserves the strictly later price rule in the real database', async () => {
+  await insert(100000, 'price-boundary');
+  await DB.query("INSERT INTO prices(time,USD) VALUES ('2026-10-29 00:00:00',100),('2026-10-30 00:00:00',200)");
+  expect(await mining.$indexBlockPrices([100000])).toEqual([]);
+  await DB.query("INSERT INTO prices(time,USD) VALUES ('2026-10-31 00:00:00',300)");
+  expect(await mining.$indexBlockPrices([100000])).toEqual([100000]);
+  const [rows]: any[] = await DB.query(
+    'SELECT p.USD FROM blocks_prices bp JOIN prices p ON p.id=bp.price_id WHERE bp.height=100000'
+  );
+  expect(Number(rows[0].USD)).toBe(300);
+});
+
 test.each([false, true])('price reconciliation excludes stale forks (targeted: %s)', async (targeted) => {
   await insert(100000, 'a-canonical');
   await insert(100000, 'z-stale', 1);
