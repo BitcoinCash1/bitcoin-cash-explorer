@@ -62,7 +62,7 @@ class PoolStatisticsCache {
       const result = await compute();
       const current = await this.generation();
       if (revision === this.revision && token === current) {
-        if (token) await valkey.$setCache(key, JSON.stringify(result), 30);
+        if (token) await valkey.$setCache(key, JSON.stringify(result), 120);
         return result;
       }
       if (attempt === 1) return result;
