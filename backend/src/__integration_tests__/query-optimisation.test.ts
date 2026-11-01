@@ -68,7 +68,7 @@ test('summary covering index migration can resume after DDL completed before ver
     ORDER BY SEQ_IN_INDEX`);
   expect(parts.map((row: any) => row.COLUMN_NAME)).toEqual(['id', 'version']);
   const [version]: any[] = await DB.query("SELECT number FROM state WHERE name = 'schema_version'");
-  expect(version[0].number).toBe(111);
+  expect(version[0].number).toBe(112);
 });
 
 test('the real difficulty boundary backfills missing daily and weekly hashrate rows', async () => {

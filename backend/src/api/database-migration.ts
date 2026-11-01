@@ -4,7 +4,7 @@ import logger from '../logger';
 import { Common } from './common';
 
 class DatabaseMigration {
-  private static currentVersion = 111;
+  private static currentVersion = 112;
   private queryTimeout = 3600_000;
   private statisticsAddedIndexed = false;
   private uniqueLogs: string[] = [];
@@ -950,6 +950,31 @@ class DatabaseMigration {
         throw new Error('Conflicting blocks_summaries index definition: id_version');
       }
       await this.updateToSchemaVersion(111);
+    }
+
+    if (databaseSchemaVersion < 112) {
+      // Cover pool counts, rolling time windows and reward sums in one compact index.
+      // This avoids fetching wide block rows on an uncached pool-statistics request.
+      // Preserve the existing height indexes for pagination; validate this named index
+      // on retries because the aggregate query explicitly selects it.
+      const columns = ['pool_id', 'stale', 'blockTimestamp', 'reward'];
+      const [parts]: any[] = await this.$executeQuery(
+        `SELECT COLUMN_NAME, SUB_PART, NON_UNIQUE FROM information_schema.STATISTICS
+         WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'blocks'
+         AND INDEX_NAME = 'pool_statistics' ORDER BY SEQ_IN_INDEX`,
+        true
+      );
+      if (!parts.length) {
+        await this.$executeQuery(
+          'ALTER TABLE blocks ADD INDEX pool_statistics (pool_id, stale, blockTimestamp, reward)'
+        );
+      } else if (
+        parts.length !== columns.length ||
+        parts.some((part, i) => part.COLUMN_NAME !== columns[i] || part.SUB_PART !== null || part.NON_UNIQUE !== 1)
+      ) {
+        throw new Error('Conflicting blocks index definition: pool_statistics');
+      }
+      await this.updateToSchemaVersion(112);
     }
   }
 

@@ -367,7 +367,7 @@ class BlocksRepository {
       `SELECT COUNT(*) AS allCount, SUM(reward) AS totalReward,
       COALESCE(SUM(blockTimestamp BETWEEN DATE_SUB(NOW(), INTERVAL 24 HOUR) AND NOW()), 0) AS dayCount,
       COALESCE(SUM(blockTimestamp BETWEEN DATE_SUB(NOW(), INTERVAL 1 WEEK) AND NOW()), 0) AS weekCount
-      FROM blocks WHERE pool_id = ? AND stale = 0`,
+      FROM blocks FORCE INDEX (pool_statistics) WHERE pool_id = ? AND stale = 0`,
       [poolId]
     );
     return rows[0];
