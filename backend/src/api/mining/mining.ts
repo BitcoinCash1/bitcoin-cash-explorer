@@ -1123,8 +1123,9 @@ class Mining {
     const saved: number[] = [];
     let totalInserted = 0;
     try {
-      const prices: any[] = await PricesRepository.$getPricesTimesAndId();
       const blocksWithoutPrices: any[] = await BlocksRepository.$getBlocksWithoutPrice(heights);
+      // An already reconciled chain needs no price-history transfer at all.
+      const prices = blocksWithoutPrices.length ? await PricesRepository.$getPricesTimesAndId() : [];
 
       const blocksPrices: BlockPrice[] = [];
 
@@ -1137,14 +1138,21 @@ class Mining {
           });
           continue;
         }
-        for (const price of prices) {
-          if (block.timestamp < price.time) {
-            blocksPrices.push({
-              height: block.height,
-              priceId: price.id,
-            });
-            break;
+        // Prices are ordered by time. Find the first strictly later price without
+        // rescanning the full history for every block. Block timestamps need not
+        // increase with height, so each lookup searches independently.
+        let low = 0;
+        let high = prices.length;
+        while (low < high) {
+          const middle = low + Math.floor((high - low) / 2);
+          if (block.timestamp < prices[middle].time) {
+            high = middle;
+          } else {
+            low = middle + 1;
           }
+        }
+        if (low < prices.length) {
+          blocksPrices.push({ height: block.height, priceId: prices[low].id });
         }
 
         if (blocksPrices.length >= 100000) {
