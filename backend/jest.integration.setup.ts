@@ -49,7 +49,7 @@ module.exports = async () => {
 
     while (attempts < maxAttempts) {
       try {
-        execSync(`${dockerComposeCmd} -f "${composeFile}" exec -T db-test mysqladmin ping -h localhost -u mempool_test -pmempool_test --silent`, {
+        execSync(`${dockerComposeCmd} -f "${composeFile}" exec -T db-test mysqladmin ping -h localhost -u explorer_test -pexplorer_test --silent`, {
           cwd: __dirname,
           stdio: 'pipe'
         });

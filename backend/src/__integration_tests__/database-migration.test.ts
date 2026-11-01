@@ -12,7 +12,7 @@ describe('Database Migration Integration Tests', () => {
     const [result] = await DB.query<any>(
       `SELECT COUNT(*) as count 
        FROM information_schema.tables 
-       WHERE table_schema = 'mempool_test' 
+       WHERE table_schema = 'explorer_test'
        AND table_name = 'state'`
     );
     expect(result[0].count).toBe(1);
@@ -28,7 +28,7 @@ describe('Database Migration Integration Tests', () => {
     const [result] = await DB.query<any>(
       `SELECT COUNT(*) as count 
        FROM information_schema.tables 
-       WHERE table_schema = 'mempool_test' 
+       WHERE table_schema = 'explorer_test'
        AND table_name = 'blocks'`
     );
     expect(result[0].count).toBe(1);
@@ -37,7 +37,7 @@ describe('Database Migration Integration Tests', () => {
   test('should key blocks by hash so stale and canonical blocks can share a height', async () => {
     const [columns] = await DB.query<any>(
       `SELECT COLUMN_NAME FROM information_schema.KEY_COLUMN_USAGE
-       WHERE TABLE_SCHEMA = 'mempool_test' AND TABLE_NAME = 'blocks'
+       WHERE TABLE_SCHEMA = 'explorer_test' AND TABLE_NAME = 'blocks'
          AND CONSTRAINT_NAME = 'PRIMARY' ORDER BY ORDINAL_POSITION`
     );
     expect(columns.map((column: any) => column.COLUMN_NAME)).toEqual(['hash']);
@@ -66,7 +66,7 @@ describe('Database Migration Integration Tests', () => {
     const [result] = await DB.query<any>(
       `SELECT COUNT(*) as count 
        FROM information_schema.tables 
-       WHERE table_schema = 'mempool_test' 
+       WHERE table_schema = 'explorer_test'
        AND table_name = 'pools'`
     );
     expect(result[0].count).toBe(1);
@@ -76,7 +76,7 @@ describe('Database Migration Integration Tests', () => {
     const [result] = await DB.query<any>(
       `SELECT COUNT(*) as count 
        FROM information_schema.tables 
-       WHERE table_schema = 'mempool_test' 
+       WHERE table_schema = 'explorer_test'
        AND table_name = 'hashrates'`
     );
     expect(result[0].count).toBe(1);
@@ -86,7 +86,7 @@ describe('Database Migration Integration Tests', () => {
     const [result] = await DB.query<any>(
       `SELECT COUNT(*) as count 
        FROM information_schema.tables 
-       WHERE table_schema = 'mempool_test' 
+       WHERE table_schema = 'explorer_test'
        AND table_name = 'prices'`
     );
     expect(result[0].count).toBe(1);
@@ -96,7 +96,7 @@ describe('Database Migration Integration Tests', () => {
     const [columns] = await DB.query<any>(
       `SELECT COLUMN_NAME, DATA_TYPE
        FROM information_schema.COLUMNS
-       WHERE TABLE_SCHEMA = 'mempool_test'
+       WHERE TABLE_SCHEMA = 'explorer_test'
        AND TABLE_NAME = 'flag_values'`
     );
     expect(columns.map((column: any) => column.COLUMN_NAME)).toEqual(
@@ -109,7 +109,7 @@ describe('Database Migration Integration Tests', () => {
     const [columns] = await DB.query<any>(
       `SELECT COLUMN_NAME 
        FROM information_schema.COLUMNS 
-       WHERE TABLE_SCHEMA = 'mempool_test' 
+       WHERE TABLE_SCHEMA = 'explorer_test'
        AND TABLE_NAME = 'blocks'`
     );
 
@@ -126,7 +126,7 @@ describe('Database Migration Integration Tests', () => {
     const [columns] = await DB.query<any>(
       `SELECT COLUMN_NAME 
        FROM information_schema.COLUMNS 
-       WHERE TABLE_SCHEMA = 'mempool_test' 
+       WHERE TABLE_SCHEMA = 'explorer_test'
        AND TABLE_NAME = 'pools'`
     );
 

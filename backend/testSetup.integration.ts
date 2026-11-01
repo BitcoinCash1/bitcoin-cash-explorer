@@ -7,7 +7,7 @@
 //
 // Don't mock these for integration tests - we want real implementations:
 // - logger.ts (need real logging)
-// - config.ts (need real config from mempool-config.test.json)
+// - config.ts (need real config from explorer-config.test.json)
 // - rbf-cache.ts (might be used by repositories)
 // - mempool.ts (might be used by repositories)
 // - memory-cache.ts (might be used by repositories)
