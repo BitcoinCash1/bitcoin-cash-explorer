@@ -1,3 +1,4 @@
+import poolStatisticsCache from '../api/mining/pool-statistics-cache';
 import bitcoinApi from '../api/bitcoin/bitcoin-api-factory';
 import { BlockExtended, BlockExtension, BlockPrice } from '../mempool.interfaces';
 import DB from '../database';
@@ -204,6 +205,7 @@ class BlocksRepository {
       ];
 
       await DB.query(query, params);
+      await poolStatisticsCache.invalidate();
     } catch (e: any) {
       if (e.errno === 1062) {
         // ER_DUP_ENTRY - This scenario is possible upon node backend restart or if a stale block is reconnected
@@ -358,6 +360,24 @@ class BlocksRepository {
       logger.err(`Cannot count blocks for this pool (using offset). Reason: ` + (e instanceof Error ? e.message : e));
       throw e;
     }
+  }
+
+  public async $poolStatisticsCounts(poolId: number): Promise<any> {
+    const [rows]: any[] = await DB.query(
+      `SELECT COUNT(*) AS allCount, SUM(reward) AS totalReward,
+      COALESCE(SUM(blockTimestamp BETWEEN DATE_SUB(NOW(), INTERVAL 24 HOUR) AND NOW()), 0) AS dayCount,
+      COALESCE(SUM(blockTimestamp BETWEEN DATE_SUB(NOW(), INTERVAL 1 WEEK) AND NOW()), 0) AS weekCount
+      FROM blocks WHERE pool_id = ? AND stale = 0`,
+      [poolId]
+    );
+    return rows[0];
+  }
+
+  public async $networkStatisticsCounts(): Promise<any> {
+    const [rows]: any[] = await DB.query(`SELECT COUNT(*) AS weekCount,
+      COALESCE(SUM(blockTimestamp BETWEEN DATE_SUB(NOW(), INTERVAL 24 HOUR) AND NOW()), 0) AS dayCount
+      FROM blocks WHERE stale = 0 AND blockTimestamp BETWEEN DATE_SUB(NOW(), INTERVAL 1 WEEK) AND NOW()`);
+    return rows[0];
   }
 
   /**
@@ -608,7 +628,7 @@ class BlocksRepository {
   /**
    * Return blocks difficulty
    */
-  public async $getBlocksDifficulty(): Promise<object[]> {
+  public async $getBlocksDifficulty(): Promise<{ time: number; height: number; difficulty: number; bits: number }[]> {
     try {
       const [rows]: any[] = await DB.query(
         `SELECT UNIX_TIMESTAMP(blockTimestamp) as time, height, difficulty, bits FROM blocks WHERE stale = 0 ORDER BY height ASC`
@@ -1041,19 +1061,22 @@ class BlocksRepository {
   }
 
   /**
-   * Get all blocks which have not be linked to a price yet
+   * Get canonical blocks needing a price, or canonical blocks at explicit retry heights.
    */
-  public async $getBlocksWithoutPrice(): Promise<object[]> {
+  public async $getBlocksWithoutPrice(heights?: number[]): Promise<object[]> {
+    if (heights && !heights.length) return [];
     try {
-      const [rows]: any[] = await DB.query(`
+      const [rows]: any[] = await DB.query(
+        `
         SELECT UNIX_TIMESTAMP(blocks.blockTimestamp) as timestamp, blocks.height
         FROM blocks
         LEFT JOIN blocks_prices ON blocks.height = blocks_prices.height
         LEFT JOIN prices ON blocks_prices.price_id = prices.id
-        WHERE blocks_prices.height IS NULL
-          OR prices.id IS NULL
+        WHERE blocks.stale = 0 AND ${heights ? `blocks.height IN (${heights.map(() => '?').join(',')})` : '(blocks_prices.height IS NULL OR prices.id IS NULL)'}
         ORDER BY blocks.height
-      `);
+      `,
+        heights || []
+      );
       return rows;
     } catch (e) {
       logger.err('Cannot get blocks height and timestamp from the db. Reason: ' + (e instanceof Error ? e.message : e));
@@ -1064,7 +1087,7 @@ class BlocksRepository {
   /**
    * Save block price by batch
    */
-  public async $saveBlockPrices(blockPrices: BlockPrice[]): Promise<void> {
+  public async $saveBlockPrices(blockPrices: BlockPrice[]): Promise<boolean> {
     try {
       let query = `INSERT INTO blocks_prices(height, price_id) VALUES`;
       for (const price of blockPrices) {
@@ -1073,6 +1096,7 @@ class BlocksRepository {
       query = query.slice(0, -1);
       query += ` ON DUPLICATE KEY UPDATE price_id = VALUES(price_id)`;
       await DB.query(query);
+      return true;
     } catch (e: any) {
       if (e.errno === 1062) {
         // ER_DUP_ENTRY - This scenario is possible upon node backend restart
@@ -1088,6 +1112,7 @@ class BlocksRepository {
           }] into db. Reason: ` + (e instanceof Error ? e.message : e)
         );
       }
+      return false;
     }
   }
 
@@ -1183,6 +1208,7 @@ class BlocksRepository {
         WHERE hash = ?`,
         [poolId, poolsUpdater.currentSha, id]
       );
+      await poolStatisticsCache.invalidate();
     } catch (e) {
       logger.err(`Cannot update block pool. Reason: ` + (e instanceof Error ? e.message : e));
       throw e;
@@ -1232,6 +1258,7 @@ class BlocksRepository {
         WHERE height = ? AND hash != ?`,
         [height, hash ?? '']
       );
+      await poolStatisticsCache.invalidate();
     } catch (e) {
       logger.err(`Cannot set canonical block at height. Reason: ` + (e instanceof Error ? e.message : e));
       throw e;

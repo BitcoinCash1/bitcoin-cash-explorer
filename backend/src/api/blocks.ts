@@ -527,61 +527,21 @@ class Blocks {
       }
       const lastBlockToIndex = Math.max(0, currentBlockHeight - indexingBlockAmount + 1);
 
-      // Get all indexed block hash
-      const indexedBlocks = (await blocksRepository.$getIndexedBlocks()).filter(
-        (block) => block.height >= lastBlockToIndex
-      );
-      const indexedBlockSummariesHashesArray = await BlocksSummariesRepository.$getIndexedSummariesId();
-
-      const indexedBlockSummariesHashes = {}; // Use a map for faster seek during the indexing loop
-      for (const hash of indexedBlockSummariesHashesArray) {
-        indexedBlockSummariesHashes[hash] = true;
-      }
-
-      // Logging
       let newlyIndexed = 0;
-      let totalIndexed = indexedBlocks.reduce(
-        (count, block) => count + (indexedBlockSummariesHashes[block.hash] === true ? 1 : 0),
-        0
-      );
-      let indexedThisRun = 0;
-      let timer = Date.now() / 1000;
-      const startedAt = Date.now() / 1000;
-
-      logger.debug(
-        `Block summaries indexing: ${totalIndexed}/${indexedBlocks.length} already indexed, ${indexedBlocks.length - totalIndexed} remaining`,
-        logger.tags.mining
-      );
-
-      for (const block of indexedBlocks) {
-        if (indexedBlockSummariesHashes[block.hash] === true) {
-          continue;
+      let cursor: { height: number; hash: string } | undefined;
+      while (true) {
+        const batch = await BlocksSummariesRepository.$getMissingSummaries(
+          lastBlockToIndex,
+          currentBlockHeight,
+          cursor
+        );
+        if (!batch.length) break;
+        for (const block of batch) {
+          await this.$indexBlockSummary(block.hash, block.height, block.stale);
+          newlyIndexed++;
         }
-
-        // Logging
-        const elapsedSeconds = Date.now() / 1000 - timer;
-        if (elapsedSeconds > 5) {
-          const runningFor = Date.now() / 1000 - startedAt;
-          const blockPerSeconds = indexedThisRun / elapsedSeconds;
-          const progress = Math.round((totalIndexed / indexedBlocks.length) * 10000) / 100;
-          logger.debug(
-            `Indexing block summary for #${block.height} | ~${blockPerSeconds.toFixed(
-              2
-            )} blocks/sec | total: ${totalIndexed}/${
-              indexedBlocks.length
-            } (${progress}%) | elapsed: ${runningFor.toFixed(2)} seconds`,
-            logger.tags.mining
-          );
-          timer = Date.now() / 1000;
-          indexedThisRun = 0;
-        }
-
-        await this.$indexBlockSummary(block.hash, block.height, block.stale);
-
-        // Logging
-        indexedThisRun++;
-        totalIndexed++;
-        newlyIndexed++;
+        cursor = batch[batch.length - 1];
+        logger.debug(`Block summaries indexing: indexed ${newlyIndexed} missing summaries`, logger.tags.mining);
       }
       if (newlyIndexed > 0) {
         logger.notice(`Blocks summaries indexing completed: indexed ${newlyIndexed} blocks`, logger.tags.mining);
@@ -1232,7 +1192,7 @@ class Blocks {
               `Cannot save block price for ${blockExtended.height} because the price updater hasnt completed yet. Trying again in 10 seconds.`,
               logger.tags.mining
             );
-            indexer.scheduleSingleTask('blocksPrices', 10000);
+            indexer.queueBlockPrice(blockExtended.height);
           }
 
           // Save blocks summary for visualization if it's enabled

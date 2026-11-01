@@ -1,3 +1,4 @@
+import poolStatisticsCache from '../api/mining/pool-statistics-cache';
 import DB from '../database';
 import logger from '../logger';
 import { BlockAudit, AuditScore, TransactionAudit, TransactionStripped } from '../mempool.interfaces';
@@ -32,6 +33,7 @@ class BlocksAuditRepositories {
           audit.expectedSize,
         ]
       );
+      await poolStatisticsCache.invalidate();
     } catch (e: any) {
       if (e.errno === 1062) {
         // ER_DUP_ENTRY - This scenario is possible upon node backend restart

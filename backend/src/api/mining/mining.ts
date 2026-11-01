@@ -1,3 +1,4 @@
+import poolStatisticsCache, { PoolStatisticsResult } from './pool-statistics-cache';
 import { BlockPrice, PoolInfo, PoolStats, RewardStats } from '../../mempool.interfaces';
 import BlocksRepository from '../../repositories/BlocksRepository';
 import PoolsRepository from '../../repositories/PoolsRepository';
@@ -461,48 +462,52 @@ class Mining {
   /**
    * Get all mining pool stats for a pool
    */
-  public async $getPoolStat(slug: string): Promise<object> {
+  public async $getPoolStat(slug: string): Promise<PoolStatisticsResult> {
     const pool = await PoolsRepository.$getPool(slug);
     if (!pool) {
       throw new Error('This mining pool does not exist');
     }
 
-    const blockCount: number = await BlocksRepository.$blockCount(pool.id);
-    const totalBlock: number = await BlocksRepository.$blockCount(null, null);
+    return poolStatisticsCache.get(pool.id, async () => {
+      const poolCounts = await BlocksRepository.$poolStatisticsCounts(pool.id);
+      const networkCounts = await BlocksRepository.$networkStatisticsCounts();
+      const blockCount = Number(poolCounts.allCount);
+      const totalBlock = await BlocksRepository.$blockCount(null, null);
+      const blockCount24h = Number(poolCounts.dayCount);
+      const totalBlock24h = Number(networkCounts.dayCount);
+      const blockCount1w = Number(poolCounts.weekCount);
+      const totalBlock1w = Number(networkCounts.weekCount);
+      const avgHealth = await BlocksRepository.$getAvgBlockHealthPerPoolId(pool.id);
+      const totalReward = poolCounts.totalReward || 0;
 
-    const blockCount24h: number = await BlocksRepository.$blockCount(pool.id, '24h');
-    const totalBlock24h: number = await BlocksRepository.$blockCount(null, '24h');
+      let currentEstimatedHashrate = 0;
+      let cacheable = true;
+      try {
+        currentEstimatedHashrate = await bitcoinClient.getNetworkHashPs(totalBlock24h);
+      } catch (e) {
+        cacheable = false;
+        logger.debug('Bitcoin Cash Node is not available, using zeroed value for current hashrate', logger.tags.mining);
+      }
 
-    const blockCount1w: number = await BlocksRepository.$blockCount(pool.id, '1w');
-    const totalBlock1w: number = await BlocksRepository.$blockCount(null, '1w');
-
-    const avgHealth = await BlocksRepository.$getAvgBlockHealthPerPoolId(pool.id);
-    const totalReward = await BlocksRepository.$getTotalRewardForPoolId(pool.id);
-
-    let currentEstimatedHashrate = 0;
-    try {
-      currentEstimatedHashrate = await bitcoinClient.getNetworkHashPs(totalBlock24h);
-    } catch (e) {
-      logger.debug('Bitcoin Cash Node is not available, using zeroed value for current hashrate', logger.tags.mining);
-    }
-
-    return {
-      pool: pool,
-      blockCount: {
-        all: blockCount,
-        '24h': blockCount24h,
-        '1w': blockCount1w,
-      },
-      blockShare: {
-        all: blockCount / totalBlock,
-        '24h': blockCount24h / totalBlock24h,
-        '1w': blockCount1w / totalBlock1w,
-      },
-      estimatedHashrate: currentEstimatedHashrate * (blockCount24h / totalBlock24h),
-      reportedHashrate: null,
-      avgBlockHealth: avgHealth,
-      totalReward: totalReward,
-    };
+      const value = {
+        pool: pool,
+        blockCount: {
+          all: blockCount,
+          '24h': blockCount24h,
+          '1w': blockCount1w,
+        },
+        blockShare: {
+          all: blockCount / totalBlock,
+          '24h': blockCount24h / totalBlock24h,
+          '1w': blockCount1w / totalBlock1w,
+        },
+        estimatedHashrate: currentEstimatedHashrate * (blockCount24h / totalBlock24h),
+        reportedHashrate: null,
+        avgBlockHealth: avgHealth,
+        totalReward: totalReward,
+      };
+      return { value, cacheable };
+    });
   }
 
   /**
@@ -515,7 +520,7 @@ class Mining {
   /**
    * Generate weekly mining pool hashrate history
    */
-  public async $generatePoolHashrateHistory(): Promise<void> {
+  public async $generatePoolHashrateHistory(boundary?: DifficultyBlock | null): Promise<void> {
     const now = new Date();
 
     // Run only if:
@@ -530,7 +535,9 @@ class Mining {
     }
 
     try {
-      const oldestConsecutiveBlockTimestamp = 1000 * (await BlocksRepository.$getOldestConsecutiveBlock()).timestamp;
+      if (boundary === null) return;
+      const oldestConsecutiveBlockTimestamp =
+        1000 * (boundary === undefined ? await BlocksRepository.$getOldestConsecutiveBlock() : boundary)!.timestamp;
 
       const genesisData = await this.getGenesisData();
       const genesisTimestamp = genesisData.timestamp * 1000;
@@ -657,7 +664,7 @@ class Mining {
   /**
    * Generate daily hashrate data
    */
-  public async $generateNetworkHashrateHistory(): Promise<void> {
+  public async $generateNetworkHashrateHistory(boundary?: DifficultyBlock | null): Promise<void> {
     // If a re-index was requested, truncate first
     if (this.reindexHashrateRequested === true) {
       logger.notice(`hashrates will now be re-indexed`);
@@ -674,7 +681,9 @@ class Mining {
       return;
     }
 
-    const oldestConsecutiveBlockTimestamp = 1000 * (await BlocksRepository.$getOldestConsecutiveBlock()).timestamp;
+    if (boundary === null) return;
+    const oldestConsecutiveBlockTimestamp =
+      1000 * (boundary === undefined ? await BlocksRepository.$getOldestConsecutiveBlock() : boundary)!.timestamp;
 
     try {
       const genesisData = await this.getGenesisData();
@@ -1009,7 +1018,7 @@ class Mining {
   /**
    * Index difficulty adjustments
    */
-  public async $indexDifficultyAdjustments(): Promise<void> {
+  public async $indexDifficultyAdjustments(): Promise<DifficultyBlock | null> {
     // If a re-index was requested, truncate first
     if (this.reindexDifficultyAdjustmentRequested === true) {
       logger.notice(`difficulty_adjustments will now be re-indexed`);
@@ -1024,7 +1033,7 @@ class Mining {
     }
 
     // gets {time, height, difficulty, bits} of blocks in ascending order of height
-    const blocks: any = await BlocksRepository.$getBlocksDifficulty();
+    const blocks = await BlocksRepository.$getBlocksDifficulty();
     const genesisData = await this.getGenesisData();
     let currentDifficulty = genesisData.difficulty;
     let currentBits = genesisData.bits;
@@ -1041,7 +1050,7 @@ class Mining {
 
     if (!blocks?.length) {
       // no blocks in database yet
-      return;
+      return null;
     }
 
     const oldestConsecutiveBlock = this.getOldestConsecutiveBlock(blocks);
@@ -1096,21 +1105,29 @@ class Mining {
     } else {
       logger.debug(`Indexed ${totalIndexed} difficulty adjustments`, logger.tags.mining);
     }
+    // Difficulty rows use `time`; history generators share the boundary's `timestamp` contract.
+    return {
+      timestamp: oldestConsecutiveBlock.time,
+      height: oldestConsecutiveBlock.height,
+      difficulty: oldestConsecutiveBlock.difficulty,
+      bits: oldestConsecutiveBlock.bits,
+    };
   }
 
   /**
    * Create a link between blocks and the latest price at when they were mined
    */
-  public async $indexBlockPrices(): Promise<void> {
+  public async $indexBlockPrices(heights?: number[]): Promise<number[]> {
     if (this.blocksPriceIndexingRunning === true) {
-      return;
+      return [];
     }
     this.blocksPriceIndexingRunning = true;
 
+    const saved: number[] = [];
     let totalInserted = 0;
     try {
       const prices: any[] = await PricesRepository.$getPricesTimesAndId();
-      const blocksWithoutPrices: any[] = await BlocksRepository.$getBlocksWithoutPrice();
+      const blocksWithoutPrices: any[] = await BlocksRepository.$getBlocksWithoutPrice(heights);
 
       const blocksPrices: BlockPrice[] = [];
 
@@ -1134,25 +1151,31 @@ class Mining {
         }
 
         if (blocksPrices.length >= 100000) {
-          totalInserted += blocksPrices.length;
           let logStr = `Linking ${blocksPrices.length} blocks to their closest price`;
           if (blocksWithoutPrices.length > 200000) {
-            logStr += ` | Progress ${Math.round((totalInserted / blocksWithoutPrices.length) * 100)}%`;
+            logStr += ` | Progress ${Math.round(((totalInserted + blocksPrices.length) / blocksWithoutPrices.length) * 100)}%`;
           }
           logger.debug(logStr, logger.tags.mining);
-          await BlocksRepository.$saveBlockPrices(blocksPrices);
+          if (!(await BlocksRepository.$saveBlockPrices(blocksPrices))) {
+            throw new Error('Failed to save block prices; retaining pending retries');
+          }
+          totalInserted += blocksPrices.length;
+          saved.push(...blocksPrices.map((block) => block.height));
           blocksPrices.length = 0;
         }
       }
 
       if (blocksPrices.length > 0) {
-        totalInserted += blocksPrices.length;
         let logStr = `Linking ${blocksPrices.length} blocks to their closest price`;
         if (blocksWithoutPrices.length > 200000) {
-          logStr += ` | Progress ${Math.round((totalInserted / blocksWithoutPrices.length) * 100)}%`;
+          logStr += ` | Progress ${Math.round(((totalInserted + blocksPrices.length) / blocksWithoutPrices.length) * 100)}%`;
         }
         logger.debug(logStr, logger.tags.mining);
-        await BlocksRepository.$saveBlockPrices(blocksPrices);
+        if (!(await BlocksRepository.$saveBlockPrices(blocksPrices))) {
+          throw new Error('Failed to save block prices; retaining pending retries');
+        }
+        totalInserted += blocksPrices.length;
+        saved.push(...blocksPrices.map((block) => block.height));
       }
     } catch (e) {
       this.blocksPriceIndexingRunning = false;
@@ -1166,6 +1189,7 @@ class Mining {
     }
 
     this.blocksPriceIndexingRunning = false;
+    return saved;
   }
 
   /**
@@ -1292,7 +1316,7 @@ class Mining {
 
   // Finds the oldest block in a consecutive chain back from the tip
   // assumes `blocks` is sorted in ascending height order
-  private getOldestConsecutiveBlock(blocks: DifficultyBlock[]): DifficultyBlock {
+  private getOldestConsecutiveBlock<T extends { height: number }>(blocks: T[]): T {
     for (let i = blocks.length - 1; i > 0; i--) {
       if (blocks[i].height - blocks[i - 1].height > 1) {
         return blocks[i];

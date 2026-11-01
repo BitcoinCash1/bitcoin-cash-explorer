@@ -17,7 +17,7 @@ export interface BCHNIndex {
   best_block_height: number;
 }
 
-type TaskName = 'blocksPrices' | 'coinStatsIndex';
+type TaskName = 'blocksPricesFull' | 'blocksPrices' | 'coinStatsIndex';
 
 class Indexer {
   private runIndexer = true;
@@ -26,6 +26,7 @@ class Indexer {
   private tasksScheduled: { [key in TaskName]?: NodeJS.Timeout } = {};
   private reindexTimeout: NodeJS.Timeout | undefined;
   private bchnIndexes: BCHNIndex[] = [];
+  private pendingBlockPrices = new Set<number>();
 
   public indexerIsRunning(): boolean {
     return this.indexerRunning;
@@ -97,6 +98,15 @@ class Indexer {
     }
   }
 
+  public queueBlockPrice(height: number): void {
+    // These configurations never run price indexing, so they must not retain retry work.
+    if (!Common.indexingEnabled() || !config.FIAT_PRICE.ENABLED || config.EXPLORER.NETWORK !== 'mainnet') {
+      return;
+    }
+    this.pendingBlockPrices.add(height);
+    this.scheduleSingleTask('blocksPrices', 10000);
+  }
+
   /**
    * schedules a single task to run in `timeout` ms
    * only one task of each type may be scheduled
@@ -116,12 +126,14 @@ class Indexer {
       }
     }
     this.tasksScheduled[task] = setTimeout(async () => {
+      delete this.tasksScheduled[task];
       try {
         await this.runSingleTask(task);
       } catch (e) {
         logger.err(`Unexpected error in scheduled task ${task}: ` + (e instanceof Error ? e.message : e));
-      } finally {
-        clearTimeout(this.tasksScheduled[task]);
+        if (task === 'blocksPrices' && this.pendingBlockPrices.size) {
+          this.scheduleSingleTask(task, 10000);
+        }
       }
     }, timeout);
   }
@@ -137,40 +149,46 @@ class Indexer {
     }
     this.tasksRunning[task] = true;
 
-    switch (task) {
-      case 'blocksPrices':
-        {
-          if (!['testnet4', 'chipnet', 'scalenet'].includes(config.EXPLORER.NETWORK) && config.FIAT_PRICE.ENABLED) {
-            let lastestPriceId;
+    try {
+      switch (task) {
+        case 'blocksPricesFull':
+        case 'blocksPrices':
+          {
+            if (!['testnet4', 'chipnet', 'scalenet'].includes(config.EXPLORER.NETWORK) && config.FIAT_PRICE.ENABLED) {
+              let lastestPriceId;
+              try {
+                lastestPriceId = await PricesRepository.$getLatestPriceId();
+              } catch (e) {
+                logger.debug('failed to fetch latest price id from db: ' + (e instanceof Error ? e.message : e));
+              }
+              if (priceUpdater.historyInserted === false || lastestPriceId === null || lastestPriceId === undefined) {
+                logger.debug(`Blocks prices indexer is waiting for the price updater to complete`, logger.tags.mining);
+                this.scheduleSingleTask(task, 10000);
+              } else {
+                logger.debug(`Blocks prices indexer will run now`, logger.tags.mining);
+                const heights = task === 'blocksPrices' ? [...this.pendingBlockPrices].slice(0, 1000) : undefined;
+                const saved = await mining.$indexBlockPrices(heights);
+                for (const height of saved) this.pendingBlockPrices.delete(height);
+                if (this.pendingBlockPrices.size) this.scheduleSingleTask('blocksPrices', 10000);
+              }
+            }
+          }
+          break;
+
+        case 'coinStatsIndex':
+          {
+            logger.debug(`Indexing coinStatsIndex now`);
             try {
-              lastestPriceId = await PricesRepository.$getLatestPriceId();
+              await mining.$indexCoinStatsIndex();
             } catch (e) {
-              logger.debug('failed to fetch latest price id from db: ' + (e instanceof Error ? e.message : e));
-            }
-            if (priceUpdater.historyInserted === false || lastestPriceId === null) {
-              logger.debug(`Blocks prices indexer is waiting for the price updater to complete`, logger.tags.mining);
-              this.scheduleSingleTask(task, 10000);
-            } else {
-              logger.debug(`Blocks prices indexer will run now`, logger.tags.mining);
-              await mining.$indexBlockPrices();
+              logger.debug(`failed to index coinstatsindex: ` + (e instanceof Error ? e.message : e));
             }
           }
-        }
-        break;
-
-      case 'coinStatsIndex':
-        {
-          logger.debug(`Indexing coinStatsIndex now`);
-          try {
-            await mining.$indexCoinStatsIndex();
-          } catch (e) {
-            logger.debug(`failed to index coinstatsindex: ` + (e instanceof Error ? e.message : e));
-          }
-        }
-        break;
+          break;
+      }
+    } finally {
+      this.tasksRunning[task] = false;
     }
-
-    this.tasksRunning[task] = false;
   }
 
   public async $run(): Promise<void> {
@@ -220,11 +238,11 @@ class Indexer {
         return;
       }
 
-      this.runSingleTask('blocksPrices');
+      this.runSingleTask('blocksPricesFull');
       await blocks.$indexCoinbaseAddresses();
-      await mining.$indexDifficultyAdjustments();
-      await mining.$generateNetworkHashrateHistory();
-      await mining.$generatePoolHashrateHistory();
+      const boundary = await mining.$indexDifficultyAdjustments();
+      await mining.$generateNetworkHashrateHistory(boundary);
+      await mining.$generatePoolHashrateHistory(boundary);
       await blocks.$generateBlocksSummariesDatabase();
       await blocks.$generateFlagValuesDatabase();
       await blocks.$generateAuditStats();
