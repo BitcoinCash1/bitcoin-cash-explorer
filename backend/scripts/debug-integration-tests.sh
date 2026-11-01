@@ -30,10 +30,10 @@ fi
 # Run tests with pattern if provided
 if [ -n "$1" ]; then
     echo -e "${GREEN}Running tests matching: $1${NC}"
-    EXPLORER_CONFIG_FILE="$BACKEND_DIR/mempool-config.test.json" npx jest --config=jest.integration.config.ts --runInBand --verbose "$1"
+    EXPLORER_CONFIG_FILE="$BACKEND_DIR/explorer-config.test.json" npx jest --config=jest.integration.config.ts --runInBand --verbose "$1"
 else
     echo -e "${GREEN}Running all integration tests${NC}"
-    EXPLORER_CONFIG_FILE="$BACKEND_DIR/mempool-config.test.json" npm run test:integration
+    EXPLORER_CONFIG_FILE="$BACKEND_DIR/explorer-config.test.json" npm run test:integration
 fi
 
 echo -e "${GREEN}Tests completed${NC}"

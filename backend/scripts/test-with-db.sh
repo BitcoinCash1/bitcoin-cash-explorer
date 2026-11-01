@@ -55,7 +55,7 @@ echo -e "${YELLOW}Waiting for MariaDB to be ready...${NC}"
 max_attempts=30
 attempt=0
 while [ $attempt -lt $max_attempts ]; do
-  if $DOCKER_COMPOSE -f docker-compose.test.yml exec -T db-test mysqladmin ping -h localhost -u mempool_test -pmempool_test --silent 2>/dev/null; then
+  if $DOCKER_COMPOSE -f docker-compose.test.yml exec -T db-test mysqladmin ping -h localhost -u explorer_test -pexplorer_test --silent 2>/dev/null; then
     echo -e "${GREEN}MariaDB is ready!${NC}"
     break
   fi
@@ -79,7 +79,7 @@ npm run build
 # Run integration tests with absolute path to config
 # SKIP_DB_SETUP=1 and SKIP_DB_TEARDOWN=1 tell Jest that we're managing the database lifecycle
 echo -e "${GREEN}Running integration tests...${NC}"
-export EXPLORER_CONFIG_FILE="$BACKEND_DIR/mempool-config.test.json"
+export EXPLORER_CONFIG_FILE="$BACKEND_DIR/explorer-config.test.json"
 export SKIP_DB_SETUP=1
 export SKIP_DB_TEARDOWN=1
 npm run test:integration
