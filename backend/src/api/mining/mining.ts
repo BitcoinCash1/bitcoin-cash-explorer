@@ -1,4 +1,4 @@
-import poolStatisticsCache from './pool-statistics-cache';
+import poolStatisticsCache, { PoolStatisticsResult } from './pool-statistics-cache';
 import { BlockPrice, PoolInfo, PoolStats, RewardStats } from '../../mempool.interfaces';
 import BlocksRepository from '../../repositories/BlocksRepository';
 import PoolsRepository from '../../repositories/PoolsRepository';
@@ -462,7 +462,7 @@ class Mining {
   /**
    * Get all mining pool stats for a pool
    */
-  public async $getPoolStat(slug: string): Promise<object> {
+  public async $getPoolStat(slug: string): Promise<PoolStatisticsResult> {
     const pool = await PoolsRepository.$getPool(slug);
     if (!pool) {
       throw new Error('This mining pool does not exist');
@@ -481,13 +481,15 @@ class Mining {
       const totalReward = poolCounts.totalReward || 0;
 
       let currentEstimatedHashrate = 0;
+      let cacheable = true;
       try {
         currentEstimatedHashrate = await bitcoinClient.getNetworkHashPs(totalBlock24h);
       } catch (e) {
+        cacheable = false;
         logger.debug('Bitcoin Cash Node is not available, using zeroed value for current hashrate', logger.tags.mining);
       }
 
-      return {
+      const value = {
         pool: pool,
         blockCount: {
           all: blockCount,
@@ -504,6 +506,7 @@ class Mining {
         avgBlockHealth: avgHealth,
         totalReward: totalReward,
       };
+      return { value, cacheable };
     });
   }
 
