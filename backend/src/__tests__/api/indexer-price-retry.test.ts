@@ -91,3 +91,21 @@ test('drains bounded batches and preserves heights queued while a batch is runni
   expect((indexer as unknown as { pendingBlockPrices: Set<number> }).pendingBlockPrices.size).toBe(0);
   expect(jest.getTimerCount()).toBe(0);
 });
+
+test.each([false, true])(
+  'unresolved retries do not starve later heights beyond the first batch (throws=%s)',
+  async (throws) => {
+    const run = jest.mocked(mining.$indexBlockPrices);
+    run.mockReset().mockImplementation(async (heights) => heights?.filter((height) => height >= 1000) || []);
+    if (throws) {
+      run.mockRejectedValueOnce(new Error('first batch failed'));
+    }
+    for (let height = 0; height <= 1000; height++) {
+      indexer.queueBlockPrice(height);
+    }
+    await jest.advanceTimersByTimeAsync(20000);
+    expect(run.mock.calls[0][0]).not.toContain(1000);
+    expect(run.mock.calls[1][0]).toContain(1000);
+    expect((indexer as unknown as { pendingBlockPrices: Set<number> }).pendingBlockPrices.has(1000)).toBe(false);
+  }
+);

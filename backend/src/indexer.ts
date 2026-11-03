@@ -167,9 +167,19 @@ class Indexer {
               } else {
                 logger.debug(`Blocks prices indexer will run now`, logger.tags.mining);
                 const heights = task === 'blocksPrices' ? [...this.pendingBlockPrices].slice(0, 1000) : undefined;
+                // Rotate attempted heights before awaiting I/O, so unresolved or failed
+                // batches cannot indefinitely block later retries from being attempted.
+                for (const height of heights || []) {
+                  this.pendingBlockPrices.delete(height);
+                  this.pendingBlockPrices.add(height);
+                }
                 const saved = await mining.$indexBlockPrices(heights);
-                for (const height of saved) this.pendingBlockPrices.delete(height);
-                if (this.pendingBlockPrices.size) this.scheduleSingleTask('blocksPrices', 10000);
+                for (const height of saved) {
+                  this.pendingBlockPrices.delete(height);
+                }
+                if (this.pendingBlockPrices.size) {
+                  this.scheduleSingleTask('blocksPrices', 10000);
+                }
               }
             }
           }

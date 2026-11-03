@@ -1179,17 +1179,21 @@ class Blocks {
           } catch (e) {
             logger.debug('failed to fetch latest price id from db: ' + (e instanceof Error ? e.message : e));
           }
-          if (priceUpdater.historyInserted === true && lastestPriceId !== null) {
-            await blocksRepository.$saveBlockPrices([
+          let priceSaved = false;
+          if (priceUpdater.historyInserted === true && lastestPriceId !== null && lastestPriceId !== undefined) {
+            priceSaved = await blocksRepository.$saveBlockPrices([
               {
                 height: blockExtended.height,
                 priceId: lastestPriceId,
               },
             ]);
-            this.updateTimerProgress(timer, `saved prices for ${this.currentBlockHeight}`);
-          } else {
+            if (priceSaved) {
+              this.updateTimerProgress(timer, `saved prices for ${this.currentBlockHeight}`);
+            }
+          }
+          if (!priceSaved) {
             logger.debug(
-              `Cannot save block price for ${blockExtended.height} because the price updater hasnt completed yet. Trying again in 10 seconds.`,
+              `Block price for ${blockExtended.height} is not saved yet. Trying again in 10 seconds.`,
               logger.tags.mining
             );
             indexer.queueBlockPrice(blockExtended.height);
