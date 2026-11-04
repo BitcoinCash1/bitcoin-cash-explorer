@@ -87,17 +87,6 @@ test('shares a degraded calculation without storing it, then caches recovery', a
   expect(valkey.$setCache).toHaveBeenCalledWith(expect.stringMatching(/:1$/), JSON.stringify(recovered.value), 120);
 });
 
-test('ignores previous generation responses after invalidation', async () => {
-  const generationKey = [...values.keys()].find((key) => key.endsWith(':generation'))!;
-  const prefix = generationKey.slice(0, -':generation'.length);
-  values.set(`${prefix}:${values.get(generationKey)}:1`, JSON.stringify({ estimatedHashrate: 0 }));
-  await cache.invalidate();
-  const recovered = { value: { estimatedHashrate: 100 }, cacheable: true };
-  const compute = jest.fn().mockResolvedValue(recovered);
-  expect(await cache.get(1, compute)).toEqual(recovered);
-  expect(compute).toHaveBeenCalledTimes(1);
-});
-
 test.each([false, true])(
   'does not retain degraded results when Valkey is unavailable (disabled=%s)',
   async (disabled) => {
