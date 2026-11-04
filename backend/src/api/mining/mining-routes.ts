@@ -166,11 +166,15 @@ class MiningRoutes {
     try {
       const stats = await mining.$getPoolsStats(interval);
       const blockCount = await BlocksRepository.$blockCount(null, null);
-      res.header('Pragma', 'public');
-      res.header('Cache-control', 'public');
+      if (stats.cacheable) {
+        res.header('Pragma', 'public');
+        res.header('Cache-control', 'public');
+        res.setHeader('Expires', new Date(Date.now() + MiningRoutes.getExpiresMsForInterval(interval)).toUTCString());
+      } else {
+        res.header('Cache-control', 'no-store');
+      }
       res.header('X-total-count', blockCount.toString());
-      res.setHeader('Expires', new Date(Date.now() + MiningRoutes.getExpiresMsForInterval(interval)).toUTCString());
-      res.json(stats);
+      res.json(stats.value);
     } catch (e) {
       handleError(req, res, 500, 'Failed to get pools');
     }

@@ -1,3 +1,4 @@
+import poolStatisticsCache from './mining/pool-statistics-cache';
 import DB from '../database';
 import logger from '../logger';
 import config from '../config';
@@ -183,6 +184,7 @@ class PoolsParser {
           WHERE slug='${this.unknownPool.slug}'
         `);
       }
+      await poolStatisticsCache.invalidate();
     } catch (e) {
       logger.err(`Unable to insert or update "Unknown" mining pool. Reason: ${e instanceof Error ? e.message : e}`);
     }

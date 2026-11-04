@@ -1,3 +1,4 @@
+import poolStatisticsCache from '../api/mining/pool-statistics-cache';
 import { Common } from '../api/common';
 import poolsParser from '../api/pools-parser';
 import config from '../config';
@@ -32,6 +33,7 @@ class PoolsRepository {
    * Get basic pool info and block count
    */
   public async $getPoolsInfo(interval: string | null = null): Promise<PoolInfo[]> {
+    const useTimestampIndex = ['24h', '3d', '1w', '1m'].includes(interval || '');
     interval = Common.getSqlInterval(interval);
 
     let query = `
@@ -42,11 +44,11 @@ class PoolsRepository {
           pools.link AS link,
           slug,
           AVG(blocks_audits.match_rate) AS avgMatchRate,
-          AVG((CAST(blocks.fees as SIGNED) - CAST(blocks_audits.expected_fees as SIGNED)) / NULLIF(CAST(blocks_audits.expected_fees as SIGNED), 0)) AS avgFeeDelta,
+          AVG(CAST((CAST(blocks.fees as SIGNED) - CAST(blocks_audits.expected_fees as SIGNED)) / NULLIF(CAST(blocks_audits.expected_fees as SIGNED), 0) AS DECIMAL(30,12))) AS avgFeeDelta,
           unique_id as poolUniqueId
-      FROM blocks
+      FROM blocks ${useTimestampIndex ? 'FORCE INDEX (blockTimestamp)' : ''}
       JOIN pools on pools.id = pool_id
-      LEFT JOIN blocks_audits ON blocks_audits.height = blocks.height
+      LEFT JOIN blocks_audits ON blocks_audits.hash = blocks.hash
       WHERE blocks.stale = 0
     `;
 
@@ -162,6 +164,7 @@ class PoolsRepository {
         SET name = ?, link = ?, addresses = ?, regexes = ?, slug = ?, unique_id = ?`,
         [pool.name, pool.link, JSON.stringify(pool.addresses), JSON.stringify(pool.regexes), slug, pool.id]
       );
+      await poolStatisticsCache.invalidate();
     } catch (e: any) {
       logger.err(`Cannot insert new mining pool into db. Reason: ` + (e instanceof Error ? e.message : e));
     }
@@ -183,6 +186,7 @@ class PoolsRepository {
         WHERE id = ?`,
         [newSlug, newName, dbId]
       );
+      await poolStatisticsCache.invalidate();
     } catch (e: any) {
       logger.err(`Cannot rename mining pool id ${dbId}. Reason: ` + (e instanceof Error ? e.message : e));
     }
@@ -203,6 +207,7 @@ class PoolsRepository {
         WHERE id = ?`,
         [newLink, dbId]
       );
+      await poolStatisticsCache.invalidate();
     } catch (e: any) {
       logger.err(`Cannot update link for mining pool id ${dbId}. Reason: ` + (e instanceof Error ? e.message : e));
     }
@@ -224,6 +229,7 @@ class PoolsRepository {
         WHERE id = ?`,
         [JSON.stringify(addresses), JSON.stringify(regexes), dbId]
       );
+      await poolStatisticsCache.invalidate();
     } catch (e: any) {
       logger.err(`Cannot update mining pool id ${dbId}. Reason: ` + (e instanceof Error ? e.message : e));
     }

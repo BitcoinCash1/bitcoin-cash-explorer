@@ -390,7 +390,14 @@ class Mining {
   /**
    * Generate high level overview of the pool ranks and general stats
    */
-  public async $getPoolsStats(interval: string | null): Promise<object> {
+  public async $getPoolsStats(interval: string | null): Promise<PoolStatisticsResult> {
+    if (interval && ['24h', '3d', '1w', '1m'].includes(interval)) {
+      return poolStatisticsCache.getOverview(interval, () => this.computePoolsStats(interval));
+    }
+    return this.computePoolsStats(interval);
+  }
+
+  private async computePoolsStats(interval: string | null): Promise<PoolStatisticsResult> {
     const shouldCache = this.shouldCache(interval);
     const cacheKey = `mining:pools-stats-${interval || 'all'}`;
 
@@ -398,7 +405,7 @@ class Mining {
       try {
         const cachedData = await valkeyCache.$getCache(cacheKey);
         if (cachedData) {
-          return JSON.parse(cachedData);
+          return { value: JSON.parse(cachedData), cacheable: true };
         }
       } catch (e) {
         logger.warn(`Failed to retrieve pools stats from Valkey cache: ${e instanceof Error ? e.message : e}`);
@@ -439,16 +446,18 @@ class Mining {
     const totalBlock3d: number = await BlocksRepository.$blockCount(null, '3d');
     const totalBlock1w: number = await BlocksRepository.$blockCount(null, '1w');
 
+    let cacheable = true;
     try {
       poolsStatistics['lastEstimatedHashrate'] = await bitcoinClient.getNetworkHashPs(totalBlock24h);
       poolsStatistics['lastEstimatedHashrate3d'] = await bitcoinClient.getNetworkHashPs(totalBlock3d);
       poolsStatistics['lastEstimatedHashrate1w'] = await bitcoinClient.getNetworkHashPs(totalBlock1w);
     } catch (e) {
+      cacheable = false;
       poolsStatistics['lastEstimatedHashrate'] = 0;
       logger.debug('Bitcoin Cash Node is not available, using zeroed value for current hashrate', logger.tags.mining);
     }
 
-    if (shouldCache) {
+    if (shouldCache && cacheable) {
       try {
         await valkeyCache.$setCache(cacheKey, JSON.stringify(poolsStatistics), this.getCacheTTL(interval));
       } catch (e) {
@@ -456,7 +465,7 @@ class Mining {
       }
     }
 
-    return poolsStatistics;
+    return { value: poolsStatistics, cacheable };
   }
 
   /**

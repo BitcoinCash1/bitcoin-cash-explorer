@@ -84,17 +84,7 @@ test('shares a degraded calculation without storing it, then caches recovery', a
   expect(await cache.get(1, compute)).toEqual(recovered);
   expect(await cache.get(1, compute)).toEqual(recovered);
   expect(compute).toHaveBeenCalledTimes(2);
-  expect(valkey.$setCache).toHaveBeenCalledWith(expect.stringContaining(':v2:'), JSON.stringify(recovered.value), 120);
-});
-
-test('ignores legacy response keys while retaining shared generation invalidation', async () => {
-  const generationKey = [...values.keys()].find((key) => key.endsWith(':generation'))!;
-  const prefix = generationKey.slice(0, -':generation'.length);
-  values.set(`${prefix}:${values.get(generationKey)}:1`, JSON.stringify({ estimatedHashrate: 0 }));
-  const recovered = { value: { estimatedHashrate: 100 }, cacheable: true };
-  const compute = jest.fn().mockResolvedValue(recovered);
-  expect(await cache.get(1, compute)).toEqual(recovered);
-  expect(compute).toHaveBeenCalledTimes(1);
+  expect(valkey.$setCache).toHaveBeenCalledWith(expect.stringMatching(/:1$/), JSON.stringify(recovered.value), 120);
 });
 
 test.each([false, true])(
@@ -119,5 +109,40 @@ test('bounds recalculation when every degraded result is invalidated', async () 
   });
   expect(await cache.get(1, compute)).toEqual(result);
   expect(compute).toHaveBeenCalledTimes(2);
-  expect([...values.keys()].filter((key) => key.includes(':v2:'))).toHaveLength(0);
+  expect([...values.keys()].filter((key) => !key.endsWith(':generation'))).toHaveLength(0);
+});
+
+test('overview keys isolate intervals, pools, networks and databases', async () => {
+  const compute = jest.fn(async () => ({ value: { count: 10 }, cacheable: true }));
+  const network = config.EXPLORER.NETWORK;
+  const database = config.DATABASE.DATABASE;
+  try {
+    await cache.getOverview('1m', compute);
+    await cache.getOverview('1m', compute);
+    await cache.getOverview('1w', compute);
+    await cache.get(1, compute);
+    config.DATABASE.DATABASE = 'isolated';
+    await cache.getOverview('1m', compute);
+    config.EXPLORER.NETWORK = 'chipnet';
+    await cache.getOverview('1m', compute);
+    expect(compute).toHaveBeenCalledTimes(5);
+  } finally {
+    config.EXPLORER.NETWORK = network;
+    config.DATABASE.DATABASE = database;
+  }
+});
+
+test('overview expiration, malformed data and invalidation force fresh calculations', async () => {
+  const compute = jest.fn(async () => ({ value: { count: 10 }, cacheable: true }));
+  await cache.getOverview('1m', compute);
+  const key = [...values.keys()].find((key) => key.includes('overview:1m'))!;
+  values.delete(key); // Model Valkey expiration; TTL is asserted in the shared cache test.
+  await cache.getOverview('1m', compute);
+  values.set(key, 'null');
+  await cache.getOverview('1m', compute);
+  values.set(key, '{invalid');
+  await cache.getOverview('1m', compute);
+  await cache.invalidate();
+  await cache.getOverview('1m', compute);
+  expect(compute).toHaveBeenCalledTimes(5);
 });

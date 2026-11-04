@@ -28,6 +28,25 @@ class Indexer {
   private bchnIndexes: BCHNIndex[] = [];
   private pendingBlockPrices = new Set<number>();
 
+  private async measureStage<T>(name: string, work: () => Promise<T>): Promise<T> {
+    const started = performance.now();
+    try {
+      const result = await work();
+      const rows = Array.isArray(result) ? ` rows=${result.length}` : '';
+      logger.debug(
+        `Indexer stage=${name} status=completed duration_ms=${Math.round(performance.now() - started)}${rows}`,
+        logger.tags.mining
+      );
+      return result;
+    } catch (error) {
+      logger.warn(
+        `Indexer stage=${name} status=failed duration_ms=${Math.round(performance.now() - started)}`,
+        logger.tags.mining
+      );
+      throw error;
+    }
+  }
+
   public indexerIsRunning(): boolean {
     return this.indexerRunning;
   }
@@ -173,7 +192,7 @@ class Indexer {
                   this.pendingBlockPrices.delete(height);
                   this.pendingBlockPrices.add(height);
                 }
-                const saved = await mining.$indexBlockPrices(heights);
+                const saved = await this.measureStage(task, () => mining.$indexBlockPrices(heights));
                 for (const height of saved) {
                   this.pendingBlockPrices.delete(height);
                 }
@@ -240,7 +259,7 @@ class Indexer {
 
       await this.checkAvailableBCHNIndexes();
 
-      const chainValid = await blocks.$generateBlockDatabase();
+      const chainValid = await this.measureStage('block-database', () => blocks.$generateBlockDatabase());
       if (chainValid === false) {
         // Chain of block hash was invalid, so we need to reindex. Stop here and continue at the next iteration
         logger.warn(`The chain of block hash is invalid, re-indexing invalid data in 10 seconds.`, logger.tags.mining);
@@ -250,10 +269,10 @@ class Indexer {
 
       this.runSingleTask('blocksPricesFull');
       await blocks.$indexCoinbaseAddresses();
-      const boundary = await mining.$indexDifficultyAdjustments();
+      const boundary = await this.measureStage('difficulty-adjustments', () => mining.$indexDifficultyAdjustments());
       await mining.$generateNetworkHashrateHistory(boundary);
       await mining.$generatePoolHashrateHistory(boundary);
-      await blocks.$generateBlocksSummariesDatabase();
+      await this.measureStage('missing-summaries', () => blocks.$generateBlocksSummariesDatabase());
       await blocks.$generateFlagValuesDatabase();
       await blocks.$generateAuditStats();
       await auditReplicator.$sync();
