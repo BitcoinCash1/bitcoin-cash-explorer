@@ -55,6 +55,7 @@ class BlocksAuditRepositories {
       `,
         [expectedFees, expectedSize, hash]
       );
+      await poolStatisticsCache.invalidate();
     } catch (e: any) {
       logger.err(`Cannot update block audit in db. Reason: ` + (e instanceof Error ? e.message : e));
     }

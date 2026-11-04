@@ -31,6 +31,20 @@ class PoolStatisticsCache {
   }
 
   public async get(pool: number, compute: () => Promise<PoolStatisticsResult>): Promise<PoolStatisticsResult> {
+    return this.getKey(pool, compute);
+  }
+
+  public async getOverview(
+    interval: string,
+    compute: () => Promise<PoolStatisticsResult>
+  ): Promise<PoolStatisticsResult> {
+    return this.getKey(`overview:v1:${interval}`, compute);
+  }
+
+  private async getKey(
+    pool: number | string,
+    compute: () => Promise<PoolStatisticsResult>
+  ): Promise<PoolStatisticsResult> {
     const token = await this.generation();
     const revision = this.revision;
     const key = `${this.prefix}:${token}:${revision}:${pool}`;
@@ -46,7 +60,7 @@ class PoolStatisticsCache {
   }
 
   private async load(
-    pool: number,
+    pool: number | string,
     token: string | null,
     revision: number,
     compute: () => Promise<PoolStatisticsResult>
@@ -59,7 +73,14 @@ class PoolStatisticsCache {
         if (cached) {
           try {
             const value = JSON.parse(cached);
-            if (revision === this.revision && token === (await this.generation())) return { value, cacheable: true };
+            if (
+              value &&
+              typeof value === 'object' &&
+              !Array.isArray(value) &&
+              revision === this.revision &&
+              token === (await this.generation())
+            )
+              return { value, cacheable: true };
           } catch {
             /* Recompute malformed cached responses. */
           }

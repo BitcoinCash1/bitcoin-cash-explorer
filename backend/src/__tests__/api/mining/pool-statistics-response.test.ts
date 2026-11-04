@@ -151,3 +151,29 @@ test.each(['ETIMEDOUT', 'ECONNREFUSED'])('retries after a transport failure (%s)
   expect(((await recovered.json()) as Record<string, unknown>).estimatedHashrate).toBe(20);
   expect(rpcCalls).toBe(1);
 });
+
+test('monthly overview shares concurrent misses, avoids caching RPC failure and recovers', async () => {
+  const overviewUrl = url.replace('mining/pool/example', 'mining/pools/1m');
+  jest.mocked(PoolsRepository.$getPoolsInfo).mockClear().mockResolvedValue([]);
+  jest.mocked(BlocksRepository.$countEmptyBlocks).mockResolvedValue([]);
+  rpcFailure = true;
+  const responses = await Promise.all(Array.from({ length: 8 }, () => fetch(overviewUrl)));
+  for (const response of responses) {
+    expect(response.status).toBe(200);
+    expect(response.headers.get('cache-control')).toBe('no-store');
+    const body = await response.json();
+    expect(body).toMatchObject({ pools: [], blockCount: 100, lastEstimatedHashrate: 0 });
+    expect(body).not.toHaveProperty('cacheable');
+  }
+  expect(PoolsRepository.$getPoolsInfo).toHaveBeenCalledTimes(1);
+  expect([...values.keys()].filter((key) => key.includes('overview:'))).toHaveLength(0);
+  rpcFailure = false;
+  const recovered = await fetch(overviewUrl);
+  expect(recovered.headers.get('cache-control')).toBe('public');
+  expect(await recovered.json()).toMatchObject({ lastEstimatedHashrate: 100 });
+  await (await fetch(overviewUrl)).json();
+  expect(PoolsRepository.$getPoolsInfo).toHaveBeenCalledTimes(2);
+  await cache.invalidate();
+  await (await fetch(overviewUrl)).json();
+  expect(PoolsRepository.$getPoolsInfo).toHaveBeenCalledTimes(3);
+});
