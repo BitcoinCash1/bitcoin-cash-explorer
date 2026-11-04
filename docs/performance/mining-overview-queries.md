@@ -34,16 +34,11 @@ Historical single-run observations:
 
 Large history transfers remain visible, but no evidence currently justifies weakening full reconciliation. Existing logger output now adds monotonic stage timings for block-database generation, difficulty adjustments, missing summaries, and asynchronous price indexing. Completed means the stage returned; existing internal error handling is unchanged. Price-stage `rows` counts saved heights, not scanned rows. Existing summary logs report indexed counts.
 
-## Reproducing measurements
+## Measurement method
 
-Run from `backend` against an explicitly selected config:
+The one-off benchmark script is retained outside the repository with local server reports; it is not part of the application.
 
-```sh
-node scripts/benchmark-mining-queries.mjs --config /path/to/explorer-config.json --repeats 3 --history > mining-benchmark.jsonl
-node scripts/benchmark-mining-queries.mjs --config /path/to/explorer-config.json --intervals 3m,6m,1y,2y,3y,4y,all --repeats 1 > mining-long-benchmark.jsonl
-```
-
-The script emits metadata, EXPLAIN plans, client duration, rows read and rows returned, without credentials or result payloads. It uses read-only transactions and a 15-second statement limit. Historical checks fetch full chain/difficulty results; use deliberately, not on a polling schedule. Reads can still consume resources and appear in the server slow log. Rows returned for missing-summary/price queries indicate work found; chain/difficulty row counts do not imply new work.
+Measurements used explicit database configuration, read-only transactions and a 15-second statement limit. They recorded EXPLAIN plans, client duration, session rows read and rows returned, without credentials or result payloads. Historical checks fetched full chain/difficulty results. Reads can still consume resources and appear in the server slow log. Rows returned for missing-summary/price queries indicate work found; chain/difficulty row counts do not imply new work.
 
 Do not run integration tests against production: they create and truncate test data. Run them against a disposable local database.
 
@@ -55,5 +50,5 @@ After deployment, confirm the running revision and compare direct endpoint cold/
 - MariaDB 10.11 disposable integration database: 8 suites, 50 tests passed.
 - Backend build/type checking and source formatting passed.
 - Repository-wide ESLint remains failing with 46 errors. Rechecking the same error-bearing files from `origin/main` produces the same 46 errors; no new error-bearing files were introduced. Backend lint is currently commented out in CI. Existing warnings are not treated as a clean lint run.
-- Standalone benchmark runner smoke-tested against the disposable database, including all four historical queries.
+- The external one-off benchmark was smoke-tested against the disposable database, including all four historical queries.
 - No production application/configuration changes or deployment performed. No end-user browser latency claim is made.
