@@ -38,7 +38,7 @@ class PoolStatisticsCache {
     interval: string,
     compute: () => Promise<PoolStatisticsResult>
   ): Promise<PoolStatisticsResult> {
-    return this.getKey(`overview:v1:${interval}`, compute);
+    return this.getKey(`overview:${interval}`, compute);
   }
 
   private async getKey(
@@ -66,8 +66,7 @@ class PoolStatisticsCache {
     compute: () => Promise<PoolStatisticsResult>
   ): Promise<PoolStatisticsResult> {
     for (let attempt = 0; attempt < 2; attempt++) {
-      // Version response keys so older workers cannot supply cached RPC fallbacks.
-      const key = `${this.prefix}:v2:${token}:${pool}`;
+      const key = `${this.prefix}:${token}:${pool}`;
       if (token) {
         const cached = await valkey.$getCache(key);
         if (cached) {

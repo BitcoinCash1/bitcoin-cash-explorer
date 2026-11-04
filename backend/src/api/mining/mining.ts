@@ -399,7 +399,7 @@ class Mining {
 
   private async computePoolsStats(interval: string | null): Promise<PoolStatisticsResult> {
     const shouldCache = this.shouldCache(interval);
-    const cacheKey = `mining:pools-stats-v2-${interval || 'all'}`;
+    const cacheKey = `mining:pools-stats-${interval || 'all'}`;
 
     if (shouldCache) {
       try {

@@ -101,7 +101,7 @@ test('RPC failure is not cached by Valkey or HTTP, and the next request recovers
   }
   expect(rpcCalls).toBe(1);
   expect(BlocksRepository.$poolStatisticsCounts).toHaveBeenCalledTimes(1);
-  expect([...values.keys()].filter((key) => key.includes(':v2:'))).toHaveLength(0);
+  expect([...values.keys()].filter((key) => !key.endsWith(':generation'))).toHaveLength(0);
   // A successive failed request retries; there is no hidden negative cache.
   await (await fetch(url)).json();
   expect(rpcCalls).toBe(2);
@@ -115,7 +115,7 @@ test('RPC failure is not cached by Valkey or HTTP, and the next request recovers
   await (await fetch(url)).json();
   expect(rpcCalls).toBe(3);
   expect(BlocksRepository.$poolStatisticsCounts).toHaveBeenCalledTimes(3);
-  expect(valkey.$setCache).toHaveBeenCalledWith(expect.stringContaining(':v2:'), expect.any(String), 120);
+  expect(valkey.$setCache).toHaveBeenCalledWith(expect.stringMatching(/:1$/), expect.any(String), 120);
 });
 
 test('a successful zero hashrate remains cacheable', async () => {
