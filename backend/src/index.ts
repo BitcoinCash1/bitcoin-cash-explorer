@@ -32,6 +32,7 @@ import v8 from 'v8';
 import { formatBytes, getBytesUnit } from './utils/format';
 import valkeyCache from './api/valkey-cache';
 import bitcoinCoreRoutes from './api/bitcoin/bitcoin-core.routes';
+import bitcoinClient from './api/bitcoin/bitcoin-client';
 import bitcoinSecondClient from './api/bitcoin/bitcoin-second-client';
 import aboutRoutes from './api/about.routes';
 import mempoolBlocks from './api/mempool-blocks';
@@ -369,6 +370,8 @@ class Server {
   }
 
   exitCleanup(): void {
+    bitcoinClient.destroy();
+    bitcoinSecondClient.destroy();
     if (config.DATABASE.ENABLED) {
       DB.releasePidLock();
     }

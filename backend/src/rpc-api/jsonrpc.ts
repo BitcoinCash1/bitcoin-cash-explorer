@@ -2,15 +2,20 @@ const http = require('http');
 const https = require('https');
 import { readFileSync } from 'fs';
 
-const JsonRPC = function (opts) {
-  // @ts-ignore
+const JsonRPC = function (this: any, opts) {
   this.opts = opts || {};
-  // @ts-ignore
   this.http = this.opts.ssl ? https : http;
+  this.agent = new this.http.Agent({ keepAlive: true, maxSockets: 16, maxFreeSockets: 4, scheduling: 'lifo' });
+  this.pending = new Set();
+  this.destroyed = false;
 };
 
 JsonRPC.prototype.call = function (method, params) {
   return new Promise((resolve, reject) => {
+    if (this.destroyed) {
+      reject(new Error('RPC client destroyed'));
+      return;
+    }
     const time = Date.now();
     let requestJSON;
 
@@ -46,7 +51,7 @@ JsonRPC.prototype.call = function (method, params) {
         Host: this.opts.host || 'localhost',
         'Content-Length': requestJSON.length,
       },
-      agent: false,
+      agent: this.agent,
       rejectUnauthorized: this.opts.ssl && this.opts.sslStrict !== false,
     };
 
@@ -71,43 +76,41 @@ JsonRPC.prototype.call = function (method, params) {
     let cbCalled = false;
     const request = this.http.request(requestOptions);
 
-    // start request timeout timer
-    const reqTimeout = setTimeout(function () {
-      if (cbCalled) {
-        return;
-      }
-      cbCalled = true;
-      request.abort();
-      const err = new Error('ETIMEDOUT');
-      // @ts-ignore
-      err.code = 'ETIMEDOUT';
-      reject(err);
-    }, this.opts.timeout || 30000);
-
-    // set additional timeout on socket in case of remote freeze after sending headers
-    request.setTimeout(this.opts.timeout || 30000, function () {
-      if (cbCalled) {
-        return;
-      }
-      cbCalled = true;
-      request.abort();
-      const err = new Error('ESOCKETTIMEDOUT');
-      // @ts-ignore
-      err.code = 'ESOCKETTIMEDOUT';
-      reject(err);
-    });
-
-    request.on('error', function (err) {
+    let reqTimeout;
+    const finish = (err, result?) => {
       if (cbCalled) {
         return;
       }
       cbCalled = true;
       clearTimeout(reqTimeout);
-      reject(err);
-    });
+      this.pending.delete(cancel);
+      if (err) {
+        request.destroy();
+        reject(err);
+      } else {
+        resolve(result);
+      }
+    };
+    const cancel = () => finish(new Error('RPC client destroyed'));
+    const timeout = (code) => finish(Object.assign(new Error(code), { code }));
+    this.pending.add(cancel);
+
+    // Include agent queueing and the entire response body in the deadline.
+    reqTimeout = setTimeout(
+      () => timeout('ETIMEDOUT'),
+      Math.max(1, (this.opts.timeout || 30000) - (Date.now() - time))
+    );
+    request.setTimeout(this.opts.timeout || 30000, () => timeout('ESOCKETTIMEDOUT'));
+    request.on('error', (err) => finish(err));
 
     request.on('response', (response) => {
-      clearTimeout(reqTimeout);
+      response.on('error', (err) => finish(err));
+      response.on('aborted', () => finish(new Error('RPC response aborted')));
+      response.on('close', () => {
+        if (!response.complete) {
+          finish(new Error('Incomplete RPC response'));
+        }
+      });
 
       // We need to buffer the response chunks in a nonblocking way.
       let buffer = '';
@@ -123,8 +126,6 @@ JsonRPC.prototype.call = function (method, params) {
         if (cbCalled) {
           return;
         }
-        cbCalled = true;
-
         try {
           var decoded = JSON.parse(buffer);
         } catch (e) {
@@ -136,11 +137,11 @@ JsonRPC.prototype.call = function (method, params) {
           if (response.statusCode !== 200) {
             err = new Error('Invalid params, response status code: ' + response.statusCode);
             err.code = -32602;
-            reject(err);
+            finish(err);
           } else {
             err = new Error('Problem parsing JSON response from server');
             err.code = -32603;
-            reject(err);
+            finish(err);
           }
           return;
         }
@@ -151,26 +152,27 @@ JsonRPC.prototype.call = function (method, params) {
 
         // iterate over each response, normally there will be just one
         // unless a batch rpc call response is being processed
-        decoded.forEach(function (decodedResponse, i) {
-          if (decodedResponse.hasOwnProperty('error') && decodedResponse.error) {
-            if (reject) {
-              err = new Error(decodedResponse.error.message || '');
-              if (decodedResponse.error.code) {
-                err.code = decodedResponse.error.code;
-              }
-              reject(err);
+        if (decoded.length === 0) {
+          finish(Object.assign(new Error('Invalid JSON-RPC response'), { code: -32603 }));
+          return;
+        }
+        decoded.forEach(function (decodedResponse) {
+          if (!decodedResponse || typeof decodedResponse !== 'object') {
+            finish(Object.assign(new Error('Invalid JSON-RPC response'), { code: -32603 }));
+            return;
+          }
+          if (Object.prototype.hasOwnProperty.call(decodedResponse, 'error') && decodedResponse.error) {
+            err = new Error(decodedResponse.error.message || '');
+            if (decodedResponse.error.code) {
+              err.code = decodedResponse.error.code;
             }
-          } else if (decodedResponse.hasOwnProperty('result')) {
-            // @ts-ignore
-            resolve(decodedResponse.result, response.headers);
+            finish(err);
+          } else if (Object.prototype.hasOwnProperty.call(decodedResponse, 'result')) {
+            finish(null, decodedResponse.result);
           } else {
-            if (reject) {
-              err = new Error(decodedResponse.error.message || '');
-              if (decodedResponse.error.code) {
-                err.code = decodedResponse.error.code;
-              }
-              reject(err);
-            }
+            err = new Error('Invalid JSON-RPC response');
+            err.code = -32603;
+            finish(err);
           }
         });
       });
@@ -180,3 +182,14 @@ JsonRPC.prototype.call = function (method, params) {
 };
 
 module.exports.JsonRPC = JsonRPC;
+
+JsonRPC.prototype.destroy = function () {
+  if (this.destroyed) {
+    return;
+  }
+  this.destroyed = true;
+  for (const cancel of this.pending) {
+    cancel();
+  }
+  this.agent.destroy();
+};
