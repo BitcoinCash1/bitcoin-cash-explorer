@@ -353,7 +353,7 @@ class BitcoinApi implements AbstractBitcoinApi {
       scriptpubkey_asm:
         vin.scriptPubKey?.asm && typeof vin.scriptPubKey.hex === 'string'
           ? transactionUtils.convertScriptSigAsm(vin.scriptPubKey.hex)
-          : '', // TODO: Why would you call convertScriptSigAsm, if you already have the asm?
+          : '', // Decode hex to preserve the API opcode names and explicit push-data markers.
       scriptpubkey_type: vin.scriptPubKey ? this.translateScriptPubKeyType(vin.scriptPubKey.type) : '',
       scriptpubkey_byte_code_pattern: vin.scriptPubKey?.byteCodePattern?.pattern || '',
       scriptpubkey_byte_code: vin.scriptPubKey?.byteCodePattern?.data || [],
@@ -403,7 +403,7 @@ class BitcoinApi implements AbstractBitcoinApi {
       scriptpubkey: output.scriptPubKey.hex,
       scriptpubkey_address:
         output.scriptPubKey && output.scriptPubKey.addresses ? output.scriptPubKey.addresses[0] : '',
-      scriptpubkey_asm: output.scriptPubKey.asm ? transactionUtils.convertScriptSigAsm(output.scriptPubKey.hex) : '', // TODO: Why would you call convertScriptSigAsm, if you already have the asm?
+      scriptpubkey_asm: output.scriptPubKey.asm ? transactionUtils.convertScriptSigAsm(output.scriptPubKey.hex) : '', // Decode hex to preserve the API opcode names and explicit push-data markers.
       scriptpubkey_type: this.translateScriptPubKeyType(output.scriptPubKey.type),
       scriptpubkey_byte_code_pattern: output.scriptPubKey?.byteCodePattern?.pattern || '',
       scriptpubkey_byte_code: [...(output.scriptPubKey?.byteCodePattern?.data || [])],
