@@ -1,3 +1,4 @@
+import DB from '../database';
 import BlocksRepository from '../repositories/BlocksRepository';
 import { setupTestDatabase, waitForDatabase, cleanupTestData, insertTestPool, insertTestBlock } from './test-helpers';
 
@@ -83,7 +84,53 @@ describe('BlocksRepository Integration Tests', () => {
 
     const missingBlocks = await BlocksRepository.$getMissingBlocksBetweenHeights(800100, 800102);
 
-    expect(missingBlocks).toContain(800101);
+    expect(missingBlocks).toEqual([800101]);
+  });
+
+  test('should return every missing height in ascending order for reversed ranges', async () => {
+    expect(await BlocksRepository.$getMissingBlocksBetweenHeights(800102, 800100)).toEqual([800100, 800101, 800102]);
+  });
+
+  test('should preserve the single-height no-op', async () => {
+    expect(await BlocksRepository.$getMissingBlocksBetweenHeights(800100, 800100)).toEqual([]);
+  });
+
+  test.each([
+    { heights: [10, 11, 12, 13, 14], missing: [] },
+    { heights: [11, 13], missing: [10, 12, 14] },
+    { heights: [11, 11, 13], missing: [10, 12, 14] },
+  ])('finds exact gaps for $heights', async ({ heights, missing }) => {
+    for (const [index, height] of heights.entries()) {
+      await insertTestBlock({
+        height,
+        hash: (index + 1).toString(16).padStart(64, '0'),
+        poolId: defaultPoolId,
+      });
+    }
+    expect(await BlocksRepository.$getMissingBlocksBetweenHeights(10, 14)).toEqual(missing);
+    expect(await BlocksRepository.$getMissingBlocksBetweenHeights(14, 10)).toEqual(missing);
+  });
+
+  test('ignores stale forks but accepts a canonical block at the same height', async () => {
+    for (const [index, height] of [10, 11, 11].entries()) {
+      await insertTestBlock({
+        height,
+        hash: (index + 1).toString(16).padStart(64, '0'),
+        poolId: defaultPoolId,
+      });
+    }
+    await DB.query('UPDATE blocks SET stale = 1 WHERE hash IN (?, ?)', ['1'.padStart(64, '0'), '2'.padStart(64, '0')]);
+    expect(await BlocksRepository.$getMissingBlocksBetweenHeights(10, 12)).toEqual([10, 12]);
+  });
+
+  test('propagates database errors instead of returning a complete range', async () => {
+    const error = new Error('Database unavailable');
+    const query = jest.spyOn(DB, 'query').mockRejectedValueOnce(error);
+    try {
+      await expect(BlocksRepository.$getMissingBlocksBetweenHeights(10, 12)).rejects.toBe(error);
+    } finally {
+      query.mockRestore();
+    }
   });
 
   test('should get latest block height', async () => {
