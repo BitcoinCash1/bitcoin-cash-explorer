@@ -303,12 +303,12 @@ class BlocksRepository {
         [minHeight, maxHeight]
       );
 
-      const indexedBlockHeights: number[] = [];
+      const indexedBlockHeights = new Set<number>();
       rows.forEach((row: any) => {
-        indexedBlockHeights.push(row.height);
+        indexedBlockHeights.add(row.height);
       });
       const seekedBlocks: number[] = Array.from(Array(maxHeight - minHeight + 1).keys(), (n) => n + minHeight);
-      const missingBlocksHeights = seekedBlocks.filter((x) => indexedBlockHeights.indexOf(x) === -1);
+      const missingBlocksHeights = seekedBlocks.filter((x) => !indexedBlockHeights.has(x));
 
       return missingBlocksHeights;
     } catch (e) {
