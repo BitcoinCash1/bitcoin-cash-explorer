@@ -9,6 +9,10 @@ function Client(opts) {
   this.rpc = new rpc.JsonRPC(opts);
 }
 
+Client.prototype.destroy = function () {
+  this.rpc.destroy();
+};
+
 // ===----------------------------------------------------------------------===//
 // cmd
 // ===----------------------------------------------------------------------===//
