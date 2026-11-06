@@ -279,3 +279,38 @@ test('destroy also closes retained idle sockets', async () => {
   await pause(20);
   expect(Object.values(rpc.agent.freeSockets).flat()).toHaveLength(0);
 });
+
+test.each(['stalled', 'truncated'])(
+  'releases a saturated pool after sixteen %s bodies so a queued healthy call succeeds',
+  async (failure) => {
+    const blocked: http.ServerResponse[] = [];
+    let requests = 0;
+    const server = await serve((req, res) => {
+      req.resume();
+      if (++requests <= 16) {
+        res.writeHead(200, { 'Content-Length': '100' });
+        res.write('{"result":');
+        blocked.push(res);
+      } else res.end('{"result":42}');
+    });
+    const rpc = client(server, { timeout: failure === 'stalled' ? 120 : 1000 });
+    const failures = Promise.allSettled(Array.from({ length: 16 }, () => rpc.call('blocked', [])));
+    for (let turns = 0; turns < 100 && blocked.length < 16; turns++) await pause(2);
+    expect(blocked).toHaveLength(16);
+    // Give the queued request a later deadline than the sixteen occupied slots.
+    rpc.opts.timeout = 1000;
+    const healthy = rpc.call('healthy', []);
+    expect(Object.values(rpc.agent.requests).flat()).toHaveLength(1);
+    if (failure === 'truncated') blocked.forEach((res) => res.destroy());
+    await expect(healthy).resolves.toBe(42);
+    const settled = await failures;
+    expect(settled.every((result) => result.status === 'rejected')).toBe(true);
+    if (failure === 'stalled') {
+      settled.forEach((result) =>
+        expect((result as PromiseRejectedResult).reason).toMatchObject({ code: 'ETIMEDOUT' })
+      );
+    }
+    expect(requests).toBe(17);
+    expect(rpc.pending.size).toBe(0);
+  }
+);
