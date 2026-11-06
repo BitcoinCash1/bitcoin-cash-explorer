@@ -350,7 +350,10 @@ class BitcoinApi implements AbstractBitcoinApi {
       scriptsig_byte_code: vin.scriptSig?.byteCodePattern?.data || [],
       scriptpubkey: (vin.scriptPubKey && vin.scriptPubKey.hex) || '',
       scriptpubkey_address: vin.scriptPubKey && vin.scriptPubKey.address ? vin.scriptPubKey.address : '',
-      scriptpubkey_asm: vin.scriptPubKey?.asm ? transactionUtils.convertScriptSigAsm(vin.scriptPubKey.hex) : '', // TODO: Why would you call convertScriptSigAsm, if you already have the asm?
+      scriptpubkey_asm:
+        vin.scriptPubKey?.asm && typeof vin.scriptPubKey.hex === 'string'
+          ? transactionUtils.convertScriptSigAsm(vin.scriptPubKey.hex)
+          : '', // TODO: Why would you call convertScriptSigAsm, if you already have the asm?
       scriptpubkey_type: vin.scriptPubKey ? this.translateScriptPubKeyType(vin.scriptPubKey.type) : '',
       scriptpubkey_byte_code_pattern: vin.scriptPubKey?.byteCodePattern?.pattern || '',
       scriptpubkey_byte_code: vin.scriptPubKey?.byteCodePattern?.data || [],
@@ -361,19 +364,7 @@ class BitcoinApi implements AbstractBitcoinApi {
       ...(vin.tokenData?.nft?.commitment !== undefined && { token_nft_commitment: vin.tokenData.nft.commitment }),
     }));
 
-    publicTransaction.vout = transaction.vout.map((vout): IPublicApi.VerboseVout => ({
-      value: Math.round(vout.value * 100000000),
-      scriptpubkey: vout.scriptPubKey.hex,
-      scriptpubkey_address: vout.scriptPubKey && vout.scriptPubKey.addresses ? vout.scriptPubKey.addresses[0] : '',
-      scriptpubkey_asm: vout.scriptPubKey.asm ? transactionUtils.convertScriptSigAsm(vout.scriptPubKey.hex) : '', // TODO: Why would you call convertScriptSigAsm, if you already have the asm?
-      scriptpubkey_type: this.translateScriptPubKeyType(vout.scriptPubKey.type),
-      scriptpubkey_byte_code_pattern: vout.scriptPubKey?.byteCodePattern?.pattern || '',
-      scriptpubkey_byte_code: vout.scriptPubKey?.byteCodePattern?.data || [],
-      ...(vout.tokenData?.category !== undefined && { token_category: vout.tokenData.category }),
-      ...(vout.tokenData?.amount !== undefined && { token_amount: vout.tokenData.amount }),
-      ...(vout.tokenData?.nft?.capability !== undefined && { token_nft_capability: vout.tokenData.nft.capability }),
-      ...(vout.tokenData?.nft?.commitment !== undefined && { token_nft_commitment: vout.tokenData.nft.commitment }),
-    }));
+    publicTransaction.vout = transaction.vout.map((vout) => this.convertOutput(vout));
 
     if (transaction.confirmations) {
       publicTransaction.status = {
@@ -386,7 +377,12 @@ class BitcoinApi implements AbstractBitcoinApi {
 
     if (addPrevout) {
       try {
-        publicTransaction = await this.$calculateFeeFromInputs(publicTransaction, false, lazyPrevouts, prevoutResolver);
+        publicTransaction = await this.$calculateFeeFromInputs(
+          publicTransaction,
+          transaction.vin,
+          lazyPrevouts,
+          prevoutResolver
+        );
       } catch (e) {
         if (!allowMissingPrevouts) {
           throw e;
@@ -397,6 +393,73 @@ class BitcoinApi implements AbstractBitcoinApi {
     }
 
     return publicTransaction;
+  }
+
+  private convertOutput(
+    output: Pick<IBitcoinApi.VerboseVout, 'value' | 'scriptPubKey' | 'tokenData'>
+  ): IPublicApi.VerboseVout {
+    return {
+      value: Math.round(output.value * 100000000),
+      scriptpubkey: output.scriptPubKey.hex,
+      scriptpubkey_address:
+        output.scriptPubKey && output.scriptPubKey.addresses ? output.scriptPubKey.addresses[0] : '',
+      scriptpubkey_asm: output.scriptPubKey.asm ? transactionUtils.convertScriptSigAsm(output.scriptPubKey.hex) : '', // TODO: Why would you call convertScriptSigAsm, if you already have the asm?
+      scriptpubkey_type: this.translateScriptPubKeyType(output.scriptPubKey.type),
+      scriptpubkey_byte_code_pattern: output.scriptPubKey?.byteCodePattern?.pattern || '',
+      scriptpubkey_byte_code: [...(output.scriptPubKey?.byteCodePattern?.data || [])],
+      ...(output.tokenData?.category !== undefined && { token_category: output.tokenData.category }),
+      ...(output.tokenData?.amount !== undefined && { token_amount: output.tokenData.amount }),
+      ...(output.tokenData?.nft?.capability !== undefined && { token_nft_capability: output.tokenData.nft.capability }),
+      ...(output.tokenData?.nft?.commitment !== undefined && { token_nft_commitment: output.tokenData.nft.commitment }),
+    };
+  }
+
+  private getInlinePrevout(vin: IBitcoinApi.VerboseVin): IPublicApi.VerboseVout | null {
+    const script = vin.scriptPubKey;
+    const pattern = script?.byteCodePattern;
+    // Check raw metadata before conversion defaults can conceal missing fields.
+    if (
+      vin.coinbase ||
+      typeof vin.value !== 'number' ||
+      !Number.isFinite(vin.value) ||
+      vin.value < 0 ||
+      !script ||
+      typeof script.hex !== 'string' ||
+      typeof script.asm !== 'string' ||
+      typeof script.type !== 'string' ||
+      !pattern ||
+      typeof pattern.pattern !== 'string' ||
+      !Array.isArray(pattern.data) ||
+      !pattern.data.every((data) => typeof data === 'string')
+    ) {
+      return null;
+    }
+    // Bare multisig vout addresses cannot be recovered from vin's singular address.
+    const addressTypes = ['pubkey', 'pubkeyhash', 'scripthash', 'script'];
+    const addresslessTypes = ['nonstandard', 'nulldata', 'anchor'];
+    if (
+      (!addressTypes.includes(script.type) && !addresslessTypes.includes(script.type)) ||
+      (addressTypes.includes(script.type) && (typeof script.address !== 'string' || script.address.length === 0)) ||
+      (script.address !== undefined && typeof script.address !== 'string')
+    ) {
+      return null;
+    }
+    const token = vin.tokenData;
+    if (
+      token !== undefined &&
+      (!token ||
+        typeof token.category !== 'string' ||
+        typeof token.amount !== 'string' ||
+        (token.nft !== undefined &&
+          (!token.nft || typeof token.nft.capability !== 'string' || typeof token.nft.commitment !== 'string')))
+    ) {
+      return null;
+    }
+    return this.convertOutput({
+      value: vin.value,
+      scriptPubKey: { ...script, addresses: script.address ? [script.address] : undefined },
+      tokenData: token,
+    });
   }
 
   private translateScriptPubKeyType(outputType: string): string {
@@ -484,7 +547,7 @@ class BitcoinApi implements AbstractBitcoinApi {
 
   private async $calculateFeeFromInputs(
     transaction: IPublicApi.VerboseTransaction,
-    addPrevout: boolean,
+    rawInputs: IBitcoinApi.VerboseVin[],
     lazyPrevouts: boolean,
     prevoutResolver?: PrevoutResolver
   ): Promise<IPublicApi.VerboseTransaction> {
@@ -500,9 +563,11 @@ class BitcoinApi implements AbstractBitcoinApi {
         continue;
       }
       const vin = transaction.vin[i];
-      const prevout = prevoutResolver
-        ? await prevoutResolver(vin.txid, vin.vout)
-        : ((await this.$getRawTransaction(vin.txid, false, false)) as IPublicApi.VerboseTransaction).vout[vin.vout];
+      const prevout =
+        this.getInlinePrevout(rawInputs[i]) ??
+        (prevoutResolver
+          ? await prevoutResolver(vin.txid, vin.vout)
+          : ((await this.$getRawTransaction(vin.txid, false, false)) as IPublicApi.VerboseTransaction).vout[vin.vout]);
       vin.prevout = prevout;
       transactionUtils.addInnerScriptsToVin(vin);
       totalIn += prevout.value;
