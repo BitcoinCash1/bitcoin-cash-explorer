@@ -195,5 +195,7 @@ test('actual server rejects mixed-case API routes while canonical paths remain a
   for (const url of [
     `${baseUrl}/TRANSACTION-TIMES?txId[]=${txid}`,
     `${baseUrl.replace('/api/v1', '/API/v1')}/transaction-times?txId[]=${txid}`,
-  ]) { expect((await fetch(url)).status).toBe(404); }
+  ]) {
+    expect((await fetch(url)).status).toBe(404);
+  }
 });

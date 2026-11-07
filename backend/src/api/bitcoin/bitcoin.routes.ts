@@ -174,7 +174,10 @@ class BitcoinRoutes {
     }
 
     try {
-      const batchedOutspends = await bitcoinApi.$getBatchedOutspends(txids, config.EXPLORER.MAX_OUTSPENDS_OUTPUTS || Infinity);
+      const batchedOutspends = await bitcoinApi.$getBatchedOutspends(
+        txids,
+        config.EXPLORER.MAX_OUTSPENDS_OUTPUTS || Infinity
+      );
       res.json(batchedOutspends);
     } catch (e) {
       if (e instanceof Error && e.message === 'Too many outputs requested') {
