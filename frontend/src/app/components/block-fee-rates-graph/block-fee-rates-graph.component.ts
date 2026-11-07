@@ -1,4 +1,10 @@
 import {
+  FeeChartScale,
+  feeChartFragment,
+  parseFeeChartFragment,
+  scaleFeeChart,
+} from '@app/shared/fee-chart.utils';
+import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -51,6 +57,11 @@ export class BlockFeeRatesGraphComponent implements OnInit {
   @Input() widget = false;
   @Input() right: number | string = 45;
   @Input() left: number | string = 75;
+
+  scale: FeeChartScale = 'linear';
+  omittedLogPoints = 0;
+  positiveLogPoints = 0;
+  private rawChartData: any;
 
   miningWindowPreference: string;
   radioGroupForm: UntypedFormGroup;
@@ -106,30 +117,19 @@ export class BlockFeeRatesGraphComponent implements OnInit {
 
     if (!this.widget) {
       this.route.fragment.subscribe((fragment) => {
+        const parsed = parseFeeChartFragment(fragment);
         if (
-          [
-            '24h',
-            '3d',
-            '1w',
-            '1m',
-            '3m',
-            '6m',
-            '1y',
-            '2y',
-            '3y',
-            '4y',
-            'all',
-          ].indexOf(fragment) > -1
+          parsed.time &&
+          parsed.time !== this.radioGroupForm.controls['dateSpan'].value
         ) {
-          this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
-            emitEvent: false,
-          });
+          this.radioGroupForm.controls['dateSpan'].setValue(parsed.time);
         }
+        this.onScaleChange(parsed.scale);
       });
     }
 
     this.hrStatsObservable$ = this.apiService
-      .getHistoricalBlockFeeRates$('24h')
+      .getHistoricalBlockFeeRates$('24h', true)
       .pipe(
         map((response: HttpResponse<any[]>) => {
           return {
@@ -161,7 +161,7 @@ export class BlockFeeRatesGraphComponent implements OnInit {
         }
         this.timespan = timespan;
         this.isLoading = true;
-        return this.apiService.getHistoricalBlockFeeRates$(timespan).pipe(
+        return this.apiService.getHistoricalBlockFeeRates$(timespan, true).pipe(
           tap((response) => {
             // Group by percentile
             const seriesData = this.widget
@@ -304,6 +304,7 @@ export class BlockFeeRatesGraphComponent implements OnInit {
   }
 
   prepareChartOptions(data) {
+    this.rawChartData = data;
     this.chartOptions = {
       color: this.widget
         ? [
@@ -359,7 +360,7 @@ export class BlockFeeRatesGraphComponent implements OnInit {
           for (const rate of data.reverse()) {
             tooltip += `${rate.marker} ${
               rate.seriesName
-            }: ${rate.data[1].toFixed(2)} sats/Byte<br>`;
+            }: ${formatNumber(rate.data[3] ?? rate.data[1], this.locale, '1.0-3')} sats/Byte<br>`;
           }
 
           if (['24h', '3d'].includes(this.timespan)) {
@@ -431,6 +432,9 @@ export class BlockFeeRatesGraphComponent implements OnInit {
               axisLabel: {
                 color: 'rgb(110, 112, 121)',
                 formatter: (val) => {
+                  if (val < 1) {
+                    return `${formatNumber(val, this.locale, '1.0-3')} s/B`;
+                  }
                   const selectedPowerOfTen: any = selectPowerOfTen(val);
                   const newVal = Math.round(val / selectedPowerOfTen.divider);
                   return `${newVal}${selectedPowerOfTen.unit} s/B`;
@@ -479,6 +483,10 @@ export class BlockFeeRatesGraphComponent implements OnInit {
             },
           ],
     };
+    const scaled = scaleFeeChart(this.chartOptions, this.scale);
+    this.chartOptions = scaled.options;
+    this.omittedLogPoints = scaled.omitted;
+    this.positiveLogPoints = scaled.positive;
   }
 
   onChartInit(ec) {
@@ -530,5 +538,21 @@ export class BlockFeeRatesGraphComponent implements OnInit {
     this.chartOptions.grid.bottom = prevBottom;
     this.chartOptions.backgroundColor = 'none';
     this.chartInstance.setOption(this.chartOptions);
+  }
+
+  getFragment(changes: { time?: string; scale?: FeeChartScale } = {}): string {
+    return feeChartFragment(
+      this.radioGroupForm.controls['dateSpan'].value,
+      this.scale,
+      changes
+    );
+  }
+
+  onScaleChange(scale: FeeChartScale): void {
+    this.scale = scale;
+    if (this.rawChartData) {
+      this.prepareChartOptions(this.rawChartData);
+      this.chartInstance?.setOption(this.chartOptions, { notMerge: true });
+    }
   }
 }

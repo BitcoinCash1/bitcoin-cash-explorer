@@ -26,7 +26,7 @@
             class="btn-check"
             id="feerates-24h"
             [value]="'24h'"
-            fragment="24h"
+            [fragment]="getFragment({ time: '24h' })"
             [routerLink]="['/graphs/mining/block-fee-rates' | relativeUrl]"
             formControlName="dateSpan"
           />
@@ -38,7 +38,7 @@
             class="btn-check"
             id="feerates-3d"
             [value]="'3d'"
-            fragment="3d"
+            [fragment]="getFragment({ time: '3d' })"
             [routerLink]="['/graphs/mining/block-fee-rates' | relativeUrl]"
             formControlName="dateSpan"
           />
@@ -50,7 +50,7 @@
             class="btn-check"
             id="feerates-1w"
             [value]="'1w'"
-            fragment="1w"
+            [fragment]="getFragment({ time: '1w' })"
             [routerLink]="['/graphs/mining/block-fee-rates' | relativeUrl]"
             formControlName="dateSpan"
           />
@@ -62,7 +62,7 @@
             class="btn-check"
             id="feerates-1m"
             [value]="'1m'"
-            fragment="1m"
+            [fragment]="getFragment({ time: '1m' })"
             [routerLink]="['/graphs/mining/block-fee-rates' | relativeUrl]"
             formControlName="dateSpan"
           />
@@ -74,7 +74,7 @@
             class="btn-check"
             id="feerates-3m"
             [value]="'3m'"
-            fragment="3m"
+            [fragment]="getFragment({ time: '3m' })"
             [routerLink]="['/graphs/mining/block-fee-rates' | relativeUrl]"
             formControlName="dateSpan"
           />
@@ -86,7 +86,7 @@
             class="btn-check"
             id="feerates-6m"
             [value]="'6m'"
-            fragment="6m"
+            [fragment]="getFragment({ time: '6m' })"
             [routerLink]="['/graphs/mining/block-fee-rates' | relativeUrl]"
             formControlName="dateSpan"
           />
@@ -98,7 +98,7 @@
             class="btn-check"
             id="feerates-1y"
             [value]="'1y'"
-            fragment="1y"
+            [fragment]="getFragment({ time: '1y' })"
             [routerLink]="['/graphs/mining/block-fee-rates' | relativeUrl]"
             formControlName="dateSpan"
           />
@@ -110,7 +110,7 @@
             class="btn-check"
             id="feerates-2y"
             [value]="'2y'"
-            fragment="2y"
+            [fragment]="getFragment({ time: '2y' })"
             [routerLink]="['/graphs/mining/block-fee-rates' | relativeUrl]"
             formControlName="dateSpan"
           />
@@ -122,7 +122,7 @@
             class="btn-check"
             id="feerates-3y"
             [value]="'3y'"
-            fragment="3y"
+            [fragment]="getFragment({ time: '3y' })"
             [routerLink]="['/graphs/mining/block-fee-rates' | relativeUrl]"
             formControlName="dateSpan"
           />
@@ -134,7 +134,7 @@
             class="btn-check"
             id="feerates-4y"
             [value]="'4y'"
-            fragment="4y"
+            [fragment]="getFragment({ time: '4y' })"
             [routerLink]="['/graphs/mining/block-fee-rates' | relativeUrl]"
             formControlName="dateSpan"
           />
@@ -145,13 +145,36 @@
           class="btn-check"
           id="feerates-all"
           [value]="'all'"
-          fragment="all"
+          [fragment]="getFragment({ time: 'all' })"
           [routerLink]="['/graphs/mining/block-fee-rates' | relativeUrl]"
           formControlName="dateSpan"
         />
         <label class="btn btn-purple btn-sm" for="feerates-all">ALL</label>
       </div>
     </form>
+    <div
+      class="btn-group formRadioGroup"
+      role="group"
+      aria-label="Chart scale"
+      *ngIf="!widget"
+    >
+      <a
+        class="btn btn-purple btn-sm"
+        [class.active]="scale === 'linear'"
+        [routerLink]="['/graphs/mining/block-fee-rates' | relativeUrl]"
+        [fragment]="getFragment({ scale: 'linear' })"
+        i18n="charts.linear-scale"
+        >Linear</a
+      >
+      <a
+        class="btn btn-purple btn-sm"
+        [class.active]="scale === 'log'"
+        [routerLink]="['/graphs/mining/block-fee-rates' | relativeUrl]"
+        [fragment]="getFragment({ scale: 'log' })"
+        i18n="charts.log-scale"
+        >Log</a
+      >
+    </div>
   </div>
 
   <div *ngIf="widget">
@@ -164,7 +187,10 @@
           Avg Block Fee (24h)
         </h5>
         <p class="card-text">
-          <app-fee-rate [fee]="stats.avgMedianRate"></app-fee-rate>
+          <app-fee-rate
+            [fee]="stats.avgMedianRate"
+            rounding="1.0-3"
+          ></app-fee-rate>
         </p>
       </div>
       <div
@@ -175,12 +201,31 @@
           Avg Block Fee (1m)
         </h5>
         <p class="card-text">
-          <app-fee-rate [fee]="stats.avgMedianRate"></app-fee-rate>
+          <app-fee-rate
+            [fee]="stats.avgMedianRate"
+            rounding="1.0-3"
+          ></app-fee-rate>
         </p>
       </div>
     </div>
   </div>
 
+  <p
+    *ngIf="scale === 'log' && omittedLogPoints > 0"
+    class="text-muted small"
+    role="status"
+  >
+    @if (positiveLogPoints === 0) {
+      <span i18n="charts.log-no-positive-values"
+        >No positive values to plot. Select Linear to see zero values.</span
+      >
+    } @else {
+      <span i18n="charts.log-omitted-values"
+        >Zero and invalid values are omitted from the log plot. Select Linear to
+        inspect them.</span
+      >
+    }
+  </p>
   <div
     [class.chart]="!widget"
     [class.chart-widget]="widget"

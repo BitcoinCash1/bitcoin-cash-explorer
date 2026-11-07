@@ -150,9 +150,9 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                 blockFees: response.body.map(
                   (val) => val.avgFees / 100_000_000
                 ),
-                blockFeesFiat: response.body
-                  .filter((val) => val['USD'] > 0)
-                  .map((val) => (val.avgFees / 100_000_000) * val['USD']),
+                blockFeesFiat: response.body.map((val) =>
+                  this.toFiat(val.avgFees / 100_000_000, val['USD'])
+                ),
                 blockFeesPercent: response.body.map(
                   (val) =>
                     (val.avgFees /
@@ -162,12 +162,12 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                 blockSubsidy: response.body.map(
                   (val) => this.subsidyAt(val.avgHeight) / 100_000_000
                 ),
-                blockSubsidyFiat: response.body
-                  .filter((val) => val['USD'] > 0)
-                  .map(
-                    (val) =>
-                      (this.subsidyAt(val.avgHeight) / 100_000_000) * val['USD']
-                  ),
+                blockSubsidyFiat: response.body.map((val) =>
+                  this.toFiat(
+                    this.subsidyAt(val.avgHeight) / 100_000_000,
+                    val['USD']
+                  )
+                ),
                 blockSubsidyPercent: response.body.map(
                   (val) =>
                     (this.subsidyAt(val.avgHeight) /
@@ -190,7 +190,19 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
       );
   }
 
+  private toFiat(value: number, price: number): number | null {
+    return Number.isFinite(price) && price > 0 ? value * price : null;
+  }
+
   prepareChartOptions() {
+    const showFiat =
+      !this.stateService.isAnyTestnet() &&
+      this.data.blockFeesFiat.some(
+        (value) => value !== null && Number.isFinite(value)
+      );
+    if (!showFiat && this.displayMode === 'fiat') {
+      this.displayMode = 'normal';
+    }
     let title: object;
     if (this.data.blockFees.length === 0) {
       title = {
@@ -430,7 +442,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                 axisLabel: {
                   color: 'var(--grey)',
                   formatter: function (val) {
-                    return this.fiatShortenerPipe.transform(val, null, 'USD');
+                    return this.fiatShortenerPipe.transform(val, 'USD');
                   }.bind(this),
                 },
                 splitLine: {
@@ -520,6 +532,23 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
               },
             ],
     };
+    if (!showFiat) {
+      this.chartOptions['yAxis'] = (this.chartOptions['yAxis'] as any[])?.slice(
+        0,
+        1
+      );
+      this.chartOptions['series'] = (
+        this.chartOptions['series'] as any[]
+      )?.filter((series) => series.yAxisIndex !== 1);
+      const legend = this.chartOptions['legend'] as any;
+      if (legend) {
+        legend.data = legend.data.filter(
+          (entry) => !entry.name.includes('USD')
+        );
+        delete legend.selected['Subsidy (USD)'];
+        delete legend.selected['Fees (USD)'];
+      }
+    }
   }
 
   onChartInit(ec) {
@@ -678,9 +707,9 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
           this.data.blockFeesFiat.splice(
             startIndex,
             endIndex - startIndex,
-            ...response.body
-              .filter((val) => val['USD'] > 0)
-              .map((val) => (val.avgFees / 100_000_000) * val['USD'])
+            ...response.body.map((val) =>
+              this.toFiat(val.avgFees / 100_000_000, val['USD'])
+            )
           );
           this.data.blockFeesPercent.splice(
             startIndex,
@@ -701,12 +730,12 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
           this.data.blockSubsidyFiat.splice(
             startIndex,
             endIndex - startIndex,
-            ...response.body
-              .filter((val) => val['USD'] > 0)
-              .map(
-                (val) =>
-                  (this.subsidyAt(val.avgHeight) / 100_000_000) * val['USD']
+            ...response.body.map((val) =>
+              this.toFiat(
+                this.subsidyAt(val.avgHeight) / 100_000_000,
+                val['USD']
               )
+            )
           );
           this.data.blockSubsidyPercent.splice(
             startIndex,
@@ -718,15 +747,11 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                 100
             )
           );
-          option.series[0].data = this.data.blockSubsidy;
-          option.series[1].data = this.data.blockFees;
-          option.series[2].data = this.data.blockSubsidyFiat;
-          option.series[3].data = this.data.blockFeesFiat;
-          option.series[4].data = this.data.blockSubsidyPercent;
-          option.series[5].data = this.data.blockFeesPercent;
-          option.xAxis[0].data = this.data.blockHeight;
-          option.xAxis[1].data = this.data.timestamp;
-          this.chartInstance.setOption(option, true);
+          // Price availability can change after zooming; rebuild axes/series by meaning,
+          // while retaining the user's zoom window instead of assuming fixed series indices.
+          this.prepareChartOptions();
+          this.chartOptions['dataZoom'] = option.dataZoom;
+          this.chartInstance.setOption(this.chartOptions, true);
           const lengthAfter = this.data.timestamp.length;
 
           // Update the zoom to keep the same range after the update
