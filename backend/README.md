@@ -291,3 +291,8 @@ for example, `100000`. Both single and batched requests return HTTP 400 when
 they exceed the budget. Duplicate transaction IDs each consume their output
 count. Internal calls remain unlimited. Docker exposes the same keys with
 the `EXPLORER_` prefix; see [Docker configuration](../docker/README.md).
+### Optional Unix socket listener
+
+Set `EXPLORER.UNIX_SOCKET_PATH` to serve the backend API and WebSocket endpoint over a local Unix socket in addition to its TCP port. Leave it empty to use TCP only. This setting is separate from BCHN RPC connection pooling and the Valkey socket configuration.
+
+Use a directory owned by the backend service account, writable only by trusted administrators and that account. Before starting listeners or cluster workers, the primary process probes an existing socket for up to one second. It removes a stale socket only after connection refusal and an unchanged filesystem identity. An active listener, regular file, symlink, timeout, or permission error stops startup with a diagnostic; resolve that condition before restarting. The service does not create the parent directory or remove arbitrary files.
