@@ -49,7 +49,7 @@ test.each(intervals)(
     expect(response.status).toBe(200);
     expect(await response.json()).toEqual([]);
     expect(response.headers.get('cache-control')).toBe('public');
-    const expiry = Date.parse(response.headers.get('expires'));
+    const expiry = Date.parse(response.headers.get('expires') || '');
     expect(expiry).toBeGreaterThan(Date.now() + (ttl - 2) * 1000);
   }
 );
