@@ -32,7 +32,11 @@ describe('fee chart scale', () => {
     ]);
     expect(series.data[0][3]).toBe(0);
     expect(series.stack).toBeUndefined();
-    expect(result.options['yAxis']).toMatchObject({ type: 'log', min: 0.001 });
+    expect(result.options['yAxis']).toMatchObject({
+      type: 'log',
+      min: 0.0001,
+      startValue: 0.0001,
+    });
     expect(result.omitted).toBe(3);
     expect(result.positive).toBe(2);
     expect(input.series[0].data[0]).toEqual([0, 0, 100]);

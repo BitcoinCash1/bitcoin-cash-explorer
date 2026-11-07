@@ -9,6 +9,7 @@ import { BlockRewardsGraphComponent } from '../block-rewards-graph/block-rewards
 import { BlockFeesSubsidyGraphComponent } from '../block-fees-subsidy-graph/block-fees-subsidy-graph.component';
 import { FiatShortenerPipe } from '@app/shared/pipes/fiat-shortener.pipe';
 import { FiatCurrencyPipe } from '@app/shared/pipes/fiat-currency.pipe';
+import { echarts } from '@app/graphs/echarts';
 
 function fixture(
   rows = [{ avgHeight: 100, timestamp: 1000, avgFees: 1, USD: 500 }]
@@ -213,3 +214,80 @@ it('rebuilds subsidy series after zoom changes price availability without shifti
   );
   subscription.unsubscribe();
 });
+
+it.each([
+  { mode: 'normal', beforePrice: undefined, afterPrice: 500 },
+  { mode: 'normal', beforePrice: 500, afterPrice: undefined },
+  { mode: 'normal', beforePrice: 500, afterPrice: 500 },
+  { mode: 'fiat', beforePrice: 500, afterPrice: 500 },
+  { mode: 'percentage', beforePrice: 500, afterPrice: undefined },
+  { mode: 'fiat', beforePrice: 500, afterPrice: undefined },
+] as const)(
+  'retains legend selections after zoom, with BCH fallback when fiat disappears: $mode/$beforePrice/$afterPrice',
+  ({ mode, beforePrice, afterPrice }) => {
+    const rows = [
+      { avgHeight: 100, timestamp: 1000, avgFees: 1, USD: beforePrice },
+      { avgHeight: 101, timestamp: 1001, avgFees: 2, USD: beforePrice },
+      { avgHeight: 102, timestamp: 1002, avgFees: 3, USD: undefined },
+    ];
+    const f = fixture(rows);
+    const zoom = new Subject<any>();
+    const component = new BlockFeesSubsidyGraphComponent(
+      'en-US',
+      f.seo as any,
+      { ...f.api, getBlockFeesFromTimespan$: () => zoom } as any,
+      new UntypedFormBuilder(),
+      f.state as any,
+      f.storage as any,
+      f.mining as any,
+      f.route as any,
+      {} as any,
+      {} as any,
+      f.shortener,
+      f.currency,
+      { detectChanges: vi.fn() } as any
+    );
+    component.ngOnInit();
+    const subscription = component.statsObservable$.subscribe();
+    const chart = echarts.init(null, null, {
+      renderer: 'svg',
+      ssr: true,
+      width: 1000,
+      height: 500,
+    });
+    try {
+      component.displayMode = mode;
+      component.prepareChartOptions();
+      chart.setOption(component.chartOptions);
+      component.onChartInit(chart);
+      const suffix =
+        mode === 'fiat' ? ' (USD)' : mode === 'percentage' ? ' (%)' : '';
+      chart.dispatchAction({
+        type: 'legendUnSelect',
+        name: `Subsidy${suffix}`,
+      });
+      chart.dispatchAction({ type: 'dataZoom', startValue: 0, endValue: 2 });
+      component.onZoom();
+      zoom.next({ body: rows.map((row) => ({ ...row, USD: afterPrice })) });
+      const fallback = mode === 'fiat' && afterPrice === undefined;
+      const selected = (chart.getOption()['legend'] as any[])[0].selected;
+      expect(component.displayMode).toBe(fallback ? 'normal' : mode);
+      expect(selected[fallback ? 'Subsidy' : `Subsidy${suffix}`]).toBe(
+        fallback
+      );
+      expect(selected[fallback ? 'Fees' : `Fees${suffix}`]).toBe(true);
+      expect(component.isLoading).toBe(false);
+      const series = chart.getOption()['series'] as any[];
+      expect(series.some((item) => item.name.includes('USD'))).toBe(
+        afterPrice !== undefined
+      );
+      expect((chart.getOption()['dataZoom'] as any[])[0]).toMatchObject({
+        startValue: 0,
+        endValue: 3,
+      });
+    } finally {
+      chart.dispose();
+      subscription.unsubscribe();
+    }
+  }
+);

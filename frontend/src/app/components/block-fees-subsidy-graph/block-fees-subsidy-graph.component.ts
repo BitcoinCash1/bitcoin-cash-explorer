@@ -749,7 +749,19 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
           );
           // Price availability can change after zooming; rebuild axes/series by meaning,
           // while retaining the user's zoom window instead of assuming fixed series indices.
+          const previousDisplayMode = this.displayMode;
+          const selected = this.chartInstance.getOption().legend?.[0]?.selected;
           this.prepareChartOptions();
+          const legend = this.chartOptions['legend'] as any;
+          // Keep individual selections for surviving series. If fiat disappears,
+          // use the new BCH defaults rather than restoring its hidden selections.
+          if (legend && selected && this.displayMode === previousDisplayMode) {
+            for (const name of Object.keys(legend.selected)) {
+              if (typeof selected[name] === 'boolean') {
+                legend.selected[name] = selected[name];
+              }
+            }
+          }
           this.chartOptions['dataZoom'] = option.dataZoom;
           this.chartInstance.setOption(this.chartOptions, true);
           const lengthAfter = this.data.timestamp.length;

@@ -44,10 +44,14 @@ export function scaleFeeChart(
   scale: FeeChartScale
 ): { options: EChartsOption; omitted: number; positive: number } {
   const minByAxis = new Map<number, number>();
+  const barAxes = new Set<number>();
   let omitted = 0;
   let positive = 0;
   const series = ((options['series'] || []) as any[]).map((series, index) => {
     const axis = series.yAxisIndex || 0;
+    if (series.type === 'bar') {
+      barAxes.add(axis);
+    }
     const data = series.data.map((point: number[]) => {
       const raw = point[3] ?? point[1];
       const valid = Number.isFinite(raw) && raw > 0;
@@ -74,12 +78,24 @@ export function scaleFeeChart(
       ? options['yAxis']
       : [options['yAxis']]
     : [];
-  const axes = sourceAxes.map((axis, index) => ({
-    ...axis,
-    ...(scale === 'log'
-      ? { type: 'log' as const, min: minByAxis.get(index), max: undefined }
-      : {}),
-  }));
+  const axes = sourceAxes.map((axis, index) => {
+    const minimum = minByAxis.get(index);
+    // Log bars otherwise start at 1, pointing down for sub-satoshi values.
+    // Leave a decade below the data so even the smallest bar has visible height.
+    const baseline =
+      barAxes.has(index) && minimum > 0 ? minimum / 10 : undefined;
+    return {
+      ...axis,
+      ...(scale === 'log'
+        ? {
+            type: 'log' as const,
+            min: baseline ?? minimum,
+            startValue: baseline,
+            max: undefined,
+          }
+        : {}),
+    };
+  });
   return {
     options: {
       ...options,

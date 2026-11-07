@@ -433,7 +433,8 @@ export class BlockFeeRatesGraphComponent implements OnInit {
                 color: 'rgb(110, 112, 121)',
                 formatter: (val) => {
                   if (val < 1) {
-                    return `${formatNumber(val, this.locale, '1.0-3')} s/B`;
+                    // Keep small log ticks (including the bar baseline) distinct from zero.
+                    return `${val.toLocaleString(this.locale, { maximumSignificantDigits: 3 })} s/B`;
                   }
                   const selectedPowerOfTen: any = selectPowerOfTen(val);
                   const newVal = Math.round(val / selectedPowerOfTen.divider);

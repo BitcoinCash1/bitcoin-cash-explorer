@@ -5,6 +5,7 @@ import { UntypedFormBuilder } from '@angular/forms';
 import { BehaviorSubject, of } from 'rxjs';
 import { afterEach, expect, it, vi } from 'vitest';
 import { BlockFeeRatesGraphComponent } from './block-fee-rates-graph.component';
+import { echarts } from '@app/graphs/echarts';
 
 function fixture(widget = false) {
   vi.stubGlobal('window', { innerWidth: 1200 });
@@ -68,14 +69,76 @@ it('uses precise API for both chart requests and round-trips zero/sub-sat points
   expect(values()[1][1]).toBe(0.001);
   expect(f.component.chartOptions['yAxis']).toMatchObject({
     type: 'log',
-    min: 0.001,
+    min: 0.0001,
   });
+  expect(
+    (f.component.chartOptions['yAxis'] as any).axisLabel.formatter(0.0001)
+  ).toBe('0.0001 s/B');
   f.component.onScaleChange('linear');
   expect(values()[0][1]).toBe(0);
   expect(f.component.chartOptions['yAxis']).toMatchObject({ type: 'value' });
   expect((f.component.chartOptions['series'] as any[])[0].stack).toBe('Total');
   f.dispose();
 });
+
+it.each([
+  [0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.125],
+  [0.001, 0.01, 0.1, 1, 2, 5, 10],
+  [1, 1, 1, 1, 1, 1, 1],
+  [2, 3, 4, 5, 6, 7, 8],
+])(
+  'renders positive log percentile bars upward from a shared baseline: %j',
+  (...rates) => {
+    const f = fixture();
+    const names = ['Min', '10th', '25th', 'Median', '75th', '90th', 'Max'];
+    const chart = echarts.init(null, null, {
+      renderer: 'svg',
+      ssr: true,
+      width: 1000,
+      height: 500,
+    });
+    try {
+      f.component.prepareChartOptions({
+        legends: names.map((name) => ({ name })),
+        series: names.map((name, index) => ({
+          name,
+          type: 'bar',
+          barWidth: '100%',
+          large: true,
+          stack: 'Total',
+          data: [0, 1, 2].map((point) => [
+            1000000 + point * 600000,
+            rates[index],
+            100 + point,
+          ]),
+        })),
+      });
+      f.component.onScaleChange('log');
+      chart.setOption(f.component.chartOptions);
+      chart.dispatchAction({ type: 'legendSelect', name: 'Max' });
+      const layouts = names.map((_, index) =>
+        (chart as any)
+          .getModel()
+          .getSeriesByIndex(index)
+          .getData()
+          .getItemLayout(0)
+      );
+      for (const [index, layout] of layouts.entries()) {
+        expect(layout.height).toBeLessThan(0);
+        expect(layout.y).toBeCloseTo(layouts[0].y);
+        expect(layout.width).toBeGreaterThan(0);
+        if (index > 0 && rates[index] > rates[index - 1]) {
+          // Every higher percentile extends above the lower bar drawn in front of it.
+          expect(layout.height).toBeLessThan(layouts[index - 1].height);
+        }
+      }
+      expect(chart.renderToSVGString()).toContain('<path');
+    } finally {
+      chart.dispose();
+      f.dispose();
+    }
+  }
+);
 
 it('keeps widget linear by default and computes averages from raw rates', () => {
   const f = fixture(true);
