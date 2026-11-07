@@ -21,6 +21,8 @@ import { handleError } from '../../utils/api';
 import poolsUpdater from '../../tasks/pools-updater';
 import chainTips from '../chain-tips';
 import FlagValueRepository, { INTERVAL_PRESETS } from '../../repositories/FlagValueRepository';
+import BlocksRepository from '../../repositories/BlocksRepository';
+import { decodeStaleHistoryCursor } from '../stale-history';
 
 const TXID_REGEX = /^[a-f0-9]{64}$/i;
 const BLOCK_HASH_REGEX = /^[a-f0-9]{64}$/i;
@@ -59,6 +61,7 @@ class BitcoinRoutes {
       .get(config.EXPLORER.API_URL_PREFIX + 'blocks-bulk/:from/:to', this.getBlocksByBulk.bind(this))
       .get(config.EXPLORER.API_URL_PREFIX + 'chain-tips', this.getChainTips.bind(this))
       .get(config.EXPLORER.API_URL_PREFIX + 'stale-tips', this.getStaleTips.bind(this))
+      .get(config.EXPLORER.API_URL_PREFIX + 'stale-tips/history', this.getStaleHistory.bind(this))
       .post(config.EXPLORER.API_URL_PREFIX + 'prevouts', this.$getPrevouts) // TODO: Prevouts with Verbose (new end-point)
       .post(config.EXPLORER.API_URL_PREFIX + 'txs/package', this.$submitPackage)
       // Internal routes
@@ -527,6 +530,27 @@ class BitcoinRoutes {
       }
     } catch (e) {
       handleError(req, res, 500, 'Failed to get chain tips');
+    }
+  }
+
+  private async getStaleHistory(req: Request, res: Response) {
+    // Canonical counterparts may change after a reorg; never cache errors or old pairings.
+    res.setHeader('Cache-Control', 'no-store');
+    let cursor;
+    try {
+      cursor = decodeStaleHistoryCursor(req.query.cursor);
+    } catch {
+      handleError(req, res, 400, 'Invalid stale history cursor');
+      return;
+    }
+    if (!config.DATABASE.ENABLED) {
+      handleError(req, res, 503, 'Stale block history is unavailable without a database');
+      return;
+    }
+    try {
+      res.json(await BlocksRepository.$getStaleHistory(cursor));
+    } catch {
+      handleError(req, res, 500, 'Failed to get stale block history');
     }
   }
 

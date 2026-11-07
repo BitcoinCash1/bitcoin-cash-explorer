@@ -20,6 +20,7 @@ import {
   SubmitPackageResult,
   ChainTip,
   StaleTip,
+  StaleHistoryPage,
 } from '@interfaces/node-api.interface';
 import {
   BehaviorSubject,
@@ -250,6 +251,13 @@ export class ApiService {
   getStaleTips$(): Observable<StaleTip[]> {
     return this.httpClient.get<StaleTip[]>(
       this.apiBaseUrl + this.apiBasePath + '/api/v1/stale-tips'
+    );
+  }
+
+  getStaleHistory$(cursor?: string): Observable<StaleHistoryPage> {
+    return this.httpClient.get<StaleHistoryPage>(
+      this.apiBaseUrl + this.apiBasePath + '/api/v1/stale-tips/history',
+      { params: cursor ? { cursor } : {} }
     );
   }
 

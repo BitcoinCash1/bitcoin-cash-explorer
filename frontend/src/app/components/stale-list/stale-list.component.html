@@ -42,19 +42,115 @@
     class="chain-tips"
     [ngStyle]="{ 'min-height': '295px', opacity: isLoading ? '0.75' : '1' }"
   >
-    <ng-container *ngIf="chainTips$ | async as chainTips">
-      <div *ngFor="let chainTip of chainTips" class="chain-tip">
+    <ng-container
+      *ngTemplateOutlet="
+        staleCards;
+        context: { $implicit: chainTips, history: false }
+      "
+    ></ng-container>
+    <p *ngIf="recentError" role="status" i18n="chain-tips.recent-unavailable">
+      Recent chain tips are temporarily unavailable.
+    </p>
+    <p
+      *ngIf="!isLoading && !recentError && !chainTips.length"
+      i18n="chain-tips.no-stale-blocks-yet"
+    >
+      This node hasn't seen any stale blocks yet!
+    </p>
+  </div>
+
+  <h2 i18n="chain-tips.history">Indexed Stale Block History</h2>
+  <p class="text-secondary" i18n="chain-tips.history-description">
+    Previously indexed stale blocks, compared with the current canonical block
+    at each height.
+  </p>
+  <div
+    class="chain-tips"
+    infiniteScroll
+    [infiniteScrollDistance]="1"
+    [infiniteScrollThrottle]="150"
+    [infiniteScrollDisabled]="
+      historyLoading || !!historyError || !historyNextCursor
+    "
+    (scrolled)="loadMoreHistory()"
+  >
+    <ng-container
+      *ngTemplateOutlet="
+        staleCards;
+        context: { $implicit: visibleHistoryEntries, history: true }
+      "
+    ></ng-container>
+  </div>
+  <div
+    class="history-status"
+    aria-live="polite"
+    [attr.aria-busy]="historyLoading"
+  >
+    <p *ngIf="historyLoading" i18n="chain-tips.history-loading">
+      Loading stale block history…
+    </p>
+    <ng-container *ngIf="historyError">
+      <p
+        *ngIf="historyError === 'unavailable'"
+        i18n="chain-tips.history-unavailable"
+      >
+        Stale block history is unavailable for this network.
+      </p>
+      <p *ngIf="historyError === 'failed'" i18n="chain-tips.history-failed">
+        Unable to load stale block history. Please try again.
+      </p>
+      <button
+        class="btn btn-purple"
+        (click)="loadMoreHistory()"
+        i18n="action.retry"
+      >
+        Retry
+      </button>
+    </ng-container>
+    <p
+      *ngIf="!historyLoading && !historyError && !historyEntries.length"
+      i18n="chain-tips.history-empty"
+    >
+      No indexed stale blocks have been recorded for this network.
+    </p>
+    <button
+      *ngIf="!historyLoading && !historyError && historyNextCursor"
+      class="btn btn-purple"
+      (click)="loadMoreHistory()"
+      i18n="chain-tips.history-more"
+    >
+      Load older stale blocks
+    </button>
+    <p
+      *ngIf="
+        !historyLoading &&
+        !historyError &&
+        historyEntries.length &&
+        !historyNextCursor
+      "
+      i18n="chain-tips.history-end"
+    >
+      All indexed stale blocks have been loaded.
+    </p>
+  </div>
+
+  <ng-template #staleCards let-chainTips let-history="history">
+    <div class="chain-tips">
+      <div
+        *ngFor="let chainTip of chainTips; trackBy: trackEntry"
+        class="chain-tip"
+      >
         <p class="info">
           <span class="height"
             ><a
               [routerLink]="[
-                '/block/' + (chainTip.canonical?.id || chainTip.height)
+                '/block/' + (chainTip.canonical?.id || chainTip.stale.height)
                   | relativeUrl,
               ]"
-              >{{ chainTip.height }}</a
+              >{{ chainTip.stale.height }}</a
             ></span
           >
-          <span class="badges">
+          <span class="badges" *ngIf="!history">
             <span class="type" [ngSwitch]="chainTip.status">
               <span
                 *ngSwitchCase="'headers-only'"
@@ -215,7 +311,10 @@
 
             <div class="vs-label">vs</div>
 
-            <div class="block-column canonical">
+            <div
+              class="block-column canonical"
+              *ngIf="chainTip.canonical; else missingCanonical"
+            >
               <div class="block-label" i18n="chain-tips.winning-block">
                 <span class="badge bg-success">Winning</span>
               </div>
@@ -340,15 +439,17 @@
                 </a>
               </div>
             </div>
+            <ng-template #missingCanonical>
+              <p
+                class="missing-canonical"
+                i18n="chain-tips.canonical-unavailable"
+              >
+                Canonical block unavailable
+              </p>
+            </ng-template>
           </div>
         </div>
       </div>
-
-      <div class="no-chain-tips" *ngIf="!chainTips?.length">
-        <p i18n="chain-tips.no-stale-blocks-yet">
-          This node hasn't seen any stale blocks yet!
-        </p>
-      </div>
-    </ng-container>
-  </div>
+    </div>
+  </ng-template>
 </div>

@@ -1,8 +1,18 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { Router } from '@angular/router';
-import { BehaviorSubject, Observable, Subscription } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
-import { StaleTip, BlockExtended } from '@interfaces/node-api.interface';
+import { Subscription } from 'rxjs';
+import { distinctUntilChanged, startWith } from 'rxjs/operators';
+import {
+  StaleTip,
+  BlockExtended,
+  StaleHistoryEntry,
+} from '@interfaces/node-api.interface';
 import { ApiService } from '@app/services/api.service';
 import { StateService } from '@app/services/state.service';
 import { SeoService } from '@app/services/seo.service';
@@ -15,11 +25,19 @@ import { seoDescriptionNetwork } from '@app/shared/common.utils';
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class StaleList implements OnInit {
-  chainTips$: Observable<StaleTip[]>;
-  nextChainTipSubject = new BehaviorSubject(null);
-  urlFragmentSubscription: Subscription;
+export class StaleList implements OnInit, OnDestroy {
+  chainTips: StaleTip[] = [];
+  historyEntries: StaleHistoryEntry[] = [];
+  visibleHistoryEntries: StaleHistoryEntry[] = [];
+  historyNextCursor: string | null = null;
+  historyLoading = false;
+  historyError: 'unavailable' | 'failed' | null = null;
+  recentError = false;
   isLoading = true;
+  private networkSubscription: Subscription;
+  private requests = new Subscription();
+  private historyHashes = new Set<string>();
+  private historyLoaded = false;
 
   gradientColors = {
     '': ['var(--mainnet-alt)', 'var(--primary)'],
@@ -32,37 +50,51 @@ export class StaleList implements OnInit {
     private apiService: ApiService,
     public stateService: StateService,
     private seoService: SeoService,
-    public router: Router
+    public router: Router,
+    private changeDetector: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.chainTips$ = this.apiService.getStaleTips$().pipe(
-      map((chainTips) => {
-        const filtered = chainTips.filter(
-          (chainTip) => chainTip.status !== 'active'
-        ) as StaleTip[];
-
-        filtered.forEach((chainTip) => {
-          if (chainTip.stale?.extras) {
-            chainTip.stale.extras.minFee = this.getMinBlockFee(chainTip.stale);
-            chainTip.stale.extras.maxFee = this.getMaxBlockFee(chainTip.stale);
-          }
-          if (chainTip.canonical?.extras) {
-            chainTip.canonical.extras.minFee = this.getMinBlockFee(
-              chainTip.canonical
-            );
-            chainTip.canonical.extras.maxFee = this.getMaxBlockFee(
-              chainTip.canonical
-            );
-          }
-        });
-
-        return filtered;
-      }),
-      tap(() => {
-        this.isLoading = false;
-      })
-    );
+    this.networkSubscription = this.stateService.networkChanged$
+      .pipe(startWith(this.stateService.network), distinctUntilChanged())
+      .subscribe(() => {
+        this.requests.unsubscribe();
+        this.requests = new Subscription();
+        this.chainTips = [];
+        this.historyEntries = [];
+        this.visibleHistoryEntries = [];
+        this.historyHashes.clear();
+        this.historyNextCursor = null;
+        this.historyLoading = false;
+        this.historyLoaded = false;
+        this.historyError = null;
+        this.recentError = false;
+        this.isLoading = true;
+        this.requests.add(
+          this.apiService.getStaleTips$().subscribe({
+            next: (tips) => {
+              const hashes = new Set<string>();
+              this.chainTips = tips.filter((tip) => {
+                if (tip.status === 'active' || hashes.has(tip.stale.id)) {
+                  return false;
+                }
+                hashes.add(tip.stale.id);
+                return true;
+              });
+              this.chainTips.forEach((tip) => this.prepareEntry(tip));
+              this.updateVisibleHistory();
+              this.isLoading = false;
+              this.changeDetector.markForCheck();
+            },
+            error: () => {
+              this.recentError = true;
+              this.isLoading = false;
+              this.changeDetector.markForCheck();
+            },
+          })
+        );
+        this.loadMoreHistory();
+      });
 
     this.seoService.setTitle(
       $localize`:@@page.stale-chain-tips:Stale Chain Tips`
@@ -72,6 +104,68 @@ export class StaleList implements OnInit {
         this.stateService.network
       )} network.`
     );
+  }
+
+  ngOnDestroy(): void {
+    this.networkSubscription?.unsubscribe();
+    this.requests.unsubscribe();
+  }
+
+  loadMoreHistory(): void {
+    if (
+      this.historyLoading ||
+      (this.historyLoaded && !this.historyNextCursor)
+    ) {
+      return;
+    }
+    this.historyLoading = true;
+    this.historyError = null;
+    this.changeDetector.markForCheck();
+    this.requests.add(
+      this.apiService
+        .getStaleHistory$(this.historyNextCursor || undefined)
+        .subscribe({
+          next: (page) => {
+            for (const entry of page.entries) {
+              if (!this.historyHashes.has(entry.stale.id)) {
+                this.historyHashes.add(entry.stale.id);
+                this.prepareEntry(entry);
+                this.historyEntries.push(entry);
+              }
+            }
+            this.historyNextCursor = page.nextCursor;
+            this.historyLoaded = true;
+            this.updateVisibleHistory();
+            this.historyLoading = false;
+            this.changeDetector.markForCheck();
+          },
+          error: (error) => {
+            this.historyError = error.status === 503 ? 'unavailable' : 'failed';
+            this.historyLoading = false;
+            this.changeDetector.markForCheck();
+          },
+        })
+    );
+  }
+
+  trackEntry(_index: number, entry: StaleHistoryEntry): string {
+    return entry.stale.id;
+  }
+
+  private updateVisibleHistory(): void {
+    const recentHashes = new Set(this.chainTips.map((tip) => tip.stale.id));
+    this.visibleHistoryEntries = this.historyEntries.filter(
+      (entry) => !recentHashes.has(entry.stale.id)
+    );
+  }
+
+  private prepareEntry(entry: StaleHistoryEntry): void {
+    for (const block of [entry.stale, entry.canonical]) {
+      if (block?.extras) {
+        block.extras.minFee = this.getMinBlockFee(block);
+        block.extras.maxFee = this.getMaxBlockFee(block);
+      }
+    }
   }
 
   getBlockGradient(block: BlockExtended): string {

@@ -293,3 +293,13 @@ export interface StaleTip extends ChainTip {
   stale: BlockExtended;
   canonical: BlockExtended;
 }
+
+export interface StaleHistoryEntry {
+  stale: BlockExtended;
+  canonical: BlockExtended | null;
+}
+
+export interface StaleHistoryPage {
+  entries: StaleHistoryEntry[];
+  nextCursor: string | null;
+}

@@ -59,6 +59,7 @@
 }
 
 .block-comparison {
+  --block-size: 125px;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -91,7 +92,6 @@
 }
 
 .bitcoin-block {
-  --block-size: 125px;
   width: var(--block-size);
   height: var(--block-size);
   position: relative;
@@ -214,4 +214,30 @@
   position: relative;
   top: -1em;
   margin-left: 10px;
+}
+
+.history-status {
+  margin-block: 1.5rem 2rem;
+  text-align: center;
+}
+
+.missing-canonical {
+  width: 125px;
+  text-align: center;
+  color: var(--fg);
+}
+
+@media screen and (max-width: 420px) {
+  .block-comparison {
+    --block-size: 100px;
+    gap: 2rem;
+  }
+
+  .chain-tips .chain-tip {
+    padding-inline: 0.5rem;
+  }
+
+  .missing-canonical {
+    width: 100px;
+  }
 }
