@@ -111,10 +111,30 @@ test.each([
   expect(await response.json()).toEqual(expected);
 });
 
-test('non-array transaction query retains its existing error contract', async () => {
+test('non-array transaction query returns a client error', async () => {
   const response = await fetch(`${baseUrl}/transaction-times?txId=${txid}`);
-  expect(response.status).toBe(500);
+  expect(response.status).toBe(400);
   expect(await response.json()).toEqual({ error: 'Not an array' });
+});
+
+test.each(['', `txId[invalid]=${txid}`])('malformed transaction-times query returns 400: %s', async (query) => {
+  const response = await fetch(`${baseUrl}/transaction-times?${query}`);
+  expect(response.status).toBe(400);
+  expect(await response.json()).toEqual({ error: 'Not an array' });
+});
+
+test.each([100, 101])('transaction-times enforces the supplied ID limit over HTTP: %i', async (count) => {
+  const query = Array.from({ length: count }, () => `txId[]=${txid}`).join('&');
+  const response = await fetch(`${baseUrl}/transaction-times?${query}`);
+  expect(response.status).toBe(count === 100 ? 200 : 400);
+  expect(await response.json()).toEqual(count === 100 ? Array(100).fill(0) : { error: 'Too many txids requested' });
+});
+
+test('transaction-times counts invalid supplied IDs before filtering', async () => {
+  const query = [`txId[]=${txid}`, ...Array(100).fill('txId[]=invalid')].join('&');
+  const response = await fetch(`${baseUrl}/transaction-times?${query}`);
+  expect(response.status).toBe(400);
+  expect(await response.json()).toEqual({ error: 'Too many txids requested' });
 });
 
 test('JSON request bodies reach the prevout handler as arrays', async () => {

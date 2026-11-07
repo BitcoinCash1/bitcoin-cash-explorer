@@ -353,8 +353,8 @@ class WebsocketHandler {
             }
 
             if (parsedMessage && parsedMessage['track-mempool-block'] !== undefined) {
-              if (Number.isInteger(parsedMessage['track-mempool-block']) && parsedMessage['track-mempool-block'] >= 0) {
-                const index = parsedMessage['track-mempool-block'];
+              const index = parsedMessage['track-mempool-block'];
+              if (Number.isInteger(index) && index >= 0 && index < config.EXPLORER.MEMPOOL_BLOCKS_AMOUNT) {
                 client['track-mempool-block'] = index;
                 const mBlocksWithTransactions = mempoolBlocks.getMempoolBlocksWithTransactions();
                 response['projected-block-transactions'] = JSON.stringify({
