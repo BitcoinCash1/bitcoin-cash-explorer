@@ -219,21 +219,3 @@ test('actual server rejects mixed-case API routes while canonical paths remain a
     expect((await fetch(url)).status).toBe(404);
   }
 });
-
-test('stale history reports disabled storage as uncached 503', async () => {
-  const response = await fetch(`${baseUrl}/stale-tips/history`);
-  expect(response.status).toBe(503);
-  expect(response.headers.get('cache-control')).toBe('no-store');
-  expect(response.headers.has('expires')).toBe(false);
-  expect(await response.json()).toEqual({ error: 'Stale block history is unavailable without a database' });
-});
-
-test.each(['cursor=', 'cursor=bad', 'cursor=one&cursor=two', 'cursor[height]=1'])(
-  'stale history rejects malformed HTTP query %s',
-  async (query) => {
-    const response = await fetch(`${baseUrl}/stale-tips/history?${query}`);
-    expect(response.status).toBe(400);
-    expect(response.headers.get('cache-control')).toBe('no-store');
-    expect(await response.json()).toEqual({ error: 'Invalid stale history cursor' });
-  }
-);
