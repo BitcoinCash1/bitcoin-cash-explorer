@@ -15,9 +15,9 @@ class PoolStatisticsCache {
     return `mining:pool-statistics:${config.EXPLORER.NETWORK}:${config.DATABASE.DATABASE}`;
   }
 
-  public async invalidate(): Promise<void> {
+  public async invalidate(strict = false): Promise<void> {
     this.revision++;
-    await valkey.$setCache(`${this.prefix}:generation`, randomUUID());
+    await valkey.$setCache(`${this.prefix}:generation`, randomUUID(), undefined, strict);
   }
 
   private async generation(): Promise<string | null> {

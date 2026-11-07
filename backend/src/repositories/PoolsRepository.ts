@@ -1,3 +1,4 @@
+import { PoolConnection } from 'mysql2/promise';
 import poolStatisticsCache from '../api/mining/pool-statistics-cache';
 import { Common } from '../api/common';
 import poolsParser from '../api/pools-parser';
@@ -10,21 +11,34 @@ class PoolsRepository {
   /**
    * Get all pools tagging info
    */
-  public async $getPools(): Promise<PoolTag[]> {
-    const [rows] = await DB.query('SELECT id, unique_id as uniqueId, name, addresses, regexes, slug FROM pools');
+  public async $getPools(connection?: PoolConnection): Promise<PoolTag[]> {
+    const [rows] = await DB.query(
+      'SELECT id, unique_id as uniqueId, name, addresses, regexes, slug FROM pools',
+      undefined,
+      'debug',
+      connection
+    );
     return <PoolTag[]>rows;
   }
 
   /**
    * Get unknown pool tagging info
    */
-  public async $getUnknownPool(): Promise<PoolTag> {
+  public async $getUnknownPool(connection?: PoolConnection): Promise<PoolTag> {
     let [rows]: any[] = await DB.query(
-      'SELECT id, unique_id as uniqueId, name, slug FROM pools where name = "Unknown"'
+      'SELECT id, unique_id as uniqueId, name, slug FROM pools where name = "Unknown"',
+      undefined,
+      'debug',
+      connection
     );
     if (rows && rows.length === 0 && config.DATABASE.ENABLED) {
-      await poolsParser.$insertUnknownPool();
-      [rows] = await DB.query('SELECT id, unique_id as uniqueId, name, slug FROM pools where name = "Unknown"');
+      await poolsParser.$insertUnknownPool(connection);
+      [rows] = await DB.query(
+        'SELECT id, unique_id as uniqueId, name, slug FROM pools where name = "Unknown"',
+        undefined,
+        'debug',
+        connection
+      );
     }
     return <PoolTag>rows[0];
   }
@@ -122,14 +136,14 @@ class PoolsRepository {
   /**
    * Get a mining pool info by its unique id
    */
-  public async $getPoolByUniqueId(id: number, parse = true): Promise<PoolTag | null> {
+  public async $getPoolByUniqueId(id: number, parse = true, connection?: PoolConnection): Promise<PoolTag | null> {
     const query = `
       SELECT *
       FROM pools
       WHERE pools.unique_id = ?`;
 
     try {
-      const [rows]: any[] = await DB.query(query, [id]);
+      const [rows]: any[] = await DB.query(query, [id], 'debug', connection);
 
       if (rows.length < 1) {
         return null;
@@ -156,16 +170,19 @@ class PoolsRepository {
    *
    * @param pool
    */
-  public async $insertNewMiningPool(pool: any, slug: string): Promise<void> {
+  public async $insertNewMiningPool(pool: any, slug: string, connection?: PoolConnection): Promise<void> {
     try {
       await DB.query(
         `
         INSERT INTO pools
         SET name = ?, link = ?, addresses = ?, regexes = ?, slug = ?, unique_id = ?`,
-        [pool.name, pool.link, JSON.stringify(pool.addresses), JSON.stringify(pool.regexes), slug, pool.id]
+        [pool.name, pool.link, JSON.stringify(pool.addresses), JSON.stringify(pool.regexes), slug, pool.id],
+        'debug',
+        connection
       );
-      await poolStatisticsCache.invalidate();
+      if (!connection) await poolStatisticsCache.invalidate();
     } catch (e: any) {
+      if (connection) throw e;
       logger.err(`Cannot insert new mining pool into db. Reason: ` + (e instanceof Error ? e.message : e));
     }
   }
@@ -177,17 +194,25 @@ class PoolsRepository {
    * @param newSlug
    * @param newName
    */
-  public async $renameMiningPool(dbId: number, newSlug: string, newName: string): Promise<void> {
+  public async $renameMiningPool(
+    dbId: number,
+    newSlug: string,
+    newName: string,
+    connection?: PoolConnection
+  ): Promise<void> {
     try {
       await DB.query(
         `
         UPDATE pools
         SET slug = ?, name = ?
         WHERE id = ?`,
-        [newSlug, newName, dbId]
+        [newSlug, newName, dbId],
+        'debug',
+        connection
       );
-      await poolStatisticsCache.invalidate();
+      if (!connection) await poolStatisticsCache.invalidate();
     } catch (e: any) {
+      if (connection) throw e;
       logger.err(`Cannot rename mining pool id ${dbId}. Reason: ` + (e instanceof Error ? e.message : e));
     }
   }
@@ -198,17 +223,20 @@ class PoolsRepository {
    * @param dbId
    * @param newLink
    */
-  public async $updateMiningPoolLink(dbId: number, newLink: string): Promise<void> {
+  public async $updateMiningPoolLink(dbId: number, newLink: string, connection?: PoolConnection): Promise<void> {
     try {
       await DB.query(
         `
         UPDATE pools
         SET link = ?
         WHERE id = ?`,
-        [newLink, dbId]
+        [newLink, dbId],
+        'debug',
+        connection
       );
-      await poolStatisticsCache.invalidate();
+      if (!connection) await poolStatisticsCache.invalidate();
     } catch (e: any) {
+      if (connection) throw e;
       logger.err(`Cannot update link for mining pool id ${dbId}. Reason: ` + (e instanceof Error ? e.message : e));
     }
   }
@@ -220,17 +248,25 @@ class PoolsRepository {
    * @param addresses
    * @param regexes
    */
-  public async $updateMiningPoolTags(dbId: number, addresses: string, regexes: string): Promise<void> {
+  public async $updateMiningPoolTags(
+    dbId: number,
+    addresses: string,
+    regexes: string,
+    connection?: PoolConnection
+  ): Promise<void> {
     try {
       await DB.query(
         `
         UPDATE pools
         SET addresses = ?, regexes = ?
         WHERE id = ?`,
-        [JSON.stringify(addresses), JSON.stringify(regexes), dbId]
+        [JSON.stringify(addresses), JSON.stringify(regexes), dbId],
+        'debug',
+        connection
       );
-      await poolStatisticsCache.invalidate();
+      if (!connection) await poolStatisticsCache.invalidate();
     } catch (e: any) {
+      if (connection) throw e;
       logger.err(`Cannot update mining pool id ${dbId}. Reason: ` + (e instanceof Error ? e.message : e));
     }
   }

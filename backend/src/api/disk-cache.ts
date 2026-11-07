@@ -33,11 +33,12 @@ class DiskCache {
     });
   }
 
-  async $saveCacheToDisk(sync = false): Promise<void> {
+  async $saveCacheToDisk(sync = false, strict = false): Promise<void> {
     if (!cluster.isPrimary || !config.EXPLORER.CACHE_ENABLED) {
       return;
     }
     if (this.isWritingCache) {
+      if (strict) throw new Error('Disk cache write already in progress');
       logger.debug('Saving cache already in progress. Skipping.');
       return;
     }
@@ -128,6 +129,7 @@ class DiskCache {
     } catch (e) {
       logger.warn('Error writing to cache file: ' + (e instanceof Error ? e.message : e));
       this.isWritingCache = false;
+      if (strict) throw e;
     }
   }
 

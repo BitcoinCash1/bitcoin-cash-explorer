@@ -87,7 +87,7 @@ class DB {
       });
     } else {
       try {
-        const pool = await this.getPool();
+        const pool = connection || (await this.getPool());
         return pool.query(query, params);
       } catch (e) {
         if (errorLogLevel !== 'silent') {
@@ -100,6 +100,21 @@ class DB {
         }
         throw e;
       }
+    }
+  }
+
+  public async $transaction<T>(work: (connection: PoolConnection) => Promise<T>): Promise<T> {
+    const connection = await (await this.getPool()).getConnection();
+    try {
+      await connection.beginTransaction();
+      const result = await work(connection);
+      await connection.commit();
+      return result;
+    } catch (error) {
+      await connection.rollback();
+      throw error;
+    } finally {
+      connection.release();
     }
   }
 

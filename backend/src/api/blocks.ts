@@ -1,3 +1,4 @@
+import poolsUpdater from '../tasks/pools-updater';
 import config from '../config';
 import bitcoinApi, { bitcoinCoreApi } from './bitcoin/bitcoin-api-factory';
 import logger from '../logger';
@@ -347,6 +348,9 @@ class Blocks {
     }
 
     if (['mainnet', 'testnet4', 'chipnet', 'scalenet'].includes(config.EXPLORER.NETWORK)) {
+      // Pin the definition generation before any asynchronous attribution reads.
+      const attribution = {};
+      poolsUpdater.trackPoolAttribution(attribution);
       let pool: PoolTag;
       if (coinbaseTx !== undefined) {
         pool = await this.$findBlockMiner(coinbaseTx);
@@ -371,6 +375,8 @@ class Blocks {
           slug: pool.slug,
           minerNames: null,
         };
+
+        poolsUpdater.copyPoolAttribution(attribution, extras.pool);
 
         if (extras.pool.name === 'OCEAN') {
           extras.pool.minerNames = parseDATUMTemplateCreator(extras.coinbaseRaw);
