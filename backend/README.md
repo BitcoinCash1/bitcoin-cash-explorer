@@ -291,6 +291,7 @@ for example, `100000`. Both single and batched requests return HTTP 400 when
 they exceed the budget. Duplicate transaction IDs each consume their output
 count. Internal calls remain unlimited. Docker exposes the same keys with
 the `EXPLORER_` prefix; see [Docker configuration](../docker/README.md).
+
 ### Optional Unix socket listener
 
 Set `EXPLORER.UNIX_SOCKET_PATH` to serve the backend API and WebSocket endpoint over a local Unix socket in addition to its TCP port. Leave it empty to use TCP only. This setting is separate from BCHN RPC connection pooling and the Valkey socket configuration.

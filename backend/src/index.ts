@@ -57,19 +57,9 @@ export class Server {
   constructor() {
     this.app = express();
     this.app.set('case sensitive routing', true);
-    void this.initialize().catch((error) => {
-      logger.err(`Server startup failed: ${error instanceof Error ? error.message : error}`);
-      this.forceExit('startup failure', 1);
-    });
-  }
-
-  private async initialize(): Promise<void> {
-    if (await prepareUnixSocket(config.EXPLORER.UNIX_SOCKET_PATH)) {
-      logger.notice(`Removed stale Unix socket ${config.EXPLORER.UNIX_SOCKET_PATH}`);
-    }
 
     if (!config.EXPLORER.SPAWN_CLUSTER_PROCS) {
-      await this.startServer();
+      this.startServer();
       return;
     }
 
@@ -99,7 +89,7 @@ export class Server {
         }, 10000);
       });
     } else {
-      await this.startServer(true);
+      this.startServer(true);
     }
   }
 
@@ -399,6 +389,16 @@ export class Server {
   }
 }
 
-if (require.main === module) {
+async function start(): Promise<void> {
+  if (await prepareUnixSocket(config.EXPLORER.UNIX_SOCKET_PATH)) {
+    logger.notice(`Removed stale Unix socket ${config.EXPLORER.UNIX_SOCKET_PATH}`);
+  }
   new Server();
+}
+
+if (require.main === module) {
+  void start().catch((error) => {
+    logger.err(`Server startup failed: ${error instanceof Error ? error.message : error}`);
+    process.exit(1);
+  });
 }
