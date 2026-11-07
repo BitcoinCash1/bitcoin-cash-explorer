@@ -52,7 +52,7 @@ sqlDescribe('precise fee history on MariaDB', () => {
 
   test('missing percentile values stay null rather than becoming fabricated zero fees', async () => {
     await connection.query('INSERT INTO blocks VALUES (6, DATE_SUB(NOW(), INTERVAL 1 DAY), ?, 0)', [
-      JSON.stringify(Array(7).fill(null)),
+      JSON.stringify([]),
     ]);
     const rows = await repository.$getHistoricalBlockFeeRates(1, null, true);
     expect(rows.find((row) => row.avgHeight === 6).avgFee_50).toBeNull();
