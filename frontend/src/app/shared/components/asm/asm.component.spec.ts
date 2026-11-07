@@ -45,3 +45,48 @@ describe('ASM timelock annotations', () => {
     expect(hide).toHaveBeenCalledOnce();
   });
 });
+
+function parse(asm: string, crop = 0): AsmComponent {
+  const component = new AsmComponent();
+  component.asm = asm;
+  component.crop = crop;
+  component.parseASM();
+  return component;
+}
+
+describe('ASM control-flow indentation', () => {
+  it('aligns nested branches and loops while preserving timelock annotations', () => {
+    const component = parse(
+      'OP_IF OP_NOTIF OP_BEGIN OP_PUSHNUM_1 OP_CSV OP_UNTIL OP_ELSE OP_DUP OP_ENDIF OP_ELSE OP_DROP OP_ENDIF OP_CHECKSIG'
+    );
+    expect(component.instructions.map((line) => line.visualDepth)).toEqual([
+      0, 1, 2, 3, 3, 2, 1, 2, 1, 0, 1, 0, 0,
+    ]);
+    expect(component.instructions[3].timelockTooltip).toContain('1 block');
+  });
+
+  it('caps padding without losing actual nesting depth', () => {
+    const component = parse(
+      'OP_IF '.repeat(12) + 'OP_DUP ' + 'OP_ENDIF '.repeat(12) + 'OP_CHECKSIG'
+    );
+    expect(component.instructions.map((line) => line.visualDepth)).toEqual([
+      0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 10, 9, 8, 7, 6, 5, 4, 3, 2,
+      1, 0, 0,
+    ]);
+  });
+
+  it('handles unmatched closers, cropped scripts, and subsequent input changes', () => {
+    expect(
+      parse('OP_ELSE OP_ENDIF OP_UNTIL OP_DUP').instructions.map(
+        (line) => line.visualDepth
+      )
+    ).toEqual([0, 0, 0, 0]);
+    const component = parse('OP_IF OP_DUP OP_ENDIF', 13);
+    expect(component.instructions.map((line) => line.visualDepth)).toEqual([
+      0, 1,
+    ]);
+    component.asm = 'OP_DUP';
+    component.parseASM();
+    expect(component.instructions[0].visualDepth).toBe(0);
+  });
+});

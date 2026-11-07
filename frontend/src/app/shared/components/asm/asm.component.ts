@@ -35,6 +35,7 @@ export class AsmComponent implements OnChanges, OnInit {
   instructions: {
     instruction: string;
     args: string[];
+    visualDepth: number;
     timelockTooltip?: string;
   }[] = [];
   sighashLabels: Record<number, string> = SighashLabels;
@@ -86,13 +87,24 @@ export class AsmComponent implements OnChanges, OnInit {
         chars += instructions[i].length + 3;
       }
     }
+    let depth = 0;
     this.instructions = instructions
       .filter((instruction) => instruction.trim() !== '')
       .map((instruction, index) => {
         const parts = instruction.split(' ');
+        const opcode = parts[0];
+        if (opcode === 'ENDIF' || opcode === 'UNTIL') {
+          depth = Math.max(depth - 1, 0);
+        }
+        const renderDepth = opcode === 'ELSE' ? Math.max(depth - 1, 0) : depth;
+        if (opcode === 'IF' || opcode === 'NOTIF' || opcode === 'BEGIN') {
+          depth += 1;
+        }
         return {
           instruction: parts[0],
           args: parts.slice(1),
+          // Clamp only visual depth so deeply nested blocks still close correctly.
+          visualDepth: Math.min(renderDepth, 10),
           timelockTooltip: timelockTooltips.get(index),
         };
       });

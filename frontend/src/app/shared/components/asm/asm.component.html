@@ -1,49 +1,50 @@
 <div class="asm">
   @for (instruction of instructions; track $index; let i = $index) {
-    <span [class]="opcodeStyles.get(instruction.instruction)"
-      >OP_{{ instruction.instruction }}</span
-    >
-    @if (instruction.timelockTooltip !== undefined) {
-      <span class="timelock" [ngbTooltip]="instruction.timelockTooltip">
-        <fa-icon [icon]="['fas', 'clock']" [fixedWidth]="true"></fa-icon>
-      </span>
-    }
-    @for (arg of instruction.args; track arg; let j = $index) {
-      <ng-container
-        *ngIf="annotations.signatures?.[arg] as sigInfo; else plainArg"
+    <div class="asm-line asm-indent-{{ instruction.visualDepth }}">
+      <span [class]="opcodeStyles.get(instruction.instruction)"
+        >OP_{{ instruction.instruction }}</span
       >
-        <span
-          class="sig sig-key sig-inline sighash-{{ sigInfo.sig.sighash }}"
-          [class.hovered]="
-            annotations.selectedSig && annotations.selectedSig === sigInfo.sig
-          "
-          (mouseenter)="doShowSigInfo(sigInfo.sig)"
-          (mouseleave)="doHideSigInfo()"
-          [title]="sighashLabels[sigInfo.sig.sighash]"
-        >
-          <fa-icon [icon]="['fas', 'key']" [fixedWidth]="true"></fa-icon>
+      @if (instruction.timelockTooltip !== undefined) {
+        <span class="timelock" [ngbTooltip]="instruction.timelockTooltip">
+          <fa-icon [icon]="['fas', 'clock']" [fixedWidth]="true"></fa-icon>
         </span>
-        {{ arg.slice(0, -2)
-        }}<span
-          class="sig sighash-{{ sigInfo.sig.sighash }}"
-          [class.hovered]="
-            annotations.selectedSig && annotations.selectedSig === sigInfo.sig
-          "
-          (mouseenter)="doShowSigInfo(sigInfo.sig)"
-          (mouseleave)="doHideSigInfo()"
-          [title]="sighashLabels[sigInfo.sig.sighash]"
-          >{{ arg.slice(-2) }}</span
+      }
+      @for (arg of instruction.args; track arg; let j = $index) {
+        <ng-container
+          *ngIf="annotations.signatures?.[arg] as sigInfo; else plainArg"
         >
-      </ng-container>
-      <ng-template #plainArg>
-        @if (annotations.p2sh && i === instructions.length - 1) {
-          <span class="script" ngbTooltip="script">
-            <fa-icon [icon]="['fas', 'code']" [fixedWidth]="true"></fa-icon>
+          <span
+            class="sig sig-key sig-inline sighash-{{ sigInfo.sig.sighash }}"
+            [class.hovered]="
+              annotations.selectedSig && annotations.selectedSig === sigInfo.sig
+            "
+            (mouseenter)="doShowSigInfo(sigInfo.sig)"
+            (mouseleave)="doHideSigInfo()"
+            [title]="sighashLabels[sigInfo.sig.sighash]"
+          >
+            <fa-icon [icon]="['fas', 'key']" [fixedWidth]="true"></fa-icon>
           </span>
-        }
-        {{ arg }}
-      </ng-template>
-    }
-    <br />
+          {{ arg.slice(0, -2)
+          }}<span
+            class="sig sighash-{{ sigInfo.sig.sighash }}"
+            [class.hovered]="
+              annotations.selectedSig && annotations.selectedSig === sigInfo.sig
+            "
+            (mouseenter)="doShowSigInfo(sigInfo.sig)"
+            (mouseleave)="doHideSigInfo()"
+            [title]="sighashLabels[sigInfo.sig.sighash]"
+            >{{ arg.slice(-2) }}</span
+          >
+        </ng-container>
+        <ng-template #plainArg>
+          @if (annotations.p2sh && i === instructions.length - 1) {
+            <span class="script" ngbTooltip="script">
+              <fa-icon [icon]="['fas', 'code']" [fixedWidth]="true"></fa-icon>
+            </span>
+          }
+          {{ arg }}
+        </ng-template>
+      }
+    </div>
   }
 </div>
