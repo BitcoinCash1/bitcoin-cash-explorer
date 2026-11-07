@@ -189,3 +189,11 @@ test('unmatched paths return 404', async () => {
   const response = await fetch(`${baseUrl}/missing-contract-route`);
   expect(response.status).toBe(404);
 });
+
+test('actual server rejects mixed-case API routes while canonical paths remain available', async () => {
+  expect((await fetch(`${baseUrl}/transaction-times?txId[]=${txid}`)).status).toBe(200);
+  for (const url of [
+    `${baseUrl}/TRANSACTION-TIMES?txId[]=${txid}`,
+    `${baseUrl.replace('/api/v1', '/API/v1')}/transaction-times?txId[]=${txid}`,
+  ]) { expect((await fetch(url)).status).toBe(404); }
+});
