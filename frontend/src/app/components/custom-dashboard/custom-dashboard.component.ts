@@ -381,7 +381,8 @@ export class CustomDashboardComponent
         () =>
           addressString.match(/04[a-fA-F0-9]{128}|(02|03)[a-fA-F0-9]{64}/)
             ? this.electrsApiService.getPubKeyAddress$(addressString)
-            : this.electrsApiService.getAddress$(addressString)
+            : this.electrsApiService.getAddress$(addressString),
+        this.stateService.isBrowser
       )
         .pipe(
           filter((address) => !!address),
@@ -402,7 +403,8 @@ export class CustomDashboardComponent
                   addressString +
                   'ac'
               )
-            : this.electrsApiService.getAddressSummary$(addressString)
+            : this.electrsApiService.getAddressSummary$(addressString),
+        this.stateService.isBrowser
       ).pipe(
         switchMap((initial) =>
           initial
@@ -477,7 +479,8 @@ export class CustomDashboardComponent
 
       this.walletSummary$ = refreshDashboard$(
         this.stateService.connectionState$,
-        () => this.apiService.getWallet$(walletName)
+        () => this.apiService.getWallet$(walletName),
+        this.stateService.isBrowser
       ).pipe(
         switchMap((wallet) =>
           wallet

@@ -1,4 +1,4 @@
-import { of, Observable, defer, interval, merge, timer } from 'rxjs';
+import { EMPTY, of, Observable, defer, interval, merge, timer } from 'rxjs';
 import {
   catchError,
   distinctUntilChanged,
@@ -10,14 +10,16 @@ import {
 /** Refetch initially, when connected again, and hourly without terminating on an outage. */
 export function refreshDashboard$<T>(
   connectionState: Observable<number>,
-  request: () => Observable<T>
+  request: () => Observable<T>,
+  isBrowser: boolean
 ): Observable<T | null> {
   return merge(
     connectionState.pipe(
       distinctUntilChanged(),
       filter((state, index) => index === 0 || state === 2)
     ),
-    interval(60 * 60 * 1000)
+    // A recurring server-side timer prevents Angular from reaching SSR stability.
+    isBrowser ? interval(60 * 60 * 1000) : EMPTY
   ).pipe(
     switchMap(() =>
       defer(request).pipe(

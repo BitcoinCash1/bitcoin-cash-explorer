@@ -14,7 +14,7 @@ it('settles failed shared history to a visible unavailable state and later recov
     {} as any,
     { getBlockPrice$: vi.fn(() => of({ USD: 500 })) } as any
   );
-  component.addressSummary$ = refreshDashboard$(connection, request);
+  component.addressSummary$ = refreshDashboard$(connection, request, true);
   component.ngOnInit();
   let result: any;
   const subscription = component.transactions$.subscribe(

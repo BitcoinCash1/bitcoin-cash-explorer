@@ -16,6 +16,7 @@ function fixture() {
   const api = { getWallet$: vi.fn(() => of(structuredClone(original) as any)) };
   Object.assign(component, {
     stateService: {
+      isBrowser: true,
       connectionState$,
       walletTransactions$,
       env: {

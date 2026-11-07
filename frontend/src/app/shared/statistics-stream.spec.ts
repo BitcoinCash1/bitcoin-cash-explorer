@@ -74,7 +74,7 @@ it('dashboard refresh survives failure, refetches on reconnect/hourly, and relea
     () => throwError(() => new Error('offline')) as Observable<any>
   );
   const values: any[] = [];
-  const subscription = refreshDashboard$(connection, request).subscribe(
+  const subscription = refreshDashboard$(connection, request, true).subscribe(
     (value) => values.push(value)
   );
   vi.advanceTimersByTime(30000);
