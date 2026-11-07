@@ -297,7 +297,7 @@ class StatisticsApi {
       return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
     } catch (e) {
       logger.err('$list2H() error' + (e instanceof Error ? e.message : e));
-      return [];
+      throw e;
     }
   }
 
@@ -308,7 +308,7 @@ class StatisticsApi {
       return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
     } catch (e) {
       logger.err('$list24h() error' + (e instanceof Error ? e.message : e));
-      return [];
+      throw e;
     }
   }
 
@@ -319,7 +319,7 @@ class StatisticsApi {
       return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
     } catch (e) {
       logger.err('$list3D() error' + (e instanceof Error ? e.message : e));
-      return [];
+      throw e;
     }
   }
 
@@ -330,7 +330,7 @@ class StatisticsApi {
       return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
     } catch (e) {
       logger.err('$list1W() error' + (e instanceof Error ? e.message : e));
-      return [];
+      throw e;
     }
   }
 
@@ -341,7 +341,7 @@ class StatisticsApi {
       return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
     } catch (e) {
       logger.err('$list1M() error' + (e instanceof Error ? e.message : e));
-      return [];
+      throw e;
     }
   }
 
@@ -352,7 +352,7 @@ class StatisticsApi {
       return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
     } catch (e) {
       logger.err('$list3M() error' + (e instanceof Error ? e.message : e));
-      return [];
+      throw e;
     }
   }
 
@@ -363,7 +363,7 @@ class StatisticsApi {
       return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
     } catch (e) {
       logger.err('$list6M() error' + (e instanceof Error ? e.message : e));
-      return [];
+      throw e;
     }
   }
 
@@ -374,7 +374,7 @@ class StatisticsApi {
       return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
     } catch (e) {
       logger.err('$list1Y() error' + (e instanceof Error ? e.message : e));
-      return [];
+      throw e;
     }
   }
 
@@ -385,7 +385,7 @@ class StatisticsApi {
       return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
     } catch (e) {
       logger.err('$list2Y() error' + (e instanceof Error ? e.message : e));
-      return [];
+      throw e;
     }
   }
 
@@ -396,7 +396,7 @@ class StatisticsApi {
       return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
     } catch (e) {
       logger.err('$list3Y() error' + (e instanceof Error ? e.message : e));
-      return [];
+      throw e;
     }
   }
 
@@ -407,7 +407,7 @@ class StatisticsApi {
       return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
     } catch (e) {
       logger.err('$list4Y() error' + (e instanceof Error ? e.message : e));
-      return [];
+      throw e;
     }
   }
 
@@ -418,7 +418,7 @@ class StatisticsApi {
       return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
     } catch (e) {
       logger.err('$listAll() error' + (e instanceof Error ? e.message : e));
-      return [];
+      throw e;
     }
   }
 
