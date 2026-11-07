@@ -1,3 +1,4 @@
+import { loadStatistics$ } from '@app/shared/statistics-stream';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -17,11 +18,10 @@ import {
   Subscription,
 } from 'rxjs';
 import {
-  catchError,
   filter,
   map,
-  scan,
   shareReplay,
+  takeUntil,
   switchMap,
   tap,
 } from 'rxjs/operators';
@@ -55,6 +55,8 @@ interface MempoolInfoData {
 }
 
 interface MempoolStatsData {
+  loading: boolean;
+  error: unknown;
   mempool: OptimizedMempoolStats[];
   bytesPerSecond: any;
 }
@@ -259,37 +261,19 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
     this.mempoolStats$ = this.stateService.connectionState$.pipe(
       filter((state) => state === 2),
       switchMap(() =>
-        this.apiService.list2HStatistics$().pipe(
-          catchError((e) => {
-            return of(null);
-          })
+        loadStatistics$(
+          () => this.apiService.list2HStatistics$(),
+          this.stateService.live2Chart$
         )
       ),
-      switchMap((mempoolStats) => {
-        return merge(
-          this.stateService.live2Chart$.pipe(
-            scan((acc, stats) => {
-              const now = Date.now() / 1000;
-              const start = now - 2 * 60 * 60;
-              acc.unshift(stats);
-              acc = acc.filter((p) => p.added >= start);
-              return acc;
-            }, mempoolStats || [])
-          ),
-          of(mempoolStats)
-        );
-      }),
-      map((mempoolStats) => {
-        if (mempoolStats) {
-          return {
-            mempool: mempoolStats,
-            bytesPerSecond: this.handleNewMempoolData(mempoolStats.concat([])),
-          };
-        } else {
-          return null;
-        }
-      }),
-      shareReplay(1)
+      map(({ data, loading, error }) => ({
+        mempool: data,
+        bytesPerSecond: data ? this.handleNewMempoolData([...data]) : null,
+        loading,
+        error,
+      })),
+      takeUntil(this.destroy$),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
 
     this.currencySubscription = this.stateService.fiatCurrency$.subscribe(

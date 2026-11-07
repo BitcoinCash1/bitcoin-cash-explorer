@@ -15,6 +15,11 @@
       else recentTransactionsSkeleton
     "
   >
+    <tr *ngIf="error">
+      <td colspan="4" class="text-center text-muted" role="status">
+        {{ error }}
+      </td>
+    </tr>
     <tr *ngFor="let transaction of transactions; let i = index">
       <td class="table-cell-txid">
         <a [routerLink]="['/tx' | relativeUrl, transaction.txid]">

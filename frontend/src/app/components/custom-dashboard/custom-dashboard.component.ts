@@ -1,3 +1,5 @@
+import { refreshDashboard$ } from '@app/shared/dashboard-refresh';
+import { loadStatistics$ } from '@app/shared/statistics-stream';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -18,12 +20,11 @@ import {
   Subscription,
 } from 'rxjs';
 import {
-  catchError,
   filter,
   map,
   scan,
-  share,
   shareReplay,
+  takeUntil,
   startWith,
   switchMap,
   tap,
@@ -64,6 +65,8 @@ interface MempoolInfoData {
 }
 
 interface MempoolStatsData {
+  loading: boolean;
+  error: unknown;
   mempool: OptimizedMempoolStats[];
   bytesPerSecond: any;
 }
@@ -103,7 +106,6 @@ export class CustomDashboardComponent
   widgets;
 
   addressSubscription: Subscription;
-  walletSubscription: Subscription;
   blockTxSubscription: Subscription;
   addressSummary$: Observable<AddressTxSummary[]>;
   walletSummary$: Observable<AddressTxSummary[]>;
@@ -178,10 +180,7 @@ export class CustomDashboardComponent
       this.websocketService.stopTrackingAddress();
       this.address = null;
     }
-    if (this.walletSubscription) {
-      this.walletSubscription.unsubscribe();
-      this.websocketService.stopTrackingWallet();
-    }
+    this.websocketService.stopTrackingWallet();
     this.destroy$.next(1);
     this.destroy$.complete();
   }
@@ -306,37 +305,19 @@ export class CustomDashboardComponent
     this.mempoolStats$ = this.stateService.connectionState$.pipe(
       filter((state) => state === 2),
       switchMap(() =>
-        this.apiService.list2HStatistics$().pipe(
-          catchError((e) => {
-            return of(null);
-          })
+        loadStatistics$(
+          () => this.apiService.list2HStatistics$(),
+          this.stateService.live2Chart$
         )
       ),
-      switchMap((mempoolStats) => {
-        return merge(
-          this.stateService.live2Chart$.pipe(
-            scan((acc, stats) => {
-              const now = Date.now() / 1000;
-              const start = now - 2 * 60 * 60;
-              acc.unshift(stats);
-              acc = acc.filter((p) => p.added >= start);
-              return acc;
-            }, mempoolStats || [])
-          ),
-          of(mempoolStats)
-        );
-      }),
-      map((mempoolStats) => {
-        if (mempoolStats) {
-          return {
-            mempool: mempoolStats,
-            bytesPerSecond: this.handleNewMempoolData(mempoolStats.concat([])),
-          };
-        } else {
-          return null;
-        }
-      }),
-      shareReplay(1)
+      map(({ data, loading, error }) => ({
+        mempool: data,
+        bytesPerSecond: data ? this.handleNewMempoolData([...data]) : null,
+        loading,
+        error,
+      })),
+      takeUntil(this.destroy$),
+      shareReplay({ bufferSize: 1, refCount: true })
     );
 
     this.currencySubscription = this.stateService.fiatCurrency$.subscribe(
@@ -395,17 +376,16 @@ export class CustomDashboardComponent
           ? addressString.toLowerCase()
           : addressString;
 
-      this.addressSubscription = (
-        addressString.match(/04[a-fA-F0-9]{128}|(02|03)[a-fA-F0-9]{64}/)
-          ? this.electrsApiService.getPubKeyAddress$(addressString)
-          : this.electrsApiService.getAddress$(addressString)
+      this.addressSubscription = refreshDashboard$(
+        this.stateService.connectionState$,
+        () =>
+          addressString.match(/04[a-fA-F0-9]{128}|(02|03)[a-fA-F0-9]{64}/)
+            ? this.electrsApiService.getPubKeyAddress$(addressString)
+            : this.electrsApiService.getAddress$(addressString)
       )
         .pipe(
-          catchError((err) => {
-            console.log(err);
-            return of(null);
-          }),
-          filter((address) => !!address)
+          filter((address) => !!address),
+          takeUntil(this.destroy$)
         )
         .subscribe((address: Address) => {
           this.websocketService.startTrackAddress(address.address);
@@ -413,59 +393,72 @@ export class CustomDashboardComponent
           this.cd.markForCheck();
         });
 
-      this.addressSummary$ = (
-        addressString.match(/04[a-fA-F0-9]{128}|(02|03)[a-fA-F0-9]{64}/)
-          ? this.electrsApiService.getScriptHashSummary$(
-              (addressString.length === 66 ? '21' : '41') + addressString + 'ac'
-            )
-          : this.electrsApiService.getAddressSummary$(addressString)
+      this.addressSummary$ = refreshDashboard$(
+        this.stateService.connectionState$,
+        () =>
+          addressString.match(/04[a-fA-F0-9]{128}|(02|03)[a-fA-F0-9]{64}/)
+            ? this.electrsApiService.getScriptHashSummary$(
+                (addressString.length === 66 ? '21' : '41') +
+                  addressString +
+                  'ac'
+              )
+            : this.electrsApiService.getAddressSummary$(addressString)
       ).pipe(
-        catchError((e) => {
-          return of(null);
-        }),
         switchMap((initial) =>
-          this.stateService.blockTransactions$.pipe(
-            startWith(null),
-            scan((summary, tx) => {
-              if (tx && !summary.some((t) => t.txid === tx.txid)) {
-                let value = 0;
-                let funded = 0;
-                let fundedCount = 0;
-                let spent = 0;
-                let spentCount = 0;
-                for (const vout of tx.vout) {
-                  if (vout.scriptpubkey_address === addressString) {
-                    value += vout.value;
-                    funded += vout.value;
-                    fundedCount++;
-                  }
-                }
-                for (const vin of tx.vin) {
-                  if (vin.prevout?.scriptpubkey_address === addressString) {
-                    value -= vin.prevout?.value;
-                    spent += vin.prevout?.value;
-                    spentCount++;
-                  }
-                }
-                if (this.address && this.address.address === addressString) {
-                  this.address.chain_stats.tx_count++;
-                  this.address.chain_stats.funded_txo_sum += funded;
-                  this.address.chain_stats.funded_txo_count += fundedCount;
-                  this.address.chain_stats.spent_txo_sum += spent;
-                  this.address.chain_stats.spent_txo_count += spentCount;
-                }
-                summary.unshift({
-                  txid: tx.txid,
-                  time: tx.status?.block_time,
-                  height: tx.status?.block_height,
-                  value,
-                });
-              }
-              return summary;
-            }, initial)
-          )
+          initial
+            ? this.stateService.blockTransactions$.pipe(
+                startWith(null),
+                scan(
+                  (summary, tx) => {
+                    if (tx && !summary.some((t) => t.txid === tx.txid)) {
+                      let value = 0;
+                      let funded = 0;
+                      let fundedCount = 0;
+                      let spent = 0;
+                      let spentCount = 0;
+                      for (const vout of tx.vout) {
+                        if (vout.scriptpubkey_address === addressString) {
+                          value += vout.value;
+                          funded += vout.value;
+                          fundedCount++;
+                        }
+                      }
+                      for (const vin of tx.vin) {
+                        if (
+                          vin.prevout?.scriptpubkey_address === addressString
+                        ) {
+                          value -= vin.prevout?.value;
+                          spent += vin.prevout?.value;
+                          spentCount++;
+                        }
+                      }
+                      if (
+                        this.address &&
+                        this.address.address === addressString
+                      ) {
+                        this.address.chain_stats.tx_count++;
+                        this.address.chain_stats.funded_txo_sum += funded;
+                        this.address.chain_stats.funded_txo_count +=
+                          fundedCount;
+                        this.address.chain_stats.spent_txo_sum += spent;
+                        this.address.chain_stats.spent_txo_count += spentCount;
+                      }
+                      summary.unshift({
+                        txid: tx.txid,
+                        time: tx.status?.block_time,
+                        height: tx.status?.block_height,
+                        value,
+                      });
+                    }
+                    return summary;
+                  },
+                  initial.map((summary) => ({ ...summary }))
+                )
+              )
+            : of(null)
         ),
-        share()
+        takeUntil(this.destroy$),
+        shareReplay({ bufferSize: 1, refCount: true })
       );
     }
   }
@@ -482,61 +475,75 @@ export class CustomDashboardComponent
       ).props['wallet'];
       this.websocketService.startTrackingWallet(walletName);
 
-      this.walletSummary$ = this.apiService.getWallet$(walletName).pipe(
-        catchError((e) => {
-          return of({});
-        }),
+      this.walletSummary$ = refreshDashboard$(
+        this.stateService.connectionState$,
+        () => this.apiService.getWallet$(walletName)
+      ).pipe(
         switchMap((wallet) =>
-          this.stateService.walletTransactions$.pipe(
-            startWith([]),
-            scan(
-              (summaries, newTransactions) => {
-                const newSummaries: AddressTxSummary[] = [];
-                for (const tx of newTransactions) {
-                  const funded: Record<string, number> = {};
-                  const spent: Record<string, number> = {};
-                  const fundedCount: Record<string, number> = {};
-                  const spentCount: Record<string, number> = {};
-                  for (const vin of tx.vin) {
-                    const address = vin.prevout?.scriptpubkey_address;
-                    if (address && wallet[address]) {
-                      spent[address] =
-                        (spent[address] ?? 0) + (vin.prevout?.value ?? 0);
-                      spentCount[address] = (spentCount[address] ?? 0) + 1;
+          wallet
+            ? this.stateService.walletTransactions$.pipe(
+                startWith([]),
+                scan(
+                  (summaries, newTransactions) => {
+                    const newSummaries: AddressTxSummary[] = [];
+                    const known = new Set(
+                      summaries.map((summary) => summary.txid)
+                    );
+                    for (const tx of newTransactions) {
+                      if (known.has(tx.txid)) continue;
+                      known.add(tx.txid);
+                      const funded: Record<string, number> = {};
+                      const spent: Record<string, number> = {};
+                      const fundedCount: Record<string, number> = {};
+                      const spentCount: Record<string, number> = {};
+                      for (const vin of tx.vin) {
+                        const address = vin.prevout?.scriptpubkey_address;
+                        if (address && wallet[address]) {
+                          spent[address] =
+                            (spent[address] ?? 0) + (vin.prevout?.value ?? 0);
+                          spentCount[address] = (spentCount[address] ?? 0) + 1;
+                        }
+                      }
+                      for (const vout of tx.vout) {
+                        const address = vout.scriptpubkey_address;
+                        if (address && wallet[address]) {
+                          funded[address] =
+                            (funded[address] ?? 0) + (vout.value ?? 0);
+                          fundedCount[address] =
+                            (fundedCount[address] ?? 0) + 1;
+                        }
+                      }
+                      for (const address of Object.keys({
+                        ...funded,
+                        ...spent,
+                      })) {
+                        // add tx to summary
+                        const txSummary: AddressTxSummary = {
+                          txid: tx.txid,
+                          value: (funded[address] ?? 0) - (spent[address] ?? 0),
+                          height: tx.status.block_height,
+                          time: tx.status.block_time,
+                        };
+                        wallet[address].transactions?.push(txSummary);
+                        newSummaries.push(txSummary);
+                      }
                     }
-                  }
-                  for (const vout of tx.vout) {
-                    const address = vout.scriptpubkey_address;
-                    if (address && wallet[address]) {
-                      funded[address] =
-                        (funded[address] ?? 0) + (vout.value ?? 0);
-                      fundedCount[address] = (fundedCount[address] ?? 0) + 1;
-                    }
-                  }
-                  for (const address of Object.keys({ ...funded, ...spent })) {
-                    // add tx to summary
-                    const txSummary: AddressTxSummary = {
-                      txid: tx.txid,
-                      value: (funded[address] ?? 0) - (spent[address] ?? 0),
-                      height: tx.status.block_height,
-                      time: tx.status.block_time,
-                    };
-                    wallet[address].transactions?.push(txSummary);
-                    newSummaries.push(txSummary);
-                  }
-                }
-                return this.deduplicateWalletTransactions([
-                  ...summaries,
-                  ...newSummaries,
-                ]);
-              },
-              this.deduplicateWalletTransactions(
-                Object.values(wallet).flatMap((address) => address.transactions)
+                    return this.deduplicateWalletTransactions([
+                      ...summaries,
+                      ...newSummaries,
+                    ]);
+                  },
+                  this.deduplicateWalletTransactions(
+                    Object.values(wallet).flatMap(
+                      (address) => address.transactions ?? []
+                    )
+                  )
+                )
               )
-            )
-          )
+            : of(null)
         ),
-        share()
+        takeUntil(this.destroy$),
+        shareReplay({ bufferSize: 1, refCount: true })
       );
     }
   }
@@ -549,7 +556,7 @@ export class CustomDashboardComponent
       if (transactions.has(tx.txid)) {
         transactions.get(tx.txid).value += tx.value;
       } else {
-        transactions.set(tx.txid, tx);
+        transactions.set(tx.txid, { ...tx });
       }
     }
     return Array.from(transactions.values()).sort((a, b) => {

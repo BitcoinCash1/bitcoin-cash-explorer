@@ -101,6 +101,8 @@
               [left]="50"
               [right]="20"
               [data]="mempoolStats?.bytesPerSecond"
+              [isLoading]="mempoolStats.loading"
+              [error]="mempoolStats.error"
               [windowPreferenceOverride]="'2h'"
             ></app-incoming-transactions-graph>
           </div>

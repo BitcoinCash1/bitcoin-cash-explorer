@@ -61,6 +61,14 @@ export class AddressTransactionsWidgetComponent
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (
+      this.transactions$ &&
+      (!this.error || this.addressSummary$) &&
+      !changes['address'] &&
+      !changes['addressSummary$'] &&
+      !changes['isPubkey']
+    )
+      return;
     this.startAddressSubscription();
   }
 
@@ -86,11 +94,18 @@ export class AddressTransactionsWidgetComponent
       )
     ).pipe(
       map((summary) => {
+        this.isLoading = false;
+        if (!summary) {
+          this.error ||= $localize`Unable to load address history. Waiting to retry.`;
+          return [];
+        }
+        this.error = null;
         return summary
-          ?.filter((tx) => Math.abs(tx.value) >= 1000000)
+          .filter((tx) => Math.abs(tx.value) >= 1000000)
           ?.slice(0, 6);
       }),
       switchMap((txs) => {
+        if (!txs.length) return of([]);
         return zip(
           txs.map((tx) =>
             this.priceService

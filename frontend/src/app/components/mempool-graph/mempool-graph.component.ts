@@ -51,6 +51,7 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
   @Input() showZoom = true;
   @Input() windowPreferenceOverride: string;
   @Input() isLoading: boolean;
+  @Input() error: unknown;
 
   mempoolSizeFeesData: any;
   mempoolSizeFeesOptions: EChartsOption;
@@ -82,7 +83,21 @@ export class MempoolGraphComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    if (!this.data) {
+    if (this.isLoading) return;
+    if (!this.data?.length || this.error) {
+      this.mempoolSizeFeesOptions = {
+        title: {
+          text: this.error
+            ? $localize`Error loading data.`
+            : $localize`No data to display yet. Try again later.`,
+          left: 'center',
+          top: 'center',
+          textStyle: { color: 'grey', fontSize: 15 },
+        },
+        series: [],
+        xAxis: [],
+        yAxis: [],
+      };
       return;
     }
     this.isWidget = this.template === 'widget';

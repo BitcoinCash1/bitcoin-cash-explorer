@@ -1,6 +1,9 @@
 <div class="card">
   <div class="card-body more-padding">
-    <div class="balance-container" *ngIf="!isLoading; else loading">
+    <div *ngIf="error" class="text-center text-muted" role="status">
+      {{ error }}
+    </div>
+    <div class="balance-container" *ngIf="!isLoading && !error; else loading">
       <div class="item">
         <h5 class="card-title" i18n="dashboard.bch-holdings">BCH Holdings</h5>
         <div class="card-text">
@@ -38,7 +41,7 @@
 </div>
 
 <ng-template #loading>
-  <div class="balance-skeleton">
+  <div class="balance-skeleton" *ngIf="isLoading">
     <div class="item">
       <h5 class="card-title" i18n="dashboard.bch-holdings">BCH Holdings</h5>
       <div class="card-text">

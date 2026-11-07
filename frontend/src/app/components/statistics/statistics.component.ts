@@ -1,6 +1,9 @@
+import { loadStatistics$ } from '@app/shared/statistics-stream';
+import { Subject, combineLatest } from 'rxjs';
 import {
   Component,
   OnInit,
+  OnDestroy,
   LOCALE_ID,
   Inject,
   ViewChild,
@@ -9,7 +12,13 @@ import {
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { UntypedFormGroup, UntypedFormBuilder } from '@angular/forms';
-import { switchMap, startWith, distinctUntilChanged } from 'rxjs/operators';
+import {
+  switchMap,
+  startWith,
+  distinctUntilChanged,
+  takeUntil,
+  filter,
+} from 'rxjs/operators';
 
 import { OptimizedMempoolStats } from '@interfaces/node-api.interface';
 import { WebsocketService } from '@app/services/websocket.service';
@@ -28,7 +37,9 @@ import { IncomingTransactionsGraphComponent } from '@components/incoming-transac
   styleUrls: ['./statistics.component.scss'],
   standalone: false,
 })
-export class StatisticsComponent implements OnInit {
+export class StatisticsComponent implements OnInit, OnDestroy {
+  private readonly destroy$ = new Subject<void>();
+  statsError: unknown;
   @ViewChild('mempoolgraph') mempoolGraph: MempoolGraphComponent;
   @ViewChild('incominggraph') incomingGraph: IncomingTransactionsGraphComponent;
 
@@ -77,10 +88,12 @@ export class StatisticsComponent implements OnInit {
       $localize`See mempool size (in MB) and transactions per second (in B/s) visualized over time.`
     );
 
-    this.stateService.networkChanged$.subscribe((network) => {
-      this.network = network;
-      this.cdr.markForCheck();
-    });
+    this.stateService.networkChanged$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((network) => {
+        this.network = network;
+        this.cdr.markForCheck();
+      });
 
     this.graphWindowPreference = this.storageService.getValue(
       'graphWindowPreference'
@@ -95,7 +108,7 @@ export class StatisticsComponent implements OnInit {
     });
 
     // 1. Listen for URL fragments and update the form state (allows API trigger)
-    this.route.fragment.subscribe((fragment) => {
+    this.route.fragment.pipe(takeUntil(this.destroy$)).subscribe((fragment) => {
       const validSpans = [
         '2h',
         '24h',
@@ -117,68 +130,71 @@ export class StatisticsComponent implements OnInit {
       }
     });
 
-    // 2. React to form changes properly, fetching data when the URL/selection changes
-    this.radioGroupForm.controls['dateSpan'].valueChanges
-      .pipe(
+    combineLatest([
+      this.radioGroupForm.controls['dateSpan'].valueChanges.pipe(
         startWith(this.radioGroupForm.controls['dateSpan'].value),
-        distinctUntilChanged(), // Prevent duplicate API calls for the same timespan
-        switchMap((timespan) => {
+        distinctUntilChanged()
+      ),
+      this.stateService.connectionState$.pipe(
+        distinctUntilChanged(),
+        filter((state, index) => index === 0 || state === 2)
+      ),
+    ])
+      .pipe(
+        switchMap(() => {
+          const timespan = this.radioGroupForm.controls['dateSpan'].value;
           this.timespan = timespan;
-          this.isLoading = true;
-          this.cdr.markForCheck(); // Show spinner in UI immediately
-
-          if (timespan === '2h') {
-            this.websocketService.want(['blocks', 'live-2h-chart']);
-            return this.apiService.list2HStatistics$();
-          }
-
-          this.websocketService.want(['blocks']);
-
-          switch (timespan) {
-            case '24h':
-              return this.apiService.list24HStatistics$();
-            case '3d':
-              return this.apiService.list3DStatistics$();
-            case '1w':
-              return this.apiService.list1WStatistics$();
-            case '1m':
-              return this.apiService.list1MStatistics$();
-            case '3m':
-              return this.apiService.list3MStatistics$();
-            case '6m':
-              return this.apiService.list6MStatistics$();
-            case '1y':
-              return this.apiService.list1YStatistics$();
-            case '2y':
-              return this.apiService.list2YStatistics$();
-            case '3y':
-              return this.apiService.list3YStatistics$();
-            case '4y':
-              return this.apiService.list4YStatistics$();
-            case 'all':
-              return this.apiService.listAllTimeStatistics$();
-            default:
-              return this.apiService.list2HStatistics$();
-          }
-        })
+          this.websocketService.want(
+            timespan === '2h' ? ['blocks', 'live-2h-chart'] : ['blocks']
+          );
+          return loadStatistics$(
+            () => this.requestStatistics(timespan),
+            timespan === '2h' ? this.stateService.live2Chart$ : undefined
+          );
+        }),
+        takeUntil(this.destroy$)
       )
-      .subscribe((mempoolStats: any) => {
-        this.mempoolStats = mempoolStats;
-        this.handleNewMempoolData([...this.mempoolStats]); // Modern shallow copy
-        this.isLoading = false;
-        this.cdr.markForCheck(); // Force Angular to evaluate the template and hide spinner
+      .subscribe(({ data, error, loading }) => {
+        this.mempoolStats = data?.map((sample) => ({ ...sample })) ?? [];
+        this.statsError = error;
+        this.isLoading = loading;
+        this.handleNewMempoolData([...this.mempoolStats]);
+        this.cdr.markForCheck();
       });
+  }
 
-    // 3. Keep live web-socket chart updates strictly synced with the UI
-    this.stateService.live2Chart$.subscribe((mempoolStats) => {
-      this.mempoolStats.unshift(mempoolStats);
-      this.mempoolStats = this.mempoolStats.slice(
-        0,
-        this.mempoolStats.length - 1
-      );
-      this.handleNewMempoolData([...this.mempoolStats]);
-      this.cdr.markForCheck(); // Push updated options to ngx-echarts
-    });
+  private requestStatistics(timespan: string) {
+    switch (timespan) {
+      case '24h':
+        return this.apiService.list24HStatistics$();
+      case '3d':
+        return this.apiService.list3DStatistics$();
+      case '1w':
+        return this.apiService.list1WStatistics$();
+      case '1m':
+        return this.apiService.list1MStatistics$();
+      case '3m':
+        return this.apiService.list3MStatistics$();
+      case '6m':
+        return this.apiService.list6MStatistics$();
+      case '1y':
+        return this.apiService.list1YStatistics$();
+      case '2y':
+        return this.apiService.list2YStatistics$();
+      case '3y':
+        return this.apiService.list3YStatistics$();
+      case '4y':
+        return this.apiService.list4YStatistics$();
+      case 'all':
+        return this.apiService.listAllTimeStatistics$();
+      default:
+        return this.apiService.list2HStatistics$();
+    }
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   handleNewMempoolData(mempoolStats: OptimizedMempoolStats[]) {

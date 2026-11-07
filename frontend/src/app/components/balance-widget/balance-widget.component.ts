@@ -4,6 +4,7 @@ import {
   Component,
   Input,
   OnChanges,
+  OnDestroy,
   SimpleChanges,
 } from '@angular/core';
 import { StateService } from '@app/services/state.service';
@@ -12,7 +13,7 @@ import {
   AddressTxSummary,
 } from '@app/interfaces/backend-api.interface';
 import { ElectrsApiService } from '@app/services/backend-api.service';
-import { Observable, catchError, of } from 'rxjs';
+import { Observable, Subscription, catchError, of } from 'rxjs';
 
 @Component({
   selector: 'app-balance-widget',
@@ -21,7 +22,8 @@ import { Observable, catchError, of } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class BalanceWidgetComponent implements OnChanges {
+export class BalanceWidgetComponent implements OnChanges, OnDestroy {
+  private subscription: Subscription;
   @Input() address: string;
   @Input() addressInfo: Address;
   @Input() addressSummary$: Observable<AddressTxSummary[]> | null;
@@ -41,33 +43,58 @@ export class BalanceWidgetComponent implements OnChanges {
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
-    this.isLoading = true;
-    if (!this.addressSummary$ && (!this.address || !this.addressInfo)) {
+    if (
+      this.subscription &&
+      (!this.subscription.closed || !this.error) &&
+      this.addressInfo &&
+      !changes['addressSummary$'] &&
+      !changes['address'] &&
+      !changes['isPubkey']
+    ) {
+      this.total =
+        this.addressInfo.chain_stats.funded_txo_sum -
+        this.addressInfo.chain_stats.spent_txo_sum;
+      this.cd.markForCheck();
       return;
     }
-    (
+    this.subscription?.unsubscribe();
+    this.subscription = undefined;
+    this.error = null;
+    this.total = this.delta7d = this.delta30d = 0;
+    this.isLoading = true;
+    if (!this.addressSummary$ && (!this.address || !this.addressInfo)) {
+      this.isLoading = false;
+      this.cd.markForCheck();
+      return;
+    }
+    const summary$ =
       this.addressSummary$ ||
       (this.isPubkey
         ? this.electrsApiService.getScriptHashSummary$(
             (this.address.length === 66 ? '21' : '41') + this.address + 'ac'
           )
-        : this.electrsApiService.getAddressSummary$(this.address)
-      ).pipe(
-        catchError((e) => {
-          this.error = `Failed to fetch address balance history: ${
-            e?.status || ''
-          } ${e?.statusText || 'unknown error'}`;
+        : this.electrsApiService.getAddressSummary$(this.address));
+    this.subscription = summary$
+      .pipe(
+        catchError((error) => {
+          this.error = `Failed to fetch address balance history: ${error?.status || ''} ${error?.statusText || 'unknown error'}`;
           return of(null);
         })
       )
-    ).subscribe((addressSummary) => {
-      if (addressSummary) {
-        this.error = null;
-        this.calculateStats(addressSummary);
-      }
-      this.isLoading = false;
-      this.cd.markForCheck();
-    });
+      .subscribe((summary) => {
+        if (summary) {
+          this.error = null;
+          this.calculateStats(summary);
+        } else {
+          this.error ||= $localize`Unable to load balance history. Waiting to retry.`;
+        }
+        this.isLoading = false;
+        this.cd.markForCheck();
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
 
   calculateStats(summary: AddressTxSummary[]): void {
