@@ -261,9 +261,12 @@ class BitcoinApi implements AbstractBitcoinApi {
     return this.bitcoindClient.submitPackage(rawTransactions, allowhighfees);
   }
 
-  async $getOutspends(txId: string): Promise<IPublicApi.Outspend[]> {
+  async $getOutspends(txId: string, maxOutputs = Infinity): Promise<IPublicApi.Outspend[]> {
     const outSpends: IPublicApi.Outspend[] = [];
     const tx = (await this.$getRawTransaction(txId, false, false)) as IPublicApi.Transaction;
+    if (tx.vout.length > maxOutputs) {
+      throw new Error('Too many outputs requested');
+    }
     for (let i = 0; i < tx.vout.length; i++) {
       if (tx.status && tx.status.block_height === 0) {
         outSpends.push({
@@ -279,10 +282,12 @@ class BitcoinApi implements AbstractBitcoinApi {
     return outSpends;
   }
 
-  async $getBatchedOutspends(txId: string[]): Promise<IPublicApi.Outspend[][]> {
+  async $getBatchedOutspends(txId: string[], maxOutputs = Infinity): Promise<IPublicApi.Outspend[][]> {
     const outspends: IPublicApi.Outspend[][] = [];
+    let remainingOutputs = maxOutputs;
     for (const tx of txId) {
-      const outspend = await this.$getOutspends(tx);
+      const outspend = await this.$getOutspends(tx, remainingOutputs);
+      remainingOutputs -= outspend.length;
       outspends.push(outspend);
     }
     return outspends;

@@ -42,6 +42,12 @@ interface IConfig {
     DISK_CACHE_BLOCK_INTERVAL: number;
     PRICE_UPDATES_PER_HOUR: number;
     MAX_TRACKED_ADDRESSES: number;
+    MAX_BUFFERED_AMOUNT: number;
+    MAX_MESSAGE_SIZE: number;
+    MAX_TRACKED_TXS: number;
+    MSG_RATE_LIMIT: number;
+    MSG_RATE_WINDOW: number;
+    MAX_OUTSPENDS_OUTPUTS: number;
   };
   ELECTRUM: {
     HOST: string;
@@ -174,6 +180,13 @@ const defaults: IConfig = {
     DISK_CACHE_BLOCK_INTERVAL: 6,
     PRICE_UPDATES_PER_HOUR: 1,
     MAX_TRACKED_ADDRESSES: 1,
+    MAX_BUFFERED_AMOUNT: 15_000_000,
+    MAX_MESSAGE_SIZE: 100_000,
+    MAX_TRACKED_TXS: 500,
+    MSG_RATE_LIMIT: 200,
+    MSG_RATE_WINDOW: 10_000,
+    // Public request budget; zero keeps large BCH transactions unrestricted.
+    MAX_OUTSPENDS_OUTPUTS: 0,
   },
   ELECTRUM: {
     HOST: '127.0.0.1',
