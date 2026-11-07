@@ -8,6 +8,7 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { SigInfo, SighashLabels } from '@app/shared/transaction.utils';
+import { detectTimelockTooltips } from '@app/shared/script.utils';
 
 @Component({
   selector: 'app-asm',
@@ -31,7 +32,11 @@ export class AsmComponent implements OnChanges, OnInit {
   @Output() showSigInfo = new EventEmitter<SigInfo>();
   @Output() hideSigInfo = new EventEmitter<void>();
 
-  instructions: { instruction: string; args: string[] }[] = [];
+  instructions: {
+    instruction: string;
+    args: string[];
+    timelockTooltip?: string;
+  }[] = [];
   sighashLabels: Record<number, string> = SighashLabels;
 
   ngOnInit(): void {
@@ -45,7 +50,10 @@ export class AsmComponent implements OnChanges, OnInit {
   }
 
   parseASM(): void {
-    let instructions = this.asm.split('OP_');
+    let instructions = this.asm
+      .split('OP_')
+      .filter((instruction) => instruction.trim() !== '');
+    const timelockTooltips = detectTimelockTooltips(instructions);
     // trim instructions to a whole number of instructions with at most `crop` characters total
     if (this.crop && this.asm.length > this.crop) {
       let chars = 0;
@@ -80,11 +88,12 @@ export class AsmComponent implements OnChanges, OnInit {
     }
     this.instructions = instructions
       .filter((instruction) => instruction.trim() !== '')
-      .map((instruction) => {
+      .map((instruction, index) => {
         const parts = instruction.split(' ');
         return {
           instruction: parts[0],
           args: parts.slice(1),
+          timelockTooltip: timelockTooltips.get(index),
         };
       });
   }

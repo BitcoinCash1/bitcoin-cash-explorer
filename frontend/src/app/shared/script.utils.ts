@@ -1,3 +1,5 @@
+import { dates } from './i18n/dates';
+
 // See also: https://documentation.cash/protocol/blockchain/script.html#operation-codes-opcodes
 // Below are the decimal numbers (NOT the hex values)
 const opcodes = {
@@ -546,4 +548,122 @@ export function isPoint(pointHex: string): boolean {
     // If we square and it's equal, then it was a perfect root and valid point.
     return (y * y) % curveP === ySquared;
   }
+}
+
+export const LOCKTIME_THRESHOLD = 500000000;
+
+/** Decode only a literal ScriptNum push, without evaluating script or consensus rules. */
+function decodeTimelockOperand(instruction: string): number | undefined {
+  const [opcode, ...args] = instruction.trim().split(/\s+/);
+  if (args.length === 0) {
+    if (opcode === '0' || opcode === 'FALSE') {
+      return 0;
+    }
+    if (opcode === 'TRUE') {
+      return 1;
+    }
+    if (opcode === 'PUSHNUM_NEG1' || opcode === '1NEGATE') {
+      return -1;
+    }
+    const smallNumber = opcode.match(/^(?:PUSHNUM_)?([1-9]|1[0-6])$/);
+    return smallNumber ? Number(smallNumber[1]) : undefined;
+  }
+
+  const push = opcode.match(/^PUSHBYTES_([1-5])$/);
+  if (!push || args.length !== 1) {
+    return undefined;
+  }
+  const byteCount = Number(push[1]);
+  const hex = args[0];
+  if (hex.length !== byteCount * 2 || !/^[0-9a-fA-F]+$/.test(hex)) {
+    return undefined;
+  }
+
+  // ScriptNum uses little-endian signed magnitude, including a fifth sign byte.
+  // Arithmetic avoids the 32-bit truncation of JavaScript's bitwise operators.
+  let magnitude = 0;
+  for (let index = 0; index < byteCount; index++) {
+    const byte = parseInt(hex.slice(index * 2, index * 2 + 2), 16);
+    const unsignedByte = index === byteCount - 1 ? byte & 0x7f : byte;
+    magnitude += unsignedByte * 2 ** (index * 8);
+  }
+  const negative = parseInt(hex.slice(-2), 16) >= 0x80;
+  return negative ? -magnitude : magnitude;
+}
+
+/** Annotate adjacent literal operands only; this is a display hint, not validation. */
+export function detectTimelockTooltips(
+  instructions: string[]
+): Map<number, string> {
+  const tooltips = new Map<number, string>();
+  for (let index = 0; index + 1 < instructions.length; index++) {
+    const nextOpcode = instructions[index + 1].trim().split(/\s+/)[0];
+    const isCltv =
+      nextOpcode === 'CLTV' || nextOpcode === 'CHECKLOCKTIMEVERIFY';
+    const isCsv = nextOpcode === 'CSV' || nextOpcode === 'CHECKSEQUENCEVERIFY';
+    if (!isCltv && !isCsv) {
+      continue;
+    }
+    const operand = instructions[index].trim();
+    // Unknown stack expressions cannot be interpreted from an adjacent opcode.
+    // Recognised but malformed literal pushes receive an explicit invalid hint.
+    if (
+      !/^(?:PUSHBYTES_|PUSHNUM_|0(?:\s|$)|FALSE(?:\s|$)|TRUE(?:\s|$)|1NEGATE(?:\s|$)|(?:[1-9]|1[0-6])(?:\s|$))/.test(
+        operand
+      )
+    ) {
+      continue;
+    }
+    const value = decodeTimelockOperand(operand);
+    tooltips.set(
+      index,
+      isCltv ? formatCltvTimestamp(value) : formatCsvSequence(value)
+    );
+  }
+  return tooltips;
+}
+
+export function formatCltvTimestamp(value: number | undefined): string {
+  if (!Number.isInteger(value) || value < 0 || value > 0xffffffff) {
+    return $localize`:@@script.invalid-locktime:Invalid locktime`;
+  }
+  if (value < LOCKTIME_THRESHOLD) {
+    return $localize`:@@script.locktime-height:Block height: ${value}:HEIGHT:`;
+  }
+  return new Date(value * 1000)
+    .toISOString()
+    .replace('T', ' ')
+    .replace(/\.\d{3}Z$/, ' UTC');
+}
+
+export function formatCsvSequence(value: number | undefined): string {
+  if (!Number.isInteger(value) || value < 0 || value > 0x7fffffffff) {
+    return $localize`:@@script.invalid-relative-locktime:Invalid relative locktime`;
+  }
+  if (value & 0x80000000) {
+    return $localize`:@@script.disabled-relative-locktime:Relative locktime disabled (CSV acts as NOP)`;
+  }
+  const delay = value & 0xffff;
+  if (!(value & 0x00400000)) {
+    return delay === 1
+      ? $localize`:@@script.relative-locktime-block:Relative locktime: ${delay}:BLOCKS: block`
+      : $localize`:@@script.relative-locktime-blocks:Relative locktime: ${delay}:BLOCKS: blocks`;
+  }
+  let seconds = delay * 512;
+  const duration: string[] = [];
+  for (const [size, singular, plural] of [
+    [86400, 'i18nDay', 'i18nDays'],
+    [3600, 'i18nHour', 'i18nHours'],
+    [60, 'i18nMinute', 'i18nMinutes'],
+    [1, 'i18nSecond', 'i18nSeconds'],
+  ] as const) {
+    const count = Math.floor(seconds / size);
+    if (count) {
+      const strings = dates(count);
+      duration.push(strings[count === 1 ? singular : plural]);
+      seconds %= size;
+    }
+  }
+  const formatted = duration.join(' ') || dates(0).i18nSeconds;
+  return $localize`:@@script.relative-locktime-duration:Relative locktime: ${formatted}:DURATION:`;
 }

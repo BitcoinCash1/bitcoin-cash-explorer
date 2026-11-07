@@ -95,8 +95,8 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   showFullScript: { [vinIndex: number]: boolean } = {};
   showFullScriptPubkeyAsm: { [voutIndex: number]: boolean } = {};
   showFullScriptPubkeyHex: { [voutIndex: number]: boolean } = {};
-  showFullOpReturnData: { [voutIndex: number]: boolean } = {};
-  showFullOpReturnPreview: { [voutIndex: number]: boolean } = {};
+  showFullOpReturnData: Record<string, boolean> = {};
+  showFullOpReturnPreview: Record<string, boolean> = {};
   similarityMatches: Map<
     string,
     Map<string, { score: number; match: AddressMatch; group: number }>
@@ -821,14 +821,14 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
       !this.showFullScriptPubkeyHex[voutIndex];
   }
 
-  toggleShowFullOpReturnData(voutIndex: number): void {
-    this.showFullOpReturnData[voutIndex] =
-      !this.showFullOpReturnData[voutIndex];
+  toggleShowFullOpReturnData(txid: string, voutIndex: number): void {
+    const key = `${txid}-vout-${voutIndex}`;
+    this.showFullOpReturnData[key] = !this.showFullOpReturnData[key];
   }
 
-  toggleShowFullOpReturnPreview(voutIndex: number): void {
-    this.showFullOpReturnPreview[voutIndex] =
-      !this.showFullOpReturnPreview[voutIndex];
+  toggleShowFullOpReturnPreview(txid: string, voutIndex: number): void {
+    const key = `${txid}-vout-${voutIndex}`;
+    this.showFullOpReturnPreview[key] = !this.showFullOpReturnPreview[key];
   }
 
   showSigInfo(txIndex: number, vindex: number, sig: SigInfo): void {
