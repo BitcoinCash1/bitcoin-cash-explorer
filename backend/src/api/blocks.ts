@@ -1090,7 +1090,16 @@ class Blocks {
     const timer = this.startTimer();
 
     diskCache.lock();
+    try {
+      return await this.$updateBlocksWithCacheLocked(timer);
+    } finally {
+      // Release our lock before callers can await asynchronous cache publication.
+      diskCache.unlock();
+      this.clearTimer(timer);
+    }
+  }
 
+  private async $updateBlocksWithCacheLocked(timer: any): Promise<number> {
     let fastForwarded = false;
     let handledBlocks = 0;
     const blockHeightTip = await bitcoinCoreApi.$getBlockHeightTip();
@@ -1278,10 +1287,6 @@ class Blocks {
 
       handledBlocks++;
     }
-
-    diskCache.unlock();
-
-    this.clearTimer(timer);
 
     return handledBlocks;
   }

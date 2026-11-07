@@ -39,7 +39,7 @@ import mempoolBlocks from './api/mempool-blocks';
 import walletApi from './api/services/wallets';
 import stratumApi from './api/services/stratum';
 
-class Server {
+export class Server {
   private wss: WebSocket.Server | undefined;
   private wssUnixSocket: WebSocket.Server | undefined;
   private server: http.Server | undefined;
@@ -284,8 +284,6 @@ class Server {
         logger.debug(`AxiosError: ${e?.message}`);
       }
       setTimeout(this.runMainUpdateLoop.bind(this), 1000 * this.currentBackendRetryInterval);
-    } finally {
-      diskCache.unlock();
     }
   }
 
@@ -385,4 +383,6 @@ class Server {
   }
 }
 
-((): Server => new Server())();
+if (require.main === module) {
+  new Server();
+}
