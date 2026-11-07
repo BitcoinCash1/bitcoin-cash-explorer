@@ -33,6 +33,13 @@ import { StorageService } from '@app/services/storage.service';
 import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pipe';
 import { EChartsInitOpts } from 'echarts/types/dist/echarts';
 
+type DisplayMode = 'normal' | 'fiat' | 'percentage';
+interface FeesSubsidyLegend {
+  mode: DisplayMode;
+  fees: boolean;
+  subsidy: boolean;
+}
+
 @Component({
   selector: 'app-block-fees-subsidy-graph',
   templateUrl: './block-fees-subsidy-graph.component.html',
@@ -69,7 +76,8 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
   formatNumber = formatNumber;
   timespan = '';
   chartInstance: any = undefined;
-  displayMode: 'normal' | 'fiat' | 'percentage' = 'normal';
+  displayMode: DisplayMode = 'normal';
+  legend: FeesSubsidyLegend = { mode: 'normal', fees: true, subsidy: true };
   updateZoom = false;
   zoomSpan = 100;
   zoomTimeSpan = '';
@@ -110,6 +118,8 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
     this.radioGroupForm.controls['dateSpan'].setValue(
       this.miningWindowPreference
     );
+
+    this.restoreLegend();
 
     this.route.fragment.subscribe((fragment) => {
       if (
@@ -194,6 +204,55 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
     return Number.isFinite(price) && price > 0 ? value * price : null;
   }
 
+  private restoreLegend(): void {
+    const stored = this.storageService.getValue('fees_subsidy_legend');
+    if (!stored) {
+      return;
+    }
+    try {
+      const value = JSON.parse(stored);
+      if (
+        !value ||
+        !['normal', 'fiat', 'percentage'].includes(value.mode) ||
+        typeof value.fees !== 'boolean' ||
+        typeof value.subsidy !== 'boolean'
+      ) {
+        throw new Error('Invalid fees/subsidy legend');
+      }
+      this.legend = {
+        mode: value.mode,
+        fees: value.fees,
+        subsidy: value.subsidy,
+      };
+      this.displayMode = this.legend.mode;
+    } catch {
+      this.storageService.removeItem('fees_subsidy_legend');
+    }
+  }
+
+  private legendSelection(): Record<string, boolean> {
+    return {
+      Subsidy: this.displayMode === 'normal' && this.legend.subsidy,
+      Fees: this.displayMode === 'normal' && this.legend.fees,
+      'Subsidy (USD)': this.displayMode === 'fiat' && this.legend.subsidy,
+      'Fees (USD)': this.displayMode === 'fiat' && this.legend.fees,
+      'Subsidy (%)': this.displayMode === 'percentage' && this.legend.subsidy,
+      'Fees (%)': this.displayMode === 'percentage' && this.legend.fees,
+    };
+  }
+
+  private persistLegend(): void {
+    // Exporting or reapplying the bound options must retain live chart selections.
+    const chartLegend = this.chartOptions['legend'] as any;
+    if (chartLegend) {
+      chartLegend.selected = this.legendSelection();
+    }
+    this.storageService.setValue(
+      'fees_subsidy_legend',
+      JSON.stringify(this.legend)
+    );
+  }
+
   prepareChartOptions() {
     const showFiat =
       !this.stateService.isAnyTestnet() &&
@@ -202,6 +261,8 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
       );
     if (!showFiat && this.displayMode === 'fiat') {
       this.displayMode = 'normal';
+      this.legend = { mode: 'normal', fees: true, subsidy: true };
+      this.persistLegend();
     }
     let title: object;
     if (this.data.blockFees.length === 0) {
@@ -398,14 +459,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                   icon: 'roundRect',
                 },
               ],
-              selected: {
-                'Subsidy (USD)': this.displayMode === 'fiat',
-                'Fees (USD)': this.displayMode === 'fiat',
-                Subsidy: this.displayMode === 'normal',
-                Fees: this.displayMode === 'normal',
-                'Subsidy (%)': this.displayMode === 'percentage',
-                'Fees (%)': this.displayMode === 'percentage',
-              },
+              selected: this.legendSelection(),
             },
       yAxis:
         this.data.blockFees.length === 0
@@ -559,7 +613,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
         return;
       }
 
-      let mode: 'normal' | 'fiat' | 'percentage';
+      let mode: DisplayMode;
       if (params.name.includes('USD')) {
         mode = 'fiat';
       } else if (params.name.includes('%')) {
@@ -569,6 +623,14 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
       }
 
       if (this.displayMode === mode) {
+        const suffix =
+          mode === 'fiat' ? ' (USD)' : mode === 'percentage' ? ' (%)' : '';
+        this.legend = {
+          mode,
+          fees: params.selected[`Fees${suffix}`],
+          subsidy: params.selected[`Subsidy${suffix}`],
+        };
+        this.persistLegend();
         return;
       }
 
@@ -576,6 +638,8 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
 
       if (isActivation) {
         this.displayMode = mode;
+        this.legend = { mode, fees: true, subsidy: true };
+        this.persistLegend();
         this.chartInstance.dispatchAction({
           type:
             this.displayMode === 'normal' ? 'legendSelect' : 'legendUnSelect',

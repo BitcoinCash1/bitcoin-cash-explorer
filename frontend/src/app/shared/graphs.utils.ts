@@ -127,10 +127,46 @@ export const formatterXAxisTimeCategory = (
   }
 };
 
-export const download = (href, name) => {
+// Standalone SVGs cannot inherit the page's theme custom properties.
+function resolveSvgCssVariables(href: string): string {
+  const dataUrl = /^(data:image\/svg\+xml(?:;charset=utf-8)?(;base64)?),/i.exec(
+    href
+  );
+  if (!dataUrl) {
+    return href;
+  }
+
+  try {
+    const payload = href.slice(dataUrl[0].length);
+    const base64 = !!dataUrl[2];
+    const svg = base64
+      ? new TextDecoder('utf-8', { fatal: true }).decode(
+          Uint8Array.from(atob(payload), (character) => character.charCodeAt(0))
+        )
+      : decodeURIComponent(payload);
+    const style = getComputedStyle(document.documentElement);
+    const resolved = svg.replace(
+      /var\(\s*(--[\w-]+)\s*\)/g,
+      (match, name) => style.getPropertyValue(name).trim() || match
+    );
+    const encoded = base64
+      ? btoa(
+          Array.from(new TextEncoder().encode(resolved), (byte) =>
+            String.fromCharCode(byte)
+          ).join('')
+        )
+      : encodeURIComponent(resolved);
+    return dataUrl[0] + encoded;
+  } catch {
+    // A malformed data URL or an unavailable custom property must not block saving.
+    return href;
+  }
+}
+
+export const download = (href: string, name: string): void => {
   const a = document.createElement('a');
   a.download = name;
-  a.href = href;
+  a.href = resolveSvgCssVariables(href);
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
