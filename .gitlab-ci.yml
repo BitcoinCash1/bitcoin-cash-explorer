@@ -27,7 +27,7 @@ validate-build-backend:
       paths: [backend/.pnpm-store]
     - key:
         prefix: rust-1.98.1-node26-linux-amd64
-        files: [rust/gbt/Cargo.lock]
+        files: [rust/gbt/Cargo.lock, rust/gbt/napi-cli/package-lock.json]
       paths: [.cargo/registry, .cargo/git, rust/gbt/target]
   script:
     - bash ci/run.sh backend

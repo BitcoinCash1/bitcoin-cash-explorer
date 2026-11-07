@@ -1,4 +1,5 @@
-package-lock.json
+/package-lock.json
+/pnpm-lock.yaml
 index.js
 index.d.ts
 *.node
