@@ -776,6 +776,9 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
 
           // Update the chart
           const newOption = this.chartInstance.getOption();
+          // Angular reapplies these bound options after the rebuild. Keep both
+          // zoom controls in sync with the corrected range, including percentages.
+          this.chartOptions['dataZoom'] = newOption.dataZoom;
           this.zoomSpan =
             newOption.dataZoom[0].end - newOption.dataZoom[0].start;
           this.zoomTimeSpan = this.getTimeRangeFromTimespan(

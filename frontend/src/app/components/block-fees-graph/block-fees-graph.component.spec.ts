@@ -285,6 +285,15 @@ it.each([
         startValue: 0,
         endValue: 3,
       });
+      chart.dispatchAction({ type: 'dataZoom', startValue: 1, endValue: 2 });
+      component.onZoom();
+      zoom.next({ body: rows.map((row) => ({ ...row, USD: afterPrice })) });
+      // ngx-echarts reapplies the bound options after Angular detects the rebuild.
+      chart.setOption(component.chartOptions, true);
+      expect((chart.getOption()['dataZoom'] as any[])[0]).toMatchObject({
+        startValue: 1,
+        endValue: 4,
+      });
     } finally {
       chart.dispose();
       subscription.unsubscribe();
