@@ -76,6 +76,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
   formatNumber = formatNumber;
   timespan = '';
   chartInstance: any = undefined;
+  private initializedCharts = new WeakSet<object>();
   displayMode: DisplayMode = 'normal';
   legend: FeesSubsidyLegend = { mode: 'normal', fees: true, subsidy: true };
   updateZoom = false;
@@ -607,6 +608,11 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
 
   onChartInit(ec) {
     this.chartInstance = ec;
+    // Async wrapper initialization can emit the same instance more than once.
+    if (this.initializedCharts.has(ec)) {
+      return;
+    }
+    this.initializedCharts.add(ec);
 
     this.chartInstance.on('legendselectchanged', (params) => {
       if (this.isLoading) {

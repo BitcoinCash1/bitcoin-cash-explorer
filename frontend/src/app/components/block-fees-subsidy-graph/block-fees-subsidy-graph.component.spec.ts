@@ -159,3 +159,33 @@ it('persists real ECharts toggles, switches modes and restores hidden selections
     chart.dispose();
   }
 });
+
+it('registers chart listeners once when initialization emits the same instance twice', () => {
+  const f = fixture();
+  const component = f.load();
+  const chart = echarts.init(null, null, {
+    renderer: 'svg',
+    ssr: true,
+    width: 1000,
+    height: 500,
+  });
+  try {
+    chart.setOption(component.chartOptions);
+    component.onChartInit(chart);
+    component.onChartInit(chart);
+    chart.dispatchAction({ type: 'legendToggleSelect', name: 'Fees' });
+    chart.dispatchAction({ type: 'legendToggleSelect', name: 'Subsidy (%)' });
+    expect((chart.getOption()['legend'] as any[])[0].selected).toMatchObject({
+      'Fees (%)': true,
+      'Subsidy (%)': true,
+    });
+    expect(component.legend).toEqual({
+      mode: 'percentage',
+      fees: true,
+      subsidy: true,
+    });
+    expect(f.load().legend).toEqual(component.legend);
+  } finally {
+    chart.dispose();
+  }
+});
