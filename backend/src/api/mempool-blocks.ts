@@ -24,6 +24,7 @@ class MempoolBlocks {
   private mempoolBlocks: MempoolBlockWithTransactions[] = [];
   private mempoolBlockDeltas: MempoolBlockDelta[] = [];
   private txSelectionWorker: Worker | null = null;
+  private txSelectionWorkerInitialized = false;
   private rustInitialized = false;
   private rustGbtGenerator: GbtGenerator = new GbtGenerator(
     config.EXPLORER.MIN_BLOCK_SIZE_UNITS,
@@ -133,66 +134,54 @@ class MempoolBlocks {
     if (saveResults) {
       this.resetUids();
     }
-    // set missing short ids
-    for (const txid of transactions) {
-      const tx = newMempool[txid];
-      this.setUid(tx, !saveResults);
+    const uidMap = saveResults ? this.uidMap : new Map<number, string>();
+    const txidMap = saveResults ? this.txidMap : new Map<string, number>();
+    const entries = transactions.map((txid) => newMempool[txid]).filter((tx) => tx != null);
+    for (const tx of entries) {
+      if (saveResults) this.setUid(tx);
+      else this.setTempUid(tx.txid, uidMap, txidMap);
     }
 
-    // prepare a stripped down version of the mempool with only the minimum necessary data
-    // to reduce the overhead of passing this data to the worker thread
+    // Transfer only selection data, keeping audit identifiers and input lists private.
     const strippedMempool: Map<number, CompactThreadTransaction> = new Map();
-    for (const txid of transactions) {
-      const entry = newMempool[txid];
-      if (entry.uid !== null && entry.uid !== undefined) {
-        const stripped = {
-          uid: entry.uid,
-          fee: entry.fee,
-          size: entry.size,
-          sigops: entry.sigops,
-          feePerSize: entry.feePerSize,
-          inputs: entry.vin
-            .map((v) => this.getUid(newMempool[v.txid]))
-            .filter((uid) => uid !== null && uid !== undefined) as number[],
-        };
-        strippedMempool.set(entry.uid, stripped);
-      }
+    for (const entry of entries) {
+      const uid = txidMap.get(entry.txid)!;
+      strippedMempool.set(uid, {
+        uid,
+        fee: entry.fee,
+        size: entry.size,
+        sigops: entry.sigops,
+        feePerSize: entry.feePerSize,
+        inputs: this.getInputUids(entry, txidMap),
+      });
     }
 
     // (re)initialize tx selection worker thread
     if (!this.txSelectionWorker) {
-      this.txSelectionWorker = new Worker(path.resolve(__dirname, './tx-selection-worker.js'));
+      const worker = new Worker(path.resolve(__dirname, './tx-selection-worker.js'));
+      this.txSelectionWorker = worker;
       // if the thread throws an unexpected error, or exits for any other reason,
       // reset worker state so that it will be re-initialized on the next run
       this.txSelectionWorker.once('error', () => {
-        this.txSelectionWorker = null;
+        if (this.txSelectionWorker === worker) {
+          this.txSelectionWorker = null;
+          this.txSelectionWorkerInitialized = false;
+        }
       });
       this.txSelectionWorker.once('exit', () => {
-        this.txSelectionWorker = null;
+        if (this.txSelectionWorker === worker) {
+          this.txSelectionWorker = null;
+          this.txSelectionWorkerInitialized = false;
+        }
       });
     }
 
     // run the block construction algorithm in a separate thread, and wait for a result
-    let threadErrorListener;
     try {
-      const workerResultPromise = new Promise<{
-        blocks: number[][];
-        rates: Map<number, number>;
-      }>((resolve, reject) => {
-        threadErrorListener = reject;
-        this.txSelectionWorker?.once('message', (result): void => {
-          resolve(result);
-        });
-        this.txSelectionWorker?.once('error', reject);
-      });
-      this.txSelectionWorker.postMessage({
-        type: 'set',
-        mempool: strippedMempool,
-      });
-      const { blocks, rates } = this.convertResultTxids(await workerResultPromise);
-
-      // clean up thread error listener
-      this.txSelectionWorker?.removeListener('error', threadErrorListener);
+      this.txSelectionWorkerInitialized = false;
+      const result = await this.requestWorker({ type: 'set', mempool: strippedMempool });
+      const { blocks, rates } = this.convertResultTxids(result, uidMap);
+      this.txSelectionWorkerInitialized = saveResults;
 
       const processed = this.processBlockTemplates(
         newMempool,
@@ -207,6 +196,7 @@ class MempoolBlocks {
 
       return processed;
     } catch (e) {
+      this.resetJsWorker();
       logger.err('makeBlockTemplates failed. ' + (e instanceof Error ? e.message : e));
     }
     return this.mempoolBlocks;
@@ -231,8 +221,8 @@ class MempoolBlocks {
     candidates: GbtCandidates | undefined,
     saveResults = false
   ): Promise<void> {
-    if (!this.txSelectionWorker) {
-      // need to reset the worker
+    if (!saveResults || !this.txSelectionWorker || !this.txSelectionWorkerInitialized) {
+      // Dry runs use isolated identifiers; rebuild after a dry run replaced worker state.
       await this.$makeBlockTemplates(transactions, newMempool, candidates, saveResults);
       return;
     }
@@ -256,42 +246,68 @@ class MempoolBlocks {
           size: entry.size,
           sigops: entry.sigops,
           feePerSize: entry.feePerSize,
-          inputs: entry.vin
-            .map((v) => this.getUid(newMempool[v.txid]))
-            .filter((uid) => uid !== null && uid !== undefined) as number[],
+          inputs: [
+            ...new Set(
+              entry.vin
+                .map((vin) => this.getUid(newMempool[vin.txid]))
+                .filter((uid): uid is number => uid !== undefined)
+            ),
+          ],
         };
       });
 
     // run the block construction algorithm in a separate thread, and wait for a result
-    let threadErrorListener;
     try {
-      const workerResultPromise = new Promise<{
-        blocks: number[][];
-        rates: Map<number, number>;
-      }>((resolve, reject) => {
-        threadErrorListener = reject;
-        this.txSelectionWorker?.once('message', (result): void => {
-          resolve(result);
-        });
-        this.txSelectionWorker?.once('error', reject);
-      });
-      this.txSelectionWorker.postMessage({
+      const result = await this.requestWorker({
         type: 'update',
         added: addedStripped,
         removed: removedTxs.map((tx) => tx.uid) as number[],
       });
-      const { blocks, rates } = this.convertResultTxids(await workerResultPromise);
-
+      const { blocks, rates } = this.convertResultTxids(result);
       this.removeUids(removedTxs);
-
-      // clean up thread error listener
-      this.txSelectionWorker?.removeListener('error', threadErrorListener);
 
       this.processBlockTemplates(newMempool, blocks, null, Object.entries(rates), candidates, saveResults);
       logger.debug(`updateBlockTemplates completed in ${(Date.now() - start) / 1000} seconds`);
     } catch (e) {
+      this.resetJsWorker();
       logger.err('updateBlockTemplates failed. ' + (e instanceof Error ? e.message : e));
     }
+  }
+
+  private requestWorker(message: object): Promise<{ blocks: number[][]; rates: Map<number, number> }> {
+    const worker = this.txSelectionWorker;
+    if (!worker) return Promise.reject(new Error('Transaction selection worker is not initialized'));
+    return new Promise((resolve, reject) => {
+      const cleanup = () => {
+        worker.removeListener('message', onMessage);
+        worker.removeListener('error', onError);
+        worker.removeListener('exit', onExit);
+      };
+      const onMessage = (result) => {
+        cleanup();
+        resolve(result);
+      };
+      const onError = (error) => {
+        cleanup();
+        reject(error);
+      };
+      const onExit = (code) => onError(new Error(`Transaction selection worker exited (${code})`));
+      worker.once('message', onMessage);
+      worker.once('error', onError);
+      worker.once('exit', onExit);
+      try {
+        worker.postMessage(message);
+      } catch (error) {
+        onError(error);
+      }
+    });
+  }
+
+  private resetJsWorker(): void {
+    const worker = this.txSelectionWorker;
+    this.txSelectionWorker = null;
+    this.txSelectionWorkerInitialized = false;
+    if (worker) void worker.terminate();
   }
 
   private resetRustGbt(): void {
@@ -334,29 +350,28 @@ class MempoolBlocks {
           .join(', ')}`
       );
     }
-    // set missing short ids
+    const uidMap = saveResults ? this.uidMap : new Map<number, string>();
+    const txidMap = saveResults ? this.txidMap : new Map<string, number>();
     for (const tx of transactions) {
-      this.setUid(tx, !saveResults);
+      if (saveResults) this.setUid(tx);
+      else this.setTempUid(tx.txid, uidMap, txidMap);
     }
-    // set short ids for transaction inputs (deduplicate: a tx may spend multiple outputs of the
-    // same parent, which must count as only one dependency to avoid inflating missing_parent_count)
-    for (const tx of transactions) {
-      tx.inputs = [
-        ...new Set(
-          tx.vin
-            .map((v) => this.getUid(newMempool[v.txid]))
-            .filter((uid): uid is number => uid !== null && uid !== undefined)
-        ),
-      ];
-    }
-    const txsWithNoUid = transactions.filter((tx) => !tx.uid);
-    if (txsWithNoUid.length > 0) {
-      logger.debug(
-        `RUST makeBlockTemplates: ${txsWithNoUid.length} tx(s) have no uid after setUid (will be skipped by Rust): ${txsWithNoUid
-          .map((tx) => tx.txid)
-          .join(', ')}`
-      );
-    }
+    const rustTransactions = transactions.map((tx): RustThreadTransaction => {
+      const inputs = this.getInputUids(tx, txidMap);
+      if (saveResults) {
+        tx.inputs = inputs;
+        return tx as RustThreadTransaction;
+      }
+      return {
+        uid: txidMap.get(tx.txid)!,
+        order: tx.order,
+        fee: tx.fee,
+        size: tx.size,
+        sigops: tx.sigops,
+        feePerSize: tx.feePerSize,
+        inputs,
+      };
+    });
 
     // run the block construction algorithm in a separate thread, and wait for a result
     const rustGbt = saveResults
@@ -364,7 +379,8 @@ class MempoolBlocks {
       : new GbtGenerator(config.EXPLORER.MIN_BLOCK_SIZE_UNITS, config.EXPLORER.MEMPOOL_BLOCKS_AMOUNT);
     try {
       const { blocks, blockSizes, rates, overflow } = this.convertNapiResultTxids(
-        await rustGbt.make(transactions as RustThreadTransaction[], this.nextUid)
+        await rustGbt.make(rustTransactions, saveResults ? this.nextUid : uidMap.size + 1),
+        uidMap
       );
       if (saveResults) {
         this.rustInitialized = true;
@@ -604,6 +620,20 @@ class MempoolBlocks {
     }
   }
 
+  private setTempUid(txid: string, uidMap: Map<number, string>, txidMap: Map<string, number>): number {
+    let uid = txidMap.get(txid);
+    if (uid === undefined) {
+      uid = uidMap.size + 1;
+      uidMap.set(uid, txid);
+      txidMap.set(txid, uid);
+    }
+    return uid;
+  }
+
+  private getInputUids(tx: VerboseMempoolTransactionExtended, txidMap: Map<string, number>): number[] {
+    return [...new Set(tx.vin.map((vin) => txidMap.get(vin.txid)).filter((uid): uid is number => uid !== undefined))];
+  }
+
   private getUid(tx: VerboseMempoolTransactionExtended): number | void {
     if (tx) {
       return this.txidMap.get(tx.txid);
@@ -621,18 +651,21 @@ class MempoolBlocks {
     }
   }
 
-  private convertResultTxids({ blocks, rates }: { blocks: number[][]; rates: Map<number, number> }): {
+  private convertResultTxids(
+    { blocks, rates }: { blocks: number[][]; rates: Map<number, number> },
+    uidMap = this.uidMap
+  ): {
     blocks: string[][];
     rates: { [root: string]: number };
   } {
     const convertedBlocks: string[][] = blocks.map((block) =>
       block.map((uid) => {
-        return this.uidMap.get(uid) || '';
+        return uidMap.get(uid) || '';
       })
     );
     const convertedRates = {};
     for (const rateUid of rates.keys()) {
-      const rateTxid = this.uidMap.get(rateUid);
+      const rateTxid = uidMap.get(rateUid);
       if (rateTxid) {
         convertedRates[rateTxid] = rates.get(rateUid);
       }
@@ -647,7 +680,10 @@ class MempoolBlocks {
     };
   }
 
-  private convertNapiResultTxids({ blocks, blockSizes, rates, overflow }: GbtResult): {
+  private convertNapiResultTxids(
+    { blocks, blockSizes, rates, overflow }: GbtResult,
+    uidMap = this.uidMap
+  ): {
     blocks: string[][];
     blockSizes: number[];
     rates: [string, number][];
@@ -655,7 +691,7 @@ class MempoolBlocks {
   } {
     const convertedBlocks: string[][] = blocks.map((block) =>
       block.map((uid) => {
-        const txid = this.uidMap.get(uid);
+        const txid = uidMap.get(uid);
         if (txid !== undefined) {
           return txid;
         } else {
@@ -665,11 +701,11 @@ class MempoolBlocks {
     );
     const convertedRates: [string, number][] = [];
     for (const [rateUid, rate] of rates) {
-      const rateTxid = this.uidMap.get(rateUid) as string;
+      const rateTxid = uidMap.get(rateUid) as string;
       convertedRates.push([rateTxid, rate]);
     }
     const convertedOverflow: string[] = overflow.map((uid) => {
-      const txid = this.uidMap.get(uid);
+      const txid = uidMap.get(uid);
       if (txid !== undefined) {
         return txid;
       } else {
