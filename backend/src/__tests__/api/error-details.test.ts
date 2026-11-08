@@ -20,3 +20,11 @@ test('bounds and sanitises exception fields without serializing upstream data', 
   expect(safeErrorDetails(new Error('x'.repeat(1000))).message).toHaveLength(256);
   expect(safeErrorDetails({ message: 'private' })).toEqual({ name: 'UnknownError' });
 });
+
+test('redacts quoted authorization header values', () => {
+  const details = safeErrorDetails(
+    new Error('{"Authorization":"Bearer private-token","Cookie":"session=private-cookie"}')
+  );
+  expect(details.message).not.toContain('private-token');
+  expect(details.message).not.toContain('private-cookie');
+});

@@ -9,7 +9,7 @@ export function safeErrorDetails(error: unknown): { name?: string; code?: string
       .replace(/\b[a-z][a-z\d+.-]*:\/\/\S+/gi, '[redacted URL]')
       .replace(/\b(?:authorization|proxy-authorization)\s*[:=]\s*(?:Basic|Bearer)\s+\S+/gi, 'authorization=[redacted]')
       .replace(
-        /(["']?\b(?:password|passwd|cookie|token|secret|api[_-]?key)["']?\s*[:=]\s*)(?:"[^"]*"|'[^']*'|[^\s,;]+)/gi,
+        /(["']?\b(?:authorization|proxy-authorization|password|passwd|cookie|token|secret|api[_-]?key)["']?\s*[:=]\s*)(?:"[^"]*"|'[^']*'|[^\s,;]+)/gi,
         '$1[redacted]'
       )
       .slice(0, limit);
