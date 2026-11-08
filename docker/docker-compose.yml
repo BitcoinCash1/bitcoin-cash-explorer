@@ -28,20 +28,16 @@ services:
       EXPLORER_MSG_RATE_WINDOW: "10000"
       EXPLORER_MAX_OUTSPENDS_OUTPUTS: "0"
       EXPLORER_INDEXING_BLOCKS_AMOUNT: "-1"
-
       CORE_RPC_HOST: "172.27.0.1"
       CORE_RPC_PORT: "8332"
       CORE_RPC_USERNAME: "explorer"
       CORE_RPC_PASSWORD: "explorer"
-
       ELECTRUM_HOST: "172.27.0.1"
-
       DATABASE_ENABLED: "true"
       DATABASE_HOST: "bch-explorer-db"
       DATABASE_DATABASE: "explorer"
       DATABASE_USERNAME: "explorer"
       DATABASE_PASSWORD: "${DATABASE_PASSWORD:-explorer}"
-
       STATISTICS_ENABLED: "true"
     image: registry.melroy.org/bitcoincash/bitcoin-cash-explorer/bch-explorer-backend:3.16.5
     user: 1000:1000
