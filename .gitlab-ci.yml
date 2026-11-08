@@ -1,5 +1,5 @@
 default:
-  image: registry.melroy.org/melroy/docker-images/rust:1.98.1-node-26.13.0
+  image: registry.melroy.org/melroy/docker-images/rust:1.98.1-node-26.13.0@sha256:b2e9f9171f821fd4f37bf21e8daf57a3f646744341958b887f6f1c5eceeb397e
 
 variables:
   GHCR_USERNAME: melroy89
@@ -22,11 +22,11 @@ build-backend:
     MEMPOOL_COMMIT_HASH: $CI_COMMIT_SHORT_SHA
   cache:
     - key:
-        prefix: pnpm12-backend
+        prefix: pnpm12-node26-backend
         files: [backend/pnpm-lock.yaml]
       paths: [backend/.pnpm-store]
     - key:
-        prefix: rust-1.98.1-linux-amd64
+        prefix: rust-1.98.1-node26-linux-amd64
         files: [rust/gbt/Cargo.lock]
       paths: [.cargo/registry, .cargo/git, rust/gbt/target]
   script:
@@ -43,7 +43,7 @@ build-frontend:
     DOCKER_COMMIT_HASH: $CI_COMMIT_SHORT_SHA
   cache:
     key:
-      prefix: pnpm12-frontend
+      prefix: pnpm12-node26-frontend
       files: [frontend/pnpm-lock.yaml]
     paths: [frontend/.pnpm-store]
   script:
