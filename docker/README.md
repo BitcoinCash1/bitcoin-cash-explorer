@@ -8,9 +8,31 @@ See a video guide of this installation method by k3tan [on BitcoinTV.com](https:
 
 Jump to a section in this doc:
 
+- [Building images](#building-images)
 - [Configure with Bitcoin Cash Node Only](#configure-with-bitcoin-cash-node-only)
 - [Configure with Bitcoin Cash Node + Electrum Server](#configure-with-bitcoin-cash-node--electrum-server)
 - [Further Configuration](#further-configuration)
+
+## Building images
+
+Each component has one Dockerfile and one final runtime stage. Normal builds compile
+from source. CI selects `BUILD_INPUT=artifacts` and supplies the already validated
+output through the `build-artifacts` named context, skipping the source builder.
+Both paths use the same runtime configuration, user, entrypoint and healthcheck.
+
+Run these commands from the repository root using Docker BuildKit:
+
+```bash
+./docker/init.sh
+
+# Normal source builds (the default).
+docker buildx build --build-context backend=./backend --build-context rustgbt=./rust -t bch-backend ./backend
+docker buildx build -t bch-frontend ./frontend
+
+# CI packaging, after downloading the validation jobs' artifacts.
+docker buildx build --build-arg BUILD_INPUT=artifacts --build-context build-artifacts=./backend/package -t bch-backend ./backend
+docker buildx build --build-arg BUILD_INPUT=artifacts --build-context build-artifacts=./frontend/dist/explorer/browser -t bch-frontend ./frontend
+```
 
 ## Database and persistent storage
 

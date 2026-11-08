@@ -80,20 +80,28 @@ docker-build-deploy:
 
     # Populate the Docker image store explicitly after runner cache/image cleanup.
     # This avoids the default builder's "unlazy requires an applier" failure.
-    # Current Dockerfiles use literal external image references in every FROM.
+    # Pull only the shared runtime base; artifact builds skip the source builder.
     - |
-      awk 'toupper($1) == "FROM" && !seen[$2]++ { print $2 }' "docker/$SERVICE/Dockerfile.ci" |
+      awk 'toupper($1) == "FROM" && tolower($3) == "as" && $4 == "runtime" { print $2 }' "docker/$SERVICE/Dockerfile" |
         while IFS= read -r base_image; do
           docker pull "$base_image" || exit 1
         done
 
+    - |
+      case "$SERVICE" in
+        backend) ARTIFACT_DIR=./backend/package ;;
+        frontend) ARTIFACT_DIR=./frontend/dist/explorer/browser ;;
+        *) exit 2 ;;
+      esac
     - export IMAGE_NAME="bch-explorer-$SERVICE:$CI_COMMIT_TAG"
     - |
       docker buildx build \
-        --file "docker/$SERVICE/Dockerfile.ci" \
+        --file "docker/$SERVICE/Dockerfile" \
+        --build-arg BUILD_INPUT=artifacts \
+        --build-context "build-artifacts=$ARTIFACT_DIR" \
         --tag $CI_REGISTRY_IMAGE/$IMAGE_NAME \
         --tag $GHCR_REGISTRY/$GHCR_ORG/$IMAGE_NAME \
-        .
+        "./$SERVICE/"
     # Publishes to GitLab Container Registry
     - docker push $CI_REGISTRY_IMAGE/$IMAGE_NAME
     # Publishes to GitHub Container Registry

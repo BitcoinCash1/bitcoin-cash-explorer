@@ -1,3 +1,6 @@
+# Build from source by default; CI selects the validated artifacts instead.
+ARG BUILD_INPUT=builder
+
 FROM registry.melroy.org/melroy/docker-images/rust:1.98.1-node-26.13.0 AS builder
 
 ARG commitHash
@@ -18,10 +21,15 @@ ENV FD=/build/rust-gbt
 RUN mkdir rust-gbt
 
 RUN pnpm preinstall
-# pnpm v11 caches install state here; deleting it forces re-linking of the freshly built rust-gbt binary.
+# pnpm caches install state here; deleting it forces re-linking of the freshly built rust-gbt binary.
 RUN rm -rf node_modules/.pnpm-workspace-state-v1.json
 RUN pnpm install --prod
 RUN pnpm package
+
+FROM scratch AS artifacts
+COPY --from=build-artifacts / /build/package/
+
+FROM ${BUILD_INPUT} AS build-output
 
 FROM registry.melroy.org/melroy/docker-images/rust:1.98.1-node-26.13.0 AS runtime
 
@@ -31,8 +39,8 @@ ENV NODE_ENV=production
 WORKDIR /backend
 
 RUN chown 1000:1000 ./
-COPY --from=builder --chown=1000:1000 /build/package ./package/
-COPY --from=builder --chown=1000:1000 /build/explorer-config-template.json /build/start.sh /build/wait-for-it.sh ./
+COPY --from=build-output --chown=1000:1000 /build/package ./package/
+COPY --chown=1000:1000 explorer-config-template.json start.sh wait-for-it.sh ./
 # Rename template to explorer-config.json
 RUN mv explorer-config-template.json explorer-config.json
 
