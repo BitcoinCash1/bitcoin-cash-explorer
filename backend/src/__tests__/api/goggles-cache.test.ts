@@ -78,7 +78,8 @@ test('unavailable history does not receive the successful-response cache policy'
   jest.mocked(FlagValueRepository.$getTipAndTailIndexedByBucketSize).mockResolvedValue(null);
   const response = await fetch(`${url}/4y`);
   expect(response.status).toBe(503);
-  expect(response.headers.get('cache-control')).toBeNull();
+  expect(response.headers.get('cache-control')).toBe('no-store');
+  expect(response.headers.get('x-accel-expires')).toBe('0');
   expect(response.headers.get('expires')).toBeNull();
   expect(await response.json()).toEqual({
     error: 'Historical Goggles data is unavailable: no complete 1008-block bucket is indexed',
