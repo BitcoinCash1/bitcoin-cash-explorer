@@ -51,6 +51,12 @@ describe('BCH Explorer Backend Config', () => {
         DISK_CACHE_BLOCK_INTERVAL: 6,
         PRICE_UPDATES_PER_HOUR: 1,
         MAX_TRACKED_ADDRESSES: 1,
+        MAX_BUFFERED_AMOUNT: 15000000,
+        MAX_MESSAGE_SIZE: 100000,
+        MAX_TRACKED_TXS: 500,
+        MSG_RATE_LIMIT: 200,
+        MSG_RATE_WINDOW: 10000,
+        MAX_OUTSPENDS_OUTPUTS: 0,
       });
 
       expect(config.ELECTRUM).toStrictEqual({

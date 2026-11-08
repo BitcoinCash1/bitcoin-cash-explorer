@@ -56,11 +56,11 @@ class WebsocketHandler {
   private serializedInitData = '{}';
   private mempoolSequence = 0;
 
-  private MAX_BUFFERED_AMOUNT = 15_000_000; // Max. 15 MB buffered amount
-  public MAX_MESSAGE_SIZE = 100_000; // Max. 100 KB message size
-  private MAX_TRACKED_TXS = 500; // Max. 500 tracked transactions
-  private MSG_RATE_LIMIT = 200; // Max. 200 messages per 10 seconds
-  private MSG_RATE_WINDOW = 10_000; // 10 seconds
+  private MAX_BUFFERED_AMOUNT = config.EXPLORER.MAX_BUFFERED_AMOUNT;
+  public MAX_MESSAGE_SIZE = config.EXPLORER.MAX_MESSAGE_SIZE;
+  private MAX_TRACKED_TXS = config.EXPLORER.MAX_TRACKED_TXS;
+  private MSG_RATE_LIMIT = config.EXPLORER.MSG_RATE_LIMIT;
+  private MSG_RATE_WINDOW = config.EXPLORER.MSG_RATE_WINDOW;
 
   addWebsocketServer(wss: WebSocket.Server) {
     this.webSocketServers.push(wss);

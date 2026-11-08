@@ -55,6 +55,7 @@ class Server {
 
   constructor() {
     this.app = express();
+    this.app.set('case sensitive routing', true);
 
     if (!config.EXPLORER.SPAWN_CLUSTER_PROCS) {
       this.startServer();

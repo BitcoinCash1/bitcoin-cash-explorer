@@ -178,6 +178,12 @@ Corresponding `docker-compose.yml` overrides:
       EXPLORER_DISK_CACHE_BLOCK_INTERVAL: ""
       EXPLORER_PRICE_UPDATES_PER_HOUR: ""
       EXPLORER_MAX_TRACKED_ADDRESSES: ""
+      EXPLORER_MAX_BUFFERED_AMOUNT: "15000000"
+      EXPLORER_MAX_MESSAGE_SIZE: "100000"
+      EXPLORER_MAX_TRACKED_TXS: "500"
+      EXPLORER_MSG_RATE_LIMIT: "200"
+      EXPLORER_MSG_RATE_WINDOW: "10000"
+      EXPLORER_MAX_OUTSPENDS_OUTPUTS: "0"
       ...
 ```
 
@@ -395,3 +401,13 @@ retain their existing behaviour. Only referenced outputs from repeated, confirme
 parents are retained, with limits of 1,024 parent entries and 8 MiB of serialized
 output projections. Candidate metadata is limited to 4,096 parent IDs and 32,768
 outpoints. These byte limits describe retained projections, not total process RSS.
+
+WebSocket limits use bytes for `EXPLORER_MAX_BUFFERED_AMOUNT` and `EXPLORER_MAX_MESSAGE_SIZE`,
+transaction count for `EXPLORER_MAX_TRACKED_TXS`, and messages per
+`EXPLORER_MSG_RATE_WINDOW` milliseconds for `EXPLORER_MSG_RATE_LIMIT`. Defaults retain
+15 MB buffered data, 100 KB messages, 500 tracked transactions and 200 messages per 10 seconds.
+
+`EXPLORER_MAX_OUTSPENDS_OUTPUTS` limits the cumulative number of outputs in each public
+single-transaction or batched outspends request. The default `0` is unlimited to retain
+compatibility with large Bitcoin Cash transactions; set it to, for example, `100000`
+to enable a public request budget. Internal calls remain unlimited.

@@ -175,9 +175,16 @@ class BitcoinRoutes {
     }
 
     try {
-      const batchedOutspends = await bitcoinApi.$getBatchedOutspends(txids);
+      const batchedOutspends = await bitcoinApi.$getBatchedOutspends(
+        txids,
+        config.EXPLORER.MAX_OUTSPENDS_OUTPUTS || Infinity
+      );
       res.json(batchedOutspends);
     } catch (e) {
+      if (e instanceof Error && e.message === 'Too many outputs requested') {
+        handleError(req, res, 400, e.message);
+        return;
+      }
       handleError(req, res, 500, 'Failed to get batched outspends');
     }
   }
@@ -1000,9 +1007,13 @@ class BitcoinRoutes {
       return;
     }
     try {
-      const result = await bitcoinApi.$getOutspends(req.params.txId);
+      const result = await bitcoinApi.$getOutspends(req.params.txId, config.EXPLORER.MAX_OUTSPENDS_OUTPUTS || Infinity);
       res.json(result);
     } catch (e) {
+      if (e instanceof Error && e.message === 'Too many outputs requested') {
+        handleError(req, res, 400, e.message);
+        return;
+      }
       handleError(req, res, 500, 'Failed to get transaction outspends');
     }
   }

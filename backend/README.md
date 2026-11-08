@@ -270,3 +270,22 @@ Example output:
 ```sh
 Feb 13 14:55:27 [63246] WARN: Truncating pools, blocks, hashrates and difficulty_adjustments tables for re-indexing (using '--reindex-blocks'). You can cancel this command within 5 seconds
 ```
+
+## Request limits
+
+The `EXPLORER` configuration retains the existing WebSocket defaults:
+
+| Key | Default | Meaning |
+| --- | ---: | --- |
+| `MAX_BUFFERED_AMOUNT` | 15000000 | Buffered response bytes before disconnect |
+| `MAX_MESSAGE_SIZE` | 100000 | Maximum inbound message bytes |
+| `MAX_TRACKED_TXS` | 500 | Transactions tracked per connection |
+| `MSG_RATE_LIMIT` | 200 | Messages accepted per rate window |
+| `MSG_RATE_WINDOW` | 10000 | Rate window in milliseconds |
+| `MAX_OUTSPENDS_OUTPUTS` | 0 | Cumulative outputs per public outspends request; zero is unlimited |
+
+For a finite public outspends budget, set `EXPLORER.MAX_OUTSPENDS_OUTPUTS` to,
+for example, `100000`. Both single and batched requests return HTTP 400 when
+they exceed the budget. Duplicate transaction IDs each consume their output
+count. Internal calls remain unlimited. Docker exposes the same keys with
+the `EXPLORER_` prefix; see [Docker configuration](../docker/README.md).
