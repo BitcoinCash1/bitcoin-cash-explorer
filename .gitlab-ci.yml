@@ -1,5 +1,5 @@
 default:
-  image: registry.melroy.org/melroy/docker-images/bch-ci:rust1.98.1-node24.22.1-pnpm11.24.0-20261108
+  image: registry.melroy.org/melroy/docker-images/bch-ci:rust1.95-node24.22.1-pnpm11.24.0-20261108@sha256:1783506a5e592cb7db50a58cb9ab36f05812f3da508b644da8264f9bd2738fd5
 
 variables:
   GHCR_USERNAME: melroy89
@@ -26,7 +26,7 @@ build-backend:
         files: [backend/pnpm-lock.yaml]
       paths: [backend/.pnpm-store]
     - key:
-        prefix: rust-1.98.1-linux-amd64
+        prefix: rust-1.95-linux-amd64
         files: [rust/gbt/Cargo.lock]
       paths: [.cargo/registry, .cargo/git, rust/gbt/target]
   script:
