@@ -14,7 +14,13 @@ const txid = '1'.repeat(64);
 const handlers = routes as any;
 
 async function invoke(method: string, params = {}, query = {}) {
-  const res = { status: jest.fn().mockReturnThis(), json: jest.fn(), send: jest.fn(), setHeader: jest.fn() };
+  const res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+    send: jest.fn(),
+    setHeader: jest.fn(),
+    removeHeader: jest.fn(),
+  };
   await handlers[method]({ params, query, accepts: () => true }, res);
   return res;
 }
