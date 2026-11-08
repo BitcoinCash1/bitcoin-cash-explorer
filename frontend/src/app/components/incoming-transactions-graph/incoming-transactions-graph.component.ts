@@ -46,6 +46,7 @@ export class IncomingTransactionsGraphComponent implements OnInit, OnChanges {
   @Input() windowPreferenceOverride: string;
   @Input() outlierCappingEnabled: boolean = false;
   @Input() isLoading: boolean;
+  @Input() error: unknown;
 
   mempoolStatsChartOption: EChartsOption = {};
   mempoolStatsChartInitOption: EChartsInitOpts = {
@@ -63,13 +64,27 @@ export class IncomingTransactionsGraphComponent implements OnInit, OnChanges {
   ) {}
 
   ngOnInit() {
-    if (this.data) {
+    if (this.data && !this.error && !this.isLoading) {
       this.mountChart();
     }
   }
 
   ngOnChanges(): void {
-    if (!this.data) {
+    if (this.isLoading) return;
+    if (!this.data?.series?.[0]?.length || this.error) {
+      this.mempoolStatsChartOption = {
+        title: {
+          text: this.error
+            ? $localize`Error loading data.`
+            : $localize`No data to display yet. Try again later.`,
+          left: 'center',
+          top: 'center',
+          textStyle: { color: 'grey', fontSize: 15 },
+        },
+        series: [],
+        xAxis: [],
+        yAxis: [],
+      };
       return;
     }
     this.windowPreference =
@@ -303,7 +318,7 @@ export class IncomingTransactionsGraphComponent implements OnInit, OnChanges {
       ],
       yAxis: {
         max: (value): number => {
-          let cappedMax = value.max;
+          let cappedMax = Number.isFinite(value.max) ? value.max : 0;
           if (
             this.outlierCappingEnabled &&
             value.max >= this.medianBytesPerSecond * OUTLIERS_MEDIAN_MULTIPLIER

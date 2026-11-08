@@ -10,7 +10,7 @@
 ></div>
 <div
   class="text-center loadingGraphs"
-  *ngIf="!stateService.isBrowser || isLoading"
+  *ngIf="!stateService.isBrowser || (isLoading && !error)"
 >
   <div class="spinner-border text-light"></div>
 </div>

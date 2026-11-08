@@ -24,10 +24,6 @@ class StatisticsRoutes {
     req: Request,
     res: Response
   ) {
-    res.header('Pragma', 'public');
-    res.header('Cache-control', 'public');
-    res.setHeader('Expires', new Date(Date.now() + 1000 * 300).toUTCString());
-
     try {
       let result;
       switch (time as string) {
@@ -80,8 +76,11 @@ class StatisticsRoutes {
           res.setHeader('Expires', new Date(Date.now() + 1000 * 30).toUTCString());
           break;
       }
+      res.header('Pragma', 'public');
+      res.header('Cache-control', 'public');
       res.json(result);
     } catch (e) {
+      res.header('Cache-control', 'no-store');
       handleError(req, res, 500, 'Failed to get statistics');
     }
   }

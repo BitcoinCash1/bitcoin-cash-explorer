@@ -10,6 +10,7 @@
             <button
               class="btn p-0 ps-2"
               style="margin: 0 0 4px 0px"
+              [disabled]="!!statsError || !mempoolStats?.length"
               (click)="onSaveChart('mempool')"
               aria-label="Download mempool chart"
             >
@@ -270,8 +271,9 @@
               [height]="500"
               [left]="65"
               [right]="showCount ? 50 : 10"
-              [data]="mempoolStats && mempoolStats.length ? mempoolStats : null"
+              [data]="mempoolStats"
               [isLoading]="isLoading"
+              [error]="statsError"
             ></app-mempool-graph>
           </div>
         </div>
@@ -289,6 +291,7 @@
               <button
                 class="btn p-0 ps-2"
                 style="margin: 0 0 4px 0px"
+                [disabled]="!!statsError || !mempoolStats?.length"
                 (click)="onSaveChart('incoming')"
                 aria-label="Download transaction bytes chart"
               >
@@ -324,6 +327,7 @@
               [data]="mempoolTransactionsPerSecondData"
               [outlierCappingEnabled]="outlierCappingEnabled"
               [isLoading]="isLoading"
+              [error]="statsError"
             ></app-incoming-transactions-graph>
           </div>
         </div>
