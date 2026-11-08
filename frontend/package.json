@@ -5,7 +5,7 @@
   "license": "AGPL-3.0-or-later",
   "homepage": "https://bchexplorer.cash",
   "author": "Melroy van den Berg <melroy@melroy.org> (https://melroy.org)",
-  "packageManager": "pnpm@12.4.1",
+  "packageManager": "pnpm@12.18.0",
   "repository": {
     "type": "git",
     "url": "git+https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer"
