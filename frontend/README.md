@@ -33,7 +33,9 @@ $ pnpm config:defaults:explorer
 
 ### 3. Run the Frontend
 
-_Use Node.js 24.15.0 or newer in the 24.x LTS series and the pinned [pnpm 11.24.0](https://pnpm.io/installation) from `package.json`. CI uses Node.js 24.22.1._
+_Use Node.js 26.13.0 or newer in the 26.x LTS series and the pinned [pnpm 12.18.0](https://pnpm.io/installation) from `package.json`. CI uses Node.js 26.13.0._
+
+Use [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) for local development. From the repository root, run `nvm install` and `nvm use`; the root `.nvmrc` selects Node.js 26.13.0.
 
 Install project dependencies and run the frontend server:
 
@@ -87,7 +89,9 @@ Set up the [BCH Explorer backend](../backend/) first, if you haven't already.
 
 ### 1. Build the Frontend
 
-_Use Node.js 24.15.0 or newer in the 24.x LTS series and the pinned [pnpm 11.24.0](https://pnpm.io/installation) from `package.json`. CI uses Node.js 24.22.1._
+_Use Node.js 26.13.0 or newer in the 26.x LTS series and the pinned [pnpm 12.18.0](https://pnpm.io/installation) from `package.json`. CI uses Node.js 26.13.0._
+
+Use [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) for local development. From the repository root, run `nvm install` and `nvm use`; the root `.nvmrc` selects Node.js 26.13.0.
 
 Build the frontend:
 

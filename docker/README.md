@@ -8,9 +8,56 @@ See a video guide of this installation method by k3tan [on BitcoinTV.com](https:
 
 Jump to a section in this doc:
 
+- [Building images](#building-images)
 - [Configure with Bitcoin Cash Node Only](#configure-with-bitcoin-cash-node-only)
 - [Configure with Bitcoin Cash Node + Electrum Server](#configure-with-bitcoin-cash-node--electrum-server)
 - [Further Configuration](#further-configuration)
+
+## Building images
+
+Each component has one Dockerfile and one final runtime stage. Normal builds compile
+from source. CI selects `BUILD_INPUT=artifacts` and supplies the already validated
+output through the `build-artifacts` named context, skipping the source builder.
+Both paths share the runtime configuration, user and entrypoint, including the
+backend healthcheck.
+
+Run these commands from the repository root using Docker BuildKit. `--load` makes
+the resulting images available in the local Docker image store:
+
+```bash
+./docker/init.sh
+
+# Normal source builds (the default).
+docker buildx build --load \
+  --build-context backend=./backend \
+  --build-context rustgbt=./rust \
+  -t bch-backend ./backend
+
+docker buildx build --load -t bch-frontend ./frontend
+```
+
+For CI packaging, download both validation jobs' artifact archives and extract them
+at the repository root, preserving symbolic links (for example, with `unzip`). The
+extracted output must be at `backend/package` and `frontend/dist/explorer/browser`:
+
+```bash
+docker buildx build --load \
+  --build-arg BUILD_INPUT=artifacts \
+  --build-context build-artifacts=./backend/package \
+  -t bch-backend ./backend
+
+docker buildx build --load \
+  --build-arg BUILD_INPUT=artifacts \
+  --build-context build-artifacts=./frontend/dist/explorer/browser \
+  -t bch-frontend ./frontend
+```
+
+These examples create local `bch-backend` and `bch-frontend` images. The supplied
+Compose file uses published registry images; change each service's `image` setting
+to the corresponding local tag if you want to deploy your own build.
+
+The deployment instructions below assume you are in the `docker/` directory. From
+the repository root, first run `cd docker`.
 
 ## Database and persistent storage
 
@@ -135,7 +182,7 @@ Below we list selected settings from `explorer-config.json` and the correspondin
     "USE_SECOND_NODE_FOR_MINFEE": false,
     "EXTERNAL_ASSETS": [],
     "STDOUT_LOG_MIN_PRIORITY": "info",
-    "INDEXING_BLOCKS_AMOUNT": false,
+    "INDEXING_BLOCKS_AMOUNT": 0,
     "AUTOMATIC_POOLS_UPDATE": false,
     "POOLS_JSON_URL": "https://gitlab.melroy.org/bitcoincash/mining-pools/-/raw/main/pools-v2.json",
     "POOLS_JSON_TREE_URL": "https://gitlab.melroy.org/api/v4/projects/199/repository/tree",
@@ -213,7 +260,7 @@ Corresponding `docker-compose.yml` overrides:
       CORE_RPC_USERNAME: ""
       CORE_RPC_PASSWORD: ""
       CORE_RPC_TIMEOUT: 60000
-      CORE_RPC_COOKIE: false
+      CORE_RPC_COOKIE: "false"
       CORE_RPC_COOKIE_PATH: ""
       ...
 ```
@@ -267,7 +314,7 @@ Corresponding `docker-compose.yml` overrides:
       SECOND_CORE_RPC_USERNAME: ""
       SECOND_CORE_RPC_PASSWORD: ""
       SECOND_CORE_RPC_TIMEOUT: ""
-      SECOND_CORE_RPC_COOKIE: false
+      SECOND_CORE_RPC_COOKIE: "false"
       SECOND_CORE_RPC_COOKIE_PATH: ""
       ...
 ```
