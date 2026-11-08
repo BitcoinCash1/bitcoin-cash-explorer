@@ -1,4 +1,4 @@
-FROM registry.melroy.org/melroy/docker-images/rust:1.98.1-node-24.22.1 AS runtime
+FROM registry.melroy.org/melroy/docker-images/rust:1.98.1-node-26.13.0 AS runtime
 
 ENV NODE_OPTIONS=--max-old-space-size=16384
 ENV NODE_ENV=production

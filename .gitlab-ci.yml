@@ -1,5 +1,5 @@
 default:
-  image: registry.melroy.org/melroy/docker-images/rust:1.98.1-node-24.22.1@sha256:98fa8fc5023aaec3933b185bc93dcc8804a0e665c1eb4ffe68e13c7b0f146978
+  image: registry.melroy.org/melroy/docker-images/rust:1.98.1-node-26.13.0
 
 variables:
   GHCR_USERNAME: melroy89

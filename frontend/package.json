@@ -6,6 +6,9 @@
   "homepage": "https://bchexplorer.cash",
   "author": "Melroy van den Berg <melroy@melroy.org> (https://melroy.org)",
   "packageManager": "pnpm@12.18.0",
+  "engines": {
+    "node": ">=26.13.0 <27"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://gitlab.melroy.org/bitcoincash/bitcoin-cash-explorer"
@@ -101,7 +104,7 @@
     "@angular/language-service": "^22.2.3",
     "@eslint/js": "^10.0.1",
     "@types/express": "^5.0.6",
-    "@types/node": "^24.19.2",
+    "@types/node": "^26.6.6",
     "angular-eslint": "^22.6.0",
     "baseline-browser-mapping": "^2.11.34",
     "browser-sync": "^3.0.4",

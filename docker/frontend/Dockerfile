@@ -1,4 +1,4 @@
-FROM registry.melroy.org/melroy/docker-images/debian-pnpm:24.22.1-trixie AS builder
+FROM registry.melroy.org/melroy/docker-images/debian-pnpm:26.13.0-trixie AS builder
 
 ARG commitHash
 ENV DOCKER_COMMIT_HASH=${commitHash}
