@@ -1,5 +1,6 @@
 import * as http from 'http';
 import * as https from 'https';
+import { setTimeout as realSetTimeout } from 'timers';
 import { AddressInfo } from 'net';
 import { readFileSync, mkdtempSync, writeFileSync, rmSync } from 'fs';
 import { tmpdir } from 'os';
@@ -7,7 +8,7 @@ import { join } from 'path';
 const { JsonRPC } = require('../../rpc-api/jsonrpc');
 const { Client } = require('../../rpc-api/index');
 
-const pause = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+const pause = (ms: number) => new Promise((resolve) => realSetTimeout(resolve, ms));
 let servers: (http.Server | https.Server)[];
 let clients: any[];
 beforeEach(() => {
@@ -299,24 +300,34 @@ test.each(['stalled', 'truncated'])(
         blocked.push(res);
       } else res.end('{"result":42}');
     });
-    const rpc = client(server, { timeout: failure === 'stalled' ? 120 : 1000 });
-    const failures = Promise.allSettled(Array.from({ length: 16 }, () => rpc.call('blocked', [])));
-    for (let turns = 0; turns < 100 && blocked.length < 16; turns++) await pause(2);
-    expect(blocked).toHaveLength(16);
-    // Give the queued request a later deadline than the sixteen occupied slots.
-    rpc.opts.timeout = 1000;
-    const healthy = rpc.call('healthy', []);
-    expect(Object.values(rpc.agent.requests).flat()).toHaveLength(1);
-    if (failure === 'truncated') blocked.forEach((res) => res.destroy());
-    await expect(healthy).resolves.toBe(42);
-    const settled = await failures;
-    expect(settled.every((result) => result.status === 'rejected')).toBe(true);
-    if (failure === 'stalled') {
-      settled.forEach((result) =>
-        expect((result as PromiseRejectedResult).reason).toMatchObject({ code: 'ETIMEDOUT' })
-      );
+    // Control absolute deadlines while leaving socket I/O and polling on real time.
+    // A busy runner must not expire occupied slots before the queue assertion.
+    jest.useFakeTimers({
+      doNotFake: ['Date', 'hrtime', 'performance', 'nextTick', 'queueMicrotask', 'setImmediate', 'clearImmediate'],
+    });
+    try {
+      const rpc = client(server, { timeout: 30000 });
+      const failures = Promise.allSettled(Array.from({ length: 16 }, () => rpc.call('blocked', [])));
+      for (let turns = 0; turns < 100 && blocked.length < 16; turns++) await pause(2);
+      expect(blocked).toHaveLength(16);
+      // Give the queued request a later deadline than the sixteen occupied slots.
+      rpc.opts.timeout = 60000;
+      const healthy = rpc.call('healthy', []);
+      expect(Object.values(rpc.agent.requests).flat()).toHaveLength(1);
+      if (failure === 'truncated') blocked.forEach((res) => res.destroy());
+      else await jest.advanceTimersByTimeAsync(30000);
+      await expect(healthy).resolves.toBe(42);
+      const settled = await failures;
+      expect(settled.every((result) => result.status === 'rejected')).toBe(true);
+      if (failure === 'stalled') {
+        settled.forEach((result) =>
+          expect((result as PromiseRejectedResult).reason).toMatchObject({ code: 'ETIMEDOUT' })
+        );
+      }
+      expect(requests).toBe(17);
+      expect(rpc.pending.size).toBe(0);
+    } finally {
+      jest.useRealTimers();
     }
-    expect(requests).toBe(17);
-    expect(rpc.pending.size).toBe(0);
   }
 );
