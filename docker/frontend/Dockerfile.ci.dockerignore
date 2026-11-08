@@ -1,0 +1,8 @@
+*
+!frontend
+frontend/*
+!frontend/dist
+!frontend/entrypoint.sh
+!frontend/wait-for
+!frontend/nginx.conf
+!frontend/nginx-explorer.conf

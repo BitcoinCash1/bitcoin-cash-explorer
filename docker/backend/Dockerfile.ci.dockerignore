@@ -1,0 +1,7 @@
+*
+!backend
+backend/*
+!backend/package
+!docker
+docker/*
+!docker/backend

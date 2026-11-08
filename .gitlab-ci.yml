@@ -1,122 +1,65 @@
 default:
-  image: registry.melroy.org/melroy/docker-images/rust:1.98.1-node-24.22.1
+  image: registry.melroy.org/melroy/docker-images/bch-ci:rust1.98.1-node24.22.1-pnpm11.16.0-11.24.0-20261108
 
 variables:
   GHCR_USERNAME: melroy89
   GHCR_ORG: bitcoincash1
   GHCR_REGISTRY: ghcr.io
 
-.cache_backend_template: &cache_backend_definition
-  cache:
-    key:
-      files:
-        - backend/pnpm-lock.yaml
-        - rust/gbt/Cargo.lock
-    paths:
-      # pnpm
-      - backend/.pnpm-store
-      # cargo
-      - .cargo
-
-.cache_frontend_template: &cache_frontend_definition
-  cache:
-    key:
-      files:
-        - frontend/pnpm-lock.yaml
-    paths:
-      - frontend/.pnpm-store
-
 workflow:
   auto_cancel:
     on_new_commit: interruptible
 
 stages:
-  - test
   - build
   - deploy
 
-lint-format-test-backend:
-  stage: test
-  <<: *cache_backend_definition
-  interruptible: true
-  script:
-    - cd backend
-    - mkdir rust-gbt # Placeholder directory (if pnpm install is triggered during preinstall)
-    - pnpm preinstall
-    - (cd ../rust/gbt && cargo test --locked)
-    - (cd ../rust/gbt && npm run test:bindings)
-    # pnpm v11 caches install state here; deleting it forces re-linking of the freshly built rust-gbt binary.
-    - rm -rf node_modules/.pnpm-workspace-state-v1.json
-    - pnpm install --prefer-offline --prefer-frozen-lockfile
-    #- pnpm run lint
-    - pnpm prettier:check
-    - pnpm test
-
-#test-frontend:
-#  stage: test
-#  image: cypress/browsers:22.15.0
-#  <<: *cache_frontend_definition
-#  interruptible: true
-#  variables:
-#    ELECTRON_EXTRA_LAUNCH_ARGS: "--headless --disable-gpu --disable-software-rasterizer --no-sandbox"
-#  script:
-#    - cd frontend
-#    - pnpm install --prefer-offline --prefer-frozen-lockfile
-#    - pnpm config:defaults:explorer
-#    - pnpm e2e:ci
-
-lint-format-test-frontend:
-  stage: test
-  <<: *cache_frontend_definition
-  interruptible: true
-  script:
-    - cd frontend
-    - pnpm install --prefer-offline --prefer-frozen-lockfile
-    - pnpm config:defaults:explorer
-    - pnpm run lint
-    - pnpm prettier:check
-    - pnpm test:unit
-
 build-backend:
   stage: build
-  variables:
-    NODE_ENV: production
-    CARGO_HOME: $CI_PROJECT_DIR/.cargo
-  <<: *cache_backend_definition
   interruptible: true
+  variables:
+    CARGO_HOME: $CI_PROJECT_DIR/.cargo
+    MEMPOOL_COMMIT_HASH: $CI_COMMIT_SHORT_SHA
+  cache:
+    - key:
+        prefix: pnpm-backend
+        files: [backend/pnpm-lock.yaml]
+      paths: [backend/.pnpm-store]
+    - key:
+        prefix: rust-1.98.1-linux-amd64
+        files: [rust/gbt/Cargo.lock]
+      paths: [.cargo/registry, .cargo/git, rust/gbt/target]
   script:
-    - cd backend
-    - mkdir rust-gbt # Placeholder directory (if pnpm install is triggered during preinstall)
-    - pnpm preinstall
-    # pnpm v11 caches install state here; deleting it forces re-linking of the freshly built rust-gbt binary.
-    - rm -rf node_modules/.pnpm-workspace-state-v1.json
-    - pnpm install --prefer-offline --prefer-frozen-lockfile
-    - pnpm package
+    - bash ci/run.sh backend
   artifacts:
     name: "Backend Build"
     expire_in: 1 week
-    paths:
-      - backend/package
+    paths: [backend/package]
 
 build-frontend:
   stage: build
-  variables:
-    NODE_ENV: production
-  <<: *cache_frontend_definition
   interruptible: true
+  variables:
+    DOCKER_COMMIT_HASH: $CI_COMMIT_SHORT_SHA
+  cache:
+    key:
+      prefix: pnpm-frontend
+      files: [frontend/pnpm-lock.yaml]
+    paths: [frontend/.pnpm-store]
   script:
-    - cd frontend
-    - pnpm install --prefer-offline --prefer-frozen-lockfile
-    - pnpm config:defaults:explorer
-    - pnpm build
+    - bash ci/run.sh frontend
   artifacts:
     name: "Frontend Build"
     expire_in: 1 week
-    paths:
-      - frontend/dist/explorer/browser
+    paths: [frontend/dist/explorer/browser]
 
 docker-build-deploy:
   stage: deploy
+  needs:
+    - job: build-backend
+      artifacts: true
+    - job: build-frontend
+      artifacts: true
   rules:
     - if: '$CI_PROJECT_NAMESPACE == "bitcoincash" && $CI_COMMIT_TAG'
   variables:
@@ -139,7 +82,7 @@ docker-build-deploy:
     # This avoids the default builder's "unlazy requires an applier" failure.
     # Current Dockerfiles use literal external image references in every FROM.
     - |
-      awk 'toupper($1) == "FROM" && !seen[$2]++ { print $2 }' "docker/$SERVICE/Dockerfile" |
+      awk 'toupper($1) == "FROM" && !seen[$2]++ { print $2 }' "docker/$SERVICE/Dockerfile.ci" |
         while IFS= read -r base_image; do
           docker pull "$base_image" || exit 1
         done
@@ -147,12 +90,10 @@ docker-build-deploy:
     - export IMAGE_NAME="bch-explorer-$SERVICE:$CI_COMMIT_TAG"
     - |
       docker buildx build \
-        --build-arg commitHash="$CI_COMMIT_SHORT_SHA" \
-        --build-context rustgbt=./rust \
-        --build-context backend=./backend \
+        --file "docker/$SERVICE/Dockerfile.ci" \
         --tag $CI_REGISTRY_IMAGE/$IMAGE_NAME \
         --tag $GHCR_REGISTRY/$GHCR_ORG/$IMAGE_NAME \
-        ./$SERVICE/
+        .
     # Publishes to GitLab Container Registry
     - docker push $CI_REGISTRY_IMAGE/$IMAGE_NAME
     # Publishes to GitHub Container Registry
@@ -164,6 +105,8 @@ deploy-frontend:
   needs:
     - job: build-frontend
       artifacts: true
+    - job: build-backend
+      artifacts: false
   image: alpine:3
   rules:
     - if: '$CI_PROJECT_NAMESPACE == "bitcoincash" && $CI_COMMIT_TAG'

@@ -1,0 +1,22 @@
+FROM registry.melroy.org/melroy/docker-images/rust:1.98.1-node-24.22.1 AS runtime
+
+ENV NODE_OPTIONS=--max-old-space-size=16384
+ENV NODE_ENV=production
+
+WORKDIR /backend
+
+RUN chown 1000:1000 ./
+COPY --chown=1000:1000 backend/package ./package/
+COPY --chown=1000:1000 docker/backend/explorer-config-template.json docker/backend/start.sh docker/backend/wait-for-it.sh ./
+# Rename template to explorer-config.json
+RUN mv explorer-config-template.json explorer-config.json
+
+HEALTHCHECK --interval=40s --timeout=20s --start-period=40s --retries=5 \
+  CMD node package/healthcheck.js
+
+USER 1000
+
+EXPOSE 8999
+
+CMD ["/backend/start.sh"]
+
