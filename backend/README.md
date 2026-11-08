@@ -80,6 +80,8 @@ Query OK, 0 rows affected (0.00 sec)
 
 _Use Node.js 26.13.0 or newer in the 26.x LTS series and the pinned [pnpm 12.18.0](https://pnpm.io/installation) from `package.json`. CI uses Node.js 26.13.0._
 
+Use [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) for local development. From the repository root, run `nvm install` and `nvm use`; the root `.nvmrc` selects Node.js 26.13.0.
+
 _The build process requires [Rust](https://www.rust-lang.org/tools/install) to be installed._
 
 Build and copy the native Rust addon first, then install dependencies and build the backend:
@@ -275,14 +277,14 @@ Feb 13 14:55:27 [63246] WARN: Truncating pools, blocks, hashrates and difficulty
 
 The `EXPLORER` configuration retains the existing WebSocket defaults:
 
-| Key | Default | Meaning |
-| --- | ---: | --- |
-| `MAX_BUFFERED_AMOUNT` | 15000000 | Buffered response bytes before disconnect |
-| `MAX_MESSAGE_SIZE` | 100000 | Maximum inbound message bytes |
-| `MAX_TRACKED_TXS` | 500 | Transactions tracked per connection |
-| `MSG_RATE_LIMIT` | 200 | Messages accepted per rate window |
-| `MSG_RATE_WINDOW` | 10000 | Rate window in milliseconds |
-| `MAX_OUTSPENDS_OUTPUTS` | 0 | Cumulative outputs per public outspends request; zero is unlimited |
+| Key                     |  Default | Meaning                                                            |
+| ----------------------- | -------: | ------------------------------------------------------------------ |
+| `MAX_BUFFERED_AMOUNT`   | 15000000 | Buffered response bytes before disconnect                          |
+| `MAX_MESSAGE_SIZE`      |   100000 | Maximum inbound message bytes                                      |
+| `MAX_TRACKED_TXS`       |      500 | Transactions tracked per connection                                |
+| `MSG_RATE_LIMIT`        |      200 | Messages accepted per rate window                                  |
+| `MSG_RATE_WINDOW`       |    10000 | Rate window in milliseconds                                        |
+| `MAX_OUTSPENDS_OUTPUTS` |        0 | Cumulative outputs per public outspends request; zero is unlimited |
 
 For a finite public outspends budget, set `EXPLORER.MAX_OUTSPENDS_OUTPUTS` to,
 for example, `100000`. Both single and batched requests return HTTP 400 when
