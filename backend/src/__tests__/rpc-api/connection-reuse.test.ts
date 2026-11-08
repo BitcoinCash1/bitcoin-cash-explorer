@@ -89,14 +89,20 @@ test('concurrency is capped at sixteen sockets and queued calls proceed', async 
   server.on('connection', () => connections++);
   const rpc = client(server);
   const calls = Array.from({ length: 40 }, () => rpc.call('test', []));
+  let settled = false;
+  const results = Promise.all(calls).finally(() => {
+    settled = true;
+  });
+  // Attach rejection handling immediately while the server releases queued waves.
+  void results.catch(() => undefined);
   for (let turns = 0; turns < 100 && releases.length < 16; turns++) await pause(5);
   expect(releases.length).toBe(16);
   expect(connections).toBe(16);
-  while (active || releases.length) {
+  while (!settled) {
     releases.splice(0).forEach((release) => release());
     await pause(10);
   }
-  expect(await Promise.all(calls)).toEqual(Array(40).fill(42));
+  expect(await results).toEqual(Array(40).fill(42));
   expect(peak).toBeLessThanOrEqual(16);
 });
 
