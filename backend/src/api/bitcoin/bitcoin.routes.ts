@@ -32,6 +32,7 @@ function getAddressRegex(): RegExp {
 }
 const SCRIPT_HASH_REGEX = /^([a-f0-9]{2})+$/i;
 const JUST_NUMBERS_REGEX = /^[1-9]\d*$/;
+const MAX_TRANSACTION_TIMES = 100;
 
 class BitcoinRoutes {
   public initRoutes(app: Application) {
@@ -141,16 +142,19 @@ class BitcoinRoutes {
 
   private getTransactionTimes(req: Request, res: Response) {
     if (!Array.isArray(req.query.txId)) {
-      handleError(req, res, 500, 'Not an array');
+      handleError(req, res, 400, 'Not an array');
       return;
     }
+    const requestedTxIds = req.query.txId;
+    if (requestedTxIds.length > MAX_TRANSACTION_TIMES) {
+      handleError(req, res, 400, 'Too many txids requested');
+      return;
+    }
+
     const txIds: string[] = [];
-    for (const _txId in req.query.txId) {
-      if (typeof req.query.txId[_txId] === 'string') {
-        const txid = req.query.txId[_txId].toString();
-        if (TXID_REGEX.test(txid)) {
-          txIds.push(txid);
-        }
+    for (const txid of requestedTxIds) {
+      if (typeof txid === 'string' && TXID_REGEX.test(txid)) {
+        txIds.push(txid);
       }
     }
 
@@ -161,7 +165,7 @@ class BitcoinRoutes {
   private async $getBatchedOutspends(req: Request, res: Response): Promise<IPublicApi.Outspend[][] | void> {
     const txids_csv = req.query.txids;
     if (!txids_csv || typeof txids_csv !== 'string') {
-      handleError(req, res, 500, 'Invalid txids format');
+      handleError(req, res, 400, 'Invalid txids format');
       return;
     }
     const txids = txids_csv.split(',');
@@ -195,7 +199,7 @@ class BitcoinRoutes {
 
   private async getTransaction(req: Request, res: Response) {
     if (!TXID_REGEX.test(req.params.txId)) {
-      handleError(req, res, 501, `Invalid transaction ID`);
+      handleError(req, res, 400, `Invalid transaction ID`);
       return;
     }
     try {
@@ -220,7 +224,7 @@ class BitcoinRoutes {
 
   private async getTransactionHex(req: Request, res: Response) {
     if (!TXID_REGEX.test(req.params.txId)) {
-      handleError(req, res, 501, `Invalid transaction ID`);
+      handleError(req, res, 400, `Invalid transaction ID`);
       return;
     }
     try {
@@ -306,7 +310,7 @@ class BitcoinRoutes {
 
   private async getTransactionStatus(req: Request, res: Response) {
     if (!TXID_REGEX.test(req.params.txId)) {
-      handleError(req, res, 501, `Invalid transaction ID`);
+      handleError(req, res, 400, `Invalid transaction ID`);
       return;
     }
     try {
@@ -326,7 +330,7 @@ class BitcoinRoutes {
 
   private async getStrippedBlockTransactions(req: Request, res: Response) {
     if (!BLOCK_HASH_REGEX.test(req.params.hash)) {
-      handleError(req, res, 501, `Invalid block hash`);
+      handleError(req, res, 400, `Invalid block hash`);
       return;
     }
     try {
@@ -340,11 +344,11 @@ class BitcoinRoutes {
 
   private async getStrippedBlockTransaction(req: Request, res: Response) {
     if (!BLOCK_HASH_REGEX.test(req.params.hash)) {
-      handleError(req, res, 501, `Invalid block hash`);
+      handleError(req, res, 400, `Invalid block hash`);
       return;
     }
     if (!TXID_REGEX.test(req.params.txid)) {
-      handleError(req, res, 501, `Invalid transaction ID`);
+      handleError(req, res, 400, `Invalid transaction ID`);
       return;
     }
     try {
@@ -362,7 +366,7 @@ class BitcoinRoutes {
 
   private async getBlock(req: Request, res: Response) {
     if (!BLOCK_HASH_REGEX.test(req.params.hash)) {
-      handleError(req, res, 501, `Invalid block hash`);
+      handleError(req, res, 400, `Invalid block hash`);
       return;
     }
     try {
@@ -388,7 +392,7 @@ class BitcoinRoutes {
 
   private async getBlockHeader(req: Request, res: Response) {
     if (!BLOCK_HASH_REGEX.test(req.params.hash)) {
-      handleError(req, res, 501, `Invalid block hash`);
+      handleError(req, res, 400, `Invalid block hash`);
       return;
     }
     try {
@@ -402,7 +406,7 @@ class BitcoinRoutes {
 
   private async getBlockAuditSummary(req: Request, res: Response) {
     if (!BLOCK_HASH_REGEX.test(req.params.hash)) {
-      handleError(req, res, 501, `Invalid block hash`);
+      handleError(req, res, 400, `Invalid block hash`);
       return;
     }
     try {
@@ -421,11 +425,11 @@ class BitcoinRoutes {
 
   private async $getBlockTxAuditSummary(req: Request, res: Response) {
     if (!BLOCK_HASH_REGEX.test(req.params.hash)) {
-      handleError(req, res, 501, `Invalid block hash`);
+      handleError(req, res, 400, `Invalid block hash`);
       return;
     }
     if (!TXID_REGEX.test(req.params.txid)) {
-      handleError(req, res, 501, `Invalid transaction ID`);
+      handleError(req, res, 400, `Invalid transaction ID`);
       return;
     }
     try {
@@ -546,7 +550,7 @@ class BitcoinRoutes {
 
   private async getBlockTransactions(req: Request, res: Response) {
     if (!BLOCK_HASH_REGEX.test(req.params.hash)) {
-      handleError(req, res, 501, `Invalid block hash`);
+      handleError(req, res, 400, `Invalid block hash`);
       return;
     }
     try {
@@ -592,7 +596,7 @@ class BitcoinRoutes {
       return;
     }
     if (!getAddressRegex().test(req.params.address)) {
-      handleError(req, res, 501, `Invalid address`);
+      handleError(req, res, 400, `Invalid address`);
       return;
     }
 
@@ -622,7 +626,7 @@ class BitcoinRoutes {
       return;
     }
     if (!getAddressRegex().test(req.params.address)) {
-      handleError(req, res, 501, `Invalid address`);
+      handleError(req, res, 400, `Invalid address`);
       return;
     }
 
@@ -657,7 +661,7 @@ class BitcoinRoutes {
       return;
     }
     if (!getAddressRegex().test(req.params.address)) {
-      handleError(req, res, 501, `Invalid address`);
+      handleError(req, res, 400, `Invalid address`);
       return;
     }
 
@@ -692,7 +696,7 @@ class BitcoinRoutes {
       return;
     }
     if (!getAddressRegex().test(req.params.address)) {
-      handleError(req, res, 501, `Invalid address`);
+      handleError(req, res, 400, `Invalid address`);
       return;
     }
     // TODO: Try to implement this with electrum?
@@ -706,7 +710,7 @@ class BitcoinRoutes {
       return;
     }
     if (!getAddressRegex().test(req.params.address)) {
-      handleError(req, res, 501, `Invalid address`);
+      handleError(req, res, 400, `Invalid address`);
       return;
     }
 
@@ -737,7 +741,7 @@ class BitcoinRoutes {
       return;
     }
     if (!SCRIPT_HASH_REGEX.test(req.params.scripthash)) {
-      handleError(req, res, 501, `Invalid scripthash`);
+      handleError(req, res, 400, `Invalid scripthash`);
       return;
     }
 
@@ -765,7 +769,7 @@ class BitcoinRoutes {
       return;
     }
     if (!SCRIPT_HASH_REGEX.test(req.params.scripthash)) {
-      handleError(req, res, 501, `Invalid scripthash`);
+      handleError(req, res, 400, `Invalid scripthash`);
       return;
     }
 
@@ -798,7 +802,7 @@ class BitcoinRoutes {
       return;
     }
     if (!SCRIPT_HASH_REGEX.test(req.params.scripthash)) {
-      handleError(req, res, 501, `Invalid scripthash`);
+      handleError(req, res, 400, `Invalid scripthash`);
       return;
     }
 
@@ -827,7 +831,7 @@ class BitcoinRoutes {
       return;
     }
     if (!SCRIPT_HASH_REGEX.test(req.params.scripthash)) {
-      handleError(req, res, 501, `Invalid scripthash`);
+      handleError(req, res, 400, `Invalid scripthash`);
       return;
     }
 
@@ -963,7 +967,7 @@ class BitcoinRoutes {
 
   private async getRawBlock(req: Request, res: Response) {
     if (!BLOCK_HASH_REGEX.test(req.params.hash)) {
-      handleError(req, res, 501, `Invalid block hash`);
+      handleError(req, res, 400, `Invalid block hash`);
       return;
     }
     try {
@@ -977,7 +981,7 @@ class BitcoinRoutes {
 
   private async getTxIdsForBlock(req: Request, res: Response) {
     if (!BLOCK_HASH_REGEX.test(req.params.hash)) {
-      handleError(req, res, 501, `Invalid block hash`);
+      handleError(req, res, 400, `Invalid block hash`);
       return;
     }
     try {
@@ -990,7 +994,7 @@ class BitcoinRoutes {
 
   private async validateAddress(req: Request, res: Response) {
     if (!getAddressRegex().test(req.params.address)) {
-      handleError(req, res, 501, `Invalid address`);
+      handleError(req, res, 400, `Invalid address`);
       return;
     }
     try {
@@ -1003,7 +1007,7 @@ class BitcoinRoutes {
 
   private async getTransactionOutspends(req: Request, res: Response) {
     if (!TXID_REGEX.test(req.params.txId)) {
-      handleError(req, res, 501, `Invalid transaction ID`);
+      handleError(req, res, 400, `Invalid transaction ID`);
       return;
     }
     try {
@@ -1020,12 +1024,12 @@ class BitcoinRoutes {
 
   private async getTransactionOutspend(req: Request, res: Response) {
     if (!TXID_REGEX.test(req.params.txId)) {
-      handleError(req, res, 501, `Invalid transaction ID`);
+      handleError(req, res, 400, `Invalid transaction ID`);
       return;
     }
     // Check if vout is a valid number
     if (isNaN(parseInt(req.params.vout))) {
-      handleError(req, res, 501, `Invalid vout`);
+      handleError(req, res, 400, `Invalid vout`);
       return;
     }
     try {
@@ -1038,7 +1042,7 @@ class BitcoinRoutes {
 
   private async getTransactionMerkleProof(req: Request, res: Response): Promise<void> {
     if (!TXID_REGEX.test(req.params.txId)) {
-      handleError(req, res, 501, `Invalid transaction ID`);
+      handleError(req, res, 400, `Invalid transaction ID`);
       return;
     }
     try {
