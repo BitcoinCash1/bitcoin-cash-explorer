@@ -90,7 +90,7 @@ test('database failures are uncached errors, while disabled database is explicit
   const lookup = jest.spyOn(BlocksRepository, '$getStaleHistory').mockRejectedValue(new Error('database unavailable'));
   const failed = await request();
   expect(failed.statusCode).toBe(500);
-  expect(failed.headers).toEqual({ 'Cache-Control': 'no-store' });
+  expect(failed.headers).toEqual({ 'Cache-Control': 'no-store', 'X-Accel-Expires': '0' });
   expect(failed.body).toEqual({ error: 'Failed to get stale block history' });
   lookup.mockClear();
   config.DATABASE.ENABLED = false;
