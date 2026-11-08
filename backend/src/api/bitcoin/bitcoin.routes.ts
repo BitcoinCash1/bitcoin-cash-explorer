@@ -435,14 +435,22 @@ class BitcoinRoutes {
   }
 
   private async getBlocks(req: Request, res: Response) {
+    const height = req.params.height === undefined ? undefined : parseInt(req.params.height, 10);
+    let phase = 'lookup';
     try {
       if (['mainnet', 'testnet4', 'chipnet', 'scalenet'].includes(config.EXPLORER.NETWORK)) {
-        // Bitcoin
-        const height = req.params.height === undefined ? undefined : parseInt(req.params.height, 10);
+        const result = await blocks.$getBlocks(height, 15);
+        phase = 'serialization';
         res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
-        res.json(await blocks.$getBlocks(height, 15));
+        res.json(result);
       }
-    } catch (e) {
+    } catch {
+      // Do not log raw upstream errors: they can contain credentials or response bodies.
+      logger.err(`Failed to get blocks ${JSON.stringify({
+        network: config.EXPLORER.NETWORK,
+        height: Number.isFinite(height) ? height : null,
+        phase,
+      })}`);
       handleError(req, res, 500, 'Failed to get blocks');
     }
   }
