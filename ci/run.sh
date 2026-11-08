@@ -67,6 +67,9 @@ case "${1:?backend or frontend required}" in
     section tests pnpm run test:unit
 
     section package pnpm run build
+
+    # Docker needs every runtime placeholder; keep the website config.js unchanged.
+    section docker_template pnpm run config:docker-template
     ;;
 
   *)
