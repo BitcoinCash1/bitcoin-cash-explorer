@@ -1,3 +1,4 @@
+import { safeErrorDetails } from '../../utils/error-details';
 import { Application, Request, Response } from 'express';
 import * as bitcoinjs from 'bitcoinjs-lib';
 import config from '../../config';
@@ -444,13 +445,16 @@ class BitcoinRoutes {
         res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
         res.json(result);
       }
-    } catch {
-      // Do not log raw upstream errors: they can contain credentials or response bodies.
-      logger.err(`Failed to get blocks ${JSON.stringify({
-        network: config.EXPLORER.NETWORK,
-        height: Number.isFinite(height) ? height : null,
-        phase,
-      })}`);
+    } catch (error) {
+      // Log only bounded, sanitised exception fields, never the upstream object.
+      logger.err(
+        `Failed to get blocks ${JSON.stringify({
+          network: config.EXPLORER.NETWORK,
+          height: Number.isFinite(height) ? height : null,
+          phase,
+          error: safeErrorDetails(error),
+        })}`
+      );
       handleError(req, res, 500, 'Failed to get blocks');
     }
   }

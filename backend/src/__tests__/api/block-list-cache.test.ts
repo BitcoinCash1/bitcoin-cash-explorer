@@ -15,17 +15,20 @@ test.each(['lookup', 'serialization', 'success'])('block list %s cache contract'
   const headers = new Map();
   const result = Array.from({ length: 15 }, (_, i) => ({ height: 100 - i }));
   jest.mocked(blocks.$getBlocks).mockResolvedValue(result as never);
-  if (scenario === 'lookup') {jest.mocked(blocks.$getBlocks).mockRejectedValue(new Error('secret upstream body'));}
+  if (scenario === 'lookup') {
+    jest.mocked(blocks.$getBlocks).mockRejectedValue(new Error('password=secret'));
+  }
   const res = {
     setHeader: jest.fn((k, v) => headers.set(k, v)),
     removeHeader: jest.fn((k) => headers.delete(k)),
     status: jest.fn().mockReturnThis(),
     json: jest.fn(),
   };
-  if (scenario === 'serialization')
-    {res.json.mockImplementationOnce(() => {
-      throw new Error('secret');
-    });}
+  if (scenario === 'serialization') {
+    res.json.mockImplementationOnce(() => {
+      throw new Error('token=secret');
+    });
+  }
   await (routes as any).getBlocks({ params: { height: '100' }, accepts: () => true }, res);
   expect(blocks.$getBlocks).toHaveBeenCalledWith(100, 15);
   if (scenario === 'success') {

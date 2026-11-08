@@ -25,8 +25,11 @@ describe('error response caching', () => {
       expect(headers.get('Cache-Control')).toBe('no-store');
       expect(headers.get('X-Accel-Expires')).toBe('0');
       expect(res.status).toHaveBeenCalledWith(status);
-      if (json) {expect(res.json).toHaveBeenCalledWith({ error: 'Failed to get blocks' });}
-      else {expect(res.send).toHaveBeenCalledWith('Failed to get blocks');}
+      if (json) {
+        expect(res.json).toHaveBeenCalledWith({ error: 'Failed to get blocks' });
+      } else {
+        expect(res.send).toHaveBeenCalledWith('Failed to get blocks');
+      }
     }
   });
 
