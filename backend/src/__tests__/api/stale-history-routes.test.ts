@@ -26,6 +26,9 @@ function response() {
     setHeader(name: string, value: string) {
       headers[name] = value;
     },
+    removeHeader(name: string) {
+      delete headers[name];
+    },
     status(code: number) {
       this.statusCode = code;
       return this;
