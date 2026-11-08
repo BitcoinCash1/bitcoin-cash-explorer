@@ -92,11 +92,12 @@ class ValkeyCache {
     await this.$removeTransactions([]);
   }
 
-  async $updateBlocks(blocks: BlockExtended[]): Promise<void> {
+  async $updateBlocks(blocks: BlockExtended[], strict = false): Promise<void> {
     if (!config.VALKEY.ENABLED) {
       return;
     }
     if (!this.connected) {
+      if (strict) throw new Error('Valkey is not connected');
       logger.warn(`Failed to update blocks in Valkey cache: Valkey is not connected`);
       return;
     }
@@ -104,6 +105,7 @@ class ValkeyCache {
       await this.client.set('blocks', JSON.stringify(blocks));
       logger.debug(`Saved latest blocks to Valkey cache`);
     } catch (e) {
+      if (strict) throw e;
       logger.warn(`Failed to update blocks in Valkey cache: ${e instanceof Error ? e.message : e}`);
     }
   }
@@ -361,11 +363,12 @@ class ValkeyCache {
   /**
    * Set arbitrary cache value by key with optional expiry
    */
-  public async $setCache(key: string, value: string, expirySeconds?: number): Promise<void> {
+  public async $setCache(key: string, value: string, expirySeconds?: number, strict = false): Promise<void> {
     if (!config.VALKEY.ENABLED) {
       return;
     }
     if (!this.connected) {
+      if (strict) throw new Error('Valkey is not connected');
       logger.warn(`Failed to set cache in Valkey: Valkey is not connected`);
       return;
     }
@@ -376,6 +379,7 @@ class ValkeyCache {
         await this.client.set(key, value);
       }
     } catch (e) {
+      if (strict) throw e;
       logger.warn(`Failed to set cache in Valkey: ${e instanceof Error ? e.message : e}`);
     }
   }

@@ -1,3 +1,4 @@
+import { PoolConnection } from 'mysql2/promise';
 import poolStatisticsCache from './mining/pool-statistics-cache';
 import DB from '../database';
 import logger from '../logger';
@@ -21,31 +22,31 @@ class PoolsParser {
     slug: 'unknown',
   };
 
-  public setMiningPools(pools): void {
+  public prepareMiningPools(pools): any[] {
+    pools = structuredClone(pools);
     for (const pool of pools) {
       pool.regexes = pool.tags;
       pool.slug = pool.name.replace(/[^a-z0-9]/gi, '').toLowerCase();
       delete pool.tags;
     }
-    this.miningPools = pools;
+    return pools;
+  }
+
+  public setMiningPools(pools): void {
+    this.miningPools = this.prepareMiningPools(pools);
   }
 
   /**
    * Populate our db with updated mining pool definition
    * @param pools
    */
-  public async migratePoolsJson(): Promise<void> {
-    // We also need to wipe the backend cache to make sure we don't serve blocks with
-    // the wrong mining pool (usually happen with unknown blocks)
-    diskCache.setIgnoreBlocksCache();
-    valkeyCache.setIgnoreBlocksCache();
-
-    await this.$insertUnknownPool();
+  public async migratePoolsJson(connection: PoolConnection, pools: any[], sha: string): Promise<boolean> {
+    await this.$insertUnknownPool(connection);
 
     let reindexUnknown = false;
     let clearCache = false;
 
-    for (const pool of this.miningPools) {
+    for (const pool of pools) {
       if (!pool.id) {
         logger.info(`Mining pool ${pool.name} has no unique 'id' defined. Skipping.`);
         continue;
@@ -73,12 +74,12 @@ class PoolsParser {
         logger.warn(`Mining pool ${pool.name} has no 'regexes' defined.`);
       }
 
-      const poolDB = await PoolsRepository.$getPoolByUniqueId(pool.id, false);
+      const poolDB = await PoolsRepository.$getPoolByUniqueId(pool.id, false, connection);
       if (!poolDB) {
         // New mining pool
         const slug = pool.name.replace(/[^a-z0-9]/gi, '').toLowerCase();
         logger.debug(`Inserting new mining pool ${pool.name}`);
-        await PoolsRepository.$insertNewMiningPool(pool, slug);
+        await PoolsRepository.$insertNewMiningPool(pool, slug, connection);
         reindexUnknown = true;
         clearCache = true;
       } else {
@@ -88,22 +89,22 @@ class PoolsParser {
           logger.warn(
             `Renaming ${poolDB.name} mining pool to ${pool.name}. Slug has been updated. Maybe you want to make a redirection from 'https://bchexplorer.cash/mining/pool/${poolDB.slug}' to 'https://bchexplorer.cash/mining/pool/${newSlug}`
           );
-          await PoolsRepository.$renameMiningPool(poolDB.id, newSlug, pool.name);
+          await PoolsRepository.$renameMiningPool(poolDB.id, newSlug, pool.name, connection);
           clearCache = true;
         }
         if (poolDB.link !== pool.link) {
           // Pool link has changed
           logger.debug(`Updating link for ${pool.name} mining pool`);
-          await PoolsRepository.$updateMiningPoolLink(poolDB.id, pool.link);
+          await PoolsRepository.$updateMiningPoolLink(poolDB.id, pool.link, connection);
           clearCache = true;
         }
         if (JSON.stringify(pool.addresses) !== poolDB.addresses || JSON.stringify(pool.regexes) !== poolDB.regexes) {
           // Pool addresses changed or coinbase tags changed
           logger.notice(`Updating addresses and/or coinbase tags for ${pool.name} mining pool.`);
-          await PoolsRepository.$updateMiningPoolTags(poolDB.id, pool.addresses, pool.regexes);
+          await PoolsRepository.$updateMiningPoolTags(poolDB.id, pool.addresses, pool.regexes, connection);
           reindexUnknown = true;
           clearCache = true;
-          await this.$reindexBlocksForPool(poolDB.id);
+          await this.$reindexBlocksForPool(poolDB.id, connection, sha);
         }
       }
     }
@@ -112,23 +113,32 @@ class PoolsParser {
       logger.notice(`Updating addresses and/or coinbase tags for unknown mining pool.`);
       let unknownPool;
       if (config.DATABASE.ENABLED === true) {
-        unknownPool = await PoolsRepository.$getUnknownPool();
+        unknownPool = await PoolsRepository.$getUnknownPool(connection);
       } else {
         unknownPool = this.unknownPool;
       }
-      await this.$reindexBlocksForPool(unknownPool.id);
+      await this.$reindexBlocksForPool(unknownPool.id, connection, sha);
     }
 
-    // refresh the in-memory block cache with the reindexed data
-    if (clearCache) {
-      for (const block of blocks.getBlocks()) {
-        const reindexedBlock = await blocks.$indexBlock(block.id);
-        block.extras.pool = reindexedBlock.extras.pool;
-      }
-      // update persistent cache with the reindexed data
-      diskCache.$saveCacheToDisk();
-      valkeyCache.$updateBlocks(blocks.getBlocks());
+    return clearCache;
+  }
+
+  public async $refreshStaleBlocks(sha: string, fromHeight: number, pendingHashes: string[] = []): Promise<void> {
+    const [rows]: any[] = await DB.query(
+      'SELECT hash, pool_id, coinbase_raw, coinbase_addresses FROM blocks WHERE height >= ?' +
+        (pendingHashes.length ? ' OR hash IN (?)' : ''),
+      pendingHashes.length ? [fromHeight, pendingHashes] : [fromHeight]
+    );
+    await DB.$transaction((connection) => this.$reassignBlocks(rows, connection, sha, true));
+    await poolStatisticsCache.invalidate(true);
+    diskCache.setIgnoreBlocksCache();
+    valkeyCache.setIgnoreBlocksCache();
+    for (const block of blocks.getBlocks()) {
+      const reindexedBlock = await blocks.$indexBlock(block.id);
+      block.extras.pool = reindexedBlock.extras.pool;
     }
+    await diskCache.$saveCacheToDisk(false, true);
+    await valkeyCache.$updateBlocks(blocks.getBlocks(), true);
   }
 
   public matchBlockMiner(scriptsig: string, addresses: string[], pools: PoolTag[]): PoolTag | undefined {
@@ -159,33 +169,49 @@ class PoolsParser {
   /**
    * Manually add the 'unknown pool'
    */
-  public async $insertUnknownPool(): Promise<void> {
+  public async $insertUnknownPool(connection?: PoolConnection): Promise<void> {
     if (!config.DATABASE.ENABLED) {
       return;
     }
 
     try {
-      const [rows]: any[] = await DB.query({
-        sql: 'SELECT name from pools where name="Unknown"',
-        timeout: 120000,
-      });
+      const [rows]: any[] = await DB.query(
+        {
+          sql: 'SELECT name from pools where name="Unknown"',
+          timeout: 120000,
+        },
+        undefined,
+        'debug',
+        connection
+      );
       if (rows.length === 0) {
-        await DB.query({
-          sql: `INSERT INTO pools(name, link, regexes, addresses, slug, unique_id)
+        await DB.query(
+          {
+            sql: `INSERT INTO pools(name, link, regexes, addresses, slug, unique_id)
           VALUES("${this.unknownPool.name}", "${this.unknownPool.link}", "[]", "[]", "${this.unknownPool.slug}", 0);
         `,
-        });
+          },
+          undefined,
+          'debug',
+          connection
+        );
       } else {
-        await DB.query(`UPDATE pools
+        await DB.query(
+          `UPDATE pools
           SET name='${this.unknownPool.name}', link='${this.unknownPool.link}',
           regexes='[]', addresses='[]',
           slug='${this.unknownPool.slug}',
           unique_id=0
           WHERE slug='${this.unknownPool.slug}'
-        `);
+        `,
+          undefined,
+          'debug',
+          connection
+        );
       }
-      await poolStatisticsCache.invalidate();
+      if (!connection) await poolStatisticsCache.invalidate();
     } catch (e) {
+      if (connection) throw e;
       logger.err(`Unable to insert or update "Unknown" mining pool. Reason: ${e instanceof Error ? e.message : e}`);
     }
   }
@@ -195,7 +221,7 @@ class PoolsParser {
    *
    * @param pool local id of existing pool to reindex
    */
-  private async $reindexBlocksForPool(poolId: number): Promise<void> {
+  private async $reindexBlocksForPool(poolId: number, connection: PoolConnection, sha: string): Promise<void> {
     let firstKnownBlockPool = 130635; // https://bchexplorer.cash/block/00000000000009c4cdccbc49e72552a732fbbcad97391207d4606186e9e6d899
     if (config.EXPLORER.NETWORK === 'testnet4') {
       firstKnownBlockPool = 21106; // https://mempool.space/testnet/block/0000000070b701a5b6a1b965f6a38e0472e70b2bb31b973e4638dec400877581
@@ -207,29 +233,41 @@ class PoolsParser {
 
     const [blocks]: any[] = await DB.query(
       `
-      SELECT height, hash, coinbase_raw, coinbase_addresses
+      SELECT height, hash, pool_id, coinbase_raw, coinbase_addresses
       FROM blocks
       WHERE pool_id = ?
       AND height >= ?
       ORDER BY height DESC
     `,
-      [poolId, firstKnownBlockPool]
+      [poolId, firstKnownBlockPool],
+      'debug',
+      connection
     );
 
+    await this.$reassignBlocks(blocks, connection, sha);
+  }
+
+  private async $reassignBlocks(
+    blocks: any[],
+    connection: PoolConnection | undefined,
+    sha: string,
+    stampUnchanged = false
+  ): Promise<void> {
     let pools: PoolTag[] = [];
     if (config.DATABASE.ENABLED === true) {
-      pools = await PoolsRepository.$getPools();
+      pools = await PoolsRepository.$getPools(connection);
     } else {
       pools = this.miningPools;
     }
 
+    const unknownPool = await PoolsRepository.$getUnknownPool(connection);
     let changed = 0;
     for (const block of blocks) {
       const addresses = JSON.parse(block.coinbase_addresses) || [];
-      const newPool = this.matchBlockMiner(block.coinbase_raw, addresses, pools);
-      if (newPool && newPool.id !== poolId) {
-        changed++;
-        await BlocksRepository.$savePool(block.hash, newPool.id);
+      const newPool = this.matchBlockMiner(block.coinbase_raw, addresses, pools) || unknownPool;
+      if (newPool && (stampUnchanged || newPool.id !== block.pool_id)) {
+        if (newPool.id !== block.pool_id) changed++;
+        await BlocksRepository.$savePool(block.hash, newPool.id, connection, sha);
       }
     }
 

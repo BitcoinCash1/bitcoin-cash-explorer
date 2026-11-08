@@ -1,3 +1,4 @@
+import { PoolConnection } from 'mysql2/promise';
 import poolStatisticsCache from '../api/mining/pool-statistics-cache';
 import bitcoinApi from '../api/bitcoin/bitcoin-api-factory';
 import { BlockExtended, BlockExtension, BlockPrice } from '../mempool.interfaces';
@@ -115,6 +116,7 @@ class BlocksRepository {
    * Save indexed block data in the database
    */
   public async $saveBlockInDatabase(block: BlockExtended) {
+    const attributionSha = poolsUpdater.getAttributionSha(block.extras.pool);
     const truncatedCoinbaseSignature = block?.extras?.coinbaseSignature?.substring(0, 500);
     const truncatedCoinbaseSignatureAscii = block?.extras?.coinbaseSignatureAscii?.substring(0, 500);
 
@@ -196,7 +198,7 @@ class BlocksRepository {
         block.extras.feePercentiles ? JSON.stringify(block.extras.feePercentiles) : null,
         block.extras.medianFeeAmt,
         truncatedCoinbaseSignatureAscii,
-        poolsUpdater.currentSha,
+        attributionSha,
         BlocksRepository.version,
         block.stale ? 1 : 0,
         block_size,
@@ -205,6 +207,7 @@ class BlocksRepository {
       ];
 
       await DB.query(query, params);
+      poolsUpdater.trackIndexedBlock(block.id, attributionSha);
       await poolStatisticsCache.invalidate();
     } catch (e: any) {
       if (e.errno === 1062) {
@@ -1200,15 +1203,22 @@ class BlocksRepository {
    * @param id
    * @param poolId
    */
-  public async $savePool(id: string, poolId: number): Promise<void> {
+  public async $savePool(
+    id: string,
+    poolId: number,
+    connection?: PoolConnection,
+    definitionHash = poolsUpdater.currentSha
+  ): Promise<void> {
     try {
       await DB.query(
         `
         UPDATE blocks SET pool_id = ?, definition_hash = ?
         WHERE hash = ?`,
-        [poolId, poolsUpdater.currentSha, id]
+        [poolId, definitionHash, id],
+        'debug',
+        connection
       );
-      await poolStatisticsCache.invalidate();
+      if (!connection) await poolStatisticsCache.invalidate();
     } catch (e) {
       logger.err(`Cannot update block pool. Reason: ` + (e instanceof Error ? e.message : e));
       throw e;

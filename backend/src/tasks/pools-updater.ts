@@ -1,3 +1,6 @@
+import diskCache from '../api/disk-cache';
+import valkeyCache from '../api/valkey-cache';
+import BlocksRepository from '../repositories/BlocksRepository';
 import axios, { AxiosResponse } from 'axios';
 import poolsParser from '../api/pools-parser';
 import config from '../config';
@@ -14,6 +17,10 @@ import { Common } from '../api/common';
 class PoolsUpdater {
   tag = 'PoolsUpdater';
 
+  private migrating = false;
+  private readonly pendingBlocks = new Set<string>();
+  private readonly attributionShas = new WeakMap<object, string | null>();
+  private recheck: { sha: string; fromHeight: number } | null = null;
   lastRun = 0;
   currentSha: string | null = null;
   poolsUrl: string = config.EXPLORER.POOLS_JSON_URL;
@@ -38,6 +45,8 @@ class PoolsUpdater {
     ) {
       return;
     }
+
+    if (this.migrating || this.recheck) return;
 
     const now = new Date().getTime() / 1000;
     if (now - this.lastRun < config.EXPLORER.POOLS_UPDATE_DELAY) {
@@ -94,23 +103,36 @@ class PoolsUpdater {
       if (poolsJson === undefined) {
         return;
       }
-      poolsParser.setMiningPools(poolsJson);
+      const stagedPools = poolsParser.prepareMiningPools(poolsJson);
 
       if (config.DATABASE.ENABLED === false) {
+        poolsParser.miningPools = stagedPools;
+        this.currentSha = sha;
         // Don't run db operations
         logger.info(`Mining pools-v2.json (${sha}) import completed (no database)`, this.tag);
         return;
       }
 
+      const fromHeight = Math.max(0, (await BlocksRepository.$mostRecentBlockHeight()) - 10);
+      this.migrating = true;
       try {
-        await DB.query('START TRANSACTION;');
-        await this.updateDBSha(sha);
-        await poolsParser.migratePoolsJson();
-        await DB.query('COMMIT;');
-      } catch (e) {
-        logger.err(`Could not migrate mining pools, rolling back. Exception: ${JSON.stringify(e)}`, this.tag);
-        await DB.query('ROLLBACK;');
+        await DB.$transaction(async (connection) => {
+          await DB.query('DELETE FROM state WHERE name = ?', ['pools_json_sha'], 'debug', connection);
+          await DB.query('INSERT INTO state VALUES(?, NULL, ?)', ['pools_json_sha', sha], 'debug', connection);
+          await poolsParser.migratePoolsJson(connection, stagedPools, sha);
+        });
+      } catch (error) {
+        this.pendingBlocks.clear();
+        throw error;
+      } finally {
+        this.migrating = false;
       }
+      // Indexing continues using the old definitions until the transaction has committed.
+      poolsParser.miningPools = stagedPools;
+      this.currentSha = sha;
+      this.recheck = { sha, fromHeight };
+      diskCache.setIgnoreBlocksCache();
+      valkeyCache.setIgnoreBlocksCache();
       logger.info(`Mining pools-v2.json (${sha}) import completed`, this.tag);
     } catch (e) {
       // fast-forward lastRun to 10 minutes before the next scheduled update
@@ -119,21 +141,40 @@ class PoolsUpdater {
     }
   }
 
-  /**
-   * Update our latest pools-v2.json sha in the db
-   */
-  private async updateDBSha(sha: string): Promise<void> {
-    this.currentSha = sha;
-    if (config.DATABASE.ENABLED === true) {
-      try {
-        await DB.query('DELETE FROM state where name="pools_json_sha"');
-        await DB.query(`INSERT INTO state VALUES('pools_json_sha', NULL, '${sha}')`);
-      } catch (e) {
-        logger.err(
-          'Cannot save GitLab pools-v2.json sha into the db. Reason: ' + (e instanceof Error ? e.message : e),
-          this.tag
-        );
+  public trackPoolAttribution(pool: object): void {
+    this.attributionShas.set(pool, this.currentSha);
+  }
+
+  public copyPoolAttribution(source: object, target: object): void {
+    this.attributionShas.set(target, this.getAttributionSha(source));
+  }
+
+  public getAttributionSha(pool: object): string | null {
+    return this.attributionShas.has(pool) ? this.attributionShas.get(pool)! : this.currentSha;
+  }
+
+  public trackIndexedBlock(hash: string, attributionSha: string | null): void {
+    if (this.migrating || attributionSha !== this.currentSha) {
+      this.pendingBlocks.add(hash);
+      if (!this.migrating && this.currentSha && !this.recheck) {
+        this.recheck = { sha: this.currentSha, fromHeight: Number.MAX_SAFE_INTEGER };
       }
+    }
+  }
+
+  public async $recheckBlocks(): Promise<void> {
+    if (!this.recheck) return;
+    const pending = [...this.pendingBlocks].slice(0, 1000);
+    for (const hash of pending) this.pendingBlocks.delete(hash);
+    try {
+      await poolsParser.$refreshStaleBlocks(this.recheck.sha, this.recheck.fromHeight, pending);
+      if (!this.pendingBlocks.size) this.recheck = null;
+    } catch (error) {
+      for (const hash of pending) this.pendingBlocks.add(hash);
+      logger.err(
+        `Could not refresh mining pools; will retry: ${error instanceof Error ? error.message : error}`,
+        this.tag
+      );
     }
   }
 
