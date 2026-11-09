@@ -1,4 +1,8 @@
 import '@angular/compiler';
+// Include declaring modules for the address and its transitive transaction
+// components in Angular's AOT scope without executing their routing setup.
+import type {} from '@app/graphs/graphs.module';
+import type {} from '@components/transaction/transaction.module';
 import { convertToParamMap } from '@angular/router';
 import { BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
 import { afterEach, describe, expect, it, vi } from 'vitest';

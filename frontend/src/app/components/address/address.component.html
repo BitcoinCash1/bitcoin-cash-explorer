@@ -206,8 +206,14 @@
     <div class="title-tx">
       <h2 class="text-start">
         @if (paginatedMode) {
-          <span i18n="address.transactions-loaded"
-            >{{ transactions?.length || 0 | number }} transactions loaded</span
+          <span
+            i18n="address.transactions-loaded"
+            >{transactions?.length || 0, plural,
+              =1 {1 transaction loaded}
+              other {
+                {{ transactions?.length || 0 | number }} transactions loaded
+              }
+            }</span
           >
         } @else {
           <ng-template [ngIf]="!transactions?.length">&nbsp;</ng-template>
