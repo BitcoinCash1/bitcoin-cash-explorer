@@ -24,7 +24,44 @@ let url: string;
 let rpcFailure = false;
 let rpcResult = 100;
 let rpcCalls = 0;
+let rpcConsumersReady = Promise.resolve();
 const originalEnabled = config.VALKEY.ENABLED;
+
+/** Hold the mock RPC response until every HTTP consumer has entered the real cache. */
+function holdRpcForConsumers(method: 'get' | 'getOverview', expected: number): () => void {
+  let consumers = 0;
+  const ready = Promise.withResolvers<void>();
+  rpcConsumersReady = ready.promise;
+  const entered = () => {
+    if (++consumers === expected) ready.resolve();
+  };
+  if (method === 'get') {
+    const get = cache.get.bind(cache);
+    const spy = jest.spyOn(cache, 'get').mockImplementation((pool, compute) => {
+      const result = get(pool, compute);
+      entered();
+      return result;
+    });
+    return () => spy.mockRestore();
+  }
+  const getOverview = cache.getOverview.bind(cache);
+  const spy = jest.spyOn(cache, 'getOverview').mockImplementation((interval, compute) => {
+    const result = getOverview(interval, compute);
+    entered();
+    return result;
+  });
+  return () => spy.mockRestore();
+}
+
+async function concurrentResponses(target: string, method: 'get' | 'getOverview'): Promise<Response[]> {
+  const restore = holdRpcForConsumers(method, 8);
+  try {
+    return await Promise.all(Array.from({ length: 8 }, () => fetch(target)));
+  } finally {
+    restore();
+    rpcConsumersReady = Promise.resolve();
+  }
+}
 
 beforeAll(async () => {
   // Exercise the real RPC transport and HTTP route with controlled node responses.
@@ -33,7 +70,7 @@ beforeAll(async () => {
       /* Drain the RPC request. */
     }
     rpcCalls++;
-    await new Promise((resolve) => setTimeout(resolve, 20));
+    await rpcConsumersReady;
     res.setHeader('Content-Type', 'application/json');
     res.end(
       JSON.stringify(
@@ -87,7 +124,7 @@ afterAll(async () => {
 
 test('RPC failure is not cached by Valkey or HTTP, and the next request recovers', async () => {
   rpcFailure = true;
-  const responses = await Promise.all(Array.from({ length: 8 }, () => fetch(url)));
+  const responses = await concurrentResponses(url, 'get');
   for (const response of responses) {
     expect(response.status).toBe(200);
     expect(response.headers.get('cache-control')).toBe('no-store');
@@ -157,7 +194,7 @@ test('monthly overview shares concurrent misses, avoids caching RPC failure and 
   jest.mocked(PoolsRepository.$getPoolsInfo).mockClear().mockResolvedValue([]);
   jest.mocked(BlocksRepository.$countEmptyBlocks).mockResolvedValue([]);
   rpcFailure = true;
-  const responses = await Promise.all(Array.from({ length: 8 }, () => fetch(overviewUrl)));
+  const responses = await concurrentResponses(overviewUrl, 'getOverview');
   for (const response of responses) {
     expect(response.status).toBe(200);
     expect(response.headers.get('cache-control')).toBe('no-store');
@@ -166,6 +203,7 @@ test('monthly overview shares concurrent misses, avoids caching RPC failure and 
     expect(body).not.toHaveProperty('cacheable');
   }
   expect(PoolsRepository.$getPoolsInfo).toHaveBeenCalledTimes(1);
+  expect(rpcCalls).toBe(1);
   expect([...values.keys()].filter((key) => key.includes('overview:'))).toHaveLength(0);
   rpcFailure = false;
   const recovered = await fetch(overviewUrl);
