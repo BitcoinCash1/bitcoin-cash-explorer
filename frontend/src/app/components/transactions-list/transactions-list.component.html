@@ -439,10 +439,11 @@
                           <td i18n="transactions-list.p2sh-redeem-script">
                             P2SH redeem script
                           </td>
-                          <td
-                            style="text-align: left"
-                            [innerHTML]="vin.inner_redeemscript_asm | asmStyler"
-                          ></td>
+                          <td style="text-align: left">
+                            <app-asm
+                              [asm]="vin.inner_redeemscript_asm"
+                            ></app-asm>
+                          </td>
                         </tr>
                         <tr>
                           <td i18n="transactions-list.nsequence">nSequence</td>
@@ -455,12 +456,11 @@
                             <td i18n="transactions-list.previous-output-script">
                               Previous output script
                             </td>
-                            <td
-                              style="text-align: left"
-                              [innerHTML]="
-                                vin.prevout.scriptpubkey_asm | asmStyler
-                              "
-                            ></td>
+                            <td style="text-align: left">
+                              <app-asm
+                                [asm]="vin.prevout.scriptpubkey_asm"
+                              ></app-asm>
+                            </td>
                           </tr>
                           <tr>
                             <td i18n="transactions-list.previous-output-type">
@@ -699,7 +699,9 @@
                               "
                               *ngIf="vout.scriptpubkey_asm !== 'OP_RETURN'"
                               class="badge bg-secondary scriptmessage opreturn-msg"
-                              (click)="toggleShowFullOpReturnPreview(vindex)"
+                              (click)="
+                                toggleShowFullOpReturnPreview(tx.txid, vindex)
+                              "
                               >{{
                                 vout.scriptpubkey_asm
                                   | hex2ascii
@@ -712,7 +714,11 @@
                               @if (
                                 (vout.scriptpubkey_asm | hex2ascii).length > 200
                               ) {
-                                @if (!showFullOpReturnPreview[vindex]) {
+                                @if (
+                                  !showFullOpReturnPreview[
+                                    tx.txid + "-vout-" + vindex
+                                  ]
+                                ) {
                                   <span
                                     #expandOpReturn
                                     tabindex="0"
@@ -724,7 +730,10 @@
                                     "
                                     class="badge bg-primary"
                                     (click)="
-                                      toggleShowFullOpReturnPreview(vindex)
+                                      toggleShowFullOpReturnPreview(
+                                        tx.txid,
+                                        vindex
+                                      )
                                     "
                                     >Show more</span
                                   >
@@ -740,7 +749,10 @@
                                     "
                                     class="badge bg-primary"
                                     (click)="
-                                      toggleShowFullOpReturnPreview(vindex)
+                                      toggleShowFullOpReturnPreview(
+                                        tx.txid,
+                                        vindex
+                                      )
                                     "
                                     >Show less</span
                                   >
@@ -896,7 +908,7 @@
                 <tr
                   *ngIf="
                     vout.scriptpubkey_type === 'op_return' &&
-                    showFullOpReturnPreview[vindex]
+                    showFullOpReturnPreview[tx.txid + '-vout-' + vindex]
                   "
                   [ngClass]="{
                     focus:
@@ -1021,7 +1033,9 @@
                               white-space: pre-line;
                             "
                           >
-                            @if (!showFullOpReturnData[vindex]) {
+                            @if (
+                              !showFullOpReturnData[tx.txid + "-vout-" + vindex]
+                            ) {
                               {{
                                 vout.scriptpubkey_asm
                                   | hex2ascii
@@ -1037,22 +1051,37 @@
                               "
                               style="display: flex"
                             >
-                              <span *ngIf="!showFullOpReturnData[vindex]"
+                              <span
+                                *ngIf="
+                                  !showFullOpReturnData[
+                                    tx.txid + '-vout-' + vindex
+                                  ]
+                                "
                                 >...</span
                               >
                               <button
                                 type="button"
                                 class="btn btn-sm btn-purple mt-2"
-                                (click)="toggleShowFullOpReturnData(vindex)"
+                                (click)="
+                                  toggleShowFullOpReturnData(tx.txid, vindex)
+                                "
                                 style="margin-left: auto"
                               >
                                 <span
-                                  *ngIf="!showFullOpReturnData[vindex]"
+                                  *ngIf="
+                                    !showFullOpReturnData[
+                                      tx.txid + '-vout-' + vindex
+                                    ]
+                                  "
                                   i18n="show-all"
                                   >Show all</span
                                 >
                                 <span
-                                  *ngIf="showFullOpReturnData[vindex]"
+                                  *ngIf="
+                                    showFullOpReturnData[
+                                      tx.txid + '-vout-' + vindex
+                                    ]
+                                  "
                                   i18n="show-less"
                                   >Show less</span
                                 >

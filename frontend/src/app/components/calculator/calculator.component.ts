@@ -12,6 +12,7 @@ import {
   map,
   shareReplay,
   switchMap,
+  tap,
 } from 'rxjs/operators';
 import { StateService } from '@app/services/state.service';
 import { ApiService } from '@app/services/api.service';
@@ -39,6 +40,7 @@ export class CalculatorComponent implements OnInit {
   isMaxSupply = false;
   currentCurrency = 'USD';
   currencyDecimals = 2;
+  lastInput: 'fiat' | 'bitcoin' | 'satoshis' = 'bitcoin';
 
   currency$: Observable<string>;
   price$: Observable<number>;
@@ -108,39 +110,50 @@ export class CalculatorComponent implements OnInit {
       shareReplay({ bufferSize: 1, refCount: true })
     );
 
-    combineLatest([this.price$, this.form.get('fiat').valueChanges]).subscribe(
-      ([price, value]) => {
-        this.currentPrice = price;
-        const maxFiat = price * MAX_BCH_SUPPLY;
-        const isMaxSupply = value >= maxFiat;
-        this.isMaxSupply = isMaxSupply;
-        if (isMaxSupply) {
-          value = maxFiat;
-          this.form
-            .get('fiat')
-            .setValue(this.formatFiat(value), { emitEvent: false });
-        }
-        let rate = parseFloat((value / price).toFixed(8));
-        if (rate >= MAX_BCH_SUPPLY) {
-          rate = MAX_BCH_SUPPLY;
-        }
-        const satsRate = Math.round(rate * 100_000_000);
-        if (isNaN(value)) {
-          return;
-        }
-        this.form
-          .get('bitcoin')
-          .setValue(isMaxSupply ? MAX_BCH_SUPPLY.toString() : rate.toFixed(8), {
-            emitEvent: false,
-          });
-        this.form.get('satoshis').setValue(satsRate, { emitEvent: false });
+    combineLatest([
+      this.price$,
+      this.form
+        .get('fiat')
+        .valueChanges.pipe(tap(() => (this.lastInput = 'fiat'))),
+    ]).subscribe(([price, value]) => {
+      if (this.lastInput !== 'fiat') {
+        return;
       }
-    );
+      this.currentPrice = price;
+      const maxFiat = price * MAX_BCH_SUPPLY;
+      const isMaxSupply = value >= maxFiat;
+      this.isMaxSupply = isMaxSupply;
+      if (isMaxSupply) {
+        value = maxFiat;
+        this.form
+          .get('fiat')
+          .setValue(this.formatFiat(value), { emitEvent: false });
+      }
+      let rate = parseFloat((value / price).toFixed(8));
+      if (rate >= MAX_BCH_SUPPLY) {
+        rate = MAX_BCH_SUPPLY;
+      }
+      const satsRate = Math.round(rate * 100_000_000);
+      if (isNaN(value)) {
+        return;
+      }
+      this.form
+        .get('bitcoin')
+        .setValue(isMaxSupply ? MAX_BCH_SUPPLY.toString() : rate.toFixed(8), {
+          emitEvent: false,
+        });
+      this.form.get('satoshis').setValue(satsRate, { emitEvent: false });
+    });
 
     combineLatest([
       this.price$,
-      this.form.get('bitcoin').valueChanges,
+      this.form
+        .get('bitcoin')
+        .valueChanges.pipe(tap(() => (this.lastInput = 'bitcoin'))),
     ]).subscribe(([price, value]) => {
+      if (this.lastInput !== 'bitcoin') {
+        return;
+      }
       this.currentPrice = price;
       const isMaxSupply = parseFloat(value) >= MAX_BCH_SUPPLY;
       this.isMaxSupply = isMaxSupply;
@@ -161,8 +174,13 @@ export class CalculatorComponent implements OnInit {
 
     combineLatest([
       this.price$,
-      this.form.get('satoshis').valueChanges,
+      this.form
+        .get('satoshis')
+        .valueChanges.pipe(tap(() => (this.lastInput = 'satoshis'))),
     ]).subscribe(([price, value]) => {
+      if (this.lastInput !== 'satoshis') {
+        return;
+      }
       this.currentPrice = price;
       let bitcoinValue = value / 100_000_000;
       const isMaxSupply = bitcoinValue >= MAX_BCH_SUPPLY;
