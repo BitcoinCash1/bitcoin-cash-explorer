@@ -25,6 +25,10 @@
                 <source xml:space="preserve">Difficulty</source>
                 <target xml:space="preserve">Moeilijkheidsgraad</target>
             </trans-unit>
+            <trans-unit id="1093088634249507965">
+                <source xml:space="preserve">Loading pending transaction count</source>
+                <target xml:space="preserve">Loading pending transaction count</target>
+            </trans-unit>
             <trans-unit id="1130652265542107236">
                 <source xml:space="preserve">Age</source>
                 <target xml:space="preserve">Leeftijd</target>
@@ -121,6 +125,10 @@
                 <source xml:space="preserve"> Minimum fee </source>
                 <target xml:space="preserve"> Minimumvergoeding </target>
             </trans-unit>
+            <trans-unit id="1571987793005765970">
+                <source xml:space="preserve">Recent Goggles data is not indexed yet</source>
+                <target xml:space="preserve">Recent Goggles data is not indexed yet</target>
+            </trans-unit>
             <trans-unit id="1576412637250081491">
                 <source xml:space="preserve"> Submit Package </source>
                 <target xml:space="preserve"> Pakket indienen </target>
@@ -145,6 +153,10 @@
                 <source xml:space="preserve">Audit status</source>
                 <target xml:space="preserve">Auditstatus</target>
             </trans-unit>
+            <trans-unit id="1642363239193169588">
+                <source xml:space="preserve">All transactions</source>
+                <target xml:space="preserve">All transactions</target>
+            </trans-unit>
             <trans-unit id="1652579116694662723">
                 <source xml:space="preserve"> Purging </source>
                 <target xml:space="preserve"> Weggooien </target>
@@ -164,6 +176,10 @@
             <trans-unit id="1780726536610449318">
                 <source xml:space="preserve"> Treasury Leaderboard </source>
                 <target xml:space="preserve"> Schatkist-ranglijst </target>
+            </trans-unit>
+            <trans-unit id="1787473399462910998">
+                <source xml:space="preserve"> Load more transactions </source>
+                <target xml:space="preserve"> Load more transactions </target>
             </trans-unit>
             <trans-unit id="1792702609723944983">
                 <source xml:space="preserve">Not seen in Mempool</source>
@@ -204,6 +220,10 @@
             <trans-unit id="1955634148203463265">
                 <source xml:space="preserve"> Broadcast </source>
                 <target xml:space="preserve"> Uitzenden </target>
+            </trans-unit>
+            <trans-unit id="1980504865097627824">
+                <source xml:space="preserve">Log</source>
+                <target xml:space="preserve">Log</target>
             </trans-unit>
             <trans-unit id="1986319458172810942">
                 <source xml:space="preserve"> CashToken Amount </source>
@@ -325,6 +345,14 @@
                 <source xml:space="preserve">Change (7d)</source>
                 <target xml:space="preserve">Wijziging (7d)</target>
             </trans-unit>
+            <trans-unit id="2329414200589920187">
+                <source xml:space="preserve">Total txs (Count)</source>
+                <target xml:space="preserve">Total txs (Count)</target>
+            </trans-unit>
+            <trans-unit id="2330577642930707695">
+                <source xml:space="preserve"> Cancel </source>
+                <target xml:space="preserve"> Cancel </target>
+            </trans-unit>
             <trans-unit id="2348971518300945764">
                 <source xml:space="preserve">Range</source>
                 <target xml:space="preserve">Bereik</target>
@@ -336,6 +364,10 @@
             <trans-unit id="2365612610415331480">
                 <source xml:space="preserve"><x ctype="x-span" equiv-text="&lt;span class=&quot;badge bg-secondary&quot;&gt;" id="START_TAG_SPAN"/>Stale<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></source>
                 <target xml:space="preserve"><x ctype="x-span" equiv-text="&lt;span class=&quot;badge bg-secondary&quot;&gt;" id="START_TAG_SPAN"/>Verouderd<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></target>
+            </trans-unit>
+            <trans-unit id="237167053899964641">
+                <source xml:space="preserve"><x equiv-text="{{ countResult.confirmedCount | number }}" id="INTERPOLATION"/> counted so far</source>
+                <target xml:space="preserve"><x equiv-text="{{ countResult.confirmedCount | number }}" id="INTERPOLATION"/> counted so far</target>
             </trans-unit>
             <trans-unit id="2372330987466821730">
                 <source xml:space="preserve"> Offline </source>
@@ -372,6 +404,10 @@
             <trans-unit id="25148835d92465353fc5fe8897c27d5369978e5a">
                 <source xml:space="preserve">Difficulty</source>
                 <target xml:space="preserve">Moeilijkheid</target>
+            </trans-unit>
+            <trans-unit id="2531409894022483466">
+                <source xml:space="preserve">Transaction total is unavailable from the history server.</source>
+                <target xml:space="preserve">Transaction total is unavailable from the history server.</target>
             </trans-unit>
             <trans-unit id="2549503191466527026">
                 <source xml:space="preserve"> Fees </source>
@@ -436,6 +472,10 @@
             <trans-unit id="2724055831234181057">
                 <source xml:space="preserve">Version</source>
                 <target xml:space="preserve">Versie</target>
+            </trans-unit>
+            <trans-unit id="2731996625798485199">
+                <source xml:space="preserve">Relative</source>
+                <target xml:space="preserve">Relative</target>
             </trans-unit>
             <trans-unit id="273835844989646128">
                 <source xml:space="preserve">empty</source>
@@ -533,6 +573,10 @@
                 <source xml:space="preserve">Chipnet Explorer</source>
                 <target xml:space="preserve">Chipnet Explorer</target>
             </trans-unit>
+            <trans-unit id="301059893059136596">
+                <source xml:space="preserve">Calculate total</source>
+                <target xml:space="preserve">Calculate total</target>
+            </trans-unit>
             <trans-unit id="302660251728612874">
                 <source xml:space="preserve"> Avg Health </source>
                 <target xml:space="preserve"> Gemiddelde gezondheid </target>
@@ -545,6 +589,10 @@
                 <source xml:space="preserve">Pools Count</source>
                 <target xml:space="preserve">Aantal pools</target>
             </trans-unit>
+            <trans-unit id="3063510354807972964">
+                <source xml:space="preserve"> Stale block history is unavailable for this network. </source>
+                <target xml:space="preserve"> Stale block history is unavailable for this network. </target>
+            </trans-unit>
             <trans-unit id="3079792765469479718">
                 <source xml:space="preserve">Expected Block</source>
                 <target xml:space="preserve">Verwachte Blok</target>
@@ -556,6 +604,10 @@
             <trans-unit id="3088064334969042235">
                 <source xml:space="preserve">Special Blocks</source>
                 <target xml:space="preserve">Speciale blokken</target>
+            </trans-unit>
+            <trans-unit id="3088616737962453844">
+                <source xml:space="preserve">Indexed Stale Block History</source>
+                <target xml:space="preserve">Indexed Stale Block History</target>
             </trans-unit>
             <trans-unit id="3090889139796775910">
                 <source xml:space="preserve">See the average number of transactions per Bitcoin Cash block over time.</source>
@@ -589,9 +641,17 @@
                 <source xml:space="preserve">Any</source>
                 <target xml:space="preserve">Elke</target>
             </trans-unit>
+            <trans-unit id="3225529788416574041">
+                <source xml:space="preserve">Zero and invalid values are omitted from the log plot. Select Linear to inspect them.</source>
+                <target xml:space="preserve">Zero and invalid values are omitted from the log plot. Select Linear to inspect them.</target>
+            </trans-unit>
             <trans-unit id="3261973261379224721">
                 <source xml:space="preserve">Fee paid on average for each transaction in the past 144 blocks</source>
                 <target xml:space="preserve">Gemiddeld betaalde transactiekosten per transactie in de laatste 144 blokken</target>
+            </trans-unit>
+            <trans-unit id="3263223753007133035">
+                <source xml:space="preserve">Paused while this tab is hidden.</source>
+                <target xml:space="preserve">Paused while this tab is hidden.</target>
             </trans-unit>
             <trans-unit id="3304972143698843178">
                 <source xml:space="preserve">Event</source>
@@ -616,6 +676,10 @@
             <trans-unit id="3348816905677831844">
                 <source xml:space="preserve"> USD Value </source>
                 <target xml:space="preserve"> USD-waarde </target>
+            </trans-unit>
+            <trans-unit id="337042823378782227">
+                <source xml:space="preserve">Explorer Goggles</source>
+                <target xml:space="preserve">Explorer Goggles</target>
             </trans-unit>
             <trans-unit id="3380799392226022892">
                 <source xml:space="preserve">Based on average native transaction of 140 Bytes</source>
@@ -693,6 +757,10 @@
                 <source xml:space="preserve">Mainnet Explorer</source>
                 <target xml:space="preserve">Mainnet-verkenner</target>
             </trans-unit>
+            <trans-unit id="3629811700647770560">
+                <source xml:space="preserve">matching none of: </source>
+                <target xml:space="preserve">matching none of: </target>
+            </trans-unit>
             <trans-unit id="365703926135033322">
                 <source xml:space="preserve"> Subsidy + fees </source>
                 <target xml:space="preserve"> Subsidie + vergoedingen </target>
@@ -716,6 +784,18 @@
             <trans-unit id="3694137827245006433">
                 <source xml:space="preserve"> Unsupported or invalid address </source>
                 <target xml:space="preserve"> Niet-ondersteund of ongeldig adres </target>
+            </trans-unit>
+            <trans-unit id="369990080077029024">
+                <source xml:space="preserve">Linear</source>
+                <target xml:space="preserve">Linear</target>
+            </trans-unit>
+            <trans-unit id="3705814444030703471">
+                <source xml:space="preserve">of transactions</source>
+                <target xml:space="preserve">of transactions</target>
+            </trans-unit>
+            <trans-unit id="3722847452049744608">
+                <source xml:space="preserve"> Recent chain tips are temporarily unavailable. </source>
+                <target xml:space="preserve"> Recent chain tips are temporarily unavailable. </target>
             </trans-unit>
             <trans-unit id="3727261967700441034">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> <x ctype="x-span" equiv-text="&lt;span class=&quot;shared-block&quot;&gt;" id="START_TAG_SPAN"/>block<x ctype="x-span" equiv-text="&lt;/span&gt;" id="CLOSE_TAG_SPAN"/></source>
@@ -774,6 +854,10 @@
                 <source xml:space="preserve"> of total supply </source>
                 <target xml:space="preserve"> van totale voorraad </target>
             </trans-unit>
+            <trans-unit id="3957893539899419625">
+                <source xml:space="preserve">The transaction snapshot changed or expired. Reload the list to continue.</source>
+                <target xml:space="preserve">The transaction snapshot changed or expired. Reload the list to continue.</target>
+            </trans-unit>
             <trans-unit id="3973931101896534797">
                 <source xml:space="preserve">Date</source>
                 <target xml:space="preserve">Datum</target>
@@ -785,6 +869,10 @@
             <trans-unit id="4012359471246826308">
                 <source xml:space="preserve">Fee span</source>
                 <target xml:space="preserve">Vergoedingbereik</target>
+            </trans-unit>
+            <trans-unit id="4022655944103921511">
+                <source xml:space="preserve">Continue calculating</source>
+                <target xml:space="preserve">Continue calculating</target>
             </trans-unit>
             <trans-unit id="4045684136967540279">
                 <source xml:space="preserve">See Bitcoin Cash block rewards in BCH and USD visualized over time. Block rewards are the total funds miners earn from the block subsidy and fees.</source>
@@ -854,6 +942,10 @@
                 <source xml:space="preserve"><x equiv-text="{{ bufferedCount$ | async }}" id="INTERPOLATION"/> new transactions</source>
                 <target xml:space="preserve"><x equiv-text="{{ bufferedCount$ | async }}" id="INTERPOLATION"/> nieuwe transacties</target>
             </trans-unit>
+            <trans-unit id="4329920221816822454">
+                <source xml:space="preserve"> Canonical block unavailable </source>
+                <target xml:space="preserve"> Canonical block unavailable </target>
+            </trans-unit>
             <trans-unit id="4333425760770516639">
                 <source xml:space="preserve">What is a mempool explorer?</source>
                 <target xml:space="preserve">Wat is een mempool-verkenner?</target>
@@ -882,6 +974,10 @@
                 <source xml:space="preserve">Mined</source>
                 <target xml:space="preserve">Gedolven</target>
             </trans-unit>
+            <trans-unit id="437528108502186964">
+                <source xml:space="preserve">More indexed block history is required for this interval</source>
+                <target xml:space="preserve">More indexed block history is required for this interval</target>
+            </trans-unit>
             <trans-unit id="4379563009807160796">
                 <source xml:space="preserve">There are <x equiv-text="{{ block.extras.orphans.length }}" id="INTERPOLATION"/> stale blocks at this height</source>
                 <target xml:space="preserve">Er zijn <x equiv-text="{{ block.extras.orphans.length }}" id="INTERPOLATION"/> rotte blokken op deze hoogte</target>
@@ -894,6 +990,10 @@
                 <source xml:space="preserve"> Waiting for it to appear in the mempool... </source>
                 <target xml:space="preserve"> Wachten tot het in de mempool verschijnt... </target>
             </trans-unit>
+            <trans-unit id="4401611379108367393">
+                <source xml:space="preserve">Weekly average</source>
+                <target xml:space="preserve">Weekly average</target>
+            </trans-unit>
             <trans-unit id="4414442487981069880">
                 <source xml:space="preserve">other inputs</source>
                 <target xml:space="preserve">andere inputs</target>
@@ -905,6 +1005,10 @@
             <trans-unit id="4417228290563175049">
                 <source xml:space="preserve"> Redirecting to transaction page... </source>
                 <target xml:space="preserve"> Doorsturen naar transactiepagina... </target>
+            </trans-unit>
+            <trans-unit id="4441488485539399148">
+                <source xml:space="preserve">Retry pending transaction count</source>
+                <target xml:space="preserve">Retry pending transaction count</target>
             </trans-unit>
             <trans-unit id="4467323362722952678">
                 <source xml:space="preserve">Unknown</source>
@@ -950,6 +1054,10 @@
                 <source xml:space="preserve">Size</source>
                 <target xml:space="preserve">Grootte</target>
             </trans-unit>
+            <trans-unit id="457631005118170918">
+                <source xml:space="preserve">Scanned through block <x equiv-text="{{ countResult.scannedThroughHeight | number }}" id="INTERPOLATION"/></source>
+                <target xml:space="preserve">Scanned through block <x equiv-text="{{ countResult.scannedThroughHeight | number }}" id="INTERPOLATION"/></target>
+            </trans-unit>
             <trans-unit id="4580786032076405950">
                 <source xml:space="preserve">Classic</source>
                 <target xml:space="preserve">Klassiek</target>
@@ -991,9 +1099,17 @@
                 <source xml:space="preserve">B/s</source>
                 <target xml:space="preserve">B/s</target>
             </trans-unit>
+            <trans-unit id="4741499275883076849">
+                <source xml:space="preserve">Historical Goggles data is not indexed yet</source>
+                <target xml:space="preserve">Historical Goggles data is not indexed yet</target>
+            </trans-unit>
             <trans-unit id="476870518410763600">
                 <source xml:space="preserve">(Newly Generated Coins)</source>
                 <target xml:space="preserve">(Nieuw-gegenereerde munten)</target>
+            </trans-unit>
+            <trans-unit id="4777086504104566868">
+                <source xml:space="preserve">matching all of: </source>
+                <target xml:space="preserve">matching all of: </target>
             </trans-unit>
             <trans-unit id="4793828002882320882">
                 <source xml:space="preserve">At block: <x equiv-text="data[0].data[2]" id="PH"/></source>
@@ -1043,9 +1159,17 @@
                 <source xml:space="preserve">Description</source>
                 <target xml:space="preserve">Inscriptie</target>
             </trans-unit>
+            <trans-unit id="4910252410176197710">
+                <source xml:space="preserve"> Unable to load stale block history. Please try again. </source>
+                <target xml:space="preserve"> Unable to load stale block history. Please try again. </target>
+            </trans-unit>
             <trans-unit id="4939001214826529053">
                 <source xml:space="preserve">Calculator</source>
                 <target xml:space="preserve">Rekenmachine</target>
+            </trans-unit>
+            <trans-unit id="4948327672903382079">
+                <source xml:space="preserve">Goggles indexing is required for this graph</source>
+                <target xml:space="preserve">Goggles indexing is required for this graph</target>
             </trans-unit>
             <trans-unit id="4948789143508999262">
                 <source xml:space="preserve">Transaction cannot be broadcasted because it&apos;s missing or has an invalid signature</source>
@@ -1091,6 +1215,10 @@
                 <source xml:space="preserve">Change (30d)</source>
                 <target xml:space="preserve">Wijziging (30d)</target>
             </trans-unit>
+            <trans-unit id="5138783033774878609">
+                <source xml:space="preserve">Transaction history is unavailable from the history server.</source>
+                <target xml:space="preserve">Transaction history is unavailable from the history server.</target>
+            </trans-unit>
             <trans-unit id="5143204595795749226">
                 <source xml:space="preserve">Block Time Variation</source>
                 <target xml:space="preserve">Variatie in bloktijd</target>
@@ -1110,6 +1238,10 @@
             <trans-unit id="5166531163188856419">
                 <source xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> Block Height </source>
                 <target xml:space="preserve"> <x equiv-text="{{ networkName }}" id="INTERPOLATION"/> Blokhoogte </target>
+            </trans-unit>
+            <trans-unit id="5171192616638755303">
+                <source xml:space="preserve"> Retry </source>
+                <target xml:space="preserve"> Retry </target>
             </trans-unit>
             <trans-unit id="5182043391401885822">
                 <source xml:space="preserve">mining pool</source>
@@ -1135,9 +1267,17 @@
                 <source xml:space="preserve"> Health </source>
                 <target xml:space="preserve"> Gezondheid </target>
             </trans-unit>
+            <trans-unit id="5300865118804972896">
+                <source xml:space="preserve">Could not load transactions. Your loaded transactions are still available.</source>
+                <target xml:space="preserve">Could not load transactions. Your loaded transactions are still available.</target>
+            </trans-unit>
             <trans-unit id="5310841849641828650">
                 <source xml:space="preserve">Allowed?</source>
                 <target xml:space="preserve">Toegestaan?</target>
+            </trans-unit>
+            <trans-unit id="5353190408552460577">
+                <source xml:space="preserve"> Support BCH Explorer as an enterprise sponsor and have your company logo featured here. <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://t.me/melroyvandenberg&quot;         target=&quot;_blank&quot;         rel=&quot;noopener noreferrer&quot;         aria-label=&quot;Contact Melroy on Telegram&quot;         &gt;" id="START_LINK"/>Contact me on Telegram<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> to discuss sponsorship. </source>
+                <target xml:space="preserve"> Support BCH Explorer as an enterprise sponsor and have your company logo featured here. <x ctype="x-a" equiv-text="&lt;a         href=&quot;https://t.me/melroyvandenberg&quot;         target=&quot;_blank&quot;         rel=&quot;noopener noreferrer&quot;         aria-label=&quot;Contact Melroy on Telegram&quot;         &gt;" id="START_LINK"/>Contact me on Telegram<x ctype="x-a" equiv-text="&lt;/a       &gt;" id="CLOSE_LINK"/> to discuss sponsorship. </target>
             </trans-unit>
             <trans-unit id="5369657738305549962">
                 <source xml:space="preserve"> Show diagram </source>
@@ -1158,6 +1298,10 @@
             <trans-unit id="5458697026988984634">
                 <source xml:space="preserve">Cheap</source>
                 <target xml:space="preserve">Goedkoop</target>
+            </trans-unit>
+            <trans-unit id="5478089023694008069">
+                <source xml:space="preserve"> Previously indexed stale blocks, compared with the current canonical block at each height. </source>
+                <target xml:space="preserve"> Previously indexed stale blocks, compared with the current canonical block at each height. </target>
             </trans-unit>
             <trans-unit id="5478121364779850827">
                 <source xml:space="preserve"> Reset </source>
@@ -1207,6 +1351,10 @@
                 <source xml:space="preserve">Error loading address data.</source>
                 <target xml:space="preserve">Fout bij het laden van adresdata.</target>
             </trans-unit>
+            <trans-unit id="5643561794785412000">
+                <source xml:space="preserve">Unavailable</source>
+                <target xml:space="preserve">Unavailable</target>
+            </trans-unit>
             <trans-unit id="5656496863503540632">
                 <source xml:space="preserve">Usually places your transaction in between the first and second mempool blocks</source>
                 <target xml:space="preserve">Plaatst je transactie gewoonlijk tussen het eerste en tweede mempoolblok</target>
@@ -1251,6 +1399,10 @@
                 <source xml:space="preserve">Medium Priority</source>
                 <target xml:space="preserve">Gem. Prioriteit</target>
             </trans-unit>
+            <trans-unit id="5868129569955318876">
+                <source xml:space="preserve">Monthly average</source>
+                <target xml:space="preserve">Monthly average</target>
+            </trans-unit>
             <trans-unit id="590117958379793860">
                 <source xml:space="preserve"> Maintaining, improving and creating this BCH explorer costs <x ctype="x-i" equiv-text="&lt;i&gt;" id="START_ITALIC_TEXT"/>a lot of time and effort<x ctype="x-i" equiv-text="&lt;/i&gt;" id="CLOSE_ITALIC_TEXT"/>. As a one-man operation, I spend a lot of personal time working on this project. </source>
                 <target xml:space="preserve"> Het onderhouden, verbeteren en ontwikkelen van deze BCH-explorer kost <x ctype="x-i" equiv-text="&lt;i&gt;" id="START_ITALIC_TEXT"/>veel tijd en moeite<x ctype="x-i" equiv-text="&lt;/i&gt;" id="CLOSE_ITALIC_TEXT"/>. Aangezien ik dit in mijn eentje doe, besteed ik veel van mijn vrije tijd aan dit project. </target>
@@ -1286,6 +1438,10 @@
             <trans-unit id="6056001875264593206">
                 <source xml:space="preserve">provably unspendable</source>
                 <target xml:space="preserve">aantoonbaar onbruikbaar</target>
+            </trans-unit>
+            <trans-unit id="6071901990897595928">
+                <source xml:space="preserve">Matched</source>
+                <target xml:space="preserve">Matched</target>
             </trans-unit>
             <trans-unit id="6080998935194218567">
                 <source xml:space="preserve">See size, fee range, included transactions, audit (expected vs actual), and more for Bitcoin Cash<x equiv-text="seoDescriptionNetwork(             this.stateService.network           )" id="PH"/> block <x equiv-text="block.height" id="BLOCK_HEIGHT"/> (<x equiv-text="block.id" id="BLOCK_ID"/>).</source>
@@ -1343,6 +1499,10 @@
                 <source xml:space="preserve"> Inputs &amp; Outputs </source>
                 <target xml:space="preserve"> Input en output </target>
             </trans-unit>
+            <trans-unit id="6352359326178198569">
+                <source xml:space="preserve"> All indexed stale blocks have been loaded. </source>
+                <target xml:space="preserve"> All indexed stale blocks have been loaded. </target>
+            </trans-unit>
             <trans-unit id="6361947660157581901">
                 <source xml:space="preserve">See the average mining fees earned per Bitcoin Cash block visualized in BCH and USD over time.</source>
                 <target xml:space="preserve">Bekijk de gemiddelde mining-kosten die per Bitcoin-blok worden verdiend, gevisualiseerd in BTC en USD in de loop van de tijd.</target>
@@ -1358,6 +1518,14 @@
             <trans-unit id="6391724349488018234">
                 <source xml:space="preserve">Indexing in progress</source>
                 <target xml:space="preserve">Indexering is bezig</target>
+            </trans-unit>
+            <trans-unit id="6402910793539652939">
+                <source xml:space="preserve">Unable to load address history. Waiting to retry.</source>
+                <target xml:space="preserve">Unable to load address history. Waiting to retry.</target>
+            </trans-unit>
+            <trans-unit id="6408242991683022488">
+                <source xml:space="preserve">Unable to load balance history. Waiting to retry.</source>
+                <target xml:space="preserve">Unable to load balance history. Waiting to retry.</target>
             </trans-unit>
             <trans-unit id="6408975971582883304">
                 <source xml:space="preserve">Message</source>
@@ -1391,6 +1559,10 @@
                 <source xml:space="preserve">Response</source>
                 <target xml:space="preserve">Reactie</target>
             </trans-unit>
+            <trans-unit id="6557284236206797364">
+                <source xml:space="preserve"> No indexed stale blocks have been recorded for this network. </source>
+                <target xml:space="preserve"> No indexed stale blocks have been recorded for this network. </target>
+            </trans-unit>
             <trans-unit id="6558868518949093648">
                 <source xml:space="preserve">Block Header Hex</source>
                 <target xml:space="preserve">Blokheader-hex</target>
@@ -1423,6 +1595,10 @@
                 <source xml:space="preserve">See the most recent Bitcoin Cash<x equiv-text="seoDescriptionNetwork(           this.stateService.network         )" id="PH"/> blocks along with basic stats such as block height, block reward, block size, and more.</source>
                 <target xml:space="preserve">Bekijk de meest recente Bitcoin<x equiv-text="seoDescriptionNetwork(this.stateService.network)" id="PH"/>-blokken samen met basisstatistieken zoals blokhoogte, blokbeloning, blokgrootte en meer.</target>
             </trans-unit>
+            <trans-unit id="663015461141624870">
+                <source xml:space="preserve"> Load older stale blocks </source>
+                <target xml:space="preserve"> Load older stale blocks </target>
+            </trans-unit>
             <trans-unit id="6641135694653212933">
                 <source xml:space="preserve">Mempool by Bytes (sat/Byte)</source>
                 <target xml:space="preserve">Mempool per Bytes (sat/Byte)</target>
@@ -1446,6 +1622,10 @@
             <trans-unit id="6685040638257748438">
                 <source xml:space="preserve">UTXO Count</source>
                 <target xml:space="preserve">UTXO optelling</target>
+            </trans-unit>
+            <trans-unit id="6692790334231877872">
+                <source xml:space="preserve">Share of bytes (%)</source>
+                <target xml:space="preserve">Share of bytes (%)</target>
             </trans-unit>
             <trans-unit id="6698602804540558682">
                 <source xml:space="preserve">Empty Blocks</source>
@@ -1552,13 +1732,29 @@
                 <source xml:space="preserve">select filter categories to highlight matching transactions</source>
                 <target xml:space="preserve">selecteer filtercategorieën om overeenkomende transacties te markeren</target>
             </trans-unit>
+            <trans-unit id="7068467709683687700">
+                <source xml:space="preserve">Goggles</source>
+                <target xml:space="preserve">Goggles</target>
+            </trans-unit>
+            <trans-unit id="7100682569130055450">
+                <source xml:space="preserve">Historical Goggles data is unavailable</source>
+                <target xml:space="preserve">Historical Goggles data is unavailable</target>
+            </trans-unit>
             <trans-unit id="7101197021456818771">
                 <source xml:space="preserve">Pool</source>
                 <target xml:space="preserve">Pool</target>
             </trans-unit>
+            <trans-unit id="7110051539869092553">
+                <source xml:space="preserve"><x equiv-text="{{ countResult.confirmedCount | number }}" id="INTERPOLATION"/> confirmed as of block <x equiv-text="{{ countResult.snapshotHeight | number }}" id="INTERPOLATION_1"/></source>
+                <target xml:space="preserve"><x equiv-text="{{ countResult.confirmedCount | number }}" id="INTERPOLATION"/> confirmed as of block <x equiv-text="{{ countResult.snapshotHeight | number }}" id="INTERPOLATION_1"/></target>
+            </trans-unit>
             <trans-unit id="7146000240905514695">
                 <source xml:space="preserve">Student Name</source>
                 <target xml:space="preserve">Studentnaam</target>
+            </trans-unit>
+            <trans-unit id="7156679713701409170">
+                <source xml:space="preserve">Total size (B)</source>
+                <target xml:space="preserve">Total size (B)</target>
             </trans-unit>
             <trans-unit id="7170419784695970065">
                 <source xml:space="preserve">Allow high fees?</source>
@@ -1584,6 +1780,10 @@
                 <source xml:space="preserve">This transaction has a low transaction fee on L1, because of BCH</source>
                 <target xml:space="preserve">Deze transactie heeft lage transactiekosten op L1, dankzij BCH</target>
             </trans-unit>
+            <trans-unit id="7379502371151001203">
+                <source xml:space="preserve">Unable to load Goggles data</source>
+                <target xml:space="preserve">Unable to load Goggles data</target>
+            </trans-unit>
             <trans-unit id="740444365933492829">
                 <source xml:space="preserve">Avg Tx Fee</source>
                 <target xml:space="preserve">Gem Tx-vergoeding</target>
@@ -1591,6 +1791,10 @@
             <trans-unit id="7413402651194809686">
                 <source xml:space="preserve"> Miners Reward </source>
                 <target xml:space="preserve"> Beloning voor miners </target>
+            </trans-unit>
+            <trans-unit id="7419704019640008953">
+                <source xml:space="preserve">Share</source>
+                <target xml:space="preserve">Share</target>
             </trans-unit>
             <trans-unit id="7453887203136814323">
                 <source xml:space="preserve">Previous Block</source>
@@ -1620,9 +1824,23 @@
                 <source xml:space="preserve">No Match</source>
                 <target xml:space="preserve">Geen overeenkomst</target>
             </trans-unit>
+            <trans-unit id="756817606297151084">
+                <source xml:space="preserve">{VAR_PLURAL, plural, =1 {1 transaction loaded} other {<x id="INTERPOLATION"/> transactions loaded
+              }}</source>
+                <target xml:space="preserve">{VAR_PLURAL, plural, =1 {1 transaction loaded} other {<x id="INTERPOLATION"/> transactions loaded
+              }}</target>
+            </trans-unit>
+            <trans-unit id="7583284471112269714">
+                <source xml:space="preserve"><x equiv-text="{{ countResult.progress | number: &quot;1.0-0&quot; }}" id="INTERPOLATION"/>% of block heights scanned</source>
+                <target xml:space="preserve"><x equiv-text="{{ countResult.progress | number: &quot;1.0-0&quot; }}" id="INTERPOLATION"/>% of block heights scanned</target>
+            </trans-unit>
             <trans-unit id="7587252691654342708">
                 <source xml:space="preserve">Block Fees Vs Subsidy</source>
                 <target xml:space="preserve">Blokvergoeding versus subsidie</target>
+            </trans-unit>
+            <trans-unit id="7588360653697178739">
+                <source xml:space="preserve">Share of txs (%)</source>
+                <target xml:space="preserve">Share of txs (%)</target>
             </trans-unit>
             <trans-unit id="7621097312029689276">
                 <source xml:space="preserve">Block Sizes</source>
@@ -1680,6 +1898,10 @@
                 <source xml:space="preserve">Coinjoin</source>
                 <target xml:space="preserve">Coinjoin</target>
             </trans-unit>
+            <trans-unit id="7823410862017570733">
+                <source xml:space="preserve">No transactions found.</source>
+                <target xml:space="preserve">No transactions found.</target>
+            </trans-unit>
             <trans-unit id="7840301863034787689">
                 <source xml:space="preserve"> Type </source>
                 <target xml:space="preserve"> Type </target>
@@ -1708,6 +1930,10 @@
                 <source xml:space="preserve">Coinbase tag</source>
                 <target xml:space="preserve">Coinbaselabel</target>
             </trans-unit>
+            <trans-unit id="7934833136974560675">
+                <source xml:space="preserve">Retry</source>
+                <target xml:space="preserve">Retry</target>
+            </trans-unit>
             <trans-unit id="7941620384374510360">
                 <source xml:space="preserve">Transaction hex or base64 encoded PSBT</source>
                 <target xml:space="preserve">Transactie-hex of base64-gecodeerde PSBT</target>
@@ -1715,6 +1941,10 @@
             <trans-unit id="7944704425911956229">
                 <source xml:space="preserve"> Avg Block Fee (24h) </source>
                 <target xml:space="preserve"> Gem blokvergoeding (24 uur) </target>
+            </trans-unit>
+            <trans-unit id="7981396798858761045">
+                <source xml:space="preserve">*On average between blocks <x equiv-text="startHeight" id="PH"/> - <x equiv-text="startHeight + bucketSize - 1" id="PH_1"/></source>
+                <target xml:space="preserve">*On average between blocks <x equiv-text="startHeight" id="PH"/> - <x equiv-text="startHeight + bucketSize - 1" id="PH_1"/></target>
             </trans-unit>
             <trans-unit id="7981454540995527470">
                 <source xml:space="preserve">1 new transaction</source>
@@ -1743,6 +1973,10 @@
             <trans-unit id="80065834848189518">
                 <source xml:space="preserve">No data to display yet. Try again later.</source>
                 <target xml:space="preserve">Geen data om weer te geven. Probeer het later nog eens.</target>
+            </trans-unit>
+            <trans-unit id="8020959823225109393">
+                <source xml:space="preserve">Reload transactions</source>
+                <target xml:space="preserve">Reload transactions</target>
             </trans-unit>
             <trans-unit id="8040881171107393560">
                 <source xml:space="preserve">ID</source>
@@ -1775,6 +2009,10 @@
             <trans-unit id="8097247056335527144">
                 <source xml:space="preserve">Median Time</source>
                 <target xml:space="preserve">Mediaantijd</target>
+            </trans-unit>
+            <trans-unit id="8104026723137755535">
+                <source xml:space="preserve">Retry balance</source>
+                <target xml:space="preserve">Retry balance</target>
             </trans-unit>
             <trans-unit id="8105367655277227191">
                 <source xml:space="preserve"> Expected </source>
@@ -1900,6 +2138,10 @@
                 <source xml:space="preserve">No Priority</source>
                 <target xml:space="preserve">Geen Prioriteit</target>
             </trans-unit>
+            <trans-unit id="8502067216129228126">
+                <source xml:space="preserve">Absolute</source>
+                <target xml:space="preserve">Absolute</target>
+            </trans-unit>
             <trans-unit id="8506168272622458998">
                 <source xml:space="preserve">Raw hex</source>
                 <target xml:space="preserve">Ruwe hexcode</target>
@@ -1996,9 +2238,17 @@
                 <source xml:space="preserve">Features</source>
                 <target xml:space="preserve">Kenmerken</target>
             </trans-unit>
+            <trans-unit id="88738880330538801">
+                <source xml:space="preserve">No positive values to plot. Select Linear to see zero values.</source>
+                <target xml:space="preserve">No positive values to plot. Select Linear to see zero values.</target>
+            </trans-unit>
             <trans-unit id="8875021007006086451">
                 <source xml:space="preserve">Testnet4 Explorer</source>
                 <target xml:space="preserve">Testnet4 Verkenner</target>
+            </trans-unit>
+            <trans-unit id="8875266558780866551">
+                <source xml:space="preserve">Count unavailable. Try again.</source>
+                <target xml:space="preserve">Count unavailable. Try again.</target>
             </trans-unit>
             <trans-unit id="88825654282419901">
                 <source xml:space="preserve"><x equiv-text="{{ i }}" id="INTERPOLATION"/> transaction</source>
@@ -2082,6 +2332,10 @@
                 <source xml:space="preserve"> not available </source>
                 <target xml:space="preserve"> niet beschikbaar </target>
             </trans-unit>
+            <trans-unit id="9202715939710224021">
+                <source xml:space="preserve"> Loading stale block history… </source>
+                <target xml:space="preserve"> Loading stale block history… </target>
+            </trans-unit>
             <trans-unit id="9212705249340904752">
                 <source xml:space="preserve">Explore</source>
                 <target xml:space="preserve">Verken</target>
@@ -2089,6 +2343,10 @@
             <trans-unit id="9219712723630129965">
                 <source xml:space="preserve">Coinbase</source>
                 <target xml:space="preserve">Coinbase</target>
+            </trans-unit>
+            <trans-unit id="94192612217457160">
+                <source xml:space="preserve">matching any of: </source>
+                <target xml:space="preserve">matching any of: </target>
             </trans-unit>
             <trans-unit id="945376464060430485">
                 <source xml:space="preserve">Bits</source>
@@ -2173,6 +2431,14 @@
             <trans-unit id="block.component.browser-title">
                 <source xml:space="preserve">Block <x equiv-text="block.height" id="BLOCK_HEIGHT"/>: <x equiv-text="block.id" id="BLOCK_ID"/></source>
                 <target xml:space="preserve">Blok <x equiv-text="block.height" id="BLOCK_HEIGHT"/>: <x equiv-text="block.id" id="BLOCK_ID"/></target>
+            </trans-unit>
+            <trans-unit id="charts.log-export-empty">
+                <source xml:space="preserve">No positive values. Select Linear to see zeros.</source>
+                <target xml:space="preserve">No positive values. Select Linear to see zeros.</target>
+            </trans-unit>
+            <trans-unit id="charts.log-export-omitted">
+                <source xml:space="preserve">Log scale: zero and invalid values omitted.</source>
+                <target xml:space="preserve">Log scale: zero and invalid values omitted.</target>
             </trans-unit>
             <trans-unit id="clipboard.copied-message">
                 <source xml:space="preserve">Copied!</source>
@@ -2297,6 +2563,10 @@
             <trans-unit id="meta.description.bitcoin.graphs.block-health">
                 <source xml:space="preserve">See Bitcoin Cash block health visualized over time. Block health is a measure of how many expected transactions were included in an actual mined block. Expected transactions are determined using BCH Explorer&apos;s re-implementation of BCHN&apos;s transaction selection algorithm.</source>
                 <target xml:space="preserve">Zie de gezondheid van Bitcoin Cash-blokken in de loop van de tijd gevisualiseerd. De blokstatus is een maatstaf voor het aantal verwachte transacties dat in een daadwerkelijk gedolven blok is opgenomen. Verwachte transacties worden bepaald met behulp van BCH Explorer&apos;s herimplementatie van het transactieselectie-algoritme van BCHN.</target>
+            </trans-unit>
+            <trans-unit id="meta.description.bitcoin.graphs.goggles">
+                <source xml:space="preserve">See Bitcoin Cash transactions matching Explorer Goggles filters visualized over time.</source>
+                <target xml:space="preserve">See Bitcoin Cash transactions matching Explorer Goggles filters visualized over time.</target>
             </trans-unit>
             <trans-unit id="meta.description.bitcoin.graphs.hashrate">
                 <source xml:space="preserve">See hashrate and difficulty for the Bitcoin<x equiv-text="seoDescriptionNetwork(           this.network         )" id="PH"/> network visualized over time.</source>
@@ -2430,6 +2700,34 @@ wordt in realtime bijgewerkt.</target>
             <trans-unit id="recent-transactions-title">
                 <source xml:space="preserve">Recent Transactions</source>
                 <target xml:space="preserve">Recente Transacties</target>
+            </trans-unit>
+            <trans-unit id="script.disabled-relative-locktime">
+                <source xml:space="preserve">Relative locktime disabled (CSV acts as NOP)</source>
+                <target xml:space="preserve">Relative locktime disabled (CSV acts as NOP)</target>
+            </trans-unit>
+            <trans-unit id="script.invalid-locktime">
+                <source xml:space="preserve">Invalid locktime</source>
+                <target xml:space="preserve">Invalid locktime</target>
+            </trans-unit>
+            <trans-unit id="script.invalid-relative-locktime">
+                <source xml:space="preserve">Invalid relative locktime</source>
+                <target xml:space="preserve">Invalid relative locktime</target>
+            </trans-unit>
+            <trans-unit id="script.locktime-height">
+                <source xml:space="preserve">Block height: <x equiv-text="value" id="HEIGHT"/></source>
+                <target xml:space="preserve">Block height: <x equiv-text="value" id="HEIGHT"/></target>
+            </trans-unit>
+            <trans-unit id="script.relative-locktime-block">
+                <source xml:space="preserve">Relative locktime: <x equiv-text="delay" id="BLOCKS"/> block</source>
+                <target xml:space="preserve">Relative locktime: <x equiv-text="delay" id="BLOCKS"/> block</target>
+            </trans-unit>
+            <trans-unit id="script.relative-locktime-blocks">
+                <source xml:space="preserve">Relative locktime: <x equiv-text="delay" id="BLOCKS"/> blocks</source>
+                <target xml:space="preserve">Relative locktime: <x equiv-text="delay" id="BLOCKS"/> blocks</target>
+            </trans-unit>
+            <trans-unit id="script.relative-locktime-duration">
+                <source xml:space="preserve">Relative locktime: <x equiv-text="formatted" id="DURATION"/></source>
+                <target xml:space="preserve">Relative locktime: <x equiv-text="formatted" id="DURATION"/></target>
             </trans-unit>
             <trans-unit id="time-before">
                 <source xml:space="preserve"><x equiv-text="dateStrings.i18nYear" id="DATE"/> before</source>
