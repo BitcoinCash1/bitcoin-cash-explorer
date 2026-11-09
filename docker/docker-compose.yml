@@ -3,7 +3,7 @@ services:
     environment:
       FRONTEND_HTTP_PORT: "8080"
       BACKEND_MAINNET_HTTP_HOST: "bch-explorer-api"
-    image: registry.melroy.org/bitcoincash/bitcoin-cash-explorer/bch-explorer-frontend:3.16.5
+    image: registry.melroy.org/bitcoincash/bitcoin-cash-explorer/bch-explorer-frontend:3.16.6
     user: 1000:1000
     container_name: bch-explorer-web
     restart: always
@@ -39,7 +39,7 @@ services:
       DATABASE_USERNAME: "explorer"
       DATABASE_PASSWORD: "${DATABASE_PASSWORD:-explorer}"
       STATISTICS_ENABLED: "true"
-    image: registry.melroy.org/bitcoincash/bitcoin-cash-explorer/bch-explorer-backend:3.16.5
+    image: registry.melroy.org/bitcoincash/bitcoin-cash-explorer/bch-explorer-backend:3.16.6
     user: 1000:1000
     container_name: bch-explorer-api
     restart: always
