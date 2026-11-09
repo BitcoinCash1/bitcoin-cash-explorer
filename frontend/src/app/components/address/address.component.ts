@@ -5,21 +5,40 @@ import {
   HostListener,
   ChangeDetectorRef,
 } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { ElectrsApiService } from '@app/services/backend-api.service';
-import { switchMap, filter, catchError, map, tap } from 'rxjs/operators';
+import {
+  switchMap,
+  filter,
+  catchError,
+  map,
+  tap,
+  skip,
+  distinctUntilChanged,
+  startWith,
+} from 'rxjs/operators';
 import {
   Address,
   ChainStats,
   Transaction,
   Utxo,
   Vin,
+  AddressTransactionCount,
 } from '@app/interfaces/backend-api.interface';
 import { WebsocketService } from '@app/services/websocket.service';
 import { StateService } from '@app/services/state.service';
 import { AudioService } from '@app/services/audio.service';
 import { ApiService } from '@app/services/api.service';
-import { of, merge, Subscription, Observable, forkJoin } from 'rxjs';
+import {
+  of,
+  merge,
+  Subscription,
+  Observable,
+  forkJoin,
+  EMPTY,
+  combineLatest,
+  timer,
+} from 'rxjs';
 import { SeoService } from '@app/services/seo.service';
 import { seoDescriptionNetwork } from '@app/shared/common.utils';
 import { AddressInformation } from '@interfaces/node-api.interface';
@@ -132,7 +151,7 @@ export class AddressComponent implements OnInit, OnDestroy {
   isMobile: boolean;
   showQR: boolean = false;
   addressType: 'bch' | 'token' | 'legacy' = 'bch';
-  displayAddress: string;
+  displayAddress = '';
   bchAddressString: string;
 
   address: Address;
@@ -160,6 +179,26 @@ export class AddressComponent implements OnInit, OnDestroy {
 
   now = Date.now() / 1000;
   balancePeriod: 'all' | '1m' = 'all';
+
+  paginatedMode = false;
+  transactionError: any;
+  countError: any;
+  countResult: AddressTransactionCount | null = null;
+  countRunning = false;
+  countPaused = false;
+  pageResetRequired = false;
+  private emptyPageContinuations = 0;
+  private liveTransactions = new Map<string, Transaction>();
+  private removedTransactions = new Set<string>();
+  private nextPageCursor: string | null = null;
+  private pageSnapshot: string | null = null;
+  private countCursor: string | null = null;
+  private countSubscription = new Subscription();
+  private pagedSubscriptions = new Subscription();
+  private summarySubscription = new Subscription();
+  private pageSubscription = new Subscription();
+  private pagedScript: string | undefined;
+  private pagedTarget = '';
 
   private tempTransactions: Transaction[];
   private timeTxIndexes: number[];
@@ -196,9 +235,29 @@ export class AddressComponent implements OnInit, OnDestroy {
       )
     );
 
-    this.mainSubscription = this.route.paramMap
+    this.mainSubscription = combineLatest([
+      this.route.paramMap,
+      this.stateService.backend$.pipe(distinctUntilChanged()),
+      this.stateService.networkChanged$.pipe(
+        startWith(this.stateService.network),
+        distinctUntilChanged()
+      ),
+    ])
       .pipe(
-        switchMap((params: ParamMap) => {
+        switchMap(([params, backend]) => {
+          this.cancelPagedRequests();
+          this.paginatedMode = backend === 'electrum';
+          this.transactionError = null;
+          this.countResult = null;
+          this.countCursor = null;
+          this.countError = null;
+          this.liveTransactions.clear();
+          this.removedTransactions.clear();
+          this.emptyPageContinuations = 0;
+          this.websocketService.stopTrackingAddress();
+          this.pageSnapshot = null;
+          this.nextPageCursor = null;
+          this.pageResetRequired = false;
           this.error = undefined;
           this.isLoadingAddress = true;
           this.fullyLoaded = false;
@@ -258,6 +317,11 @@ export class AddressComponent implements OnInit, OnDestroy {
             this.stateService.network || 'mainnet',
             this.addressString
           );
+
+          if (this.paginatedMode) {
+            this.startPagedAddress();
+            return EMPTY;
+          }
 
           return merge(
             of(true),
@@ -393,7 +457,10 @@ export class AddressComponent implements OnInit, OnDestroy {
             const vinIds: string[] = [];
             for (const tx of this.transactions) {
               tx.vin.forEach((v, index) => {
-                if (v.prevout?.scriptpubkey_address === this.address.address) {
+                if (
+                  v.prevout?.scriptpubkey_address ===
+                  (this.address?.address || this.bchAddressString)
+                ) {
                   addressVin.push(v);
                   vinIds.push(`${tx.txid}:${index}`);
                 }
@@ -427,20 +494,47 @@ export class AddressComponent implements OnInit, OnDestroy {
 
     this.mempoolTxSubscription =
       this.stateService.mempoolTransactions$.subscribe((tx) => {
-        this.addTransaction(tx);
-        this.mempoolStats.addTx(tx);
+        if (this.paginatedMode) {
+          this.liveTransactions.set(tx.txid, tx);
+          this.removedTransactions.delete(tx.txid);
+          this.addTransaction(tx);
+          this.refreshPagedSummary();
+        } else {
+          this.addTransaction(tx);
+          this.mempoolStats?.addTx(tx);
+        }
         this.cdr.markForCheck();
       });
 
     this.mempoolRemovedTxSubscription =
       this.stateService.mempoolRemovedTransactions$.subscribe((tx) => {
         this.removeTransaction(tx);
-        this.mempoolStats.removeTx(tx);
+        if (this.paginatedMode) {
+          this.liveTransactions.delete(tx.txid);
+          this.removedTransactions.add(tx.txid);
+          this.refreshPagedSummary();
+        } else this.mempoolStats?.removeTx(tx);
         this.cdr.markForCheck();
       });
 
     this.blockTxSubscription = this.stateService.blockTransactions$.subscribe(
       (transaction) => {
+        if (this.paginatedMode) {
+          this.liveTransactions.set(transaction.txid, transaction);
+          this.removedTransactions.delete(transaction.txid);
+          const existing = this.transactions?.find(
+            (tx) => tx.txid === transaction.txid
+          );
+          if (existing) {
+            existing.status = transaction.status;
+            this.transactions = this.transactions.slice();
+          } else {
+            this.addTransaction(transaction, false);
+          }
+          this.refreshPagedSummary();
+          this.cdr.markForCheck();
+          return;
+        }
         const tx = this.transactions?.find((t) => t.txid === transaction.txid);
         if (tx) {
           tx.status = transaction.status;
@@ -473,7 +567,9 @@ export class AddressComponent implements OnInit, OnDestroy {
     if (playSound) {
       if (
         transaction.vout.some(
-          (vout) => vout?.scriptpubkey_address === this.address.address
+          (vout) =>
+            vout?.scriptpubkey_address ===
+            (this.address?.address || this.bchAddressString)
         )
       ) {
         this.audioService.playSound('cha-ching');
@@ -495,7 +591,10 @@ export class AddressComponent implements OnInit, OnDestroy {
         }
       }
       for (const [index, vout] of transaction.vout.entries()) {
-        if (vout.scriptpubkey_address === this.address.address) {
+        if (
+          vout.scriptpubkey_address ===
+          (this.address?.address || this.bchAddressString)
+        ) {
           this.utxos.push({
             txid: transaction.txid,
             vout: index,
@@ -530,7 +629,10 @@ export class AddressComponent implements OnInit, OnDestroy {
     if (this.utxos != null) {
       let utxosChanged = false;
       for (const vin of transaction.vin) {
-        if (vin.prevout?.scriptpubkey_address === this.address.address) {
+        if (
+          vin.prevout?.scriptpubkey_address ===
+          (this.address?.address || this.bchAddressString)
+        ) {
           this.utxos.push({
             txid: vin.txid,
             vout: vin.vout,
@@ -541,7 +643,10 @@ export class AddressComponent implements OnInit, OnDestroy {
         }
       }
       for (const [index, vout] of transaction.vout.entries()) {
-        if (vout.scriptpubkey_address === this.address.address) {
+        if (
+          vout.scriptpubkey_address ===
+          (this.address?.address || this.bchAddressString)
+        ) {
           const utxoIndex = this.utxos.findIndex(
             (utxo) => utxo.txid === transaction.txid && utxo.vout === index
           );
@@ -564,7 +669,10 @@ export class AddressComponent implements OnInit, OnDestroy {
     if (this.utxos != null) {
       let utxosChanged = false;
       for (const vin of transaction.vin) {
-        if (vin.prevout?.scriptpubkey_address === this.address.address) {
+        if (
+          vin.prevout?.scriptpubkey_address ===
+          (this.address?.address || this.bchAddressString)
+        ) {
           const utxoIndex = this.utxos.findIndex(
             (utxo) => utxo.txid === vin.txid && utxo.vout === vin.vout
           );
@@ -577,7 +685,10 @@ export class AddressComponent implements OnInit, OnDestroy {
         }
       }
       for (const [index, vout] of transaction.vout.entries()) {
-        if (vout.scriptpubkey_address === this.address.address) {
+        if (
+          vout.scriptpubkey_address ===
+          (this.address?.address || this.bchAddressString)
+        ) {
           const utxoIndex = this.utxos.findIndex(
             (utxo) => utxo.txid === transaction.txid && utxo.vout === index
           );
@@ -596,6 +707,11 @@ export class AddressComponent implements OnInit, OnDestroy {
   }
 
   loadMore(): void {
+    if (this.paginatedMode) {
+      this.emptyPageContinuations = 0;
+      this.loadPagedTransactions();
+      return;
+    }
     if (this.isLoadingTransactions || this.fullyLoaded) {
       return;
     }
@@ -605,13 +721,15 @@ export class AddressComponent implements OnInit, OnDestroy {
 
     (this.address.is_pubkey
       ? this.electrsApiService.getScriptHashTransactions$(
-          (this.address.address.length === 66 ? '21' : '41') +
-            this.address.address +
+          ((this.address?.address || this.bchAddressString).length === 66
+            ? '21'
+            : '41') +
+            (this.address?.address || this.bchAddressString) +
             'ac',
           this.lastTransactionTxId
         )
       : this.electrsApiService.getAddressTransactions$(
-          this.address.address,
+          this.address?.address || this.bchAddressString,
           this.lastTransactionTxId
         )
     ).subscribe({
@@ -636,14 +754,225 @@ export class AddressComponent implements OnInit, OnDestroy {
     });
   }
 
+  private cancelPagedRequests(): void {
+    this.pagedSubscriptions.unsubscribe();
+    this.pagedSubscriptions = new Subscription();
+    this.summarySubscription.unsubscribe();
+    this.pageSubscription.unsubscribe();
+    this.cancelCount();
+  }
+
+  private startPagedAddress(): void {
+    const pubkey = /^(?:04[a-fA-F0-9]{128}|(?:02|03)[a-fA-F0-9]{64})$/.test(
+      this.addressString
+    );
+    this.pagedTarget = this.bchAddressString;
+    this.pagedScript = pubkey
+      ? (this.addressString.length === 130 ? '41' : '21') +
+        this.addressString +
+        'ac'
+      : undefined;
+    this.isLoadingTransactions = false;
+    this.refreshPagedSummary();
+    this.loadPagedTransactions();
+    this.pagedSubscriptions.add(
+      this.stateService.connectionState$
+        .pipe(
+          skip(1),
+          filter((state) => state === 2)
+        )
+        .subscribe(() => this.refreshPagedSummary())
+    );
+  }
+
+  refreshPagedSummary(): void {
+    this.summarySubscription.unsubscribe();
+    this.summarySubscription = this.electrsApiService
+      .getAddressBalanceSummary$(this.pagedTarget, this.pagedScript)
+      .subscribe({
+        next: (summary) => {
+          // Balance-only data has no transaction or output totals. Keep these unknown.
+          const stats = (balance: number): ChainStats => ({
+            funded_txo_sum: balance,
+            spent_txo_sum: 0,
+            funded_txo_count: undefined,
+            spent_txo_count: undefined,
+            tx_count: undefined,
+          });
+          this.address = {
+            address: this.pagedScript ? this.addressString : summary.address,
+            electrum: true,
+            is_pubkey: !!this.pagedScript,
+            chain_stats: stats(summary.confirmedBalance),
+            mempool_stats: stats(summary.pendingBalance),
+          };
+          this.updateChainStats();
+          this.websocketService.startTrackAddress(this.address.address);
+          this.error = null;
+          this.isLoadingAddress = false;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.error = error;
+          this.isLoadingAddress = false;
+          this.cdr.markForCheck();
+        },
+      });
+  }
+
+  private loadPagedTransactions(): void {
+    if (this.isLoadingTransactions && !this.pageSubscription.closed) return;
+    if (this.fullyLoaded) return;
+    this.isLoadingTransactions = true;
+    this.retryLoadMore = false;
+    const replace = !this.nextPageCursor;
+    this.pageSubscription = this.electrsApiService
+      .getAddressTransactionPage$(
+        this.pagedTarget,
+        this.pagedScript,
+        this.nextPageCursor || undefined
+      )
+      .subscribe({
+        next: (page) => {
+          if (!replace && this.pageSnapshot !== page.snapshotHash) {
+            this.handlePageError({ status: 409 });
+            return;
+          }
+          this.pageSnapshot = page.snapshotHash;
+          this.nextPageCursor = page.nextCursor;
+          const merged = replace
+            ? page.transactions
+            : [...(this.transactions || []), ...page.transactions];
+          const live = Array.from(this.liveTransactions.values());
+          const byId = new Map([...live, ...merged].map((tx) => [tx.txid, tx]));
+          for (const tx of live) byId.set(tx.txid, tx);
+          this.transactions = Array.from(byId.values()).filter(
+            (tx) => !this.removedTransactions.has(tx.txid)
+          );
+          this.fullyLoaded = page.complete;
+          this.transactionError = null;
+          this.pageResetRequired = false;
+          this.isLoadingTransactions = false;
+          if (
+            !page.complete &&
+            !page.transactions.length &&
+            this.emptyPageContinuations++ < 3
+          ) {
+            this.pagedSubscriptions.add(
+              timer(0).subscribe(() => this.loadPagedTransactions())
+            );
+          } else if (page.transactions.length) {
+            this.emptyPageContinuations = 0;
+          }
+          this.cdr.markForCheck();
+        },
+        error: (error) => this.handlePageError(error),
+      });
+  }
+
+  private requiresSnapshotReset(error: any): boolean {
+    return (
+      error.status === 409 || error.error?.code === 'INVALID_ADDRESS_CURSOR'
+    );
+  }
+
+  private handlePageError(error: any): void {
+    this.transactionError = error;
+    this.retryLoadMore = true;
+    this.isLoadingTransactions = false;
+    if (this.requiresSnapshotReset(error)) {
+      this.pageResetRequired = true;
+      this.nextPageCursor = null;
+      this.pageSnapshot = null;
+      this.fullyLoaded = false;
+    }
+    this.cdr.markForCheck();
+  }
+
+  calculateCount(): void {
+    if (this.countRunning) return;
+    this.countError = null;
+    this.countSubscription = new Subscription();
+    this.countRunning = true;
+    this.continueCount();
+  }
+
+  cancelCount(): void {
+    this.countRunning = false;
+    this.countPaused = false;
+    this.countSubscription.unsubscribe();
+  }
+
+  private continueCount(): void {
+    if (!this.countRunning) return;
+    if (document.hidden) {
+      this.countPaused = true;
+      return;
+    }
+    this.countPaused = false;
+    this.countSubscription.add(
+      this.electrsApiService
+        .getAddressTransactionCount$(
+          this.pagedTarget,
+          this.pagedScript,
+          this.countCursor || undefined
+        )
+        .subscribe({
+          next: (result) => {
+            if (
+              this.countCursor &&
+              this.countResult?.snapshotHash !== result.snapshotHash
+            ) {
+              this.handleCountError({ status: 409 });
+              return;
+            }
+            this.countResult = result;
+            this.countCursor = result.nextCursor;
+            if (result.complete) this.countRunning = false;
+            else {
+              // Yield between bounded foreground batches; navigation/visibility can cancel the next one.
+              this.countSubscription.add(
+                timer(0).subscribe(() => this.continueCount())
+              );
+            }
+            this.cdr.markForCheck();
+          },
+          error: (error) => this.handleCountError(error),
+        })
+    );
+  }
+
+  private handleCountError(error: any): void {
+    this.countError = error;
+    this.countRunning = false;
+    if (this.requiresSnapshotReset(error)) {
+      this.countResult = null;
+      this.countCursor = null;
+    }
+    this.cdr.markForCheck();
+  }
+
+  @HostListener('document:visibilitychange')
+  onVisibilityChange(): void {
+    if (!this.paginatedMode || !this.countRunning) return;
+    if (document.hidden) {
+      this.countSubscription.unsubscribe();
+      this.countPaused = true;
+    } else {
+      this.countSubscription = new Subscription();
+      this.continueCount();
+    }
+    this.cdr.markForCheck();
+  }
+
   updateChainStats(): void {
     this.chainStats = new AddressStats(
       this.address.chain_stats,
-      this.address.address
+      this.address?.address || this.bchAddressString
     );
     this.mempoolStats = new AddressStats(
       this.address.mempool_stats,
-      this.address.address
+      this.address?.address || this.bchAddressString
     );
   }
 
@@ -685,6 +1014,7 @@ export class AddressComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.cancelPagedRequests();
     this.mainSubscription.unsubscribe();
     this.mempoolTxSubscription.unsubscribe();
     this.mempoolRemovedTxSubscription.unsubscribe();

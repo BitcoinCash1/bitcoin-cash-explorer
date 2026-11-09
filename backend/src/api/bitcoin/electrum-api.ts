@@ -1,3 +1,5 @@
+import { AddressPagination } from './address-pagination';
+import { HistoryCoordinator } from './history-coordinator';
 import config from '../../config';
 import { ElectrumClient } from '@bitcoincash/electrum-client';
 import { ElectrumConfig, PersistencePolicy } from '@bitcoincash/electrum-client/dist/types';
@@ -13,6 +15,10 @@ import { compareElectrumHistoryNewestFirst } from './electrum-history';
 
 class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
   private electrumClient: ElectrumClient;
+  private historyClient!: ElectrumClient;
+  private reconnectHistory: () => void;
+  private readonly historyCoordinator = new HistoryCoordinator();
+  private pagination: AddressPagination;
 
   constructor(bitcoinClient: any) {
     super(bitcoinClient);
@@ -53,12 +59,110 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       electrumCallbacks
     );
 
+    this.reconnectHistory = () => {
+      this.historyClient?.close();
+      this.historyClient = new ElectrumClient(
+        config.ELECTRUM.PORT,
+        config.ELECTRUM.HOST,
+        config.ELECTRUM.TLS_ENABLED ? 'tls' : 'tcp',
+        electrumCallbacks
+      );
+      void this.historyClient
+        .initElectrum(electrumConfig, electrumPersistencePolicy)
+        .catch(() => logger.err('Error connecting dedicated Electrum history client'));
+    };
+    this.reconnectHistory();
+    this.pagination = new AddressPagination(
+      {
+        snapshot: async () => {
+          const hash = await this.$getBlockHashTip();
+          const block = await this.$getBlock(hash);
+          return { height: block.height, hash };
+        },
+        hash: (height) => this.$getBlockHash(height),
+        firstUse: async (key, snapshotHash) => {
+          const first = await this.historyCoordinator.request<any>('first:' + key + ':' + snapshotHash, () =>
+            this.historyRequest('blockchain.scripthash.get_first_use', [key])
+          );
+          if (first === null) return null;
+          if (!Number.isSafeInteger(first.height) || first.height < 0) throw new Error('Invalid first use response');
+          return first.height;
+        },
+        history: (key, from, to, count, signal, snapshotHash) =>
+          this.historyCoordinator.request<IElectrumApi.ScriptHashHistory[]>(
+            `${key}:${snapshotHash}:${from}:${to}`,
+            () => this.historyRequest('blockchain.scripthash.get_history', [key, from, to]),
+            count,
+            signal
+          ),
+        pending: (key) => this.electrumClient.blockchainScripthash_getMempool(key),
+      },
+      config.EXPLORER.NETWORK
+    );
+
     this.electrumClient
       .initElectrum(electrumConfig, electrumPersistencePolicy)
       .then(() => {})
       .catch((err) => {
         logger.err(`Error connecting to Electrum Server at ${config.ELECTRUM.HOST}:${config.ELECTRUM.PORT}`);
       });
+  }
+
+  private historyRequest(method: string, params: any[]): Promise<any> {
+    return new Promise((resolve, reject) => {
+      const timer = setTimeout(() => {
+        this.reconnectHistory();
+        reject(new Error('Electrum history request timed out'));
+      }, 15000);
+      void this.historyClient
+        .request(method, params)
+        .then(resolve, reject)
+        .finally(() => clearTimeout(timer));
+    });
+  }
+
+  private async paginationKey(target: string, scriptHash: boolean): Promise<{ key: string; address: string }> {
+    if (scriptHash) return { key: target, address: target };
+    const info = await this.bitcoindClient.validateAddress(target);
+    if (!info?.isvalid) throw new Error('Invalid Bitcoin Cash address');
+    return { key: this.encodeScriptHash(info.scriptPubKey), address: info.address };
+  }
+  async $getAddressSummary(target: string, scriptHash = false) {
+    const { key, address } = await this.paginationKey(target, scriptHash);
+    const balance = await this.electrumClient.blockchainScripthash_getBalance(key);
+    return {
+      address,
+      confirmedBalance: balance.confirmed,
+      pendingBalance: balance.unconfirmed,
+      electrum: true as const,
+    };
+  }
+  async $getAddressPage(target: string, scriptHash = false, cursor?: string, signal?: AbortSignal) {
+    const { key } = await this.paginationKey(target, scriptHash);
+    const page = await this.pagination.page(key, 'transactions', cursor, signal);
+    const transactions: IPublicApi.VerboseTransaction[] = [];
+    for (const row of 'rows' in page ? page.rows : []) {
+      if (signal?.aborted) throw new Error('Request cancelled');
+      transactions.push((await this.$getRawTransaction(row.tx_hash, false, true)) as IPublicApi.VerboseTransaction);
+    }
+    if ((await this.$getBlockHash(page.snapshotHeight)) !== page.snapshotHash)
+      throw Object.assign(new Error('Address snapshot changed; restart pagination'), {
+        status: 409,
+        code: 'ADDRESS_SNAPSHOT_CHANGED',
+      });
+    return {
+      nextCursor: page.nextCursor,
+      complete: page.complete,
+      snapshotHeight: page.snapshotHeight,
+      snapshotHash: page.snapshotHash,
+      transactions,
+    };
+  }
+  async $getAddressCount(target: string, scriptHash = false, cursor?: string, signal?: AbortSignal) {
+    const { key } = await this.paginationKey(target, scriptHash);
+    const page = await this.pagination.page(key, 'count', cursor, signal);
+    if (!('confirmedCount' in page)) throw new Error('Invalid count result');
+    return page;
   }
 
   async $getAddress(address: string): Promise<IPublicApi.Address> {
@@ -71,7 +175,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       const balance = await this.$getScriptHashBalance(addressInfo.scriptPubKey);
       const history = await this.$getScriptHashHistory(addressInfo.scriptPubKey);
 
-      const unconfirmed = history.filter((h) => h.fee).length;
+      const unconfirmed = history.filter((h) => h.height <= 0).length;
 
       return {
         address: addressInfo.address,
@@ -112,9 +216,8 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       let startingIndex = 0;
       if (lastSeenTxId) {
         const pos = history.findIndex((historicalTx) => historicalTx.tx_hash === lastSeenTxId);
-        if (pos) {
-          startingIndex = pos + 1;
-        }
+        if (pos < 0) throw new Error('Invalid transaction cursor');
+        startingIndex = pos + 1;
       }
       const endIndex = Math.min(startingIndex + 10, history.length);
 
@@ -173,11 +276,13 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       const balance = await this.electrumClient.blockchainScripthash_getBalance(scripthash);
       let history = memoryCache.get<IElectrumApi.ScriptHashHistory[]>('Scripthash_getHistory', scripthash);
       if (!history) {
-        history = await this.electrumClient.blockchainScripthash_getHistory(scripthash);
+        history = await this.historyCoordinator.request<IElectrumApi.ScriptHashHistory[]>('full:' + scripthash, () =>
+          this.historyRequest('blockchain.scripthash.get_history', [scripthash])
+        );
         memoryCache.set('Scripthash_getHistory', scripthash, history, 2);
       }
 
-      const unconfirmed = history ? history.filter((h) => h.fee).length : 0;
+      const unconfirmed = history ? history.filter((h) => h.height <= 0).length : 0;
 
       return {
         scripthash: scripthash,
@@ -221,7 +326,9 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       const transactions: IPublicApi.VerboseTransaction[] = [];
       let history = memoryCache.get<IElectrumApi.ScriptHashHistory[]>('Scripthash_getHistory', scripthash);
       if (!history) {
-        history = await this.electrumClient.blockchainScripthash_getHistory(scripthash);
+        history = await this.historyCoordinator.request<IElectrumApi.ScriptHashHistory[]>('full:' + scripthash, () =>
+          this.historyRequest('blockchain.scripthash.get_history', [scripthash])
+        );
         memoryCache.set('Scripthash_getHistory', scripthash, history, 2);
       }
       if (!history) {
@@ -232,9 +339,8 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       let startingIndex = 0;
       if (lastSeenTxId) {
         const pos = history.findIndex((historicalTx) => historicalTx.tx_hash === lastSeenTxId);
-        if (pos) {
-          startingIndex = pos + 1;
-        }
+        if (pos < 0) throw new Error('Invalid transaction cursor');
+        startingIndex = pos + 1;
       }
       const endIndex = Math.min(startingIndex + 10, history.length);
 
@@ -430,17 +536,25 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
       }
 
       // TODO: Extend blockchainScripthash_getHistory method in your new @bitcoincash/electrum-client package
-      return this.electrumClient.request('blockchain.scripthash.get_history', params).then((history) => {
-        memoryCache.set(cacheKey, scriptHash, history, 2);
-        return history;
-      });
+      return this.historyCoordinator
+        .request<IElectrumApi.ScriptHashHistory[]>(JSON.stringify(params), () =>
+          this.historyRequest('blockchain.scripthash.get_history', params)
+        )
+        .then((history) => {
+          memoryCache.set(cacheKey, scriptHash, history, 2);
+          return history;
+        });
     }
 
     // Use standard method for non-height-filtered queries
-    return this.electrumClient.blockchainScripthash_getHistory(this.encodeScriptHash(scriptHash)).then((history) => {
-      memoryCache.set(cacheKey, scriptHash, history, 2);
-      return history;
-    });
+    return this.historyCoordinator
+      .request<IElectrumApi.ScriptHashHistory[]>('full:' + this.encodeScriptHash(scriptHash), () =>
+        this.historyRequest('blockchain.scripthash.get_history', [this.encodeScriptHash(scriptHash)])
+      )
+      .then((history) => {
+        memoryCache.set(cacheKey, scriptHash, history, 2);
+        return history;
+      });
   }
 
   private encodeScriptHash(scriptPubKey: string): string {

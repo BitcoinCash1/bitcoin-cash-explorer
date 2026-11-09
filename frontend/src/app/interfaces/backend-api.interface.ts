@@ -160,6 +160,32 @@ export interface Block {
   abla_state?: BlockAblaState;
 }
 
+export interface AddressBalanceSummary {
+  address: string;
+  confirmedBalance: number;
+  pendingBalance: number;
+  electrum: true;
+  is_pubkey?: boolean;
+}
+
+export interface AddressTransactionPage {
+  transactions: Transaction[];
+  nextCursor: string | null;
+  complete: boolean;
+  snapshotHeight: number;
+  snapshotHash: string;
+}
+
+export interface AddressTransactionCount {
+  confirmedCount: number;
+  scannedThroughHeight: number;
+  progress: number;
+  nextCursor: string | null;
+  complete: boolean;
+  snapshotHeight: number;
+  snapshotHash: string;
+}
+
 export interface Address {
   electrum?: boolean;
   address: string;

@@ -90,6 +90,12 @@ class BitcoinRoutes {
       .get(config.EXPLORER.API_URL_PREFIX + 'block/:hash/txs', this.getBlockTransactions) // TODO: txs with Verbose (new end-point)
       .get(config.EXPLORER.API_URL_PREFIX + 'block/:hash/txs/:index', this.getBlockTransactions) // TODO: txs with Verbose (new end-point)
       .get(config.EXPLORER.API_URL_PREFIX + 'block-height/:height', this.getBlockHeight)
+      .get(config.EXPLORER.API_URL_PREFIX + 'address/:address/summary', this.getAddressSummary.bind(this))
+      .get(config.EXPLORER.API_URL_PREFIX + 'address/:address/transactions', this.getAddressPage.bind(this))
+      .get(config.EXPLORER.API_URL_PREFIX + 'address/:address/transaction-count', this.getAddressCount.bind(this))
+      .get(config.EXPLORER.API_URL_PREFIX + 'scripthash/:scripthash/summary', this.getAddressSummary.bind(this))
+      .get(config.EXPLORER.API_URL_PREFIX + 'scripthash/:scripthash/transactions', this.getAddressPage.bind(this))
+      .get(config.EXPLORER.API_URL_PREFIX + 'scripthash/:scripthash/transaction-count', this.getAddressCount.bind(this))
       .get(config.EXPLORER.API_URL_PREFIX + 'address/:address', this.getAddress)
       .get(config.EXPLORER.API_URL_PREFIX + 'address/:address/txs', this.getAddressTransactions) // TODO: txs with Verbose (new end-point)
       .get(config.EXPLORER.API_URL_PREFIX + 'address/:address/txs/summary', this.getAddressTransactionSummary) // TODO: Requires mempool/electrs backend atm.. I think we can also use fulcrum or bchn here.
@@ -102,6 +108,79 @@ class BitcoinRoutes {
       .get(config.EXPLORER.API_URL_PREFIX + 'scripthash/:scripthash/txs/summary', this.getScriptHashTransactionSummary) // TODO: Requires mempool/electrs backend atm.. I think we can also use fulcrum or bchn here.
       .get(config.EXPLORER.API_URL_PREFIX + 'scripthash/:scripthash/utxo', this.getScriptHashUtxo)
       .get(config.EXPLORER.API_URL_PREFIX + 'address-prefix/:prefix', this.getAddressPrefix);
+  }
+
+  private async addressProgress(req: Request, res: Response, mode: 'summary' | 'page' | 'count'): Promise<void> {
+    const scriptHash = req.params.scripthash !== undefined;
+    const target = scriptHash ? req.params.scripthash : req.params.address;
+    if (config.EXPLORER.BACKEND === 'none') {
+      res.status(405).json({ error: 'Address pagination requires Electrum' });
+      return;
+    }
+    if (!(scriptHash ? /^[a-f0-9]{64}$/i.test(target) : getAddressRegex().test(target))) {
+      res.status(400).json({ error: scriptHash ? 'Invalid scripthash' : 'Invalid address' });
+      return;
+    }
+    if (
+      req.query.cursor !== undefined &&
+      (typeof req.query.cursor !== 'string' || !req.query.cursor || req.query.cursor.length > 2048)
+    ) {
+      res.status(400).json({ error: 'Invalid address cursor', code: 'INVALID_ADDRESS_CURSOR' });
+      return;
+    }
+    const canonical = scriptHash ? target.match(/../g)!.reverse().join('').toLowerCase() : target;
+    const controller = new AbortController();
+    const close = () => {
+      if (!res.writableFinished) controller.abort();
+    };
+    res.once('close', close);
+    res.setHeader('Cache-Control', 'no-store');
+    try {
+      const result =
+        mode === 'summary'
+          ? await bitcoinApi.$getAddressSummary(canonical, scriptHash)
+          : mode === 'page'
+            ? await bitcoinApi.$getAddressPage(
+                canonical,
+                scriptHash,
+                req.query.cursor as string | undefined,
+                controller.signal
+              )
+            : await bitcoinApi.$getAddressCount(
+                canonical,
+                scriptHash,
+                req.query.cursor as string | undefined,
+                controller.signal
+              );
+      const payload =
+        'transactions' in result
+          ? { ...result, transactions: transactionUtils.stripVerbosityFromTransactions(result.transactions) }
+          : result;
+      if (!res.destroyed) res.json(payload);
+    } catch (error: any) {
+      const status = [400, 405, 409, 503].includes(error?.status)
+        ? error.status
+        : error?.message === 'Invalid Bitcoin Cash address'
+          ? 400
+          : 503;
+      if (status === 503) res.setHeader('Retry-After', '2');
+      if (!res.destroyed)
+        res.status(status).json({
+          error: status === 503 ? 'Address history temporarily unavailable' : error.message,
+          code: error?.code || (status === 503 ? 'ADDRESS_HISTORY_BUSY' : undefined),
+        });
+    } finally {
+      res.removeListener('close', close);
+    }
+  }
+  private getAddressSummary(req: Request, res: Response) {
+    return this.addressProgress(req, res, 'summary');
+  }
+  private getAddressPage(req: Request, res: Response) {
+    return this.addressProgress(req, res, 'page');
+  }
+  private getAddressCount(req: Request, res: Response) {
+    return this.addressProgress(req, res, 'count');
   }
 
   private getInitData(req: Request, res: Response) {
@@ -663,6 +742,10 @@ class BitcoinRoutes {
       const nonVerboseTransactions = transactionUtils.stripVerbosityFromTransactions(transactions);
       res.json(nonVerboseTransactions);
     } catch (e) {
+      if (e instanceof Error && e.message === 'Invalid transaction cursor') {
+        handleError(req, res, 400, e.message);
+        return;
+      }
       if (e instanceof Error && e.message === 'Invalid Bitcoin Cash address') {
         res.status(400).send(e.message);
         return;
@@ -808,6 +891,10 @@ class BitcoinRoutes {
       const nonVerboseTransactions = transactionUtils.stripVerbosityFromTransactions(transactions);
       res.json(nonVerboseTransactions);
     } catch (e) {
+      if (e instanceof Error && e.message === 'Invalid transaction cursor') {
+        handleError(req, res, 400, e.message);
+        return;
+      }
       if (
         e instanceof Error &&
         e.message &&

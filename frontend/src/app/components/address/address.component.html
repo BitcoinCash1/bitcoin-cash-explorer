@@ -85,7 +85,9 @@
 
   <div class="clearfix"></div>
 
-  <ng-template [ngIf]="!isLoadingAddress && !error">
+  <ng-template
+    [ngIf]="!isLoadingAddress && (!error || (paginatedMode && address))"
+  >
     <div class="box">
       <div class="row">
         @if (isMobile) {
@@ -197,35 +199,73 @@
         </div>
       </div>
     </ng-container>-->
+  </ng-template>
 
+  <ng-template [ngIf]="paginatedMode || (!isLoadingAddress && !error)">
     <br />
     <div class="title-tx">
       <h2 class="text-start">
-        <ng-template [ngIf]="!transactions?.length">&nbsp;</ng-template>
-        <ng-template
-          i18n="X of X Address Transaction"
-          [ngIf]="transactions?.length === 1"
-          >{{ (transactions?.length | number) || "?" }} of
-          {{ mempoolStats.tx_count + chainStats.tx_count | number }}
-          transaction</ng-template
-        >
-        <ng-template
-          i18n="X of X Address Transactions (Plural)"
-          [ngIf]="transactions?.length > 1"
-          >{{ (transactions?.length | number) || "?" }} of
-          {{ mempoolStats.tx_count + chainStats.tx_count | number }}
-          transactions</ng-template
-        >
+        @if (paginatedMode) {
+          <span i18n="address.transactions-loaded"
+            >{{ transactions?.length || 0 | number }} transactions loaded</span
+          >
+        } @else {
+          <ng-template [ngIf]="!transactions?.length">&nbsp;</ng-template>
+          <ng-template
+            i18n="X of X Address Transaction"
+            [ngIf]="transactions?.length === 1"
+            >{{ (transactions?.length | number) || "?" }} of
+            {{ mempoolStats.tx_count + chainStats.tx_count | number }}
+            transaction</ng-template
+          >
+          <ng-template
+            i18n="X of X Address Transactions (Plural)"
+            [ngIf]="transactions?.length > 1"
+            >{{ (transactions?.length | number) || "?" }} of
+            {{ mempoolStats.tx_count + chainStats.tx_count | number }}
+            transactions</ng-template
+          >
+        }
       </h2>
     </div>
 
     <app-transactions-list
       [transactions]="transactions"
       [showConfirmations]="true"
-      [addresses]="[address.address]"
+      [addresses]="[address?.address || bchAddressString]"
       (loadMore)="loadMore()"
     ></app-transactions-list>
 
+    @if (paginatedMode && transactionError) {
+      <p role="alert">
+        @if (pageResetRequired) {
+          <span i18n="address.snapshot-expired"
+            >The transaction snapshot changed or expired. Reload the list to
+            continue.</span
+          >
+        } @else {
+          <span i18n="address.transactions-error"
+            >Could not load transactions. Your loaded transactions are still
+            available.</span
+          >
+        }
+      </p>
+    }
+    @if (paginatedMode && fullyLoaded && !transactions?.length) {
+      <p i18n="address.no-transactions">No transactions found.</p>
+    }
+    @if (
+      paginatedMode && !fullyLoaded && !isLoadingTransactions && !retryLoadMore
+    ) {
+      <button
+        type="button"
+        class="btn btn-outline-info btn-sm"
+        (click)="loadMore()"
+        i18n="address.load-more"
+      >
+        Load more transactions
+      </button>
+    }
     <div class="text-center">
       <ng-template [ngIf]="isLoadingTransactions">
         <ng-container *ngIf="addressLoadingStatus$ as addressLoadingStatus">
@@ -258,9 +298,13 @@
           type="button"
           class="btn btn-outline-info btn-sm"
           (click)="loadMore()"
-          aria-label="Load more transactions"
         >
           <fa-icon [icon]="['fas', 'redo-alt']" [fixedWidth]="true"></fa-icon>
+          @if (pageResetRequired) {
+            <span i18n="address.reload-transactions">Reload transactions</span>
+          } @else {
+            <span i18n="address.retry-page">Retry</span>
+          }
         </button>
       </ng-template>
     </div>
@@ -328,6 +372,15 @@
         >Error loading address data.</span
       >
       <br />
+      @if (paginatedMode) {
+        <button
+          class="btn btn-outline-info btn-sm"
+          type="button"
+          (click)="refreshPagedSummary()"
+        >
+          <span i18n="address.retry-balance">Retry balance</span>
+        </button>
+      }
       <i class="small">({{ error | httpErrorMsg }})</i>
       <br />
       @if (
@@ -402,7 +455,64 @@
 
 <ng-template #transactionsRow>
   <td i18n="address.confirmed-transactions">Confirmed Transactions</td>
-  <td class="wrap-cell">{{ chainStats.tx_count }}</td>
+  <td class="wrap-cell" aria-live="polite">
+    @if (paginatedMode) {
+      @if (countResult?.complete) {
+        <span i18n="address.confirmed-total"
+          >{{ countResult.confirmedCount | number }} confirmed as of block
+          {{ countResult.snapshotHeight | number }}</span
+        >
+      } @else if (countResult) {
+        <span i18n="address.count-progress"
+          >{{ countResult.confirmedCount | number }} counted so far</span
+        >
+        <small class="d-block" i18n="address.count-height-progress"
+          >{{ countResult.progress | number: "1.0-0" }}% of block heights
+          scanned</small
+        >
+        <small class="d-block" i18n="address.scanned-height"
+          >Scanned through block
+          {{ countResult.scannedThroughHeight | number }}</small
+        >
+      } @else {
+        <span i18n="address.total-not-calculated">Total not calculated</span>
+      }
+      @if (countRunning) {
+        <button
+          type="button"
+          class="btn btn-outline-info btn-sm ms-2"
+          (click)="cancelCount()"
+          i18n="address.cancel-count"
+        >
+          Cancel
+        </button>
+        @if (countPaused) {
+          <small class="d-block" i18n="address.count-paused"
+            >Paused while this tab is hidden.</small
+          >
+        }
+      } @else if (!countResult?.complete) {
+        <button
+          type="button"
+          class="btn btn-outline-info btn-sm ms-2"
+          (click)="calculateCount()"
+        >
+          @if (countResult) {
+            <span i18n="address.continue-count">Continue calculating</span>
+          } @else {
+            <span i18n="address.calculate-total">Calculate total</span>
+          }
+        </button>
+      }
+      @if (countError) {
+        <small class="d-block" role="alert" i18n="address.count-error"
+          >Count unavailable. Try again.</small
+        >
+      }
+    } @else {
+      {{ chainStats.tx_count }}
+    }
+  </td>
 </ng-template>
 
 <ng-template #pendingTransactionsRow>
@@ -410,7 +520,11 @@
     Pending Transactions
   </td>
   <td class="fst-italic wrap-cell">
-    {{ mempoolStats.tx_count }}
+    @if (paginatedMode) {
+      <span i18n="address.pending-count-unknown">Not calculated</span>
+    } @else {
+      {{ mempoolStats.tx_count }}
+    }
   </td>
 </ng-template>
 
