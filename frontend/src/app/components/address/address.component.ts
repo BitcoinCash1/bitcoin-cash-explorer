@@ -13,7 +13,7 @@ import {
   catchError,
   map,
   tap,
-  skip,
+  pairwise,
   distinctUntilChanged,
   startWith,
 } from 'rxjs/operators';
@@ -191,6 +191,8 @@ export class AddressComponent implements OnInit, OnDestroy {
   pageResetRequired = false;
   private emptyPageContinuations = 0;
   private liveTransactions = new Map<string, Transaction>();
+  private pendingArrivalSequence = new Map<string, number>();
+  private liveSequence = 0;
   private removedTransactions = new Set<string>();
   private nextPageCursor: string | null = null;
   private pageSnapshot: string | null = null;
@@ -199,6 +201,8 @@ export class AddressComponent implements OnInit, OnDestroy {
   private pagedSubscriptions = new Subscription();
   private summarySubscription = new Subscription();
   private pageSubscription = new Subscription();
+  private pageRequests = new Subscription();
+  private pageGeneration = 0;
   private pagedScript: string | undefined;
   private pagedTarget = '';
 
@@ -256,6 +260,8 @@ export class AddressComponent implements OnInit, OnDestroy {
           this.countUnavailable = false;
           this.historyUnavailable = false;
           this.liveTransactions.clear();
+          this.pendingArrivalSequence.clear();
+          this.liveSequence = 0;
           this.removedTransactions.clear();
           this.emptyPageContinuations = 0;
           this.websocketService.stopTrackingAddress();
@@ -500,8 +506,12 @@ export class AddressComponent implements OnInit, OnDestroy {
       this.stateService.mempoolTransactions$.subscribe((tx) => {
         if (this.paginatedMode) {
           this.liveTransactions.set(tx.txid, tx);
+          if (!this.pendingArrivalSequence.has(tx.txid)) {
+            this.pendingArrivalSequence.set(tx.txid, ++this.liveSequence);
+          }
           this.removedTransactions.delete(tx.txid);
           this.addTransaction(tx);
+          if (this.transactions) this.mergePagedTransactions(this.transactions);
           this.refreshPagedSummary();
         } else {
           this.addTransaction(tx);
@@ -515,7 +525,9 @@ export class AddressComponent implements OnInit, OnDestroy {
         this.removeTransaction(tx);
         if (this.paginatedMode) {
           this.liveTransactions.delete(tx.txid);
+          this.pendingArrivalSequence.delete(tx.txid);
           this.removedTransactions.add(tx.txid);
+          if (this.transactions) this.mergePagedTransactions(this.transactions);
           this.refreshPagedSummary();
         } else this.mempoolStats?.removeTx(tx);
         this.cdr.markForCheck();
@@ -525,6 +537,7 @@ export class AddressComponent implements OnInit, OnDestroy {
       (transaction) => {
         if (this.paginatedMode) {
           this.liveTransactions.set(transaction.txid, transaction);
+          this.pendingArrivalSequence.delete(transaction.txid);
           this.removedTransactions.delete(transaction.txid);
           const existing = this.transactions?.find(
             (tx) => tx.txid === transaction.txid
@@ -535,6 +548,7 @@ export class AddressComponent implements OnInit, OnDestroy {
           } else {
             this.addTransaction(transaction, false);
           }
+          if (this.transactions) this.mergePagedTransactions(this.transactions);
           this.refreshPagedSummary();
           this.cdr.markForCheck();
           return;
@@ -763,6 +777,9 @@ export class AddressComponent implements OnInit, OnDestroy {
     this.pagedSubscriptions = new Subscription();
     this.summarySubscription.unsubscribe();
     this.pageSubscription.unsubscribe();
+    this.pageRequests.unsubscribe();
+    this.pageRequests = new Subscription();
+    this.pageGeneration++;
     this.cancelCount();
   }
 
@@ -782,11 +799,64 @@ export class AddressComponent implements OnInit, OnDestroy {
     this.pagedSubscriptions.add(
       this.stateService.connectionState$
         .pipe(
-          skip(1),
-          filter((state) => state === 2)
+          pairwise(),
+          filter(([previous, current]) => previous !== 2 && current === 2)
         )
-        .subscribe(() => this.refreshPagedSummary())
+        .subscribe(() => this.restartPagedTransactions())
     );
+  }
+
+  private restartPagedTransactions(): void {
+    // Reconnects may have missed both new transactions and removals. Fetch a fresh
+    // first page, while leaving the old cards visible until replacement succeeds.
+    this.pageSubscription.unsubscribe();
+    this.pageRequests.unsubscribe();
+    this.pageRequests = new Subscription();
+    this.pageGeneration++;
+    this.nextPageCursor = null;
+    this.pageSnapshot = null;
+    this.emptyPageContinuations = 0;
+    this.liveTransactions.clear();
+    this.removedTransactions.clear();
+    this.pendingArrivalSequence.clear();
+    this.liveSequence = 0;
+    this.fullyLoaded = false;
+    this.transactionError = null;
+    this.historyUnavailable = false;
+    this.pageResetRequired = false;
+    this.retryLoadMore = false;
+    this.isLoadingTransactions = false;
+    this.refreshPagedSummary();
+    this.loadPagedTransactions();
+    this.cdr.markForCheck();
+  }
+
+  private mergePagedTransactions(transactions: Transaction[]): void {
+    const live = Array.from(this.liveTransactions.values());
+    const byId = new Map([...live, ...transactions].map((tx) => [tx.txid, tx]));
+    for (const tx of live) byId.set(tx.txid, tx);
+    const merged = Array.from(byId.values()).filter(
+      (tx) => !this.removedTransactions.has(tx.txid)
+    );
+    const previousOrder = new Map(merged.map((tx, index) => [tx.txid, index]));
+    this.transactions = merged.sort((a, b) => {
+      if (a.status.confirmed !== b.status.confirmed) {
+        return a.status.confirmed ? 1 : -1;
+      }
+      if (a.status.confirmed) {
+        return (
+          (b.status.block_height || 0) - (a.status.block_height || 0) ||
+          a.txid.localeCompare(b.txid)
+        );
+      }
+      // Live pending arrivals are newest first. Preserve page/existing order for
+      // pending transactions whose arrival time was not observed in this session.
+      return (
+        (this.pendingArrivalSequence.get(b.txid) || 0) -
+          (this.pendingArrivalSequence.get(a.txid) || 0) ||
+        previousOrder.get(a.txid) - previousOrder.get(b.txid)
+      );
+    });
   }
 
   refreshPagedSummary(): void {
@@ -831,6 +901,7 @@ export class AddressComponent implements OnInit, OnDestroy {
     this.isLoadingTransactions = true;
     this.retryLoadMore = false;
     const replace = !this.nextPageCursor;
+    const generation = this.pageGeneration;
     this.pageSubscription = this.electrsApiService
       .getAddressTransactionPage$(
         this.pagedTarget,
@@ -839,6 +910,7 @@ export class AddressComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: (page) => {
+          if (generation !== this.pageGeneration) return;
           if (!replace && this.pageSnapshot !== page.snapshotHash) {
             this.handlePageError({ status: 409 });
             return;
@@ -848,12 +920,7 @@ export class AddressComponent implements OnInit, OnDestroy {
           const merged = replace
             ? page.transactions
             : [...(this.transactions || []), ...page.transactions];
-          const live = Array.from(this.liveTransactions.values());
-          const byId = new Map([...live, ...merged].map((tx) => [tx.txid, tx]));
-          for (const tx of live) byId.set(tx.txid, tx);
-          this.transactions = Array.from(byId.values()).filter(
-            (tx) => !this.removedTransactions.has(tx.txid)
-          );
+          this.mergePagedTransactions(merged);
           this.fullyLoaded = page.complete;
           this.transactionError = null;
           this.pageResetRequired = false;
@@ -863,16 +930,22 @@ export class AddressComponent implements OnInit, OnDestroy {
             !page.transactions.length &&
             this.emptyPageContinuations++ < 3
           ) {
-            this.pagedSubscriptions.add(
-              timer(0).subscribe(() => this.loadPagedTransactions())
+            this.pageRequests.add(
+              timer(0).subscribe(() => {
+                if (generation === this.pageGeneration)
+                  this.loadPagedTransactions();
+              })
             );
           } else if (page.transactions.length) {
             this.emptyPageContinuations = 0;
           }
           this.cdr.markForCheck();
         },
-        error: (error) => this.handlePageError(error),
+        error: (error) => {
+          if (generation === this.pageGeneration) this.handlePageError(error);
+        },
       });
+    this.pageRequests.add(this.pageSubscription);
   }
 
   private isHistoryUnavailable(error: any): boolean {

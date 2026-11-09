@@ -58,7 +58,7 @@ function setup(
     network: '',
     backend$: new BehaviorSubject(backend),
     networkChanged$,
-    connectionState$: new BehaviorSubject(0),
+    connectionState$: new BehaviorSubject(2),
     loadingIndicators$: new BehaviorSubject({}),
     mempoolTransactions$: new Subject<any>(),
     mempoolRemovedTransactions$: new Subject<any>(),
@@ -335,6 +335,145 @@ describe('bounded Electrum address loading', () => {
       undefined,
       'next'
     );
+  });
+
+  it('keeps two live pending arrivals newest first before and after a page arrives', () => {
+    const { component: c, pages, state } = setup();
+    state.mempoolTransactions$.next(tx('first-pending', false));
+    state.mempoolTransactions$.next(tx('second-pending', false));
+    pages[0].next(page([tx('confirmed')], 'next'));
+    expect(c.transactions.map((item) => item.txid)).toEqual([
+      'second-pending',
+      'first-pending',
+      'confirmed',
+    ]);
+    state.mempoolTransactions$.next(tx('third-pending', false));
+    expect(c.transactions.map((item) => item.txid)).toEqual([
+      'third-pending',
+      'second-pending',
+      'first-pending',
+      'confirmed',
+    ]);
+    c.loadMore();
+    pages[1].next(page([tx('other-confirmed')]));
+    expect(c.transactions.slice(0, 3).map((item) => item.txid)).toEqual([
+      'third-pending',
+      'second-pending',
+      'first-pending',
+    ]);
+  });
+
+  it('sorts pending before confirmed heights and uses txid ties immediately on live confirmation', () => {
+    const { component: c, pages, state } = setup();
+    const confirmed = (id: string, height: number) => ({
+      ...tx(id),
+      status: { confirmed: true, block_height: height },
+    });
+    pages[0].next(
+      page([
+        confirmed('older', 9),
+        confirmed('z', 10),
+        tx('pending', false),
+        confirmed('a', 10),
+      ])
+    );
+    expect(c.transactions.map((item) => item.txid)).toEqual([
+      'pending',
+      'a',
+      'z',
+      'older',
+    ]);
+    state.blockTransactions$.next(confirmed('newest', 11));
+    expect(c.transactions.map((item) => item.txid)).toEqual([
+      'pending',
+      'newest',
+      'a',
+      'z',
+      'older',
+    ]);
+    state.blockTransactions$.next(confirmed('pending', 10));
+    expect(c.transactions.map((item) => item.txid)).toEqual([
+      'newest',
+      'a',
+      'pending',
+      'z',
+      'older',
+    ]);
+    state.mempoolRemovedTransactions$.next(tx('a'));
+    expect(c.transactions.map((item) => item.txid)).toEqual([
+      'newest',
+      'pending',
+      'z',
+      'older',
+    ]);
+  });
+
+  it('reconnects with a fresh first page, clearing stale live overrides and ignoring the obsolete inflight page', () => {
+    const { component: c, api, pages, state, counts } = setup();
+    pages[0].next(page([tx('restored')], 'old-next'));
+    state.mempoolTransactions$.next(tx('stale-pending', false));
+    state.mempoolRemovedTransactions$.next(tx('restored'));
+    c.calculateCount();
+    counts[0].next(count(50));
+    c.loadMore();
+    const oldPage = pages[1];
+    state.connectionState$.next(2);
+    state.connectionState$.next(2);
+    expect(api.getAddressTransactionPage$).toHaveBeenCalledTimes(2);
+    state.connectionState$.next(0);
+    state.connectionState$.next(2);
+    expect(api.getAddressTransactionPage$).toHaveBeenCalledTimes(3);
+    // Only the disconnected -> connected transition refreshes the first page.
+    expect(oldPage.observed).toBe(false);
+    expect(c.transactions.map((item) => item.txid)).toEqual(['stale-pending']);
+    expect(c.countResult.confirmedCount).toBe(50);
+    expect(api.getAddressTransactionPage$).toHaveBeenLastCalledWith(
+      first,
+      undefined,
+      undefined
+    );
+    oldPage.next(page([tx('obsolete')]));
+    expect(c.transactions.map((item) => item.txid)).toEqual(['stale-pending']);
+    pages[2].next(page([tx('missed'), tx('restored')]));
+    expect(c.transactions.map((item) => item.txid)).toEqual([
+      'missed',
+      'restored',
+    ]);
+    state.connectionState$.next(0);
+    state.connectionState$.next(1);
+    state.connectionState$.next(2);
+    expect(api.getAddressTransactionPage$).toHaveBeenCalledTimes(4);
+    state.connectionState$.next(2);
+    expect(api.getAddressTransactionPage$).toHaveBeenCalledTimes(4);
+  });
+
+  it('cancels queued empty-page continuations at reconnect and resets terminal page state', () => {
+    vi.useFakeTimers();
+    const { component: c, api, pages, state } = setup();
+    pages[0].next(page([], 'obsolete-cursor'));
+    state.connectionState$.next(0);
+    state.connectionState$.next(2);
+    vi.runOnlyPendingTimers();
+    expect(api.getAddressTransactionPage$).toHaveBeenCalledTimes(2);
+    expect(api.getAddressTransactionPage$).toHaveBeenLastCalledWith(
+      first,
+      undefined,
+      undefined
+    );
+    pages[1].error({
+      status: 422,
+      error: { code: 'ADDRESS_HISTORY_UNAVAILABLE', retryable: false },
+    });
+    expect(c.historyUnavailable).toBe(true);
+    state.connectionState$.next(0);
+    state.connectionState$.next(2);
+    expect(c.historyUnavailable).toBe(false);
+    expect(c.transactionError).toBeNull();
+    expect(c.retryLoadMore).toBe(false);
+    expect(c.fullyLoaded).toBe(false);
+    expect(api.getAddressTransactionPage$).toHaveBeenCalledTimes(3);
+    pages[2].next(page([tx('recovered')]));
+    expect(c.fullyLoaded).toBe(true);
   });
 
   it('preserves the none backend flow', () => {
