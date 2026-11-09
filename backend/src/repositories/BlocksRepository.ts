@@ -17,6 +17,12 @@ import blocks from '../api/blocks';
 import BlocksAuditsRepository from './BlocksAuditsRepository';
 import { parseDATUMTemplateCreator } from '../utils/bitcoin-script';
 import poolsUpdater from '../tasks/pools-updater';
+import {
+  encodeStaleHistoryCursor,
+  STALE_HISTORY_PAGE_SIZE,
+  StaleHistoryCursor,
+  StaleHistoryPage,
+} from '../api/stale-history';
 
 interface DatabaseBlock {
   index_version: number;
@@ -111,6 +117,74 @@ const BLOCK_DB_FIELDS = `
 
 class BlocksRepository {
   static version = 1;
+
+  /** Bounded database history. No live chain-tip status or historical RPC enrichment. */
+  public async $getStaleHistory(cursor?: StaleHistoryCursor): Promise<StaleHistoryPage> {
+    // InnoDB appends the hash primary key to stale_height, including the tie-breaker.
+    const params: (number | string)[] = [];
+    let before = '';
+    if (cursor) {
+      before = ' AND (height < ? OR (height = ? AND hash < ?))';
+      params.push(cursor.height, cursor.height, cursor.hash);
+    }
+    params.push(STALE_HISTORY_PAGE_SIZE + 1);
+    const canonicalFields = BLOCK_DB_FIELDS.trim()
+      .split(',')
+      .map((field) => {
+        const expression = field.trim();
+        const alias = expression.match(/\s+AS\s+(\w+)$/i);
+        const name = alias ? alias[1] : expression.split('.').pop();
+        return (
+          expression
+            .replace(/\s+AS\s+\w+$/i, '')
+            .replace(/\bblocks\./g, 'canonical.')
+            .replace(/\bpools\./g, 'canonical_pools.') + ` AS canonical_${name}`
+        );
+      })
+      .join(', ');
+    const [rows] = await DB.query<RowDataPacket[]>(
+      `
+      SELECT ${BLOCK_DB_FIELDS}, ${canonicalFields}
+      FROM (
+        SELECT hash, height FROM blocks FORCE INDEX (stale_height)
+        WHERE stale = 1${before}
+        ORDER BY height DESC, hash DESC LIMIT ?
+      ) history
+      JOIN blocks ON blocks.hash = history.hash
+      LEFT JOIN pools ON pools.id = blocks.pool_id
+      -- Canonical flags can briefly overlap while a reorg is indexed. Leave ambiguous pairs null.
+      LEFT JOIN blocks canonical ON canonical.hash = (
+        SELECT MIN(candidate.hash) FROM blocks candidate FORCE INDEX (stale_height)
+        WHERE candidate.stale = 0 AND candidate.height = history.height
+        HAVING COUNT(*) = 1
+      )
+      LEFT JOIN pools canonical_pools ON canonical_pools.id = canonical.pool_id
+      ORDER BY history.height DESC, history.hash DESC`,
+      params
+    );
+    const entries: StaleHistoryPage['entries'] = [];
+    for (const row of rows.slice(0, STALE_HISTORY_PAGE_SIZE)) {
+      const canonical = Object.fromEntries(
+        Object.entries(row)
+          .filter(([key]) => key.startsWith('canonical_'))
+          .map(([key, value]) => [key.slice('canonical_'.length), value])
+      );
+      entries.push({
+        stale: await this.formatDbBlockIntoExtendedBlock(row as unknown as DatabaseBlock, false),
+        canonical: canonical.id
+          ? await this.formatDbBlockIntoExtendedBlock(canonical as unknown as DatabaseBlock, false)
+          : null,
+      });
+    }
+    const last = entries[entries.length - 1]?.stale;
+    return {
+      entries,
+      nextCursor:
+        rows.length > STALE_HISTORY_PAGE_SIZE && last
+          ? encodeStaleHistoryCursor({ height: last.height, hash: last.id })
+          : null,
+    };
+  }
 
   /**
    * Save indexed block data in the database
@@ -1296,7 +1370,7 @@ class BlocksRepository {
    *
    * @param dbBlk
    */
-  private async formatDbBlockIntoExtendedBlock(dbBlk: DatabaseBlock): Promise<BlockExtended> {
+  private async formatDbBlockIntoExtendedBlock(dbBlk: DatabaseBlock, enrich = true): Promise<BlockExtended> {
     const blk: Partial<BlockExtended> = {};
     const extras: Partial<BlockExtension> = {};
 
@@ -1351,13 +1425,13 @@ class BlocksRepository {
 
     // Re-org can happen after indexing so we need to always get the
     // latest state from core
-    extras.orphans = chainTips.getOrphanedBlocksAtHeight(dbBlk.height);
+    extras.orphans = enrich ? chainTips.getOrphanedBlocksAtHeight(dbBlk.height) : [];
 
     // Match rate is not part of the blocks table, but it is part of APIs so we must include it
     extras.matchRate = null;
     extras.expectedFees = null;
     extras.expectedSize = null;
-    if (config.EXPLORER.AUDIT) {
+    if (enrich && config.EXPLORER.AUDIT) {
       const auditScore = await BlocksAuditsRepository.$getBlockAuditScore(dbBlk.id);
       if (auditScore) {
         extras.matchRate = auditScore.matchRate;
@@ -1368,7 +1442,11 @@ class BlocksRepository {
 
     // If we're missing block summary related field, check if we can populate them on the fly now
     // This is for example triggered upon re-org
-    if (Common.blocksSummariesIndexingEnabled() && (extras.medianFeeAmt === null || extras.feePercentiles === null)) {
+    if (
+      enrich &&
+      Common.blocksSummariesIndexingEnabled() &&
+      (extras.medianFeeAmt === null || extras.feePercentiles === null)
+    ) {
       extras.feePercentiles = await BlocksSummariesRepository.$getFeePercentilesByBlockId(dbBlk.id);
       if (extras.feePercentiles === null) {
         const summaryVersion = 0;
