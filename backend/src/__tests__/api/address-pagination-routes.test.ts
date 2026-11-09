@@ -1,6 +1,11 @@
 jest.mock('../../api/bitcoin/bitcoin-api-factory', () => ({
   __esModule: true,
-  default: { $getAddressSummary: jest.fn(), $getAddressPage: jest.fn(), $getAddressCount: jest.fn() },
+  default: {
+    $getAddressMempoolSummary: jest.fn(),
+    $getAddressSummary: jest.fn(),
+    $getAddressPage: jest.fn(),
+    $getAddressCount: jest.fn(),
+  },
 }));
 import express from 'express';
 import { createServer, Server } from 'node:http';
@@ -101,4 +106,40 @@ test('terminal history unavailability returns 422 without Retry-After', async ()
     code: 'ADDRESS_HISTORY_UNAVAILABLE',
     retryable: false,
   });
+});
+
+test('mempool summary HTTP contract preserves script hash byte order and no-store', async () => {
+  (api.$getAddressMempoolSummary as jest.Mock).mockResolvedValue({ pendingTransactionCount: 3 });
+  const hash = '00'.repeat(31) + 'ab';
+  const response = await fetch(url + 'scripthash/' + hash + '/mempool-summary');
+  expect(response.status).toBe(200);
+  expect(response.headers.get('cache-control')).toBe('no-store');
+  expect(await response.json()).toEqual({ pendingTransactionCount: 3 });
+  expect(api.$getAddressMempoolSummary).toHaveBeenCalledWith('ab' + '00'.repeat(31), true);
+  expect(api.$getAddressSummary).not.toHaveBeenCalled();
+  expect(api.$getAddressPage).not.toHaveBeenCalled();
+  expect(api.$getAddressCount).not.toHaveBeenCalled();
+});
+test('mempool address HTTP endpoint reports zero and transient failure independently', async () => {
+  (api.$getAddressMempoolSummary as jest.Mock)
+    .mockResolvedValueOnce({ pendingTransactionCount: 0 })
+    .mockRejectedValueOnce(new Error('invalid upstream response'));
+  const zero = await fetch(url + 'address/qqtest/mempool-summary');
+  expect(await zero.json()).toEqual({ pendingTransactionCount: 0 });
+  expect(zero.headers.get('cache-control')).toBe('no-store');
+  const response = await fetch(url + 'address/qqtest/mempool-summary');
+  expect(response.status).toBe(503);
+  expect(response.headers.get('retry-after')).toBe('2');
+  expect(response.headers.get('cache-control')).toBe('no-store');
+});
+test('mempool summary remains unsupported with backend none', async () => {
+  config.EXPLORER.BACKEND = 'none';
+  try {
+    const response = await fetch(url + 'address/qqtest/mempool-summary');
+    expect(response.status).toBe(405);
+    expect(response.headers.get('cache-control')).toBe('no-store');
+    expect(api.$getAddressMempoolSummary).not.toHaveBeenCalled();
+  } finally {
+    config.EXPLORER.BACKEND = 'electrum';
+  }
 });

@@ -160,6 +160,10 @@ export interface Block {
   abla_state?: BlockAblaState;
 }
 
+export interface AddressMempoolSummary {
+  pendingTransactionCount: number;
+}
+
 export interface AddressBalanceSummary {
   address: string;
   confirmedBalance: number;

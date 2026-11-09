@@ -4,7 +4,14 @@ import '@angular/compiler';
 import type {} from '@app/graphs/graphs.module';
 import type {} from '@components/transaction/transaction.module';
 import { convertToParamMap } from '@angular/router';
-import { BehaviorSubject, ReplaySubject, Subject } from 'rxjs';
+import {
+  BehaviorSubject,
+  ReplaySubject,
+  Subject,
+  firstValueFrom,
+  of,
+} from 'rxjs';
+import { ElectrsApiService } from '@app/services/backend-api.service';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AddressComponent } from './address.component';
 const first = 'qz9cq5ytxmejfqqr0l5clkmw0l52pj6n5yc76lup7a';
@@ -43,7 +50,8 @@ function setup(
   const params = new BehaviorSubject(convertToParamMap({ id: address }));
   const summaries: Subject<any>[] = [],
     pages: Subject<any>[] = [],
-    counts: Subject<any>[] = [];
+    counts: Subject<any>[] = [],
+    pendingCounts: Subject<any>[] = [];
   const request = (list: Subject<any>[]) =>
     vi.fn(() => {
       const subject = new Subject<any>();
@@ -52,6 +60,7 @@ function setup(
     });
   const api = {
     getAddressBalanceSummary$: request(summaries),
+    getAddressMempoolSummary$: request(pendingCounts),
     getAddressTransactionPage$: request(pages),
     getAddressTransactionCount$: request(counts),
     getAddress$: vi.fn(() => new Subject<any>()),
@@ -91,6 +100,7 @@ function setup(
     summaries,
     pages,
     counts,
+    pendingCounts,
     state,
     visibility,
   };
@@ -478,6 +488,122 @@ describe('bounded Electrum address loading', () => {
     expect(api.getAddressTransactionPage$).toHaveBeenCalledTimes(3);
     pages[2].next(page([tx('recovered')]));
     expect(c.fullyLoaded).toBe(true);
+  });
+
+  it('loads pending count independently and accepts exact one and zero without a total calculation', () => {
+    const { component: c, api, summaries, pages, pendingCounts } = setup();
+    expect(c.pendingCount).toBeNull();
+    expect(c.isLoadingPendingCount).toBe(true);
+    expect(api.getAddressMempoolSummary$).toHaveBeenCalledTimes(1);
+    summaries[0].next({
+      address: first,
+      confirmedBalance: 123,
+      pendingBalance: -5,
+      electrum: true,
+    });
+    pages[0].next(page([tx('first')]));
+    expect(c.isLoadingAddress).toBe(false);
+    expect(c.isLoadingTransactions).toBe(false);
+    expect(c.pendingCount).toBeNull();
+    pendingCounts[0].next({ pendingTransactionCount: 1 });
+    expect(c.pendingCount).toBe(1);
+    expect(c.isLoadingPendingCount).toBe(false);
+    expect(api.getAddressTransactionCount$).not.toHaveBeenCalled();
+    c.refreshPendingCount();
+    pendingCounts[1].next({ pendingTransactionCount: 0 });
+    expect(c.pendingCount).toBe(0);
+  });
+
+  it('keeps balance and cards available through pending count failure and independent retry', () => {
+    const { component: c, api, summaries, pages, pendingCounts } = setup();
+    summaries[0].next({
+      address: first,
+      confirmedBalance: 123,
+      pendingBalance: 0,
+      electrum: true,
+    });
+    pages[0].next(page([tx('first')]));
+    pendingCounts[0].error({ status: 503 });
+    expect(c.pendingCount).toBeNull();
+    expect(c.pendingCountError.status).toBe(503);
+    expect(c.isLoadingPendingCount).toBe(false);
+    expect(c.error).toBeNull();
+    expect(c.transactionError).toBeNull();
+    expect(c.chainStats.balance).toBe(123);
+    expect(c.transactions[0].txid).toBe('first');
+    c.refreshPendingCount();
+    expect(c.pendingCountError).toBeNull();
+    pendingCounts[1].next({ pendingTransactionCount: 1 });
+    expect(c.pendingCount).toBe(1);
+    expect(api.getAddressBalanceSummary$).toHaveBeenCalledTimes(1);
+    expect(api.getAddressTransactionPage$).toHaveBeenCalledTimes(1);
+  });
+
+  it('coalesces live add, confirmation and removal refreshes and refreshes immediately after reconnect', () => {
+    vi.useFakeTimers();
+    const { component: c, api, pendingCounts, state } = setup();
+    pendingCounts[0].next({ pendingTransactionCount: 1 });
+    state.mempoolTransactions$.next(tx('new', false));
+    state.blockTransactions$.next(tx('confirmed'));
+    state.mempoolRemovedTransactions$.next(tx('removed', false));
+    expect(api.getAddressMempoolSummary$).toHaveBeenCalledTimes(1);
+    vi.runOnlyPendingTimers();
+    expect(api.getAddressMempoolSummary$).toHaveBeenCalledTimes(2);
+    expect(pendingCounts[0].observed).toBe(false);
+    pendingCounts[1].next({ pendingTransactionCount: 0 });
+    expect(c.pendingCount).toBe(0);
+    state.connectionState$.next(0);
+    state.connectionState$.next(2);
+    expect(api.getAddressMempoolSummary$).toHaveBeenCalledTimes(3);
+    state.connectionState$.next(2);
+    expect(api.getAddressMempoolSummary$).toHaveBeenCalledTimes(3);
+  });
+
+  it('cancels pending count requests and coalesced work on navigation and uses the pubkey script after network changes', () => {
+    vi.useFakeTimers();
+    const { component: c, api, params, pendingCounts, state } = setup();
+    state.mempoolTransactions$.next(tx('new', false));
+    const pubkey = '02' + '11'.repeat(32);
+    params.next(convertToParamMap({ id: pubkey }));
+    expect(pendingCounts[0].observed).toBe(false);
+    pendingCounts[0].next({ pendingTransactionCount: 99 });
+    expect(c.pendingCount).toBeNull();
+    vi.runOnlyPendingTimers();
+    expect(api.getAddressMempoolSummary$).toHaveBeenCalledTimes(2);
+    expect(api.getAddressMempoolSummary$).toHaveBeenLastCalledWith(
+      pubkey,
+      '21' + pubkey + 'ac'
+    );
+    state.networkChanged$.next('chipnet');
+    expect(pendingCounts[1].observed).toBe(false);
+    expect(api.getAddressMempoolSummary$).toHaveBeenCalledTimes(3);
+    pendingCounts[2].next({ pendingTransactionCount: 1 });
+    expect(c.pendingCount).toBe(1);
+  });
+
+  it('uses the existing service pubkey hash convention and network path for the pending count endpoint', async () => {
+    const requestedUrls: string[] = [];
+    const get = vi.fn((url: string) => {
+      requestedUrls.push(url);
+      return of({ pendingTransactionCount: 1 });
+    });
+    const network = new BehaviorSubject('chipnet');
+    const service = new ElectrsApiService(
+      { get } as any,
+      {
+        isBrowser: true,
+        env: { ROOT_NETWORK: '' },
+        networkChanged$: network,
+      } as any
+    );
+    const script = '21' + '02' + '11'.repeat(32) + 'ac';
+    await firstValueFrom(service.getScriptHash$(script));
+    const legacyUrl = requestedUrls[0];
+    await firstValueFrom(service.getAddressMempoolSummary$('unused', script));
+    expect(requestedUrls[1]).toBe(legacyUrl + '/mempool-summary');
+    expect(requestedUrls[1]).toMatch(
+      /^\/chipnet\/api\/scripthash\/[a-f0-9]{64}\/mempool-summary$/
+    );
   });
 
   it('preserves the none backend flow', () => {

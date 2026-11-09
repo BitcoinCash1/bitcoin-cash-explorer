@@ -1,6 +1,9 @@
 import { createHash } from 'node:crypto';
 import { IElectrumApi } from './electrum-api.interface';
 import { HistoryBusyError } from './history-coordinator';
+export interface AddressMempoolSummary {
+  pendingTransactionCount: number;
+}
 export interface AddressSummary {
   address: string;
   confirmedBalance: number;

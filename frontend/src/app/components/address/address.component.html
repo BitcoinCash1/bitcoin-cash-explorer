@@ -538,7 +538,31 @@
   </td>
   <td class="fst-italic wrap-cell">
     @if (paginatedMode) {
-      <span i18n="address.pending-count-unknown">Not calculated</span>
+      @if (pendingCountError) {
+        <span i18n="address.pending-count-unavailable">Unavailable</span>
+        <button
+          type="button"
+          class="btn btn-outline-info btn-sm ms-2"
+          (click)="refreshPendingCount()"
+          aria-label="Retry pending transaction count"
+          i18n-aria-label="address.retry-pending-count"
+          i18n="address.retry-pending-count-button"
+        >
+          Retry
+        </button>
+      } @else {
+        @if (pendingCount !== null) {
+          {{ pendingCount | number }}
+        }
+        @if (isLoadingPendingCount) {
+          <span
+            role="status"
+            aria-label="Loading pending transaction count"
+            i18n-aria-label="address.loading-pending-count"
+            >…</span
+          >
+        }
+      }
     } @else {
       {{ mempoolStats.tx_count }}
     }

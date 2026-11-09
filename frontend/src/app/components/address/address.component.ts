@@ -183,6 +183,9 @@ export class AddressComponent implements OnInit, OnDestroy {
   paginatedMode = false;
   transactionError: any;
   countError: any;
+  pendingCount: number | null = null;
+  pendingCountError: any;
+  isLoadingPendingCount = true;
   countUnavailable = false;
   historyUnavailable = false;
   countResult: AddressTransactionCount | null = null;
@@ -200,6 +203,9 @@ export class AddressComponent implements OnInit, OnDestroy {
   private countSubscription = new Subscription();
   private pagedSubscriptions = new Subscription();
   private summarySubscription = new Subscription();
+  private pendingCountSubscription = new Subscription();
+  private pendingCountRefresh = new Subscription();
+  private pendingCountRefreshQueued = false;
   private pageSubscription = new Subscription();
   private pageRequests = new Subscription();
   private pageGeneration = 0;
@@ -257,6 +263,9 @@ export class AddressComponent implements OnInit, OnDestroy {
           this.countResult = null;
           this.countCursor = null;
           this.countError = null;
+          this.pendingCount = null;
+          this.pendingCountError = null;
+          this.isLoadingPendingCount = true;
           this.countUnavailable = false;
           this.historyUnavailable = false;
           this.liveTransactions.clear();
@@ -513,6 +522,7 @@ export class AddressComponent implements OnInit, OnDestroy {
           this.addTransaction(tx);
           if (this.transactions) this.mergePagedTransactions(this.transactions);
           this.refreshPagedSummary();
+          this.refreshPendingCount(true);
         } else {
           this.addTransaction(tx);
           this.mempoolStats?.addTx(tx);
@@ -529,6 +539,7 @@ export class AddressComponent implements OnInit, OnDestroy {
           this.removedTransactions.add(tx.txid);
           if (this.transactions) this.mergePagedTransactions(this.transactions);
           this.refreshPagedSummary();
+          this.refreshPendingCount(true);
         } else this.mempoolStats?.removeTx(tx);
         this.cdr.markForCheck();
       });
@@ -550,6 +561,7 @@ export class AddressComponent implements OnInit, OnDestroy {
           }
           if (this.transactions) this.mergePagedTransactions(this.transactions);
           this.refreshPagedSummary();
+          this.refreshPendingCount(true);
           this.cdr.markForCheck();
           return;
         }
@@ -776,6 +788,9 @@ export class AddressComponent implements OnInit, OnDestroy {
     this.pagedSubscriptions.unsubscribe();
     this.pagedSubscriptions = new Subscription();
     this.summarySubscription.unsubscribe();
+    this.pendingCountSubscription.unsubscribe();
+    this.pendingCountRefresh.unsubscribe();
+    this.pendingCountRefreshQueued = false;
     this.pageSubscription.unsubscribe();
     this.pageRequests.unsubscribe();
     this.pageRequests = new Subscription();
@@ -795,6 +810,7 @@ export class AddressComponent implements OnInit, OnDestroy {
       : undefined;
     this.isLoadingTransactions = false;
     this.refreshPagedSummary();
+    this.refreshPendingCount();
     this.loadPagedTransactions();
     this.pagedSubscriptions.add(
       this.stateService.connectionState$
@@ -827,6 +843,7 @@ export class AddressComponent implements OnInit, OnDestroy {
     this.retryLoadMore = false;
     this.isLoadingTransactions = false;
     this.refreshPagedSummary();
+    this.refreshPendingCount();
     this.loadPagedTransactions();
     this.cdr.markForCheck();
   }
@@ -857,6 +874,38 @@ export class AddressComponent implements OnInit, OnDestroy {
         previousOrder.get(a.txid) - previousOrder.get(b.txid)
       );
     });
+  }
+
+  refreshPendingCount(coalesce = false): void {
+    if (coalesce) {
+      if (this.pendingCountRefreshQueued) return;
+      this.pendingCountRefreshQueued = true;
+      this.pendingCountRefresh = timer(0).subscribe(() =>
+        this.refreshPendingCount()
+      );
+      return;
+    }
+    this.pendingCountRefresh.unsubscribe();
+    this.pendingCountRefreshQueued = false;
+    this.pendingCountSubscription.unsubscribe();
+    this.isLoadingPendingCount = true;
+    this.pendingCountError = null;
+    this.pendingCountSubscription = this.electrsApiService
+      .getAddressMempoolSummary$(this.pagedTarget, this.pagedScript)
+      .subscribe({
+        next: ({ pendingTransactionCount }) => {
+          this.pendingCount = pendingTransactionCount;
+          this.isLoadingPendingCount = false;
+          this.cdr.markForCheck();
+        },
+        error: (error) => {
+          this.pendingCount = null;
+          this.pendingCountError = error;
+          this.isLoadingPendingCount = false;
+          this.cdr.markForCheck();
+        },
+      });
+    this.cdr.markForCheck();
   }
 
   refreshPagedSummary(): void {

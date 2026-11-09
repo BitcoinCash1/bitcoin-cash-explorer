@@ -23,6 +23,7 @@ import {
   Utxo,
   DetailedOutspend,
   AddressBalanceSummary,
+  AddressMempoolSummary,
   AddressTransactionPage,
   AddressTransactionCount,
 } from '@app/interfaces/backend-api.interface';
@@ -228,6 +229,13 @@ export class ElectrsApiService {
         )
       )
     );
+  }
+
+  getAddressMempoolSummary$(
+    address: string,
+    script?: string
+  ): Observable<AddressMempoolSummary> {
+    return this.getBoundedAddressResource$(address, script, 'mempool-summary');
   }
 
   getAddressBalanceSummary$(

@@ -1828,6 +1828,84 @@ export const restApiDocsData = [
     type: 'endpoint',
     category: 'addresses',
     httpRequestMethod: 'GET',
+    fragment: 'get-address-mempool-summary',
+    title: 'GET Address Mempool Summary',
+    description: {
+      default:
+        'Returns pendingTransactionCount: the number of distinct unconfirmed transactions, including zero-fee transactions. Uses only the mempool API, without confirmed history or transaction expansion. Request independently of balances and transaction pages; refresh on live updates and reconnection. Requires the Electrum backend (405 otherwise). Responses use Cache-Control: no-store. Dependency failures return 503 with Retry-After. Counts may change immediately as transactions arrive or confirm. Examples are illustrative.',
+    },
+    urlString: '/address/:address/mempool-summary',
+    showConditions: ['', 'testnet4', 'chipnet'],
+    showJsExamples: {
+      '': false,
+      testnet4: false,
+      chipnet: false,
+    },
+    codeExample: {
+      default: {
+        codeTemplate: {
+          curl: '/api/v1/address/%{1}/mempool-summary',
+        },
+        codeSampleMainnet: {
+          esModule: [],
+          commonJS: [],
+          curl: ['bitcoincash:qrklehkvy83zwhptgs65s0j5yjcczqvtavk684hag6'],
+          response: '{\n  "pendingTransactionCount": 1\n}',
+        },
+        codeSampleTestnet: {
+          esModule: [],
+          commonJS: [],
+          curl: ['bchtest:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqdpn3jdgd'],
+          response: '{\n  "pendingTransactionCount": 0\n}',
+        },
+      },
+    },
+  },
+  {
+    type: 'endpoint',
+    category: 'addresses',
+    httpRequestMethod: 'GET',
+    fragment: 'get-scripthash-mempool-summary',
+    title: 'GET Script Hash Mempool Summary',
+    description: {
+      default:
+        'Returns pendingTransactionCount: the number of distinct unconfirmed transactions, including zero-fee transactions. Uses only the mempool API, without confirmed history or transaction expansion. Request independently of balances and transaction pages; refresh on live updates and reconnection. Requires the Electrum backend (405 otherwise). Responses use Cache-Control: no-store. Dependency failures return 503 with Retry-After. Counts may change immediately as transactions arrive or confirm. Examples are illustrative. Supply SHA-256 of scriptPubKey in conventional digest order (64 hex characters), as for the other script-hash endpoints.',
+    },
+    urlString: '/scripthash/:scripthash/mempool-summary',
+    showConditions: ['', 'testnet4', 'chipnet'],
+    showJsExamples: {
+      '': false,
+      testnet4: false,
+      chipnet: false,
+    },
+    codeExample: {
+      default: {
+        codeTemplate: {
+          curl: '/api/v1/scripthash/%{1}/mempool-summary',
+        },
+        codeSampleMainnet: {
+          esModule: [],
+          commonJS: [],
+          curl: [
+            '0000000000000000000000000000000000000000000000000000000000000000',
+          ],
+          response: '{\n  "pendingTransactionCount": 1\n}',
+        },
+        codeSampleTestnet: {
+          esModule: [],
+          commonJS: [],
+          curl: [
+            '0000000000000000000000000000000000000000000000000000000000000000',
+          ],
+          response: '{\n  "pendingTransactionCount": 0\n}',
+        },
+      },
+    },
+  },
+  {
+    type: 'endpoint',
+    category: 'addresses',
+    httpRequestMethod: 'GET',
     fragment: 'get-address',
     title: 'GET Address',
     description: {

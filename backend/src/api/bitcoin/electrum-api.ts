@@ -15,6 +15,7 @@ import { compareElectrumHistoryNewestFirst } from './electrum-history';
 
 class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
   private electrumClient: ElectrumClient;
+  private readonly pendingMempool = new Map<string, Promise<IElectrumApi.ScriptHashMempool[]>>();
   private historyClient!: ElectrumClient;
   private reconnectHistory: () => void;
   private readonly historyCoordinator = new HistoryCoordinator();
@@ -90,6 +91,9 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
           if (first === null || (first?.result === null && Object.prototype.hasOwnProperty.call(first, 'id'))) {
             return null;
           }
+          // Fulcrum marks a script used only by the mempool with height zero and a null block hash.
+          // Pending rows are fetched independently; there is no confirmed birth height to scan.
+          if (first.height === 0 && first.block_hash === '0'.repeat(64)) return null;
           if (!Number.isSafeInteger(first.height) || first.height < 0) throw new Error('Invalid first use response');
           return first.height;
         },
@@ -100,7 +104,7 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
             count,
             signal
           ),
-        pending: (key) => this.electrumClient.blockchainScripthash_getMempool(key),
+        pending: (key) => this.$getScriptHashMempool(key),
       },
       config.EXPLORER.NETWORK
     );
@@ -131,6 +135,14 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
     const info = await this.bitcoindClient.validateAddress(target);
     if (!info?.isvalid) throw new Error('Invalid Bitcoin Cash address');
     return { key: this.encodeScriptHash(info.scriptPubKey), address: info.address };
+  }
+  async $getAddressMempoolSummary(target: string, scriptHash = false) {
+    const { key } = await this.paginationKey(target, scriptHash);
+    const pending = await this.$getScriptHashMempool(key);
+    return {
+      pendingTransactionCount: new Set(pending.filter((row) => row.height <= 0).map((row) => row.tx_hash.toLowerCase()))
+        .size,
+    };
   }
   async $getAddressSummary(target: string, scriptHash = false) {
     const { key, address } = await this.paginationKey(target, scriptHash);
@@ -494,7 +506,27 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
   }
 
   private $getScriptHashMempool(scriptHash: string): Promise<IElectrumApi.ScriptHashMempool[]> {
-    return this.electrumClient.blockchainScripthash_getMempool(scriptHash);
+    const pending = this.pendingMempool.get(scriptHash);
+    if (pending) return pending;
+    const operation = this.electrumClient.blockchainScripthash_getMempool(scriptHash).then((rows: unknown) => {
+      if (
+        !Array.isArray(rows) ||
+        rows.some(
+          (row) =>
+            !row ||
+            !Number.isSafeInteger(row.height) ||
+            typeof row.tx_hash !== 'string' ||
+            !/^[a-f0-9]{64}$/i.test(row.tx_hash)
+        )
+      ) {
+        throw new Error('Invalid mempool history response');
+      }
+      return rows as IElectrumApi.ScriptHashMempool[];
+    });
+    this.pendingMempool.set(scriptHash, operation);
+    const complete = () => this.pendingMempool.delete(scriptHash);
+    void operation.then(complete, complete);
+    return operation;
   }
 
   async $getTransactionMerkleProof(txId: string): Promise<IPublicApi.MerkleProof> {

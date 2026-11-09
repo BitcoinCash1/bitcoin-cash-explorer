@@ -90,9 +90,17 @@ class BitcoinRoutes {
       .get(config.EXPLORER.API_URL_PREFIX + 'block/:hash/txs', this.getBlockTransactions) // TODO: txs with Verbose (new end-point)
       .get(config.EXPLORER.API_URL_PREFIX + 'block/:hash/txs/:index', this.getBlockTransactions) // TODO: txs with Verbose (new end-point)
       .get(config.EXPLORER.API_URL_PREFIX + 'block-height/:height', this.getBlockHeight)
+      .get(
+        config.EXPLORER.API_URL_PREFIX + 'address/:address/mempool-summary',
+        this.getAddressMempoolSummary.bind(this)
+      )
       .get(config.EXPLORER.API_URL_PREFIX + 'address/:address/summary', this.getAddressSummary.bind(this))
       .get(config.EXPLORER.API_URL_PREFIX + 'address/:address/transactions', this.getAddressPage.bind(this))
       .get(config.EXPLORER.API_URL_PREFIX + 'address/:address/transaction-count', this.getAddressCount.bind(this))
+      .get(
+        config.EXPLORER.API_URL_PREFIX + 'scripthash/:scripthash/mempool-summary',
+        this.getAddressMempoolSummary.bind(this)
+      )
       .get(config.EXPLORER.API_URL_PREFIX + 'scripthash/:scripthash/summary', this.getAddressSummary.bind(this))
       .get(config.EXPLORER.API_URL_PREFIX + 'scripthash/:scripthash/transactions', this.getAddressPage.bind(this))
       .get(config.EXPLORER.API_URL_PREFIX + 'scripthash/:scripthash/transaction-count', this.getAddressCount.bind(this))
@@ -110,7 +118,12 @@ class BitcoinRoutes {
       .get(config.EXPLORER.API_URL_PREFIX + 'address-prefix/:prefix', this.getAddressPrefix);
   }
 
-  private async addressProgress(req: Request, res: Response, mode: 'summary' | 'page' | 'count'): Promise<void> {
+  private async addressProgress(
+    req: Request,
+    res: Response,
+    mode: 'summary' | 'page' | 'count' | 'mempool'
+  ): Promise<void> {
+    res.setHeader('Cache-Control', 'no-store');
     const scriptHash = req.params.scripthash !== undefined;
     const target = scriptHash ? req.params.scripthash : req.params.address;
     if (config.EXPLORER.BACKEND === 'none') {
@@ -134,24 +147,25 @@ class BitcoinRoutes {
       if (!res.writableFinished) controller.abort();
     };
     res.once('close', close);
-    res.setHeader('Cache-Control', 'no-store');
     try {
       const result =
-        mode === 'summary'
-          ? await bitcoinApi.$getAddressSummary(canonical, scriptHash)
-          : mode === 'page'
-            ? await bitcoinApi.$getAddressPage(
-                canonical,
-                scriptHash,
-                req.query.cursor as string | undefined,
-                controller.signal
-              )
-            : await bitcoinApi.$getAddressCount(
-                canonical,
-                scriptHash,
-                req.query.cursor as string | undefined,
-                controller.signal
-              );
+        mode === 'mempool'
+          ? await bitcoinApi.$getAddressMempoolSummary(canonical, scriptHash)
+          : mode === 'summary'
+            ? await bitcoinApi.$getAddressSummary(canonical, scriptHash)
+            : mode === 'page'
+              ? await bitcoinApi.$getAddressPage(
+                  canonical,
+                  scriptHash,
+                  req.query.cursor as string | undefined,
+                  controller.signal
+                )
+              : await bitcoinApi.$getAddressCount(
+                  canonical,
+                  scriptHash,
+                  req.query.cursor as string | undefined,
+                  controller.signal
+                );
       const payload =
         'transactions' in result
           ? { ...result, transactions: transactionUtils.stripVerbosityFromTransactions(result.transactions) }
@@ -173,6 +187,9 @@ class BitcoinRoutes {
     } finally {
       res.removeListener('close', close);
     }
+  }
+  private getAddressMempoolSummary(req: Request, res: Response) {
+    return this.addressProgress(req, res, 'mempool');
   }
   private getAddressSummary(req: Request, res: Response) {
     return this.addressProgress(req, res, 'summary');
