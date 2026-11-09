@@ -1,15 +1,22 @@
-import { formatCurrency, getCurrencySymbol } from '@angular/common';
-import { Inject, LOCALE_ID, Pipe, PipeTransform } from '@angular/core';
+import {
+  Inject,
+  LOCALE_ID,
+  OnDestroy,
+  Pipe,
+  PipeTransform,
+} from '@angular/core';
 import { Subscription } from 'rxjs';
 import { StateService } from '@app/services/state.service';
+import { SMALL_FIAT_THRESHOLD } from './fiat-currency.pipe';
 
 @Pipe({
   name: 'fiatShortener',
   standalone: false,
 })
-export class FiatShortenerPipe implements PipeTransform {
+export class FiatShortenerPipe implements PipeTransform, OnDestroy {
   fiatSubscription: Subscription;
   currency: string;
+  private currencyMaxFracCache: Record<string, number> = {};
 
   constructor(
     @Inject(LOCALE_ID) public locale: string,
@@ -22,14 +29,36 @@ export class FiatShortenerPipe implements PipeTransform {
     );
   }
 
-  transform(num: number, ...args: any[]): unknown {
-    const currency = args[1] || this.currency || 'USD';
+  ngOnDestroy(): void {
+    this.fiatSubscription.unsubscribe();
+  }
 
-    if (num < 1000) {
+  private getCurrencyMaxFrac(currency: string): number {
+    if (!(currency in this.currencyMaxFracCache)) {
+      this.currencyMaxFracCache[currency] =
+        new Intl.NumberFormat(this.locale, {
+          style: 'currency',
+          currency,
+        }).resolvedOptions().maximumFractionDigits ?? Number.POSITIVE_INFINITY;
+    }
+    return this.currencyMaxFracCache[currency];
+  }
+
+  transform(num: number, currencyInput?: string): unknown {
+    let currency = currencyInput || this.currency || 'USD';
+    try {
+      this.getCurrencyMaxFrac(currency); // validates & warms cache
+    } catch {
+      currency = 'USD';
+    }
+
+    if (Math.abs(num) < SMALL_FIAT_THRESHOLD) {
+      const maxFrac = Math.min(2, this.getCurrencyMaxFrac(currency));
       return new Intl.NumberFormat(this.locale, {
         style: 'currency',
         currency,
-        maximumFractionDigits: 1,
+        minimumFractionDigits: maxFrac,
+        maximumFractionDigits: maxFrac,
       }).format(num);
     }
 
@@ -42,16 +71,25 @@ export class FiatShortenerPipe implements PipeTransform {
       { value: 1e15, symbol: 'P' },
       { value: 1e18, symbol: 'E' },
     ];
+    const absNum = Math.abs(num);
     const item = lookup
       .slice()
       .reverse()
-      .find((item) => num >= item.value);
+      .find((item) => absNum >= item.value);
+
+    if (!item) {
+      return new Intl.NumberFormat(this.locale, {
+        style: 'currency',
+        currency,
+        maximumFractionDigits: 0,
+      }).format(0);
+    }
 
     const result = new Intl.NumberFormat(this.locale, {
       style: 'currency',
       currency,
       maximumFractionDigits: 0,
-    }).format(item ? num / item.value : 0);
+    }).format(num / item.value);
 
     return result + item.symbol;
   }

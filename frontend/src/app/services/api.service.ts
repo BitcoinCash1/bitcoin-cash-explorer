@@ -477,12 +477,16 @@ export class ApiService {
     );
   }
 
-  getHistoricalBlockFeeRates$(interval: string | undefined): Observable<any> {
+  getHistoricalBlockFeeRates$(
+    interval: string | undefined,
+    precise = false
+  ): Observable<any> {
     return this.httpClient.get<any[]>(
       this.apiBaseUrl +
         this.apiBasePath +
         `/api/v1/mining/blocks/fee-rates` +
-        (interval !== undefined ? `/${interval}` : ''),
+        (interval !== undefined ? `/${interval}` : '') +
+        (precise ? '/precise' : ''),
       { observe: 'response' }
     );
   }

@@ -188,9 +188,9 @@ class Mining {
   /**
    * Get historical block fee rates percentiles
    */
-  public async $getHistoricalBlockFeeRates(interval: string | null = null): Promise<any> {
+  public async $getHistoricalBlockFeeRates(interval: string | null = null, precise = false): Promise<any> {
     const shouldCache = this.shouldCache(interval);
-    const cacheKey = `mining:historical-block-fee-rates-${interval || 'all'}`;
+    const cacheKey = `mining:historical-block-fee-rates-${interval || 'all'}${precise ? '-precise' : ''}`;
 
     if (shouldCache) {
       try {
@@ -207,7 +207,8 @@ class Mining {
 
     const data = await BlocksRepository.$getHistoricalBlockFeeRates(
       this.getTimeRange(interval),
-      Common.getSqlInterval(interval)
+      Common.getSqlInterval(interval),
+      precise
     );
 
     if (shouldCache) {

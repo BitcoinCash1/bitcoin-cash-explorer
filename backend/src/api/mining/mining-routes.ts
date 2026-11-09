@@ -30,6 +30,10 @@ class MiningRoutes {
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/fees', this.$getBlockFeesTimespan)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/rewards/:interval', this.$getHistoricalBlockRewards)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/fee-rates/:interval', this.$getHistoricalBlockFeeRates)
+      .get(
+        config.EXPLORER.API_URL_PREFIX + 'mining/blocks/fee-rates/:interval/precise',
+        this.$getHistoricalBlockFeeRatesPrecise
+      )
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/sizes/:interval', this.$getHistoricalBlockSize)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/timestamps/:interval', this.$getHistoricalBlockTimeDiffs)
       .get(config.EXPLORER.API_URL_PREFIX + 'mining/blocks/tx-counts/:interval', this.$getHistoricalBlockTxCounts)
@@ -326,6 +330,25 @@ class MiningRoutes {
       res.json(blockFeeRates);
     } catch (e) {
       handleError(req, res, 500, 'Failed to get historical block fee rates');
+    }
+  }
+
+  private async $getHistoricalBlockFeeRatesPrecise(req: Request, res: Response) {
+    const interval = req.params.interval;
+    if (!MiningRoutes.validateInterval(req, res)) {
+      return;
+    }
+
+    try {
+      const blockFeeRates = await mining.$getHistoricalBlockFeeRates(interval, true);
+      const blockCount = await BlocksRepository.$blockCount(null, null);
+      res.header('Pragma', 'public');
+      res.header('Cache-control', 'public');
+      res.header('X-total-count', blockCount.toString());
+      res.setHeader('Expires', new Date(Date.now() + MiningRoutes.getExpiresMsForInterval(interval)).toUTCString());
+      res.json(blockFeeRates);
+    } catch (e) {
+      handleError(req, res, 500, 'Failed to get precise historical block fee rates');
     }
   }
 

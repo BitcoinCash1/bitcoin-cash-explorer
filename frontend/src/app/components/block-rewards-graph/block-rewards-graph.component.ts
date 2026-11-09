@@ -128,7 +128,11 @@ export class BlockRewardsGraphComponent implements OnInit {
                   val.avgHeight,
                 ]),
                 blockRewardsFiat: response.body
-                  .filter((val) => val[this.currency] > 0)
+                  .filter(
+                    (val) =>
+                      Number.isFinite(val[this.currency]) &&
+                      val[this.currency] > 0
+                  )
                   .map((val) => [
                     val.timestamp * 1000,
                     (val.avgRewards / 100000000) * val[this.currency],
@@ -149,6 +153,8 @@ export class BlockRewardsGraphComponent implements OnInit {
   }
 
   prepareChartOptions(data) {
+    const showFiat =
+      !this.stateService.isAnyTestnet() && data.blockRewardsFiat.length > 0;
     let title: object;
     if (data.blockRewards.length === 0) {
       title = {
@@ -308,11 +314,7 @@ export class BlockRewardsGraphComponent implements OnInit {
                 axisLabel: {
                   color: 'rgb(110, 112, 121)',
                   formatter: function (val) {
-                    return this.fiatShortenerPipe.transform(
-                      val,
-                      null,
-                      this.currency
-                    );
+                    return this.fiatShortenerPipe.transform(val, this.currency);
                   }.bind(this),
                 },
                 splitLine: {
@@ -384,6 +386,16 @@ export class BlockRewardsGraphComponent implements OnInit {
               },
             ],
     };
+    if (!showFiat) {
+      this.chartOptions['legend'] = undefined;
+      this.chartOptions['yAxis'] = (this.chartOptions['yAxis'] as any[])?.slice(
+        0,
+        1
+      );
+      this.chartOptions['series'] = (
+        this.chartOptions['series'] as any[]
+      )?.filter((series) => series.yAxisIndex !== 1);
+    }
   }
 
   onChartInit(ec) {

@@ -857,18 +857,23 @@ class BlocksRepository {
   /**
    * Get the historical averaged block fee rate percentiles
    */
-  public async $getHistoricalBlockFeeRates(div: number, interval: string | null): Promise<any> {
+  public async $getHistoricalBlockFeeRates(div: number, interval: string | null, precise = false): Promise<any> {
     try {
+      const averageFee = (index: number): string =>
+        precise
+          ? `ROUND(AVG(JSON_EXTRACT(fee_span, '$[${index}]')), 3)`
+          : `CAST(AVG(JSON_EXTRACT(fee_span, '$[${index}]')) as INT)`;
+
       let query = `SELECT
         CAST(AVG(height) as INT) as avgHeight,
         CAST(AVG(UNIX_TIMESTAMP(blockTimestamp)) as INT) as timestamp,
-        CAST(AVG(JSON_EXTRACT(fee_span, '$[0]')) as INT) as avgFee_0,
-        CAST(AVG(JSON_EXTRACT(fee_span, '$[1]')) as INT) as avgFee_10,
-        CAST(AVG(JSON_EXTRACT(fee_span, '$[2]')) as INT) as avgFee_25,
-        CAST(AVG(JSON_EXTRACT(fee_span, '$[3]')) as INT) as avgFee_50,
-        CAST(AVG(JSON_EXTRACT(fee_span, '$[4]')) as INT) as avgFee_75,
-        CAST(AVG(JSON_EXTRACT(fee_span, '$[5]')) as INT) as avgFee_90,
-        CAST(AVG(JSON_EXTRACT(fee_span, '$[6]')) as INT) as avgFee_100
+        ${averageFee(0)} as avgFee_0,
+        ${averageFee(1)} as avgFee_10,
+        ${averageFee(2)} as avgFee_25,
+        ${averageFee(3)} as avgFee_50,
+        ${averageFee(4)} as avgFee_75,
+        ${averageFee(5)} as avgFee_90,
+        ${averageFee(6)} as avgFee_100
       FROM blocks
       WHERE stale = 0`;
 
@@ -879,7 +884,17 @@ class BlocksRepository {
       query += ` GROUP BY UNIX_TIMESTAMP(blockTimestamp) DIV ${div}`;
 
       const [rows]: any = await DB.query(query);
-      return rows;
+      // mysql2 can return SQL DECIMAL results as strings. Keep the public API numeric.
+      if (!precise) {
+        return rows;
+      }
+      return rows.map((row) => {
+        const numericRow = { ...row };
+        for (const [key, value] of Object.entries(row)) {
+          numericRow[key] = value === null ? null : Number(value);
+        }
+        return numericRow;
+      });
     } catch (e) {
       logger.err('Cannot generate block fee rates history. Reason: ' + (e instanceof Error ? e.message : e));
       throw e;
