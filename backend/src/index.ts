@@ -38,6 +38,7 @@ import aboutRoutes from './api/about.routes';
 import mempoolBlocks from './api/mempool-blocks';
 import walletApi from './api/services/wallets';
 import stratumApi from './api/services/stratum';
+import { prepareUnixSocket } from './utils/unix-socket';
 
 export class Server {
   private wss: WebSocket.Server | undefined;
@@ -157,6 +158,10 @@ export class Server {
     this.wss = new WebSocket.Server({ server: this.server, maxPayload: websocketHandler.MAX_MESSAGE_SIZE });
     if (config.EXPLORER.UNIX_SOCKET_PATH) {
       this.serverUnixSocket = http.createServer(this.app);
+      this.serverUnixSocket.on('error', (error) => {
+        logger.err(`Unix socket listener failed at ${config.EXPLORER.UNIX_SOCKET_PATH}: ${error.message}`);
+        this.forceExit('Unix socket listener failure', 1);
+      });
       this.wssUnixSocket = new WebSocket.Server({
         server: this.serverUnixSocket,
         maxPayload: websocketHandler.MAX_MESSAGE_SIZE,
@@ -384,6 +389,16 @@ export class Server {
   }
 }
 
-if (require.main === module) {
+async function start(): Promise<void> {
+  if (await prepareUnixSocket(config.EXPLORER.UNIX_SOCKET_PATH)) {
+    logger.notice(`Removed stale Unix socket ${config.EXPLORER.UNIX_SOCKET_PATH}`);
+  }
   new Server();
+}
+
+if (require.main === module) {
+  void start().catch((error) => {
+    logger.err(`Server startup failed: ${error instanceof Error ? error.message : error}`);
+    process.exit(1);
+  });
 }
