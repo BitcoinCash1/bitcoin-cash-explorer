@@ -1,3 +1,4 @@
+import { AddressMempoolSummary, AddressPageMetadata, AddressCountPage } from './address-pagination';
 import { AbstractBitcoinApi, BlockTransactionFetchOptions } from './bitcoin-api-abstract-factory';
 import { IBitcoinApi, SubmitPackageResult, TestMempoolAcceptResult } from './bitcoin-api.interface';
 import { IPublicApi } from './public-api.interface';
@@ -178,6 +179,32 @@ class BitcoinApi implements AbstractBitcoinApi {
     }
 
     return this.bitcoindClient.getBlock(hash).then((block: IBitcoinApi.Block) => BitcoinApi.convertBlock(block));
+  }
+
+  async $getAddressMempoolSummary(_target: string, _scriptHash = false): Promise<AddressMempoolSummary> {
+    throw Object.assign(new Error('Address mempool summary requires Electrum'), { status: 405 });
+  }
+  async $getAddressSummary(
+    _target: string,
+    _scriptHash = false
+  ): Promise<{ address: string; confirmedBalance: number; pendingBalance: number; electrum: true }> {
+    throw Object.assign(new Error('Address pagination requires Electrum'), { status: 405 });
+  }
+  async $getAddressPage(
+    _target: string,
+    _scriptHash = false,
+    _cursor?: string,
+    _signal?: AbortSignal
+  ): Promise<AddressPageMetadata & { transactions: IPublicApi.VerboseTransaction[] }> {
+    throw Object.assign(new Error('Address pagination requires Electrum'), { status: 405 });
+  }
+  async $getAddressCount(
+    _target: string,
+    _scriptHash = false,
+    _cursor?: string,
+    _signal?: AbortSignal
+  ): Promise<AddressCountPage> {
+    throw Object.assign(new Error('Address pagination requires Electrum'), { status: 405 });
   }
 
   $getAddress(address: string): Promise<IPublicApi.Address> {

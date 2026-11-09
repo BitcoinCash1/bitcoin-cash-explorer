@@ -1,3 +1,5 @@
+// Preserve the production template scope when compiling this suite with Angular AOT.
+import type {} from './block.module';
 import '@angular/compiler';
 import { convertToParamMap } from '@angular/router';
 import { BehaviorSubject, Subject, of } from 'rxjs';

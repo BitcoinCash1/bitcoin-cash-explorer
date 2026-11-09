@@ -1582,6 +1582,330 @@ export const restApiDocsData = [
     type: 'endpoint',
     category: 'addresses',
     httpRequestMethod: 'GET',
+    fragment: 'get-address-summary',
+    title: 'GET Address Balance Summary',
+    description: {
+      default:
+        'Returns confirmedBalance and pendingBalance (a signed pending delta), canonical address and electrum. It does not retrieve lifetime history or return a transaction count. Load this independently of the transaction page. Use a CashAddr address matching the selected network. Requires the Electrum backend (405 otherwise). Responses use Cache-Control: no-store. Amounts are integer satoshis. Examples are illustrative. Dependency failures return 503 with Retry-After.',
+    },
+    urlString: '/address/:address/summary',
+    showConditions: ['', 'testnet4', 'chipnet'],
+    showJsExamples: {
+      '': false,
+      testnet4: false,
+      chipnet: false,
+    },
+    codeExample: {
+      default: {
+        codeTemplate: {
+          curl: '/api/v1/address/%{1}/summary',
+        },
+        codeSampleMainnet: {
+          esModule: [],
+          commonJS: [],
+          curl: ['bitcoincash:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfnhks603'],
+          response:
+            '{\n  "address": "bitcoincash:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfnhks603",\n  "confirmedBalance": 0,\n  "pendingBalance": 0,\n  "electrum": true\n}',
+        },
+        codeSampleTestnet: {
+          esModule: [],
+          commonJS: [],
+          curl: ['bchtest:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqdpn3jdgd'],
+          response:
+            '{\n  "address": "bchtest:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqdpn3jdgd",\n  "confirmedBalance": 0,\n  "pendingBalance": 0,\n  "electrum": true\n}',
+        },
+      },
+    },
+  },
+  {
+    type: 'endpoint',
+    category: 'addresses',
+    httpRequestMethod: 'GET',
+    fragment: 'get-address-transactions',
+    title: 'GET Address Transaction Page',
+    description: {
+      default:
+        'Returns up to 10 transactions, pending first and then confirmed newest first. Within a confirmed block, transaction IDs provide deterministic ordering. Uses finite height ranges. An empty transactions array with complete=false means more searching is required: continue with nextCursor. Only complete=true ends scrolling. snapshotHeight and snapshotHash identify the fixed confirmed chain snapshot; newer activity can arrive through WebSocket updates. Use a CashAddr address matching the selected network. Requires the Electrum backend (405 otherwise). Responses use Cache-Control: no-store. Amounts are integer satoshis. Examples are illustrative. Cursors expire after 15 minutes and are bound to the network, script, operation and chain snapshot. Pass nextCursor unchanged as the URL-encoded cursor query parameter. A 400 INVALID_ADDRESS_CURSOR or 409 ADDRESS_SNAPSHOT_CHANGED requires restarting without a cursor. A 503 ADDRESS_HISTORY_BUSY indicates a temporary dependency or capacity problem; respect Retry-After and retry without discarding loaded cards. A 422 ADDRESS_HISTORY_UNAVAILABLE with retryable=false means the server cannot provide usable history (for example a configured upstream limit or contradictory empty history). Stop the operation, clear partial count progress, and do not offer automatic continuation. This does not identify the precise Fulcrum cause. Never treat an error or an incomplete empty page as an empty address.',
+    },
+    urlString: '/address/:address/transactions',
+    showConditions: ['', 'testnet4', 'chipnet'],
+    showJsExamples: {
+      '': false,
+      testnet4: false,
+      chipnet: false,
+    },
+    codeExample: {
+      default: {
+        codeTemplate: {
+          curl: '/api/v1/address/%{1}/transactions',
+        },
+        codeSampleMainnet: {
+          esModule: [],
+          commonJS: [],
+          curl: ['bitcoincash:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfnhks603'],
+          response:
+            '{\n  "transactions": [],\n  "nextCursor": null,\n  "complete": true,\n  "snapshotHeight": 976636,\n  "snapshotHash": "0000000000000000000000000000000000000000000000000000000000000000"\n}',
+        },
+        codeSampleTestnet: {
+          esModule: [],
+          commonJS: [],
+          curl: ['bchtest:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqdpn3jdgd'],
+          response:
+            '{\n  "transactions": [],\n  "nextCursor": null,\n  "complete": true,\n  "snapshotHeight": 976636,\n  "snapshotHash": "0000000000000000000000000000000000000000000000000000000000000000"\n}',
+        },
+      },
+    },
+  },
+  {
+    type: 'endpoint',
+    category: 'addresses',
+    httpRequestMethod: 'GET',
+    fragment: 'get-address-transaction-count',
+    title: 'GET Address Transaction Count',
+    description: {
+      default:
+        'Start only on an explicit user request. Each call scans a bounded set of height ranges. confirmedCount is cumulative but partial until complete=true; progress is the percentage of block heights scanned, not the percentage of transactions counted. Continue sequentially with nextCursor. Pause by stopping requests and resume with the same unexpired cursor. The final count is confirmed transactions as of snapshotHeight, not a live pending total. Dense single-block histories beyond the supported 20,000-entry limit return 422. Use a CashAddr address matching the selected network. Requires the Electrum backend (405 otherwise). Responses use Cache-Control: no-store. Amounts are integer satoshis. Examples are illustrative. Cursors expire after 15 minutes and are bound to the network, script, operation and chain snapshot. Pass nextCursor unchanged as the URL-encoded cursor query parameter. A 400 INVALID_ADDRESS_CURSOR or 409 ADDRESS_SNAPSHOT_CHANGED requires restarting without a cursor. A 503 ADDRESS_HISTORY_BUSY indicates a temporary dependency or capacity problem; respect Retry-After and retry without discarding loaded cards. A 422 ADDRESS_HISTORY_UNAVAILABLE with retryable=false means the server cannot provide usable history (for example a configured upstream limit or contradictory empty history). Stop the operation, clear partial count progress, and do not offer automatic continuation. This does not identify the precise Fulcrum cause. Never treat an error or an incomplete empty page as an empty address.',
+    },
+    urlString: '/address/:address/transaction-count',
+    showConditions: ['', 'testnet4', 'chipnet'],
+    showJsExamples: {
+      '': false,
+      testnet4: false,
+      chipnet: false,
+    },
+    codeExample: {
+      default: {
+        codeTemplate: {
+          curl: '/api/v1/address/%{1}/transaction-count',
+        },
+        codeSampleMainnet: {
+          esModule: [],
+          commonJS: [],
+          curl: ['bitcoincash:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqfnhks603'],
+          response:
+            '{\n  "confirmedCount": 0,\n  "scannedThroughHeight": 976636,\n  "progress": 100,\n  "nextCursor": null,\n  "complete": true,\n  "snapshotHeight": 976636,\n  "snapshotHash": "0000000000000000000000000000000000000000000000000000000000000000"\n}',
+        },
+        codeSampleTestnet: {
+          esModule: [],
+          commonJS: [],
+          curl: ['bchtest:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqdpn3jdgd'],
+          response:
+            '{\n  "confirmedCount": 0,\n  "scannedThroughHeight": 976636,\n  "progress": 100,\n  "nextCursor": null,\n  "complete": true,\n  "snapshotHeight": 976636,\n  "snapshotHash": "0000000000000000000000000000000000000000000000000000000000000000"\n}',
+        },
+      },
+    },
+  },
+  {
+    type: 'endpoint',
+    category: 'addresses',
+    httpRequestMethod: 'GET',
+    fragment: 'get-scripthash-summary',
+    title: 'GET Script Hash Balance Summary',
+    description: {
+      default:
+        'Returns confirmedBalance and pendingBalance (a signed pending delta), canonical address and electrum. It does not retrieve lifetime history or return a transaction count. Load this independently of the transaction page. The script hash is SHA-256 of the scriptPubKey in conventional digest order (64 hex characters); this REST API reverses it internally for Electrum. Do not reverse it before calling this endpoint. Requires the Electrum backend (405 otherwise). Responses use Cache-Control: no-store. Amounts are integer satoshis. Examples are illustrative. Dependency failures return 503 with Retry-After.',
+    },
+    urlString: '/scripthash/:scripthash/summary',
+    showConditions: ['', 'testnet4', 'chipnet'],
+    showJsExamples: {
+      '': false,
+      testnet4: false,
+      chipnet: false,
+    },
+    codeExample: {
+      default: {
+        codeTemplate: {
+          curl: '/api/v1/scripthash/%{1}/summary',
+        },
+        codeSampleMainnet: {
+          esModule: [],
+          commonJS: [],
+          curl: [
+            '0000000000000000000000000000000000000000000000000000000000000000',
+          ],
+          response:
+            '{\n  "address": "0000000000000000000000000000000000000000000000000000000000000000",\n  "confirmedBalance": 0,\n  "pendingBalance": 0,\n  "electrum": true\n}',
+        },
+        codeSampleTestnet: {
+          esModule: [],
+          commonJS: [],
+          curl: [
+            '0000000000000000000000000000000000000000000000000000000000000000',
+          ],
+          response:
+            '{\n  "address": "0000000000000000000000000000000000000000000000000000000000000000",\n  "confirmedBalance": 0,\n  "pendingBalance": 0,\n  "electrum": true\n}',
+        },
+      },
+    },
+  },
+  {
+    type: 'endpoint',
+    category: 'addresses',
+    httpRequestMethod: 'GET',
+    fragment: 'get-scripthash-transactions',
+    title: 'GET Script Hash Transaction Page',
+    description: {
+      default:
+        'Returns up to 10 transactions, pending first and then confirmed newest first. Within a confirmed block, transaction IDs provide deterministic ordering. Uses finite height ranges. An empty transactions array with complete=false means more searching is required: continue with nextCursor. Only complete=true ends scrolling. snapshotHeight and snapshotHash identify the fixed confirmed chain snapshot; newer activity can arrive through WebSocket updates. The script hash is SHA-256 of the scriptPubKey in conventional digest order (64 hex characters); this REST API reverses it internally for Electrum. Do not reverse it before calling this endpoint. Requires the Electrum backend (405 otherwise). Responses use Cache-Control: no-store. Amounts are integer satoshis. Examples are illustrative. Cursors expire after 15 minutes and are bound to the network, script, operation and chain snapshot. Pass nextCursor unchanged as the URL-encoded cursor query parameter. A 400 INVALID_ADDRESS_CURSOR or 409 ADDRESS_SNAPSHOT_CHANGED requires restarting without a cursor. A 503 ADDRESS_HISTORY_BUSY indicates a temporary dependency or capacity problem; respect Retry-After and retry without discarding loaded cards. A 422 ADDRESS_HISTORY_UNAVAILABLE with retryable=false means the server cannot provide usable history (for example a configured upstream limit or contradictory empty history). Stop the operation, clear partial count progress, and do not offer automatic continuation. This does not identify the precise Fulcrum cause. Never treat an error or an incomplete empty page as an empty address.',
+    },
+    urlString: '/scripthash/:scripthash/transactions',
+    showConditions: ['', 'testnet4', 'chipnet'],
+    showJsExamples: {
+      '': false,
+      testnet4: false,
+      chipnet: false,
+    },
+    codeExample: {
+      default: {
+        codeTemplate: {
+          curl: '/api/v1/scripthash/%{1}/transactions',
+        },
+        codeSampleMainnet: {
+          esModule: [],
+          commonJS: [],
+          curl: [
+            '0000000000000000000000000000000000000000000000000000000000000000',
+          ],
+          response:
+            '{\n  "transactions": [],\n  "nextCursor": null,\n  "complete": true,\n  "snapshotHeight": 976636,\n  "snapshotHash": "0000000000000000000000000000000000000000000000000000000000000000"\n}',
+        },
+        codeSampleTestnet: {
+          esModule: [],
+          commonJS: [],
+          curl: [
+            '0000000000000000000000000000000000000000000000000000000000000000',
+          ],
+          response:
+            '{\n  "transactions": [],\n  "nextCursor": null,\n  "complete": true,\n  "snapshotHeight": 976636,\n  "snapshotHash": "0000000000000000000000000000000000000000000000000000000000000000"\n}',
+        },
+      },
+    },
+  },
+  {
+    type: 'endpoint',
+    category: 'addresses',
+    httpRequestMethod: 'GET',
+    fragment: 'get-scripthash-transaction-count',
+    title: 'GET Script Hash Transaction Count',
+    description: {
+      default:
+        'Start only on an explicit user request. Each call scans a bounded set of height ranges. confirmedCount is cumulative but partial until complete=true; progress is the percentage of block heights scanned, not the percentage of transactions counted. Continue sequentially with nextCursor. Pause by stopping requests and resume with the same unexpired cursor. The final count is confirmed transactions as of snapshotHeight, not a live pending total. Dense single-block histories beyond the supported 20,000-entry limit return 422. The script hash is SHA-256 of the scriptPubKey in conventional digest order (64 hex characters); this REST API reverses it internally for Electrum. Do not reverse it before calling this endpoint. Requires the Electrum backend (405 otherwise). Responses use Cache-Control: no-store. Amounts are integer satoshis. Examples are illustrative. Cursors expire after 15 minutes and are bound to the network, script, operation and chain snapshot. Pass nextCursor unchanged as the URL-encoded cursor query parameter. A 400 INVALID_ADDRESS_CURSOR or 409 ADDRESS_SNAPSHOT_CHANGED requires restarting without a cursor. A 503 ADDRESS_HISTORY_BUSY indicates a temporary dependency or capacity problem; respect Retry-After and retry without discarding loaded cards. A 422 ADDRESS_HISTORY_UNAVAILABLE with retryable=false means the server cannot provide usable history (for example a configured upstream limit or contradictory empty history). Stop the operation, clear partial count progress, and do not offer automatic continuation. This does not identify the precise Fulcrum cause. Never treat an error or an incomplete empty page as an empty address.',
+    },
+    urlString: '/scripthash/:scripthash/transaction-count',
+    showConditions: ['', 'testnet4', 'chipnet'],
+    showJsExamples: {
+      '': false,
+      testnet4: false,
+      chipnet: false,
+    },
+    codeExample: {
+      default: {
+        codeTemplate: {
+          curl: '/api/v1/scripthash/%{1}/transaction-count',
+        },
+        codeSampleMainnet: {
+          esModule: [],
+          commonJS: [],
+          curl: [
+            '0000000000000000000000000000000000000000000000000000000000000000',
+          ],
+          response:
+            '{\n  "confirmedCount": 0,\n  "scannedThroughHeight": 976636,\n  "progress": 100,\n  "nextCursor": null,\n  "complete": true,\n  "snapshotHeight": 976636,\n  "snapshotHash": "0000000000000000000000000000000000000000000000000000000000000000"\n}',
+        },
+        codeSampleTestnet: {
+          esModule: [],
+          commonJS: [],
+          curl: [
+            '0000000000000000000000000000000000000000000000000000000000000000',
+          ],
+          response:
+            '{\n  "confirmedCount": 0,\n  "scannedThroughHeight": 976636,\n  "progress": 100,\n  "nextCursor": null,\n  "complete": true,\n  "snapshotHeight": 976636,\n  "snapshotHash": "0000000000000000000000000000000000000000000000000000000000000000"\n}',
+        },
+      },
+    },
+  },
+  {
+    type: 'endpoint',
+    category: 'addresses',
+    httpRequestMethod: 'GET',
+    fragment: 'get-address-mempool-summary',
+    title: 'GET Address Mempool Summary',
+    description: {
+      default:
+        'Returns pendingTransactionCount: the number of distinct unconfirmed transactions, including zero-fee transactions. Uses only the mempool API, without confirmed history or transaction expansion. Request independently of balances and transaction pages; refresh on live updates and reconnection. Requires the Electrum backend (405 otherwise). Responses use Cache-Control: no-store. Dependency failures return 503 with Retry-After. Counts may change immediately as transactions arrive or confirm. Examples are illustrative.',
+    },
+    urlString: '/address/:address/mempool-summary',
+    showConditions: ['', 'testnet4', 'chipnet'],
+    showJsExamples: {
+      '': false,
+      testnet4: false,
+      chipnet: false,
+    },
+    codeExample: {
+      default: {
+        codeTemplate: {
+          curl: '/api/v1/address/%{1}/mempool-summary',
+        },
+        codeSampleMainnet: {
+          esModule: [],
+          commonJS: [],
+          curl: ['bitcoincash:qrklehkvy83zwhptgs65s0j5yjcczqvtavk684hag6'],
+          response: '{\n  "pendingTransactionCount": 1\n}',
+        },
+        codeSampleTestnet: {
+          esModule: [],
+          commonJS: [],
+          curl: ['bchtest:qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqdpn3jdgd'],
+          response: '{\n  "pendingTransactionCount": 0\n}',
+        },
+      },
+    },
+  },
+  {
+    type: 'endpoint',
+    category: 'addresses',
+    httpRequestMethod: 'GET',
+    fragment: 'get-scripthash-mempool-summary',
+    title: 'GET Script Hash Mempool Summary',
+    description: {
+      default:
+        'Returns pendingTransactionCount: the number of distinct unconfirmed transactions, including zero-fee transactions. Uses only the mempool API, without confirmed history or transaction expansion. Request independently of balances and transaction pages; refresh on live updates and reconnection. Requires the Electrum backend (405 otherwise). Responses use Cache-Control: no-store. Dependency failures return 503 with Retry-After. Counts may change immediately as transactions arrive or confirm. Examples are illustrative. Supply SHA-256 of scriptPubKey in conventional digest order (64 hex characters), as for the other script-hash endpoints.',
+    },
+    urlString: '/scripthash/:scripthash/mempool-summary',
+    showConditions: ['', 'testnet4', 'chipnet'],
+    showJsExamples: {
+      '': false,
+      testnet4: false,
+      chipnet: false,
+    },
+    codeExample: {
+      default: {
+        codeTemplate: {
+          curl: '/api/v1/scripthash/%{1}/mempool-summary',
+        },
+        codeSampleMainnet: {
+          esModule: [],
+          commonJS: [],
+          curl: [
+            '0000000000000000000000000000000000000000000000000000000000000000',
+          ],
+          response: '{\n  "pendingTransactionCount": 1\n}',
+        },
+        codeSampleTestnet: {
+          esModule: [],
+          commonJS: [],
+          curl: [
+            '0000000000000000000000000000000000000000000000000000000000000000',
+          ],
+          response: '{\n  "pendingTransactionCount": 0\n}',
+        },
+      },
+    },
+  },
+  {
+    type: 'endpoint',
+    category: 'addresses',
+    httpRequestMethod: 'GET',
     fragment: 'get-address',
     title: 'GET Address',
     description: {
@@ -1689,7 +2013,7 @@ export const restApiDocsData = [
     title: 'GET Address Transactions',
     description: {
       default:
-        'Get transaction history for the specified address/scripthash, sorted with newest first. Returns up to 50 mempool transactions plus the first 25 confirmed transactions. You can request more confirmed transactions using an <code>after_txid</code> query parameter.',
+        'Get transaction history for the specified address/scripthash, sorted with newest first. The Electrum backend returns up to 10 transactions per page, with pending transactions first. Request the next page with an <code>after_txid</code> query parameter. This legacy endpoint may retrieve full history; use the cursor-based Transaction Page endpoint for large addresses.',
     },
     urlString: '/address/:address/txs',
     showConditions: bitcoinNetworks,

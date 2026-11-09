@@ -6,6 +6,7 @@ import {
   catchError,
   filter,
   from,
+  map,
   of,
   shareReplay,
   switchMap,
@@ -21,6 +22,10 @@ import {
   AddressTxSummary,
   Utxo,
   DetailedOutspend,
+  AddressBalanceSummary,
+  AddressMempoolSummary,
+  AddressTransactionPage,
+  AddressTransactionCount,
 } from '@app/interfaces/backend-api.interface';
 import { StateService } from '@app/services/state.service';
 import { BlockExtended } from '@interfaces/node-api.interface';
@@ -200,6 +205,69 @@ export class ElectrsApiService {
         '/txid/' +
         index,
       { responseType: 'text' }
+    );
+  }
+
+  private getBoundedAddressResource$<T>(
+    address: string,
+    script: string | undefined,
+    resource: string,
+    cursor?: string
+  ): Observable<T> {
+    const target$ = script
+      ? from(calcScriptHash$(script)).pipe(map((hash) => `scripthash/${hash}`))
+      : of(`address/${encodeURIComponent(address)}`);
+    return target$.pipe(
+      switchMap((target) =>
+        this.httpClient.get<T>(
+          `${this.apiBaseUrl}${this.apiBasePath}/api/${target}/${resource}`,
+          {
+            params: cursor
+              ? new HttpParams().set('cursor', cursor)
+              : new HttpParams(),
+          }
+        )
+      )
+    );
+  }
+
+  getAddressMempoolSummary$(
+    address: string,
+    script?: string
+  ): Observable<AddressMempoolSummary> {
+    return this.getBoundedAddressResource$(address, script, 'mempool-summary');
+  }
+
+  getAddressBalanceSummary$(
+    address: string,
+    script?: string
+  ): Observable<AddressBalanceSummary> {
+    return this.getBoundedAddressResource$(address, script, 'summary');
+  }
+
+  getAddressTransactionPage$(
+    address: string,
+    script?: string,
+    cursor?: string
+  ): Observable<AddressTransactionPage> {
+    return this.getBoundedAddressResource$(
+      address,
+      script,
+      'transactions',
+      cursor
+    );
+  }
+
+  getAddressTransactionCount$(
+    address: string,
+    script?: string,
+    cursor?: string
+  ): Observable<AddressTransactionCount> {
+    return this.getBoundedAddressResource$(
+      address,
+      script,
+      'transaction-count',
+      cursor
     );
   }
 

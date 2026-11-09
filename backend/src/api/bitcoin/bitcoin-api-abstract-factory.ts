@@ -1,3 +1,4 @@
+import { AddressMempoolSummary, AddressSummary, AddressPageMetadata, AddressCountPage } from './address-pagination';
 import { SubmitPackageResult, TestMempoolAcceptResult } from './bitcoin-api.interface';
 import { IPublicApi } from './public-api.interface';
 import { IBitcoinApi } from './bitcoin-api.interface';
@@ -31,6 +32,20 @@ export interface AbstractBitcoinApi {
   $getBlockHeader(hash: string): Promise<string>;
   $getBlock(hash: string): Promise<IPublicApi.Block>;
   $getRawBlock(hash: string): Promise<Buffer>;
+  $getAddressMempoolSummary(target: string, scriptHash?: boolean): Promise<AddressMempoolSummary>;
+  $getAddressSummary(target: string, scriptHash?: boolean): Promise<AddressSummary>;
+  $getAddressPage(
+    target: string,
+    scriptHash?: boolean,
+    cursor?: string,
+    signal?: AbortSignal
+  ): Promise<AddressPageMetadata & { transactions: IPublicApi.VerboseTransaction[] }>;
+  $getAddressCount(
+    target: string,
+    scriptHash?: boolean,
+    cursor?: string,
+    signal?: AbortSignal
+  ): Promise<AddressCountPage>;
   $getAddress(address: string): Promise<IPublicApi.Address>;
   $getAddressTransactions(address: string, lastSeenTxId: string): Promise<IPublicApi.VerboseTransaction[]>;
   $getAddressMempoolTransactions(address: string): Promise<IPublicApi.VerboseTransaction[]>;
