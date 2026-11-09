@@ -103,8 +103,11 @@ it.each([
     );
     const component = f.load();
     expect(component.displayMode).toBe('normal');
-    expect(component.chartOptions['yAxis']).toHaveLength(2);
-    expect(component.chartOptions['series']).toHaveLength(6);
+    expect(component.chartOptions['yAxis']).toHaveLength(1);
+    expect(component.chartOptions['series']).toHaveLength(4);
+    expect(
+      (component.chartOptions['series'] as any[]).map((series) => series.name)
+    ).toEqual(['Subsidy', 'Fees', 'Subsidy (%)', 'Fees (%)']);
     expect((component.chartOptions['legend'] as any).selected).toMatchObject({
       Fees: true,
       Subsidy: true,
