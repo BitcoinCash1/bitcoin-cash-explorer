@@ -53,7 +53,7 @@ test('retries after an unexpected task failure and releases the running guard', 
   expect(run).toHaveBeenLastCalledWith([12]);
 });
 
-test.each(['testnet4', 'chipnet', 'scalenet', 'disabled fiat', 'disabled indexing'])(
+test.each(['testnet4', 'chipnet', 'scalenet', 'disabled fiat', 'disabled indexing'] as const)(
   'does not retain price retries for %s',
   async (scenario) => {
     if (scenario === 'disabled fiat') {

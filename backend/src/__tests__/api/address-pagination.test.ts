@@ -4,11 +4,14 @@ const hash = 'a'.repeat(64);
 const row = (id: number, height: number) => ({ tx_hash: id.toString(16).padStart(64, '0'), height, fee: 0 });
 function fixture(height = 1000000, birth: number | null = 1) {
   const source: jest.Mocked<PageSource> = {
-    snapshot: jest.fn(async () => ({ height, hash })),
-    hash: jest.fn(async () => hash),
-    firstUse: jest.fn(async () => birth),
-    history: jest.fn(async () => []),
-    pending: jest.fn(async () => []),
+    snapshot: jest.fn<ReturnType<PageSource['snapshot']>, Parameters<PageSource['snapshot']>>(async () => ({
+      height,
+      hash,
+    })),
+    hash: jest.fn<ReturnType<PageSource['hash']>, Parameters<PageSource['hash']>>(async () => hash),
+    firstUse: jest.fn<ReturnType<PageSource['firstUse']>, Parameters<PageSource['firstUse']>>(async () => birth),
+    history: jest.fn<ReturnType<PageSource['history']>, Parameters<PageSource['history']>>(async () => []),
+    pending: jest.fn<ReturnType<PageSource['pending']>, Parameters<PageSource['pending']>>(async () => []),
   };
   return { source, pager: new AddressPagination(source, 'mainnet') };
 }

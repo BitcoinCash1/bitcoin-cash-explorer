@@ -1,3 +1,5 @@
+import { IPublicApi } from '../../api/bitcoin/public-api.interface';
+import { BlockExtended, VerboseTransactionExtended } from '../../mempool.interfaces';
 import blocks from '../../api/blocks';
 import BitcoinApi from '../../api/bitcoin/bitcoin-api';
 import { bitcoinCoreApi } from '../../api/bitcoin/bitcoin-api-factory';
@@ -34,7 +36,10 @@ beforeEach(() => {
   jest.mocked(bitcoinClient.getBlock).mockResolvedValue({ tx: [] } as never);
   jest.spyOn(BitcoinApi, 'convertBlock').mockReturnValue(block as never);
   jest.spyOn(blocks as any, '$getTransactionsExtended').mockResolvedValue([]);
-  jest.spyOn(blocks, '$getBlockExtended').mockResolvedValue(block as never);
+  const blockTestHooks = blocks as unknown as {
+    $getBlockExtended(block: IPublicApi.Block, transactions: VerboseTransactionExtended[]): Promise<BlockExtended>;
+  };
+  jest.spyOn(blockTestHooks, '$getBlockExtended').mockResolvedValue(block as never);
   jest.spyOn(blocks as any, '$handleReorgs').mockResolvedValue(undefined);
   jest.mocked(PricesRepository.$getLatestPriceId).mockResolvedValue(17);
   jest.mocked(BlocksRepository.$saveBlockPrices).mockResolvedValue(true);

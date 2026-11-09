@@ -1,7 +1,8 @@
 jest.mock('@bitcoincash/electrum-client', () => {
   // Bypass the suite-wide package mock and Jest's ESM loader: Node 26 loads the actual installed client.
   const nativeModule = process.getBuiltinModule('node:module');
-  return nativeModule.Module._load(require.resolve('@bitcoincash/electrum-client'), undefined, false);
+  const loader = new nativeModule.Module(__filename);
+  return loader.require(require.resolve('@bitcoincash/electrum-client'));
 });
 jest.mock('../../api/blocks', () => ({ __esModule: true, default: { getBlocks: () => [] } }));
 jest.mock('../../api/bitcoin/bitcoin-api-factory', () => ({ __esModule: true, default: {}, bitcoinCoreApi: {} }));
