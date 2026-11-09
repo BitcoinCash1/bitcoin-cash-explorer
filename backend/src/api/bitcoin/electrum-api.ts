@@ -84,7 +84,12 @@ class BitcoindElectrsApi extends BitcoinApi implements AbstractBitcoinApi {
           const first = await this.historyCoordinator.request<any>('first:' + key + ':' + snapshotHash, () =>
             this.historyRequest('blockchain.scripthash.get_first_use', [key])
           );
-          if (first === null) return null;
+          // electrum-client 1.2.x returns the whole JSON-RPC envelope for a null
+          // result (`msg.result || msg`). get_first_use legitimately returns null
+          // for an unused script; normalize only that exact wire response here.
+          if (first === null || (first?.result === null && Object.prototype.hasOwnProperty.call(first, 'id'))) {
+            return null;
+          }
           if (!Number.isSafeInteger(first.height) || first.height < 0) throw new Error('Invalid first use response');
           return first.height;
         },
