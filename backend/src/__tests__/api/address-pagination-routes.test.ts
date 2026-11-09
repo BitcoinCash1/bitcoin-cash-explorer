@@ -83,3 +83,22 @@ test('rejects malformed supplied cursor before invoking scanner', async () => {
   expect(response.status).toBe(400);
   expect(api.$getAddressPage).not.toHaveBeenCalled();
 });
+
+test('terminal history unavailability returns 422 without Retry-After', async () => {
+  (api.$getAddressCount as jest.Mock).mockRejectedValueOnce(
+    Object.assign(new Error('Transaction history is unavailable from the configured history server'), {
+      status: 422,
+      code: 'ADDRESS_HISTORY_UNAVAILABLE',
+      retryable: false,
+    })
+  );
+  const response = await fetch(url + 'address/qqtest/transaction-count');
+  expect(response.status).toBe(422);
+  expect(response.headers.get('retry-after')).toBeNull();
+  expect(response.headers.get('cache-control')).toBe('no-store');
+  expect(await response.json()).toEqual({
+    error: 'Transaction history is unavailable from the configured history server',
+    code: 'ADDRESS_HISTORY_UNAVAILABLE',
+    retryable: false,
+  });
+});

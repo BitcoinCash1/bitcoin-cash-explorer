@@ -238,7 +238,11 @@
 
     @if (paginatedMode && transactionError) {
       <p role="alert">
-        @if (pageResetRequired) {
+        @if (historyUnavailable) {
+          <span i18n="address.history-unavailable"
+            >Transaction history is unavailable from the history server.</span
+          >
+        } @else if (pageResetRequired) {
           <span i18n="address.snapshot-expired"
             >The transaction snapshot changed or expired. Reload the list to
             continue.</span
@@ -255,7 +259,11 @@
       <p i18n="address.no-transactions">No transactions found.</p>
     }
     @if (
-      paginatedMode && !fullyLoaded && !isLoadingTransactions && !retryLoadMore
+      paginatedMode &&
+      !historyUnavailable &&
+      !fullyLoaded &&
+      !isLoadingTransactions &&
+      !retryLoadMore
     ) {
       <button
         type="button"
@@ -457,7 +465,11 @@
   <td i18n="address.confirmed-transactions">Confirmed Transactions</td>
   <td class="wrap-cell" aria-live="polite">
     @if (paginatedMode) {
-      @if (countResult?.complete) {
+      @if (countUnavailable) {
+        <span role="alert" i18n="address.total-unavailable"
+          >Transaction total is unavailable from the history server.</span
+        >
+      } @else if (countResult?.complete) {
         <span i18n="address.confirmed-total"
           >{{ countResult.confirmedCount | number }} confirmed as of block
           {{ countResult.snapshotHeight | number }}</span
@@ -474,8 +486,6 @@
           >Scanned through block
           {{ countResult.scannedThroughHeight | number }}</small
         >
-      } @else {
-        <span i18n="address.total-not-calculated">Total not calculated</span>
       }
       @if (countRunning) {
         <button
@@ -491,10 +501,11 @@
             >Paused while this tab is hidden.</small
           >
         }
-      } @else if (!countResult?.complete) {
+      } @else if (!countUnavailable && !countResult?.complete) {
         <button
           type="button"
-          class="btn btn-outline-info btn-sm ms-2"
+          class="btn btn-outline-info btn-sm"
+          [class.ms-2]="countResult"
           (click)="calculateCount()"
         >
           @if (countResult) {
@@ -504,7 +515,7 @@
           }
         </button>
       }
-      @if (countError) {
+      @if (countError && !countUnavailable) {
         <small class="d-block" role="alert" i18n="address.count-error"
           >Count unavailable. Try again.</small
         >

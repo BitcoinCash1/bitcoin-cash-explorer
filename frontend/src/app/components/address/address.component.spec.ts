@@ -243,6 +243,100 @@ describe('bounded Electrum address loading', () => {
     expect(pages[1].observed).toBe(false);
     expect(api.getPubKeyAddress$).toHaveBeenCalledWith(pubkey);
   });
+  it('clears partial count progress on terminal history failure and disables count until navigation', () => {
+    vi.useFakeTimers();
+    const { component: c, api, counts, params, summaries } = setup();
+    summaries[0].next({
+      address: first,
+      confirmedBalance: 123,
+      pendingBalance: 0,
+      electrum: true,
+    });
+    c.calculateCount();
+    counts[0].next(count(0, 'partial'));
+    vi.runOnlyPendingTimers();
+    counts[1].error({
+      status: 422,
+      error: { code: 'ADDRESS_HISTORY_UNAVAILABLE', retryable: false },
+    });
+    expect(c.countUnavailable).toBe(true);
+    expect(c.countResult).toBeNull();
+    expect(c.countRunning).toBe(false);
+    expect(c.chainStats.balance).toBe(123);
+    expect(c.chainStats.tx_count).toBeUndefined();
+    c.calculateCount();
+    vi.runOnlyPendingTimers();
+    expect(api.getAddressTransactionCount$).toHaveBeenCalledTimes(2);
+    params.next(convertToParamMap({ id: second }));
+    expect(c.countUnavailable).toBe(false);
+    c.calculateCount();
+    expect(api.getAddressTransactionCount$).toHaveBeenLastCalledWith(
+      second,
+      undefined,
+      undefined
+    );
+  });
+
+  it('retains partial progress and permits continuation after a transient count failure', () => {
+    vi.useFakeTimers();
+    const { component: c, api, counts } = setup();
+    c.calculateCount();
+    counts[0].next(count(120, 'continue'));
+    vi.runOnlyPendingTimers();
+    counts[1].error({ status: 503 });
+    expect(c.countUnavailable).toBe(false);
+    expect(c.countResult.confirmedCount).toBe(120);
+    expect(c.countRunning).toBe(false);
+    c.calculateCount();
+    expect(api.getAddressTransactionCount$).toHaveBeenLastCalledWith(
+      first,
+      undefined,
+      'continue'
+    );
+  });
+
+  it('retains cards and balance but disables page retries on terminal history failure until network changes', () => {
+    const { component: c, api, pages, summaries, state } = setup();
+    summaries[0].next({
+      address: first,
+      confirmedBalance: 123,
+      pendingBalance: 0,
+      electrum: true,
+    });
+    pages[0].next(page([tx('existing')], 'next'));
+    c.loadMore();
+    pages[1].error({
+      status: 422,
+      error: { code: 'ADDRESS_HISTORY_UNAVAILABLE', retryable: false },
+    });
+    expect(c.historyUnavailable).toBe(true);
+    expect(c.retryLoadMore).toBe(false);
+    expect(c.isLoadingTransactions).toBe(false);
+    expect(c.transactions[0].txid).toBe('existing');
+    expect(c.chainStats.balance).toBe(123);
+    c.loadMore();
+    expect(api.getAddressTransactionPage$).toHaveBeenCalledTimes(2);
+    state.networkChanged$.next('chipnet');
+    expect(c.historyUnavailable).toBe(false);
+    expect(api.getAddressTransactionPage$).toHaveBeenCalledTimes(3);
+  });
+
+  it('allows page retry using the same cursor after a transient history failure', () => {
+    const { component: c, api, pages } = setup();
+    pages[0].next(page([tx('existing')], 'next'));
+    c.loadMore();
+    pages[1].error({ status: 503 });
+    expect(c.historyUnavailable).toBe(false);
+    expect(c.retryLoadMore).toBe(true);
+    expect(c.transactions[0].txid).toBe('existing');
+    c.loadMore();
+    expect(api.getAddressTransactionPage$).toHaveBeenLastCalledWith(
+      first,
+      undefined,
+      'next'
+    );
+  });
+
   it('preserves the none backend flow', () => {
     const { component: c, api } = setup('none');
     expect(c.paginatedMode).toBe(false);

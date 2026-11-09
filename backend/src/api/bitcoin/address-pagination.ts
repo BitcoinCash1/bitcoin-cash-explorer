@@ -19,6 +19,11 @@ export interface AddressCountPage extends AddressPageMetadata {
   progress: number;
 }
 type Row = IElectrumApi.ScriptHashHistory;
+export class AddressHistoryUnavailableError extends Error {
+  readonly status = 422;
+  readonly code = 'ADDRESS_HISTORY_UNAVAILABLE';
+  readonly retryable = false;
+}
 export class AddressCursorError extends Error {
   constructor(
     message: string,
@@ -135,7 +140,8 @@ export class AddressPagination {
       const pending = this.validate(await this.source.pending(key))
         .filter((row) => row.height <= 0)
         .sort((a, b) => a.tx_hash.localeCompare(b.tx_hash));
-      if (pending.length > MAX_ROWS) throw new HistoryBusyError('Pending history exceeds safe page limit');
+      if (pending.length > MAX_ROWS)
+        throw new AddressHistoryUnavailableError('Pending transaction history exceeds the supported limit');
       const digest = createHash('sha256').update(JSON.stringify(pending)).digest('hex');
       if (c.pendingDigest && c.pendingDigest !== digest)
         throw new AddressCursorError('Pending snapshot changed; restart pagination', 409, 'ADDRESS_SNAPSHOT_CHANGED');
@@ -159,8 +165,16 @@ export class AddressPagination {
       const history = this.validate(
         await this.source.history(key, from, to, mode === 'count', signal, c.snapshotHash)
       ).filter((r) => r.height >= from && r.height < to && r.height > 0);
+      // A confirmed first use proves that this first counting interval cannot be empty.
+      // Some history servers return [] for unsupported addresses rather than an RPC error.
+      if (mode === 'count' && c.birth > 0 && from === c.birth && history.length === 0) {
+        throw new AddressHistoryUnavailableError(
+          'Transaction history is unavailable from the configured history server'
+        );
+      }
       if (history.length > (to - from === 1 ? MAX_SINGLE_BLOCK_ROWS : MAX_ROWS)) {
-        if (to - from <= 1) throw new HistoryBusyError('Single block history exceeds safe page limit');
+        if (to - from <= 1)
+          throw new AddressHistoryUnavailableError('Single block transaction history exceeds the supported limit');
         c.width = Math.max(1, Math.floor((to - from) / 2));
         continue;
       }
@@ -189,7 +203,7 @@ export class AddressPagination {
       throw new AddressCursorError('Address snapshot changed; restart pagination', 409, 'ADDRESS_SNAPSHOT_CHANGED');
     const complete = c.pendingOffset < 0 && (mode === 'count' ? c.next > c.snapshotHeight : c.next <= c.birth);
     if (complete && c.birth > 0 && c.birth <= c.snapshotHeight && c.confirmedCount === 0)
-      throw new HistoryBusyError('History contradicts confirmed first use');
+      throw new AddressHistoryUnavailableError('Transaction history is unavailable from the configured history server');
     const base = {
       nextCursor: complete ? null : this.encode(c),
       complete,

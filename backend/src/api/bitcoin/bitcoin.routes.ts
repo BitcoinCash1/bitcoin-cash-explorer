@@ -158,7 +158,7 @@ class BitcoinRoutes {
           : result;
       if (!res.destroyed) res.json(payload);
     } catch (error: any) {
-      const status = [400, 405, 409, 503].includes(error?.status)
+      const status = [400, 405, 409, 422, 503].includes(error?.status)
         ? error.status
         : error?.message === 'Invalid Bitcoin Cash address'
           ? 400
@@ -168,6 +168,7 @@ class BitcoinRoutes {
         res.status(status).json({
           error: status === 503 ? 'Address history temporarily unavailable' : error.message,
           code: error?.code || (status === 503 ? 'ADDRESS_HISTORY_BUSY' : undefined),
+          ...(status === 422 && error?.retryable === false ? { retryable: false } : {}),
         });
     } finally {
       res.removeListener('close', close);

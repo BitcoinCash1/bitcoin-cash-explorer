@@ -183,6 +183,8 @@ export class AddressComponent implements OnInit, OnDestroy {
   paginatedMode = false;
   transactionError: any;
   countError: any;
+  countUnavailable = false;
+  historyUnavailable = false;
   countResult: AddressTransactionCount | null = null;
   countRunning = false;
   countPaused = false;
@@ -251,6 +253,8 @@ export class AddressComponent implements OnInit, OnDestroy {
           this.countResult = null;
           this.countCursor = null;
           this.countError = null;
+          this.countUnavailable = false;
+          this.historyUnavailable = false;
           this.liveTransactions.clear();
           this.removedTransactions.clear();
           this.emptyPageContinuations = 0;
@@ -821,6 +825,7 @@ export class AddressComponent implements OnInit, OnDestroy {
   }
 
   private loadPagedTransactions(): void {
+    if (this.historyUnavailable) return;
     if (this.isLoadingTransactions && !this.pageSubscription.closed) return;
     if (this.fullyLoaded) return;
     this.isLoadingTransactions = true;
@@ -870,6 +875,14 @@ export class AddressComponent implements OnInit, OnDestroy {
       });
   }
 
+  private isHistoryUnavailable(error: any): boolean {
+    return (
+      error.status === 422 &&
+      error.error?.code === 'ADDRESS_HISTORY_UNAVAILABLE' &&
+      error.error?.retryable === false
+    );
+  }
+
   private requiresSnapshotReset(error: any): boolean {
     return (
       error.status === 409 || error.error?.code === 'INVALID_ADDRESS_CURSOR'
@@ -878,7 +891,13 @@ export class AddressComponent implements OnInit, OnDestroy {
 
   private handlePageError(error: any): void {
     this.transactionError = error;
-    this.retryLoadMore = true;
+    this.historyUnavailable = this.isHistoryUnavailable(error);
+    this.retryLoadMore = !this.historyUnavailable;
+    if (this.historyUnavailable) {
+      this.nextPageCursor = null;
+      this.pageSnapshot = null;
+      this.pageResetRequired = false;
+    }
     this.isLoadingTransactions = false;
     if (this.requiresSnapshotReset(error)) {
       this.pageResetRequired = true;
@@ -890,7 +909,7 @@ export class AddressComponent implements OnInit, OnDestroy {
   }
 
   calculateCount(): void {
-    if (this.countRunning) return;
+    if (this.countRunning || this.countUnavailable) return;
     this.countError = null;
     this.countSubscription = new Subscription();
     this.countRunning = true;
@@ -945,6 +964,13 @@ export class AddressComponent implements OnInit, OnDestroy {
   private handleCountError(error: any): void {
     this.countError = error;
     this.countRunning = false;
+    if (this.isHistoryUnavailable(error)) {
+      this.countUnavailable = true;
+      this.countResult = null;
+      this.countCursor = null;
+      this.countPaused = false;
+      this.countSubscription.unsubscribe();
+    }
     if (this.requiresSnapshotReset(error)) {
       this.countResult = null;
       this.countCursor = null;

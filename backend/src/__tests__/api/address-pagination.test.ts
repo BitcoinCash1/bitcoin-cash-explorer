@@ -74,10 +74,14 @@ test('changing pending snapshot resets instead of silently shifting offsets', as
   source.pending.mockResolvedValue(Array.from({ length: 11 }, (_, i) => row(i + 1, 0)));
   await expect(pager.page('key', 'transactions', page.nextCursor!)).rejects.toMatchObject({ status: 409 });
 });
-test('dense windows shrink boundedly and single-block overflow returns controlled failure', async () => {
+test('dense windows shrink boundedly and single-block overflow returns terminal failure', async () => {
   const { source, pager } = fixture(100, 1);
   source.history.mockResolvedValue(Array.from({ length: 20001 }, (_, i) => row(i, 100)));
-  await expect(pager.page('key', 'transactions')).rejects.toMatchObject({ status: 503 });
+  await expect(pager.page('key', 'transactions')).rejects.toMatchObject({
+    status: 422,
+    code: 'ADDRESS_HISTORY_UNAVAILABLE',
+    retryable: false,
+  });
   expect(source.history.mock.calls.every((c) => c[2] - c[1] >= 1)).toBe(true);
   expect(source.history.mock.calls.length).toBeLessThanOrEqual(8);
 });
@@ -119,9 +123,18 @@ test('coordinator caps queued work and preserves live coalesced waiter after lea
 });
 
 test('contradictory first use never yields false exact zero', async () => {
-  const { pager } = fixture(100, 1);
-  await expect(pager.page('key', 'count')).rejects.toMatchObject({ status: 503 });
-  await expect(pager.page('key', 'transactions')).rejects.toMatchObject({ status: 503 });
+  const { pager, source } = fixture(100, 1);
+  await expect(pager.page('key', 'count')).rejects.toMatchObject({
+    status: 422,
+    code: 'ADDRESS_HISTORY_UNAVAILABLE',
+    retryable: false,
+  });
+  expect(source.history).toHaveBeenCalledTimes(1);
+  await expect(pager.page('key', 'transactions')).rejects.toMatchObject({
+    status: 422,
+    code: 'ADDRESS_HISTORY_UNAVAILABLE',
+    retryable: false,
+  });
 });
 test('all cancelled queued work frees capacity before the active operation completes', async () => {
   const coordinator = new HistoryCoordinator();
@@ -169,4 +182,26 @@ test('a dense multiblock window still shrinks before accepting a bounded single 
   expect(page.complete).toBe(false);
   expect('rows' in page && page.rows).toHaveLength(10);
   expect(source.history.mock.calls.some((call) => call[2] - call[1] === 1)).toBe(true);
+});
+
+test('pending history above the supported limit returns a terminal error', async () => {
+  const { source, pager } = fixture(100, null);
+  source.pending.mockResolvedValue(Array.from({ length: 2001 }, (_, i) => row(i, 0)));
+  await expect(pager.page('key', 'transactions')).rejects.toMatchObject({
+    status: 422,
+    code: 'ADDRESS_HISTORY_UNAVAILABLE',
+    retryable: false,
+  });
+  expect(source.history).not.toHaveBeenCalled();
+});
+
+test('count stops at the first empty birth interval before returning invented progress', async () => {
+  const { pager, source } = fixture(1000000, 100);
+  await expect(pager.page('key', 'count')).rejects.toMatchObject({
+    status: 422,
+    code: 'ADDRESS_HISTORY_UNAVAILABLE',
+    retryable: false,
+  });
+  expect(source.history).toHaveBeenCalledTimes(1);
+  expect(source.history.mock.calls[0].slice(1, 3)).toEqual([100, 244]);
 });
