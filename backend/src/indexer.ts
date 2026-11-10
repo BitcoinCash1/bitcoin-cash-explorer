@@ -109,6 +109,7 @@ class Indexer {
   }
 
   private scheduleNextRun(timeout: number): void {
+    if (shutdown.stopping) return;
     if (!this.reindexTimeout) {
       // Only one future run should be planned, ignore if already scheduled
       this.reindexTimeout = setTimeout(() => {
@@ -119,6 +120,7 @@ class Indexer {
   }
 
   public queueBlockPrice(height: number): void {
+    if (shutdown.stopping) return;
     // These configurations never run price indexing, so they must not retain retry work.
     if (!Common.indexingEnabled() || !config.FIAT_PRICE.ENABLED || config.EXPLORER.NETWORK !== 'mainnet') {
       return;
@@ -136,6 +138,7 @@ class Indexer {
    * @param {boolean} replace - `true` replaces any already scheduled task (works like a debounce), `false` ignores subsequent requests (works like a throttle)
    */
   public scheduleSingleTask(task: TaskName, timeout = 10000, replace = false): void {
+    if (shutdown.stopping) return;
     if (this.tasksScheduled[task]) {
       if (!replace) {
         //throttle
@@ -251,6 +254,7 @@ class Indexer {
       if (config.FIAT_PRICE.ENABLED) {
         try {
           await priceUpdater.$run();
+          if (shutdown.stopping) return;
         } catch (e) {
           logger.err(`Running priceUpdater failed. Reason: ` + (e instanceof Error ? e.message : e));
         }
@@ -258,6 +262,7 @@ class Indexer {
 
       // Do not attempt to index anything unless BCHN is fully synced
       const blockchainInfo = await bitcoinClient.getBlockchainInfo();
+      if (shutdown.stopping) return;
       if (blockchainInfo.blocks !== blockchainInfo.headers) {
         logger.debug(`BCHN not fully synced, retrying index run in 10 seconds.`);
         nextRunDelay = retryDelay;
@@ -267,8 +272,10 @@ class Indexer {
       logger.debug(`Running mining indexer`);
 
       await this.checkAvailableBCHNIndexes();
+      if (shutdown.stopping) return;
 
       const chainValid = await this.measureStage('block-database', () => blocks.$generateBlockDatabase());
+      if (shutdown.stopping) return;
       if (chainValid === false) {
         // Chain of block hash was invalid, so we need to reindex. Stop here and continue at the next iteration
         logger.warn(`The chain of block hash is invalid, re-indexing invalid data in 10 seconds.`, logger.tags.mining);
@@ -278,15 +285,25 @@ class Indexer {
 
       this.runSingleTask('blocksPricesFull');
       await blocks.$indexCoinbaseAddresses();
+      if (shutdown.stopping) return;
       const boundary = await this.measureStage('difficulty-adjustments', () => mining.$indexDifficultyAdjustments());
+      if (shutdown.stopping) return;
       await mining.$generateNetworkHashrateHistory(boundary);
+      if (shutdown.stopping) return;
       await mining.$generatePoolHashrateHistory(boundary);
+      if (shutdown.stopping) return;
       await this.measureStage('missing-summaries', () => blocks.$generateBlocksSummariesDatabase());
+      if (shutdown.stopping) return;
       await blocks.$generateFlagValuesDatabase();
+      if (shutdown.stopping) return;
       await blocks.$generateAuditStats();
+      if (shutdown.stopping) return;
       await auditReplicator.$sync();
+      if (shutdown.stopping) return;
       await statisticsReplicator.$sync();
+      if (shutdown.stopping) return;
       await BlocksAuditsRepository.$migrateAuditsV0toV1();
+      if (shutdown.stopping) return;
       // do not wait for classify blocks to finish
       blocks.$classifyBlocks();
       runSuccessful = true;
@@ -295,13 +312,15 @@ class Indexer {
       logger.err(`Indexer failed, trying again in 10 seconds. Reason: ` + (e instanceof Error ? e.message : e));
     } finally {
       this.indexerRunning = false;
-      const nextRunAt = new Date(Date.now() + nextRunDelay).toUTCString();
-      if (runSuccessful) {
-        logger.debug(`Indexing completed. Next run planned at ${nextRunAt}`);
-      } else {
-        logger.debug(`Indexing did not complete, next run planned at ${nextRunAt}`);
+      if (!shutdown.stopping) {
+        const nextRunAt = new Date(Date.now() + nextRunDelay).toUTCString();
+        if (runSuccessful) {
+          logger.debug(`Indexing completed. Next run planned at ${nextRunAt}`);
+        } else {
+          logger.debug(`Indexing did not complete, next run planned at ${nextRunAt}`);
+        }
+        this.scheduleNextRun(nextRunDelay);
       }
-      this.scheduleNextRun(nextRunDelay);
     }
   }
 }

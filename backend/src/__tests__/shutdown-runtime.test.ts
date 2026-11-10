@@ -7,7 +7,7 @@ import WebSocket from 'ws';
 
 // Deliberately use a child process so Jest's global mocks cannot replace the
 // actual signal handler, HTTP server, WebSocket server or database lifecycle.
-test.each(['SIGTERM', 'SIGINT', 'cluster', 'cluster-failure', 'orphan-queue', 'deadline'] as const)(
+test.each(['SIGTERM', 'SIGINT', 'cluster', 'cluster-failure', 'orphan-queue', 'mining-backlog', 'deadline'] as const)(
   '%s shutdown handles active work and pool cleanup',
   async (signal) => {
     const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'bch-shutdown-'));
@@ -49,13 +49,17 @@ test.each(['SIGTERM', 'SIGINT', 'cluster', 'cluster-failure', 'orphan-queue', 'd
         ...process.env,
         EXPLORER_CONFIG_FILE: configFile,
         SHUTDOWN_REAL_DB: process.env.SHUTDOWN_TEST_DB_PORT ? '1' : '',
-        SHUTDOWN_TEST_DEADLINE: signal === 'deadline' || signal === 'orphan-queue' ? '1' : '',
-        SHUTDOWN_TEST_ORPHANS: signal === 'orphan-queue' ? '1' : '',
+        SHUTDOWN_TEST_DEADLINE:
+          signal === 'deadline' || signal === 'orphan-queue' || signal === 'mining-backlog' ? '1' : '',
+        SHUTDOWN_TEST_ORPHANS: signal === 'orphan-queue' || signal === 'mining-backlog' ? '1' : '',
         SHUTDOWN_TEST_WORKER_FAILURE: signal === 'cluster-failure' ? '1' : '',
+        SHUTDOWN_TEST_WORKER_START_DELAY: signal === 'cluster-failure' ? '1000' : '',
       },
       execArgv: ['--import', pathToFileURL(require.resolve('tsx')).href],
       silent: true,
     });
+    const expectedReadyCount = signal.startsWith('cluster') ? 2 : 1;
+    let readyCount = 0;
     const events: string[] = [];
     const workerExits: { code: number | null; signal: string | null }[] = [];
     const waiters = new Map<string, (message: any) => void>();
@@ -69,9 +73,18 @@ test.each(['SIGTERM', 'SIGINT', 'cluster', 'cluster-failure', 'orphan-queue', 'd
     child.on('message', (message: any) => {
       events.push(message.event);
       if (message.event === 'worker-exited') workerExits.push(message);
+      // Forking/online does not mean a worker has installed its signal handler.
+      // The failure-injection case requires both workers to reach DB.shutdown().
+      if (message.event === 'ready' && ++readyCount < expectedReadyCount) return;
       waiters.get(message.event)?.(message);
     });
-    const waitFor = (event: string) => new Promise<any>((resolve) => waiters.set(event, resolve));
+    const waitFor = (event: string) =>
+      Promise.race([
+        new Promise<any>((resolve) => waiters.set(event, resolve)),
+        exited.then(() => {
+          throw new Error(`Backend exited before ${event}: ${diagnostics}`);
+        }),
+      ]);
     const exited = new Promise<{ code: number | null; signal: string | null }>((resolve) => {
       child.once('exit', (code, signal) => resolve({ code, signal }));
     });
@@ -79,6 +92,19 @@ test.each(['SIGTERM', 'SIGINT', 'cluster', 'cluster-failure', 'orphan-queue', 'd
     let ws: WebSocket | undefined;
     try {
       const { port } = await waitFor('ready');
+      if (signal === 'mining-backlog') {
+        const started = waitFor('mining-started');
+        const drained = waitFor('mining-drained');
+        child.send('mining-backlog');
+        await started;
+        child.kill('SIGTERM');
+        expect(await drained).toMatchObject({ indexed: 1 });
+        expect(await exited).toEqual({ code: 0, signal: null });
+        expect(events.indexOf('mining-drained')).toBeLessThan(events.indexOf('pool-closing'));
+        expect(events).toContain('pool-closed');
+        expect(diagnostics).not.toContain('Shutdown exceeded');
+        return;
+      }
       if (signal === 'orphan-queue') {
         const started = waitFor('orphan-started');
         const drained = waitFor('orphans-drained');

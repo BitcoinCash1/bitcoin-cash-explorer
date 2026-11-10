@@ -1,3 +1,4 @@
+import shutdown from '../../utils/shutdown';
 import poolStatisticsCache, { PoolStatisticsResult } from './pool-statistics-cache';
 import { BlockPrice, PoolInfo, PoolStats, RewardStats } from '../../mempool.interfaces';
 import BlocksRepository from '../../repositories/BlocksRepository';
@@ -570,6 +571,7 @@ class Mining {
       loadingIndicators.setProgress('weekly-hashrate-indexing', 0);
 
       while (toTimestamp > genesisTimestamp && toTimestamp > oldestConsecutiveBlockTimestamp) {
+        if (shutdown.stopping) return;
         const fromTimestamp = toTimestamp - 604800000;
 
         // Skip already indexed weeks
@@ -716,6 +718,7 @@ class Mining {
       loadingIndicators.setProgress('daily-hashrate-indexing', 0);
 
       while (toTimestamp > genesisTimestamp && toTimestamp > oldestConsecutiveBlockTimestamp) {
+        if (shutdown.stopping) return;
         const fromTimestamp = toTimestamp - 86400000;
 
         // Skip already indexed days
@@ -844,6 +847,7 @@ class Mining {
       // Process daily hashrates from today back to genesis (but skip genesis itself)
       let currentDayTo = toTimestamp;
       while (currentDayTo > genesisTimestamp) {
+        if (shutdown.stopping) return;
         const currentDayFrom = currentDayTo - 86400000;
         dailyTotalProcessed++;
 
@@ -930,6 +934,7 @@ class Mining {
       // Process weekly hashrates from today back to genesis (but skip genesis itself)
       let currentWeekTo = toTimestamp;
       while (currentWeekTo > genesisTimestamp) {
+        if (shutdown.stopping) return;
         const currentWeekFrom = currentWeekTo - 604800000; // 7 days
         weeklyTotalProcessed++;
 
@@ -1072,6 +1077,7 @@ class Mining {
     let timer = new Date().getTime() / 1000;
 
     for (const block of blocks) {
+      if (shutdown.stopping) return null;
       // skip until the first block after the oldest consecutive block
       if (block.height <= oldestConsecutiveBlock.height) {
         continue;
@@ -1128,7 +1134,7 @@ class Mining {
    * Create a link between blocks and the latest price at when they were mined
    */
   public async $indexBlockPrices(heights?: number[]): Promise<number[]> {
-    if (this.blocksPriceIndexingRunning === true) {
+    if (shutdown.stopping || this.blocksPriceIndexingRunning === true) {
       return [];
     }
     this.blocksPriceIndexingRunning = true;
@@ -1143,6 +1149,7 @@ class Mining {
       const blocksPrices: BlockPrice[] = [];
 
       for (const block of blocksWithoutPrices) {
+        if (shutdown.stopping) break;
         // Quick optimisation, out mtgox feed only goes back to 2010-07-19 02:00:00, so skip the first 68951 blocks
         if (config.EXPLORER.NETWORK === 'mainnet' && block.height < 68951) {
           blocksPrices.push({
@@ -1221,12 +1228,14 @@ class Mining {
     let currentBlockHeight = blockchainInfo.blocks;
 
     while (currentBlockHeight > 0) {
+      if (shutdown.stopping) return;
       const indexedBlocks = await BlocksRepository.$getBlocksMissingCoinStatsIndex(
         currentBlockHeight,
         currentBlockHeight - 10000
       );
 
       for (const block of indexedBlocks) {
+        if (shutdown.stopping) return;
         const txoutset = await bitcoinClient.getTxoutSetinfo('none', block.height);
         await BlocksRepository.$updateCoinStatsIndexData(
           block.hash,

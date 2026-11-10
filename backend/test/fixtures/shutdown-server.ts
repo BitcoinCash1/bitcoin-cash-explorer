@@ -1,3 +1,6 @@
+import mempool from '../../src/api/mempool';
+import indexer from '../../src/indexer';
+import bitcoinClient from '../../src/api/bitcoin/bitcoin-client';
 import chainTips from '../../src/api/chain-tips';
 import blocks from '../../src/api/blocks';
 import summaries from '../../src/repositories/BlocksSummariesRepository';
@@ -52,18 +55,60 @@ DB.shutdown = async () => {
   await closeDatabase();
   process.send?.({ event: 'pool-closed' });
 };
-const server = new Server();
-(server as any).app.get('/slow', async (_req, res) => {
-  process.send?.({ event: 'request-started' });
-  if (process.env.SHUTDOWN_REAL_DB) {
-    config.DATABASE.ENABLED = true;
-    await DB.query('SELECT SLEEP(0.4)');
-  } else {
-    await new Promise((resolve) => setTimeout(resolve, 400));
+function startHttpServer(): void {
+  const server = new Server();
+  (server as any).app.get('/slow', async (_req, res) => {
+    process.send?.({ event: 'request-started' });
+    if (process.env.SHUTDOWN_REAL_DB) {
+      config.DATABASE.ENABLED = true;
+      await DB.query('SELECT SLEEP(0.4)');
+    } else {
+      await new Promise((resolve) => setTimeout(resolve, 400));
+    }
+    res.end('completed');
+  });
+}
+
+// Stagger startup to exercise the readiness barrier on slower CI runners.
+if (cluster.isWorker && process.env.workerId === '1' && process.env.SHUTDOWN_TEST_WORKER_START_DELAY) {
+  setTimeout(startHttpServer, Number(process.env.SHUTDOWN_TEST_WORKER_START_DELAY));
+} else {
+  startHttpServer();
+}
+process.on('message', async (message) => {
+  if (message === 'mining-backlog') {
+    mempool.hasPriority = () => false;
+    config.EXPLORER.BLOCKS_SUMMARIES_INDEXING = true;
+    (Common as any).indexingEnabled = () => true;
+    (Common as any).blocksSummariesIndexingEnabled = () => true;
+    bitcoinClient.getBlockchainInfo = async () => ({ blocks: 20, headers: 20 }) as any;
+    bitcoinClient.getIndexInfo = async () => ({});
+    blocks.$generateBlockDatabase = async () => true;
+    blocks.$indexCoinbaseAddresses = async () => undefined;
+    const mining = (await import('../../src/api/mining/mining')).default;
+    mining.$indexDifficultyAdjustments = async () => null;
+    mining.$generateNetworkHashrateHistory = async () => undefined;
+    mining.$generatePoolHashrateHistory = async () => undefined;
+    let indexed = 0;
+    summaries.$getMissingSummaries = async () =>
+      Array.from({ length: 12 }, (_, height) => ({
+        height,
+        hash: String(height),
+        stale: false,
+      }));
+    blocks.$indexBlockSummary = async () => {
+      process.send?.({ event: 'mining-started' });
+      if (!shutdown.stopping) {
+        // Hold the current unit until SIGTERM; parent scheduling must not decide
+        // how many backlog items the test sees before shutdown starts.
+        await new Promise<void>((resolve) => process.once('SIGTERM', () => setTimeout(resolve, 50)));
+      } else {
+        await new Promise((resolve) => setTimeout(resolve, 50));
+      }
+      indexed++;
+    };
+    void indexer.$run().then(() => process.send?.({ event: 'mining-drained', indexed }));
   }
-  res.end('completed');
-});
-process.on('message', (message) => {
   if (message === 'orphans') {
     let indexed = 0;
     (chainTips as any).indexingQueue = Array.from({ length: 12 }, (_, index) => ({
