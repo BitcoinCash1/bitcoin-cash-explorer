@@ -255,4 +255,4 @@ sed -i "s!__FIAT_PRICE_ENABLED__!${__FIAT_PRICE_ENABLED__}!g" explorer-config.js
 sed -i "s!__FIAT_PRICE_PAID__!${__FIAT_PRICE_PAID__}!g" explorer-config.json
 sed -i "s!__FIAT_PRICE_API_KEY__!${__FIAT_PRICE_API_KEY__}!g" explorer-config.json
 
-node /backend/package/index.js
+exec node /backend/package/index.js

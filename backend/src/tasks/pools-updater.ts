@@ -1,3 +1,4 @@
+import shutdown from '../utils/shutdown';
 import diskCache from '../api/disk-cache';
 import valkeyCache from '../api/valkey-cache';
 import BlocksRepository from '../repositories/BlocksRepository';
@@ -28,7 +29,7 @@ class PoolsUpdater {
   poolsSource: string = config.EXPLORER.POOLS_SOURCE || 'gitlab';
 
   public async $startService(): Promise<void> {
-    while (true) {
+    while (!shutdown.stopping) {
       try {
         await this.updatePoolsJson();
       } catch (e: any) {
@@ -39,6 +40,10 @@ class PoolsUpdater {
   }
 
   public async updatePoolsJson(): Promise<void> {
+    return shutdown.run(() => this.updatePoolsJsonWork());
+  }
+
+  private async updatePoolsJsonWork(): Promise<void> {
     if (
       ['mainnet', 'testnet4', 'chipnet', 'scalenet'].includes(config.EXPLORER.NETWORK) === false ||
       config.EXPLORER.ENABLED === false

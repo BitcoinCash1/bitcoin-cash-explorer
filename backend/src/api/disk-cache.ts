@@ -16,6 +16,7 @@ class DiskCache {
   private static FILE_NAMES = config.EXPLORER.CACHE_DIR + '/cache{number}.json';
   private static CHUNK_FILES = 25;
   private isWritingCache = false;
+  private currentWrite: Promise<void> | undefined;
   private ignoreBlocksCache = false;
 
   private semaphore: { resume: (() => void)[]; locks: number } = {
@@ -23,17 +24,20 @@ class DiskCache {
     locks: 0,
   };
 
-  constructor() {
-    if (!cluster.isPrimary || !config.EXPLORER.CACHE_ENABLED) {
-      return;
+  async $saveCacheToDisk(sync = false, strict = false): Promise<void> {
+    if (this.currentWrite) {
+      if (strict) throw new Error('Disk cache write already in progress');
+      return this.currentWrite;
     }
-    process.on('SIGINT', (e) => {
-      this.$saveCacheToDisk(true);
-      process.exit(0);
-    });
+    this.currentWrite = this.saveCacheToDisk(sync, strict);
+    try {
+      await this.currentWrite;
+    } finally {
+      this.currentWrite = undefined;
+    }
   }
 
-  async $saveCacheToDisk(sync = false, strict = false): Promise<void> {
+  private async saveCacheToDisk(sync: boolean, strict: boolean): Promise<void> {
     if (!cluster.isPrimary || !config.EXPLORER.CACHE_ENABLED) {
       return;
     }

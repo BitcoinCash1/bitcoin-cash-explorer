@@ -1,3 +1,4 @@
+import shutdown from '../../utils/shutdown';
 import memPool from '../mempool';
 import logger from '../../logger';
 import { VerboseTransactionExtended, OptimizedStatistic } from '../../mempool.interfaces';
@@ -39,6 +40,10 @@ class Statistics {
   }
 
   public async runStatistics(skipIfRecent = false): Promise<void> {
+    return shutdown.run(() => this.runStatisticsWork(skipIfRecent));
+  }
+
+  private async runStatisticsWork(skipIfRecent = false): Promise<void> {
     if (!memPool.isInSync()) {
       return;
     }

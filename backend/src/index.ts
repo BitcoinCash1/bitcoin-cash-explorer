@@ -1,3 +1,4 @@
+import shutdown from './utils/shutdown';
 import express from 'express';
 import { Application, Request, Response, NextFunction } from 'express';
 import * as http from 'http';
@@ -41,6 +42,7 @@ import stratumApi from './api/services/stratum';
 import { prepareUnixSocket } from './utils/unix-socket';
 
 export class Server {
+  private shutdownPromise: Promise<void> | undefined;
   private wss: WebSocket.Server | undefined;
   private wssUnixSocket: WebSocket.Server | undefined;
   private server: http.Server | undefined;
@@ -57,6 +59,26 @@ export class Server {
   constructor() {
     this.app = express();
     this.app.set('case sensitive routing', true);
+    this.app.use((_req: Request, res: Response, next: NextFunction) => {
+      if (shutdown.stopping) {
+        res.setHeader('Connection', 'close');
+        res.status(503).end('Server shutting down');
+        return;
+      }
+      next();
+    });
+    ['SIGHUP', 'SIGINT', 'SIGTERM', 'SIGUSR1', 'SIGUSR2'].forEach((signal) => {
+      process.on(signal, () => this.forceExit(signal));
+    });
+    process.on('exit', () => this.exitCleanup());
+    process.on('uncaughtException', (error) => {
+      console.error('uncaughtException:', error);
+      this.forceExit('uncaughtException', 1);
+    });
+    process.on('unhandledRejection', (reason) => {
+      console.error('unhandledRejection:', reason);
+      this.forceExit('unhandledRejection', 1);
+    });
 
     if (!config.EXPLORER.SPAWN_CLUSTER_PROCS) {
       this.startServer();
@@ -76,6 +98,7 @@ export class Server {
       }
 
       cluster.on('exit', (worker, code, signal) => {
+        if (shutdown.stopping) return;
         const workerId = worker.process['env'].workerId;
         logger.warn(
           `Mempool Worker PID #${worker.process.pid} workerId: ${workerId} died. Restarting in 10 seconds... ${
@@ -83,6 +106,7 @@ export class Server {
           }`
         );
         setTimeout(() => {
+          if (shutdown.stopping) return;
           const env = { workerId: workerId };
           const newWorker = cluster.fork(env);
           newWorker.process['env'] = env;
@@ -94,26 +118,11 @@ export class Server {
   }
 
   async startServer(worker = false): Promise<void> {
-    logger.notice(`Starting Mempool Server${worker ? ' (worker)' : ''}... (${backendInfo.getShortCommitHash()})`);
+    return shutdown.run(() => this.startServerWork(worker));
+  }
 
-    // Register cleanup listeners for exit events
-    ['SIGHUP', 'SIGINT', 'SIGTERM', 'SIGUSR1', 'SIGUSR2'].forEach((event) => {
-      process.on(event, () => {
-        this.forceExit(event);
-      });
-    });
-    process.on('exit', () => {
-      logger.debug(`'exit' event triggered`);
-      this.exitCleanup();
-    });
-    process.on('uncaughtException', (error) => {
-      console.error(`uncaughtException:`, error);
-      this.forceExit('uncaughtException', 1);
-    });
-    process.on('unhandledRejection', (reason, promise) => {
-      console.error(`unhandledRejection:`, reason, promise);
-      this.forceExit('unhandledRejection', 1);
-    });
+  private async startServerWork(worker: boolean): Promise<void> {
+    logger.notice(`Starting Mempool Server${worker ? ' (worker)' : ''}... (${backendInfo.getShortCommitHash()})`);
 
     if (config.DATABASE.ENABLED) {
       DB.getPidLock();
@@ -129,6 +138,8 @@ export class Server {
         throw new Error(e instanceof Error ? e.message : 'Error');
       }
     }
+
+    if (shutdown.stopping) return;
 
     this.app
       .use((req: Request, res: Response, next: NextFunction) => {
@@ -171,6 +182,7 @@ export class Server {
     this.setUpWebsocketHandling();
 
     await poolsUpdater.updatePoolsJson(); // Needs to be done before loading the disk cache because we sometimes wipe it
+    if (shutdown.stopping) return;
     if (
       config.DATABASE.ENABLED === true &&
       config.EXPLORER.ENABLED &&
@@ -180,7 +192,8 @@ export class Server {
       logger.err(
         `Failed to retreive pools-v2.json sha, cannot run block indexing. Please make sure you've set valid urls in your explorer-config.json::MEMPOOL::POOLS_JSON_URL and explorer-config.json::MEMPOOL::POOLS_JSON_TREE_UR, aborting now`
       );
-      return process.exit(1);
+      this.forceExit('Missing pools metadata', 1);
+      return;
     }
 
     await syncAssets.syncAssets$();
@@ -214,6 +227,8 @@ export class Server {
       this.healthCheck();
     }, 2500);
 
+    if (shutdown.stopping) return;
+
     this.server.listen(config.EXPLORER.HTTP_PORT, () => {
       if (worker) {
         logger.info(`Mempool Server worker #${process.pid} started`);
@@ -236,6 +251,10 @@ export class Server {
   }
 
   async runMainUpdateLoop(): Promise<void> {
+    return shutdown.run(() => this.runMainUpdateWork());
+  }
+
+  private async runMainUpdateWork(): Promise<void> {
     const start = Date.now();
     try {
       try {
@@ -260,7 +279,7 @@ export class Server {
       indexer.$run();
       if (config.WALLETS.ENABLED) {
         // might take a while, so run in the background
-        walletApi.$syncWallets();
+        shutdown.run(() => walletApi.$syncWallets());
       }
       if (config.FIAT_PRICE.ENABLED) {
         priceUpdater.$run();
@@ -365,13 +384,67 @@ export class Server {
     }
   }
 
-  forceExit(exitEvent, code?: number): void {
-    logger.debug(`triggering exit for signal: ${exitEvent}`);
-    if (code) {
-      // override the default exit code
-      process.exitCode = code;
+  forceExit(exitEvent: string, code = 0): void {
+    if (code) process.exitCode = code;
+    if (this.shutdownPromise) return;
+    shutdown.stop();
+    logger.notice(`Shutting down after ${exitEvent}`);
+    // Leave Docker's 60-second grace period room to reap the process.
+    const deadline = setTimeout(() => {
+      logger.err('Shutdown exceeded 50 seconds; forcing exit');
+      process.exit(1);
+    }, 50000);
+    this.shutdownPromise = this.shutdown()
+      .then(() => {
+        clearTimeout(deadline);
+        process.exit(process.exitCode || 0);
+      })
+      .catch((error) => {
+        logger.err(`Shutdown failed: ${error instanceof Error ? error.message : error}`);
+        process.exit(1);
+      });
+  }
+
+  private async shutdown(): Promise<void> {
+    if (cluster.isPrimary && config.EXPLORER.SPAWN_CLUSTER_PROCS) {
+      await Promise.all(
+        Object.values(cluster.workers || {}).map((worker) => {
+          if (!worker || worker.isDead()) return Promise.resolve();
+          return new Promise<void>((resolve) => {
+            worker.once('exit', () => resolve());
+            worker.process.kill('SIGTERM');
+          });
+        })
+      );
     }
-    process.exit();
+    stratumApi.stop();
+    const listeners = [this.server, this.serverUnixSocket].map((server) => {
+      if (!server?.listening) return Promise.resolve();
+      return new Promise<void>((resolve, reject) => {
+        server.close((error) => (error ? reject(error) : resolve()));
+      });
+    });
+    for (const wss of [this.wss, this.wssUnixSocket]) {
+      if (!wss) continue;
+      for (const client of wss.clients) {
+        client.removeAllListeners('message');
+        client.close(1001, 'Server shutting down');
+        const timeout = setTimeout(() => client.terminate(), 5000);
+        timeout.unref();
+        client.once('close', () => clearTimeout(timeout));
+      }
+      wss.close();
+    }
+    await Promise.all([...listeners, shutdown.drain()]);
+    if (config.EXPLORER.CACHE_ENABLED && !config.VALKEY.ENABLED) {
+      await diskCache.$saveCacheToDisk();
+    }
+    await DB.shutdown();
+    await valkeyCache.close();
+    bitcoinClient.destroy();
+    bitcoinSecondClient.destroy();
+    if (config.DATABASE.ENABLED) DB.releasePidLock();
+    logger.notice('Shutdown completed; database pool closed');
   }
 
   exitCleanup(): void {

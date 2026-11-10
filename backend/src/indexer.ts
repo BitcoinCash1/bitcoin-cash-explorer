@@ -1,3 +1,4 @@
+import shutdown from './utils/shutdown';
 import { Common } from './api/common';
 import blocks from './api/blocks';
 import mempool from './api/mempool';
@@ -163,6 +164,10 @@ class Indexer {
    * (use `scheduleSingleTask` instead to queue a task to run after some timeout)
    */
   public async runSingleTask(task: TaskName): Promise<void> {
+    return shutdown.run(() => this.runSingleTaskWork(task));
+  }
+
+  private async runSingleTaskWork(task: TaskName): Promise<void> {
     if (!Common.indexingEnabled() || this.tasksRunning[task]) {
       return;
     }
@@ -221,6 +226,10 @@ class Indexer {
   }
 
   public async $run(): Promise<void> {
+    return shutdown.run(() => this.runWork());
+  }
+
+  private async runWork(): Promise<void> {
     if (
       !Common.indexingEnabled() ||
       this.runIndexer === false ||

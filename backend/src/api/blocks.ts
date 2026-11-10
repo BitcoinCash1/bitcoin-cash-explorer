@@ -1,3 +1,4 @@
+import shutdown from '../utils/shutdown';
 import poolsUpdater from '../tasks/pools-updater';
 import config from '../config';
 import bitcoinApi, { bitcoinCoreApi } from './bitcoin/bitcoin-api-factory';
@@ -792,6 +793,10 @@ class Blocks {
    * [INDEXING] Index transaction classification flags for Goggles
    */
   public async $classifyBlocks(): Promise<void> {
+    return shutdown.run(() => this.classifyBlocksWork());
+  }
+
+  private async classifyBlocksWork(): Promise<void> {
     return;
 
     // All code below is currently not used, since they say it requires esplora backend.

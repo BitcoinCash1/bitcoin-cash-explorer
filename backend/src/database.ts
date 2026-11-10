@@ -15,6 +15,7 @@ class DB {
     }
   }
   private pool: Pool | null = null;
+  private shuttingDown = false;
   private poolConfig: PoolOptions = {
     port: config.DATABASE.PORT,
     database: config.DATABASE.DATABASE,
@@ -215,6 +216,7 @@ class DB {
   }
 
   private async getPool(): Promise<Pool> {
+    if (this.shuttingDown) throw new Error('Database is shutting down');
     if (this.pool === null) {
       this.pool = createPool(this.poolConfig);
       this.pool.on('connection', function (newConnection: PoolConnection) {
@@ -224,11 +226,13 @@ class DB {
     return this.pool;
   }
 
-  /**
-   * Close the database connection pool
-   * This should only be called when the application is shutting down
-   * or at the end of test suites
-   */
+  /** Permanently stop pool acquisition before closing application connections. */
+  public async shutdown(): Promise<void> {
+    this.shuttingDown = true;
+    await this.close();
+  }
+
+  /** Close the current pool, allowing tests to open a fresh pool later. */
   public async close(): Promise<void> {
     if (this.pool !== null) {
       await this.pool.end();

@@ -28,7 +28,7 @@ test.each([defaults, overrides])('Docker entrypoint generates numeric request li
     // Exercise the real substitutions; replace only the final application launch.
     const entrypoint = fs
       .readFileSync(path.join(docker, 'start.sh'), 'utf8')
-      .replace('node /backend/package/index.js', ':');
+      .replace('exec node /backend/package/index.js', ':');
     const script = path.join(dir, 'start.sh');
     fs.writeFileSync(script, entrypoint);
     const env = { PATH: process.env.PATH, EXPLORER_CACHE_DIR: path.join(dir, 'cache') };
