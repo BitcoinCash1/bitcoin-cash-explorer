@@ -1,4 +1,5 @@
 import shutdown from './utils/shutdown';
+import { shutdownClusterWorkers } from './utils/shutdown-cluster-workers';
 import express from 'express';
 import { Application, Request, Response, NextFunction } from 'express';
 import * as http from 'http';
@@ -406,16 +407,14 @@ export class Server {
   }
 
   private async shutdown(): Promise<void> {
+    let workerShutdownError: unknown;
     if (cluster.isPrimary && config.EXPLORER.SPAWN_CLUSTER_PROCS) {
-      await Promise.all(
-        Object.values(cluster.workers || {}).map((worker) => {
-          if (!worker || worker.isDead()) return Promise.resolve();
-          return new Promise<void>((resolve) => {
-            worker.once('exit', () => resolve());
-            worker.process.kill('SIGTERM');
-          });
-        })
-      );
+      try {
+        await shutdownClusterWorkers(Object.values(cluster.workers || {}).filter((worker) => worker !== undefined));
+      } catch (error) {
+        // Still release the primary's own resources before reporting worker failure.
+        workerShutdownError = error;
+      }
     }
     stratumApi.stop();
     const listeners = [this.server, this.serverUnixSocket].map((server) => {
@@ -444,6 +443,7 @@ export class Server {
     bitcoinClient.destroy();
     bitcoinSecondClient.destroy();
     if (config.DATABASE.ENABLED) DB.releasePidLock();
+    if (workerShutdownError) throw workerShutdownError;
     logger.notice('Shutdown completed; database pool closed');
   }
 

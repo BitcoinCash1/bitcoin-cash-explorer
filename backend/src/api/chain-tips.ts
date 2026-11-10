@@ -158,7 +158,7 @@ class ChainTips {
       return;
     }
     this.indexingOrphanedBlocks = true;
-    while (this.indexingQueue.length > 0) {
+    while (this.indexingQueue.length > 0 && !shutdown.stopping) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, prefer-const
       let { blockhash, block, tip } = this.indexingQueue.shift()!;
       if (!block && !blockhash) {

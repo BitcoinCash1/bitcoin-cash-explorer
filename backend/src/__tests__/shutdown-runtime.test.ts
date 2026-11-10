@@ -7,8 +7,8 @@ import WebSocket from 'ws';
 
 // Deliberately use a child process so Jest's global mocks cannot replace the
 // actual signal handler, HTTP server, WebSocket server or database lifecycle.
-test.each(['SIGTERM', 'SIGINT', 'cluster', 'deadline'] as const)(
-  '%s drains requests and background work before closing the pool',
+test.each(['SIGTERM', 'SIGINT', 'cluster', 'cluster-failure', 'orphan-queue', 'deadline'] as const)(
+  '%s shutdown handles active work and pool cleanup',
   async (signal) => {
     const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'bch-shutdown-'));
     const configFile = path.join(directory, 'config.json');
@@ -21,7 +21,7 @@ test.each(['SIGTERM', 'SIGINT', 'cluster', 'deadline'] as const)(
           HTTP_PORT: 0,
           CACHE_ENABLED: false,
           EXTERNAL_ASSETS: [],
-          SPAWN_CLUSTER_PROCS: signal === 'cluster' ? 2 : 0,
+          SPAWN_CLUSTER_PROCS: signal.startsWith('cluster') ? 2 : 0,
           UNIX_SOCKET_PATH: '',
         },
         DATABASE: {
@@ -49,12 +49,15 @@ test.each(['SIGTERM', 'SIGINT', 'cluster', 'deadline'] as const)(
         ...process.env,
         EXPLORER_CONFIG_FILE: configFile,
         SHUTDOWN_REAL_DB: process.env.SHUTDOWN_TEST_DB_PORT ? '1' : '',
-        SHUTDOWN_TEST_DEADLINE: signal === 'deadline' ? '1' : '',
+        SHUTDOWN_TEST_DEADLINE: signal === 'deadline' || signal === 'orphan-queue' ? '1' : '',
+        SHUTDOWN_TEST_ORPHANS: signal === 'orphan-queue' ? '1' : '',
+        SHUTDOWN_TEST_WORKER_FAILURE: signal === 'cluster-failure' ? '1' : '',
       },
       execArgv: ['--import', pathToFileURL(require.resolve('tsx')).href],
       silent: true,
     });
     const events: string[] = [];
+    const workerExits: { code: number | null; signal: string | null }[] = [];
     const waiters = new Map<string, (message: any) => void>();
     let diagnostics = '';
     child.stdout?.on('data', (data) => {
@@ -65,6 +68,7 @@ test.each(['SIGTERM', 'SIGINT', 'cluster', 'deadline'] as const)(
     });
     child.on('message', (message: any) => {
       events.push(message.event);
+      if (message.event === 'worker-exited') workerExits.push(message);
       waiters.get(message.event)?.(message);
     });
     const waitFor = (event: string) => new Promise<any>((resolve) => waiters.set(event, resolve));
@@ -75,6 +79,20 @@ test.each(['SIGTERM', 'SIGINT', 'cluster', 'deadline'] as const)(
     let ws: WebSocket | undefined;
     try {
       const { port } = await waitFor('ready');
+      if (signal === 'orphan-queue') {
+        const started = waitFor('orphan-started');
+        const drained = waitFor('orphans-drained');
+        child.send('orphans');
+        await started;
+        child.kill('SIGTERM');
+        const result = await drained;
+        expect(result).toMatchObject({ indexed: 1, queued: 11 });
+        expect(await exited).toEqual({ code: 0, signal: null });
+        expect(events.indexOf('orphans-drained')).toBeLessThan(events.indexOf('pool-closing'));
+        expect(events).toContain('pool-closed');
+        expect(diagnostics).not.toContain('Shutdown exceeded');
+        return;
+      }
       if (signal === 'deadline') {
         const started = waitFor('background-started');
         child.send('stall');
@@ -97,16 +115,22 @@ test.each(['SIGTERM', 'SIGINT', 'cluster', 'deadline'] as const)(
       const background = waitFor('background-started');
       child.send('background');
       await background;
-      child.kill(signal === 'cluster' ? 'SIGTERM' : signal);
+      child.kill(signal === 'SIGINT' ? 'SIGINT' : 'SIGTERM');
       // Duplicate stop requests must not duplicate pool shutdown or interrupt work.
       child.kill(signal === 'SIGTERM' ? 'SIGINT' : 'SIGTERM');
       expect(await response).toBe('completed');
       expect(await socketClosed).toBe(1001);
-      expect(await exited).toEqual({ code: 0, signal: null });
+      expect(await exited).toEqual({ code: signal === 'cluster-failure' ? 1 : 0, signal: null });
       expect(events.indexOf('background-completed')).toBeLessThan(events.indexOf('pool-closing'));
       expect(events.filter((event) => event === 'pool-closed')).toHaveLength(1);
-      expect(diagnostics).toContain('Shutdown completed');
-      if (signal === 'cluster') {
+      if (signal === 'cluster-failure') {
+        expect(diagnostics).toContain('Shutdown failed: A cluster worker exited');
+        expect(diagnostics).not.toContain('Shutdown completed');
+        expect(workerExits.map(({ code }) => code)).toEqual([1, 1]);
+      } else {
+        expect(diagnostics).toContain('Shutdown completed');
+      }
+      if (signal.startsWith('cluster')) {
         expect(events.filter((event) => event === 'worker-exited')).toHaveLength(2);
         expect(diagnostics).not.toContain('Restarting in 10 seconds');
       }
