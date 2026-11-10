@@ -1,3 +1,4 @@
+import shutdown from '../utils/shutdown';
 import { createClient } from 'redis';
 import memPool from './mempool';
 import blocks from './blocks';
@@ -33,11 +34,20 @@ class ValkeyCache {
         },
         database: NetworkDB[config.EXPLORER.NETWORK],
       };
-      this.$ensureConnected();
+      shutdown.run(async () => {
+        await this.$ensureConnected();
+      });
       setInterval(() => {
-        this.$ensureConnected();
+        shutdown.run(async () => {
+          await this.$ensureConnected();
+        });
       }, 10000);
     }
+  }
+
+  public async close(): Promise<void> {
+    if (this.client?.isOpen) await this.client.close();
+    this.connected = false;
   }
 
   private async $ensureConnected(): Promise<boolean> {

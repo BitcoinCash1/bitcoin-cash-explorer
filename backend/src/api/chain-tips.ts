@@ -1,3 +1,4 @@
+import shutdown from '../utils/shutdown';
 import config from '../config';
 import logger from '../logger';
 import { BlockExtended } from '../mempool.interfaces';
@@ -44,6 +45,10 @@ class ChainTips {
   private maxIndexingQueueSize = 100;
 
   public async updateOrphanedBlocks(): Promise<void> {
+    return shutdown.run(() => this.updateOrphanedBlocksWork());
+  }
+
+  private async updateOrphanedBlocksWork(): Promise<void> {
     try {
       this.chainTips = await bitcoinClient.getChainTips();
 
@@ -145,11 +150,15 @@ class ChainTips {
   }
 
   private async $indexOrphanedBlocks(): Promise<void> {
+    return shutdown.run(() => this.indexOrphanedBlocksWork());
+  }
+
+  private async indexOrphanedBlocksWork(): Promise<void> {
     if (this.indexingOrphanedBlocks) {
       return;
     }
     this.indexingOrphanedBlocks = true;
-    while (this.indexingQueue.length > 0) {
+    while (this.indexingQueue.length > 0 && !shutdown.stopping) {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion, prefer-const
       let { blockhash, block, tip } = this.indexingQueue.shift()!;
       if (!block && !blockhash) {

@@ -1,3 +1,4 @@
+import shutdown from '../utils/shutdown';
 import poolsUpdater from '../tasks/pools-updater';
 import config from '../config';
 import bitcoinApi, { bitcoinCoreApi } from './bitcoin/bitcoin-api-factory';
@@ -536,6 +537,7 @@ class Blocks {
       let newlyIndexed = 0;
       let cursor: { height: number; hash: string } | undefined;
       while (true) {
+        if (shutdown.stopping) return;
         const batch = await BlocksSummariesRepository.$getMissingSummaries(
           lastBlockToIndex,
           currentBlockHeight,
@@ -543,6 +545,7 @@ class Blocks {
         );
         if (!batch.length) break;
         for (const block of batch) {
+          if (shutdown.stopping) return;
           await this.$indexBlockSummary(block.hash, block.height, block.stale);
           newlyIndexed++;
         }
@@ -589,6 +592,7 @@ class Blocks {
       let newlyIndexedBuckets = 0;
 
       while (this.flagValuesDeleteQueue.length > 0) {
+        if (shutdown.stopping) return;
         // Deletion of in-queue heights due to reorg
         const deletionHeight = this.flagValuesDeleteQueue[0];
         if (deletionHeight === undefined) {
@@ -600,6 +604,7 @@ class Blocks {
       }
 
       for (const preset of INDEXING_PRESETS) {
+        if (shutdown.stopping) return;
         let seedHeight = preset.retentionSpan > -1 ? tipOfSummaries - preset.retentionSpan : 0;
         if (config.EXPLORER.INDEXING_BLOCKS_AMOUNT > 0) {
           seedHeight = Math.max(seedHeight, tipOfSummaries - config.EXPLORER.INDEXING_BLOCKS_AMOUNT + 1);
@@ -643,6 +648,7 @@ class Blocks {
         const blocksToCompute =
           firstBucket + preset.bucketSize - lastBucket - indexedBuckets.length * preset.bucketSize;
         for (let bucketStart = firstBucket; bucketStart >= lastBucket; bucketStart -= preset.bucketSize) {
+          if (shutdown.stopping) return;
           if (isBucketIndexed[bucketStart]) {
             continue; // already indexed
           }
@@ -659,6 +665,7 @@ class Blocks {
 
             // Incrementalized logic capped by max blocks per query, not bucket size
             while (step > bucketLastHeight) {
+              if (shutdown.stopping) return;
               const blocksPerQuery = Math.min(step - bucketLastHeight, MAX_BLOCKS_PERQUERY);
               const cappedLastHeight = step - blocksPerQuery;
 
@@ -759,6 +766,7 @@ class Blocks {
     let indexedTotal = 0;
     logger.debug(`Indexing ${blockIds.length} block audit details`);
     for (const hash of blockIds) {
+      if (shutdown.stopping) return;
       const summary = await BlocksSummariesRepository.$getTemplate(hash);
       let totalFees = 0;
       let totalSize = 0;
@@ -792,6 +800,10 @@ class Blocks {
    * [INDEXING] Index transaction classification flags for Goggles
    */
   public async $classifyBlocks(): Promise<void> {
+    return shutdown.run(() => this.classifyBlocksWork());
+  }
+
+  private async classifyBlocksWork(): Promise<void> {
     return;
 
     // All code below is currently not used, since they say it requires esplora backend.
@@ -949,6 +961,7 @@ class Blocks {
       let timer = Date.now() / 1000;
       const startedAt = Date.now() / 1000;
       for (const { height, hash } of unindexedBlocks) {
+        if (shutdown.stopping) return;
         // Logging
         const elapsedSeconds = Date.now() / 1000 - timer;
         if (elapsedSeconds > 5) {
@@ -1009,6 +1022,7 @@ class Blocks {
       let timer = Date.now() / 1000;
 
       while (currentBlockHeight >= lastBlockToIndex) {
+        if (shutdown.stopping) return false;
         const endBlock = Math.max(0, lastBlockToIndex, currentBlockHeight - chunkSize + 1);
 
         const missingBlockHeights: number[] = await blocksRepository.$getMissingBlocksBetweenHeights(
@@ -1026,6 +1040,7 @@ class Blocks {
         );
 
         for (const blockHeight of missingBlockHeights) {
+          if (shutdown.stopping) return false;
           if (blockHeight < lastBlockToIndex) {
             break;
           }
@@ -1082,6 +1097,7 @@ class Blocks {
       throw e;
     }
 
+    if (shutdown.stopping) return false;
     return await BlocksRepository.$validateChain();
   }
 

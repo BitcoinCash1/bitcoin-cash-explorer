@@ -1,3 +1,4 @@
+import shutdown from '../../../utils/shutdown';
 import mining from '../../../api/mining/mining';
 import BlocksRepository from '../../../repositories/BlocksRepository';
 import HashratesRepository from '../../../repositories/HashratesRepository';
@@ -44,7 +45,10 @@ beforeEach(() => {
     .mocked(bitcoinApi.$getBlock)
     .mockResolvedValue({ timestamp: time - 86400, difficulty: 1, bits: row.bits } as never);
 });
-afterEach(() => jest.useRealTimers());
+afterEach(() => {
+  shutdown.stopping = false;
+  jest.useRealTimers();
+});
 afterAll(() => {
   config.EXPLORER.INDEXING_BLOCKS_AMOUNT = originalAmount;
 });
@@ -92,3 +96,17 @@ test('an empty chain skips both histories without marking them up to date', asyn
   expect(mining.lastHashrateIndexingDate).toBeNull();
   expect(mining.lastWeeklyHashrateIndexingDate).toBeNull();
 });
+
+test.each(['$generateNetworkHashrateHistory', '$generatePoolHashrateHistory'] as const)(
+  '%s stops between historical intervals without marking the backlog complete',
+  async (generate) => {
+    jest.mocked(BlocksRepository.$blockCountBetweenTimestamp).mockImplementation(async () => {
+      shutdown.stop();
+      return { blockCount: 144, lastBlockHeight: 11 } as never;
+    });
+    await mining[generate]({ timestamp: time, height: 10, difficulty: 1, bits: row.bits });
+    expect(BlocksRepository.$blockCountBetweenTimestamp).toHaveBeenCalledTimes(1);
+    expect(mining.lastHashrateIndexingDate).toBeNull();
+    expect(mining.lastWeeklyHashrateIndexingDate).toBeNull();
+  }
+);

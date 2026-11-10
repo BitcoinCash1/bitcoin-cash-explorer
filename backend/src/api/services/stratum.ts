@@ -59,6 +59,11 @@ class StratumApi {
     }
   }
 
+  public stop(): void {
+    this.runWebsocketLoop = false;
+    this.ws?.close(1001, 'Server shutting down');
+  }
+
   public async connectWebsocket(): Promise<void> {
     if (!config.STRATUM.ENABLED) {
       return;

@@ -1,3 +1,4 @@
+import shutdown from '../utils/shutdown';
 import * as fs from 'fs';
 import path from 'path';
 import config from '../config';
@@ -157,6 +158,10 @@ class PriceUpdater {
   }
 
   public async $run(): Promise<void> {
+    return shutdown.run(() => this.runWork());
+  }
+
+  private async runWork(): Promise<void> {
     if (['testnet4', 'chipnet', 'scalenet'].includes(config.EXPLORER.NETWORK)) {
       // Coins have no value on testnet/chipnet/scalenet, so we want to always show 0
       return;
