@@ -47,7 +47,8 @@ class PoolsRepository {
    * Get basic pool info and block count
    */
   public async $getPoolsInfo(interval: string | null = null): Promise<PoolInfo[]> {
-    const useTimestampIndex = ['24h', '3d', '1w', '1m'].includes(interval || '');
+    // Filter the yearly overview by date before visiting historical pool records.
+    const useTimestampIndex = ['24h', '3d', '1w', '1m', '1y'].includes(interval || '');
     interval = Common.getSqlInterval(interval);
 
     let query = `

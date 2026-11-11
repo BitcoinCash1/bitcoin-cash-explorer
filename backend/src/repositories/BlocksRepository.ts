@@ -398,11 +398,13 @@ class BlocksRepository {
    * Get empty blocks for one or all pools
    */
   public async $countEmptyBlocks(poolId: number | null, interval: string | null = null): Promise<any> {
+    // The yearly all-pools overview benefits from a bounded timestamp range.
+    const useTimestampIndex = interval === '1y' && poolId === null;
     interval = Common.getSqlInterval(interval);
 
     const params: any[] = [];
     let query = `SELECT count(*) as count, pools.id as poolId
-      FROM blocks
+      FROM blocks ${useTimestampIndex ? 'FORCE INDEX (blockTimestamp)' : ''}
       JOIN pools on pools.id = blocks.pool_id
       WHERE tx_count = 1 AND stale = 0`;
 
