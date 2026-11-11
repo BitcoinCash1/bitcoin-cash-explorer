@@ -200,3 +200,37 @@ test.each([
     });
   }
 );
+
+test.each([7, 30, 365, 1461])('explicit %s-day pool range preserves boundaries and canonical counts', async (days) => {
+  const first = await insertTestPool({ name: 'First range pool', slug: 'first-range' });
+  const second = await insertTestPool({ name: 'Second range pool', slug: 'second-range' });
+  await insertTestPool({ name: 'No matching blocks', slug: 'no-range' });
+  const to = 1794398400;
+  const from = to - days * 86400;
+  const fixtures = [
+    ['range-lower', from, first],
+    ['range-upper', to, first],
+    ['range-middle', from + 1, second],
+    ['range-before', from - 1, first],
+    ['range-after', to + 1, first],
+    ['range-stale', from + 1, first],
+  ] as const;
+  for (const [index, [hash, timestamp, poolId]] of fixtures.entries()) {
+    await insertTestBlock({ height: index + 1, hash, poolId });
+    await DB.query('UPDATE blocks SET blockTimestamp=FROM_UNIXTIME(?) WHERE hash=?', [timestamp, hash]);
+  }
+  await DB.query('UPDATE blocks SET stale=1 WHERE hash=?', ['range-stale']);
+  const spy = jest.spyOn(DB, 'query');
+  try {
+    const rows = await pools.$getPoolsInfoBetween(from, to);
+    expect(rows.map((row) => [row.poolId, Number(row.blockCount)]).sort((a, b) => a[0] - b[0])).toEqual([
+      [first, 2],
+      [second, 1],
+    ]);
+    expect(spy.mock.calls[0][1]).toEqual([from, to]);
+    expect(String(spy.mock.calls[0][0])).toContain('JOIN blocks USE INDEX (blockTimestamp)');
+    expect(await pools.$getPoolsInfoBetween(to + 2, to + 86400)).toEqual([]);
+  } finally {
+    spy.mockRestore();
+  }
+});

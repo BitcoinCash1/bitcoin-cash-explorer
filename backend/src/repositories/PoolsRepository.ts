@@ -89,7 +89,7 @@ class PoolsRepository {
   public async $getPoolsInfoBetween(from: number, to: number): Promise<PoolInfo[]> {
     const query = `SELECT COUNT(height) as blockCount, pools.id as poolId, pools.name as poolName
       FROM pools
-      LEFT JOIN blocks on pools.id = blocks.pool_id AND blocks.blockTimestamp BETWEEN FROM_UNIXTIME(?) AND FROM_UNIXTIME(?)
+      LEFT JOIN blocks USE INDEX (blockTimestamp) on pools.id = blocks.pool_id AND blocks.blockTimestamp BETWEEN FROM_UNIXTIME(?) AND FROM_UNIXTIME(?)
       WHERE blocks.stale = 0
       GROUP BY pools.id`;
 
