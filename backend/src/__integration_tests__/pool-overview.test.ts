@@ -1,6 +1,8 @@
 import cache from '../api/mining/pool-statistics-cache';
+import blocks from '../repositories/BlocksRepository';
 import audits from '../repositories/BlocksAuditsRepository';
 import DB from '../database';
+import config from '../config';
 import pools from '../repositories/PoolsRepository';
 import { cleanupTestData, insertTestPool, insertTestBlock, setupTestDatabase, waitForDatabase } from './test-helpers';
 
@@ -84,7 +86,7 @@ test('fee averages have stable precision with either index plan', async () => {
     spy.mockRestore();
   }
   const [hinted]: any[] = await DB.query(query);
-  const [unhinted]: any[] = await DB.query(query.replace('FORCE INDEX (blockTimestamp)', ''));
+  const [unhinted]: any[] = await DB.query(query.replace('USE INDEX (blockTimestamp)', ''));
   expect(hinted).toEqual(unhinted);
   const expected =
     Array.from({ length: 12 }, (_, i) => (1 - 7 * (i + 1)) / (7 * (i + 1))).reduce((a, b) => a + b, 0) / 12;
@@ -104,5 +106,131 @@ test('successful pool metadata and audit-summary writes invalidate cached statis
     expect(rows[0]).toMatchObject({ name: 'After', link: 'https://example.com' });
   } finally {
     invalidate.mockRestore();
+  }
+});
+
+test.each([
+  ['24h', '1 DAY'],
+  ['3d', '3 DAY'],
+  ['1w', '1 WEEK'],
+  ['1m', '1 MONTH'],
+  ['3m', '3 MONTH'],
+  ['6m', '6 MONTH'],
+  ['1y', '1 YEAR'],
+  ['2y', '2 YEAR'],
+  ['3y', '3 YEAR'],
+  ['4y', '4 YEAR'],
+])(
+  '%s overview preserves inclusive boundaries, empty counts and audit semantics',
+  async (requestedInterval, sqlInterval) => {
+    const first = await insertTestPool({ name: 'First', slug: 'first' });
+    const second = await insertTestPool({ name: 'Second', slug: 'second' });
+    const fixtures = [
+      ['lower', '2025-11-11 12:00:00', first, 1],
+      ['upper', '2026-11-11 12:00:00', first, 2],
+      ['middle', '2026-06-01 00:00:00', first, 1],
+      ['before', '2025-11-11 11:59:59', first, 1],
+      ['after', '2026-11-11 12:00:01', first, 1],
+      ['fork', '2026-06-01 00:00:00', first, 1],
+      ['second', '2026-06-01 00:00:00', second, 2],
+    ] as const;
+    for (const [index, [hash, timestamp, poolId, tx_count]] of fixtures.entries()) {
+      await insertTestBlock({ height: index + 1, hash, poolId, tx_count });
+      await DB.query('UPDATE blocks SET blockTimestamp=?, fees=50 WHERE hash=?', [timestamp, hash]);
+    }
+    await DB.query(
+      `UPDATE blocks SET blockTimestamp=DATE_SUB('2026-11-11 12:00:00', INTERVAL ${sqlInterval}) WHERE hash='lower'`
+    );
+    await DB.query(
+      `UPDATE blocks SET blockTimestamp=DATE_SUB(DATE_SUB('2026-11-11 12:00:00', INTERVAL ${sqlInterval}), INTERVAL 1 SECOND) WHERE hash='before'`
+    );
+    await DB.query('UPDATE blocks SET blockTimestamp=? WHERE hash IN (?, ?, ?)', [
+      '2026-11-11 11:59:59',
+      'middle',
+      'fork',
+      'second',
+    ]);
+    await DB.query('UPDATE blocks SET stale=1 WHERE hash=?', ['fork']);
+    await audit('lower', 1, 100, 80);
+    await audit('upper', 2, 0, 100);
+    await audit('fork', 6, 1, 20);
+
+    await DB.$transaction(async (connection) => {
+      await connection.query('SET timestamp = UNIX_TIMESTAMP(?)', ['2026-11-11 12:00:00']);
+      const network = config.EXPLORER.NETWORK;
+      const original = DB.query.bind(DB);
+      const spy = jest
+        .spyOn(DB, 'query')
+        .mockImplementation((query, params) => original(query, params, 'debug', connection));
+      try {
+        const result = await pools.$getPoolsInfo(requestedInterval);
+        expect(result.map((row) => [row.poolId, Number(row.blockCount)])).toEqual([
+          [first, 3],
+          [second, 1],
+        ]);
+        expect(Number(result[0].avgMatchRate)).toBe(90);
+        expect(Number(result[0].avgFeeDelta)).toBe(-0.5);
+        expect(result[1].avgMatchRate).toBeNull();
+        expect(result[1].avgFeeDelta).toBeNull();
+        const empty = await blocks.$countEmptyBlocks(null, requestedInterval);
+        expect(empty.map((row) => [row.poolId, Number(row.count)])).toEqual([[first, 2]]);
+        expect(
+          spy.mock.calls.slice(0, 2).every(([query]) => String(query).includes('USE INDEX (blockTimestamp)'))
+        ).toBe(true);
+        await blocks.$countEmptyBlocks(first, requestedInterval);
+        expect(String(spy.mock.calls.at(-1)![0])).not.toContain('USE INDEX');
+        for (const interval of ['24h', '3d', '1w', '1m', '3m', '6m', '2y', '3y', '4y', 'all', null]) {
+          await pools.$getPoolsInfo(interval);
+          expect(String(spy.mock.calls.at(-1)![0]).includes('USE INDEX')).toBe(interval !== null && interval !== 'all');
+          await blocks.$countEmptyBlocks(null, interval);
+          expect(String(spy.mock.calls.at(-1)![0]).includes('USE INDEX')).toBe(interval !== null && interval !== 'all');
+        }
+        for (const otherNetwork of ['chipnet', 'testnet4'] as const) {
+          config.EXPLORER.NETWORK = otherNetwork;
+          await pools.$getPoolsInfo(requestedInterval);
+          expect(String(spy.mock.calls.at(-1)![0])).toContain('USE INDEX (blockTimestamp)');
+          await blocks.$countEmptyBlocks(null, requestedInterval);
+          expect(String(spy.mock.calls.at(-1)![0])).toContain('USE INDEX (blockTimestamp)');
+        }
+      } finally {
+        config.EXPLORER.NETWORK = network;
+        spy.mockRestore();
+        await connection.query('SET timestamp = DEFAULT');
+      }
+    });
+  }
+);
+
+test.each([7, 30, 365, 1461])('explicit %s-day pool range preserves boundaries and canonical counts', async (days) => {
+  const first = await insertTestPool({ name: 'First range pool', slug: 'first-range' });
+  const second = await insertTestPool({ name: 'Second range pool', slug: 'second-range' });
+  await insertTestPool({ name: 'No matching blocks', slug: 'no-range' });
+  const to = 1794398400;
+  const from = to - days * 86400;
+  const fixtures = [
+    ['range-lower', from, first],
+    ['range-upper', to, first],
+    ['range-middle', from + 1, second],
+    ['range-before', from - 1, first],
+    ['range-after', to + 1, first],
+    ['range-stale', from + 1, first],
+  ] as const;
+  for (const [index, [hash, timestamp, poolId]] of fixtures.entries()) {
+    await insertTestBlock({ height: index + 1, hash, poolId });
+    await DB.query('UPDATE blocks SET blockTimestamp=FROM_UNIXTIME(?) WHERE hash=?', [timestamp, hash]);
+  }
+  await DB.query('UPDATE blocks SET stale=1 WHERE hash=?', ['range-stale']);
+  const spy = jest.spyOn(DB, 'query');
+  try {
+    const rows = await pools.$getPoolsInfoBetween(from, to);
+    expect(rows.map((row) => [row.poolId, Number(row.blockCount)]).sort((a, b) => a[0] - b[0])).toEqual([
+      [first, 2],
+      [second, 1],
+    ]);
+    expect(spy.mock.calls[0][1]).toEqual([from, to]);
+    expect(String(spy.mock.calls[0][0])).toContain('JOIN blocks USE INDEX (blockTimestamp)');
+    expect(await pools.$getPoolsInfoBetween(to + 2, to + 86400)).toEqual([]);
+  } finally {
+    spy.mockRestore();
   }
 });

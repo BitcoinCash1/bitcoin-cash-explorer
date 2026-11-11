@@ -399,10 +399,12 @@ class BlocksRepository {
    */
   public async $countEmptyBlocks(poolId: number | null, interval: string | null = null): Promise<any> {
     interval = Common.getSqlInterval(interval);
+    // Match the overview's date access path, allowing scans when the range is broad.
+    const useTimestampIndex = interval !== null && poolId === null;
 
     const params: any[] = [];
     let query = `SELECT count(*) as count, pools.id as poolId
-      FROM blocks
+      FROM blocks ${useTimestampIndex ? 'USE INDEX (blockTimestamp)' : ''}
       JOIN pools on pools.id = blocks.pool_id
       WHERE tx_count = 1 AND stale = 0`;
 
