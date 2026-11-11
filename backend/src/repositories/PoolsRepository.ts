@@ -48,7 +48,9 @@ class PoolsRepository {
    */
   public async $getPoolsInfo(interval: string | null = null): Promise<PoolInfo[]> {
     // Filter the yearly overview by date before visiting historical pool records.
-    const useTimestampIndex = ['24h', '3d', '1w', '1m', '1y'].includes(interval || '');
+    const useTimestampIndex =
+      ['24h', '3d', '1w', '1m'].includes(interval || '') ||
+      (interval === '1y' && config.EXPLORER.NETWORK === 'mainnet');
     interval = Common.getSqlInterval(interval);
 
     let query = `

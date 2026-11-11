@@ -399,7 +399,7 @@ class BlocksRepository {
    */
   public async $countEmptyBlocks(poolId: number | null, interval: string | null = null): Promise<any> {
     // The yearly all-pools overview benefits from a bounded timestamp range.
-    const useTimestampIndex = interval === '1y' && poolId === null;
+    const useTimestampIndex = interval === '1y' && poolId === null && config.EXPLORER.NETWORK === 'mainnet';
     interval = Common.getSqlInterval(interval);
 
     const params: any[] = [];

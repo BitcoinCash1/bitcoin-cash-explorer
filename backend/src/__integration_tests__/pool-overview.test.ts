@@ -2,6 +2,7 @@ import cache from '../api/mining/pool-statistics-cache';
 import blocks from '../repositories/BlocksRepository';
 import audits from '../repositories/BlocksAuditsRepository';
 import DB from '../database';
+import config from '../config';
 import pools from '../repositories/PoolsRepository';
 import { cleanupTestData, insertTestPool, insertTestBlock, setupTestDatabase, waitForDatabase } from './test-helpers';
 
@@ -131,6 +132,7 @@ test('yearly overview preserves inclusive boundaries, empty counts and audit sem
 
   await DB.$transaction(async (connection) => {
     await connection.query('SET timestamp = UNIX_TIMESTAMP(?)', ['2026-11-11 12:00:00']);
+    const network = config.EXPLORER.NETWORK;
     const original = DB.query.bind(DB);
     const spy = jest
       .spyOn(DB, 'query')
@@ -160,7 +162,15 @@ test('yearly overview preserves inclusive boundaries, empty counts and audit sem
         await blocks.$countEmptyBlocks(null, interval);
         expect(String(spy.mock.calls.at(-1)![0])).not.toContain('FORCE INDEX');
       }
+      for (const otherNetwork of ['chipnet', 'testnet4']) {
+        config.EXPLORER.NETWORK = otherNetwork;
+        await pools.$getPoolsInfo('1y');
+        expect(String(spy.mock.calls.at(-1)![0])).not.toContain('FORCE INDEX');
+        await blocks.$countEmptyBlocks(null, '1y');
+        expect(String(spy.mock.calls.at(-1)![0])).not.toContain('FORCE INDEX');
+      }
     } finally {
+      config.EXPLORER.NETWORK = network;
       spy.mockRestore();
       await connection.query('SET timestamp = DEFAULT');
     }
