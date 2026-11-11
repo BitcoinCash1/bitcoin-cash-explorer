@@ -47,11 +47,9 @@ class PoolsRepository {
    * Get basic pool info and block count
    */
   public async $getPoolsInfo(interval: string | null = null): Promise<PoolInfo[]> {
-    // Filter the yearly overview by date before visiting historical pool records.
-    const useTimestampIndex =
-      ['24h', '3d', '1w', '1m'].includes(interval || '') ||
-      (interval === '1y' && config.EXPLORER.NETWORK === 'mainnet');
     interval = Common.getSqlInterval(interval);
+    // Prefer timestamp access for date ranges, while allowing scans for broad ranges.
+    const useTimestampIndex = interval !== null;
 
     let query = `
       SELECT
@@ -63,7 +61,7 @@ class PoolsRepository {
           AVG(blocks_audits.match_rate) AS avgMatchRate,
           AVG(CAST((CAST(blocks.fees as SIGNED) - CAST(blocks_audits.expected_fees as SIGNED)) / NULLIF(CAST(blocks_audits.expected_fees as SIGNED), 0) AS DECIMAL(30,12))) AS avgFeeDelta,
           unique_id as poolUniqueId
-      FROM blocks ${useTimestampIndex ? 'FORCE INDEX (blockTimestamp)' : ''}
+      FROM blocks ${useTimestampIndex ? 'USE INDEX (blockTimestamp)' : ''}
       JOIN pools on pools.id = pool_id
       LEFT JOIN blocks_audits ON blocks_audits.hash = blocks.hash
       WHERE blocks.stale = 0
