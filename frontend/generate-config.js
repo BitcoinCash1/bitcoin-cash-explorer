@@ -55,7 +55,9 @@ try {
   throw new Error(e, { cause: e });
 }
 
-configContent.NETWORK_BLOCK_SIZE_UNITS ??= { testnet4: 2000000, chipnet: 2000000 };
+// Capacity is supplied by the selected backend, including for older local config files.
+delete configContent.MIN_BLOCK_SIZE_UNITS;
+delete configContent.NETWORK_BLOCK_SIZE_UNITS;
 
 for (const setting in configContent) {
   settings.push({

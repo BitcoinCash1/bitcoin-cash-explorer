@@ -109,6 +109,8 @@ export class ClockComponent implements OnInit {
   }
 
   getStyleForBlock(block: BlockExtended) {
+    if (this.stateService.getBlockFullness(block) === null)
+      return { background: 'var(--secondary)' };
     const greenBackgroundHeight =
       100 - this.stateService.getBlockFullness(block);
 

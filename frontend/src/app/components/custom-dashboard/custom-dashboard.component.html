@@ -330,7 +330,10 @@
                             }}"
                             role="progressbar"
                             [ngStyle]="{
-                              width: stateService.getBlockFullness(block) + '%',
+                              width:
+                                stateService.getBlockFullness(block) === null
+                                  ? null
+                                  : stateService.getBlockFullness(block) + '%',
                             }"
                           >
                             &nbsp;

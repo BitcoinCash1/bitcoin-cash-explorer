@@ -63,6 +63,15 @@ class WebsocketHandler {
   private MSG_RATE_LIMIT = config.EXPLORER.MSG_RATE_LIMIT;
   private MSG_RATE_WINDOW = config.EXPLORER.MSG_RATE_WINDOW;
 
+  constructor() {
+    this.updateSocketDataFields({
+      'network-settings': Object.freeze({
+        network: config.EXPLORER.NETWORK,
+        minimumBlockSize: config.EXPLORER.MIN_BLOCK_SIZE_UNITS,
+      }),
+    });
+  }
+
   addWebsocketServer(wss: WebSocket.Server) {
     this.webSocketServers.push(wss);
   }

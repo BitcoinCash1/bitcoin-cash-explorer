@@ -1,3 +1,4 @@
+import { validBlockLimit } from '@app/shared/block-capacity';
 import { gridResolution } from './grid-resolution';
 import {
   Component,
@@ -59,7 +60,7 @@ export class BlockOverviewGraphComponent
   @Input() isLoading: boolean;
   @Input() resolution: number;
   @Input() autofit: boolean = false;
-  @Input() blockLimit: number;
+  @Input() blockLimit: number | null;
   @Input() referenceTransactions: TransactionStripped[] | null = null;
   private layoutTimer: ReturnType<typeof setTimeout>;
   private currentTransactions: TransactionStripped[] = [];
@@ -170,7 +171,7 @@ export class BlockOverviewGraphComponent
         this.resizeCanvas();
         this.themeChangedSubscription =
           this.themeService.themeChanged$.subscribe(() => {
-            this.scene.setColorFunction(this.getColorFunction());
+            this.scene?.setColorFunction(this.getColorFunction());
           });
       }
     }
@@ -178,12 +179,23 @@ export class BlockOverviewGraphComponent
 
   ngOnChanges(changes): void {
     if (
-      this.scene &&
-      (changes.blockLimit ||
-        changes.resolution ||
-        changes.referenceTransactions)
+      changes.blockLimit ||
+      changes.resolution ||
+      changes.referenceTransactions
     ) {
-      this.setup(this.currentTransactions);
+      if (!validBlockLimit(this.blockLimit)) {
+        clearTimeout(this.layoutTimer);
+        this.layoutTimer = undefined;
+        if (this.scene) {
+          this.scene.destroy();
+          this.scene = null;
+        }
+        this.hoverTx = this.selectedTx = this.mirrorTx = null;
+        if (this.gl) this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+      } else if (this.canvas && this.gl) {
+        this.resizeCanvas();
+        this.setup(this.currentTransactions);
+      }
     }
     if (changes.orientation || changes.flip) {
       if (this.scene) {
@@ -289,7 +301,7 @@ export class BlockOverviewGraphComponent
       this.setFilterFlags();
     }
     this.filtersAvailable = filtersAvailable;
-    if (this.scene) {
+    if (this.scene && validBlockLimit(this.blockLimit)) {
       this.clearUpdateQueue();
       this.scene.setScale(
         gridResolution(
@@ -308,7 +320,7 @@ export class BlockOverviewGraphComponent
 
   enter(transactions: TransactionStripped[], direction: string): void {
     this.currentTransactions = transactions;
-    if (this.scene) {
+    if (this.scene && validBlockLimit(this.blockLimit)) {
       this.scene.setScale(
         gridResolution(
           this.referenceTransactions || transactions,
@@ -339,6 +351,7 @@ export class BlockOverviewGraphComponent
     sort: boolean = true,
     startTime?: number
   ): void {
+    this.currentTransactions = transactions || [];
     if (this.scene) {
       this.clearUpdateQueue();
       this.scene.replace(transactions || [], direction, sort, startTime);
@@ -448,6 +461,19 @@ export class BlockOverviewGraphComponent
     direction: string = 'left',
     resetLayout: boolean = false
   ): void {
+    if (!this.scene) {
+      const pending = new Map(
+        this.currentTransactions.map((tx) => [tx.txid, tx])
+      );
+      remove.forEach((id) => pending.delete(id));
+      add.forEach((tx) => pending.set(tx.txid, tx));
+      change.forEach((tx) => {
+        if (pending.has(tx.txid))
+          pending.set(tx.txid, { ...pending.get(tx.txid), rate: tx.rate });
+      });
+      this.currentTransactions = [...pending.values()];
+      return;
+    }
     if (this.scene) {
       add = add.filter((tx) => !this.scene.txs[tx.txid]);
       remove = remove.filter((txid) => this.scene.txs[txid]);
@@ -545,7 +571,7 @@ export class BlockOverviewGraphComponent
           animate: false,
         });
         this.start();
-      } else {
+      } else if (validBlockLimit(this.blockLimit)) {
         this.scene = new BlockScene({
           width: this.displayWidth,
           height: this.displayHeight,
@@ -793,6 +819,7 @@ export class BlockOverviewGraphComponent
   }
 
   setMirror(txid: string | void) {
+    if (!this.scene) return;
     if (this.mirrorTx) {
       this.scene.setHover(this.mirrorTx, false);
       this.start();

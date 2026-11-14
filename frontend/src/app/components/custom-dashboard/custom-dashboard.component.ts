@@ -279,7 +279,7 @@ export class CustomDashboardComponent
 
         return {
           size: size,
-          blocks: Math.ceil(size / this.stateService.blockSize),
+          blocks: this.stateService.projectedBlockCount(size),
         };
       })
     );

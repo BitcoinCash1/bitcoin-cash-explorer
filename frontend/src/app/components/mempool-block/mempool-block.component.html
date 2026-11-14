@@ -76,10 +76,11 @@
                     class="progress-bar progress-mempool {{ network$ | async }}"
                     role="progressbar"
                     [ngStyle]="{
-                      width:
-                        (mempoolBlock.blockSize / stateService.blockSize) *
-                          100 +
-                        '%',
+                      width: stateService.blockSize
+                        ? stateService.projectionRatio(mempoolBlock.blockSize) *
+                            100 +
+                          '%'
+                        : null,
                     }"
                   ></div>
                   <div

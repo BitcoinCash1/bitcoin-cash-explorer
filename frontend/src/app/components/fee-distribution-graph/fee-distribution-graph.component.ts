@@ -86,6 +86,7 @@ export class FeeDistributionGraphComponent implements OnInit, OnChanges {
       ? txs.reduce((min, tx) => Math.min(min, tx.rate), Infinity)
       : 0;
     const blockSize = this.stateService.blockSize;
+    if (!blockSize) return;
     const sampleInterval = blockSize / this.numSamples;
     let cumSize = 0;
     let sampleIndex = 0;

@@ -372,6 +372,14 @@ export class WebsocketService implements OnDestroy {
   }
 
   handleResponse(response: WebsocketResponse) {
+    // Reject a response for another network before publishing any part of it.
+    const settings = response['network-settings'];
+    if (
+      settings &&
+      settings.network !== (this.stateService.network || 'mainnet')
+    )
+      return;
+    if (settings) this.stateService.acceptNetworkSettings(settings);
     let reinitBlocks = false;
 
     if (response.backend) {

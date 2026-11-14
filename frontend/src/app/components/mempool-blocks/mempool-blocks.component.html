@@ -26,7 +26,7 @@
           [attr.data-cy]="'mempool-block-' + i"
           class="bitcoin-block text-center mempool-block"
           [class.hide-block]="count && i >= count"
-          id="mempool-block-{{ i }}"
+          id="mempool-block-{{ i ?? '—' }}"
           [ngStyle]="mempoolBlockStyles[i]"
           [class.blink-bg]="projectedBlock.blink"
           [style]="blockTransformation"
@@ -99,20 +99,21 @@
                   #transactionsSingular
                   let-i
                   i18n="shared.transaction-count.singular"
-                  >{{ i }} transaction</ng-template
+                  >{{ i ?? "—" }} transaction</ng-template
                 >
                 <ng-template
                   #transactionsPlural
                   let-i
                   i18n="shared.transaction-count.plural"
-                  >{{ i }} transactions</ng-template
+                  >{{ i ?? "—" }} transactions</ng-template
                 >
               </div>
               <div
                 [attr.data-cy]="'mempool-block-' + i + '-time'"
                 class="time-difference"
                 *ngIf="
-                  projectedBlock.blockSize <= stateService.blockSize;
+                  stateService.blockSize &&
+                    projectedBlock.blockSize <= stateService.blockSize;
                   else mergedBlock
                 "
               >
@@ -135,16 +136,16 @@
                       *ngTemplateOutlet="
                         blocksPlural;
                         context: {
-                          $implicit:
-                            projectedBlock.blockSize / stateService.blockSize
-                            | ceil,
+                          $implicit: stateService.projectedBlockCount(
+                            projectedBlock.blockSize
+                          ),
                         }
                       "
                     ></ng-container
                     >)</b
                   >
                   <ng-template #blocksPlural let-i i18n="shared.blocks"
-                    >{{ i }}
+                    >{{ i ?? "—" }}
                     <span class="shared-block">blocks</span></ng-template
                   >
                 </div>
@@ -156,7 +157,7 @@
       </ng-template>
     </div>
     <div
-      *ngIf="arrowVisible"
+      *ngIf="arrowVisible && stateService.blockSize"
       #arrowUp
       id="arrow-up"
       [ngStyle]="{
@@ -185,7 +186,7 @@
         <div
           class="bitcoin-block text-center mempool-block"
           [class.hide-block]="count && i >= count"
-          id="mempool-block-{{ i }}"
+          id="mempool-block-{{ i ?? '—' }}"
           [ngStyle]="mempoolEmptyBlockStyles[i]"
         ></div>
       </ng-template>

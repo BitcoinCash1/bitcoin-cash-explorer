@@ -175,8 +175,6 @@ Below we list selected settings from `explorer-config.json` and the correspondin
     "CACHE_DIR": "./cache",
     "CLEAR_PROTECTION_MINUTES": 20,
     "RECOMMENDED_FEE_PERCENTILE": 50,
-    "MIN_BLOCK_SIZE_UNITS": 32000000,
-    "NETWORK_BLOCK_SIZE_UNITS": { "testnet4": 2000000, "chipnet": 2000000 },
     "INITIAL_BLOCKS_AMOUNT": 8,
     "MEMPOOL_BLOCKS_AMOUNT": 1,
     "BLOCKS_SUMMARIES_INDEXING": false,
@@ -462,19 +460,20 @@ to enable a public request budget. Internal calls remain unlimited.
 
 ### Block capacity
 
-The frontend keeps a 32 MB Mainnet baseline and 2 MB baselines for Testnet4 and
-Chipnet. `NETWORK_BLOCK_SIZE_UNITS` overrides frontend baselines by network name
-(`mainnet`, `testnet4`, `chipnet`, or `scalenet`). In Docker, pass this value as a
-JSON object string. The existing `MIN_BLOCK_SIZE_UNITS` remains the fallback for
-Mainnet and unspecified networks. Keep these baselines aligned with each backend's
-`EXPLORER_MIN_BLOCK_SIZE_UNITS` setting.
+Configure each backend with `EXPLORER_MIN_BLOCK_SIZE_UNITS`: 32000000 for Mainnet,
+2000000 for Testnet4 and Chipnet. Each backend advertises its network and baseline
+through `network-settings` in existing HTTP/WebSocket initialisation responses.
+There is no additional settings request. Settings are cached in frontend memory
+per backend origin and network and refreshed on reconnect.
 
-When available, a mined block's ABLA limit takes precedence over its baseline.
-Live projections use the canonical tip's next-block ABLA limit. Backend projection
-responses include `blockSizeLimit`; initialisation and WebSocket projection
-updates also carry `block-capacity` with `tipHash` and `blockSizeLimit`, identifying
-the capacity used for that projection snapshot. Older backends remain supported
-through the frontend's ABLA and configured-baseline fallbacks.
+Mined blocks use their own ABLA limit when available. Projections use the capacity
+published with the snapshot, then the tip's next-block ABLA limit, then the backend
+baseline. Historical navigation never changes live capacity. Square tiles remain
+an approximation of byte occupancy, with comparison panels sharing a scale.
 
-Square transaction tiles approximate byte occupancy. Comparison panels share a
-capacity and grid scale; their empty space remains meaningful.
+The frontend settings `MIN_BLOCK_SIZE_UNITS` and `NETWORK_BLOCK_SIZE_UNITS` have
+been removed and are ignored in older configuration files. Upgrade backends before
+the frontend. With an older backend, ABLA/projection metadata still works; if no
+capacity is available, capacity-dependent displays remain unavailable rather than
+guessing a limit. No changes to existing backend Compose baseline settings are
+required.

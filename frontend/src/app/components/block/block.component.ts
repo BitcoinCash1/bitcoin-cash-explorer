@@ -996,10 +996,17 @@ export class BlockComponent implements OnInit, OnDestroy, AfterViewInit {
     return this.blockAudit?.transactions || this.strippedTransactions || null;
   }
 
-  get graphBlockLimit(): number {
+  get graphBlockLimit(): number | null {
     const own = this.block
       ? this.stateService.getBlockLimit(this.block)
       : this.stateService.networkBlockSize;
+    if (
+      own === null ||
+      (this.block?.stale &&
+        this.canonicalBlock &&
+        this.stateService.getBlockLimit(this.canonicalBlock) === null)
+    )
+      return null;
     return this.block?.stale && this.canonicalBlock
       ? Math.max(own, this.stateService.getBlockLimit(this.canonicalBlock))
       : own;

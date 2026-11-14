@@ -103,6 +103,8 @@ describe('Docker artifact configuration', () => {
     expect(readArtifact('config.js')).toBe(websiteConfig);
 
     const template = readArtifact('config.template.js');
+    expect(template).not.toContain('MIN_BLOCK_SIZE_UNITS');
+    expect(websiteConfig).not.toContain('MIN_BLOCK_SIZE_UNITS');
     const placeholders = [...template.matchAll(/\$\{__([A-Z0-9_]+)__\}/g)].map(
       (match) => match[1]
     );

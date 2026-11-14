@@ -17,7 +17,6 @@ function addSetting(key, value) {
 }
 
 function normalizedValue(value) {
-    if (value.startsWith('{')) return JSON.parse(value);
     if (Number(value)) {
         value = Number(value);
     } else if ((value === 'true') || (value === 'false')) {

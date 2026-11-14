@@ -173,6 +173,8 @@ export class StaleList implements OnInit, OnDestroy {
       return 'var(--secondary)';
     }
 
+    if (this.stateService.getBlockFullness(block) === null)
+      return 'var(--secondary)';
     const backgroundHeight = 100 - this.stateService.getBlockFullness(block);
     const network = this.stateService.network || '';
 

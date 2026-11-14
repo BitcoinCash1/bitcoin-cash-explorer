@@ -8,17 +8,21 @@
       *browserOnly
       class="block-overview-canvas"
       [class.clickable]="!!hoverTx"
+      [style.visibility]="blockLimit ? null : 'hidden'"
       #blockCanvas
     ></canvas>
     @if (!disableSpinner) {
-      <div class="loader-wrapper" [class.hidden]="!isLoading && !unavailable">
+      <div
+        class="loader-wrapper"
+        [class.hidden]="!isLoading && !unavailable && !!blockLimit"
+      >
         <div
-          *ngIf="!unavailable"
+          *ngIf="!unavailable && !!blockLimit"
           class="spinner-border ms-3 loading"
           role="status"
         ></div>
         <div
-          *ngIf="!isLoading && unavailable"
+          *ngIf="!isLoading && (unavailable || !blockLimit)"
           class="ms-3"
           i18n="block.not-available"
         >

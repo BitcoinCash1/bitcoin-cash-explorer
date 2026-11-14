@@ -7,7 +7,13 @@ import {
   TransactionStripped,
 } from '@interfaces/node-api.interface';
 
+export interface NetworkSettings {
+  network: string;
+  minimumBlockSize: number;
+}
+
 export interface WebsocketResponse {
+  'network-settings'?: NetworkSettings;
   'block-capacity'?: { tipHash: string; blockSizeLimit: number };
   backend?: 'electrum' | 'none';
   block?: BlockExtended;
