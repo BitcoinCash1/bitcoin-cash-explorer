@@ -457,23 +457,3 @@ transaction count for `EXPLORER_MAX_TRACKED_TXS`, and messages per
 single-transaction or batched outspends request. The default `0` is unlimited to retain
 compatibility with large Bitcoin Cash transactions; set it to, for example, `100000`
 to enable a public request budget. Internal calls remain unlimited.
-
-### Block capacity
-
-Configure each backend with `EXPLORER_MIN_BLOCK_SIZE_UNITS`: 32000000 for Mainnet,
-2000000 for Testnet4 and Chipnet. Each backend advertises its network and baseline
-through `network-settings` in existing HTTP/WebSocket initialisation responses.
-There is no additional settings request. Settings are cached in frontend memory
-per backend origin and network and refreshed on reconnect.
-
-Mined blocks use their own ABLA limit when available. Projections use the capacity
-published with the snapshot, then the tip's next-block ABLA limit, then the backend
-baseline. Historical navigation never changes live capacity. Square tiles remain
-an approximation of byte occupancy, with comparison panels sharing a scale.
-
-The frontend settings `MIN_BLOCK_SIZE_UNITS` and `NETWORK_BLOCK_SIZE_UNITS` have
-been removed and are ignored in older configuration files. Upgrade backends before
-the frontend. With an older backend, ABLA/projection metadata still works; if no
-capacity is available, capacity-dependent displays remain unavailable rather than
-guessing a limit. No changes to existing backend Compose baseline settings are
-required.
