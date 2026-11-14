@@ -135,10 +135,10 @@ type ExtendedTransaction<T> = T & BaseTransactionExtension;
 type ExtendedMempoolTransaction<T> = T & BaseTransactionExtension & MempoolExtension;
 
 // Specific interfaces using the generic types
-export interface TransactionExtended extends ExtendedTransaction<IPublicApi.Transaction> {}
-export interface MempoolTransactionExtended extends ExtendedMempoolTransaction<IPublicApi.Transaction> {}
-export interface VerboseTransactionExtended extends ExtendedTransaction<IPublicApi.VerboseTransaction> {}
-export interface VerboseMempoolTransactionExtended extends ExtendedMempoolTransaction<IPublicApi.VerboseTransaction> {}
+export type TransactionExtended = ExtendedTransaction<IPublicApi.Transaction>;
+export type MempoolTransactionExtended = ExtendedMempoolTransaction<IPublicApi.Transaction>;
+export type VerboseTransactionExtended = ExtendedTransaction<IPublicApi.VerboseTransaction>;
+export type VerboseMempoolTransactionExtended = ExtendedMempoolTransaction<IPublicApi.VerboseTransaction>;
 
 export interface AuditTransaction {
   uid: number;

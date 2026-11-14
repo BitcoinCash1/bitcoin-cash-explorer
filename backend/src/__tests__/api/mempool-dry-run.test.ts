@@ -10,7 +10,7 @@ import { GbtGenerator } from 'rust-gbt';
 // Keep the actual worker and its selection algorithm; only point its filename at compiled JS.
 jest.mock('worker_threads', () => {
   const actual = jest.requireActual('worker_threads');
-  const nodePath = require('node:path');
+  const nodePath = jest.requireActual('node:path');
   return {
     ...actual,
     Worker: class extends actual.Worker {
@@ -96,20 +96,21 @@ describe.each(['rust', 'js'])('%s dry-run UID isolation', (kind) => {
     expect(engine.txidMap.has('other')).toBe(false);
   });
 
-  if (kind === 'js') test('retries a generation if the canonical tip changes while the worker runs', async () => {
-    const tip: any = { id: 'before', abla_state: { next_block_size_limit: 1000000 } };
-    jest.spyOn(blocks, 'getBlocks').mockImplementation(() => [tip]);
-    const request = engine.requestWorker.bind(engine);
-    jest.spyOn(engine, 'requestWorker').mockImplementationOnce(async (message) => {
-      const result = await request(message);
-      tip.id = 'after';
-      tip.abla_state.next_block_size_limit = 2000000;
-      return result;
+  if (kind === 'js')
+    test('retries a generation if the canonical tip changes while the worker runs', async () => {
+      const tip: any = { id: 'before', abla_state: { next_block_size_limit: 1000000 } };
+      jest.spyOn(blocks, 'getBlocks').mockImplementation(() => [tip]);
+      const request = engine.requestWorker.bind(engine);
+      jest.spyOn(engine, 'requestWorker').mockImplementationOnce(async (message) => {
+        const result = await request(message);
+        tip.id = 'after';
+        tip.abla_state.next_block_size_limit = 2000000;
+        return result;
+      });
+      await make(engine, { a: transaction('a') }, true);
+      expect(engine.getCapacity()).toEqual({ tipHash: 'after', blockSizeLimit: 2000000 });
+      expect(engine.getMempoolBlocks()[0].blockSizeLimit).toBe(2000000);
     });
-    await make(engine, { a: transaction('a') }, true);
-    expect(engine.getCapacity()).toEqual({ tipHash: 'after', blockSizeLimit: 2000000 });
-    expect(engine.getMempoolBlocks()[0].blockSizeLimit).toBe(2000000);
-  });
 
   test('capacity changes rebuild live selection, while audit limits stay isolated', async () => {
     const tip: any = { id: 'tip-a', abla_state: { next_block_size_limit: 1000000 } };
