@@ -183,7 +183,10 @@ export class BlockOverviewGraphComponent
       changes.resolution ||
       changes.referenceTransactions
     ) {
+      const transactions = this.snapshotForRebuild();
       if (!validBlockLimit(this.blockLimit)) {
+        this.currentTransactions = transactions;
+        this.clearUpdateQueue();
         clearTimeout(this.layoutTimer);
         this.layoutTimer = undefined;
         if (this.scene) {
@@ -194,7 +197,7 @@ export class BlockOverviewGraphComponent
         if (this.gl) this.gl.clear(this.gl.COLOR_BUFFER_BIT);
       } else if (this.canvas && this.gl) {
         this.resizeCanvas();
-        this.setup(this.currentTransactions);
+        this.setup(transactions);
       }
     }
     if (changes.orientation || changes.flip) {
@@ -286,6 +289,26 @@ export class BlockOverviewGraphComponent
       this.clearUpdateQueue();
       this.start();
     }
+  }
+
+  // Rendering may lag the network queue. Rebuild from applied state plus queued deltas.
+  // Materialise once per rebuild, rather than copying the full block for each delta.
+  private snapshotForRebuild(): TransactionStripped[] {
+    const applied = this.scene?.txs
+      ? Object.values(this.scene.txs)
+      : this.currentTransactions || [];
+    const transactions = new Map(
+      applied.map((tx) => [tx.txid, tx as TransactionStripped])
+    );
+    for (const id of Object.values(this.pendingUpdate?.remove || {}))
+      transactions.delete(id);
+    for (const tx of Object.values(this.pendingUpdate?.add || {}))
+      transactions.set(tx.txid, tx);
+    for (const change of Object.values(this.pendingUpdate?.change || {})) {
+      const tx = transactions.get(change.txid);
+      if (tx) transactions.set(change.txid, { ...tx, rate: change.rate });
+    }
+    return [...transactions.values()];
   }
 
   // initialize the scene without any entry transition
@@ -486,7 +509,7 @@ export class BlockOverviewGraphComponent
       if (!this.layoutTimer) {
         this.layoutTimer = setTimeout(() => {
           this.layoutTimer = undefined;
-          const snapshot = Object.values(this.scene.txs);
+          const snapshot = this.snapshotForRebuild();
           this.setup(snapshot);
         }, 250);
       }

@@ -163,7 +163,7 @@ class Blocks {
         logger.err(msg);
         // tolerate this error for stale blocks (the cb transaction won't be accessible via normal RPCs)
         if (!stale) {
-          throw new Error(msg);
+          throw new Error(msg, { cause: e });
         }
       }
     }
@@ -198,7 +198,7 @@ class Blocks {
       } catch (e) {
         const msg = `Cannot fetch tx ${txid}. Reason: ` + (e instanceof Error ? e.message : e);
         logger.err(msg);
-        throw new Error(msg);
+        throw new Error(msg, { cause: e });
       }
     }
 
@@ -341,8 +341,8 @@ class Blocks {
     const coinStatsIndex = indexer.isBCHNIndexReady('coinstatsindex');
     if (coinStatsIndex !== null && coinStatsIndex.best_block_height >= block.height) {
       const txoutset = await bitcoinClient.getTxoutSetinfo('none', block.height);
-      ((extras.utxoSetSize = txoutset.txouts),
-        (extras.totalInputAmt = Math.round(txoutset.block_info.prevout_spent * 100000000)));
+      extras.utxoSetSize = txoutset.txouts;
+      extras.totalInputAmt = Math.round(txoutset.block_info.prevout_spent * 100000000);
     } else {
       extras.utxoSetSize = null;
       extras.totalInputAmt = null;
@@ -498,12 +498,8 @@ class Blocks {
       .map((vout) => vout.scriptpubkey_address)
       .filter((address) => address) as string[];
 
-    let pools: PoolTag[] = [];
-    if (config.DATABASE.ENABLED === true) {
-      pools = await poolsRepository.$getPools();
-    } else {
-      pools = poolsParser.miningPools;
-    }
+    const pools: PoolTag[] =
+      config.DATABASE.ENABLED === true ? await poolsRepository.$getPools() : poolsParser.miningPools;
 
     const pool = poolsParser.matchBlockMiner(txMinerInfo.vin[0].scriptsig, addresses || [], pools);
     if (pool) {
@@ -1238,49 +1234,57 @@ class Blocks {
         }
       }
 
-      // start async callbacks
-      this.updateTimerProgress(timer, `starting async callbacks for ${this.currentBlockHeight}`);
-      const callbackPromises = this.newAsyncBlockCallbacks.map((cb) => cb(blockExtended, txIds, transactions));
+      // Callbacks must see the canonical block whose projections they publish.
+      // Keep the prior snapshots so failed callbacks remain retryable.
+      const previousBlocks = this.blocks;
+      const previousSummaries = this.blockSummaries;
+      this.blocks = [...this.blocks, blockExtended].slice(-config.EXPLORER.INITIAL_BLOCKS_AMOUNT * 4);
+      this.blockSummaries = [...this.blockSummaries, blockSummary].slice(-config.EXPLORER.INITIAL_BLOCKS_AMOUNT * 4);
+      let callbackPromises: Promise<void>[] = [];
+      try {
+        // start async callbacks
+        this.updateTimerProgress(timer, `starting async callbacks for ${this.currentBlockHeight}`);
+        callbackPromises = this.newAsyncBlockCallbacks.map((cb) => cb(blockExtended, txIds, transactions));
+        const callbacksDone = Promise.all(callbackPromises);
+        // Attach rejection handling while the other block bookkeeping awaits I/O.
+        void callbacksDone.catch(() => undefined);
 
-      if (block.height % 2016 === 0) {
-        if (Common.indexingEnabled()) {
-          const adjustment =
-            Math.round(
-              // calcBitsDifference returns +- percentage, +100 returns to positive, /100 returns to ratio.
-              // Instead of actually doing /100, just reduce the multiplier.
-              (calcBitsDifference(this.currentBits, block.bits) + 100) * 10000
-            ) / 1000000; // Remove float point noise
+        if (block.height % 2016 === 0) {
+          if (Common.indexingEnabled()) {
+            const adjustment =
+              Math.round(
+                // calcBitsDifference returns +- percentage, +100 returns to positive, /100 returns to ratio.
+                // Instead of actually doing /100, just reduce the multiplier.
+                (calcBitsDifference(this.currentBits, block.bits) + 100) * 10000
+              ) / 1000000; // Remove float point noise
 
-          await DifficultyAdjustmentsRepository.$saveAdjustments({
-            time: block.timestamp,
-            height: block.height,
-            difficulty: block.difficulty,
-            adjustment,
-          });
-          this.updateTimerProgress(timer, `saved difficulty adjustment for ${this.currentBlockHeight}`);
+            await DifficultyAdjustmentsRepository.$saveAdjustments({
+              time: block.timestamp,
+              height: block.height,
+              difficulty: block.difficulty,
+              adjustment,
+            });
+            this.updateTimerProgress(timer, `saved difficulty adjustment for ${this.currentBlockHeight}`);
+          }
+
+          this.currentBits = block.bits;
         }
 
-        this.currentBits = block.bits;
-      }
+        // skip updating the orphan block cache if we've fallen behind the chain tip
+        if (this.currentBlockHeight >= blockHeightTip - 2) {
+          this.updateTimerProgress(timer, `getting orphaned blocks for ${this.currentBlockHeight}`);
+          await chainTips.updateOrphanedBlocks();
+        }
 
-      // skip updating the orphan block cache if we've fallen behind the chain tip
-      if (this.currentBlockHeight >= blockHeightTip - 2) {
-        this.updateTimerProgress(timer, `getting orphaned blocks for ${this.currentBlockHeight}`);
-        await chainTips.updateOrphanedBlocks();
-      }
-
-      // wait for pending async callbacks to finish
-      this.updateTimerProgress(timer, `waiting for async callbacks to complete for ${this.currentBlockHeight}`);
-      await Promise.all(callbackPromises);
-      this.updateTimerProgress(timer, `async callbacks completed for ${this.currentBlockHeight}`);
-
-      this.blocks.push(blockExtended);
-      if (this.blocks.length > config.EXPLORER.INITIAL_BLOCKS_AMOUNT * 4) {
-        this.blocks = this.blocks.slice(-config.EXPLORER.INITIAL_BLOCKS_AMOUNT * 4);
-      }
-      this.blockSummaries.push(blockSummary);
-      if (this.blockSummaries.length > config.EXPLORER.INITIAL_BLOCKS_AMOUNT * 4) {
-        this.blockSummaries = this.blockSummaries.slice(-config.EXPLORER.INITIAL_BLOCKS_AMOUNT * 4);
+        // wait for pending async callbacks to finish
+        this.updateTimerProgress(timer, `waiting for async callbacks to complete for ${this.currentBlockHeight}`);
+        await callbacksDone;
+        this.updateTimerProgress(timer, `async callbacks completed for ${this.currentBlockHeight}`);
+      } catch (error) {
+        await Promise.allSettled(callbackPromises);
+        this.blocks = previousBlocks;
+        this.blockSummaries = previousSummaries;
+        throw error;
       }
 
       if (this.newBlockCallbacks.length) {

@@ -1005,7 +1005,7 @@ class WebsocketHandler {
     // update init data
     this.updateSocketDataFields({
       mempoolInfo: mempoolInfo,
-      blocks: [...blocks.getBlocks(), block].slice(-config.EXPLORER.INITIAL_BLOCKS_AMOUNT),
+      blocks: blocks.getBlocks().slice(-config.EXPLORER.INITIAL_BLOCKS_AMOUNT),
       'mempool-blocks': mBlocks,
       'block-capacity': mempoolBlocks.getCapacity(),
       loadingIndicators: loadingIndicators.getLoadingIndicators(),
