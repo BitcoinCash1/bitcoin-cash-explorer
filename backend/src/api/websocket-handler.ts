@@ -186,7 +186,7 @@ class WebsocketHandler {
             }
 
             if (wantNow['want-mempool-blocks']) {
-              response['block-capacity'] = mempoolBlocks.getCapacity();
+              response['block-capacity'] = JSON.stringify(mempoolBlocks.getCapacity());
               response['mempool-blocks'] = this.socketData['mempool-blocks'];
             }
 
@@ -702,7 +702,7 @@ class WebsocketHandler {
         }
 
         if (client['want-mempool-blocks']) {
-          response['block-capacity'] = mempoolBlocks.getCapacity();
+          response['block-capacity'] = JSON.stringify(mempoolBlocks.getCapacity());
           response['mempool-blocks'] = getCachedResponse('mempool-blocks', mBlocks);
         }
 
@@ -1066,7 +1066,7 @@ class WebsocketHandler {
         }
 
         if (mBlocks && client['want-mempool-blocks']) {
-          response['block-capacity'] = mempoolBlocks.getCapacity();
+          response['block-capacity'] = JSON.stringify(mempoolBlocks.getCapacity());
           response['mempool-blocks'] = getCachedResponse('mempool-blocks', mBlocks);
         }
 

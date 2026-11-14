@@ -8,6 +8,7 @@ jest.mock('../../api/mempool-blocks', () => ({
       { transactions: [] },
       { transactions: ['last'] },
     ]),
+    getCapacity: jest.fn(() => ({ tipHash: 'tip', blockSizeLimit: 32000000 })),
     compressTx: jest.fn((tx) => `compressed-${tx}`),
   },
 }));
@@ -90,4 +91,14 @@ test.each([
   for (let i = 0; i < 20; i++) expect(handler.getSerializedInitData()).toBe(initial);
   expect(serialize).not.toHaveBeenCalled();
   serialize.mockRestore();
+});
+
+test('mempool-block subscription sends valid JSON with structured block capacity', async () => {
+  const { client } = fixture();
+  await client.listeners('message')[0](Buffer.from(JSON.stringify({ action: 'want', data: ['mempool-blocks'] })));
+  expect(client.send).toHaveBeenCalledTimes(1);
+  expect(JSON.parse(client.send.mock.calls[0][0])['block-capacity']).toEqual({
+    tipHash: 'tip',
+    blockSizeLimit: 32000000,
+  });
 });
