@@ -987,6 +987,24 @@ export class BlockComponent implements OnInit, OnDestroy, AfterViewInit {
     this.cd.markForCheck();
   }
 
+  get graphReferenceTransactions(): TransactionStripped[] | null {
+    if (this.block?.stale && !this.showAudit) {
+      const a = this.staleTransactions || [];
+      const b = this.canonicalTransactions || [];
+      return this.block.size >= (this.canonicalBlock?.size || 0) ? a : b;
+    }
+    return this.blockAudit?.transactions || this.strippedTransactions || null;
+  }
+
+  get graphBlockLimit(): number {
+    const own = this.block
+      ? this.stateService.getBlockLimit(this.block)
+      : this.stateService.networkBlockSize;
+    return this.block?.stale && this.canonicalBlock
+      ? Math.max(own, this.stateService.getBlockLimit(this.canonicalBlock))
+      : own;
+  }
+
   setupBlockGraphs(): void {
     if (
       this.block?.stale &&

@@ -93,7 +93,8 @@ export default class BlockScene {
   }): void {
     this.width = width;
     this.height = height;
-    this.gridSize = this.width / this.gridWidth;
+    this.gridSize =
+      this.width / Math.max(this.gridWidth, this.layout?.rows.length || 0);
     this.unitPadding = Math.max(1, Math.floor(this.gridSize / 5));
     this.unitWidth = this.gridSize - this.unitPadding * 2;
     this.animationOffset =
@@ -105,6 +106,13 @@ export default class BlockScene {
     if (this.initialised && this.scene) {
       this.updateAll(performance.now(), 50, 'left', animate);
     }
+  }
+
+  setScale(resolution: number, blockLimit: number): void {
+    this.gridWidth = resolution;
+    this.gridHeight = resolution;
+    this.bytesPerUnit = blockLimit / (resolution / 1.02) ** 2;
+    this.resize({ animate: false });
   }
 
   setOrientation(orientation: string, flip: boolean): void {
@@ -162,6 +170,12 @@ export default class BlockScene {
     txViews.forEach((txView) => {
       this.txs[txView.txid] = txView;
       this.place(txView);
+    });
+    // Square packing can leave holes: expand the viewport rather than hide transactions.
+    const extent = Math.max(this.gridWidth, this.layout.rows.length);
+    this.gridSize = this.width / extent;
+    this.unitPadding = Math.max(1, Math.floor(this.gridSize / 5));
+    txViews.forEach((txView) => {
       this.saveGridToScreenPosition(txView);
       this.applyTxUpdate(txView, {
         display: {

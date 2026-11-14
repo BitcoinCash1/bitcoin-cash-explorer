@@ -6,7 +6,11 @@
           #blockGraph
           [isLoading]="false"
           [resolution]="resolution"
-          [blockLimit]="stateService.blockSize"
+          [blockLimit]="
+            blockInfo[i]
+              ? stateService.getBlockLimit(blockInfo[i])
+              : stateService.networkBlockSize
+          "
           [orientation]="'top'"
           [flip]="false"
           [animationDuration]="animationDuration"

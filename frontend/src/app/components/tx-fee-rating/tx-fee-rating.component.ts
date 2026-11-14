@@ -76,7 +76,7 @@ export class TxFeeRatingComponent implements OnInit, OnChanges, OnDestroy {
 
     // Block not filled or sub-sat median fee
     if (
-      block.size < this.stateService.env.MIN_BLOCK_SIZE_UNITS * 0.95 ||
+      block.size < this.stateService.getBlockLimit(block) * 0.95 ||
       this.medianFeeNeeded < 1
     ) {
       this.medianFeeNeeded = 1;

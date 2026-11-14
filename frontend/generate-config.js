@@ -55,6 +55,8 @@ try {
   throw new Error(e, { cause: e });
 }
 
+configContent.NETWORK_BLOCK_SIZE_UNITS ??= { testnet4: 2000000, chipnet: 2000000 };
+
 for (const setting in configContent) {
   settings.push({
     key: setting,
@@ -85,7 +87,7 @@ if (process.env.DOCKER_COMMIT_HASH) {
 
 const newConfig = `(function (window) {
   window.__env = window.__env || {};${settings.reduce((str, obj) => `${str}
-    window.__env.${obj.key} = ${typeof obj.value === 'string' ? `'${obj.value}'` : obj.value};`, '')}
+    window.__env.${obj.key} = ${typeof obj.value === 'string' ? `'${obj.value}'` : JSON.stringify(obj.value)};`, '')}
     window.__env.GIT_COMMIT_HASH = '${gitCommitHash}';
     window.__env.PACKAGE_JSON_VERSION = '${packetJsonVersion}';
   }((typeof global !== 'undefined') ? global : this));`;

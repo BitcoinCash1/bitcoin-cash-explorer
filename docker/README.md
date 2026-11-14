@@ -176,6 +176,7 @@ Below we list selected settings from `explorer-config.json` and the correspondin
     "CLEAR_PROTECTION_MINUTES": 20,
     "RECOMMENDED_FEE_PERCENTILE": 50,
     "MIN_BLOCK_SIZE_UNITS": 32000000,
+    "NETWORK_BLOCK_SIZE_UNITS": { "testnet4": 2000000, "chipnet": 2000000 },
     "INITIAL_BLOCKS_AMOUNT": 8,
     "MEMPOOL_BLOCKS_AMOUNT": 1,
     "BLOCKS_SUMMARIES_INDEXING": false,
@@ -458,3 +459,22 @@ transaction count for `EXPLORER_MAX_TRACKED_TXS`, and messages per
 single-transaction or batched outspends request. The default `0` is unlimited to retain
 compatibility with large Bitcoin Cash transactions; set it to, for example, `100000`
 to enable a public request budget. Internal calls remain unlimited.
+
+### Block capacity
+
+The frontend keeps a 32 MB Mainnet baseline and 2 MB baselines for Testnet4 and
+Chipnet. `NETWORK_BLOCK_SIZE_UNITS` overrides frontend baselines by network name
+(`mainnet`, `testnet4`, `chipnet`, or `scalenet`). In Docker, pass this value as a
+JSON object string. The existing `MIN_BLOCK_SIZE_UNITS` remains the fallback for
+Mainnet and unspecified networks. Keep these baselines aligned with each backend's
+`EXPLORER_MIN_BLOCK_SIZE_UNITS` setting.
+
+When available, a mined block's ABLA limit takes precedence over its baseline.
+Live projections use the canonical tip's next-block ABLA limit. Backend projection
+responses include `blockSizeLimit`; initialisation and WebSocket projection
+updates also carry `block-capacity` with `tipHash` and `blockSizeLimit`, identifying
+the capacity used for that projection snapshot. Older backends remain supported
+through the frontend's ABLA and configured-baseline fallbacks.
+
+Square transaction tiles approximate byte occupancy. Comparison panels share a
+capacity and grid scale; their empty space remains meaningful.

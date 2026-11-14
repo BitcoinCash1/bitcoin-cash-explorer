@@ -61,6 +61,7 @@ export interface AuditScore {
 }
 
 export interface MempoolBlock {
+  blockSizeLimit?: number;
   blockSize: number;
   nTx: number;
   medianFee: number;

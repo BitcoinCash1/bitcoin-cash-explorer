@@ -1,3 +1,4 @@
+import { gridResolution } from './grid-resolution';
 import {
   Component,
   ElementRef,
@@ -59,6 +60,9 @@ export class BlockOverviewGraphComponent
   @Input() resolution: number;
   @Input() autofit: boolean = false;
   @Input() blockLimit: number;
+  @Input() referenceTransactions: TransactionStripped[] | null = null;
+  private layoutTimer: ReturnType<typeof setTimeout>;
+  private currentTransactions: TransactionStripped[] = [];
   @Input() orientation = 'left';
   @Input() flip = true;
   @Input() animationDuration: number = 1000;
@@ -173,6 +177,14 @@ export class BlockOverviewGraphComponent
   }
 
   ngOnChanges(changes): void {
+    if (
+      this.scene &&
+      (changes.blockLimit ||
+        changes.resolution ||
+        changes.referenceTransactions)
+    ) {
+      this.setup(this.currentTransactions);
+    }
     if (changes.orientation || changes.flip) {
       if (this.scene) {
         this.scene.setOrientation(this.orientation, this.flip);
@@ -220,6 +232,8 @@ export class BlockOverviewGraphComponent
   }
 
   ngOnDestroy(): void {
+    clearTimeout(this.layoutTimer);
+    this.layoutTimer = undefined;
     if (this.animationFrameRequest) {
       cancelAnimationFrame(this.animationFrameRequest);
     }
@@ -252,6 +266,9 @@ export class BlockOverviewGraphComponent
   }
 
   destroy(): void {
+    clearTimeout(this.layoutTimer);
+    this.layoutTimer = undefined;
+    this.currentTransactions = [];
     if (this.scene) {
       this.scene.destroy();
       this.clearUpdateQueue();
@@ -261,6 +278,9 @@ export class BlockOverviewGraphComponent
 
   // initialize the scene without any entry transition
   setup(transactions: TransactionStripped[], sort: boolean = false): void {
+    clearTimeout(this.layoutTimer);
+    this.layoutTimer = undefined;
+    this.currentTransactions = transactions;
     const filtersAvailable = transactions.reduce(
       (flagSet, tx) => flagSet || tx.flags > 0,
       false
@@ -271,6 +291,14 @@ export class BlockOverviewGraphComponent
     this.filtersAvailable = filtersAvailable;
     if (this.scene) {
       this.clearUpdateQueue();
+      this.scene.setScale(
+        gridResolution(
+          this.referenceTransactions || transactions,
+          this.blockLimit,
+          this.resolution
+        ),
+        this.blockLimit
+      );
       this.scene.setup(transactions, sort);
       this.readyNextFrame = true;
       this.start();
@@ -279,7 +307,16 @@ export class BlockOverviewGraphComponent
   }
 
   enter(transactions: TransactionStripped[], direction: string): void {
+    this.currentTransactions = transactions;
     if (this.scene) {
+      this.scene.setScale(
+        gridResolution(
+          this.referenceTransactions || transactions,
+          this.blockLimit,
+          this.resolution
+        ),
+        this.blockLimit
+      );
       this.clearUpdateQueue();
       this.scene.enter(transactions, direction);
       this.start();
@@ -420,6 +457,13 @@ export class BlockOverviewGraphComponent
         this.scene.updateAllColors();
       }
       this.scene.update(add, remove, change, direction, resetLayout);
+      if (!this.layoutTimer) {
+        this.layoutTimer = setTimeout(() => {
+          this.layoutTimer = undefined;
+          const snapshot = Object.values(this.scene.txs);
+          this.setup(snapshot);
+        }, 250);
+      }
       this.start();
       this.lastUpdate = performance.now();
       this.updateSearchHighlight();

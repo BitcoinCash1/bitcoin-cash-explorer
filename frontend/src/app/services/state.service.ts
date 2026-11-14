@@ -1,3 +1,8 @@
+import {
+  minedBlockLimit,
+  networkBlockLimit,
+  validBlockLimit,
+} from '@app/shared/block-capacity';
 import { Inject, Injectable, PLATFORM_ID, LOCALE_ID } from '@angular/core';
 import {
   ReplaySubject,
@@ -68,6 +73,7 @@ export interface Customization {
 export type SignaturesMode = 'all' | 'interesting' | 'none' | null;
 
 export interface Env {
+  NETWORK_BLOCK_SIZE_UNITS?: Record<string, number>;
   MAINNET_ENABLED: boolean;
   TESTNET4_ENABLED: boolean;
   SCALENET_ENABLED: boolean;
@@ -365,6 +371,8 @@ export class StateService {
       this.transactions$ = new BehaviorSubject<TransactionStripped[]>(null);
       this.stratumJobs$ = new BehaviorSubject<Record<string, StratumJob>>({});
       this.stratumJobUpdate$.next({ state: {} });
+      this.blocks = [];
+      this.blockSize = this.networkBlockSize;
       this.blocksSubject$.next([]);
     });
 
@@ -373,7 +381,7 @@ export class StateService {
         null
     );
 
-    this.blockSize = this.env.MIN_BLOCK_SIZE_UNITS;
+    this.blockSize = this.networkBlockSize;
 
     this.blocks$ = this.blocksSubject$.pipe(
       filter((blocks) => blocks != null && blocks.length > 0)
@@ -451,6 +459,29 @@ export class StateService {
     });
   }
 
+  get networkBlockSize(): number {
+    return networkBlockLimit(
+      this.network,
+      this.env.MIN_BLOCK_SIZE_UNITS,
+      this.env.NETWORK_BLOCK_SIZE_UNITS
+    );
+  }
+
+  getBlockLimit(block: BlockExtended): number {
+    return minedBlockLimit(block, this.networkBlockSize);
+  }
+
+  getBlockFullness(block: BlockExtended): number {
+    return Math.max(
+      0,
+      Math.min(100, (block.size / this.getBlockLimit(block)) * 100)
+    );
+  }
+
+  updateBlockCapacity(limit: unknown): void {
+    if (validBlockLimit(limit)) this.blockSize = limit;
+  }
+
   setNetworkBasedonUrl(url: string) {
     if (this.env.BASE_MODULE !== 'explorer') {
       return;
@@ -473,18 +504,21 @@ export class StateService {
       case 'testnet4':
         if (this.network !== 'testnet4') {
           this.network = 'testnet4';
+          this.blockSize = this.networkBlockSize;
           this.networkChanged$.next('testnet4');
         }
         return;
       case 'scalenet':
         if (this.network !== 'scalenet') {
           this.network = 'scalenet';
+          this.blockSize = this.networkBlockSize;
           this.networkChanged$.next('scalenet');
         }
         return;
       case 'chipnet':
         if (this.network !== 'chipnet') {
           this.network = 'chipnet';
+          this.blockSize = this.networkBlockSize;
           this.networkChanged$.next('chipnet');
         }
         return;
@@ -492,10 +526,12 @@ export class StateService {
         if (this.env.BASE_MODULE !== 'explorer') {
           if (this.network !== this.env.BASE_MODULE) {
             this.network = this.env.BASE_MODULE;
+            this.blockSize = this.networkBlockSize;
             this.networkChanged$.next(this.env.BASE_MODULE);
           }
         } else if (this.network !== '') {
           this.network = '';
+          this.blockSize = this.networkBlockSize;
           this.networkChanged$.next('');
         }
     }
@@ -548,10 +584,17 @@ export class StateService {
 
   resetBlocks(blocks: BlockExtended[]): void {
     this.blocks = blocks.reverse();
+    const tip = this.blocks.reduce(
+      (latest, block) =>
+        !latest || block.height > latest.height ? block : latest,
+      null as BlockExtended | null
+    );
+    this.updateBlockCapacity(tip?.abla_state?.next_block_size_limit);
     this.blocksSubject$.next(blocks);
   }
 
   addBlock(block: BlockExtended): void {
+    this.updateBlockCapacity(block.abla_state?.next_block_size_limit);
     this.blocks.unshift(block);
     this.blocks = this.blocks.slice(0, this.env.KEEP_BLOCKS_AMOUNT);
     this.blocksSubject$.next(this.blocks);

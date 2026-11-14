@@ -168,8 +168,10 @@ export class WebsocketService implements OnDestroy {
     if (retrying) {
       this.stateService.connectionState$.next(1);
     }
+    const connection = this.websocketSubject;
     this.subscription = this.websocketSubject.subscribe(
       (response: WebsocketResponse) => {
+        if (connection !== this.websocketSubject) return;
         this.retryCount = 0;
         this.stateService.isLoadingWebSocket$.next(false);
         this.handleResponse(response);
@@ -418,7 +420,23 @@ export class WebsocketService implements OnDestroy {
       this.stateService.conversions$.next(response.conversions);
     }
 
-    if (response['mempool-blocks']) {
+    if (
+      response['block-capacity'] &&
+      response['block-capacity'].tipHash === this.stateService.blocks[0]?.id
+    ) {
+      this.stateService.updateBlockCapacity(
+        response['block-capacity'].blockSizeLimit
+      );
+    }
+
+    if (
+      response['mempool-blocks'] &&
+      (!response['block-capacity'] ||
+        response['block-capacity'].tipHash === this.stateService.blocks[0]?.id)
+    ) {
+      this.stateService.updateBlockCapacity(
+        response['mempool-blocks'][0]?.blockSizeLimit
+      );
       this.stateService.mempoolBlocks$.next(response['mempool-blocks']);
     }
 

@@ -3,6 +3,7 @@ import fs from 'fs';
 import os from 'os';
 import path from 'path';
 import config from '../../config';
+import blocks from '../../api/blocks';
 import singleton from '../../api/mempool-blocks';
 import { GbtGenerator } from 'rust-gbt';
 
@@ -84,6 +85,62 @@ describe.each(['rust', 'js'])('%s dry-run UID isolation', (kind) => {
     await engine.$updateBlockTemplates(Object.keys(pool), pool, added, removed, undefined, true);
     return engine.getMempoolBlocksWithTransactions();
   };
+
+  test('serializes overlapping live generation and isolated audits', async () => {
+    const live = { a: transaction('a'), b: transaction('b') };
+    const audit = { other: transaction('other') };
+    const [saved, dry] = await Promise.all([make(engine, live, true), make(engine, audit, false)]);
+    expect(ids(saved).sort()).toEqual(['a', 'b']);
+    expect(ids(dry)).toEqual(['other']);
+    expect(ids(engine.getMempoolBlocksWithTransactions()).sort()).toEqual(['a', 'b']);
+    expect(engine.txidMap.has('other')).toBe(false);
+  });
+
+  if (kind === 'js') test('retries a generation if the canonical tip changes while the worker runs', async () => {
+    const tip: any = { id: 'before', abla_state: { next_block_size_limit: 1000000 } };
+    jest.spyOn(blocks, 'getBlocks').mockImplementation(() => [tip]);
+    const request = engine.requestWorker.bind(engine);
+    jest.spyOn(engine, 'requestWorker').mockImplementationOnce(async (message) => {
+      const result = await request(message);
+      tip.id = 'after';
+      tip.abla_state.next_block_size_limit = 2000000;
+      return result;
+    });
+    await make(engine, { a: transaction('a') }, true);
+    expect(engine.getCapacity()).toEqual({ tipHash: 'after', blockSizeLimit: 2000000 });
+    expect(engine.getMempoolBlocks()[0].blockSizeLimit).toBe(2000000);
+  });
+
+  test('capacity changes rebuild live selection, while audit limits stay isolated', async () => {
+    const tip: any = { id: 'tip-a', abla_state: { next_block_size_limit: 1000000 } };
+    jest.spyOn(blocks, 'getBlocks').mockImplementation(() => [tip]);
+    const pool = {
+      a: transaction('a', 600000, 600000),
+      b: transaction('b', 600000, 600000),
+      c: transaction('c', 600000, 600000),
+    };
+    await make(engine, pool, true);
+    expect(engine.getMempoolBlocksWithTransactions()[0].transactionIds).toHaveLength(1);
+    tip.id = 'tip-b';
+    tip.abla_state.next_block_size_limit = 2000000;
+    const larger = await update(engine, pool, [], []);
+    expect(larger[0].transactionIds).toHaveLength(3);
+    expect(engine.getCapacity()).toEqual({ tipHash: 'tip-b', blockSizeLimit: 2000000 });
+    const before = snapshot(engine);
+    const audit = await engine[kind === 'rust' ? '$rustMakeBlockTemplates' : '$makeBlockTemplates'](
+      Object.keys(pool),
+      pool,
+      undefined,
+      false,
+      { tipHash: 'historical', blockSizeLimit: 1000000 }
+    );
+    expect(audit[0].transactionIds).toHaveLength(1);
+    expect(snapshot(engine)).toEqual(before);
+    tip.id = 'tip-c';
+    tip.abla_state.next_block_size_limit = 1000000;
+    const smaller = await update(engine, pool, [], []);
+    expect(smaller[0].transactionIds).toHaveLength(1);
+  });
 
   test('repeated audits preserve live maps, counters, transaction fields, templates and deltas then update incrementally', async () => {
     const parent = transaction('parent', 250);

@@ -8,6 +8,7 @@ import {
 } from '@interfaces/node-api.interface';
 
 export interface WebsocketResponse {
+  'block-capacity'?: { tipHash: string; blockSizeLimit: number };
   backend?: 'electrum' | 'none';
   block?: BlockExtended;
   blocks?: BlockExtended[];
@@ -39,6 +40,7 @@ export interface WebsocketResponse {
 }
 
 export interface MempoolBlock {
+  blockSizeLimit?: number;
   blink?: boolean;
   height?: number;
   blockSize: number;

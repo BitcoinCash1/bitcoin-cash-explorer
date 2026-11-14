@@ -141,7 +141,11 @@
         [autofit]="true"
         [isLoading]="false"
         [resolution]="86"
-        [blockLimit]="stateService.blockSize"
+        [blockLimit]="
+          block
+            ? stateService.getBlockLimit(block)
+            : stateService.networkBlockSize
+        "
         [orientation]="'top'"
         [flip]="false"
         [disableSpinner]="true"
