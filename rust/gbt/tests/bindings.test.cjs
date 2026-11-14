@@ -40,3 +40,21 @@ test('native binding orders parents before children and updates its state', asyn
   const empty = await generator.update([], [3, 4], 4);
   assert.deepEqual(empty.blocks.flat(), []);
 });
+
+for (const constraint of ['size', 'sigchecks']) {
+  for (const blockCount of [1, 2]) {
+    test(`native binding retains transactions beyond ${constraint} limit with ${blockCount} blocks`, async () => {
+      const generator = new GbtGenerator(2_000_000, blockCount);
+      const transactions = [transaction(1, 10), transaction(2, 5)].map(tx => ({
+        ...tx,
+        size: constraint === 'size' ? 1_100_000 : 250,
+        sigops: constraint === 'sigchecks' ? 8_000 : 1,
+      }));
+      for (const result of [await generator.make(transactions, 2), await generator.update([], [], 2)]) {
+        assert.deepEqual(result.blocks, blockCount === 1 ? [[1]] : [[1], [2]]);
+        assert.deepEqual(result.overflow, blockCount === 1 ? [2] : []);
+        assert.deepEqual([...result.blocks.flat(), ...result.overflow].sort(), [1, 2]);
+      }
+    });
+  }
+}

@@ -111,12 +111,12 @@ pub fn gbt(
 
         loop {
             // Prefer the backlog (children whose parents were just added) over the sorted list
-            let (next_uid, from_backlog) = if let Some(uid) = backlog.pop_front() {
-                (uid, true)
+            let next_uid = if let Some(uid) = backlog.pop_front() {
+                uid
             } else if sorted_idx < sorted.len() {
                 let uid = sorted[sorted_idx];
                 sorted_idx += 1;
-                (uid, false)
+                uid
             } else {
                 break; // both sources exhausted
             };
@@ -150,10 +150,9 @@ pub fn gbt(
                 || block_sigchecks + tx_sigops >= max_sigchecks
             {
                 consecutive_failures += 1;
-                if from_backlog {
-                    // Keep for the next block rather than discarding
-                    next_block_deferred.push(next_uid);
-                }
+                // Preserve candidates from both sources for the next block or overflow.
+                // The sorted cursor has already advanced, so leaving these out loses them.
+                next_block_deferred.push(next_uid);
                 // BCHN give-up condition: many failures when close to full
                 if consecutive_failures > MAX_CONSECUTIVE_FAILURES
                     && block_size > max_block_size - 1_000
