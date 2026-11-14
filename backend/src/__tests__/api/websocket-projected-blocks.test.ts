@@ -73,3 +73,21 @@ test('omitting the projected-block field preserves an existing subscription', as
   await client.listeners('message')[0](Buffer.from('{}'));
   expect(client['track-mempool-block']).toBe(0);
 });
+
+test.each([
+  ['mainnet', 32000000],
+  ['testnet4', 2000000],
+  ['chipnet', 2000000],
+])('initialisation caches settings for %s before any blocks are available', (network, minimumBlockSize) => {
+  jest.resetModules();
+  const config = jest.requireActual('../../config').default;
+  config.EXPLORER.NETWORK = network;
+  config.EXPLORER.MIN_BLOCK_SIZE_UNITS = minimumBlockSize;
+  const handler = jest.requireActual('../../api/websocket-handler').default;
+  const initial = handler.getSerializedInitData();
+  expect(JSON.parse(initial)['network-settings']).toEqual({ network, minimumBlockSize });
+  const serialize = jest.spyOn(JSON, 'stringify');
+  for (let i = 0; i < 20; i++) expect(handler.getSerializedInitData()).toBe(initial);
+  expect(serialize).not.toHaveBeenCalled();
+  serialize.mockRestore();
+});

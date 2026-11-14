@@ -4,7 +4,11 @@
       #blockGraph
       [isLoading]="false"
       [resolution]="resolution"
-      [blockLimit]="stateService.blockSize"
+      [blockLimit]="
+        block
+          ? stateService.getBlockLimit(block)
+          : stateService.networkBlockSize
+      "
       [orientation]="'top'"
       [flip]="false"
       [disableSpinner]="true"

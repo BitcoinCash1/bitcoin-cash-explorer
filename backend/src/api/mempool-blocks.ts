@@ -1,3 +1,4 @@
+import { CapacityContext, projectionCapacity } from './block-capacity';
 import { GbtGenerator, GbtResult, ThreadTransaction as RustThreadTransaction } from 'rust-gbt';
 import logger from '../logger';
 import {
@@ -31,6 +32,61 @@ class MempoolBlocks {
     config.EXPLORER.MEMPOOL_BLOCKS_AMOUNT
   );
 
+  private generatorLimit = config.EXPLORER.MIN_BLOCK_SIZE_UNITS;
+  private publishedCapacity: CapacityContext = { tipHash: '', blockSizeLimit: config.EXPLORER.MIN_BLOCK_SIZE_UNITS };
+
+  public getCapacity(): CapacityContext {
+    return { ...this.publishedCapacity };
+  }
+
+  private isCurrentCapacity(context: CapacityContext): boolean {
+    const current = projectionCapacity();
+    return current.tipHash === context.tipHash && current.blockSizeLimit === context.blockSizeLimit;
+  }
+
+  private prepareCapacity(context: CapacityContext): void {
+    if (this.generatorLimit !== context.blockSizeLimit) {
+      this.generatorLimit = context.blockSizeLimit;
+      this.resetRustGbt();
+      this.txSelectionWorkerInitialized = false;
+    }
+  }
+
+  private selectionQueue: Promise<void> = Promise.resolve();
+
+  private serialize<T>(operation: () => Promise<T>): Promise<T> {
+    const result = this.selectionQueue.then(operation);
+    this.selectionQueue = result.then(
+      () => undefined,
+      () => undefined
+    );
+    return result;
+  }
+
+  public $makeBlockTemplates(
+    ...args: Parameters<MempoolBlocks['makeBlockTemplates']>
+  ): ReturnType<MempoolBlocks['makeBlockTemplates']> {
+    return this.serialize(() => this.makeBlockTemplates(...args));
+  }
+
+  public $updateBlockTemplates(
+    ...args: Parameters<MempoolBlocks['updateBlockTemplates']>
+  ): ReturnType<MempoolBlocks['updateBlockTemplates']> {
+    return this.serialize(() => this.updateBlockTemplates(...args));
+  }
+
+  public $rustMakeBlockTemplates(
+    ...args: Parameters<MempoolBlocks['rustMakeBlockTemplates']>
+  ): ReturnType<MempoolBlocks['rustMakeBlockTemplates']> {
+    return this.serialize(() => this.rustMakeBlockTemplates(...args));
+  }
+
+  public $rustUpdateBlockTemplates(
+    ...args: Parameters<MempoolBlocks['rustUpdateBlockTemplates']>
+  ): ReturnType<MempoolBlocks['rustUpdateBlockTemplates']> {
+    return this.serialize(() => this.rustUpdateBlockTemplates(...args));
+  }
+
   private nextUid = 1;
   private uidMap: Map<number, string> = new Map(); // map short numerical uids to full txids
   private txidMap: Map<string, number> = new Map(); // map full txids back to short numerical uids
@@ -41,6 +97,7 @@ class MempoolBlocks {
     return this.mempoolBlocks.map((block) => {
       return {
         blockSize: block.blockSize,
+        blockSizeLimit: block.blockSizeLimit,
         nTx: block.nTx,
         totalFees: block.totalFees,
         medianFee: block.medianFee,
@@ -122,13 +179,15 @@ class MempoolBlocks {
    * @param candidates
    * @param saveResults
    */
-  public async $makeBlockTemplates(
+  private async makeBlockTemplates(
     transactions: string[],
     newMempool: { [txid: string]: VerboseMempoolTransactionExtended },
     candidates: GbtCandidates | undefined,
-    saveResults = false
+    saveResults = false,
+    capacity: CapacityContext = projectionCapacity()
   ): Promise<MempoolBlockWithTransactions[]> {
     const start = Date.now();
+    if (saveResults) this.prepareCapacity(capacity);
 
     // reset mempool short ids
     if (saveResults) {
@@ -179,7 +238,11 @@ class MempoolBlocks {
     // run the block construction algorithm in a separate thread, and wait for a result
     try {
       this.txSelectionWorkerInitialized = false;
-      const result = await this.requestWorker({ type: 'set', mempool: strippedMempool });
+      const result = await this.requestWorker({
+        type: 'set',
+        mempool: strippedMempool,
+        blockSizeLimit: capacity.blockSizeLimit,
+      });
       const { blocks, rates } = this.convertResultTxids(result, uidMap);
       this.txSelectionWorkerInitialized = saveResults;
 
@@ -189,7 +252,8 @@ class MempoolBlocks {
         null,
         Object.entries(rates),
         candidates,
-        saveResults
+        saveResults,
+        capacity
       );
 
       logger.debug(`makeBlockTemplates completed in ${(Date.now() - start) / 1000} seconds`);
@@ -197,6 +261,8 @@ class MempoolBlocks {
       return processed;
     } catch (e) {
       this.resetJsWorker();
+      if (saveResults && !this.isCurrentCapacity(capacity))
+        return this.makeBlockTemplates(transactions, newMempool, candidates, true);
       logger.err('makeBlockTemplates failed. ' + (e instanceof Error ? e.message : e));
     }
     return this.mempoolBlocks;
@@ -213,17 +279,19 @@ class MempoolBlocks {
    * @param candidates
    * @param saveResults
    */
-  public async $updateBlockTemplates(
+  private async updateBlockTemplates(
     transactions: string[],
     newMempool: { [txid: string]: VerboseMempoolTransactionExtended },
     added: VerboseMempoolTransactionExtended[],
     removed: VerboseMempoolTransactionExtended[],
     candidates: GbtCandidates | undefined,
-    saveResults = false
+    saveResults = false,
+    capacity: CapacityContext = projectionCapacity()
   ): Promise<void> {
+    if (saveResults) this.prepareCapacity(capacity);
     if (!saveResults || !this.txSelectionWorker || !this.txSelectionWorkerInitialized) {
       // Dry runs use isolated identifiers; rebuild after a dry run replaced worker state.
-      await this.$makeBlockTemplates(transactions, newMempool, candidates, saveResults);
+      await this.makeBlockTemplates(transactions, newMempool, candidates, saveResults, capacity);
       return;
     }
 
@@ -260,16 +328,21 @@ class MempoolBlocks {
     try {
       const result = await this.requestWorker({
         type: 'update',
+        blockSizeLimit: capacity.blockSizeLimit,
         added: addedStripped,
         removed: removedTxs.map((tx) => tx.uid) as number[],
       });
       const { blocks, rates } = this.convertResultTxids(result);
       this.removeUids(removedTxs);
 
-      this.processBlockTemplates(newMempool, blocks, null, Object.entries(rates), candidates, saveResults);
+      this.processBlockTemplates(newMempool, blocks, null, Object.entries(rates), candidates, saveResults, capacity);
       logger.debug(`updateBlockTemplates completed in ${(Date.now() - start) / 1000} seconds`);
     } catch (e) {
       this.resetJsWorker();
+      if (saveResults && !this.isCurrentCapacity(capacity)) {
+        await this.makeBlockTemplates(transactions, newMempool, candidates, true);
+        return;
+      }
       logger.err('updateBlockTemplates failed. ' + (e instanceof Error ? e.message : e));
     }
   }
@@ -312,10 +385,7 @@ class MempoolBlocks {
 
   private resetRustGbt(): void {
     this.rustInitialized = false;
-    this.rustGbtGenerator = new GbtGenerator(
-      config.EXPLORER.MIN_BLOCK_SIZE_UNITS,
-      config.EXPLORER.MEMPOOL_BLOCKS_AMOUNT
-    );
+    this.rustGbtGenerator = new GbtGenerator(this.generatorLimit, config.EXPLORER.MEMPOOL_BLOCKS_AMOUNT);
   }
 
   /**
@@ -328,13 +398,15 @@ class MempoolBlocks {
    * @param saveResults
    * @returns
    */
-  public async $rustMakeBlockTemplates(
+  private async rustMakeBlockTemplates(
     txids: string[],
     newMempool: { [txid: string]: VerboseMempoolTransactionExtended },
     candidates: GbtCandidates | undefined,
-    saveResults = false
+    saveResults = false,
+    capacity: CapacityContext = projectionCapacity()
   ): Promise<MempoolBlockWithTransactions[]> {
     const start = Date.now();
+    if (saveResults) this.prepareCapacity(capacity);
 
     // reset mempool short ids
     if (saveResults) {
@@ -376,7 +448,7 @@ class MempoolBlocks {
     // run the block construction algorithm in a separate thread, and wait for a result
     const rustGbt = saveResults
       ? this.rustGbtGenerator
-      : new GbtGenerator(config.EXPLORER.MIN_BLOCK_SIZE_UNITS, config.EXPLORER.MEMPOOL_BLOCKS_AMOUNT);
+      : new GbtGenerator(capacity.blockSizeLimit, config.EXPLORER.MEMPOOL_BLOCKS_AMOUNT);
     try {
       const { blocks, blockSizes, rates, overflow } = this.convertNapiResultTxids(
         await rustGbt.make(rustTransactions, saveResults ? this.nextUid : uidMap.size + 1),
@@ -390,10 +462,20 @@ class MempoolBlocks {
       logger.debug(
         `RUST updateBlockTemplates returned ${resultMempoolSize} txs out of ${expectedSize} in the mempool, ${overflow.length} were unmineable`
       );
-      const processed = this.processBlockTemplates(newMempool, blocks, blockSizes, rates, candidates, saveResults);
+      const processed = this.processBlockTemplates(
+        newMempool,
+        blocks,
+        blockSizes,
+        rates,
+        candidates,
+        saveResults,
+        capacity
+      );
       logger.debug(`RUST makeBlockTemplates completed in ${(Date.now() - start) / 1000} seconds`);
       return processed;
     } catch (e) {
+      if (saveResults && !this.isCurrentCapacity(capacity))
+        return this.rustMakeBlockTemplates(txids, newMempool, candidates, true);
       logger.err('RUST makeBlockTemplates failed. ' + (e instanceof Error ? e.message : e));
       if (saveResults) {
         this.resetRustGbt();
@@ -406,9 +488,10 @@ class MempoolBlocks {
   public async $oneOffRustBlockTemplates(
     transactions: string[],
     newMempool: { [txid: string]: VerboseMempoolTransactionExtended },
-    candidates: GbtCandidates | undefined
+    candidates: GbtCandidates | undefined,
+    capacity: CapacityContext = projectionCapacity()
   ): Promise<MempoolBlockWithTransactions[]> {
-    return this.$rustMakeBlockTemplates(transactions, newMempool, candidates, false);
+    return this.$rustMakeBlockTemplates(transactions, newMempool, candidates, false, capacity);
   }
 
   /**
@@ -422,13 +505,15 @@ class MempoolBlocks {
    * @param candidates
    * @returns
    */
-  public async $rustUpdateBlockTemplates(
+  private async rustUpdateBlockTemplates(
     transactions: string[],
     newMempool: { [txid: string]: VerboseMempoolTransactionExtended },
     added: VerboseMempoolTransactionExtended[],
     removed: VerboseMempoolTransactionExtended[],
-    candidates: GbtCandidates | undefined
+    candidates: GbtCandidates | undefined,
+    capacity: CapacityContext = projectionCapacity()
   ): Promise<MempoolBlockWithTransactions[]> {
+    this.prepareCapacity(capacity);
     // GBT optimization requires that uids never get too sparse
     // as a sanity check, we should also explicitly prevent uint32 uid overflow
     if (this.nextUid + added.length >= Math.min(Math.max(262144, 2 * transactions.length), MAX_UINT32)) {
@@ -437,7 +522,7 @@ class MempoolBlocks {
 
     if (!this.rustInitialized) {
       // need to reset the worker
-      return this.$rustMakeBlockTemplates(transactions, newMempool, candidates, true);
+      return this.rustMakeBlockTemplates(transactions, newMempool, candidates, true, capacity);
     }
 
     const start = Date.now();
@@ -486,12 +571,14 @@ class MempoolBlocks {
           `GBT returned wrong number of transactions ${transactions.length} vs ${resultMempoolSize}, cache is probably out of sync`
         );
       } else {
-        const processed = this.processBlockTemplates(newMempool, blocks, blockSizes, rates, candidates, true);
+        const processed = this.processBlockTemplates(newMempool, blocks, blockSizes, rates, candidates, true, capacity);
         this.removeUids(removedTxs);
         logger.debug(`RUST updateBlockTemplates completed in ${(Date.now() - start) / 1000} seconds`);
         return processed;
       }
     } catch (e) {
+      if (!this.isCurrentCapacity(capacity))
+        return this.rustMakeBlockTemplates(transactions, newMempool, candidates, true);
       logger.err('RUST updateBlockTemplates failed. ' + (e instanceof Error ? e.message : e));
       this.resetRustGbt();
       return this.mempoolBlocks;
@@ -504,8 +591,14 @@ class MempoolBlocks {
     blockSizes: number[] | null,
     rates: [string, number][],
     candidates: GbtCandidates | undefined, // candidates is not used in BCH (this is used in BTC for CPFP)
-    saveResults
+    saveResults,
+    capacity: CapacityContext
   ): MempoolBlockWithTransactions[] {
+    if (saveResults && !this.isCurrentCapacity(capacity)) {
+      this.resetRustGbt();
+      this.resetJsWorker();
+      throw new Error('Chain tip changed during projection generation');
+    }
     for (const [txid, rate] of rates) {
       if (txid in mempool) {
         mempool[txid].feePerSize = rate;
@@ -522,11 +615,11 @@ class MempoolBlocks {
       } else {
         stackSize = blocks[lastBlockIndex].reduce((total, tx) => total + (mempool[tx]?.size || 0), 0);
       }
-      hasBlockStack = stackSize > config.EXPLORER.MIN_BLOCK_SIZE_UNITS;
+      hasBlockStack = stackSize > capacity.blockSizeLimit;
       feeStatsCalculator = new OnlineFeeStatsCalculator(stackSize, 0.5, [10, 20, 30, 40, 50, 60, 70, 80, 90]);
     }
 
-    const sizeLimit = config.EXPLORER.MIN_BLOCK_SIZE_UNITS;
+    const sizeLimit = capacity.blockSizeLimit;
     // update this thread's mempool with the results
     let mempoolTx: VerboseMempoolTransactionExtended;
     const mempoolBlocks: MempoolBlockWithTransactions[] = [];
@@ -569,10 +662,12 @@ class MempoolBlocks {
         }
       }
       mempoolBlocks[blockIndex] = this.dataToMempoolBlocks(block, transactions, totalSize, totalFees);
+      mempoolBlocks[blockIndex].blockSizeLimit = capacity.blockSizeLimit;
     }
 
     if (saveResults) {
       const deltas = this.calculateMempoolDeltas(this.mempoolBlocks, mempoolBlocks);
+      this.publishedCapacity = capacity;
       this.mempoolBlocks = mempoolBlocks;
       this.mempoolBlockDeltas = deltas;
     }

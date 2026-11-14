@@ -229,7 +229,8 @@
             #blockGraphActual
             [isLoading]="!stateService.isBrowser || isLoadingOverview"
             [resolution]="86"
-            [blockLimit]="stateService.blockSize"
+            [blockLimit]="graphBlockLimit"
+            [referenceTransactions]="graphReferenceTransactions"
             [orientation]="'top'"
             [flip]="false"
             [blockConversion]="blockConversion"
@@ -506,7 +507,8 @@
             #blockGraphProjected
             [isLoading]="!stateService.isBrowser || isLoadingOverview"
             [resolution]="86"
-            [blockLimit]="stateService.blockSize"
+            [blockLimit]="graphBlockLimit"
+            [referenceTransactions]="graphReferenceTransactions"
             [orientation]="'top'"
             [flip]="false"
             [mirrorTxid]="hoverTx"
@@ -596,7 +598,8 @@
             #blockGraphActual
             [isLoading]="!stateService.isBrowser || isLoadingOverview"
             [resolution]="86"
-            [blockLimit]="stateService.blockSize"
+            [blockLimit]="graphBlockLimit"
+            [referenceTransactions]="graphReferenceTransactions"
             [orientation]="'top'"
             [flip]="false"
             [mirrorTxid]="hoverTx"

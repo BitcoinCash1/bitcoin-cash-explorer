@@ -409,6 +409,7 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
     }
     if (blocks.length) {
       blocks[blocks.length - 1].isStack =
+        !!this.stateService.blockSize &&
         blocks[blocks.length - 1].blockSize > this.stateService.blockSize;
     }
     if (this.count) {
@@ -444,6 +445,8 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   getStyleForMempoolBlock(mempoolBlock: MempoolBlock, index: number) {
+    if (!this.stateService.blockSize)
+      return this.getStyleForMempoolEmptyBlock(index);
     const emptyBackgroundSpacePercentage = Math.max(
       100 - (mempoolBlock.blockSize / this.stateService.blockSize) * 100,
       0
@@ -503,6 +506,10 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   calculateTransactionPosition() {
+    if (!this.stateService.blockSize) {
+      this.rightPosition = null;
+      return;
+    }
     if (
       (!this.txPosition &&
         !this.txFeePerSize &&
@@ -549,6 +556,10 @@ export class MempoolBlocksComponent implements OnInit, OnChanges, OnDestroy {
         this.txFeePerSize,
         this.mempoolBlocks
       );
+      if (!estimatedPosition) {
+        this.rightPosition = null;
+        return;
+      }
       this.rightPosition =
         estimatedPosition.block * (this.blockWidth + this.blockPadding) +
         (estimatedPosition.size / this.stateService.blockSize) *

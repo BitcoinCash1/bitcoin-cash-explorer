@@ -1,3 +1,4 @@
+import { blockLimit } from './block-capacity';
 import logger from '../logger';
 import * as WebSocket from 'ws';
 import {
@@ -62,6 +63,15 @@ class WebsocketHandler {
   private MSG_RATE_LIMIT = config.EXPLORER.MSG_RATE_LIMIT;
   private MSG_RATE_WINDOW = config.EXPLORER.MSG_RATE_WINDOW;
 
+  constructor() {
+    this.updateSocketDataFields({
+      'network-settings': Object.freeze({
+        network: config.EXPLORER.NETWORK,
+        minimumBlockSize: config.EXPLORER.MIN_BLOCK_SIZE_UNITS,
+      }),
+    });
+  }
+
   addWebsocketServer(wss: WebSocket.Server) {
     this.webSocketServers.push(wss);
   }
@@ -97,6 +107,7 @@ class WebsocketHandler {
       blocks: _blocks,
       conversions: priceUpdater.getLatestPrices(),
       'mempool-blocks': mempoolBlocks.getMempoolBlocks(),
+      'block-capacity': mempoolBlocks.getCapacity(),
       transactions: memPool.getLatestTransactions(),
       backendInfo: backendInfo.getBackendInfo(),
       loadingIndicators: loadingIndicators.getLoadingIndicators(),
@@ -175,6 +186,7 @@ class WebsocketHandler {
             }
 
             if (wantNow['want-mempool-blocks']) {
+              response['block-capacity'] = mempoolBlocks.getCapacity();
               response['mempool-blocks'] = this.socketData['mempool-blocks'];
             }
 
@@ -616,6 +628,7 @@ class WebsocketHandler {
       mempoolInfo: mempoolInfo,
       bytesPerSecond: bytesPerSecond,
       'mempool-blocks': mBlocks,
+      'block-capacity': mempoolBlocks.getCapacity(),
       transactions: latestTransactions,
       loadingIndicators: loadingIndicators.getLoadingIndicators(),
       da: da ?? undefined,
@@ -689,6 +702,7 @@ class WebsocketHandler {
         }
 
         if (client['want-mempool-blocks']) {
+          response['block-capacity'] = mempoolBlocks.getCapacity();
           response['mempool-blocks'] = getCachedResponse('mempool-blocks', mBlocks);
         }
 
@@ -875,21 +889,25 @@ class WebsocketHandler {
       const auditMempool = _memPool;
 
       if (config.EXPLORER.RUST_GBT) {
-        const added = memPool.limitGBT ? candidates?.added || [] : [];
-        const removed = memPool.limitGBT ? candidates?.removed || [] : [];
-        projectedBlocks = await mempoolBlocks.$rustUpdateBlockTemplates(
-          transactionIds,
-          auditMempool,
-          added,
-          removed,
-          candidates
-        );
+        projectedBlocks = await mempoolBlocks.$rustMakeBlockTemplates(transactionIds, auditMempool, candidates, false, {
+          tipHash: block.id,
+          blockSizeLimit: blockLimit(block),
+        });
       } else {
-        projectedBlocks = await mempoolBlocks.$makeBlockTemplates(transactionIds, auditMempool, candidates, false);
+        projectedBlocks = await mempoolBlocks.$makeBlockTemplates(transactionIds, auditMempool, candidates, false, {
+          tipHash: block.id,
+          blockSizeLimit: blockLimit(block),
+        });
       }
 
       if (Common.indexingEnabled()) {
-        const auditResult = Audit.auditBlock(block.height, blockTransactions, projectedBlocks, auditMempool);
+        const auditResult = Audit.auditBlock(
+          block.height,
+          blockTransactions,
+          projectedBlocks,
+          auditMempool,
+          blockLimit(block)
+        );
         const matchRatePercentage = Math.round(auditResult.matchRate * 100 * 100) / 100;
 
         const stripped = projectedBlocks[0]?.transactions ? projectedBlocks[0].transactions : [];
@@ -987,8 +1005,9 @@ class WebsocketHandler {
     // update init data
     this.updateSocketDataFields({
       mempoolInfo: mempoolInfo,
-      blocks: [...blocks.getBlocks(), block].slice(-config.EXPLORER.INITIAL_BLOCKS_AMOUNT),
+      blocks: blocks.getBlocks().slice(-config.EXPLORER.INITIAL_BLOCKS_AMOUNT),
       'mempool-blocks': mBlocks,
+      'block-capacity': mempoolBlocks.getCapacity(),
       loadingIndicators: loadingIndicators.getLoadingIndicators(),
       da: da ?? undefined,
       fees: fees,
@@ -1047,6 +1066,7 @@ class WebsocketHandler {
         }
 
         if (mBlocks && client['want-mempool-blocks']) {
+          response['block-capacity'] = mempoolBlocks.getCapacity();
           response['mempool-blocks'] = getCachedResponse('mempool-blocks', mBlocks);
         }
 

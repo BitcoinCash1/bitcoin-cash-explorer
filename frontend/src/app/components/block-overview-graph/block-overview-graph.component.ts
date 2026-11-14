@@ -1,3 +1,5 @@
+import { validBlockLimit } from '@app/shared/block-capacity';
+import { gridResolution } from './grid-resolution';
 import {
   Component,
   ElementRef,
@@ -58,7 +60,10 @@ export class BlockOverviewGraphComponent
   @Input() isLoading: boolean;
   @Input() resolution: number;
   @Input() autofit: boolean = false;
-  @Input() blockLimit: number;
+  @Input() blockLimit: number | null;
+  @Input() referenceTransactions: TransactionStripped[] | null = null;
+  private layoutTimer: ReturnType<typeof setTimeout>;
+  private currentTransactions: TransactionStripped[] = [];
   @Input() orientation = 'left';
   @Input() flip = true;
   @Input() animationDuration: number = 1000;
@@ -166,13 +171,35 @@ export class BlockOverviewGraphComponent
         this.resizeCanvas();
         this.themeChangedSubscription =
           this.themeService.themeChanged$.subscribe(() => {
-            this.scene.setColorFunction(this.getColorFunction());
+            this.scene?.setColorFunction(this.getColorFunction());
           });
       }
     }
   }
 
   ngOnChanges(changes): void {
+    if (
+      changes.blockLimit ||
+      changes.resolution ||
+      changes.referenceTransactions
+    ) {
+      const transactions = this.snapshotForRebuild();
+      if (!validBlockLimit(this.blockLimit)) {
+        this.currentTransactions = transactions;
+        this.clearUpdateQueue();
+        clearTimeout(this.layoutTimer);
+        this.layoutTimer = undefined;
+        if (this.scene) {
+          this.scene.destroy();
+          this.scene = null;
+        }
+        this.hoverTx = this.selectedTx = this.mirrorTx = null;
+        if (this.gl) this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+      } else if (this.canvas && this.gl) {
+        this.resizeCanvas();
+        this.setup(transactions);
+      }
+    }
     if (changes.orientation || changes.flip) {
       if (this.scene) {
         this.scene.setOrientation(this.orientation, this.flip);
@@ -220,6 +247,8 @@ export class BlockOverviewGraphComponent
   }
 
   ngOnDestroy(): void {
+    clearTimeout(this.layoutTimer);
+    this.layoutTimer = undefined;
     if (this.animationFrameRequest) {
       cancelAnimationFrame(this.animationFrameRequest);
     }
@@ -252,6 +281,9 @@ export class BlockOverviewGraphComponent
   }
 
   destroy(): void {
+    clearTimeout(this.layoutTimer);
+    this.layoutTimer = undefined;
+    this.currentTransactions = [];
     if (this.scene) {
       this.scene.destroy();
       this.clearUpdateQueue();
@@ -259,8 +291,31 @@ export class BlockOverviewGraphComponent
     }
   }
 
+  // Rendering may lag the network queue. Rebuild from applied state plus queued deltas.
+  // Materialise once per rebuild, rather than copying the full block for each delta.
+  private snapshotForRebuild(): TransactionStripped[] {
+    const applied = this.scene?.txs
+      ? Object.values(this.scene.txs)
+      : this.currentTransactions || [];
+    const transactions = new Map(
+      applied.map((tx) => [tx.txid, tx as TransactionStripped])
+    );
+    for (const id of Object.values(this.pendingUpdate?.remove || {}))
+      transactions.delete(id);
+    for (const tx of Object.values(this.pendingUpdate?.add || {}))
+      transactions.set(tx.txid, tx);
+    for (const change of Object.values(this.pendingUpdate?.change || {})) {
+      const tx = transactions.get(change.txid);
+      if (tx) transactions.set(change.txid, { ...tx, rate: change.rate });
+    }
+    return [...transactions.values()];
+  }
+
   // initialize the scene without any entry transition
   setup(transactions: TransactionStripped[], sort: boolean = false): void {
+    clearTimeout(this.layoutTimer);
+    this.layoutTimer = undefined;
+    this.currentTransactions = transactions;
     const filtersAvailable = transactions.reduce(
       (flagSet, tx) => flagSet || tx.flags > 0,
       false
@@ -269,8 +324,16 @@ export class BlockOverviewGraphComponent
       this.setFilterFlags();
     }
     this.filtersAvailable = filtersAvailable;
-    if (this.scene) {
+    if (this.scene && validBlockLimit(this.blockLimit)) {
       this.clearUpdateQueue();
+      this.scene.setScale(
+        gridResolution(
+          this.referenceTransactions || transactions,
+          this.blockLimit,
+          this.resolution
+        ),
+        this.blockLimit
+      );
       this.scene.setup(transactions, sort);
       this.readyNextFrame = true;
       this.start();
@@ -279,7 +342,16 @@ export class BlockOverviewGraphComponent
   }
 
   enter(transactions: TransactionStripped[], direction: string): void {
-    if (this.scene) {
+    this.currentTransactions = transactions;
+    if (this.scene && validBlockLimit(this.blockLimit)) {
+      this.scene.setScale(
+        gridResolution(
+          this.referenceTransactions || transactions,
+          this.blockLimit,
+          this.resolution
+        ),
+        this.blockLimit
+      );
       this.clearUpdateQueue();
       this.scene.enter(transactions, direction);
       this.start();
@@ -302,6 +374,7 @@ export class BlockOverviewGraphComponent
     sort: boolean = true,
     startTime?: number
   ): void {
+    this.currentTransactions = transactions || [];
     if (this.scene) {
       this.clearUpdateQueue();
       this.scene.replace(transactions || [], direction, sort, startTime);
@@ -411,6 +484,19 @@ export class BlockOverviewGraphComponent
     direction: string = 'left',
     resetLayout: boolean = false
   ): void {
+    if (!this.scene) {
+      const pending = new Map(
+        this.currentTransactions.map((tx) => [tx.txid, tx])
+      );
+      remove.forEach((id) => pending.delete(id));
+      add.forEach((tx) => pending.set(tx.txid, tx));
+      change.forEach((tx) => {
+        if (pending.has(tx.txid))
+          pending.set(tx.txid, { ...pending.get(tx.txid), rate: tx.rate });
+      });
+      this.currentTransactions = [...pending.values()];
+      return;
+    }
     if (this.scene) {
       add = add.filter((tx) => !this.scene.txs[tx.txid]);
       remove = remove.filter((txid) => this.scene.txs[txid]);
@@ -420,6 +506,13 @@ export class BlockOverviewGraphComponent
         this.scene.updateAllColors();
       }
       this.scene.update(add, remove, change, direction, resetLayout);
+      if (!this.layoutTimer) {
+        this.layoutTimer = setTimeout(() => {
+          this.layoutTimer = undefined;
+          const snapshot = this.snapshotForRebuild();
+          this.setup(snapshot);
+        }, 250);
+      }
       this.start();
       this.lastUpdate = performance.now();
       this.updateSearchHighlight();
@@ -501,7 +594,7 @@ export class BlockOverviewGraphComponent
           animate: false,
         });
         this.start();
-      } else {
+      } else if (validBlockLimit(this.blockLimit)) {
         this.scene = new BlockScene({
           width: this.displayWidth,
           height: this.displayHeight,
@@ -749,6 +842,7 @@ export class BlockOverviewGraphComponent
   }
 
   setMirror(txid: string | void) {
+    if (!this.scene) return;
     if (this.mirrorTx) {
       this.scene.setHover(this.mirrorTx, false);
       this.start();

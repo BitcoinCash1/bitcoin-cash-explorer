@@ -64,7 +64,7 @@ export class FooterComponent implements OnInit {
 
         return {
           size: size,
-          blocks: Math.ceil(size / this.stateService.blockSize),
+          blocks: this.stateService.projectedBlockCount(size),
         };
       })
     );

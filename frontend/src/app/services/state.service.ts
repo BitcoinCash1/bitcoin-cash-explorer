@@ -1,3 +1,6 @@
+import type { NetworkSettings } from '@interfaces/websocket.interface';
+import { BlockCapacityService } from './block-capacity.service';
+import { minedBlockLimit } from '@app/shared/block-capacity';
 import { Inject, Injectable, PLATFORM_ID, LOCALE_ID } from '@angular/core';
 import {
   ReplaySubject,
@@ -80,7 +83,6 @@ export interface Env {
   NGINX_PROTOCOL?: string;
   NGINX_HOSTNAME?: string;
   NGINX_PORT?: string;
-  MIN_BLOCK_SIZE_UNITS: number;
   MEMPOOL_BLOCKS_AMOUNT: number;
   GIT_COMMIT_HASH: string;
   GIT_COMMIT_HASH_MEMPOOL_SPACE?: string; // In case of multiple servers deployments
@@ -120,7 +122,6 @@ const defaultEnv: Env = {
   NGINX_PROTOCOL: 'http',
   NGINX_HOSTNAME: '127.0.0.1',
   NGINX_PORT: '80',
-  MIN_BLOCK_SIZE_UNITS: 32000000,
   MEMPOOL_BLOCKS_AMOUNT: 8,
   GIT_COMMIT_HASH: '',
   PACKAGE_JSON_VERSION: '',
@@ -154,7 +155,20 @@ export class StateService {
   isProdDomain: boolean;
   backend: 'electrum' | 'none' = 'electrum';
   network = '';
-  blockSize: number;
+  get blockSize(): number | null {
+    return this.capacityService.projection;
+  }
+
+  activateCapacity(): void {
+    const origin = this.isBrowser
+      ? window.location.origin
+      : `${this.env.NGINX_PROTOCOL}://${this.env.NGINX_HOSTNAME}:${this.env.NGINX_PORT}`;
+    this.capacityService.activate(this.network, origin);
+  }
+
+  acceptNetworkSettings(settings: NetworkSettings): boolean {
+    return this.capacityService.acceptSettings(settings);
+  }
   env: Env;
   latestBlockHeight = -1;
   blocks: BlockExtended[] = [];
@@ -244,7 +258,8 @@ export class StateService {
     @Inject(PLATFORM_ID) private platformId: any,
     @Inject(LOCALE_ID) private locale: string,
     private router: Router,
-    private storageService: StorageService
+    private storageService: StorageService,
+    private capacityService: BlockCapacityService
   ) {
     this.isBrowser = isPlatformBrowser(this.platformId);
     this.referrer = window.document.referrer;
@@ -365,6 +380,8 @@ export class StateService {
       this.transactions$ = new BehaviorSubject<TransactionStripped[]>(null);
       this.stratumJobs$ = new BehaviorSubject<Record<string, StratumJob>>({});
       this.stratumJobUpdate$.next({ state: {} });
+      this.blocks = [];
+      this.activateCapacity();
       this.blocksSubject$.next([]);
     });
 
@@ -373,7 +390,7 @@ export class StateService {
         null
     );
 
-    this.blockSize = this.env.MIN_BLOCK_SIZE_UNITS;
+    this.activateCapacity();
 
     this.blocks$ = this.blocksSubject$.pipe(
       filter((blocks) => blocks != null && blocks.length > 0)
@@ -451,6 +468,33 @@ export class StateService {
     });
   }
 
+  get networkBlockSize(): number | null {
+    return this.capacityService.baseline;
+  }
+
+  getBlockLimit(block: BlockExtended): number | null {
+    return minedBlockLimit(block, this.networkBlockSize);
+  }
+
+  getBlockFullness(block: BlockExtended): number | null {
+    const limit = this.getBlockLimit(block);
+    return limit
+      ? Math.max(0, Math.min(100, (block.size / limit) * 100))
+      : null;
+  }
+
+  projectionRatio(size: number): number | null {
+    return this.blockSize ? size / this.blockSize : null;
+  }
+  projectedBlockCount(size: number): number | null {
+    const ratio = this.projectionRatio(size);
+    return ratio === null ? null : Math.ceil(ratio);
+  }
+
+  updateBlockCapacity(limit: unknown): void {
+    this.capacityService.updateProjection(limit);
+  }
+
   setNetworkBasedonUrl(url: string) {
     if (this.env.BASE_MODULE !== 'explorer') {
       return;
@@ -473,18 +517,21 @@ export class StateService {
       case 'testnet4':
         if (this.network !== 'testnet4') {
           this.network = 'testnet4';
+          this.activateCapacity();
           this.networkChanged$.next('testnet4');
         }
         return;
       case 'scalenet':
         if (this.network !== 'scalenet') {
           this.network = 'scalenet';
+          this.activateCapacity();
           this.networkChanged$.next('scalenet');
         }
         return;
       case 'chipnet':
         if (this.network !== 'chipnet') {
           this.network = 'chipnet';
+          this.activateCapacity();
           this.networkChanged$.next('chipnet');
         }
         return;
@@ -492,10 +539,12 @@ export class StateService {
         if (this.env.BASE_MODULE !== 'explorer') {
           if (this.network !== this.env.BASE_MODULE) {
             this.network = this.env.BASE_MODULE;
+            this.activateCapacity();
             this.networkChanged$.next(this.env.BASE_MODULE);
           }
         } else if (this.network !== '') {
           this.network = '';
+          this.activateCapacity();
           this.networkChanged$.next('');
         }
     }
@@ -548,10 +597,17 @@ export class StateService {
 
   resetBlocks(blocks: BlockExtended[]): void {
     this.blocks = blocks.reverse();
+    const tip = this.blocks.reduce(
+      (latest, block) =>
+        !latest || block.height > latest.height ? block : latest,
+      null as BlockExtended | null
+    );
+    this.updateBlockCapacity(tip?.abla_state?.next_block_size_limit);
     this.blocksSubject$.next(blocks);
   }
 
   addBlock(block: BlockExtended): void {
+    this.updateBlockCapacity(block.abla_state?.next_block_size_limit);
     this.blocks.unshift(block);
     this.blocks = this.blocks.slice(0, this.env.KEEP_BLOCKS_AMOUNT);
     this.blocksSubject$.next(this.blocks);

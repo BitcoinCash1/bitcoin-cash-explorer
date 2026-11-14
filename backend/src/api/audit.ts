@@ -19,7 +19,8 @@ class Audit {
     height: number,
     transactions: VerboseMempoolTransactionExtended[],
     projectedBlocks: MempoolBlockWithTransactions[],
-    mempool: { [txId: string]: VerboseMempoolTransactionExtended }
+    mempool: { [txId: string]: VerboseMempoolTransactionExtended },
+    blockSizeLimit = config.EXPLORER.MIN_BLOCK_SIZE_UNITS
   ): AuditResult {
     if (!projectedBlocks?.[0]?.transactionIds || !mempool) {
       return {
@@ -135,7 +136,7 @@ class Audit {
     }
 
     // transactions missing from near the end of our template are probably not being censored
-    let overflowSizeRemaining = overflowSize - (config.EXPLORER.MIN_BLOCK_SIZE_UNITS - totalSize);
+    let overflowSizeRemaining = overflowSize - (blockSizeLimit - totalSize);
     let maxOverflowRate = 0;
     let rateThreshold = 0;
     index = projectedBlocks[0].transactionIds.length - 1;

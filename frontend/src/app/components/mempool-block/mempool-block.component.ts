@@ -106,8 +106,8 @@ export class MempoolBlockComponent implements OnInit, OnDestroy {
   }
 
   getOrdinal(mempoolBlock: MempoolBlock): string {
-    const blocksInBlock = Math.ceil(
-      mempoolBlock.blockSize / this.stateService.blockSize
+    const blocksInBlock = this.stateService.projectedBlockCount(
+      mempoolBlock.blockSize
     );
     if (this.mempoolBlockIndex === 0) {
       return $localize`:@@bdf0e930eb22431140a2eaeacd809cc5f8ebd38c:Next Block`;

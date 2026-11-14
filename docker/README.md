@@ -175,7 +175,6 @@ Below we list selected settings from `explorer-config.json` and the correspondin
     "CACHE_DIR": "./cache",
     "CLEAR_PROTECTION_MINUTES": 20,
     "RECOMMENDED_FEE_PERCENTILE": 50,
-    "MIN_BLOCK_SIZE_UNITS": 32000000,
     "INITIAL_BLOCKS_AMOUNT": 8,
     "MEMPOOL_BLOCKS_AMOUNT": 1,
     "BLOCKS_SUMMARIES_INDEXING": false,

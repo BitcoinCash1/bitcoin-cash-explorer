@@ -19,7 +19,7 @@ if (parentPort) {
       });
     }
 
-    const { blocks, rates } = makeBlockTemplates(mempool);
+    const { blocks, rates } = makeBlockTemplates(mempool, params.blockSizeLimit);
 
     // return the result to main thread.
     if (parentPort) {
@@ -36,7 +36,10 @@ if (parentPort) {
  *
  * All this code below needs to be adapted to match BCH.
  */
-function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
+function makeBlockTemplates(
+  mempool: Map<number, CompactThreadTransaction>,
+  blockSizeLimit = config.EXPLORER.MIN_BLOCK_SIZE_UNITS
+): {
   blocks: number[][];
   rates: Map<number, number>;
 } {
@@ -127,8 +130,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
       // Check if the package fits into this block
       if (
         blocks.length >= 7 ||
-        (blockSize + nextTx.ancestorSize < config.EXPLORER.MIN_BLOCK_SIZE_UNITS &&
-          blockSigops + nextTx.ancestorSigops <= 80000)
+        (blockSize + nextTx.ancestorSize < blockSizeLimit && blockSigops + nextTx.ancestorSigops <= 80000)
       ) {
         const ancestors: AuditTransaction[] = Array.from(nextTx.ancestorMap.values());
         // sort ancestors by dependency graph (equivalent to sorting by ascending ancestor count)
@@ -138,11 +140,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
           }),
           nextTx,
         ];
-        // This calculation is wrong for BCH
-        const effectiveFeeRate = Math.min(
-          nextTx.dependencyRate || Infinity,
-          nextTx.ancestorFee / (nextTx.ancestorWeight / 4)
-        );
+        const effectiveFeeRate = Math.min(nextTx.dependencyRate || Infinity, nextTx.ancestorFee / nextTx.ancestorSize);
         const used: AuditTransaction[] = [];
         while (sortedTxSet.length) {
           const ancestor = sortedTxSet.pop();
@@ -154,7 +152,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
           ancestor.usedBy = nextTx.uid;
           mempoolTx.feePerSize = effectiveFeeRate; // BCH doesn't have effective fee rate, just fee rate.
           transactions.push(ancestor);
-          blockSize += ancestor.weight;
+          blockSize += ancestor.size;
           used.push(ancestor);
         }
 
@@ -175,7 +173,7 @@ function makeBlockTemplates(mempool: Map<number, CompactThreadTransaction>): {
 
     // this block is full
     // TODO: Update for BCH
-    const exceededPackageTries = failures > 1000 && blockSize > config.EXPLORER.MIN_BLOCK_SIZE_UNITS - 4000;
+    const exceededPackageTries = failures > 1000 && blockSize > blockSizeLimit - 4000;
     const queueEmpty = top >= mempoolArray.length && modified.isEmpty();
 
     if ((exceededPackageTries || queueEmpty) && blocks.length < 7) {

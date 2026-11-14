@@ -237,7 +237,7 @@ export class DashboardComponent implements OnInit, OnDestroy, AfterViewInit {
           .reduce((a, b) => a + b, 0);
         return {
           size: size,
-          blocks: Math.ceil(size / this.stateService.blockSize),
+          blocks: this.stateService.projectedBlockCount(size),
         };
       })
     );

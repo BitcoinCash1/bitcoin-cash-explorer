@@ -109,8 +109,10 @@ export class ClockComponent implements OnInit {
   }
 
   getStyleForBlock(block: BlockExtended) {
+    if (this.stateService.getBlockFullness(block) === null)
+      return { background: 'var(--secondary)' };
     const greenBackgroundHeight =
-      100 - (block.size / this.stateService.env.MIN_BLOCK_SIZE_UNITS) * 100;
+      100 - this.stateService.getBlockFullness(block);
 
     return {
       background: `repeating-linear-gradient(

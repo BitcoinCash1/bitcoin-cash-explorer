@@ -27,6 +27,7 @@ export class EtaService {
     feerate: number,
     mempoolBlocks: MempoolBlock[]
   ): MempoolPosition {
+    if (!this.stateService.blockSize || !mempoolBlocks.length) return null;
     for (
       let txInBlockIndex = 0;
       txInBlockIndex < mempoolBlocks.length;

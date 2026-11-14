@@ -1,14 +1,14 @@
-var fs = require('fs');
-const { spawnSync } = require('child_process');
+var fs = require("fs");
+const { spawnSync } = require("child_process");
 
-const CONFIG_FILE_NAME = 'explorer-frontend-config.json';
-const GENERATED_CONFIG_FILE_NAME = 'src/resources/config.js';
-const GENERATED_TEMPLATE_CONFIG_FILE_NAME = 'src/resources/config.template.js';
-const GENERATED_CUSTOMIZATION_FILE_NAME = 'src/resources/customize.js';
+const CONFIG_FILE_NAME = "explorer-frontend-config.json";
+const GENERATED_CONFIG_FILE_NAME = "src/resources/config.js";
+const GENERATED_TEMPLATE_CONFIG_FILE_NAME = "src/resources/config.template.js";
+const GENERATED_CUSTOMIZATION_FILE_NAME = "src/resources/customize.js";
 
 let settings = [];
 let configContent = {};
-let gitCommitHash = '';
+let gitCommitHash = "";
 let packetJsonVersion;
 let customConfig;
 let customConfigContent;
@@ -18,7 +18,7 @@ try {
   configContent = JSON.parse(rawConfig);
   console.log(`${CONFIG_FILE_NAME} file found, using provided config`);
 } catch (e) {
-  if (e.code !== 'ENOENT') {
+  if (e.code !== "ENOENT") {
     throw new Error(e, { cause: e });
   } else {
     console.log(`${CONFIG_FILE_NAME} file not found, using default config`);
@@ -30,35 +30,44 @@ if (configContent && configContent.CUSTOMIZATION) {
     customConfig = readConfig(configContent.CUSTOMIZATION);
     customConfigContent = JSON.parse(customConfig);
   } catch {
-    console.error(`failed to load customization config from ${configContent.CUSTOMIZATION}`);
+    console.error(
+      `failed to load customization config from ${configContent.CUSTOMIZATION}`
+    );
   }
 }
 
-const baseModuleName = configContent.BASE_MODULE || 'explorer';
-const customBuildName = (customConfigContent && customConfigContent.enterprise) ? ('.' + customConfigContent.enterprise) : '';
-const indexFilePath = 'src/index.' + baseModuleName + customBuildName + '.html';
+const baseModuleName = configContent.BASE_MODULE || "explorer";
+const customBuildName =
+  customConfigContent && customConfigContent.enterprise
+    ? "." + customConfigContent.enterprise
+    : "";
+const indexFilePath = "src/index." + baseModuleName + customBuildName + ".html";
 
 try {
-  fs.copyFileSync(indexFilePath, 'src/index.html');
-  console.log('Copied ' + indexFilePath + ' to src/index.html');
+  fs.copyFileSync(indexFilePath, "src/index.html");
+  console.log("Copied " + indexFilePath + " to src/index.html");
 } catch (e) {
-  console.error('Error copying the index file');
+  console.error("Error copying the index file");
   throw new Error(e, { cause: e });
 }
 
 try {
-  const packageJson = fs.readFileSync('package.json');
+  const packageJson = fs.readFileSync("package.json");
   packetJsonVersion = JSON.parse(packageJson).version;
   console.log(`BCH explorer version ${packetJsonVersion}`);
 } catch (e) {
-  console.error('Error reading package.json');
+  console.error("Error reading package.json");
   throw new Error(e, { cause: e });
 }
+
+// Capacity is supplied by the selected backend, including for older local config files.
+delete configContent.MIN_BLOCK_SIZE_UNITS;
+delete configContent.NETWORK_BLOCK_SIZE_UNITS;
 
 for (const setting in configContent) {
   settings.push({
     key: setting,
-    value: configContent[setting]
+    value: configContent[setting],
   });
 }
 
@@ -68,31 +77,39 @@ if (process.env.DOCKER_COMMIT_HASH) {
   gitCommitHash = process.env.CI_COMMIT_SHORT_SHA;
 } else {
   try {
-    const gitRevParse = spawnSync('git', ['rev-parse', '--short', 'HEAD']);
+    const gitRevParse = spawnSync("git", ["rev-parse", "--short", "HEAD"]);
     if (!gitRevParse.error) {
-      const output = gitRevParse.stdout.toString('utf-8').replace(/[\n\r\s]+$/, '');
-      gitCommitHash = output ? output : '?';
+      const output = gitRevParse.stdout
+        .toString("utf-8")
+        .replace(/[\n\r\s]+$/, "");
+      gitCommitHash = output ? output : "?";
       console.log(`BCH explorer revision ${gitCommitHash}`);
-    } else if (gitRevParse.error.code === 'ENOENT') {
-      console.error('git not found, cannot parse git hash');
-      gitCommitHash = '?';
+    } else if (gitRevParse.error.code === "ENOENT") {
+      console.error("git not found, cannot parse git hash");
+      gitCommitHash = "?";
     }
   } catch (e) {
-    console.error('Could not load git commit info: ' + e.message);
-    gitCommitHash = '?';
+    console.error("Could not load git commit info: " + e.message);
+    gitCommitHash = "?";
   }
 }
 
 const newConfig = `(function (window) {
-  window.__env = window.__env || {};${settings.reduce((str, obj) => `${str}
-    window.__env.${obj.key} = ${typeof obj.value === 'string' ? `'${obj.value}'` : obj.value};`, '')}
+  window.__env = window.__env || {};${settings.reduce(
+    (str, obj) => `${str}
+    window.__env.${obj.key} = ${typeof obj.value === "string" ? `'${obj.value}'` : JSON.stringify(obj.value)};`,
+    ""
+  )}
     window.__env.GIT_COMMIT_HASH = '${gitCommitHash}';
     window.__env.PACKAGE_JSON_VERSION = '${packetJsonVersion}';
   }((typeof global !== 'undefined') ? global : this));`;
 
 const newConfigTemplate = `(function (window) {
-  window.__env = window.__env || {};${settings.reduce((str, obj) => `${str}
-    window.__env.${obj.key} = ${typeof obj.value === 'string' ? `'\${__${obj.key}__}'` : `\${__${obj.key}__}`};`, '')}
+  window.__env = window.__env || {};${settings.reduce(
+    (str, obj) => `${str}
+    window.__env.${obj.key} = ${typeof obj.value === "string" ? `'\${__${obj.key}__}'` : `\${__${obj.key}__}`};`,
+    ""
+  )}
     window.__env.GIT_COMMIT_HASH = '${gitCommitHash}';
     window.__env.PACKAGE_JSON_VERSION = '${packetJsonVersion}';
   }(this));`;
@@ -108,18 +125,18 @@ function readConfig(path) {
 
 function writeConfig(path, config) {
   try {
-    fs.writeFileSync(path, config, 'utf8');
+    fs.writeFileSync(path, config, "utf8");
   } catch (e) {
-    console.error('Error writing config file');
+    console.error("Error writing config file");
     throw new Error(e, { cause: e });
   }
 }
 
 function writeConfigTemplate(path, config) {
   try {
-    fs.writeFileSync(path, config, 'utf8');
+    fs.writeFileSync(path, config, "utf8");
   } catch (e) {
-    console.error('Error writing config template file');
+    console.error("Error writing config template file");
     throw new Error(e, { cause: e });
   }
 }
@@ -128,7 +145,7 @@ writeConfigTemplate(GENERATED_TEMPLATE_CONFIG_FILE_NAME, newConfigTemplate);
 
 const currentConfig = readConfig(GENERATED_CONFIG_FILE_NAME);
 
-let customConfigJs = '';
+let customConfigJs = "";
 if (customConfig) {
   console.log(`Customizing frontend using ${configContent.CUSTOMIZATION}`);
   customConfigJs = `(function (window) {
@@ -140,16 +157,22 @@ if (customConfig) {
 writeConfig(GENERATED_CUSTOMIZATION_FILE_NAME, customConfigJs);
 
 if (currentConfig && currentConfig === newConfig) {
-  console.log(`No configuration updates, skipping ${GENERATED_CONFIG_FILE_NAME} file update`);
+  console.log(
+    `No configuration updates, skipping ${GENERATED_CONFIG_FILE_NAME} file update`
+  );
 } else if (!currentConfig) {
-  console.log(`${GENERATED_CONFIG_FILE_NAME} file not found, creating new config file`);
-  console.log('CONFIG: ', newConfig);
+  console.log(
+    `${GENERATED_CONFIG_FILE_NAME} file not found, creating new config file`
+  );
+  console.log("CONFIG: ", newConfig);
   writeConfig(GENERATED_CONFIG_FILE_NAME, newConfig);
   console.log(`${GENERATED_CONFIG_FILE_NAME} file saved`);
 } else {
-  console.log(`Configuration changes detected, updating ${GENERATED_CONFIG_FILE_NAME} file`);
-  console.log('OLD CONFIG: ', currentConfig);
-  console.log('NEW CONFIG: ', newConfig);
+  console.log(
+    `Configuration changes detected, updating ${GENERATED_CONFIG_FILE_NAME} file`
+  );
+  console.log("OLD CONFIG: ", currentConfig);
+  console.log("NEW CONFIG: ", newConfig);
   writeConfig(GENERATED_CONFIG_FILE_NAME, newConfig);
   console.log(`${GENERATED_CONFIG_FILE_NAME} file updated`);
 }
