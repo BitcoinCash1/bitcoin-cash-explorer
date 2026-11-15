@@ -71,7 +71,6 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
 
   statsObservable$: Observable<any>;
   data: any;
-  subsidies: { [key: number]: number } = {};
   isLoading = true;
   formatNumber = formatNumber;
   timespan = '';
@@ -100,8 +99,6 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
   ) {
     this.radioGroupForm = this.formBuilder.group({ dateSpan: '1y' });
     this.radioGroupForm.controls['dateSpan'].setValue('1y');
-
-    this.subsidies = this.initSubsidies();
   }
 
   ngOnInit(): void {
@@ -166,23 +163,17 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                 ),
                 blockFeesPercent: response.body.map(
                   (val) =>
-                    (val.avgFees /
-                      (val.avgFees + this.subsidyAt(val.avgHeight))) *
-                    100
+                    (val.avgFees / (val.avgFees + val.avgSubsidySats)) * 100
                 ),
                 blockSubsidy: response.body.map(
-                  (val) => this.subsidyAt(val.avgHeight) / 100_000_000
+                  (val) => val.avgSubsidySats / 100_000_000
                 ),
                 blockSubsidyFiat: response.body.map((val) =>
-                  this.toFiat(
-                    this.subsidyAt(val.avgHeight) / 100_000_000,
-                    val['USD']
-                  )
+                  this.toFiat(val.avgSubsidySats / 100_000_000, val['USD'])
                 ),
                 blockSubsidyPercent: response.body.map(
                   (val) =>
-                    (this.subsidyAt(val.avgHeight) /
-                      (val.avgFees + this.subsidyAt(val.avgHeight))) *
+                    (val.avgSubsidySats / (val.avgFees + val.avgSubsidySats)) *
                     100
                 ),
               };
@@ -724,20 +715,6 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
     return window.innerWidth <= 767.98;
   }
 
-  initSubsidies(): { [key: number]: number } {
-    let blockReward = 50 * 100_000_000;
-    const subsidies = {};
-    for (let i = 0; i <= 33; i++) {
-      subsidies[i] = blockReward;
-      blockReward = Math.floor(blockReward / 2);
-    }
-    return subsidies;
-  }
-
-  subsidyAt(height: number): number {
-    return this.subsidies[Math.floor(Math.min(height / 210000, 33))];
-  }
-
   onZoom() {
     const option = this.chartInstance.getOption();
     const timestamps = option.xAxis[1].data;
@@ -785,26 +762,19 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
             startIndex,
             endIndex - startIndex,
             ...response.body.map(
-              (val) =>
-                (val.avgFees / (val.avgFees + this.subsidyAt(val.avgHeight))) *
-                100
+              (val) => (val.avgFees / (val.avgFees + val.avgSubsidySats)) * 100
             )
           );
           this.data.blockSubsidy.splice(
             startIndex,
             endIndex - startIndex,
-            ...response.body.map(
-              (val) => this.subsidyAt(val.avgHeight) / 100_000_000
-            )
+            ...response.body.map((val) => val.avgSubsidySats / 100_000_000)
           );
           this.data.blockSubsidyFiat.splice(
             startIndex,
             endIndex - startIndex,
             ...response.body.map((val) =>
-              this.toFiat(
-                this.subsidyAt(val.avgHeight) / 100_000_000,
-                val['USD']
-              )
+              this.toFiat(val.avgSubsidySats / 100_000_000, val['USD'])
             )
           );
           this.data.blockSubsidyPercent.splice(
@@ -812,9 +782,7 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
             endIndex - startIndex,
             ...response.body.map(
               (val) =>
-                (this.subsidyAt(val.avgHeight) /
-                  (val.avgFees + this.subsidyAt(val.avgHeight))) *
-                100
+                (val.avgSubsidySats / (val.avgFees + val.avgSubsidySats)) * 100
             )
           );
           // Price availability can change after zooming; rebuild axes/series by meaning,

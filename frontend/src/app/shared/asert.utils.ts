@@ -1,3 +1,4 @@
+import { getBlockTicks, getTargetBlockSeconds } from './block-timing';
 // --- ASERT (aserti3-2d) functions ---
 // Ported from: https://gist.github.com/A60AB5450353F40E/5607d5aeb9ba0e84a71ab8f55ebdd2ad
 
@@ -105,23 +106,13 @@ export function calculateTarget(
   );
 }
 
-export function calculateTargetLegacy(
-  height: number,
-  timestamp: number,
-  anchor: AsertAnchor,
-  nextTargetBlockTime: number = 600
-): number {
-  return calculateTarget(height * 600, timestamp, anchor, nextTargetBlockTime);
-}
-
 export function getScheduleOffsetSeconds(
   height: number,
   timestamp: number,
   network: string = 'mainnet'
 ): number {
   const anchor = getAsertAnchor(network);
-  const anchorHeight = Math.floor(anchor.tick / ASERT_ANCHOR_IDEAL_BLOCK_TIME);
-  const idealElapsed = (height - anchorHeight) * ASERT_ANCHOR_IDEAL_BLOCK_TIME;
+  const idealElapsed = getBlockTicks(network, height) - anchor.tick;
   const actualElapsed = timestamp - anchor.timestamp;
   return idealElapsed - actualElapsed;
 }
@@ -129,15 +120,30 @@ export function getScheduleOffsetSeconds(
 export function getDifficultyDriftPercentSinceAnchor(
   height: number,
   timestamp: number,
-  network: string = 'mainnet'
+  network: string = 'mainnet',
+  recordedBits?: number
 ): number {
   const anchor = getAsertAnchor(network);
   const anchorTarget = bitsToTarget(anchor.bits);
-  const currentTarget = calculateTargetLegacy(height, timestamp, anchor);
+  const currentTarget =
+    recordedBits === undefined
+      ? Math.min(
+          bitsToTarget('1d00ffff'),
+          Math.max(
+            1,
+            calculateTarget(
+              getBlockTicks(network, height),
+              timestamp,
+              anchor,
+              getTargetBlockSeconds(network, height + 1)
+            )
+          )
+        )
+      : bitsToTarget(recordedBits.toString(16).padStart(8, '0'));
   if (anchorTarget === 0) return 0;
   // Higher target = easier = difficulty decrease (negative drift)
   // Lower target = harder = difficulty increase (positive drift)
-  return ((anchorTarget - currentTarget) / anchorTarget) * 100;
+  return (anchorTarget / currentTarget - 1) * 100;
 }
 
 // --- End ASERT functions ---

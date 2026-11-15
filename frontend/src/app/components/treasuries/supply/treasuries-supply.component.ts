@@ -1,3 +1,8 @@
+import {
+  CHIPNET_FIRST_SHORT_BLOCK,
+  getBlockSubsidySats,
+  getNextHalving,
+} from '@app/shared/block-timing';
 import type { OnChanges } from '@angular/core';
 import {
   ChangeDetectionStrategy,
@@ -113,7 +118,7 @@ export class TreasuriesSupplyComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   processSupplyShares(): void {
-    const total = 20999999.9769;
+    let total = 20999999.9769;
 
     // calculate total mined based on block height & subsidy schedule
     let mined = 0;
@@ -124,6 +129,29 @@ export class TreasuriesSupplyComponent implements OnInit, OnDestroy, OnChanges {
       } else {
         mined += subsidy * (this.currentHeight - i);
       }
+    }
+
+    if (this.stateService.network === 'chipnet') {
+      // Sum constant-subsidy segments, including the observed interval change.
+      let height = 0;
+      let issuedSats = 0;
+      let totalSats = 0;
+      while (getBlockSubsidySats('chipnet', height) > 0) {
+        const nextHeight = Math.min(
+          getNextHalving('chipnet', height).height,
+          height < CHIPNET_FIRST_SHORT_BLOCK
+            ? CHIPNET_FIRST_SHORT_BLOCK
+            : Infinity
+        );
+        const subsidy = getBlockSubsidySats('chipnet', height);
+        totalSats += (nextHeight - height) * subsidy;
+        issuedSats +=
+          Math.max(0, Math.min(nextHeight, this.currentHeight + 1) - height) *
+          subsidy;
+        height = nextHeight;
+      }
+      mined = issuedSats / 100_000_000;
+      total = totalSats / 100_000_000;
     }
 
     const lost = 0; // TODO: track this dynamically

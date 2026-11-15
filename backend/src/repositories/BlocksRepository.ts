@@ -1,3 +1,4 @@
+import { CHIPNET_FIRST_SHORT_BLOCK } from '../utils/block-timing';
 import { PoolConnection } from 'mysql2/promise';
 import poolStatisticsCache from '../api/mining/pool-statistics-cache';
 import bitcoinApi from '../api/bitcoin/bitcoin-api-factory';
@@ -873,9 +874,17 @@ class BlocksRepository {
     timespan?: { from: number; to: number }
   ): Promise<any> {
     try {
+      // Scheduled subsidy, not actual coinbase payout (which may be underclaimed).
+      const lastLongHeight = CHIPNET_FIRST_SHORT_BLOCK - 1;
+      const shortBlock =
+        config.EXPLORER.NETWORK === 'chipnet' ? `blocks.height >= ${CHIPNET_FIRST_SHORT_BLOCK}` : 'FALSE';
+      const ticks = `IF(${shortBlock}, ${lastLongHeight * 600} + (blocks.height - ${lastLongHeight}) * 60, blocks.height * 600)`;
+      const halvings = `FLOOR(FLOOR((${ticks} + 599) / 600) / 210000)`;
+      const subsidy = `IF(${halvings} >= 64, 0, FLOOR(FLOOR(5000000000 / POW(2, ${halvings})) * IF(${shortBlock}, 60, 600) / 600))`;
       let query = `SELECT
         CAST(AVG(blocks.height) as INT) as avgHeight,
         CAST(AVG(UNIX_TIMESTAMP(blockTimestamp)) as INT) as timestamp,
+        AVG(${subsidy}) + 0e0 as avgSubsidySats,
         CAST(AVG(fees) as INT) as avgFees,
         prices.USD
         FROM blocks
@@ -1481,16 +1490,25 @@ class BlocksRepository {
    */
   public async $getMinimalBlocksBetweenHeights(
     fromHeight: number,
-    toHeight: number
+    toHeight: number,
+    fromTimestamp?: number,
+    toTimestamp?: number
   ): Promise<{ height: number; timestamp: number }[]> {
     try {
       const query = `
         SELECT height, UNIX_TIMESTAMP(blockTimestamp) as timestamp
         FROM blocks
         WHERE height >= ? AND height <= ? AND stale = 0
+        ${fromTimestamp === undefined ? '' : 'AND blockTimestamp >= FROM_UNIXTIME(?)'}
+        ${toTimestamp === undefined ? '' : 'AND blockTimestamp <= FROM_UNIXTIME(?)'}
         ORDER BY height ASC
       `;
-      const [rows]: any[] = await DB.query(query, [fromHeight, toHeight]);
+      const [rows]: any[] = await DB.query(query, [
+        fromHeight,
+        toHeight,
+        ...(fromTimestamp === undefined ? [] : [fromTimestamp]),
+        ...(toTimestamp === undefined ? [] : [toTimestamp]),
+      ]);
       return rows;
     } catch (e) {
       logger.err(

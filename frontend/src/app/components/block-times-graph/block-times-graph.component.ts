@@ -1,3 +1,4 @@
+import { CHIPNET_ACTIVATION_TIMESTAMP } from '@app/shared/block-timing';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -20,8 +21,6 @@ import { ActivatedRoute } from '@angular/router';
 import { download, formatterXAxis } from '@app/shared/graphs.utils';
 import { StateService } from '@app/services/state.service';
 import { EChartsInitOpts } from 'echarts/types/dist/echarts';
-
-const TARGET_BLOCK_TIME_SECONDS = 600; // BCH target block interval; update if consensus changes
 
 @Component({
   selector: 'app-block-times-graph',
@@ -141,6 +140,28 @@ export class BlockTimesGraphComponent implements OnInit {
       );
   }
 
+  private targetTimeData(points: number[][]): number[][] {
+    if (!points.length) return [];
+    const start = Math.min(...points.map((point) => point[0]));
+    const end = Math.max(...points.map((point) => point[0]));
+    const activation = CHIPNET_ACTIVATION_TIMESTAMP * 1000;
+    if (this.stateService.network !== 'chipnet' || end < activation)
+      return [
+        [start, 10],
+        [end, 10],
+      ];
+    if (start >= activation)
+      return [
+        [start, 1],
+        [end, 1],
+      ];
+    return [
+      [start, 10],
+      [activation, 1],
+      [end, 1],
+    ];
+  }
+
   private computeSma(timeDiffs: number[][], window: number): number[][] {
     return timeDiffs.map((point, i) => {
       const start = Math.max(0, i - window + 1);
@@ -247,7 +268,7 @@ export class BlockTimesGraphComponent implements OnInit {
           )}</b><br>`;
 
           for (const tick of ticks) {
-            if ([0, 1].includes(tick.seriesIndex)) {
+            if ([0, 2].includes(tick.seriesIndex)) {
               tooltip += `${tick.marker} ${tick.seriesName}: ${formatNumber(
                 tick.data[1],
                 this.locale,
@@ -316,27 +337,16 @@ export class BlockTimesGraphComponent implements OnInit {
                 lineStyle: {
                   width: 1.5,
                 },
-                markLine: {
-                  silent: true,
-                  symbol: 'none',
-                  lineStyle: {
-                    type: 'solid',
-                    color: 'var(--transparent-fg)',
-                    opacity: 1,
-                    width: 2,
-                  },
-                  data: [
-                    {
-                      yAxis: TARGET_BLOCK_TIME_SECONDS / 60,
-                      label: {
-                        position: 'end',
-                        show: true,
-                        color: 'var(--fg)',
-                        formatter: `${TARGET_BLOCK_TIME_SECONDS / 60} min`,
-                      },
-                    },
-                  ],
-                },
+              },
+              {
+                name: $localize`Target block time`,
+                type: 'line',
+                step: 'end',
+                symbol: 'none',
+                silent: true,
+                tooltip: { show: false },
+                data: this.targetTimeData(data.timeDiffs),
+                lineStyle: { color: 'var(--transparent-fg)', width: 2 },
               },
               {
                 zlevel: 2,

@@ -1,10 +1,11 @@
+import { getBlockTicks, getTargetBlockSeconds } from '../utils/block-timing';
 import config from '../config';
 import { IDifficultyAdjustment } from '../mempool.interfaces';
 import blocks from './blocks';
 
 export interface DifficultyAdjustment {
   scheduleOffsetSeconds: number; // seconds ahead(+) or behind(-) ideal schedule
-  difficultyDriftPercent: number; // next-block % difficulty change (assuming 600s block)
+  difficultyDriftPercent: number; // next-block % difficulty change (assuming the candidate target interval)
   currentBits: string; // current block bits (hex)
   nextBits: string; // predicted next block bits (hex)
   timeAvg: number; // avg block time over recent 8 blocks (ms)
@@ -77,20 +78,33 @@ function calculateTarget(
   );
 }
 
-function calculateTargetLegacy(
-  height: number,
-  timestamp: number,
-  anchor: AsertAnchor,
-  nextTargetBlockTime: number = 600
-): number {
-  return calculateTarget(height * 600, timestamp, anchor, nextTargetBlockTime);
-}
-
 // function numericBitsToHex(bits: number): string {
 //   return bits.toString(16).padStart(8, '0');
 // }
 
 // --- End ASERT functions ---
+
+/** Predict the child target from the parent's known timestamp and cumulative ticks. */
+export function predictNextTarget(
+  parentHeight: number,
+  parentTimestamp: number,
+  candidateTimestamp: number,
+  network: string
+): number {
+  const interval = getTargetBlockSeconds(network, parentHeight + 1);
+  const powLimit = bitsToTarget('1d00ffff');
+  if (
+    (network === 'chipnet' || network === 'testnet4' || network === 'scalenet') &&
+    candidateTimestamp > parentTimestamp + 2 * interval
+  ) {
+    return powLimit;
+  }
+  const anchor = ASERT_ANCHORS[network] ?? ASERT_ANCHORS.mainnet;
+  return Math.max(
+    1,
+    Math.min(powLimit, calculateTarget(getBlockTicks(network, parentHeight), parentTimestamp, anchor, interval))
+  );
+}
 
 /**
  * Returns the ASERT anchor block height for the given network.
@@ -169,7 +183,7 @@ export function calcBitsDifference(oldBits: number, newBits: number): number {
  * Calculate ASERT-based difficulty adjustment data for BCH.
  *
  * Uses the aserti3-2d algorithm to compute:
- * - Schedule offset: how far ahead/behind the ideal 10-minute schedule
+ * - Schedule offset: how far ahead/behind the ideal network schedule
  * - Difficulty drift: expected % change for the next block
  * - Current and predicted next block bits
  */
@@ -177,31 +191,29 @@ export function calcAsertDifficultyAdjustment(
   blockHeight: number,
   latestBlockTimestamp: number,
   network: string,
-  recentBlocks: { timestamp: number }[]
+  recentBlocks: { timestamp: number }[],
+  recordedBits?: number,
+  candidateTimestamp?: number
 ): DifficultyAdjustment {
-  const BLOCK_SECONDS_TARGET = 600;
+  const BLOCK_SECONDS_TARGET = getTargetBlockSeconds(network, blockHeight + 1);
   const anchor = ASERT_ANCHORS[network] ?? ASERT_ANCHORS.mainnet;
-  const anchorHeight = Math.floor(anchor.tick / ASERT_ANCHOR_IDEAL_BLOCK_TIME);
 
   // Schedule offset: how far ahead or behind the ideal schedule
-  // Positive = network is ahead (blocks mined faster than 10min avg)
-  // Negative = network is behind (blocks mined slower than 10min avg)
-  const idealElapsed = (blockHeight - anchorHeight) * BLOCK_SECONDS_TARGET;
+  // Positive = network is ahead (blocks mined faster than the ideal schedule)
+  // Negative = network is behind (blocks mined slower than the ideal schedule)
+  const idealElapsed = getBlockTicks(network, blockHeight) - anchor.tick;
   const actualElapsed = latestBlockTimestamp - anchor.timestamp;
   const scheduleOffsetSeconds = idealElapsed - actualElapsed;
 
-  // Current ASERT target and bits
-  const currentTarget = calculateTargetLegacy(blockHeight, latestBlockTimestamp, anchor);
-  const currentBits = targetToBits(currentTarget);
-
-  // Predicted next block target (assuming it arrives in exactly 600s)
-  const nextTarget = calculateTargetLegacy(blockHeight + 1, latestBlockTimestamp + BLOCK_SECONDS_TARGET, anchor);
+  // With no candidate timestamp supplied, assume the next block takes its target interval.
+  const projectedTimestamp = candidateTimestamp ?? latestBlockTimestamp + BLOCK_SECONDS_TARGET;
+  const nextTarget = predictNextTarget(blockHeight, latestBlockTimestamp, projectedTimestamp, network);
+  // Legacy direct callers may omit recorded bits; the live API always supplies the header value.
+  const currentBits =
+    recordedBits === undefined ? targetToBits(nextTarget) : recordedBits.toString(16).padStart(8, '0');
+  const currentTarget = bitsToTarget(currentBits);
   const nextBits = targetToBits(nextTarget);
-
-  // Difficulty drift %: how much harder/easier the next block will be
-  // Higher target = easier mining = difficulty decrease (negative drift)
-  // Lower target = harder mining = difficulty increase (positive drift)
-  const difficultyDriftPercent = currentTarget !== 0 ? ((currentTarget - nextTarget) / currentTarget) * 100 : 0;
+  const difficultyDriftPercent = (currentTarget / bitsToTarget(nextBits) - 1) * 100;
 
   // Average block time from recent blocks (last ~8 blocks = 7 intervals)
   let timeAvgSecs = BLOCK_SECONDS_TARGET;
@@ -233,7 +245,13 @@ class DifficultyAdjustmentApi {
     // Use last ~8 blocks for average block time calculation (7 intervals)
     const recentBlocks = blocksCache.slice(-8).map((b) => ({ timestamp: b.timestamp }));
 
-    return calcAsertDifficultyAdjustment(blockHeight, latestBlock.timestamp, config.EXPLORER.NETWORK, recentBlocks);
+    return calcAsertDifficultyAdjustment(
+      blockHeight,
+      latestBlock.timestamp,
+      config.EXPLORER.NETWORK,
+      recentBlocks,
+      latestBlock.bits
+    );
   }
 }
 

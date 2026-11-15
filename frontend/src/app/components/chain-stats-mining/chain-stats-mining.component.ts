@@ -1,3 +1,4 @@
+import { getNextHalving } from '@app/shared/block-timing';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -5,7 +6,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import { StateService } from '@app/services/state.service';
 import { getDifficultyDriftPercentSinceAnchor } from '@app/shared/asert.utils';
 
@@ -46,6 +47,7 @@ export class ChainStatsMiningComponent implements OnInit {
       this.stateService.blocks$,
       this.stateService.difficultyAdjustment$,
     ]).pipe(
+      filter(([blocks, da]) => blocks.length > 0 && !!da),
       map(([blocks, da]) => {
         const maxHeight = blocks.reduce(
           (max, block) => Math.max(max, block.height),
@@ -60,7 +62,8 @@ export class ChainStatsMiningComponent implements OnInit {
           getDifficultyDriftPercentSinceAnchor(
             latestBlock.height,
             latestBlock.timestamp,
-            this.stateService.network
+            this.stateService.network,
+            latestBlock.bits
           );
 
         let colorDrift = 'var(--transparent-fg)';
@@ -88,9 +91,10 @@ export class ChainStatsMiningComponent implements OnInit {
           colorDiffChange = 'var(--red)';
         }
 
-        this.blocksUntilHalving = 210000 - (maxHeight % 210000);
+        const halving = getNextHalving(this.stateService.network, maxHeight);
+        this.blocksUntilHalving = halving.blocksRemaining;
         this.timeUntilHalving =
-          new Date().getTime() + this.blocksUntilHalving * 600000;
+          new Date().getTime() + halving.secondsRemaining * 1000;
         this.now = new Date().getTime();
 
         return {
