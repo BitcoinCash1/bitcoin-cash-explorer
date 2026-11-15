@@ -329,7 +329,6 @@ class PricesRepository {
       SELECT UNIX_TIMESTAMP(time) AS time
       FROM prices
       WHERE USD != -1
-      ORDER BY time
     `);
     if (!Array.isArray(times)) {
       return new Set();
