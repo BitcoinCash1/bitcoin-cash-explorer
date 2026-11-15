@@ -60,6 +60,7 @@ import { SighashFlag } from '@app/shared/transaction.utils';
 })
 export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   private readonly lifecycleTimers = new ComponentTimers();
+  private destroyed = false;
 
   network = '';
   showMoreIncrement = 1000;
@@ -898,8 +899,9 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     index: number
   ): void {
     const key = `${txIndex}-${type}-${index}`;
-    if (this.showTokenCopied[key]) return;
+    if (this.destroyed || this.showTokenCopied[key]) return;
     navigator.clipboard.writeText(tokenId).then(() => {
+      if (this.destroyed) return;
       this.showTokenCopied[key] = true;
       this.ref.markForCheck();
       this.lifecycleTimers.schedule(() => {
@@ -910,6 +912,7 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     this.lifecycleTimers.destroy();
 
     this.queryParamsSubscription?.unsubscribe();
