@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { StorageService } from '@app/services/storage.service';
@@ -12,6 +13,8 @@ import { StateService } from '@app/services/state.service';
   standalone: false,
 })
 export class FiatSelectorComponent implements OnInit {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   fiatForm: UntypedFormGroup;
   currencies = Object.entries(fiatCurrencies).sort((a: any, b: any) => {
     if (a[1].code < b[1].code) {
@@ -33,9 +36,11 @@ export class FiatSelectorComponent implements OnInit {
     this.fiatForm = this.formBuilder.group({
       fiat: ['USD'],
     });
-    this.stateService.fiatCurrency$.subscribe((fiat) => {
-      this.fiatForm.get('fiat')?.setValue(fiat);
-    });
+    this.lifecycleSubscriptions.add(
+      this.stateService.fiatCurrency$.subscribe((fiat) => {
+        this.fiatForm.get('fiat')?.setValue(fiat);
+      })
+    );
     if (!this.stateService.env.ADDITIONAL_CURRENCIES) {
       this.currencies = this.currencies.filter((currency: any) => {
         return ['AUD', 'CAD', 'EUR', 'JPY', 'GBP', 'CHF', 'USD'].includes(
@@ -49,5 +54,9 @@ export class FiatSelectorComponent implements OnInit {
     const newFiat = this.fiatForm.get('fiat')?.value;
     this.storageService.setValue('fiat-preference', newFiat);
     this.stateService.fiatCurrency$.next(newFiat);
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
   }
 }

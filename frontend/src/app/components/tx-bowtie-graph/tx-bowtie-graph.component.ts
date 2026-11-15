@@ -734,4 +734,8 @@ export class TxBowtieGraphComponent implements OnInit, OnChanges {
       this.pendingOutspendKey === `${txid}-${vindex}`
     );
   }
+
+  ngOnDestroy(): void {
+    this.outspendsSubscription?.unsubscribe();
+  }
 }

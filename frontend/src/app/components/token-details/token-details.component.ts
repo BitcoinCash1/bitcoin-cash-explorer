@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   ChangeDetectorRef,
   Component,
@@ -43,6 +44,8 @@ interface TokenInfo {
   standalone: false,
 })
 export class TokenDetailsComponent implements OnInit, OnDestroy {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   category: string;
   metadata: BcmrMetadata | null = null;
   isLoading = true;
@@ -67,36 +70,40 @@ export class TokenDetailsComponent implements OnInit, OnDestroy {
         this.network = network;
       });
 
-    this.route.paramMap
-      .pipe(
-        switchMap((params: ParamMap) => {
-          this.category = params.get('category') || '';
-          this.isLoading = true;
-          this.metadata = null;
+    this.lifecycleSubscriptions.add(
+      this.route.paramMap
+        .pipe(
+          switchMap((params: ParamMap) => {
+            this.category = params.get('category') || '';
+            this.isLoading = true;
+            this.metadata = null;
 
-          this.seoService.setTitle(`Cash Token: ${this.category}`);
-          this.seoService.setDescription(
-            `View details for Bitcoin Cash token ${this.category} including name, symbol, decimals, description and more.`
-          );
+            this.seoService.setTitle(`Cash Token: ${this.category}`);
+            this.seoService.setDescription(
+              `View details for Bitcoin Cash token ${this.category} including name, symbol, decimals, description and more.`
+            );
 
-          return this.bcmrService.getBcmrMetadata(this.category).pipe(
-            catchError((err) => {
-              this.error = err;
-              this.isLoading = false;
-              console.error('Error fetching token metadata:', err);
-              return of(null);
-            })
-          );
+            return this.bcmrService.getBcmrMetadata(this.category).pipe(
+              catchError((err) => {
+                this.error = err;
+                this.isLoading = false;
+                console.error('Error fetching token metadata:', err);
+                return of(null);
+              })
+            );
+          })
+        )
+        .subscribe((metadata: BcmrMetadata | null) => {
+          this.metadata = metadata;
+          this.isLoading = false;
+          this.changeDetectorRef.detectChanges();
         })
-      )
-      .subscribe((metadata: BcmrMetadata | null) => {
-        this.metadata = metadata;
-        this.isLoading = false;
-        this.changeDetectorRef.detectChanges();
-      });
+    );
   }
 
   ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
+
     this.networkChangeSubscription?.unsubscribe();
   }
 

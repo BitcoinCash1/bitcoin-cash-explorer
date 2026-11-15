@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { StorageService } from '@app/services/storage.service';
@@ -12,6 +13,8 @@ import { timezones } from '@app/app.constants';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TimezoneSelectorComponent implements OnInit {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   timezoneForm: UntypedFormGroup;
   timezones = timezones;
   localTimezoneOffset: string = '';
@@ -28,9 +31,11 @@ export class TimezoneSelectorComponent implements OnInit {
     this.timezoneForm = this.formBuilder.group({
       mode: ['local'],
     });
-    this.stateService.timezone$.subscribe((mode) => {
-      this.timezoneForm.get('mode')?.setValue(mode);
-    });
+    this.lifecycleSubscriptions.add(
+      this.stateService.timezone$.subscribe((mode) => {
+        this.timezoneForm.get('mode')?.setValue(mode);
+      })
+    );
   }
 
   changeMode() {
@@ -58,5 +63,9 @@ export class TimezoneSelectorComponent implements OnInit {
       (tz) => tz.offset !== this.localTimezoneOffset && tz.offset !== '+0'
     );
     this.localTimezoneName = timezone ? timezone.name : '';
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
   }
 }

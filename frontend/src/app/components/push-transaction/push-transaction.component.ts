@@ -75,10 +75,12 @@ export class PushTransactionComponent implements OnInit {
     );
     this.ogService.setManualOgImage('tx-push.jpg');
 
-    this.route.fragment.subscribe(async (fragment) => {
-      const fragmentParams = new URLSearchParams(fragment || '');
-      return this.handleColdcardPushTx(fragmentParams);
-    });
+    this.lifecycleSubscriptions.add(
+      this.route.fragment.subscribe(async (fragment) => {
+        const fragmentParams = new URLSearchParams(fragment || '');
+        return this.handleColdcardPushTx(fragmentParams);
+      })
+    );
   }
 
   async postTx(hex?: string): Promise<string> {

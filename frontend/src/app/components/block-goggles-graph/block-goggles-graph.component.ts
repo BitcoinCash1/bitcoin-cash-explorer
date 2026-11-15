@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -93,6 +94,8 @@ const INTERVAL_PRESETS: Record<string, number[]> = {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BlockGogglesGraphComponent implements OnInit {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   @Input() widget = false;
   @Input() right: number | string = 45;
   @Input() left: number | string = 75;
@@ -215,9 +218,11 @@ export class BlockGogglesGraphComponent implements OnInit {
     });
 
     if (!this.widget) {
-      this.route.fragment.subscribe((fragment) => {
-        this.parseFragment(fragment);
-      });
+      this.lifecycleSubscriptions.add(
+        this.route.fragment.subscribe((fragment) => {
+          this.parseFragment(fragment);
+        })
+      );
     }
 
     this.statsObservable$ = combineLatest([
@@ -886,5 +891,9 @@ export class BlockGogglesGraphComponent implements OnInit {
     this.chartOptions['title'] = prevTitle;
     options.yAxis.nameTextStyle = prevYAxisNameStyle;
     this.chartInstance.setOption(this.chartOptions);
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
   }
 }

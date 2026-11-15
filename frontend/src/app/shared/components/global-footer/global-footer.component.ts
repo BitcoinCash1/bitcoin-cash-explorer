@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   Input,
   ChangeDetectionStrategy,
@@ -29,6 +30,8 @@ import { EnterpriseService } from '@app/services/enterprise.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GlobalFooterComponent implements OnInit, OnDestroy, OnChanges {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   @Input() user: any = undefined;
 
   private destroy$: Subject<any> = new Subject<any>();
@@ -72,9 +75,11 @@ export class GlobalFooterComponent implements OnInit, OnDestroy, OnChanges {
     this.backendInfo$ = this.stateService.backendInfo$;
     this.servicesBackendInfo$ = this.stateService.servicesBackendInfo$;
     this.urlLanguage = this.languageService.getLanguageForUrl();
-    this.navigationService.subnetPaths.subscribe((paths) => {
-      this.networkPaths = paths;
-    });
+    this.lifecycleSubscriptions.add(
+      this.navigationService.subnetPaths.subscribe((paths) => {
+        this.networkPaths = paths;
+      })
+    );
     this.enterpriseInfo$ = this.enterpriseService.info$.subscribe((info) => {
       this.enterpriseInfo = info;
     });
@@ -100,6 +105,8 @@ export class GlobalFooterComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
+
     this.destroy$.next(true);
     this.destroy$.complete();
     this.urlSubscription.unsubscribe();

@@ -320,4 +320,8 @@ export class TreasuriesPieComponent implements OnChanges, OnInit {
   isEllipsisActive(e: HTMLElement): boolean {
     return e.offsetWidth < e.scrollWidth;
   }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
+  }
 }
