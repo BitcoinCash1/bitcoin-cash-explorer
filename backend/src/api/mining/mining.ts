@@ -112,7 +112,7 @@ class Mining {
    */
   public async $getHistoricalBlockFees(interval: string | null = null): Promise<any> {
     const shouldCache = this.shouldCache(interval);
-    const cacheKey = `mining:historical-block-fees-v2-${interval || 'all'}`;
+    const cacheKey = `mining:historical-block-fees-${interval || 'all'}`;
 
     if (shouldCache) {
       try {
