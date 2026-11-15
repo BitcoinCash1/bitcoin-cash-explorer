@@ -155,11 +155,14 @@ export class AsertDeviationGraphPageComponent implements OnInit {
           '3y': 1095,
           '4y': 1460,
         };
-        const toTimestamp = Math.floor(Date.now() / 1000);
+        // Share cache keys across visitors within a minute. Round outwards so
+        // the requested rolling window is covered rather than truncating it.
+        const minuteStart = Math.floor(Date.now() / 60000) * 60;
+        const toTimestamp = timespan === 'all' ? undefined : minuteStart + 60;
         const fromTimestamp =
           timespan === 'all'
             ? undefined
-            : toTimestamp - (days[timespan] ?? 30) * 86400;
+            : minuteStart - (days[timespan] ?? 30) * 86400;
         return this.apiService.getAsertBlocks$(
           getAsertAnchorHeight(this.stateService.network),
           fromTimestamp,
