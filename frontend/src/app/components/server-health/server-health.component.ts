@@ -203,4 +203,8 @@ export class ServerHealthComponent implements OnInit {
     const hue = (index / (sortedVersions.length - 1)) * 120;
     return `hsl(${hue}, 70%, 35%)`;
   }
+
+  ngOnDestroy(): void {
+    if (this.interval !== undefined) window.clearInterval(this.interval);
+  }
 }

@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   Component,
   OnInit,
@@ -88,6 +89,8 @@ const DUPLICATE_TX_BLOCKS: Record<string, [number, number]> = {
   standalone: false,
 })
 export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   network = '';
   tx: Transaction;
   txId: string;
@@ -197,9 +200,11 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.websocketService.want(['blocks', 'mempool-blocks']);
-    this.stateService.networkChanged$.subscribe((network) => {
-      this.network = network;
-    });
+    this.lifecycleSubscriptions.add(
+      this.stateService.networkChanged$.subscribe((network) => {
+        this.network = network;
+      })
+    );
 
     this.accelerateCtaType =
       (this.storageService.getValue('accel-cta-type') as 'alert' | 'button') ??
@@ -929,6 +934,8 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.lifecycleSubscriptions.unsubscribe();
+
     this.subscription.unsubscribe();
     this.transactionTimesSubscription.unsubscribe();
     // this.fetchCachedTxSubscription.unsubscribe();

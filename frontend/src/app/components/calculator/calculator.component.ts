@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -31,6 +32,8 @@ const MAX_SATOSHI_SUPPLY = MAX_BCH_SUPPLY * 100_000_000;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CalculatorComponent implements OnInit {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   dateModel: NgbDateStruct;
   todayDateModel: NgbDateStruct;
 
@@ -110,98 +113,104 @@ export class CalculatorComponent implements OnInit {
       shareReplay({ bufferSize: 1, refCount: true })
     );
 
-    combineLatest([
-      this.price$,
-      this.form
-        .get('fiat')
-        .valueChanges.pipe(tap(() => (this.lastInput = 'fiat'))),
-    ]).subscribe(([price, value]) => {
-      if (this.lastInput !== 'fiat') {
-        return;
-      }
-      this.currentPrice = price;
-      const maxFiat = price * MAX_BCH_SUPPLY;
-      const isMaxSupply = value >= maxFiat;
-      this.isMaxSupply = isMaxSupply;
-      if (isMaxSupply) {
-        value = maxFiat;
+    this.lifecycleSubscriptions.add(
+      combineLatest([
+        this.price$,
         this.form
           .get('fiat')
-          .setValue(this.formatFiat(value), { emitEvent: false });
-      }
-      let rate = parseFloat((value / price).toFixed(8));
-      if (rate >= MAX_BCH_SUPPLY) {
-        rate = MAX_BCH_SUPPLY;
-      }
-      const satsRate = Math.round(rate * 100_000_000);
-      if (isNaN(value)) {
-        return;
-      }
-      this.form
-        .get('bitcoin')
-        .setValue(isMaxSupply ? MAX_BCH_SUPPLY.toString() : rate.toFixed(8), {
-          emitEvent: false,
-        });
-      this.form.get('satoshis').setValue(satsRate, { emitEvent: false });
-    });
+          .valueChanges.pipe(tap(() => (this.lastInput = 'fiat'))),
+      ]).subscribe(([price, value]) => {
+        if (this.lastInput !== 'fiat') {
+          return;
+        }
+        this.currentPrice = price;
+        const maxFiat = price * MAX_BCH_SUPPLY;
+        const isMaxSupply = value >= maxFiat;
+        this.isMaxSupply = isMaxSupply;
+        if (isMaxSupply) {
+          value = maxFiat;
+          this.form
+            .get('fiat')
+            .setValue(this.formatFiat(value), { emitEvent: false });
+        }
+        let rate = parseFloat((value / price).toFixed(8));
+        if (rate >= MAX_BCH_SUPPLY) {
+          rate = MAX_BCH_SUPPLY;
+        }
+        const satsRate = Math.round(rate * 100_000_000);
+        if (isNaN(value)) {
+          return;
+        }
+        this.form
+          .get('bitcoin')
+          .setValue(isMaxSupply ? MAX_BCH_SUPPLY.toString() : rate.toFixed(8), {
+            emitEvent: false,
+          });
+        this.form.get('satoshis').setValue(satsRate, { emitEvent: false });
+      })
+    );
 
-    combineLatest([
-      this.price$,
-      this.form
-        .get('bitcoin')
-        .valueChanges.pipe(tap(() => (this.lastInput = 'bitcoin'))),
-    ]).subscribe(([price, value]) => {
-      if (this.lastInput !== 'bitcoin') {
-        return;
-      }
-      this.currentPrice = price;
-      const isMaxSupply = parseFloat(value) >= MAX_BCH_SUPPLY;
-      this.isMaxSupply = isMaxSupply;
-      const rate = parseFloat((value * price).toFixed(8));
-      if (isNaN(value)) {
-        return;
-      }
-      this.form
-        .get('fiat')
-        .setValue(this.formatFiat(rate), { emitEvent: false });
-      this.form
-        .get('satoshis')
-        .setValue(
-          Math.min(Math.round(value * 100_000_000), MAX_SATOSHI_SUPPLY),
-          { emitEvent: false }
-        );
-    });
+    this.lifecycleSubscriptions.add(
+      combineLatest([
+        this.price$,
+        this.form
+          .get('bitcoin')
+          .valueChanges.pipe(tap(() => (this.lastInput = 'bitcoin'))),
+      ]).subscribe(([price, value]) => {
+        if (this.lastInput !== 'bitcoin') {
+          return;
+        }
+        this.currentPrice = price;
+        const isMaxSupply = parseFloat(value) >= MAX_BCH_SUPPLY;
+        this.isMaxSupply = isMaxSupply;
+        const rate = parseFloat((value * price).toFixed(8));
+        if (isNaN(value)) {
+          return;
+        }
+        this.form
+          .get('fiat')
+          .setValue(this.formatFiat(rate), { emitEvent: false });
+        this.form
+          .get('satoshis')
+          .setValue(
+            Math.min(Math.round(value * 100_000_000), MAX_SATOSHI_SUPPLY),
+            { emitEvent: false }
+          );
+      })
+    );
 
-    combineLatest([
-      this.price$,
-      this.form
-        .get('satoshis')
-        .valueChanges.pipe(tap(() => (this.lastInput = 'satoshis'))),
-    ]).subscribe(([price, value]) => {
-      if (this.lastInput !== 'satoshis') {
-        return;
-      }
-      this.currentPrice = price;
-      let bitcoinValue = value / 100_000_000;
-      const isMaxSupply = bitcoinValue >= MAX_BCH_SUPPLY;
-      this.isMaxSupply = isMaxSupply;
-      if (isMaxSupply) {
-        bitcoinValue = MAX_BCH_SUPPLY;
-        value = MAX_SATOSHI_SUPPLY;
-        this.form.get('satoshis').setValue(value, { emitEvent: false });
-      }
-      const rate = parseFloat((bitcoinValue * price).toFixed(8));
-      const bitcoinRate = isMaxSupply
-        ? MAX_BCH_SUPPLY.toString()
-        : bitcoinValue.toFixed(8);
-      if (isNaN(value)) {
-        return;
-      }
-      this.form
-        .get('fiat')
-        .setValue(this.formatFiat(rate), { emitEvent: false });
-      this.form.get('bitcoin').setValue(bitcoinRate, { emitEvent: false });
-    });
+    this.lifecycleSubscriptions.add(
+      combineLatest([
+        this.price$,
+        this.form
+          .get('satoshis')
+          .valueChanges.pipe(tap(() => (this.lastInput = 'satoshis'))),
+      ]).subscribe(([price, value]) => {
+        if (this.lastInput !== 'satoshis') {
+          return;
+        }
+        this.currentPrice = price;
+        let bitcoinValue = value / 100_000_000;
+        const isMaxSupply = bitcoinValue >= MAX_BCH_SUPPLY;
+        this.isMaxSupply = isMaxSupply;
+        if (isMaxSupply) {
+          bitcoinValue = MAX_BCH_SUPPLY;
+          value = MAX_SATOSHI_SUPPLY;
+          this.form.get('satoshis').setValue(value, { emitEvent: false });
+        }
+        const rate = parseFloat((bitcoinValue * price).toFixed(8));
+        const bitcoinRate = isMaxSupply
+          ? MAX_BCH_SUPPLY.toString()
+          : bitcoinValue.toFixed(8);
+        if (isNaN(value)) {
+          return;
+        }
+        this.form
+          .get('fiat')
+          .setValue(this.formatFiat(rate), { emitEvent: false });
+        this.form.get('bitcoin').setValue(bitcoinRate, { emitEvent: false });
+      })
+    );
 
     // Default form with 1 BCH
     this.form.get('bitcoin').setValue(1, { emitEvent: true });
@@ -340,5 +349,9 @@ export class CalculatorComponent implements OnInit {
       price: { [this.currentCurrency]: this.currentPrice } as any,
       exchangeRates: {} as any,
     };
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
   }
 }

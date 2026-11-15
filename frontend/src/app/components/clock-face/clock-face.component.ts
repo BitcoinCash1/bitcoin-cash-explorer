@@ -73,6 +73,7 @@ export class ClockFaceComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.blocksSubscription?.unsubscribe();
     if (this.timeSubscription) {
       this.timeSubscription.unsubscribe();
     }

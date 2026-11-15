@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import {
   UntypedFormBuilder,
@@ -20,6 +21,8 @@ import { TxResult } from '@interfaces/node-api.interface';
   standalone: false,
 })
 export class PushTransactionComponent implements OnInit {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   pushTxForm: UntypedFormGroup;
   error: string = '';
   txId: string = '';
@@ -56,8 +59,10 @@ export class PushTransactionComponent implements OnInit {
       allowhighfees: [false],
     });
 
-    this.stateService.networkChanged$.subscribe(
-      (network) => (this.network = network)
+    this.lifecycleSubscriptions.add(
+      this.stateService.networkChanged$.subscribe(
+        (network) => (this.network = network)
+      )
     );
 
     this.seoService.setTitle(
@@ -228,5 +233,9 @@ export class PushTransactionComponent implements OnInit {
     return Array.from(arr)
       .map((byte) => byte.toString(16).padStart(2, '0'))
       .join('');
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
   }
 }
