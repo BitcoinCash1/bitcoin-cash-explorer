@@ -216,56 +216,28 @@ class BlocksSummariesRepository {
         return null;
       }
 
-      return this.getFeePercentiles(rows[0].transactions);
+      const transactions = JSON.parse(rows[0].transactions);
+      if (transactions === null) {
+        return null;
+      }
+
+      transactions.shift(); // Ignore coinbase
+      transactions.sort((a: any, b: any) => a.fee - b.fee);
+      const fees = transactions.map((t: any) => t.fee);
+
+      return [
+        fees[0] ?? 0, // min
+        fees[Math.max(0, Math.floor(fees.length * 0.1) - 1)] ?? 0, // 10th
+        fees[Math.max(0, Math.floor(fees.length * 0.25) - 1)] ?? 0, // 25th
+        fees[Math.max(0, Math.floor(fees.length * 0.5) - 1)] ?? 0, // median
+        fees[Math.max(0, Math.floor(fees.length * 0.75) - 1)] ?? 0, // 75th
+        fees[Math.max(0, Math.floor(fees.length * 0.9) - 1)] ?? 0, // 90th
+        fees[fees.length - 1] ?? 0, // max
+      ];
     } catch (e) {
       logger.err(`Cannot get block summaries transactions. Reason: ` + (e instanceof Error ? e.message : e));
       return null;
     }
-  }
-
-  /** Batch only the summaries needed to repair missing block fee fields. */
-  public async $getFeePercentilesByBlockIds(ids: string[]): Promise<Map<string, number[] | null>> {
-    if (!ids.length) return new Map();
-    const uniqueIds = [...new Set(ids)];
-    const result = new Map<string, number[] | null>();
-    try {
-      const [rows]: any[] = await DB.query(
-        `SELECT id, transactions FROM blocks_summaries WHERE id IN (${uniqueIds.map(() => '?').join(',')})`,
-        uniqueIds
-      );
-      for (const row of rows || []) {
-        try {
-          result.set(row.id, this.getFeePercentiles(row.transactions));
-        } catch (e) {
-          logger.err(`Cannot get block summaries transactions. Reason: ${e instanceof Error ? e.message : e}`);
-          result.set(row.id, null);
-        }
-      }
-    } catch (e) {
-      logger.err(`Cannot get block summaries transactions. Reason: ${e instanceof Error ? e.message : e}`);
-    }
-    return result;
-  }
-
-  private getFeePercentiles(transactionsJson: string): number[] | null {
-    const transactions = JSON.parse(transactionsJson);
-    if (transactions === null) {
-      return null;
-    }
-
-    transactions.shift(); // Ignore coinbase
-    transactions.sort((a: any, b: any) => a.fee - b.fee);
-    const fees = transactions.map((t: any) => t.fee);
-
-    return [
-      fees[0] ?? 0, // min
-      fees[Math.max(0, Math.floor(fees.length * 0.1) - 1)] ?? 0, // 10th
-      fees[Math.max(0, Math.floor(fees.length * 0.25) - 1)] ?? 0, // 25th
-      fees[Math.max(0, Math.floor(fees.length * 0.5) - 1)] ?? 0, // median
-      fees[Math.max(0, Math.floor(fees.length * 0.75) - 1)] ?? 0, // 75th
-      fees[Math.max(0, Math.floor(fees.length * 0.9) - 1)] ?? 0, // 90th
-      fees[fees.length - 1] ?? 0, // max
-    ];
   }
 
   public async $isSummaryIndexed(id: string): Promise<boolean> {
