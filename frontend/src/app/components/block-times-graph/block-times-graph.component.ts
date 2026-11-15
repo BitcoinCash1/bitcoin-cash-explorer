@@ -194,6 +194,10 @@ export class BlockTimesGraphComponent implements OnInit {
   prepareChartOptions(data) {
     const smaData = this.computeSma(data.timeDiffs, 144);
     const medianData = this.computeMedianLine(data.timeDiffs);
+    const targetData = this.targetTimeData(data.timeDiffs);
+    const hasSingleTimestamp =
+      targetData.length > 0 &&
+      targetData[0][0] === targetData[targetData.length - 1][0];
 
     let title: object;
     if (data.timeDiffs.length === 0) {
@@ -348,8 +352,22 @@ export class BlockTimesGraphComponent implements OnInit {
                 symbol: 'none',
                 silent: true,
                 tooltip: { show: false },
-                data: this.targetTimeData(data.timeDiffs),
+                data: targetData,
                 lineStyle: { color: 'var(--transparent-fg)', width: 2 },
+                // Coincident points have no visible line. A horizontal guide spans
+                // the plot without inventing timestamps or changing its time extent.
+                markLine: {
+                  silent: true,
+                  symbol: 'none',
+                  lineStyle: {
+                    color: 'var(--transparent-fg)',
+                    type: 'solid',
+                    width: 2,
+                  },
+                  label: { show: false },
+                  // Explicitly clear the fallback when a later response has a time span.
+                  data: hasSingleTimestamp ? [{ yAxis: targetData[0][1] }] : [],
+                },
               },
               {
                 zlevel: 2,

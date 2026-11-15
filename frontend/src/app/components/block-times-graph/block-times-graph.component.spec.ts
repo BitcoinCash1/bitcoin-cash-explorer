@@ -75,3 +75,87 @@ it('keeps the tooltip on raw block times and SMA after adding a target series', 
   expect(html).toContain('SMA');
   expect(html).not.toContain('Target');
 });
+
+function targetChart(network: string) {
+  const component = Object.create(BlockTimesGraphComponent.prototype) as any;
+  component.stateService = { network };
+  component.locale = 'en-US';
+  component.isMobile = () => false;
+  component.timespan = '24h';
+  return component;
+}
+
+describe('zero-span target guide', () => {
+  it.each([
+    ['mainnet', activation + 60000, 10],
+    ['chipnet', activation - 60000, 10],
+    ['chipnet', activation + 60000, 1],
+  ])(
+    'shows the appropriate horizontal guide for one %s sample',
+    (network, timestamp, target) => {
+      const component = targetChart(network as string);
+      component.prepareChartOptions({ timeDiffs: [[timestamp, 5, 332452]] });
+      const series = component.chartOptions.series[1];
+      expect(series.markLine.data).toEqual([{ yAxis: target }]);
+      expect(series.markLine).toMatchObject({
+        symbol: 'none',
+        label: { show: false },
+        silent: true,
+      });
+      expect(series.data).toEqual([
+        [timestamp, target],
+        [timestamp, target],
+      ]);
+    }
+  );
+
+  it('also shows the guide when multiple samples have the same timestamp', () => {
+    const component = targetChart('chipnet');
+    component.prepareChartOptions({
+      timeDiffs: [
+        [activation + 60000, 5, 332451],
+        [activation + 60000, 2, 332452],
+      ],
+    });
+    expect(component.chartOptions.series[1].markLine.data).toEqual([
+      { yAxis: 1 },
+    ]);
+  });
+
+  it('keeps empty charts free of a target guide', () => {
+    const component = targetChart('chipnet');
+    component.prepareChartOptions({ timeDiffs: [] });
+    expect(component.chartOptions.series).toEqual([]);
+  });
+
+  it('clears the fallback for a time span and restores it for another single sample', () => {
+    const component = targetChart('chipnet');
+    component.prepareChartOptions({
+      timeDiffs: [[activation + 60000, 5, 332452]],
+    });
+    expect(component.chartOptions.series[1].markLine.data).toEqual([
+      { yAxis: 1 },
+    ]);
+    component.prepareChartOptions({
+      timeDiffs: [
+        [activation - 1000, 10, 332450],
+        [activation + 1000, 1, 332451],
+      ],
+    });
+    expect(component.chartOptions.series[1]).toMatchObject({
+      step: 'end',
+      markLine: { data: [] },
+      data: [
+        [activation - 1000, 10],
+        [activation, 1],
+        [activation + 1000, 1],
+      ],
+    });
+    component.prepareChartOptions({
+      timeDiffs: [[activation - 60000, 5, 332449]],
+    });
+    expect(component.chartOptions.series[1].markLine.data).toEqual([
+      { yAxis: 10 },
+    ]);
+  });
+});
