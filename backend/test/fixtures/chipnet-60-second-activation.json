@@ -1,0 +1,47 @@
+{
+  "nodeVersion": "29.2.1",
+  "binaryVersion": "v29.2.1-3e6827e95",
+  "chipRevision": "2b15bb825adf84d82aab2100fc1cc38479d59666",
+  "blocks": [
+    {
+      "height": 332449,
+      "hash": "000000000000191d2bf64d546a6b8896eeeb7970335735b08ddb60274d59f4cd",
+      "time": 1794745967,
+      "bits": "1a1bdac4",
+      "ticks": 199469400,
+      "target_time": 600,
+      "next_target_time": 600,
+      "subsidyBch": 25.0
+    },
+    {
+      "height": 332450,
+      "hash": "00000000000015fed5ba357ba4baa1f9a283e9446b6ebc12de63152421764051",
+      "time": 1794745996,
+      "bits": "1a1a55f5",
+      "ticks": 199470000,
+      "target_time": 600,
+      "next_target_time": 60,
+      "subsidyBch": 25.0
+    },
+    {
+      "height": 332451,
+      "hash": "00000000000ecc7187034ddaa4327af300c23fd57bfd2557af6ca2392a022671",
+      "time": 1794746156,
+      "bits": "1d00ffff",
+      "ticks": 199470060,
+      "target_time": 60,
+      "next_target_time": 60,
+      "subsidyBch": 2.5
+    },
+    {
+      "height": 332452,
+      "hash": "0000000000009fe7783d823df0c48677c553fa8ac0f2c590e1fa837ba01e7c74",
+      "time": 1794746219,
+      "bits": "1b00f080",
+      "ticks": 199470120,
+      "target_time": 60,
+      "next_target_time": 60,
+      "subsidyBch": 2.5
+    }
+  ]
+}

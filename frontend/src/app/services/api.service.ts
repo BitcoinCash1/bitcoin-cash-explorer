@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
 import {
+  HistoricalBlockFees,
   OptimizedMempoolStats,
   AddressInformation,
   ITranslators,
@@ -378,12 +379,22 @@ export class ApiService {
     );
   }
 
-  getAsertBlocks$(fromHeight: number): Observable<{ h: number; t: number }[]> {
+  getAsertBlocks$(
+    fromHeight: number,
+    fromTimestamp?: number,
+    toTimestamp?: number
+  ): Observable<{ h: number; t: number }[]> {
     return this.httpClient.get<{ h: number; t: number }[]>(
       this.apiBaseUrl +
         this.apiBasePath +
         '/api/v1/mining/blocks/asert/' +
-        fromHeight
+        fromHeight,
+      {
+        params: {
+          ...(fromTimestamp === undefined ? {} : { fromTimestamp }),
+          ...(toTimestamp === undefined ? {} : { toTimestamp }),
+        },
+      }
     );
   }
 
@@ -456,8 +467,10 @@ export class ApiService {
     );
   }
 
-  getHistoricalBlockFees$(interval: string | undefined): Observable<any> {
-    return this.httpClient.get<any[]>(
+  getHistoricalBlockFees$(
+    interval: string | undefined
+  ): Observable<HttpResponse<HistoricalBlockFees[]>> {
+    return this.httpClient.get<HistoricalBlockFees[]>(
       this.apiBaseUrl +
         this.apiBasePath +
         `/api/v1/mining/blocks/fees` +
@@ -466,8 +479,11 @@ export class ApiService {
     );
   }
 
-  getBlockFeesFromTimespan$(from: number, to: number): Observable<any> {
-    return this.httpClient.get<any[]>(
+  getBlockFeesFromTimespan$(
+    from: number,
+    to: number
+  ): Observable<HttpResponse<HistoricalBlockFees[]>> {
+    return this.httpClient.get<HistoricalBlockFees[]>(
       this.apiBaseUrl +
         this.apiBasePath +
         `/api/v1/mining/blocks/fees?from=${from}&to=${to}`,

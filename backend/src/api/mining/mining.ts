@@ -707,7 +707,11 @@ class Mining {
       let toTimestamp = Math.round(lastMidnight.getTime());
       const hashrates: any[] = [];
 
-      const totalDayIndexed = (await BlocksRepository.$blockCount(null, null)) / 144;
+      // The loop indexes every eligible day, including empty days and already indexed buckets.
+      const totalDayIndexed = Math.max(
+        0,
+        Math.ceil((toTimestamp - Math.max(genesisTimestamp, oldestConsecutiveBlockTimestamp)) / 86400000)
+      );
       let indexedThisRun = 0;
       let totalIndexed = 0;
       let newlyIndexed = 0;
@@ -1433,9 +1437,15 @@ class Mining {
   /**
    * Get minimal ASERT blocks data (height and timestamp) from a given height to current tip
    * @param fromHeight Starting block height (must be >= the ASERT anchor height for the active network)
+   * @param fromTimestamp Optional inclusive lower timestamp bound, in Unix seconds
+   * @param toTimestamp Optional inclusive upper timestamp bound, in Unix seconds
    * @returns Array of objects with abbreviated keys: {h: height, t: timestamp}
    */
-  public async $getAsertBlocks(fromHeight: number): Promise<{ h: number; t: number }[]> {
+  public async $getAsertBlocks(
+    fromHeight: number,
+    fromTimestamp?: number,
+    toTimestamp?: number
+  ): Promise<{ h: number; t: number }[]> {
     const asertAnchorHeight = getAsertAnchorHeight(config.EXPLORER.NETWORK);
     const DOWNSAMPLE_THRESHOLD = 5000;
 
@@ -1445,7 +1455,8 @@ class Mining {
     }
 
     const currentTipHeight = blocks.getCurrentBlockHeight();
-    const cacheKey = `mining:asert-blocks-${fromHeight}`;
+    // Keep exact API ranges separate; the chart supplies shared minute bounds for cache reuse.
+    const cacheKey = `mining:asert-blocks-${fromHeight}-${fromTimestamp ?? ''}-${toTimestamp ?? ''}`;
 
     // Check Valkey cache first
     if (config.VALKEY.ENABLED) {
@@ -1460,7 +1471,12 @@ class Mining {
     }
 
     // Query database for minimal block data
-    const blocksData = await BlocksRepository.$getMinimalBlocksBetweenHeights(fromHeight, currentTipHeight);
+    const blocksData = await BlocksRepository.$getMinimalBlocksBetweenHeights(
+      fromHeight,
+      currentTipHeight,
+      fromTimestamp,
+      toTimestamp
+    );
 
     // Transform to abbreviated keys
     const transformedData = blocksData.map((block) => ({

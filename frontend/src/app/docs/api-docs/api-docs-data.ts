@@ -1372,7 +1372,8 @@ export const restApiDocsData = [
     fragment: 'get-difficulty-adjustment',
     title: 'GET Difficulty Adjustment',
     description: {
-      default: 'Returns details about difficulty adjustment.',
+      default:
+        'Returns difficulty adjustment details. currentBits contains the recorded tip header bits; nextBits predicts its child assuming arrival one network target interval after the tip. difficultyDriftPercent compares that prediction with the recorded difficulty. ASERT predictions may differ from actual test-network minimum-difficulty headers.',
     },
     urlString: '/v1/difficulty-adjustment',
     showConditions: bitcoinNetworks,

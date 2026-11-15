@@ -21,7 +21,7 @@
         <p
           class="card-text"
           i18n-ngbTooltip="mining.pools-luck-desc"
-          ngbTooltip="The overall luck of all mining pools over the past week. A luck bigger than 100% means the average block time for the current epoch is less than 10 minutes."
+          ngbTooltip="The overall luck of all mining pools over the past week. A luck bigger than 100% means the average block time for the current epoch is less than the network target interval."
           placement="bottom"
         >
           {{ miningStats["minersLuck"] }}%

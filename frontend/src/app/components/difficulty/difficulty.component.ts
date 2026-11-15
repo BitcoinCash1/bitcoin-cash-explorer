@@ -1,3 +1,4 @@
+import { getNextHalving } from '@app/shared/block-timing';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -7,7 +8,7 @@ import {
   OnInit,
 } from '@angular/core';
 import { combineLatest, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { filter, map } from 'rxjs/operators';
 import {
   getScheduleOffsetSeconds,
   getDifficultyDriftPercentSinceAnchor,
@@ -22,6 +23,7 @@ interface AsertStatus {
   colorDrift: string;
   timeAvg: number;
   blocksUntilHalving: number;
+  halvingProgressPercent: number;
   timeUntilHalving: number;
   diffChangePercent: number;
   diffChangeBlocks: number;
@@ -49,6 +51,7 @@ export class DifficultyComponent implements OnInit {
   now: number = Date.now();
   nextSubsidy: number;
   asertData: AsertPoint[] = [];
+  private asertNetwork: string;
   private asertRawData: AsertPoint[] = [];
 
   get asertAnchorHeight(): number {
@@ -70,7 +73,13 @@ export class DifficultyComponent implements OnInit {
       this.stateService.blocks$,
       this.stateService.difficultyAdjustment$,
     ]).pipe(
+      filter(([blocks, da]) => blocks.length > 0 && !!da),
       map(([blocks, da]) => {
+        // Heights can overlap across networks; never merge their rolling ASERT histories.
+        if (this.asertNetwork !== this.stateService.network) {
+          this.asertRawData = [];
+          this.asertNetwork = this.stateService.network;
+        }
         const maxHeight = blocks.reduce(
           (max, block) => Math.max(max, block.height),
           0
@@ -81,19 +90,21 @@ export class DifficultyComponent implements OnInit {
         );
 
         this.now = new Date().getTime();
-        this.nextSubsidy = getNextBlockSubsidy(maxHeight);
+        const halving = getNextHalving(this.stateService.network, maxHeight);
+        this.nextSubsidy = halving.subsidySats;
 
         // Halving
-        const blocksUntilHalving = 210000 - (maxHeight % 210000);
+        const blocksUntilHalving = halving.blocksRemaining;
         const timeUntilHalving =
-          new Date().getTime() + blocksUntilHalving * 600000;
+          new Date().getTime() + halving.secondsRemaining * 1000;
 
         // ASERT difficulty drift %
         const difficultyDriftPercentSinceAnchor =
           getDifficultyDriftPercentSinceAnchor(
             latestBlock.height,
             latestBlock.timestamp,
-            this.stateService.network
+            this.stateService.network,
+            latestBlock.bits
           );
 
         // Color for drift indicator
@@ -159,6 +170,7 @@ export class DifficultyComponent implements OnInit {
           colorDrift,
           timeAvg: da.timeAvg,
           blocksUntilHalving,
+          halvingProgressPercent: halving.progressPercent,
           timeUntilHalving,
           diffChangePercent,
           diffChangeBlocks,
@@ -173,17 +185,4 @@ export class DifficultyComponent implements OnInit {
     this.userSelectedMode = true;
     return false;
   }
-}
-
-function getNextBlockSubsidy(height: number): number {
-  const halvings = Math.floor(height / 210_000) + 1;
-  // Force block reward to zero when right shift is undefined.
-  if (halvings >= 64) {
-    return 0;
-  }
-
-  let subsidy = BigInt(50 * 100_000_000);
-  // Subsidy is cut in half every 210,000 blocks which will occur approximately every 4 years.
-  subsidy >>= BigInt(halvings);
-  return Number(subsidy);
 }

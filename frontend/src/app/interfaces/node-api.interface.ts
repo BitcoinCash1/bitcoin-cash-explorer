@@ -12,8 +12,8 @@ export interface OptimizedMempoolStats {
 export interface DifficultyAdjustment {
   scheduleOffsetSeconds: number;
   difficultyDriftPercent: number;
-  currentBits: string;
-  nextBits: string;
+  currentBits: string; // Recorded tip header bits.
+  nextBits: string; // Child prediction assuming one target interval after the tip.
   timeAvg: number;
 }
 
@@ -302,4 +302,13 @@ export interface StaleHistoryEntry {
 export interface StaleHistoryPage {
   entries: StaleHistoryEntry[];
   nextCursor: string | null;
+}
+
+/** Per-bucket averages; subsidy is scheduled issuance, in satoshis. */
+export interface HistoricalBlockFees {
+  avgHeight: number;
+  timestamp: number;
+  avgFees: number;
+  avgSubsidySats: number;
+  USD: number | null;
 }

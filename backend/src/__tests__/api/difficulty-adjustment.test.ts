@@ -1,4 +1,5 @@
-import { calcBitsDifference, calcAsertDifficultyAdjustment } from '../../api/difficulty-adjustment';
+import fixture from '../../../test/fixtures/chipnet-60-second-activation.json';
+import { calcBitsDifference, calcAsertDifficultyAdjustment, predictNextTarget } from '../../api/difficulty-adjustment';
 
 describe('Mempool Difficulty Adjustment', () => {
   const recentBlocksFor = (blockTimestamp: number) => [
@@ -101,4 +102,73 @@ describe('Mempool Difficulty Adjustment', () => {
     expect(() => calcBitsDifference(0x00800000, 0x1a000800)).toThrow(/Invalid bits/);
     expect(() => calcBitsDifference(0x1c000000, 0x1a000800)).toThrow(/Invalid bits/);
   });
+});
+
+describe('chipnet ASERT cadence transition', () => {
+  const anchorTimestamp = 1605451779;
+  const anchorTicks = 16844 * 600;
+  const powLimit = 65535 * 2 ** 208;
+  const timestampAt = (ticks: number) => anchorTimestamp + ticks - anchorTicks + 600 - 14400;
+
+  test('uses the child interval at the first short block while retaining parent ticks', () => {
+    const timestamp = timestampAt(332450 * 600);
+    const longTarget = predictNextTarget(332450, timestamp, timestamp + 60, 'testnet4');
+    const shortTarget = predictNextTarget(332450, timestamp, timestamp + 60, 'chipnet');
+    expect(shortTarget / longTarget).toBeCloseTo(10, 10);
+    const before = timestampAt(332449 * 600);
+    expect(predictNextTarget(332449, before, before + 600, 'chipnet')).toBe(
+      predictNextTarget(332449, before, before + 600, 'testnet4')
+    );
+  });
+
+  test('keeps the post-activation target steady at ideal 60-second pace', () => {
+    const timestamp = timestampAt(332450 * 600);
+    const target = predictNextTarget(332450, timestamp, timestamp + 60, 'chipnet');
+    expect(predictNextTarget(332451, timestamp + 60, timestamp + 120, 'chipnet')).toBe(target);
+    expect(predictNextTarget(332452, timestamp + 120, timestamp + 180, 'chipnet')).toBe(target);
+  });
+
+  test('applies minimum difficulty strictly after twice the child interval', () => {
+    const timestamp = timestampAt(332450 * 600);
+    expect(predictNextTarget(332450, timestamp, timestamp + 120, 'chipnet')).toBeLessThan(powLimit);
+    expect(predictNextTarget(332450, timestamp, timestamp + 121, 'chipnet')).toBe(powLimit);
+    const before = timestampAt(332449 * 600);
+    expect(predictNextTarget(332449, before, before + 1200, 'chipnet')).toBeLessThan(powLimit);
+    expect(predictNextTarget(332449, before, before + 1201, 'chipnet')).toBe(powLimit);
+    expect(predictNextTarget(332450, timestamp, timestamp + 121, 'testnet4')).toBeLessThan(powLimit);
+    expect(predictNextTarget(332450, timestamp, timestamp + 1201, 'testnet4')).toBe(powLimit);
+    expect(predictNextTarget(332450, timestamp, timestamp + 1201, 'scalenet')).toBe(powLimit);
+  });
+
+  test('clamps predicted targets to the consensus minimum and proof-of-work limit', () => {
+    expect(predictNextTarget(332450, 0, 60, 'chipnet')).toBe(1);
+    expect(predictNextTarget(332450, 2000000000, 2000000060, 'chipnet')).toBe(powLimit);
+  });
+
+  test('preserves the recorded header bits and calculates drift from that target', () => {
+    const timestamp = timestampAt(332450 * 600);
+    const result = calcAsertDifficultyAdjustment(332450, timestamp, 'chipnet', [], 0x1c00ffff, timestamp + 121);
+    expect(result.currentBits).toBe('1c00ffff');
+    expect(result.nextBits).toBe('1d00ffff');
+    expect(result.difficultyDriftPercent).toBeCloseTo((1 / 256 - 1) * 100, 10);
+    expect(result.timeAvg).toBe(60000);
+  });
+
+  test('measures schedule position in cumulative ticks after activation', () => {
+    const timestamp = anchorTimestamp + (332450 * 600 + 120) - anchorTicks;
+    const result = calcAsertDifficultyAdjustment(332452, timestamp, 'chipnet', []);
+    expect(result.scheduleOffsetSeconds).toBe(0);
+    expect(result.timeAvg).toBe(60000);
+  });
+});
+
+test.each(fixture.blocks.slice(1))('predicts captured child compact target at height $height', (child) => {
+  const parent = fixture.blocks.find((block) => block.height === child.height - 1)!;
+  const target = predictNextTarget(parent.height, parent.time, child.time, 'chipnet');
+  const exponent = parseInt(child.bits.slice(0, 2), 16);
+  const recordedTarget = parseInt(child.bits.slice(2), 16) * 2 ** ((exponent - 3) * 8);
+  // Compact rounding and floating-point ASERT approximation are bounded here;
+  // the explorer does not validate proof of work.
+  expect(Math.abs(target / recordedTarget - 1)).toBeLessThan(0.0001);
+  if (child.height === 332451) expect(target).toBe(65535 * 2 ** 208);
 });

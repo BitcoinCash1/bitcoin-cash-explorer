@@ -601,8 +601,30 @@ class MiningRoutes {
         return;
       }
 
-      // Get ASERT blocks data
-      const asertBlocks = await mining.$getAsertBlocks(blockHeight);
+      // Optional inclusive Unix-second bounds preserve existing height-only callers.
+      // Reject arrays, partial numbers and timestamps beyond year 9999.
+      const bounds = [req.query.fromTimestamp, req.query.toTimestamp];
+      if (
+        bounds.some(
+          (value) =>
+            value !== undefined &&
+            (typeof value !== 'string' ||
+              !/^\d+$/.test(value) ||
+              !Number.isSafeInteger(Number(value)) ||
+              Number(value) > 253402300799)
+        )
+      ) {
+        handleError(req, res, 400, 'Invalid timestamp parameter');
+        return;
+      }
+      const fromTimestamp = req.query.fromTimestamp === undefined ? undefined : Number(req.query.fromTimestamp);
+      const toTimestamp = req.query.toTimestamp === undefined ? undefined : Number(req.query.toTimestamp);
+      if (fromTimestamp !== undefined && toTimestamp !== undefined && fromTimestamp > toTimestamp) {
+        handleError(req, res, 400, 'fromTimestamp must not exceed toTimestamp');
+        return;
+      }
+      // Get ASERT history; filter timestamps before downsampling the selected range.
+      const asertBlocks = await mining.$getAsertBlocks(blockHeight, fromTimestamp, toTimestamp);
 
       // Set cache headers
       res.header('Pragma', 'public');

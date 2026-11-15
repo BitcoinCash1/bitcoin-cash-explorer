@@ -1,3 +1,4 @@
+import { CHIPNET_ACTIVATION_TIMESTAMP } from '@app/shared/block-timing';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -8,8 +9,15 @@ import {
   HostBinding,
 } from '@angular/core';
 import { EChartsOption } from '@app/graphs/echarts';
-import { Observable } from 'rxjs';
-import { map, share, startWith, switchMap, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import {
+  catchError,
+  map,
+  share,
+  startWith,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 import { ApiService } from '@app/services/api.service';
 import { SeoService } from '@app/services/seo.service';
 import { formatNumber } from '@angular/common';
@@ -20,8 +28,6 @@ import { ActivatedRoute } from '@angular/router';
 import { download, formatterXAxis } from '@app/shared/graphs.utils';
 import { StateService } from '@app/services/state.service';
 import { EChartsInitOpts } from 'echarts/types/dist/echarts';
-
-const TARGET_BLOCK_TIME_SECONDS = 600; // BCH target block interval; update if consensus changes
 
 @Component({
   selector: 'app-block-times-graph',
@@ -60,6 +66,7 @@ export class BlockTimesGraphComponent implements OnInit {
   timespan = '';
   chartInstance: any = undefined;
   private currentMedian = 0;
+  private blockCount = 0;
 
   constructor(
     @Inject(LOCALE_ID) public locale: string,
@@ -132,13 +139,52 @@ export class BlockTimesGraphComponent implements OnInit {
               this.prepareChartOptions({ timeDiffs });
               this.isLoading = false;
             }),
-            map((response) => ({
-              blockCount: parseInt(response.headers.get('x-total-count'), 10),
-            }))
+            map((response) => {
+              this.blockCount = parseInt(
+                response.headers.get('x-total-count'),
+                10
+              );
+              return { blockCount: this.blockCount };
+            }),
+            catchError(() => {
+              this.isLoading = false;
+              this.prepareChartOptions({ timeDiffs: [] });
+              this.chartOptions['title'] = {
+                text: $localize`Error loading data.`,
+                left: 'center',
+                top: 'center',
+                textStyle: { color: 'var(--fg)', fontSize: 15 },
+              };
+              return of({ blockCount: this.blockCount });
+            })
           );
         }),
         share()
       );
+  }
+
+  // Place the target transition at the actual activation timestamp; averaged
+  // bucket timestamps would move it. Chart coordinates use milliseconds and minutes.
+  private targetTimeData(points: number[][]): number[][] {
+    if (!points.length) return [];
+    const start = Math.min(...points.map((point) => point[0]));
+    const end = Math.max(...points.map((point) => point[0]));
+    const activation = CHIPNET_ACTIVATION_TIMESTAMP * 1000;
+    if (this.stateService.network !== 'chipnet' || end < activation)
+      return [
+        [start, 10],
+        [end, 10],
+      ];
+    if (start >= activation)
+      return [
+        [start, 1],
+        [end, 1],
+      ];
+    return [
+      [start, 10],
+      [activation, 1],
+      [end, 1],
+    ];
   }
 
   private computeSma(timeDiffs: number[][], window: number): number[][] {
@@ -171,6 +217,10 @@ export class BlockTimesGraphComponent implements OnInit {
   prepareChartOptions(data) {
     const smaData = this.computeSma(data.timeDiffs, 144);
     const medianData = this.computeMedianLine(data.timeDiffs);
+    const targetData = this.targetTimeData(data.timeDiffs);
+    const hasSingleTimestamp =
+      targetData.length > 0 &&
+      targetData[0][0] === targetData[targetData.length - 1][0];
 
     let title: object;
     if (data.timeDiffs.length === 0) {
@@ -247,7 +297,8 @@ export class BlockTimesGraphComponent implements OnInit {
           )}</b><br>`;
 
           for (const tick of ticks) {
-            if ([0, 1].includes(tick.seriesIndex)) {
+            // Raw block times and SMA; the intervening target series is only a guide.
+            if ([0, 2].includes(tick.seriesIndex)) {
               tooltip += `${tick.marker} ${tick.seriesName}: ${formatNumber(
                 tick.data[1],
                 this.locale,
@@ -316,26 +367,29 @@ export class BlockTimesGraphComponent implements OnInit {
                 lineStyle: {
                   width: 1.5,
                 },
+              },
+              {
+                name: $localize`Target block time`,
+                type: 'line',
+                step: 'end',
+                symbol: 'none',
+                silent: true,
+                tooltip: { show: false },
+                data: targetData,
+                lineStyle: { color: 'var(--transparent-fg)', width: 2 },
+                // Coincident points have no visible line. A horizontal guide spans
+                // the plot without inventing timestamps or changing its time extent.
                 markLine: {
                   silent: true,
                   symbol: 'none',
                   lineStyle: {
-                    type: 'solid',
                     color: 'var(--transparent-fg)',
-                    opacity: 1,
+                    type: 'solid',
                     width: 2,
                   },
-                  data: [
-                    {
-                      yAxis: TARGET_BLOCK_TIME_SECONDS / 60,
-                      label: {
-                        position: 'end',
-                        show: true,
-                        color: 'var(--fg)',
-                        formatter: `${TARGET_BLOCK_TIME_SECONDS / 60} min`,
-                      },
-                    },
-                  ],
+                  label: { show: false },
+                  // Explicitly clear the fallback when a later response has a time span.
+                  data: hasSingleTimestamp ? [{ yAxis: targetData[0][1] }] : [],
                 },
               },
               {

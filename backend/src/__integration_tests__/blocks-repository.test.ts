@@ -1,4 +1,5 @@
 import DB from '../database';
+import config from '../config';
 import BlocksRepository from '../repositories/BlocksRepository';
 import { setupTestDatabase, waitForDatabase, cleanupTestData, insertTestPool, insertTestBlock } from './test-helpers';
 
@@ -23,6 +24,61 @@ describe('BlocksRepository Integration Tests', () => {
 
   afterAll(async () => {
     await cleanupTestData();
+  });
+
+  test('filters canonical timestamps inclusively without assuming timestamp order follows height', async () => {
+    for (const [index, seconds] of [200, 100, 300, 200].entries()) {
+      await insertTestBlock({
+        height: 332449 + index,
+        hash: (index + 1).toString(16).padStart(64, '0'),
+        blockTimestamp: new Date(1700000000000 + seconds * 1000),
+        poolId: defaultPoolId,
+      });
+    }
+    await DB.query('UPDATE blocks SET stale = 1 WHERE height = 332452');
+    expect(await BlocksRepository.$getMinimalBlocksBetweenHeights(332449, 332452, 1700000200, 1700000300)).toEqual([
+      { height: 332449, timestamp: 1700000200 },
+      { height: 332451, timestamp: 1700000300 },
+    ]);
+    expect(await BlocksRepository.$getMinimalBlocksBetweenHeights(332449, 332452, undefined, 1700000100)).toEqual([
+      { height: 332450, timestamp: 1700000100 },
+    ]);
+    expect(await BlocksRepository.$getMinimalBlocksBetweenHeights(332449, 332452, 1700000301)).toEqual([]);
+  });
+
+  test('averages each scheduled subsidy across chipnet activation and halving boundaries', async () => {
+    const originalNetwork = config.EXPLORER.NETWORK;
+    try {
+      config.EXPLORER.NETWORK = 'chipnet';
+      for (const [index, height] of [332450, 332451, 1207940, 1207941].entries()) {
+        await insertTestBlock({
+          height,
+          hash: (index + 1).toString(16).padStart(64, '0'),
+          blockTimestamp: new Date(1700000000000),
+          poolId: defaultPoolId,
+        });
+      }
+      // Deliberately underclaim the coinbase: the chart represents scheduled subsidy.
+      await DB.query('UPDATE blocks SET reward = 1');
+      const rows = await BlocksRepository.$getHistoricalBlockFees(3600, null);
+      expect(rows).toHaveLength(1);
+      expect(Number(rows[0].avgSubsidySats)).toBe(781250000);
+      config.EXPLORER.NETWORK = 'mainnet';
+      const mainnet = await BlocksRepository.$getHistoricalBlockFees(3600, null);
+      expect(Number(mainnet[0].avgSubsidySats)).toBe(1328125000);
+      await DB.query('DELETE FROM blocks');
+      config.EXPLORER.NETWORK = 'chipnet';
+      await insertTestBlock({
+        height: 200000000,
+        hash: 'f'.repeat(64),
+        blockTimestamp: new Date(1700000000000),
+        poolId: defaultPoolId,
+      });
+      const exhausted = await BlocksRepository.$getHistoricalBlockFees(3600, null);
+      expect(Number(exhausted[0].avgSubsidySats)).toBe(0);
+    } finally {
+      config.EXPLORER.NETWORK = originalNetwork;
+    }
   });
 
   test('should insert and retrieve a block', async () => {

@@ -142,65 +142,33 @@ export class AsertDeviationGraphPageComponent implements OnInit {
 
   private fetchBlocksForTimespan(timespan: string) {
     return this.stateService.blocks$.pipe(
-      map((blocks) => {
-        const maxHeight = blocks.reduce(
-          (max, block) => Math.max(max, block.height),
-          0
+      switchMap(() => {
+        const days: Record<string, number> = {
+          '24h': 1,
+          '3d': 3,
+          '1w': 7,
+          '1m': 30,
+          '3m': 90,
+          '6m': 180,
+          '1y': 365,
+          '2y': 730,
+          '3y': 1095,
+          '4y': 1460,
+        };
+        // Share cache keys across visitors within a minute. Round outwards so
+        // the requested rolling window is covered rather than truncating it.
+        const minuteStart = Math.floor(Date.now() / 60000) * 60;
+        const toTimestamp = timespan === 'all' ? undefined : minuteStart + 60;
+        const fromTimestamp =
+          timespan === 'all'
+            ? undefined
+            : minuteStart - (days[timespan] ?? 30) * 86400;
+        return this.apiService.getAsertBlocks$(
+          getAsertAnchorHeight(this.stateService.network),
+          fromTimestamp,
+          toTimestamp
         );
-        return maxHeight;
-      }),
-      switchMap((currentHeight) => {
-        const fromHeight = this.calculateFromHeight(timespan, currentHeight);
-        return this.apiService.getAsertBlocks$(fromHeight);
       })
-    );
-  }
-
-  private calculateFromHeight(timespan: string, currentHeight: number): number {
-    const blocksPerDay = 144; // Just an approximation (the actual number can varies a lot)
-    let blocksBack: number;
-
-    switch (timespan) {
-      case '24h':
-        blocksBack = blocksPerDay;
-        break;
-      case '3d':
-        blocksBack = blocksPerDay * 3;
-        break;
-      case '1w':
-        blocksBack = blocksPerDay * 7;
-        break;
-      case '1m':
-        blocksBack = blocksPerDay * 30;
-        break;
-      case '3m':
-        blocksBack = blocksPerDay * 90;
-        break;
-      case '6m':
-        blocksBack = blocksPerDay * 180;
-        break;
-      case '1y':
-        blocksBack = blocksPerDay * 365;
-        break;
-      case '2y':
-        blocksBack = blocksPerDay * 730;
-        break;
-      case '3y':
-        blocksBack = blocksPerDay * 1095;
-        break;
-      case '4y':
-        blocksBack = blocksPerDay * 1460;
-        break;
-      case 'all':
-        return getAsertAnchorHeight(this.stateService.network);
-      default:
-        blocksBack = blocksPerDay * 30;
-    }
-
-    const fromHeight = currentHeight - blocksBack;
-    return Math.max(
-      fromHeight,
-      getAsertAnchorHeight(this.stateService.network)
     );
   }
 
