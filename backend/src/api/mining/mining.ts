@@ -1437,6 +1437,8 @@ class Mining {
   /**
    * Get minimal ASERT blocks data (height and timestamp) from a given height to current tip
    * @param fromHeight Starting block height (must be >= the ASERT anchor height for the active network)
+   * @param fromTimestamp Optional inclusive lower timestamp bound, in Unix seconds
+   * @param toTimestamp Optional inclusive upper timestamp bound, in Unix seconds
    * @returns Array of objects with abbreviated keys: {h: height, t: timestamp}
    */
   public async $getAsertBlocks(
@@ -1453,6 +1455,7 @@ class Mining {
     }
 
     const currentTipHeight = blocks.getCurrentBlockHeight();
+    // Keep exact API ranges separate; the chart supplies shared minute bounds for cache reuse.
     const cacheKey = `mining:asert-blocks-${fromHeight}-${fromTimestamp ?? ''}-${toTimestamp ?? ''}`;
 
     // Check Valkey cache first

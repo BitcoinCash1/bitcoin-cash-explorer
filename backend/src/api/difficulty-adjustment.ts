@@ -91,6 +91,7 @@ export function predictNextTarget(
   candidateTimestamp: number,
   network: string
 ): number {
+  // The parent may still have a 600-second interval when its child switches to 60 seconds.
   const interval = getTargetBlockSeconds(network, parentHeight + 1);
   const powLimit = bitsToTarget('1d00ffff');
   if (
@@ -213,6 +214,7 @@ export function calcAsertDifficultyAdjustment(
     recordedBits === undefined ? targetToBits(nextTarget) : recordedBits.toString(16).padStart(8, '0');
   const currentTarget = bitsToTarget(currentBits);
   const nextBits = targetToBits(nextTarget);
+  // Difficulty is inversely proportional to target: a smaller child target means an increase.
   const difficultyDriftPercent = (currentTarget / bitsToTarget(nextBits) - 1) * 100;
 
   // Average block time from recent blocks (last ~8 blocks = 7 intervals)

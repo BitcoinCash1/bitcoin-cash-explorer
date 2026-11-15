@@ -879,6 +879,8 @@ class BlocksRepository {
       const shortBlock =
         config.EXPLORER.NETWORK === 'chipnet' ? `blocks.height >= ${CHIPNET_FIRST_SHORT_BLOCK}` : 'FALSE';
       const ticks = `IF(${shortBlock}, ${lastLongHeight * 600} + (blocks.height - ${lastLongHeight}) * 60, blocks.height * 600)`;
+      // Mirror the policy helper: round ticks up to 600-tick chunks before selecting the era.
+      // Calculate each block's integer subsidy before averaging, including mixed-era buckets.
       const halvings = `FLOOR(FLOOR((${ticks} + 599) / 600) / 210000)`;
       const subsidy = `IF(${halvings} >= 64, 0, FLOOR(FLOOR(5000000000 / POW(2, ${halvings})) * IF(${shortBlock}, 60, 600) / 600))`;
       let query = `SELECT

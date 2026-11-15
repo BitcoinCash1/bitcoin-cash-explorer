@@ -601,6 +601,8 @@ class MiningRoutes {
         return;
       }
 
+      // Optional inclusive Unix-second bounds preserve existing height-only callers.
+      // Reject arrays, partial numbers and timestamps beyond year 9999.
       const bounds = [req.query.fromTimestamp, req.query.toTimestamp];
       if (
         bounds.some(
@@ -621,6 +623,7 @@ class MiningRoutes {
         handleError(req, res, 400, 'fromTimestamp must not exceed toTimestamp');
         return;
       }
+      // Get ASERT history; filter timestamps before downsampling the selected range.
       const asertBlocks = await mining.$getAsertBlocks(blockHeight, fromTimestamp, toTimestamp);
 
       // Set cache headers
