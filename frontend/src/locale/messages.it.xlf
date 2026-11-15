@@ -1562,7 +1562,7 @@
             </trans-unit>
             <trans-unit id="6553907839051185757">
                 <source xml:space="preserve">Target block time</source>
-                <target xml:space="preserve">Target block time</target>
+                <target xml:space="preserve">Tempo obiettivo per blocco</target>
             </trans-unit>
             <trans-unit id="6557284236206797364">
                 <source xml:space="preserve"> No indexed stale blocks have been recorded for this network. </source>
@@ -2030,7 +2030,7 @@
             </trans-unit>
             <trans-unit id="8116862204370405696">
                 <source xml:space="preserve">The overall luck of all mining pools over the past week. A luck bigger than 100% means the average block time for the current epoch is less than the network target interval.</source>
-                <target xml:space="preserve">The overall luck of all mining pools over the past week. A luck bigger than 100% means the average block time for the current epoch is less than the network target interval.</target>
+                <target xml:space="preserve">La fortuna complessiva di tutti i pool di mining nell’ultima settimana. Una fortuna superiore al 100% significa che il tempo medio per blocco nell’epoca corrente è inferiore all’intervallo obiettivo della rete.</target>
             </trans-unit>
             <trans-unit id="8132128899357611687">
                 <source xml:space="preserve"> Transaction Fees </source>

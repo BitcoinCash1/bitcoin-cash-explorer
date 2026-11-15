@@ -1561,7 +1561,7 @@
             </trans-unit>
             <trans-unit id="6553907839051185757">
                 <source xml:space="preserve">Target block time</source>
-                <target xml:space="preserve">Target block time</target>
+                <target xml:space="preserve">목표 블록 생성 시간</target>
             </trans-unit>
             <trans-unit id="6557284236206797364">
                 <source xml:space="preserve"> No indexed stale blocks have been recorded for this network. </source>
@@ -2029,7 +2029,7 @@
             </trans-unit>
             <trans-unit id="8116862204370405696">
                 <source xml:space="preserve">The overall luck of all mining pools over the past week. A luck bigger than 100% means the average block time for the current epoch is less than the network target interval.</source>
-                <target xml:space="preserve">The overall luck of all mining pools over the past week. A luck bigger than 100% means the average block time for the current epoch is less than the network target interval.</target>
+                <target xml:space="preserve">지난 한 주 동안 모든 채굴 풀의 종합적인 운을 나타냅니다. 운이 100%보다 높으면 현재 에포크의 평균 블록 생성 시간이 네트워크의 목표 간격보다 짧다는 뜻입니다.</target>
             </trans-unit>
             <trans-unit id="8132128899357611687">
                 <source xml:space="preserve"> Transaction Fees </source>
