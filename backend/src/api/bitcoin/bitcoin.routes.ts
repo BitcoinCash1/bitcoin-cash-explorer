@@ -1,3 +1,4 @@
+import { parseNonnegativeInteger } from '../../utils/api';
 import { safeErrorDetails } from '../../utils/error-details';
 import { Application, Request, Response } from 'express';
 import * as bitcoinjs from 'bitcoinjs-lib';
@@ -586,13 +587,14 @@ class BitcoinRoutes {
         return;
       }
 
-      const from = parseInt(req.params.from, 10);
-      if (!req.params.from || from < 0) {
+      const from = parseNonnegativeInteger(req.params.from);
+      if (from === null) {
         handleError(req, res, 400, `Parameter 'from' must be a block height (integer)`);
         return;
       }
-      const to = req.params.to === undefined ? await bitcoinApi.$getBlockHeightTip() : parseInt(req.params.to, 10);
-      if (to < 0) {
+      const to =
+        req.params.to === undefined ? await bitcoinApi.$getBlockHeightTip() : parseNonnegativeInteger(req.params.to);
+      if (to === null) {
         handleError(req, res, 400, `Parameter 'to' must be a block height (integer)`);
         return;
       }

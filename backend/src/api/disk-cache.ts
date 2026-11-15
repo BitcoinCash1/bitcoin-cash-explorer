@@ -60,7 +60,7 @@ class DiskCache {
 
       Common.shuffleArray(mempoolArray);
 
-      const chunkSize = Math.floor(mempoolArray.length / DiskCache.CHUNK_FILES);
+      const chunkSize = Math.ceil(mempoolArray.length / DiskCache.CHUNK_FILES);
 
       if (sync) {
         fs.writeFileSync(
