@@ -125,6 +125,8 @@ export function getDifficultyDriftPercentSinceAnchor(
 ): number {
   const anchor = getAsertAnchor(network);
   const anchorTarget = bitsToTarget(anchor.bits);
+  // Live widgets supply recorded bits, including minimum-difficulty exceptions.
+  // Callers without a header retain the bounded ASERT estimate for its child.
   const currentTarget =
     recordedBits === undefined
       ? Math.min(

@@ -140,6 +140,8 @@ export class BlockTimesGraphComponent implements OnInit {
       );
   }
 
+  // Place the target transition at the actual activation timestamp; averaged
+  // bucket timestamps would move it. Chart coordinates use milliseconds and minutes.
   private targetTimeData(points: number[][]): number[][] {
     if (!points.length) return [];
     const start = Math.min(...points.map((point) => point[0]));
@@ -268,6 +270,7 @@ export class BlockTimesGraphComponent implements OnInit {
           )}</b><br>`;
 
           for (const tick of ticks) {
+            // Raw block times and SMA; the intervening target series is only a guide.
             if ([0, 2].includes(tick.seriesIndex)) {
               tooltip += `${tick.marker} ${tick.seriesName}: ${formatNumber(
                 tick.data[1],

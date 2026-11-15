@@ -448,6 +448,7 @@ export class HashrateChartComponent implements OnInit {
               {
                 type: 'value',
                 position: 'right',
+                // A mixed-interval history has no single difficulty/hashrate conversion.
                 scale: true,
                 axisLabel: {
                   color: 'rgb(110, 112, 121)',

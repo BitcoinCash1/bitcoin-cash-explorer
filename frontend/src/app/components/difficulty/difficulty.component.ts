@@ -75,6 +75,7 @@ export class DifficultyComponent implements OnInit {
     ]).pipe(
       filter(([blocks, da]) => blocks.length > 0 && !!da),
       map(([blocks, da]) => {
+        // Heights can overlap across networks; never merge their rolling ASERT histories.
         if (this.asertNetwork !== this.stateService.network) {
           this.asertRawData = [];
           this.asertNetwork = this.stateService.network;

@@ -14,6 +14,7 @@ export function getTargetBlockSeconds(network: string, height: number): number {
     : 600;
 }
 
+/** Cumulative ideal seconds, including this block; earlier intervals stay unchanged. */
 export function getBlockTicks(network: string, height: number): number {
   return network === 'chipnet' && height >= CHIPNET_FIRST_SHORT_BLOCK
     ? LAST_LONG_HEIGHT * 600 + (height - LAST_LONG_HEIGHT) * 60
@@ -21,6 +22,8 @@ export function getBlockTicks(network: string, height: number): number {
 }
 
 export function getBlockSubsidySats(network: string, height: number): number {
+  // Short blocks belong to the next complete 600-tick chunk. Rounding down
+  // would delay a halving by nine one-minute blocks. Keep all rounding in satoshis.
   const chunks = (BigInt(getBlockTicks(network, height)) + 599n) / 600n;
   const halvings = chunks / 210000n;
   if (halvings >= 64n) return 0;
@@ -53,6 +56,7 @@ export function getNextHalving(
       : nextChunk;
   return {
     height: halvingHeight,
+    // Use the same chunk boundary as subsidy, so progress resets at the halving.
     progressPercent: (Math.ceil(ticks / 600) % 210000) / 2100,
     blocksRemaining: halvingHeight - height,
     secondsRemaining: getBlockTicks(network, halvingHeight) - ticks,
