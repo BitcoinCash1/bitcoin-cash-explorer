@@ -160,6 +160,17 @@ class BlocksAuditRepositories {
     }
   }
 
+  public async $getBlockAuditScoresByHashes(hashes: string[]): Promise<Map<string, AuditScore>> {
+    if (!hashes.length) return new Map();
+    const uniqueHashes = [...new Set(hashes)];
+    const [rows]: any[] = await DB.query(
+      `SELECT hash, match_rate AS matchRate, expected_fees AS expectedFees, expected_size AS expectedSize
+       FROM blocks_audits WHERE hash IN (${uniqueHashes.map(() => '?').join(',')})`,
+      uniqueHashes
+    );
+    return new Map(rows.map((row) => [row.hash, row]));
+  }
+
   public async $getBlockAuditScore(hash: string): Promise<AuditScore> {
     try {
       const [rows]: any[] = await DB.query(

@@ -411,7 +411,8 @@ class PriceUpdater {
     const prices = this.getEmptyPricesObj();
     let insertedCount = 0;
     for (const price of pricesJson) {
-      if (existingPriceTimes.includes(price['ct'])) {
+      const time = Number(price['ct']);
+      if (existingPriceTimes.has(time)) {
         continue;
       }
 
@@ -421,7 +422,8 @@ class PriceUpdater {
         break;
       }
       prices.USD = price['c'];
-      await PricesRepository.$savePrices(price['ct'], prices);
+      await PricesRepository.$savePrices(time, prices);
+      if (prices.USD !== -1) existingPriceTimes.add(time);
       ++insertedCount;
     }
     if (insertedCount > 0) {
@@ -432,12 +434,12 @@ class PriceUpdater {
 
     // Insert Kraken weekly prices
     logger.debug('Insert kraken historical prices');
-    await new KrakenApi().$insertHistoricalPrice();
+    await new KrakenApi().$insertHistoricalPrice(existingPriceTimes);
 
     // Insert missing recent hourly prices
     logger.debug('Insert missing recent hourly prices');
-    await this.$insertMissingRecentPrices('day');
-    await this.$insertMissingRecentPrices('hour');
+    await this.$insertMissingRecentPrices('day', existingPriceTimes);
+    await this.$insertMissingRecentPrices('hour', existingPriceTimes);
 
     this.historyInserted = true;
     this.lastHistoricalRun = Math.round(new Date().getTime() / 1000);
@@ -448,8 +450,8 @@ class PriceUpdater {
    * Find missing hourly prices and insert them in the database
    * It has a limited backward range and it depends on which API are available
    */
-  private async $insertMissingRecentPrices(type: 'hour' | 'day'): Promise<void> {
-    const existingPriceTimes = await PricesRepository.$getPricesTimes();
+  private async $insertMissingRecentPrices(type: 'hour' | 'day', existingPriceTimes?: Set<number>): Promise<void> {
+    existingPriceTimes ??= await PricesRepository.$getPricesTimes();
 
     logger.debug(
       `Fetching ${
@@ -479,7 +481,7 @@ class PriceUpdater {
     const grouped = {};
     for (const historicalEntry of historicalPrices) {
       for (const time in historicalEntry) {
-        if (existingPriceTimes.includes(parseInt(time, 10))) {
+        if (existingPriceTimes.has(parseInt(time, 10))) {
           continue;
         }
 
@@ -514,7 +516,9 @@ class PriceUpdater {
         }
         prices[currency] = Math.round(getMedian(grouped[time][currency]));
       }
-      await PricesRepository.$savePrices(parseInt(time, 10), prices);
+      const timestamp = parseInt(time, 10);
+      await PricesRepository.$savePrices(timestamp, prices);
+      if (prices.USD !== -1) existingPriceTimes.add(timestamp);
       ++totalInserted;
     }
 

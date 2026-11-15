@@ -324,17 +324,16 @@ class PricesRepository {
     return oldestRow[0] ? oldestRow[0].time : 0;
   }
 
-  public async $getPricesTimes(): Promise<number[]> {
+  public async $getPricesTimes(): Promise<Set<number>> {
     const [times] = await DB.query(`
       SELECT UNIX_TIMESTAMP(time) AS time
       FROM prices
       WHERE USD != -1
-      ORDER BY time
     `);
     if (!Array.isArray(times)) {
-      return [];
+      return new Set();
     }
-    return times.map((time) => time.time);
+    return new Set(times.map((time) => Number(time.time)));
   }
 
   public async $getPricesTimesWithMissingFields(): Promise<
