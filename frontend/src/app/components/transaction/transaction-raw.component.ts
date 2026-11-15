@@ -1,3 +1,4 @@
+import { ComponentTimers } from '@app/shared/component-timers';
 import {
   Component,
   OnInit,
@@ -46,6 +47,8 @@ import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pip
   standalone: false,
 })
 export class TransactionRawComponent implements OnInit, OnDestroy {
+  private readonly lifecycleTimers = new ComponentTimers();
+
   pushTxForm: UntypedFormGroup;
   rawHexTransaction: string;
   psbt: string;
@@ -372,17 +375,17 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
   setGraphSize(): void {
     this.isMobile = window.innerWidth < 850;
     if (this.graphContainer?.nativeElement && this.stateService.isBrowser) {
-      setTimeout(() => {
+      this.lifecycleTimers.schedule(() => {
         if (this.graphContainer?.nativeElement?.clientWidth) {
           this.graphWidth = this.graphContainer.nativeElement.clientWidth;
         } else {
-          setTimeout(() => {
+          this.lifecycleTimers.schedule(() => {
             this.setGraphSize();
           }, 1);
         }
       }, 1);
     } else {
-      setTimeout(() => {
+      this.lifecycleTimers.schedule(() => {
         this.setGraphSize();
       }, 1);
     }
@@ -441,6 +444,8 @@ export class TransactionRawComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.lifecycleTimers.destroy();
+
     this.mempoolBlocksSubscription?.unsubscribe();
     this.flowPrefSubscription?.unsubscribe();
     this.stateService.markBlock$.next({});

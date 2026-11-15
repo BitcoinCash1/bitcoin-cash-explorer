@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -32,6 +33,8 @@ import { EChartsInitOpts } from 'echarts/types/dist/echarts';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PoolRankingComponent implements OnInit {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   @Input() height: number = 300;
   @Input() widget = false;
 
@@ -88,27 +91,29 @@ export class PoolRankingComponent implements OnInit {
       this.stateService.env.MINING_DASHBOARD === true;
     this.auditAvailable = this.indexingAvailable && this.stateService.env.AUDIT;
 
-    this.route.fragment.subscribe((fragment) => {
-      if (
-        [
-          '24h',
-          '3d',
-          '1w',
-          '1m',
-          '3m',
-          '6m',
-          '1y',
-          '2y',
-          '3y',
-          '4y',
-          'all',
-        ].indexOf(fragment) > -1
-      ) {
-        this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
-          emitEvent: false,
-        });
-      }
-    });
+    this.lifecycleSubscriptions.add(
+      this.route.fragment.subscribe((fragment) => {
+        if (
+          [
+            '24h',
+            '3d',
+            '1w',
+            '1m',
+            '3m',
+            '6m',
+            '1y',
+            '2y',
+            '3y',
+            '4y',
+            'all',
+          ].indexOf(fragment) > -1
+        ) {
+          this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
+            emitEvent: false,
+          });
+        }
+      })
+    );
 
     this.miningStatsObservable$ = merge(
       this.radioGroupForm.get('dateSpan').valueChanges.pipe(
@@ -386,5 +391,9 @@ export class PoolRankingComponent implements OnInit {
 
   isEllipsisActive(e) {
     return e.offsetWidth < e.scrollWidth;
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
   }
 }

@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   Component,
   OnInit,
@@ -71,6 +72,8 @@ interface AuditStatus {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TrackerComponent implements OnInit, OnDestroy {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   network = '';
   tx: Transaction;
   txId: string;
@@ -159,9 +162,11 @@ export class TrackerComponent implements OnInit, OnDestroy {
     });
 
     this.websocketService.want(['blocks', 'mempool-blocks']);
-    this.stateService.networkChanged$.subscribe((network) => {
-      this.network = network;
-    });
+    this.lifecycleSubscriptions.add(
+      this.stateService.networkChanged$.subscribe((network) => {
+        this.network = network;
+      })
+    );
 
     this.da$ = this.stateService.difficultyAdjustment$.pipe(
       tap(() => {
@@ -370,30 +375,32 @@ export class TrackerComponent implements OnInit, OnDestroy {
         }
       );
 
-    this.stateService.txConfirmed$.subscribe(([txConfirmed, block]) => {
-      if (
-        txConfirmed &&
-        this.tx &&
-        !this.tx.status.confirmed &&
-        txConfirmed === this.tx.txid
-      ) {
-        this.tx.status = {
-          confirmed: true,
-          block_height: block.height,
-          block_hash: block.id,
-          block_time: block.timestamp,
-        };
-        this.txChanged$.next(true);
-        this.trackerStage = 'confirmed';
-        this.stateService.markBlock$.next({ blockHeight: block.height });
-        this.audioService.playSound('magic');
-        this.fetchMiningInfo$.next({
-          hash: block.id,
-          height: block.height,
-          txid: this.tx.txid,
-        });
-      }
-    });
+    this.lifecycleSubscriptions.add(
+      this.stateService.txConfirmed$.subscribe(([txConfirmed, block]) => {
+        if (
+          txConfirmed &&
+          this.tx &&
+          !this.tx.status.confirmed &&
+          txConfirmed === this.tx.txid
+        ) {
+          this.tx.status = {
+            confirmed: true,
+            block_height: block.height,
+            block_hash: block.id,
+            block_time: block.timestamp,
+          };
+          this.txChanged$.next(true);
+          this.trackerStage = 'confirmed';
+          this.stateService.markBlock$.next({ blockHeight: block.height });
+          this.audioService.playSound('magic');
+          this.fetchMiningInfo$.next({
+            hash: block.id,
+            height: block.height,
+            txid: this.tx.txid,
+          });
+        }
+      })
+    );
 
     this.mempoolBlocksSubscription = this.stateService.mempoolBlocks$.subscribe(
       (mempoolBlocks) => {
@@ -568,6 +575,8 @@ export class TrackerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.lifecycleSubscriptions.unsubscribe();
+
     this.subscription.unsubscribe();
     this.mempoolBlocksSubscription.unsubscribe();
     this.mempoolPositionSubscription.unsubscribe();

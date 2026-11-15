@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -41,6 +42,8 @@ import { EChartsOption } from '@app/graphs/echarts';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AsertDeviationGraphPageComponent implements OnInit {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   @Input() right: number | string = 45;
   @Input() left: number | string = 75;
 
@@ -89,27 +92,29 @@ export class AsertDeviationGraphPageComponent implements OnInit {
       this.miningWindowPreference
     );
 
-    this.route.fragment.subscribe((fragment) => {
-      if (
-        [
-          '24h',
-          '3d',
-          '1w',
-          '1m',
-          '3m',
-          '6m',
-          '1y',
-          '2y',
-          '3y',
-          '4y',
-          'all',
-        ].indexOf(fragment) > -1
-      ) {
-        this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
-          emitEvent: false,
-        });
-      }
-    });
+    this.lifecycleSubscriptions.add(
+      this.route.fragment.subscribe((fragment) => {
+        if (
+          [
+            '24h',
+            '3d',
+            '1w',
+            '1m',
+            '3m',
+            '6m',
+            '1y',
+            '2y',
+            '3y',
+            '4y',
+            'all',
+          ].indexOf(fragment) > -1
+        ) {
+          this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
+            emitEvent: false,
+          });
+        }
+      })
+    );
 
     this.statsObservable$ = this.radioGroupForm
       .get('dateSpan')
@@ -227,5 +232,9 @@ export class AsertDeviationGraphPageComponent implements OnInit {
     (this.chartOptions['grid'] as any).bottom = prevBottom;
     this.chartOptions['backgroundColor'] = 'none';
     this.chartInstance.setOption(this.chartOptions);
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
   }
 }

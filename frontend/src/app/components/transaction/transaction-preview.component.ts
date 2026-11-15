@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ElectrsApiService } from '@app/services/backend-api.service';
 import { ActivatedRoute, ParamMap } from '@angular/router';
@@ -18,6 +19,8 @@ import { seoDescriptionNetwork } from '@app/shared/common.utils';
   standalone: false,
 })
 export class TransactionPreviewComponent implements OnInit, OnDestroy {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   network = '';
   tx: Transaction;
   txId: string;
@@ -43,9 +46,11 @@ export class TransactionPreviewComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit() {
-    this.stateService.networkChanged$.subscribe((network) => {
-      this.network = network;
-    });
+    this.lifecycleSubscriptions.add(
+      this.stateService.networkChanged$.subscribe((network) => {
+        this.network = network;
+      })
+    );
 
     this.subscription = this.route.paramMap
       .pipe(
@@ -220,6 +225,8 @@ export class TransactionPreviewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.lifecycleSubscriptions.unsubscribe();
+
     this.subscription.unsubscribe();
   }
 }

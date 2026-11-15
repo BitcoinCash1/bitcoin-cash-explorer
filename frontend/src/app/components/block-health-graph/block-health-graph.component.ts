@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -44,6 +45,8 @@ import { EChartsInitOpts } from 'echarts/types/dist/echarts';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BlockHealthGraphComponent implements OnInit {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   @Input() right: number | string = 45;
   @Input() left: number | string = 75;
 
@@ -91,17 +94,28 @@ export class BlockHealthGraphComponent implements OnInit {
       this.miningWindowPreference
     );
 
-    this.route.fragment.subscribe((fragment) => {
-      if (
-        ['24h', '3d', '1w', '1m', '3m', '6m', '1y', '2y', '3y', 'all'].indexOf(
-          fragment
-        ) > -1
-      ) {
-        this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
-          emitEvent: false,
-        });
-      }
-    });
+    this.lifecycleSubscriptions.add(
+      this.route.fragment.subscribe((fragment) => {
+        if (
+          [
+            '24h',
+            '3d',
+            '1w',
+            '1m',
+            '3m',
+            '6m',
+            '1y',
+            '2y',
+            '3y',
+            'all',
+          ].indexOf(fragment) > -1
+        ) {
+          this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
+            emitEvent: false,
+          });
+        }
+      })
+    );
 
     this.statsObservable$ = this.radioGroupForm
       .get('dateSpan')
@@ -371,5 +385,9 @@ export class BlockHealthGraphComponent implements OnInit {
     this.chartOptions.grid.bottom = prevBottom;
     this.chartOptions.backgroundColor = 'none';
     this.chartInstance.setOption(this.chartOptions);
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
   }
 }

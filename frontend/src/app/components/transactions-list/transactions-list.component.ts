@@ -1,3 +1,4 @@
+import { ComponentTimers } from '@app/shared/component-timers';
 import {
   Component,
   OnInit,
@@ -58,6 +59,9 @@ import { SighashFlag } from '@app/shared/transaction.utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
+  private readonly lifecycleTimers = new ComponentTimers();
+  private destroyed = false;
+
   network = '';
   showMoreIncrement = 1000;
   private bcmrMetadataSubject = new BehaviorSubject<Map<string, BcmrMetadata>>(
@@ -265,7 +269,7 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
         (this.outputIndex || 0) + 3
       );
       if ((this.inputIndex || this.outputIndex) && !changes.transactions) {
-        setTimeout(() => {
+        this.lifecycleTimers.schedule(() => {
           const assetBoxElements =
             document.getElementsByClassName('text-start');
           if (assetBoxElements && assetBoxElements[0]) {
@@ -895,11 +899,12 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
     index: number
   ): void {
     const key = `${txIndex}-${type}-${index}`;
-    if (this.showTokenCopied[key]) return;
+    if (this.destroyed || this.showTokenCopied[key]) return;
     navigator.clipboard.writeText(tokenId).then(() => {
+      if (this.destroyed) return;
       this.showTokenCopied[key] = true;
       this.ref.markForCheck();
-      setTimeout(() => {
+      this.lifecycleTimers.schedule(() => {
         this.showTokenCopied[key] = false;
         this.ref.markForCheck();
       }, 1000);
@@ -907,6 +912,10 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
+    this.lifecycleTimers.destroy();
+
+    this.queryParamsSubscription?.unsubscribe();
     this.outspendsSubscription.unsubscribe();
     this.currencyChangeSubscription?.unsubscribe();
     this.networkSubscription.unsubscribe();

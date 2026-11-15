@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -58,6 +59,8 @@ interface Hashrate {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HashrateChartPoolsComponent implements OnInit {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   @Input() right: number | string = 45;
   @Input() left: number | string = 25;
 
@@ -109,15 +112,18 @@ export class HashrateChartPoolsComponent implements OnInit {
       this.miningWindowPreference
     );
 
-    this.route.fragment.subscribe((fragment) => {
-      if (
-        ['1m', '3m', '6m', '1y', '2y', '3y', '4y', 'all'].indexOf(fragment) > -1
-      ) {
-        this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
-          emitEvent: false,
-        });
-      }
-    });
+    this.lifecycleSubscriptions.add(
+      this.route.fragment.subscribe((fragment) => {
+        if (
+          ['1m', '3m', '6m', '1y', '2y', '3y', '4y', 'all'].indexOf(fragment) >
+          -1
+        ) {
+          this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
+            emitEvent: false,
+          });
+        }
+      })
+    );
 
     this.hashrateObservable$ = this.radioGroupForm
       .get('dateSpan')
@@ -378,5 +384,9 @@ export class HashrateChartPoolsComponent implements OnInit {
     this.chartOptions.grid.bottom = prevBottom;
     this.chartOptions.backgroundColor = 'none';
     this.chartInstance.setOption(this.chartOptions);
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
   }
 }

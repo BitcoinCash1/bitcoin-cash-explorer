@@ -1,3 +1,4 @@
+import { ComponentTimers } from '@app/shared/component-timers';
 import type { AfterContentChecked, OnDestroy } from '@angular/core';
 import {
   ChangeDetectorRef,
@@ -28,6 +29,8 @@ import { FaqTemplateDirective } from '@app/docs/faq-template/faq-template.compon
 export class ApiDocsComponent
   implements OnInit, AfterViewInit, AfterContentChecked, OnDestroy
 {
+  private readonly lifecycleTimers = new ComponentTimers();
+
   private destroy$: Subject<any> = new Subject<any>();
   plainHostname = document.location.hostname;
   hostname = document.location.hostname;
@@ -77,7 +80,7 @@ export class ApiDocsComponent
     this.changeDetectorRef.detectChanges();
 
     const that = this;
-    setTimeout(() => {
+    this.lifecycleTimers.schedule(() => {
       if (this.route.snapshot.fragment) {
         this.openEndpointContainer(this.route.snapshot.fragment);
         if (document.getElementById(this.route.snapshot.fragment)) {
@@ -125,6 +128,8 @@ export class ApiDocsComponent
   }
 
   ngOnDestroy(): void {
+    this.lifecycleTimers.destroy();
+
     this.destroy$.next(true);
     this.destroy$.complete();
     window.removeEventListener('scroll', this.onDocScroll);

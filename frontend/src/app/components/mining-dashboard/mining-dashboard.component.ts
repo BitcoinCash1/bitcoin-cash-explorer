@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -19,6 +20,8 @@ import { EventType, NavigationStart, Router } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MiningDashboardComponent implements OnInit, AfterViewInit {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   hashrateGraphHeight = 335;
   poolGraphHeight = 375;
 
@@ -44,14 +47,16 @@ export class MiningDashboardComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.stateService.focusSearchInputDesktop();
-    this.router.events.subscribe((e: NavigationStart) => {
-      if (e.type === EventType.NavigationStart) {
-        if (e.url.indexOf('graphs') === -1) {
-          // The mining dashboard and the graph component are part of the same module so we can't use ngAfterViewInit in graphs.component.ts to blur the input
-          this.stateService.focusSearchInputDesktop();
+    this.lifecycleSubscriptions.add(
+      this.router.events.subscribe((e: NavigationStart) => {
+        if (e.type === EventType.NavigationStart) {
+          if (e.url.indexOf('graphs') === -1) {
+            // The mining dashboard and the graph component are part of the same module so we can't use ngAfterViewInit in graphs.component.ts to blur the input
+            this.stateService.focusSearchInputDesktop();
+          }
         }
-      }
-    });
+      })
+    );
   }
 
   @HostListener('window:resize')
@@ -66,5 +71,9 @@ export class MiningDashboardComponent implements OnInit, AfterViewInit {
       this.hashrateGraphHeight = 240;
       this.poolGraphHeight = 240;
     }
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
   }
 }

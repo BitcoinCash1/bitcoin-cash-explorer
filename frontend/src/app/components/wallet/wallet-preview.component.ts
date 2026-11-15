@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 import {
@@ -123,6 +124,8 @@ class WalletStats implements ChainStats {
   standalone: false,
 })
 export class WalletPreviewComponent implements OnInit, OnDestroy {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   network = '';
 
   addresses: Address[] = [];
@@ -157,8 +160,10 @@ export class WalletPreviewComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.websocketService.want(['blocks', 'stats']);
-    this.stateService.networkChanged$.subscribe(
-      (network) => (this.network = network)
+    this.lifecycleSubscriptions.add(
+      this.stateService.networkChanged$.subscribe(
+        (network) => (this.network = network)
+      )
     );
     this.wallet$ = this.route.paramMap.pipe(
       map((params: ParamMap) => params.get('wallet') as string),
@@ -310,6 +315,8 @@ export class WalletPreviewComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
+
     this.walletSubscription.unsubscribe();
   }
 }

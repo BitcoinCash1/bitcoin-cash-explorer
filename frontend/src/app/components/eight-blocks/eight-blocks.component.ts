@@ -1,3 +1,4 @@
+import { ComponentTimers } from '@app/shared/component-timers';
 import type { AfterViewInit } from '@angular/core';
 import {
   Component,
@@ -7,8 +8,8 @@ import {
   QueryList,
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { catchError, startWith } from 'rxjs/operators';
-import { Subject, Subscription, of } from 'rxjs';
+import { catchError, startWith, take, takeUntil } from 'rxjs/operators';
+import { Subject, Subscription, firstValueFrom, of } from 'rxjs';
 import { StateService } from '@app/services/state.service';
 import { WebsocketService } from '@app/services/websocket.service';
 import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pipe';
@@ -50,6 +51,12 @@ interface BlockInfo extends BlockExtended {
   standalone: false,
 })
 export class EightBlocksComponent implements OnInit, OnDestroy, AfterViewInit {
+  private readonly lifecycleTimers = new ComponentTimers();
+
+  private destroyed = false;
+  private readonly destroyed$ = new Subject<void>();
+  private testBlocksSubscription: Subscription;
+
   network = '';
   latestBlocks: BlockExtended[] = [];
   isLoadingTransactions = true;
@@ -74,7 +81,7 @@ export class EightBlocksComponent implements OnInit, OnDestroy, AfterViewInit {
   stagger: number = 0;
   testing: boolean = true;
   testHeight: number = 800000;
-  testShiftTimeout: number;
+  testShiftTimeout: ReturnType<typeof setTimeout>;
 
   showInfo: boolean = true;
   blockInfo: BlockInfo[] = [];
@@ -184,6 +191,14 @@ export class EightBlocksComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
+    this.destroyed$.next();
+    this.destroyed$.complete();
+    clearTimeout(this.testShiftTimeout);
+    this.testBlocksSubscription?.unsubscribe();
+    this.graphChangeSubscription?.unsubscribe();
+    this.lifecycleTimers.destroy();
+
     this.stateService.markBlock$.next({});
     if (this.blocksSubscription) {
       this.blocksSubscription?.unsubscribe();
@@ -197,21 +212,25 @@ export class EightBlocksComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   shiftTestBlocks(): void {
-    const sub = this.apiService
+    if (this.destroyed) return;
+    clearTimeout(this.testShiftTimeout);
+    this.testBlocksSubscription?.unsubscribe();
+    this.testBlocksSubscription = this.apiService
       .getBlocks$(this.testHeight)
+      .pipe(take(1), takeUntil(this.destroyed$))
       .subscribe((result) => {
-        sub.unsubscribe();
+        if (this.destroyed) return;
         this.handleNewBlock(result.slice(0, this.numBlocks));
         this.testHeight++;
-        clearTimeout(this.testShiftTimeout);
-        this.testShiftTimeout = window.setTimeout(() => {
+        this.testShiftTimeout = setTimeout(() => {
           this.shiftTestBlocks();
         }, 10000);
       });
   }
 
   async handleNewBlock(blocks: BlockExtended[]): Promise<void> {
-    const readyPromises: Promise<TransactionStripped[]>[] = [];
+    if (this.destroyed) return;
+    const readyPromises: Promise<void>[] = [];
     const previousBlocks = this.latestBlocks;
     const newHeights = {};
     this.latestBlocks = blocks;
@@ -219,24 +238,22 @@ export class EightBlocksComponent implements OnInit, OnDestroy, AfterViewInit {
       newHeights[block.height] = true;
       if (!this.strippedTransactions[block.height]) {
         readyPromises.push(
-          new Promise((resolve) => {
-            const subscription = this.apiService
-              .getStrippedBlockTransactions$(block.id)
-              .pipe(
-                catchError(() => {
-                  return of([]);
-                })
-              )
-              .subscribe((transactions) => {
-                this.strippedTransactions[block.height] = transactions;
-                subscription.unsubscribe();
-                resolve(transactions);
-              });
+          firstValueFrom(
+            this.apiService.getStrippedBlockTransactions$(block.id).pipe(
+              catchError(() => of([])),
+              takeUntil(this.destroyed$)
+            ),
+            { defaultValue: [] }
+          ).then((transactions) => {
+            if (!this.destroyed) {
+              this.strippedTransactions[block.height] = transactions;
+            }
           })
         );
       }
     }
     await Promise.allSettled(readyPromises);
+    if (this.destroyed) return;
     this.updateBlockGraphs(blocks);
 
     // free up old transactions
@@ -261,7 +278,7 @@ export class EightBlocksComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
     this.showInfo = false;
-    setTimeout(() => {
+    this.lifecycleTimers.schedule(() => {
       this.blockInfo = blocks.map((block) => {
         return {
           ...block,

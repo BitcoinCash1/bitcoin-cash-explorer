@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -22,6 +23,8 @@ import { RelativeUrlPipe } from '@app/shared/pipes/relative-url/relative-url.pip
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ClockComponent implements OnInit {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   hideStats: boolean = false;
   mode: 'mempool' | 'mined' = 'mined';
   blockIndex: number;
@@ -54,11 +57,13 @@ export class ClockComponent implements OnInit {
     private relativeUrlPipe: RelativeUrlPipe,
     private cd: ChangeDetectorRef
   ) {
-    this.route.queryParams.subscribe((params) => {
-      this.hideStats = params && params['stats'] === 'false';
-      this.limitWidth = Number.parseInt(params['width']) || null;
-      this.limitHeight = Number.parseInt(params['height']) || null;
-    });
+    this.lifecycleSubscriptions.add(
+      this.route.queryParams.subscribe((params) => {
+        this.hideStats = params && params['stats'] === 'false';
+        this.limitWidth = Number.parseInt(params['width']) || null;
+        this.limitHeight = Number.parseInt(params['height']) || null;
+      })
+    );
   }
 
   ngOnInit(): void {
@@ -149,5 +154,11 @@ export class ClockComponent implements OnInit {
       height: this.limitHeight ? `${this.limitHeight}px` : undefined,
     };
     this.cd.markForCheck();
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
+    this.blocksSubscription?.unsubscribe();
+    this.pageSubscription?.unsubscribe();
   }
 }

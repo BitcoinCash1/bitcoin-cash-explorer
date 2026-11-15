@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -49,6 +50,8 @@ import { EChartsInitOpts } from 'echarts/types/dist/echarts';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HashrateChartComponent implements OnInit {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   @Input() tableOnly = false;
   @Input() widget = false;
   @Input() height: number = 300;
@@ -85,8 +88,10 @@ export class HashrateChartComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.stateService.networkChanged$.subscribe(
-      (network) => (this.network = network)
+    this.lifecycleSubscriptions.add(
+      this.stateService.networkChanged$.subscribe(
+        (network) => (this.network = network)
+      )
     );
 
     let firstRun = true;
@@ -111,17 +116,19 @@ export class HashrateChartComponent implements OnInit {
       this.miningWindowPreference
     );
 
-    this.route.fragment.subscribe((fragment) => {
-      if (
-        ['1w', '1m', '3m', '6m', '1y', '2y', '3y', '4y', 'all'].indexOf(
-          fragment
-        ) > -1
-      ) {
-        this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
-          emitEvent: false,
-        });
-      }
-    });
+    this.lifecycleSubscriptions.add(
+      this.route.fragment.subscribe((fragment) => {
+        if (
+          ['1w', '1m', '3m', '6m', '1y', '2y', '3y', '4y', 'all'].indexOf(
+            fragment
+          ) > -1
+        ) {
+          this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
+            emitEvent: false,
+          });
+        }
+      })
+    );
 
     this.hashrateObservable$ = combineLatest(
       merge(
@@ -575,5 +582,9 @@ export class HashrateChartComponent implements OnInit {
     this.chartOptions.grid.bottom = prevBottom;
     this.chartOptions.backgroundColor = 'none';
     this.chartInstance.setOption(this.chartOptions);
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
   }
 }

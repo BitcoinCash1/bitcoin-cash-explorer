@@ -92,3 +92,14 @@ describe('calculator last edited amount', () => {
     expect(number(component, 'satoshis')).toBe(1);
   });
 });
+
+it('releases calculator price/form observers on destruction', () => {
+  const { component, conversions$, fiatCurrency$ } = fixture();
+  expect(conversions$.observers.length).toBeGreaterThan(0);
+  component.ngOnDestroy();
+  expect(conversions$.observers).toHaveLength(0);
+  expect(fiatCurrency$.observers).toHaveLength(0);
+  const value = component.form.get('bitcoin').value;
+  conversions$.next({ ...conversions$.value, USD: 999 });
+  expect(component.form.get('bitcoin').value).toBe(value);
+});

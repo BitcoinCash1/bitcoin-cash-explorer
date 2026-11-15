@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import { Component, OnInit, OnDestroy, Input, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -17,6 +18,8 @@ import { SharedModule } from '@app/shared/shared.module';
   imports: [CommonModule, SharedModule],
 })
 export class MasterPageComponent implements OnInit, OnDestroy {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   @Input() headerVisible = true;
   @Input() footerVisibleOverride: boolean | null = null;
 
@@ -57,18 +60,20 @@ export class MasterPageComponent implements OnInit, OnDestroy {
     this.network$ = merge(of(''), this.stateService.networkChanged$);
     this.urlLanguage = this.languageService.getLanguageForUrl();
     this.subdomain = this.enterpriseService.getSubdomain();
-    this.navigationService.subnetPaths.subscribe((paths) => {
-      this.networkPaths = paths;
-      if (this.footerVisibleOverride === null) {
-        if (paths['mainnet'].indexOf('docs') > -1) {
-          this.footerVisible = false;
+    this.lifecycleSubscriptions.add(
+      this.navigationService.subnetPaths.subscribe((paths) => {
+        this.networkPaths = paths;
+        if (this.footerVisibleOverride === null) {
+          if (paths['mainnet'].indexOf('docs') > -1) {
+            this.footerVisible = false;
+          } else {
+            this.footerVisible = true;
+          }
         } else {
-          this.footerVisible = true;
+          this.footerVisible = this.footerVisibleOverride;
         }
-      } else {
-        this.footerVisible = this.footerVisibleOverride;
-      }
-    });
+      })
+    );
     this.enterpriseInfo$ = this.enterpriseService.info$.subscribe((info) => {
       this.enterpriseInfo = info;
     });
@@ -130,6 +135,8 @@ export class MasterPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
+
     if (this.enterpriseInfo$) {
       this.enterpriseInfo$.unsubscribe();
     }

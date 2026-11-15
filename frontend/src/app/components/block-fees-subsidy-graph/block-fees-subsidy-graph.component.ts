@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
@@ -58,6 +59,8 @@ interface FeesSubsidyLegend {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BlockFeesSubsidyGraphComponent implements OnInit {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   @Input() right: number | string = 45;
   @Input() left: number | string = 75;
 
@@ -119,27 +122,29 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
 
     this.restoreLegend();
 
-    this.route.fragment.subscribe((fragment) => {
-      if (
-        [
-          '24h',
-          '3d',
-          '1w',
-          '1m',
-          '3m',
-          '6m',
-          '1y',
-          '2y',
-          '3y',
-          '4y',
-          'all',
-        ].indexOf(fragment) > -1
-      ) {
-        this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
-          emitEvent: false,
-        });
-      }
-    });
+    this.lifecycleSubscriptions.add(
+      this.route.fragment.subscribe((fragment) => {
+        if (
+          [
+            '24h',
+            '3d',
+            '1w',
+            '1m',
+            '3m',
+            '6m',
+            '1y',
+            '2y',
+            '3y',
+            '4y',
+            'all',
+          ].indexOf(fragment) > -1
+        ) {
+          this.radioGroupForm.controls['dateSpan'].setValue(fragment, {
+            emitEvent: false,
+          });
+        }
+      })
+    );
 
     this.statsObservable$ = this.radioGroupForm
       .get('dateSpan')
@@ -902,5 +907,9 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
     this.chartOptions.grid.bottom = prevBottom;
     this.chartOptions.backgroundColor = 'none';
     this.chartInstance.setOption(this.chartOptions);
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
   }
 }

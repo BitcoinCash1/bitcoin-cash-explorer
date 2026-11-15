@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   Component,
   OnInit,
@@ -22,6 +23,8 @@ import { AuthServiceMempool } from '@app/services/auth.service';
   standalone: false,
 })
 export class MenuComponent implements OnInit, OnDestroy {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   @Input() navOpen: boolean = false;
   @Output() loggedOut = new EventEmitter<boolean>();
   @Output() menuToggled = new EventEmitter<boolean>();
@@ -48,13 +51,15 @@ export class MenuComponent implements OnInit, OnDestroy {
     }
 
     this.isServicesPage = this.router.url.includes('/services/');
-    this.router.events.subscribe((event) => {
-      if (event instanceof NavigationStart) {
-        if (!this.isServicesPage) {
-          this.toggleMenu(false);
+    this.lifecycleSubscriptions.add(
+      this.router.events.subscribe((event) => {
+        if (event instanceof NavigationStart) {
+          if (!this.isServicesPage) {
+            this.toggleMenu(false);
+          }
         }
-      }
-    });
+      })
+    );
   }
 
   toggleMenu(toggled: boolean) {
@@ -129,6 +134,8 @@ export class MenuComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
+
     this.stateService.menuOpen$.next(false);
   }
 }

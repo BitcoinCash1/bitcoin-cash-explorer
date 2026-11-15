@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   FeeChartScale,
   feeChartFragment,
@@ -54,6 +55,8 @@ import { EChartsInitOpts } from 'echarts/types/dist/echarts';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BlockFeeRatesGraphComponent implements OnInit {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   @Input() widget = false;
   @Input() right: number | string = 45;
   @Input() left: number | string = 75;
@@ -116,16 +119,18 @@ export class BlockFeeRatesGraphComponent implements OnInit {
     );
 
     if (!this.widget) {
-      this.route.fragment.subscribe((fragment) => {
-        const parsed = parseFeeChartFragment(fragment);
-        if (
-          parsed.time &&
-          parsed.time !== this.radioGroupForm.controls['dateSpan'].value
-        ) {
-          this.radioGroupForm.controls['dateSpan'].setValue(parsed.time);
-        }
-        this.onScaleChange(parsed.scale);
-      });
+      this.lifecycleSubscriptions.add(
+        this.route.fragment.subscribe((fragment) => {
+          const parsed = parseFeeChartFragment(fragment);
+          if (
+            parsed.time &&
+            parsed.time !== this.radioGroupForm.controls['dateSpan'].value
+          ) {
+            this.radioGroupForm.controls['dateSpan'].setValue(parsed.time);
+          }
+          this.onScaleChange(parsed.scale);
+        })
+      );
     }
 
     this.hrStatsObservable$ = this.apiService
@@ -555,5 +560,9 @@ export class BlockFeeRatesGraphComponent implements OnInit {
       this.prepareChartOptions(this.rawChartData);
       this.chartInstance?.setOption(this.chartOptions, { notMerge: true });
     }
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
   }
 }

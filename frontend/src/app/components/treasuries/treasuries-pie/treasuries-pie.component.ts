@@ -68,9 +68,6 @@ export class TreasuriesPieComponent implements OnChanges, OnInit {
       changes['selectedWallets'] ||
       changes['mode']
     ) {
-      if (this.subscription) {
-        this.subscription.unsubscribe();
-      }
       this.setupSubscription();
     } else {
       // re-trigger subscription
@@ -79,6 +76,7 @@ export class TreasuriesPieComponent implements OnChanges, OnInit {
   }
 
   setupSubscription(): void {
+    this.subscription?.unsubscribe();
     this.subscription = combineLatest([
       this.redraw$,
       this.walletSummaries$,
@@ -319,5 +317,9 @@ export class TreasuriesPieComponent implements OnChanges, OnInit {
 
   isEllipsisActive(e: HTMLElement): boolean {
     return e.offsetWidth < e.scrollWidth;
+  }
+
+  ngOnDestroy(): void {
+    this.subscription?.unsubscribe();
   }
 }

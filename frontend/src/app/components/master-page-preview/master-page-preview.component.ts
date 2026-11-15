@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import { Component, OnInit } from '@angular/core';
 import { StateService } from '@app/services/state.service';
 import { Observable, Subscription, merge, of } from 'rxjs';
@@ -11,6 +12,8 @@ import { EnterpriseService } from '@app/services/enterprise.service';
   standalone: false,
 })
 export class MasterPagePreviewComponent implements OnInit {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   network$: Observable<string>;
   lightning$: Observable<boolean>;
   officialSite: boolean;
@@ -33,5 +36,10 @@ export class MasterPagePreviewComponent implements OnInit {
     this.enterpriseInfo$ = this.enterpriseService.info$.subscribe((info) => {
       this.enterpriseInfo = info;
     });
+    this.lifecycleSubscriptions.add(this.enterpriseInfo$);
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
   }
 }

@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   Component,
   OnInit,
@@ -24,6 +25,8 @@ import { AddressInformation } from '@interfaces/node-api.interface';
   standalone: false,
 })
 export class AddressGroupComponent implements OnInit, OnDestroy {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   network = '';
 
   balance = 0;
@@ -58,8 +61,10 @@ export class AddressGroupComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.onResize();
-    this.stateService.networkChanged$.subscribe(
-      (network) => (this.network = network)
+    this.lifecycleSubscriptions.add(
+      this.stateService.networkChanged$.subscribe(
+        (network) => (this.network = network)
+      )
     );
     this.websocketService.want(['blocks']);
 
@@ -237,6 +242,8 @@ export class AddressGroupComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
+
     this.mainSubscription.unsubscribe();
     this.wsSubscription.unsubscribe();
     this.websocketService.stopTrackingAddresses();

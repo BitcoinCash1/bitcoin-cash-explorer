@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { UntypedFormBuilder, UntypedFormGroup } from '@angular/forms';
 import { StorageService } from '@app/services/storage.service';
@@ -11,6 +12,8 @@ import { StateService } from '@app/services/state.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AmountSelectorComponent implements OnInit {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   amountForm: UntypedFormGroup;
   amountModes = ['bch', 'sats', 'fiat'];
 
@@ -24,14 +27,20 @@ export class AmountSelectorComponent implements OnInit {
     this.amountForm = this.formBuilder.group({
       amountMode: ['bch'],
     });
-    this.stateService.viewAmountMode$.subscribe((amountMode) => {
-      this.amountForm.get('amountMode')?.setValue(amountMode);
-    });
+    this.lifecycleSubscriptions.add(
+      this.stateService.viewAmountMode$.subscribe((amountMode) => {
+        this.amountForm.get('amountMode')?.setValue(amountMode);
+      })
+    );
   }
 
   changeAmountMode() {
     const newAmountMode = this.amountForm.get('amountMode')?.value;
     this.storageService.setValue('view-amount-mode', newAmountMode);
     this.stateService.viewAmountMode$.next(newAmountMode);
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycleSubscriptions.unsubscribe();
   }
 }

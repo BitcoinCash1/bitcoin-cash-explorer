@@ -1,3 +1,5 @@
+import { ComponentTimers } from '@app/shared/component-timers';
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   Component,
   OnInit,
@@ -54,6 +56,10 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchFormComponent implements OnInit {
+  private readonly lifecycleTimers = new ComponentTimers();
+
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   @Input() hamburgerOpen = false;
   env: Env;
   network = '';
@@ -103,31 +109,40 @@ export class SearchFormComponent implements OnInit {
 
   ngOnInit(): void {
     this.env = this.stateService.env;
-    this.stateService.networkChanged$.subscribe((network) => {
-      this.network = network;
-      // TODO: Eventually change network type here from string to enum of consts
-      this.regexAddress = getRegex('address', (network as any) || 'mainnet');
-      this.regexBlockhash = getRegex(
-        'blockhash',
-        (network as any) || 'mainnet'
-      );
-    });
+    this.lifecycleSubscriptions.add(
+      this.stateService.networkChanged$.subscribe((network) => {
+        this.network = network;
+        // TODO: Eventually change network type here from string to enum of consts
+        this.regexAddress = getRegex('address', (network as any) || 'mainnet');
+        this.regexBlockhash = getRegex(
+          'blockhash',
+          (network as any) || 'mainnet'
+        );
+      })
+    );
 
-    this.router.events.subscribe((e: NavigationStart) => {
-      // Reset search focus when changing page
-      if (this.searchInput && e.type === EventType.NavigationStart) {
-        this.searchInput.nativeElement.blur();
-      }
-    });
+    this.lifecycleSubscriptions.add(
+      this.router.events.subscribe((e: NavigationStart) => {
+        // Reset search focus when changing page
+        if (this.searchInput && e.type === EventType.NavigationStart) {
+          this.searchInput.nativeElement.blur();
+        }
+      })
+    );
 
-    this.stateService.searchFocus$.subscribe(() => {
-      if (!this.searchInput) {
-        // Try again a bit later once the view is properly initialized
-        setTimeout(() => this.searchInput.nativeElement.focus(), 100);
-      } else if (this.searchInput) {
-        this.searchInput.nativeElement.focus();
-      }
-    });
+    this.lifecycleSubscriptions.add(
+      this.stateService.searchFocus$.subscribe(() => {
+        if (!this.searchInput) {
+          // Try again a bit later once the view is properly initialized
+          this.lifecycleTimers.schedule(
+            () => this.searchInput.nativeElement.focus(),
+            100
+          );
+        } else if (this.searchInput) {
+          this.searchInput.nativeElement.focus();
+        }
+      })
+    );
 
     this.searchForm = this.formBuilder.group({
       searchText: ['', Validators.required],
@@ -271,7 +286,7 @@ export class SearchFormComponent implements OnInit {
   }
 
   itemSelected(): void {
-    setTimeout(() => this.search());
+    this.lifecycleTimers.schedule(() => this.search());
   }
 
   selectedResult(result: any): void {
@@ -418,5 +433,11 @@ export class SearchFormComponent implements OnInit {
           }),
           catchError(() => of([]))
         );
+  }
+
+  ngOnDestroy(): void {
+    this.lifecycleTimers.destroy();
+
+    this.lifecycleSubscriptions.unsubscribe();
   }
 }

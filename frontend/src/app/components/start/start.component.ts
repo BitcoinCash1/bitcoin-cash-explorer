@@ -1,3 +1,4 @@
+import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   Component,
   ElementRef,
@@ -25,6 +26,8 @@ import { handleDemoRedirect } from '@app/shared/common.utils';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class StartComponent implements OnInit, AfterViewChecked, OnDestroy {
+  private readonly lifecycleSubscriptions = new LifecycleSubscription();
+
   @Input() showLoadingIndicator = false;
 
   interval = 60;
@@ -167,48 +170,50 @@ export class StartComponent implements OnInit, AfterViewChecked, OnDestroy {
         }
       }
     );
-    this.stateService.blocks$.subscribe((blocks: BlockExtended[]) => {
-      this.countdown = 0;
-      const block = blocks[0];
-      if (!block) {
-        return;
-      }
+    this.lifecycleSubscriptions.add(
+      this.stateService.blocks$.subscribe((blocks: BlockExtended[]) => {
+        this.countdown = 0;
+        const block = blocks[0];
+        if (!block) {
+          return;
+        }
 
-      for (const sb in specialBlocks) {
-        if (
-          specialBlocks[sb].networks.includes(
-            this.stateService.network || 'mainnet'
-          )
-        ) {
-          const height = parseInt(sb, 10);
-          const diff = height - block.height;
-          if (diff > 0 && diff <= 1008) {
-            this.countdown = diff;
-            this.eventName = specialBlocks[sb].labelEvent;
+        for (const sb in specialBlocks) {
+          if (
+            specialBlocks[sb].networks.includes(
+              this.stateService.network || 'mainnet'
+            )
+          ) {
+            const height = parseInt(sb, 10);
+            const diff = height - block.height;
+            if (diff > 0 && diff <= 1008) {
+              this.countdown = diff;
+              this.eventName = specialBlocks[sb].labelEvent;
+            }
           }
         }
-      }
-      for (const block of blocks) {
-        if (
-          specialBlocks[block.height] &&
-          specialBlocks[block.height].networks.includes(
-            this.stateService.network || 'mainnet'
-          )
-        ) {
-          this.specialEvent = true;
-          this.eventName = specialBlocks[block.height].labelEventCompleted;
+        for (const block of blocks) {
+          if (
+            specialBlocks[block.height] &&
+            specialBlocks[block.height].networks.includes(
+              this.stateService.network || 'mainnet'
+            )
+          ) {
+            this.specialEvent = true;
+            this.eventName = specialBlocks[block.height].labelEventCompleted;
+          }
+          if (
+            specialBlocks[block.height - 8] &&
+            specialBlocks[block.height - 8].networks.includes(
+              this.stateService.network || 'mainnet'
+            )
+          ) {
+            this.specialEvent = false;
+            this.eventName = '';
+          }
         }
-        if (
-          specialBlocks[block.height - 8] &&
-          specialBlocks[block.height - 8].networks.includes(
-            this.stateService.network || 'mainnet'
-          )
-        ) {
-          this.specialEvent = false;
-          this.eventName = '';
-        }
-      }
-    });
+      })
+    );
     this.resetScrollSubscription = this.stateService.resetScroll$.subscribe(
       (reset) => {
         if (reset) {
@@ -589,6 +594,8 @@ export class StartComponent implements OnInit, AfterViewChecked, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.lifecycleSubscriptions.unsubscribe();
+
     // clean up scroll position to prevent caching wrong scroll in Firefox
     this.setScrollLeft(0);
     this.timeLtrSubscription.unsubscribe();
