@@ -9,8 +9,15 @@ import {
   HostBinding,
 } from '@angular/core';
 import { EChartsOption } from '@app/graphs/echarts';
-import { Observable } from 'rxjs';
-import { map, share, startWith, switchMap, tap } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import {
+  catchError,
+  map,
+  share,
+  startWith,
+  switchMap,
+  tap,
+} from 'rxjs/operators';
 import { ApiService } from '@app/services/api.service';
 import { SeoService } from '@app/services/seo.service';
 import { formatNumber } from '@angular/common';
@@ -59,6 +66,7 @@ export class BlockTimesGraphComponent implements OnInit {
   timespan = '';
   chartInstance: any = undefined;
   private currentMedian = 0;
+  private blockCount = 0;
 
   constructor(
     @Inject(LOCALE_ID) public locale: string,
@@ -131,9 +139,24 @@ export class BlockTimesGraphComponent implements OnInit {
               this.prepareChartOptions({ timeDiffs });
               this.isLoading = false;
             }),
-            map((response) => ({
-              blockCount: parseInt(response.headers.get('x-total-count'), 10),
-            }))
+            map((response) => {
+              this.blockCount = parseInt(
+                response.headers.get('x-total-count'),
+                10
+              );
+              return { blockCount: this.blockCount };
+            }),
+            catchError(() => {
+              this.isLoading = false;
+              this.prepareChartOptions({ timeDiffs: [] });
+              this.chartOptions['title'] = {
+                text: $localize`Error loading data.`,
+                left: 'center',
+                top: 'center',
+                textStyle: { color: 'var(--fg)', fontSize: 15 },
+              };
+              return of({ blockCount: this.blockCount });
+            })
           );
         }),
         share()

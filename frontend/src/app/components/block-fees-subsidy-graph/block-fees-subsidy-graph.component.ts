@@ -161,9 +161,8 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                 blockFeesFiat: response.body.map((val) =>
                   this.toFiat(val.avgFees / 100_000_000, val['USD'])
                 ),
-                blockFeesPercent: response.body.map(
-                  (val) =>
-                    (val.avgFees / (val.avgFees + val.avgSubsidySats)) * 100
+                blockFeesPercent: response.body.map((val) =>
+                  this.rewardPercent(val.avgFees, val.avgSubsidySats)
                 ),
                 blockSubsidy: response.body.map(
                   (val) => val.avgSubsidySats / 100_000_000
@@ -171,10 +170,8 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
                 blockSubsidyFiat: response.body.map((val) =>
                   this.toFiat(val.avgSubsidySats / 100_000_000, val['USD'])
                 ),
-                blockSubsidyPercent: response.body.map(
-                  (val) =>
-                    (val.avgSubsidySats / (val.avgFees + val.avgSubsidySats)) *
-                    100
+                blockSubsidyPercent: response.body.map((val) =>
+                  this.rewardPercent(val.avgSubsidySats, val.avgFees)
                 ),
               };
 
@@ -194,6 +191,11 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
 
   private toFiat(value: number, price: number): number | null {
     return Number.isFinite(price) && price > 0 ? value * price : null;
+  }
+
+  private rewardPercent(value: number, otherReward: number): number {
+    const total = value + otherReward;
+    return total === 0 ? 0 : (value / total) * 100;
   }
 
   private restoreLegend(): void {
@@ -761,8 +763,8 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
           this.data.blockFeesPercent.splice(
             startIndex,
             endIndex - startIndex,
-            ...response.body.map(
-              (val) => (val.avgFees / (val.avgFees + val.avgSubsidySats)) * 100
+            ...response.body.map((val) =>
+              this.rewardPercent(val.avgFees, val.avgSubsidySats)
             )
           );
           this.data.blockSubsidy.splice(
@@ -780,9 +782,8 @@ export class BlockFeesSubsidyGraphComponent implements OnInit {
           this.data.blockSubsidyPercent.splice(
             startIndex,
             endIndex - startIndex,
-            ...response.body.map(
-              (val) =>
-                (val.avgSubsidySats / (val.avgFees + val.avgSubsidySats)) * 100
+            ...response.body.map((val) =>
+              this.rewardPercent(val.avgSubsidySats, val.avgFees)
             )
           );
           // Price availability can change after zooming; rebuild axes/series by meaning,

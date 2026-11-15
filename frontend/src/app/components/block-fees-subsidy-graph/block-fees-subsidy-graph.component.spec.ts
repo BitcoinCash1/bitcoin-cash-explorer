@@ -2,13 +2,19 @@ import '@angular/compiler';
 import '@angular/localize/init';
 import { HttpHeaders } from '@angular/common/http';
 import { UntypedFormBuilder } from '@angular/forms';
-import { of } from 'rxjs';
+import { of, Subject } from 'rxjs';
 import { afterEach, expect, it, vi } from 'vitest';
 import { BlockFeesSubsidyGraphComponent } from './block-fees-subsidy-graph.component';
 import { echarts } from '@app/graphs/echarts';
 
-function fixture(stored: string | null = null, price = 500, testnet = false) {
+function fixture(
+  stored: string | null = null,
+  price = 500,
+  testnet = false,
+  rewards = { fees: 1, subsidy: 5000000000 }
+) {
   vi.stubGlobal('window', { innerWidth: 1200 });
+  const zoomResponse = new Subject<any>();
   const values = new Map<string, string>();
   if (stored !== null) values.set('fees_subsidy_legend', stored);
   const storage = {
@@ -23,9 +29,18 @@ function fixture(stored: string | null = null, price = 500, testnet = false) {
       {
         getHistoricalBlockFees$: () =>
           of({
-            body: [{ avgHeight: 100, timestamp: 1000, avgFees: 1, USD: price }],
+            body: [
+              {
+                avgHeight: 100,
+                timestamp: 1000,
+                avgFees: rewards.fees,
+                avgSubsidySats: rewards.subsidy,
+                USD: price,
+              },
+            ],
             headers: new HttpHeaders({ 'x-total-count': '1' }),
           }),
+        getBlockFeesFromTimespan$: () => zoomResponse,
       } as any,
       new UntypedFormBuilder(),
       { isAnyTestnet: () => testnet } as any,
@@ -36,7 +51,7 @@ function fixture(stored: string | null = null, price = 500, testnet = false) {
       {} as any,
       {} as any,
       {} as any,
-      {} as any
+      { detectChanges: vi.fn() } as any
     );
   const load = () => {
     const instance = component();
@@ -44,10 +59,68 @@ function fixture(stored: string | null = null, price = 500, testnet = false) {
     instance.statsObservable$.subscribe().unsubscribe();
     return instance;
   };
-  return { load, values, storage };
+  return { load, values, storage, zoomResponse };
 }
 
 afterEach(() => vi.unstubAllGlobals());
+
+it.each([
+  { fees: 0, subsidy: 0, feesPercent: 0, subsidyPercent: 0 },
+  { fees: 0, subsidy: 250000000, feesPercent: 0, subsidyPercent: 100 },
+  { fees: 100000000, subsidy: 0, feesPercent: 100, subsidyPercent: 0 },
+  {
+    fees: 100000000,
+    subsidy: 250000000,
+    feesPercent: 100 / 3.5,
+    subsidyPercent: 250 / 3.5,
+  },
+])(
+  'handles reward percentages for $fees fees and $subsidy subsidy',
+  (rewards) => {
+    const component = fixture(null, 500, false, rewards).load();
+    expect(component.data.blockFeesPercent[0]).toBeCloseTo(rewards.feesPercent);
+    expect(component.data.blockSubsidyPercent[0]).toBeCloseTo(
+      rewards.subsidyPercent
+    );
+  }
+);
+
+it('keeps zero-total percentages finite when zoom data replaces a bucket', () => {
+  const f = fixture(null, 500, false, { fees: 0, subsidy: 0 });
+  const component = f.load();
+  const chart = echarts.init(null, null, {
+    renderer: 'svg',
+    ssr: true,
+    width: 1000,
+    height: 500,
+  });
+  try {
+    chart.setOption(component.chartOptions);
+    component.onChartInit(chart);
+    component.onZoom();
+    f.zoomResponse.next({
+      body: [
+        {
+          avgHeight: 200000000,
+          timestamp: 1000,
+          avgFees: 0,
+          avgSubsidySats: 0,
+          USD: 500,
+        },
+      ],
+    });
+    expect(component.isLoading).toBe(false);
+    expect(component.data.blockFeesPercent.every((value) => value === 0)).toBe(
+      true
+    );
+    expect(
+      component.data.blockSubsidyPercent.every((value) => value === 0)
+    ).toBe(true);
+  } finally {
+    chart.dispose();
+    f.zoomResponse.complete();
+  }
+});
 
 it.each(['normal', 'fiat', 'percentage'] as const)(
   'restores %s mode and individual selections across timespan rebuilds',

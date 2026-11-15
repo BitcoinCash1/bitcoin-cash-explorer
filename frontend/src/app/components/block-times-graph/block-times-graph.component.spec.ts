@@ -1,6 +1,9 @@
 import '@angular/compiler';
 import { BlockTimesGraphComponent } from './block-times-graph.component';
 import { CHIPNET_ACTIVATION_TIMESTAMP } from '@app/shared/block-timing';
+import { UntypedFormBuilder } from '@angular/forms';
+import { of, Subject } from 'rxjs';
+import { vi } from 'vitest';
 
 const activation = CHIPNET_ACTIVATION_TIMESTAMP * 1000;
 const targetData = (network: string, timestamps: number[]) => {
@@ -158,4 +161,63 @@ describe('zero-span target guide', () => {
       { yAxis: 10 },
     ]);
   });
+});
+
+it('stops loading on failure and recovers on a later range without losing available ranges', () => {
+  const requests: Subject<any>[] = [];
+  const component = new BlockTimesGraphComponent(
+    'en-US',
+    { setTitle: vi.fn(), setDescription: vi.fn() } as any,
+    {
+      getHistoricalBlockTimeDiffs$: () => {
+        const request = new Subject<any>();
+        requests.push(request);
+        return request;
+      },
+    } as any,
+    new UntypedFormBuilder(),
+    { getValue: () => null, setValue: vi.fn() } as any,
+    { getDefaultTimespan: () => '24h' } as any,
+    { network: 'mainnet' } as any,
+    { fragment: of(null) } as any
+  );
+  vi.spyOn(component, 'isMobile').mockReturnValue(false);
+  component.ngOnInit();
+  const counts: number[] = [];
+  const subscription = component.blockTimesObservable$.subscribe((stats) =>
+    counts.push(stats.blockCount)
+  );
+  try {
+    requests[0].error(new Error('503'));
+    expect(component.isLoading).toBe(false);
+    expect((component.chartOptions['title'] as any).text).toBe(
+      'Error loading data.'
+    );
+    expect(counts).toEqual([0]);
+
+    const response = {
+      body: {
+        timeDiffs: [{ timestamp: 1794746216, timeDiff: 60, height: 332451 }],
+      },
+      headers: { get: () => '6500' },
+    };
+    component.radioGroupForm.get('dateSpan').setValue('all');
+    expect(component.isLoading).toBe(true);
+    requests[1].next(response);
+    expect(component.isLoading).toBe(false);
+    expect(component.chartOptions['title']).toBeUndefined();
+    expect(counts.at(-1)).toBe(6500);
+
+    component.radioGroupForm.get('dateSpan').setValue('1m');
+    requests[2].error(new Error('503'));
+    expect(component.isLoading).toBe(false);
+    expect(counts.at(-1)).toBe(6500);
+    component.radioGroupForm.get('dateSpan').setValue('24h');
+    requests[3].next(response);
+    expect(component.chartOptions['title']).toBeUndefined();
+    expect((component.chartOptions['series'] as any[])[0].data).toHaveLength(1);
+  } finally {
+    subscription.unsubscribe();
+    vi.restoreAllMocks();
+  }
 });
