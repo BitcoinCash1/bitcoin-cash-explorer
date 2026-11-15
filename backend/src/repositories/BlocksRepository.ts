@@ -646,10 +646,22 @@ class BlocksRepository {
       const audits = config.EXPLORER.AUDIT
         ? await BlocksAuditsRepository.$getBlockAuditScoresByHashes(rows.map((row) => row.id))
         : new Map<string, AuditScore>();
+      const summaries = Common.blocksSummariesIndexingEnabled()
+        ? await BlocksSummariesRepository.$getFeePercentilesByBlockIds(
+            rows
+              .filter((row) => row.medianFeeAmt === null || JSON.parse(row.feePercentiles) === null)
+              .map((row) => row.id)
+          )
+        : new Map<string, number[] | null>();
       const blocks: BlockExtended[] = [];
       for (const block of rows) {
         blocks.push(
-          await this.formatDbBlockIntoExtendedBlock(block as DatabaseBlock, true, audits.get(block.id) ?? null)
+          await this.formatDbBlockIntoExtendedBlock(
+            block as DatabaseBlock,
+            true,
+            audits.get(block.id) ?? null,
+            summaries.get(block.id) ?? null
+          )
         );
       }
 
@@ -1391,7 +1403,8 @@ class BlocksRepository {
   private async formatDbBlockIntoExtendedBlock(
     dbBlk: DatabaseBlock,
     enrich = true,
-    prefetchedAudit?: AuditScore | null
+    prefetchedAudit?: AuditScore | null,
+    prefetchedFeePercentiles?: number[] | null
   ): Promise<BlockExtended> {
     const blk: Partial<BlockExtended> = {};
     const extras: Partial<BlockExtension> = {};
@@ -1471,7 +1484,10 @@ class BlocksRepository {
       Common.blocksSummariesIndexingEnabled() &&
       (extras.medianFeeAmt === null || extras.feePercentiles === null)
     ) {
-      extras.feePercentiles = await BlocksSummariesRepository.$getFeePercentilesByBlockId(dbBlk.id);
+      extras.feePercentiles =
+        prefetchedFeePercentiles === undefined
+          ? await BlocksSummariesRepository.$getFeePercentilesByBlockId(dbBlk.id)
+          : prefetchedFeePercentiles;
       if (extras.feePercentiles === null) {
         const summaryVersion = 0;
         // Call BHCN RPC

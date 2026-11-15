@@ -24,6 +24,7 @@ describe('keyed memory cache', () => {
   });
   it('expires exactly at the deadline before periodic cleanup', () => {
     cache.set('type', 'id', 1, 2);
+    expect(cache.cache.get(JSON.stringify(['type', 'id'])).expires).toBe(Date.now() + 2000);
     jest.setSystemTime(Date.now() + 1999);
     expect(cache.get('type', 'id')).toBe(1);
     jest.setSystemTime(Date.now() + 1);

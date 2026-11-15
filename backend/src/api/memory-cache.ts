@@ -1,7 +1,7 @@
 interface ICache {
   type: string;
   id: string;
-  expires: Date;
+  expires: number;
   data: any;
 }
 
@@ -12,8 +12,7 @@ class MemoryCache {
   }
 
   public set(type: string, id: string, data: any, secondsExpiry: number) {
-    const expiry = new Date();
-    expiry.setSeconds(expiry.getSeconds() + secondsExpiry);
+    const expiry = Date.now() + secondsExpiry * 1000;
     this.cache.set(JSON.stringify([type, id]), {
       type: type,
       id: id,
@@ -25,7 +24,7 @@ class MemoryCache {
   public get<T>(type: string, id: string): T | null {
     const key = JSON.stringify([type, id]);
     const found = this.cache.get(key);
-    if (found && found.expires > new Date()) {
+    if (found && found.expires > Date.now()) {
       return found.data;
     }
     this.cache.delete(key);
@@ -33,7 +32,7 @@ class MemoryCache {
   }
 
   private cleanup() {
-    const now = new Date();
+    const now = Date.now();
     for (const [key, entry] of this.cache) {
       if (entry.expires <= now) this.cache.delete(key);
     }
