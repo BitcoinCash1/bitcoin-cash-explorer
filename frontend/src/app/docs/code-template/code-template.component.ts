@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Env, StateService } from '@app/services/state.service';
 
 @Component({
@@ -7,7 +7,8 @@ import { Env, StateService } from '@app/services/state.service';
   styleUrls: ['./code-template.component.scss'],
   standalone: false,
 })
-export class CodeTemplateComponent implements OnInit {
+export class CodeTemplateComponent implements OnInit, OnDestroy {
+  private pendingTimeout: ReturnType<typeof setTimeout> | undefined;
   @Input() network: string;
   @Input() code: any;
   @Input() hostname: string;
@@ -25,13 +26,18 @@ export class CodeTemplateComponent implements OnInit {
   adjustContainerHeight(event) {
     if (window.innerWidth <= 992 && this.method !== 'websocket') {
       const urlObj = new URL(window.location + '');
+      if (!urlObj.hash) return;
       const endpointContainerEl = document.querySelector<HTMLElement>(
         urlObj.hash
       );
       const endpointContentEl = document.querySelector<HTMLElement>(
         urlObj.hash + ' .endpoint-content'
       );
-      window.setTimeout(function () {
+      if (!endpointContainerEl || !endpointContentEl) return;
+      clearTimeout(this.pendingTimeout);
+      this.pendingTimeout = setTimeout(() => {
+        if (!endpointContainerEl.isConnected || !endpointContentEl.isConnected)
+          return;
         endpointContainerEl.style.height =
           endpointContentEl.clientHeight + 90 + 'px';
       }, 550);
@@ -279,5 +285,9 @@ yarn add @mempool/mempool.js`;
     } else {
       return `curl${headersString} -sSL "${this.hostname}${text}"`;
     }
+  }
+
+  ngOnDestroy(): void {
+    clearTimeout(this.pendingTimeout);
   }
 }

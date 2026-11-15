@@ -1,3 +1,4 @@
+import { ComponentTimers } from '@app/shared/component-timers';
 import { Subscription as LifecycleSubscription } from 'rxjs';
 import type { AfterViewInit } from '@angular/core';
 import {
@@ -74,6 +75,8 @@ interface ComparisonStats {
   ],
 })
 export class BlockComponent implements OnInit, OnDestroy, AfterViewInit {
+  private readonly lifecycleTimers = new ComponentTimers();
+
   private readonly lifecycleSubscriptions = new LifecycleSubscription();
 
   network = '';
@@ -539,7 +542,7 @@ export class BlockComponent implements OnInit, OnDestroy, AfterViewInit {
     this.lifecycleSubscriptions.add(
       this.route.fragment.subscribe((fragment) => {
         if (fragment) {
-          setTimeout(() => {
+          this.lifecycleTimers.schedule(() => {
             const element = document.getElementById(fragment);
             if (element) {
               const headerOffset = 70;
@@ -620,6 +623,8 @@ export class BlockComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
+    this.lifecycleTimers.destroy();
+
     this.lifecycleSubscriptions.unsubscribe();
 
     this.stateService.markBlock$.next({});
@@ -1121,7 +1126,7 @@ export class BlockComponent implements OnInit, OnDestroy, AfterViewInit {
 
         if (delay) {
           // Scroll to target with delay
-          setTimeout(() => {
+          this.lifecycleTimers.schedule(() => {
             this.scrollToTopTarget(target);
           }, delay);
         } else {

@@ -1,4 +1,5 @@
 import {
+  OnDestroy,
   Component,
   Input,
   ChangeDetectionStrategy,
@@ -12,12 +13,14 @@ import {
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ClipboardComponent {
+export class ClipboardComponent implements OnDestroy {
+  private pendingTimeout: ReturnType<typeof setTimeout> | undefined;
   @Input() button = false;
   @Input() class = 'btn btn-secondary ms-1';
   @Input() size: 'small' | 'normal' | 'large' = 'normal';
   @Input() text: string;
   @Input() leftPadding = true;
+  private destroyed = false;
   copiedMessage: string = $localize`:@@clipboard.copied-message:Copied!`;
   showMessage = false;
 
@@ -30,12 +33,14 @@ export class ClipboardComponent {
   constructor(private cd: ChangeDetectorRef) {}
 
   async copyText() {
-    if (this.text && !this.showMessage) {
+    if (!this.destroyed && this.text && !this.showMessage) {
       try {
         await this.copyToClipboard(this.text);
+        if (this.destroyed) return;
         this.showMessage = true;
         this.cd.markForCheck();
-        setTimeout(() => {
+        clearTimeout(this.pendingTimeout);
+        this.pendingTimeout = setTimeout(() => {
           this.showMessage = false;
           this.cd.markForCheck();
         }, 1000);
@@ -59,5 +64,10 @@ export class ClipboardComponent {
       document.execCommand('copy');
       textarea.remove();
     }
+  }
+
+  ngOnDestroy(): void {
+    this.destroyed = true;
+    clearTimeout(this.pendingTimeout);
   }
 }

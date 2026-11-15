@@ -1,3 +1,4 @@
+import { ComponentTimers } from '@app/shared/component-timers';
 import type { AfterViewInit } from '@angular/core';
 import {
   Component,
@@ -50,6 +51,8 @@ interface BlockInfo extends BlockExtended {
   standalone: false,
 })
 export class EightBlocksComponent implements OnInit, OnDestroy, AfterViewInit {
+  private readonly lifecycleTimers = new ComponentTimers();
+
   network = '';
   latestBlocks: BlockExtended[] = [];
   isLoadingTransactions = true;
@@ -184,6 +187,8 @@ export class EightBlocksComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
+    this.lifecycleTimers.destroy();
+
     this.stateService.markBlock$.next({});
     if (this.blocksSubscription) {
       this.blocksSubscription?.unsubscribe();
@@ -261,7 +266,7 @@ export class EightBlocksComponent implements OnInit, OnDestroy, AfterViewInit {
       });
     }
     this.showInfo = false;
-    setTimeout(() => {
+    this.lifecycleTimers.schedule(() => {
       this.blockInfo = blocks.map((block) => {
         return {
           ...block,

@@ -1,3 +1,4 @@
+import { ComponentTimers } from '@app/shared/component-timers';
 import {
   Component,
   OnInit,
@@ -22,6 +23,8 @@ import { StorageService } from '@app/services/storage.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BlockchainComponent implements OnInit, OnDestroy, OnChanges {
+  private readonly lifecycleTimers = new ComponentTimers();
+
   @Input() pages: any[] = [];
   @Input() pageIndex: number;
   @Input() blocksPerPage: number = 8;
@@ -76,6 +79,8 @@ export class BlockchainComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnDestroy(): void {
+    this.lifecycleTimers.destroy();
+
     this.timeLtrSubscription.unsubscribe();
     this.connectionStateSubscription.unsubscribe();
   }
@@ -90,12 +95,12 @@ export class BlockchainComponent implements OnInit, OnDestroy, OnChanges {
     this.mempoolOffset = 0;
     this.mempoolOffsetChange.emit(0);
     this.updateStyle();
-    setTimeout(() => {
+    this.lifecycleTimers.schedule(() => {
       this.ltrTransitionEnabled = true;
       this.flipping = true;
       this.stateService.timeLtr.next(!this.timeLtr);
       this.cd.markForCheck();
-      setTimeout(() => {
+      this.lifecycleTimers.schedule(() => {
         this.ltrTransitionEnabled = false;
         this.flipping = false;
         this.mempoolOffset = prevOffset;

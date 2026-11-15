@@ -1,4 +1,5 @@
 import {
+  OnDestroy,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
   Component,
@@ -18,7 +19,8 @@ export type TrackerStage =
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class TrackerBarComponent implements OnInit, OnChanges {
+export class TrackerBarComponent implements OnInit, OnChanges, OnDestroy {
+  private pendingTimeout: ReturnType<typeof setTimeout> | undefined;
   @Input() stage: TrackerStage = 'waiting';
 
   transitionsEnabled: boolean = false;
@@ -52,7 +54,7 @@ export class TrackerBarComponent implements OnInit, OnChanges {
 
   ngOnInit(): void {
     this.setStage();
-    setTimeout(() => {
+    this.pendingTimeout = setTimeout(() => {
       this.transitionsEnabled = true;
     }, 100);
   }
@@ -82,5 +84,9 @@ export class TrackerBarComponent implements OnInit, OnChanges {
     }
     this.stages = this.stages;
     this.cd.markForCheck();
+  }
+
+  ngOnDestroy(): void {
+    clearTimeout(this.pendingTimeout);
   }
 }

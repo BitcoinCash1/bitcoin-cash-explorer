@@ -1,3 +1,4 @@
+import { ComponentTimers } from '@app/shared/component-timers';
 import type { AfterViewInit } from '@angular/core';
 import {
   ChangeDetectionStrategy,
@@ -29,6 +30,8 @@ import { EnterpriseService } from '@app/services/enterprise.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AboutComponent implements OnInit, OnDestroy, AfterViewInit {
+  private readonly lifecycleTimers = new ComponentTimers();
+
   // @ViewChild('promoVideo') promoVideo: ElementRef;
   backendInfo$: Observable<IBackendInfo>;
   frontendGitCommitHash: string;
@@ -131,7 +134,7 @@ export class AboutComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!scrollToSponsor) {
       return;
     }
-    setTimeout(() => {
+    this.lifecycleTimers.schedule(() => {
       if (this.route.snapshot.fragment) {
         const el = scrollToSponsor
           ? this.document.getElementById('community-sponsors-anchor')
@@ -186,6 +189,8 @@ export class AboutComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
+    this.lifecycleTimers.destroy();
+
     this.themeSubscription?.unsubscribe();
   }
 }

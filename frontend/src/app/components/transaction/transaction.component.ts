@@ -1,3 +1,4 @@
+import { ComponentTimers } from '@app/shared/component-timers';
 import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   Component,
@@ -89,6 +90,8 @@ const DUPLICATE_TX_BLOCKS: Record<string, [number, number]> = {
   standalone: false,
 })
 export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
+  private readonly lifecycleTimers = new ComponentTimers();
+
   private readonly lifecycleSubscriptions = new LifecycleSubscription();
 
   network = '';
@@ -160,7 +163,7 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
   set flowAnchor(element: ElementRef | null | undefined) {
     if (element) {
       this.graphContainer = element;
-      setTimeout(() => {
+      this.lifecycleTimers.schedule(() => {
         this.applyFragment();
       }, 0);
     }
@@ -907,7 +910,7 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
     const vout = parseInt(this.fragmentParams.get('vout'), 10);
     this.inputIndex = !isNaN(vin) && vin >= 0 ? vin : null;
     this.outputIndex = !isNaN(vout) && vout >= 0 ? vout : null;
-    setTimeout(() => {
+    this.lifecycleTimers.schedule(() => {
       this.applyFragment();
     }, 0);
   }
@@ -916,11 +919,11 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
   setGraphSize(): void {
     this.isMobile = window.innerWidth < 850;
     if (this.graphContainer?.nativeElement && this.stateService.isBrowser) {
-      setTimeout(() => {
+      this.lifecycleTimers.schedule(() => {
         if (this.graphContainer?.nativeElement?.clientWidth) {
           this.graphWidth = this.graphContainer.nativeElement.clientWidth;
         } else {
-          setTimeout(() => {
+          this.lifecycleTimers.schedule(() => {
             this.setGraphSize();
           }, 1);
         }
@@ -934,6 +937,8 @@ export class TransactionComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.lifecycleTimers.destroy();
+
     this.lifecycleSubscriptions.unsubscribe();
 
     this.subscription.unsubscribe();

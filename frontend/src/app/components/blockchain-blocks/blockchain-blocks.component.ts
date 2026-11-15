@@ -1,3 +1,4 @@
+import { ComponentTimers } from '@app/shared/component-timers';
 import {
   Component,
   OnInit,
@@ -28,6 +29,8 @@ interface BlockchainBlock extends BlockExtended {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BlockchainBlocksComponent implements OnInit, OnChanges, OnDestroy {
+  private readonly lifecycleTimers = new ComponentTimers();
+
   @Input() static: boolean = false;
   @Input() offset: number = 0;
   @Input() height: number = 0; // max height of blocks in chunk (dynamic blocks only)
@@ -176,7 +179,7 @@ export class BlockchainBlocksComponent implements OnInit, OnChanges, OnDestroy {
                 )
               )
             );
-            setTimeout(() => {
+            this.lifecycleTimers.schedule(() => {
               this.blockStyles = [];
               this.blocks.forEach((b, i) =>
                 this.blockStyles.push(this.getStyleForBlock(b, i))
@@ -260,6 +263,8 @@ export class BlockchainBlocksComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.lifecycleTimers.destroy();
+
     if (this.blocksSubscription) {
       this.blocksSubscription.unsubscribe();
     }
@@ -298,7 +303,7 @@ export class BlockchainBlocksComponent implements OnInit, OnChanges, OnDestroy {
           blockindex * this.blockOffset +
           this.blockPadding -
           this.dividerBlockOffset;
-        setTimeout(() => {
+        this.lifecycleTimers.schedule(() => {
           this.arrowTransition = '2s';
           this.arrowLeftPx = blockindex * this.blockOffset + this.blockPadding;
           this.cd.markForCheck();
@@ -306,7 +311,7 @@ export class BlockchainBlocksComponent implements OnInit, OnChanges, OnDestroy {
       } else {
         this.arrowLeftPx = blockindex * this.blockOffset + this.blockPadding;
         if (!animate) {
-          setTimeout(() => {
+          this.lifecycleTimers.schedule(() => {
             this.arrowTransition = '2s';
             this.cd.markForCheck();
           }, 50);
@@ -365,7 +370,7 @@ export class BlockchainBlocksComponent implements OnInit, OnChanges, OnDestroy {
     this.cd.markForCheck();
     if (animateSlide) {
       // animate blocks slide right
-      setTimeout(() => {
+      this.lifecycleTimers.schedule(() => {
         this.blockStyles = [];
         this.blocks.forEach((b, i) =>
           this.blockStyles.push(this.getStyleForBlock(b, i))

@@ -1,4 +1,5 @@
 import {
+  OnDestroy,
   Component,
   Input,
   Output,
@@ -15,7 +16,8 @@ import {
   standalone: false,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ToggleComponent implements AfterViewInit {
+export class ToggleComponent implements AfterViewInit, OnDestroy {
+  private pendingTimeout: ReturnType<typeof setTimeout> | undefined;
   @Output() toggleStatusChanged = new EventEmitter<boolean>();
   @Input() textLeft: string;
   @Input() textRight: string;
@@ -26,12 +28,16 @@ export class ToggleComponent implements AfterViewInit {
 
   ngAfterViewInit(): void {
     this.animate = true;
-    setTimeout(() => {
+    this.pendingTimeout = setTimeout(() => {
       this.cd.markForCheck();
     });
   }
 
   onToggleStatusChanged(e): void {
     this.toggleStatusChanged.emit(e.target.checked);
+  }
+
+  ngOnDestroy(): void {
+    clearTimeout(this.pendingTimeout);
   }
 }

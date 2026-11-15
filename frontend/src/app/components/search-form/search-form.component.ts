@@ -1,3 +1,4 @@
+import { ComponentTimers } from '@app/shared/component-timers';
 import { Subscription as LifecycleSubscription } from 'rxjs';
 import {
   Component,
@@ -55,6 +56,8 @@ import {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchFormComponent implements OnInit {
+  private readonly lifecycleTimers = new ComponentTimers();
+
   private readonly lifecycleSubscriptions = new LifecycleSubscription();
 
   @Input() hamburgerOpen = false;
@@ -131,7 +134,10 @@ export class SearchFormComponent implements OnInit {
       this.stateService.searchFocus$.subscribe(() => {
         if (!this.searchInput) {
           // Try again a bit later once the view is properly initialized
-          setTimeout(() => this.searchInput.nativeElement.focus(), 100);
+          this.lifecycleTimers.schedule(
+            () => this.searchInput.nativeElement.focus(),
+            100
+          );
         } else if (this.searchInput) {
           this.searchInput.nativeElement.focus();
         }
@@ -280,7 +286,7 @@ export class SearchFormComponent implements OnInit {
   }
 
   itemSelected(): void {
-    setTimeout(() => this.search());
+    this.lifecycleTimers.schedule(() => this.search());
   }
 
   selectedResult(result: any): void {
@@ -430,6 +436,8 @@ export class SearchFormComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
+    this.lifecycleTimers.destroy();
+
     this.lifecycleSubscriptions.unsubscribe();
   }
 }
