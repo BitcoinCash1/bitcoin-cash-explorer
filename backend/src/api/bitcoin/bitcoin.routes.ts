@@ -592,7 +592,8 @@ class BitcoinRoutes {
         handleError(req, res, 400, `Parameter 'from' must be a block height (integer)`);
         return;
       }
-      const to = req.params.to === undefined ? await bitcoinApi.$getBlockHeightTip() : parseNonnegativeInteger(req.params.to);
+      const to =
+        req.params.to === undefined ? await bitcoinApi.$getBlockHeightTip() : parseNonnegativeInteger(req.params.to);
       if (to === null) {
         handleError(req, res, 400, `Parameter 'to' must be a block height (integer)`);
         return;
