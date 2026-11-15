@@ -2,7 +2,7 @@ import { CHIPNET_FIRST_SHORT_BLOCK } from '../utils/block-timing';
 import { PoolConnection } from 'mysql2/promise';
 import poolStatisticsCache from '../api/mining/pool-statistics-cache';
 import bitcoinApi from '../api/bitcoin/bitcoin-api-factory';
-import { BlockExtended, BlockExtension, BlockPrice } from '../mempool.interfaces';
+import { AuditScore, BlockExtended, BlockExtension, BlockPrice } from '../mempool.interfaces';
 import DB from '../database';
 import logger from '../logger';
 import { Common } from '../api/common';
@@ -643,9 +643,14 @@ class BlocksRepository {
     try {
       const [rows]: any[] = await DB.query(query, params);
 
+      const audits = config.EXPLORER.AUDIT
+        ? await BlocksAuditsRepository.$getBlockAuditScoresByHashes(rows.map((row) => row.id))
+        : new Map<string, AuditScore>();
       const blocks: BlockExtended[] = [];
       for (const block of rows) {
-        blocks.push(await this.formatDbBlockIntoExtendedBlock(block as DatabaseBlock));
+        blocks.push(
+          await this.formatDbBlockIntoExtendedBlock(block as DatabaseBlock, true, audits.get(block.id) ?? null)
+        );
       }
 
       return blocks;
@@ -1383,7 +1388,11 @@ class BlocksRepository {
    *
    * @param dbBlk
    */
-  private async formatDbBlockIntoExtendedBlock(dbBlk: DatabaseBlock, enrich = true): Promise<BlockExtended> {
+  private async formatDbBlockIntoExtendedBlock(
+    dbBlk: DatabaseBlock,
+    enrich = true,
+    prefetchedAudit?: AuditScore | null
+  ): Promise<BlockExtended> {
     const blk: Partial<BlockExtended> = {};
     const extras: Partial<BlockExtension> = {};
 
@@ -1431,7 +1440,8 @@ class BlocksRepository {
     extras.totalOutputAmt = dbBlk.totalOutputAmt;
     extras.medianFeeAmt = dbBlk.medianFeeAmt;
     extras.feePercentiles = JSON.parse(dbBlk.feePercentiles);
-    ((extras.header = dbBlk.header), (extras.utxoSetChange = dbBlk.utxoSetChange));
+    extras.header = dbBlk.header;
+    extras.utxoSetChange = dbBlk.utxoSetChange;
     extras.utxoSetSize = dbBlk.utxoSetSize;
     extras.totalInputAmt = dbBlk.totalInputAmt;
     extras.firstSeen = dbBlk.firstSeen;
@@ -1445,7 +1455,8 @@ class BlocksRepository {
     extras.expectedFees = null;
     extras.expectedSize = null;
     if (enrich && config.EXPLORER.AUDIT) {
-      const auditScore = await BlocksAuditsRepository.$getBlockAuditScore(dbBlk.id);
+      const auditScore =
+        prefetchedAudit === undefined ? await BlocksAuditsRepository.$getBlockAuditScore(dbBlk.id) : prefetchedAudit;
       if (auditScore) {
         extras.matchRate = auditScore.matchRate;
         extras.expectedFees = auditScore.expectedFees;

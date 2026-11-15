@@ -6,7 +6,7 @@ interface ICache {
 }
 
 class MemoryCache {
-  private cache: ICache[] = [];
+  private cache = new Map<string, ICache>();
   constructor() {
     setInterval(this.cleanup.bind(this), 1000);
   }
@@ -14,7 +14,7 @@ class MemoryCache {
   public set(type: string, id: string, data: any, secondsExpiry: number) {
     const expiry = new Date();
     expiry.setSeconds(expiry.getSeconds() + secondsExpiry);
-    this.cache.push({
+    this.cache.set(JSON.stringify([type, id]), {
       type: type,
       id: id,
       data: data,
@@ -23,15 +23,20 @@ class MemoryCache {
   }
 
   public get<T>(type: string, id: string): T | null {
-    const found = this.cache.find((cache) => cache.type === type && cache.id === id);
-    if (found) {
+    const key = JSON.stringify([type, id]);
+    const found = this.cache.get(key);
+    if (found && found.expires > new Date()) {
       return found.data;
     }
+    this.cache.delete(key);
     return null;
   }
 
   private cleanup() {
-    this.cache = this.cache.filter((cache) => cache.expires > new Date());
+    const now = new Date();
+    for (const [key, entry] of this.cache) {
+      if (entry.expires <= now) this.cache.delete(key);
+    }
   }
 }
 

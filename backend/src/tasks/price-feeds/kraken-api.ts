@@ -88,7 +88,7 @@ class KrakenApi implements PriceFeed {
         if (price[0] > hardforkTimestamp) {
           break;
         }
-        if (existingPriceTimes.includes(parseInt(price[0]))) {
+        if (existingPriceTimes.has(parseInt(price[0]))) {
           continue;
         }
 
@@ -104,7 +104,7 @@ class KrakenApi implements PriceFeed {
         if (price[0] <= hardforkTimestamp) {
           continue;
         }
-        if (existingPriceTimes.includes(parseInt(price[0]))) {
+        if (existingPriceTimes.has(parseInt(price[0]))) {
           continue;
         }
 
