@@ -1,3 +1,4 @@
+import { parseNonnegativeInteger } from '../../utils/api';
 import { Application, Request, Response } from 'express';
 import config from '../../config';
 import logger from '../../logger';
@@ -276,16 +277,13 @@ class MiningRoutes {
 
   private async $getBlockFeesTimespan(req: Request, res: Response) {
     try {
-      if (!parseInt(req.query.from as string, 10) || !parseInt(req.query.to as string, 10)) {
-        throw new Error('Invalid timestamp range');
+      const from = parseNonnegativeInteger(req.query.from, 253402300799);
+      const to = parseNonnegativeInteger(req.query.to, 253402300799);
+      if (from === null || to === null || from > to) {
+        handleError(req, res, 400, 'Invalid timestamp range');
+        return;
       }
-      if (parseInt(req.query.from as string, 10) > parseInt(req.query.to as string, 10)) {
-        throw new Error('from must be less than to');
-      }
-      const blockFees = await mining.$getBlockFeesTimespan(
-        parseInt(req.query.from as string, 10),
-        parseInt(req.query.to as string, 10)
-      );
+      const blockFees = await mining.$getBlockFeesTimespan(from, to);
       res.header('Pragma', 'public');
       res.header('Cache-control', 'public');
       res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
@@ -518,7 +516,8 @@ class MiningRoutes {
       const nowPlus1day = Math.floor(Date.now() / 1000) + 60 * 60 * 24;
       // Prevent non-integers that are not seconds
       if (!/^[1-9][0-9]*$/.test(req.params.timestamp) || timestamp > nowPlus1day) {
-        throw new Error(`Invalid timestamp, value must be Unix seconds`);
+        handleError(req, res, 400, 'Invalid timestamp, value must be Unix seconds');
+        return;
       }
       const result = await BlocksRepository.$getBlockHeightFromTimestamp(timestamp);
       res.header('Pragma', 'public');

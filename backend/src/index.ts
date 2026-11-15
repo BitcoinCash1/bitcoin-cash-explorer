@@ -1,3 +1,4 @@
+import { apiErrorHandler } from './utils/api';
 import shutdown from './utils/shutdown';
 import { shutdownClusterWorkers } from './utils/shutdown-cluster-workers';
 import express from 'express';
@@ -355,6 +356,7 @@ export class Server {
     if (!config.EXPLORER.OFFICIAL) {
       aboutRoutes.initRoutes(this.app);
     }
+    this.app.use(apiErrorHandler);
   }
 
   healthCheck(): void {
