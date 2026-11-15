@@ -1559,6 +1559,10 @@
                 <source xml:space="preserve">Response</source>
                 <target xml:space="preserve">Válasz</target>
             </trans-unit>
+            <trans-unit id="6553907839051185757">
+                <source xml:space="preserve">Target block time</source>
+                <target xml:space="preserve">Target block time</target>
+            </trans-unit>
             <trans-unit id="6557284236206797364">
                 <source xml:space="preserve"> No indexed stale blocks have been recorded for this network. </source>
                 <target xml:space="preserve"> No indexed stale blocks have been recorded for this network. </target>
@@ -1630,10 +1634,6 @@
             <trans-unit id="6698602804540558682">
                 <source xml:space="preserve">Empty Blocks</source>
                 <target xml:space="preserve">Empty Blocks</target>
-            </trans-unit>
-            <trans-unit id="6699474967382202471">
-                <source xml:space="preserve">The overall luck of all mining pools over the past week. A luck bigger than 100% means the average block time for the current epoch is less than 10 minutes.</source>
-                <target xml:space="preserve">Ez az összes bányász pool általános szerencséje az elmúlt héten. A 100%-ál nagyobb szerencse azt jelenti, hogy az átlagos blokkidő az aktuális korszakban kevesebb mint 10 perc.</target>
             </trans-unit>
             <trans-unit id="6721450802285322732">
                 <source xml:space="preserve"> Included in block </source>
@@ -2026,6 +2026,10 @@
             <trans-unit id="8108093314946246971">
                 <source xml:space="preserve">TXID</source>
                 <target xml:space="preserve">TXID</target>
+            </trans-unit>
+            <trans-unit id="8116862204370405696">
+                <source xml:space="preserve">The overall luck of all mining pools over the past week. A luck bigger than 100% means the average block time for the current epoch is less than the network target interval.</source>
+                <target xml:space="preserve">The overall luck of all mining pools over the past week. A luck bigger than 100% means the average block time for the current epoch is less than the network target interval.</target>
             </trans-unit>
             <trans-unit id="8132128899357611687">
                 <source xml:space="preserve"> Transaction Fees </source>

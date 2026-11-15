@@ -953,7 +953,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
-          <context context-type="linenumber">282</context>
+          <context context-type="linenumber">312</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.ts</context>
@@ -984,7 +984,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
-          <context context-type="linenumber">286</context>
+          <context context-type="linenumber">316</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.ts</context>
@@ -1033,7 +1033,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-fees-subsidy-graph/block-fees-subsidy-graph.component.ts</context>
-          <context context-type="linenumber">266</context>
+          <context context-type="linenumber">268</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-rewards-graph/block-rewards-graph.component.ts</context>
@@ -1045,7 +1045,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
-          <context context-type="linenumber">203</context>
+          <context context-type="linenumber">232</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-tx-counts-graph/block-tx-counts-graph.component.ts</context>
@@ -1107,7 +1107,7 @@
                 data[0].axisValue"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-fees-subsidy-graph/block-fees-subsidy-graph.component.ts</context>
-          <context context-type="linenumber">344,347</context>
+          <context context-type="linenumber">346,349</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8807945662832318286" datatype="html">
@@ -1115,7 +1115,7 @@
                 data[0].axisValue"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-fees-subsidy-graph/block-fees-subsidy-graph.component.ts</context>
-          <context context-type="linenumber">352,355</context>
+          <context context-type="linenumber">354,357</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7067128377657180850" datatype="html">
@@ -1708,7 +1708,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
-          <context context-type="linenumber">77</context>
+          <context context-type="linenumber">85</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/graphs/graphs.component.html</context>
@@ -1720,47 +1720,66 @@
         <source>See Bitcoin Cash block time variation over time.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
-          <context context-type="linenumber">79</context>
+          <context context-type="linenumber">87</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2612543646528354459" datatype="html">
+        <source>Error loading data.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
+          <context context-type="linenumber">153</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/block/block.component.html</context>
+          <context context-type="linenumber">849,851</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/incoming-transactions-graph/incoming-transactions-graph.component.ts</context>
+          <context context-type="linenumber">78</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/components/mempool-graph/mempool-graph.component.ts</context>
+          <context context-type="linenumber">91</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2238469337972459496" datatype="html">
         <source>Block Time</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
-          <context context-type="linenumber">220</context>
+          <context context-type="linenumber">249</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
-          <context context-type="linenumber">332</context>
+          <context context-type="linenumber">362</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2800260241472448717" datatype="html">
         <source>Block time (SMA 144)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
-          <context context-type="linenumber">226</context>
+          <context context-type="linenumber">255</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
-          <context context-type="linenumber">353</context>
+          <context context-type="linenumber">397</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7800492512361030674" datatype="html">
         <source>Block time (Median)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
-          <context context-type="linenumber">232</context>
+          <context context-type="linenumber">261</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
-          <context context-type="linenumber">368</context>
+          <context context-type="linenumber">412</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6553907839051185757" datatype="html">
         <source>Target block time</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/block-times-graph/block-times-graph.component.ts</context>
-          <context context-type="linenumber">342</context>
+          <context context-type="linenumber">372</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5190281097971514213" datatype="html">
@@ -2480,22 +2499,6 @@
           <context context-type="linenumber">108,109</context>
         </context-group>
         <note priority="1" from="description">shared.transaction-count.plural</note>
-      </trans-unit>
-      <trans-unit id="2612543646528354459" datatype="html">
-        <source>Error loading data.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/block/block.component.html</context>
-          <context context-type="linenumber">849,851</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/incoming-transactions-graph/incoming-transactions-graph.component.ts</context>
-          <context context-type="linenumber">78</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/components/mempool-graph/mempool-graph.component.ts</context>
-          <context context-type="linenumber">91</context>
-        </context-group>
-        <note priority="1" from="description">error.general-loading-data</note>
       </trans-unit>
       <trans-unit id="9086644539236239452" datatype="html">
         <source>Error loading block data.</source>
@@ -3558,7 +3561,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/hashrate-chart/hashrate-chart.component.ts</context>
-          <context context-type="linenumber">474</context>
+          <context context-type="linenumber">475</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/pool/pool.component.ts</context>
@@ -3581,7 +3584,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/hashrate-chart/hashrate-chart.component.ts</context>
-          <context context-type="linenumber">486</context>
+          <context context-type="linenumber">487</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8105839921891777281" datatype="html">
@@ -3592,7 +3595,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/components/hashrate-chart/hashrate-chart.component.ts</context>
-          <context context-type="linenumber">497</context>
+          <context context-type="linenumber">498</context>
         </context-group>
       </trans-unit>
       <trans-unit id="mining.pools-historical-dominance" datatype="html">

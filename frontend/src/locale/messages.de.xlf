@@ -1561,6 +1561,10 @@ Da ich das Projekt alleine betreibe, investiere ich viel meiner Freizeit.</targe
                 <source xml:space="preserve">Response</source>
                 <target xml:space="preserve">Antwort</target>
             </trans-unit>
+            <trans-unit id="6553907839051185757">
+                <source xml:space="preserve">Target block time</source>
+                <target xml:space="preserve">Target block time</target>
+            </trans-unit>
             <trans-unit id="6557284236206797364">
                 <source xml:space="preserve"> No indexed stale blocks have been recorded for this network. </source>
                 <target xml:space="preserve"> No indexed stale blocks have been recorded for this network. </target>
@@ -1632,10 +1636,6 @@ Da ich das Projekt alleine betreibe, investiere ich viel meiner Freizeit.</targe
             <trans-unit id="6698602804540558682">
                 <source xml:space="preserve">Empty Blocks</source>
                 <target xml:space="preserve">Empty Blocks</target>
-            </trans-unit>
-            <trans-unit id="6699474967382202471">
-                <source xml:space="preserve">The overall luck of all mining pools over the past week. A luck bigger than 100% means the average block time for the current epoch is less than 10 minutes.</source>
-                <target xml:space="preserve">Das Gesamtglück aller Mining-Pools in der vergangenen Woche. Glück größer als 100 % bedeutet, dass die durchschnittliche Blockzeit für die aktuelle Epoche weniger als 10 Minuten beträgt.</target>
             </trans-unit>
             <trans-unit id="6721450802285322732">
                 <source xml:space="preserve"> Included in block </source>
@@ -2028,6 +2028,10 @@ Da ich das Projekt alleine betreibe, investiere ich viel meiner Freizeit.</targe
             <trans-unit id="8108093314946246971">
                 <source xml:space="preserve">TXID</source>
                 <target xml:space="preserve">TXID</target>
+            </trans-unit>
+            <trans-unit id="8116862204370405696">
+                <source xml:space="preserve">The overall luck of all mining pools over the past week. A luck bigger than 100% means the average block time for the current epoch is less than the network target interval.</source>
+                <target xml:space="preserve">The overall luck of all mining pools over the past week. A luck bigger than 100% means the average block time for the current epoch is less than the network target interval.</target>
             </trans-unit>
             <trans-unit id="8132128899357611687">
                 <source xml:space="preserve"> Transaction Fees </source>
