@@ -187,7 +187,7 @@ class BitcoinApi implements AbstractBitcoinApi {
   async $getAddressSummary(
     _target: string,
     _scriptHash = false
-  ): Promise<{ address: string; confirmedBalance: number; pendingBalance: number; electrum: true }> {
+  ): Promise<{ address: string; confirmedBalance: number; pendingBalance: number; electrum: boolean }> {
     throw Object.assign(new Error('Address pagination requires Electrum'), { status: 405 });
   }
   async $getAddressPage(

@@ -61,6 +61,15 @@ __ELECTRUM_HOST__=${ELECTRUM_HOST:=127.0.0.1}
 __ELECTRUM_PORT__=${ELECTRUM_PORT:=50001}
 __ELECTRUM_TLS_ENABLED__=${ELECTRUM_TLS_ENABLED:=false}
 
+# P2P
+__P2P_HOST__=${P2P_HOST:=127.0.0.1}
+__P2P_PORT__=${P2P_PORT:=0}
+__P2P_NETWORK__=${P2P_NETWORK:=""}
+__P2P_TIMEOUT__=${P2P_TIMEOUT:=30000}
+__P2P_FILTER_DIR__=${P2P_FILTER_DIR:=""}
+__P2P_RANGE_PREFIX_BITS__=${P2P_RANGE_PREFIX_BITS:=256}
+__P2P_MAX_HISTORY_TXS__=${P2P_MAX_HISTORY_TXS:=100000}
+
 
 # SECOND_CORE_RPC
 __SECOND_CORE_RPC_HOST__=${SECOND_CORE_RPC_HOST:=127.0.0.1}
@@ -191,6 +200,14 @@ sed -i "s!__CORE_RPC_DEBUG_LOG_PATH__!${__CORE_RPC_DEBUG_LOG_PATH__}!g" explorer
 sed -i "s!__ELECTRUM_HOST__!${__ELECTRUM_HOST__}!g" explorer-config.json
 sed -i "s!__ELECTRUM_PORT__!${__ELECTRUM_PORT__}!g" explorer-config.json
 sed -i "s!__ELECTRUM_TLS_ENABLED__!${__ELECTRUM_TLS_ENABLED__}!g" explorer-config.json
+
+sed -i "s!__P2P_HOST__!${__P2P_HOST__}!g" explorer-config.json
+sed -i "s!__P2P_PORT__!${__P2P_PORT__}!g" explorer-config.json
+sed -i "s!__P2P_NETWORK__!${__P2P_NETWORK__}!g" explorer-config.json
+sed -i "s!__P2P_TIMEOUT__!${__P2P_TIMEOUT__}!g" explorer-config.json
+sed -i "s!__P2P_FILTER_DIR__!${__P2P_FILTER_DIR__}!g" explorer-config.json
+sed -i "s!__P2P_RANGE_PREFIX_BITS__!${__P2P_RANGE_PREFIX_BITS__}!g" explorer-config.json
+sed -i "s!__P2P_MAX_HISTORY_TXS__!${__P2P_MAX_HISTORY_TXS__}!g" explorer-config.json
 
 sed -i "s!__SECOND_CORE_RPC_HOST__!${__SECOND_CORE_RPC_HOST__}!g" explorer-config.json
 sed -i "s!__SECOND_CORE_RPC_PORT__!${__SECOND_CORE_RPC_PORT__}!g" explorer-config.json

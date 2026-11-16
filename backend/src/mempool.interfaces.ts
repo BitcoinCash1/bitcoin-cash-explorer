@@ -447,7 +447,7 @@ export interface IBackendInfo {
   version: string;
   coreVersion: string;
   osVersion: string;
-  backend: 'electrum' | 'none';
+  backend: 'electrum' | 'p2p' | 'none';
 }
 
 export interface INetworkInfo {

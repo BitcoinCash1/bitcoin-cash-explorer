@@ -8,7 +8,8 @@ export interface AddressSummary {
   address: string;
   confirmedBalance: number;
   pendingBalance: number;
-  electrum: true;
+  /** True when an Electrum server gave the balance; the p2p backend computes it and gives false. */
+  electrum: boolean;
 }
 export interface AddressPageMetadata {
   nextCursor: string | null;

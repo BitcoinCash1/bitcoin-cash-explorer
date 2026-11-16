@@ -60,6 +60,15 @@
     "PORT": 16,
     "TLS_ENABLED": false
   },
+  "P2P": {
+    "HOST": "__P2P_HOST__",
+    "PORT": 8333,
+    "NETWORK": "__P2P_NETWORK__",
+    "TIMEOUT": 30001,
+    "FILTER_DIR": "__P2P_FILTER_DIR__",
+    "RANGE_PREFIX_BITS": 255,
+    "MAX_HISTORY_TXS": 100001
+  },
   "SECOND_CORE_RPC": {
     "HOST": "__SECOND_CORE_RPC_HOST__",
     "PORT": 17,

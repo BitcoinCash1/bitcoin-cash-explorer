@@ -7,7 +7,7 @@ interface IConfig {
     ENABLED: boolean;
     OFFICIAL: boolean;
     NETWORK: 'mainnet' | 'testnet4' | 'chipnet' | 'scalenet';
-    BACKEND: 'electrum' | 'none';
+    BACKEND: 'electrum' | 'p2p' | 'none';
     HTTP_PORT: number;
     UNIX_SOCKET_PATH: string;
     SPAWN_CLUSTER_PROCS: number;
@@ -53,6 +53,15 @@ interface IConfig {
     HOST: string;
     PORT: number;
     TLS_ENABLED: boolean;
+  };
+  P2P: {
+    HOST: string;
+    PORT: number;
+    NETWORK: string;
+    TIMEOUT: number;
+    FILTER_DIR: string;
+    RANGE_PREFIX_BITS: number;
+    MAX_HISTORY_TXS: number;
   };
   CORE_RPC: {
     HOST: string;
@@ -193,6 +202,15 @@ const defaults: IConfig = {
     PORT: 50001,
     TLS_ENABLED: false,
   },
+  P2P: {
+    HOST: '127.0.0.1',
+    PORT: 0, // 0 = the network's default P2P port
+    NETWORK: '', // '' = EXPLORER.NETWORK; also 'regtest', 'testnet3' or 'simnet'
+    TIMEOUT: 30000,
+    FILTER_DIR: '', // '' = <CACHE_DIR>/p2p-filters/<network>
+    RANGE_PREFIX_BITS: 256,
+    MAX_HISTORY_TXS: 100000,
+  },
   CORE_RPC: {
     HOST: '127.0.0.1',
     PORT: 8332,
@@ -282,6 +300,7 @@ const defaults: IConfig = {
 class Config implements IConfig {
   EXPLORER: IConfig['EXPLORER'];
   ELECTRUM: IConfig['ELECTRUM'];
+  P2P: IConfig['P2P'];
   CORE_RPC: IConfig['CORE_RPC'];
   SECOND_CORE_RPC: IConfig['SECOND_CORE_RPC'];
   DATABASE: IConfig['DATABASE'];
@@ -301,6 +320,7 @@ class Config implements IConfig {
     this.EXPLORER = configs.EXPLORER;
 
     this.ELECTRUM = configs.ELECTRUM;
+    this.P2P = configs.P2P;
     this.CORE_RPC = configs.CORE_RPC;
     this.SECOND_CORE_RPC = configs.SECOND_CORE_RPC;
     this.DATABASE = configs.DATABASE;

@@ -59,6 +59,15 @@
     "PORT": 50001,
     "TLS_ENABLED": false
   },
+  "P2P": {
+    "HOST": "127.0.0.1",
+    "PORT": 0,
+    "NETWORK": "",
+    "TIMEOUT": 30000,
+    "FILTER_DIR": "",
+    "RANGE_PREFIX_BITS": 256,
+    "MAX_HISTORY_TXS": 100000
+  },
   "SECOND_CORE_RPC": {
     "HOST": "127.0.0.1",
     "PORT": 8332,

@@ -65,6 +65,16 @@ describe('BCH Explorer Backend Config', () => {
         TLS_ENABLED: false,
       });
 
+      expect(config.P2P).toStrictEqual({
+        HOST: '127.0.0.1',
+        PORT: 0,
+        NETWORK: '',
+        TIMEOUT: 30000,
+        FILTER_DIR: '',
+        RANGE_PREFIX_BITS: 256,
+        MAX_HISTORY_TXS: 100000,
+      });
+
       expect(config.CORE_RPC).toStrictEqual({
         HOST: '127.0.0.1',
         PORT: 8332,
@@ -164,6 +174,8 @@ describe('BCH Explorer Backend Config', () => {
       expect(config.EXPLORER).toStrictEqual(fixture.EXPLORER);
 
       expect(config.ELECTRUM).toStrictEqual(fixture.ELECTRUM);
+
+      expect(config.P2P).toStrictEqual(fixture.P2P);
 
       expect(config.CORE_RPC).toStrictEqual(fixture.CORE_RPC);
 
