@@ -44,7 +44,7 @@ rpcpassword=explorer
 
 [Pick an Electrum Server implementation](https://bchexplorer.cash/docs/faq#address-lookup-issues), configure it, and make sure it's synced.
 
-**This step is optional.** You can run BCH Explorer without configuring an Electrum Server for it, but address lookups will be disabled.
+**This step is optional.** You can run BCH Explorer without configuring an Electrum Server for it, but address lookups will be disabled, unless you use the [`p2p` backend](#address-lookups-as-a-p2p-light-client-the-p2p-backend), which needs no Electrum Server.
 
 ### 4. Configure MariaDB
 
@@ -109,6 +109,7 @@ In particular, make sure:
 - the correct Bitcoin Cash Node RPC credentials are specified in `CORE_RPC`
 - the correct `BACKEND` is specified in `explorer`:
   - "electrum" for [cculianu/Fulcrum](https://github.com/cculianu/Fulcrum)
+  - "p2p" to read addresses as a light client of the node, with no Electrum Server ([see below](#address-lookups-as-a-p2p-light-client-the-p2p-backend))
   - "none" if you're not using any Electrum Server
 
 ### 6. Run BCH Explorer Backend
@@ -272,6 +273,38 @@ Example output:
 ```sh
 Feb 13 14:55:27 [63246] WARN: Truncating pools, blocks, hashrates and difficulty_adjustments tables for re-indexing (using '--reindex-blocks'). You can cancel this command within 5 seconds
 ```
+
+## Address lookups as a P2P light client: the `p2p` backend
+
+With `"BACKEND": "p2p"` the backend gets address data from a Bitcoin Cash node the way a light wallet does, over P2P with compact script filters (filter type 1). The node builds one filter per block, the same for every client, and serves filters, proofs and transactions. The explorer does all matching itself, so the node never needs an index of addresses or transactions and nothing grows per address or per transaction.
+
+How an address is read:
+
+1. The backend keeps its own copy of the node's type 1 filters: for every block its hash, header Merkle root, filter header and filter, downloaded with `getheaders`, `getcfheaders`, `getcfcheckpt` and `getcfilters`. Block headers must chain and meet their targets, filter headers must chain from zero and match the node's checkpoints, and every filter must hash to its header. A reorganization truncates the copy at the fork. The copy is two flat files in `FILTER_DIR` (by default `<CACHE_DIR>/p2p-filters/<network>`): it only grows by blocks and a scan reads it front to back, which files do better than the database.
+2. For an address, the key is the SHA-256 of its locking script (the Electrum scripthash before byte reversal). Each block's filter is tested for the key.
+3. For a block that matches, `getcfrange` returns the leaves with the key (transaction index, input or output index, kind) together with the leaves on either side and the edge hashes; they must rebuild the root at the front of the filter, which proves that the block has no other leaf with that key.
+4. For each transaction, `getcfproof` returns the transaction with its branch to the block header's Merkle root. A leaf for a created output gives its value; a leaf for a spent output names the spending input, and so the output it spends. History, balance, sent and received totals and unspent outputs follow from these leaves.
+5. Transactions are shown from the node's RPC as `getrawtransaction <txid> 2 <blockhash>`: the explorer knows the block, so the node needs no transaction index for address pages. The mempool part of an address comes from the explorer's own mempool copy.
+
+What the node must serve:
+
+- **P2P:** BIP157 messages for filter type 1, plus `getcfrange` and `getcfproof`. BCHD with script filters ([gcash/bchd#776](https://github.com/gcash/bchd/pull/776), [#777](https://github.com/gcash/bchd/pull/777); on unless `--nocfilters` or `--noscriptfilters`) and Knuth ([k-nuth/kth#1002](https://github.com/k-nuth/kth/pull/1002) to [#1004](https://github.com/k-nuth/kth/pull/1004)) serve them.
+- **RPC** (`CORE_RPC`, which may be another node on the same network): `validateaddress`, `getrawtransaction` with a block hash, `getblock`, and the mempool calls the explorer already uses.
+- **No Electrum Server and no index**: no address index, and no transaction index for address data. Transaction pages that look a transaction up by its id alone still need the node's transaction index, as with the other backends.
+
+The explorer asks one range per matching block and one proof per transaction, far more than one wallet does, so let the node treat it as a trusted peer: BCHD adds each `getcfrange` and `getcfproof` to the peer's ban score and drops a peer after about a hundred in a short time, unless it is whitelisted (`whitelist=<explorer address>`). The filter copy is owned by one process: run the `p2p` backend with `SPAWN_CLUSTER_PROCS` set to 0.
+
+A first lookup of an address scans every filter, which costs time in proportion to the size of the filters; the result is cached and later lookups only scan the blocks that came since. The paginated address endpoints (`/address/:address/transactions`, `/transaction-count`) scan window by window. The frontend uses those only with the `electrum` backend and otherwise reads the whole history at once (`/address/:address`, `/txs`, `/utxo`).
+
+| `P2P` setting | Default | Meaning |
+| --- | --- | --- |
+| `HOST` | `127.0.0.1` | The node's P2P host. |
+| `PORT` | `0` | The node's P2P port; 0 takes the network's default port. |
+| `NETWORK` | `""` | The P2P network; empty takes `EXPLORER.NETWORK`. Also `regtest`, `testnet3` or `simnet`. |
+| `TIMEOUT` | `30000` | Milliseconds a request may wait for each message of its answer before the connection is dropped and made again. |
+| `FILTER_DIR` | `""` | Where the filter copy is kept; empty is `<CACHE_DIR>/p2p-filters/<network>`. |
+| `RANGE_PREFIX_BITS` | `256` | Bits of the key named in `getcfrange`. Fewer bits show the node a bucket of keys rather than the key, at the cost of more leaves per answer. |
+| `MAX_HISTORY_TXS` | `100000` | Addresses with more transactions are refused, as Electrum servers refuse large histories. |
 
 ## Request limits
 
