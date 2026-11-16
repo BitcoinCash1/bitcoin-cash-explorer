@@ -84,7 +84,7 @@ Use [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) for local devel
 
 _The build process requires [Rust](https://www.rust-lang.org/tools/install) to be installed._
 
-Build and copy the native Rust addon first, then install dependencies and build the backend:
+Build and copy the native Rust addons (GBT and the filter scan) first, then install dependencies and build the backend:
 
 ```sh
 cd backend
@@ -173,7 +173,7 @@ pnpm build
 ```
 
 The GitLab backend test job also runs Rust and native-binding tests; see the
-[Rust README](../rust/gbt/README.md). Database integration tests are separate
+Rust READMEs ([GBT](../rust/gbt/README.md), [filter scan](../rust/filter-scan/README.md)). Database integration tests are separate
 from the default Jest suite; use `pnpm test:with-db` for the isolated database
 setup provided by the project.
 
@@ -280,11 +280,13 @@ With `"BACKEND": "p2p"` the backend gets address data from a Bitcoin Cash node t
 
 How an address is read:
 
-1. The backend keeps its own copy of the node's type 1 filters: for every block its hash, header Merkle root, filter header and filter, downloaded with `getheaders`, `getcfheaders`, `getcfcheckpt` and `getcfilters`. Block headers must chain and meet their targets, filter headers must chain from zero and match the node's checkpoints, and every filter must hash to its header. A reorganization truncates the copy at the fork. The copy is two flat files in `FILTER_DIR` (by default `<CACHE_DIR>/p2p-filters/<network>`): it only grows by blocks and a scan reads it front to back, which files do better than the database.
-2. For an address, the key is the SHA-256 of its locking script (the Electrum scripthash before byte reversal). Each block's filter is tested for the key, here, without asking the node.
+1. The backend keeps its own copy of the node's type 1 filters: for every block its hash, header Merkle root, filter header and filter, downloaded with `getheaders`, `getcfheaders`, `getcfcheckpt` and `getcfilters`. Block headers must chain and meet their targets, filter headers must chain from zero and match the node's checkpoints, and every filter must hash to its header. A reorganization truncates the copy at the fork. The copy is three flat files in `FILTER_DIR` (by default `<CACHE_DIR>/p2p-filters/<network>`): the filters, one record per block, and a commit record of how many blocks are whole. It only grows by blocks and a scan reads it front to back, which files do better than the database.
+2. For an address, the key is the SHA-256 of its locking script (the Electrum scripthash before byte reversal). Each block's filter is tested for the key, here, without asking the node. The test runs in the native filter scan addon ([`rust/filter-scan`](../rust/filter-scan/README.md)), which reads the filter files on all cores; lookups that arrive while a scan of many blocks runs are tested together in the next pass.
 3. For a block that matches, `MATCH_MODE` decides how the explorer learns what the block does to the address (below).
 4. History, balance, sent and received totals and unspent outputs follow from the outputs that pay the address and the inputs that spend them. The mempool part comes from the explorer's own mempool copy.
 5. Transactions are shown from the node's RPC as `getrawtransaction <txid> 2 <blockhash>`: the explorer knows the block, so the node needs no transaction index for address pages.
+
+A transaction looked up by its id alone (a transaction page, its raw hex, its outspends or its Merkle proof) is asked from the node first. When the node does not find it, because it keeps no transaction index or, for Knuth, because the transaction is confirmed and all its outputs are spent, the explorer finds its block in the filters: type 1 filters have a leaf of kind 4 for every transaction, keyed on the SHA-256 of 0x02 and the txid. In `block` mode the explorer downloads the blocks whose filter matches that key and looks for the txid in them; in `range` mode it asks `getcfrange` for the full key, whose kind 4 leaf names the transaction's place in the block. It then reads the transaction with `getrawtransaction <txid> 2 <blockhash>`. Filters built before transaction leaves were added match no block, and the node's own error is shown.
 
 The two match modes, and what each shows the node:
 
@@ -295,11 +297,13 @@ What the node must serve:
 
 - **P2P:** BIP157 messages for filter type 1 and blocks (`getdata`); for `range` mode also `getcfrange` and `getcfproof`. BCHD with script filters ([gcash/bchd#776](https://github.com/gcash/bchd/pull/776), [#777](https://github.com/gcash/bchd/pull/777); on unless `--nocfilters` or `--noscriptfilters`) and Knuth ([k-nuth/kth#1002](https://github.com/k-nuth/kth/pull/1002) to [#1004](https://github.com/k-nuth/kth/pull/1004)) serve them.
 - **RPC** (`CORE_RPC`, which may be another node on the same network): `validateaddress`, `getrawtransaction` with a block hash, `getblock`, and the mempool calls the explorer already uses.
-- **No Electrum Server and no index**: no address index, and no transaction index for address data. Transaction pages that look a transaction up by its id alone still need the node's transaction index, as with the other backends.
+- **No Electrum Server and no index**: no address index and no transaction index. Without transaction leaves in the node's filters, transaction pages opened by a bare txid of a confirmed transaction still need the node to find it by its id (a transaction index, or for Knuth an unspent output of it).
 
-In `range` mode the explorer sends one range per matching block and one proof per transaction. BCHD adds each `getcfrange` and `getcfproof` to the peer's ban score and drops a peer after about a hundred within a minute or so, unless the peer is whitelisted (`whitelist=<explorer address>`). A `getdata` for one block adds nothing, so `block` mode needs no whitelisting. The filter copy is owned by one process: run the `p2p` backend with `SPAWN_CLUSTER_PROCS` set to 0.
+In `range` mode the explorer sends one range per matching block and one proof per transaction. BCHD adds each `getcfrange` and `getcfproof` to the peer's ban score and drops a peer after about a hundred within a minute or so, unless the peer is whitelisted (`whitelist=<explorer address>`). A `getdata` for one block adds nothing, so `block` mode needs no whitelisting.
 
-A first lookup of an address scans every filter and downloads the blocks that match, which costs time in proportion to the size of the filters and of those blocks; the history is cached and later lookups only scan the blocks that came since. Downloaded blocks are not kept.
+One process writes the filter copy: the backend process, or with `SPAWN_CLUSTER_PROCS` above 0 the primary process, which then syncs the filters and serves no requests. The workers read the same files: each sees the blocks the primary has committed, and when the primary cuts blocks off at a reorganization it marks the commit record first, so a worker drops what it read from those blocks and follows the new chain. Two explorers need two `FILTER_DIR`s.
+
+A first lookup of an address scans every filter and downloads the blocks that match, which costs time in proportion to the size of the filters and of those blocks; the history is cached and later lookups only scan the blocks that came since. Downloaded blocks are not kept. On a 16-core desktop CPU (32 threads) with the filters in the page cache, the scan of 100,000 synthetic blocks of mainnet's average filter size (1,850 entries, about 4.9 KB each) took 66 ms; for mainnet's 977,620 blocks that is about 0.65 s, where the TypeScript matcher took about 20 s. A pass with 1,000 keys took 0.4 s. Filters that are not in the page cache are read from disk first, about 5 GB for mainnet.
 
 | `P2P` setting | Default | Meaning |
 | --- | --- | --- |
