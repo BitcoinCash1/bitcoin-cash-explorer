@@ -1,7 +1,12 @@
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import { gcsCount, gcsHash, gcsMatch, gcsValues, mulHigh64, siphash24 } from '../../api/bitcoin/p2p/gcs';
+import { merkleRootOf } from '../../api/bitcoin/p2p/light-client';
 import {
+  MSG_BLOCK,
+  decodeBlock,
+  decodeNotFoundBlocks,
+  encodeGetData,
   decodeCFProof,
   decodeCFRange,
   decodeHeaders,
@@ -38,7 +43,14 @@ import {
   sha256,
   toDisplay,
 } from '../../api/bitcoin/p2p/wire';
-import { gcsEncode, rangeHashes, withToken } from '../../../test/fixtures/p2p-fake-node';
+import {
+  FakeChain,
+  gcsEncode,
+  p2pkh,
+  rangeHashes,
+  serializeBlock,
+  withToken,
+} from '../../../test/fixtures/p2p-fake-node';
 
 const vectors = JSON.parse(fs.readFileSync(path.join(__dirname, 'test-data/p2p-script-filter-vectors.json'), 'utf8'));
 const hex = (s: string) => Buffer.from(s, 'hex');
@@ -159,6 +171,35 @@ describe('script filter messages, from BCHD wire encoders', () => {
     expect(() => decodeCFRange(Buffer.concat([inner, Buffer.from([0])]))).toThrow(ProtocolError);
     const proof = wire('cfproof_spent');
     expect(() => decodeCFProof(proof.subarray(0, proof.length - 32))).toThrow(ProtocolError);
+  });
+
+  test('getdata, notfound and block messages, and the Merkle root of a block', () => {
+    const hash = Buffer.alloc(32, 7);
+    expect(encodeGetData([{ type: MSG_BLOCK, hash }]).toString('hex')).toBe('0102000000' + '07'.repeat(32));
+    const notFound = encodeGetData([
+      { type: 1, hash: ZERO_HASH },
+      { type: MSG_BLOCK, hash },
+    ]);
+    expect(decodeNotFoundBlocks(notFound)).toEqual([hash]);
+    const chain = new FakeChain();
+    const coinbase = chain.tip.txs[0].txid;
+    const block = chain.mine([
+      {
+        spends: [`${toDisplay(coinbase)}:0`],
+        outputs: [
+          { script: p2pkh(1), value: 5 },
+          { script: p2pkh(2), value: 6 },
+        ],
+      },
+    ]);
+    const raw = serializeBlock(block);
+    const decoded = decodeBlock(raw);
+    expect(decoded.header.hash.equals(block.hash)).toBe(true);
+    expect(decoded.txs.map((tx) => tx.txid)).toEqual(block.txs.map((tx) => tx.txid));
+    expect(decoded.txs[1].outputs.map((o) => o.value)).toEqual([5, 6]);
+    expect(merkleRootOf(decoded.txs.map((tx) => tx.txid)).equals(block.merkleRoot)).toBe(true);
+    expect(merkleRootOf([block.txs[0].txid]).equals(block.txs[0].txid)).toBe(true);
+    expect(() => decodeBlock(raw.subarray(0, raw.length - 1))).toThrow(ProtocolError);
   });
 
   test('getheaders and headers', () => {

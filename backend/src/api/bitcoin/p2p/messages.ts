@@ -211,6 +211,49 @@ export function readTx(r: ByteReader): ParsedTx {
   return { raw, txid: sha256d(raw), inputs, outputs };
 }
 
+export const MSG_BLOCK = 2;
+
+export function encodeGetData(items: { type: number; hash: Buffer }[]): Buffer {
+  const w = new ByteWriter().varint(items.length);
+  for (const item of items) {
+    w.u32(item.type).bytes(item.hash);
+  }
+  return w.toBuffer();
+}
+
+/** The hashes of the blocks a notfound message lists. */
+export function decodeNotFoundBlocks(payload: Buffer): Buffer[] {
+  const r = new ByteReader(payload);
+  const n = r.count(36);
+  const out: Buffer[] = [];
+  for (let i = 0; i < n; i++) {
+    const type = r.u32();
+    const hash = r.hash();
+    if (type === MSG_BLOCK) {
+      out.push(hash);
+    }
+  }
+  return out;
+}
+
+export interface Block {
+  header: BlockHeader;
+  txs: ParsedTx[];
+}
+
+export function decodeBlock(payload: Buffer): Block {
+  const r = new ByteReader(payload);
+  const header = parseBlockHeader(r.bytes(80));
+  // A transaction takes at least 60 bytes.
+  const n = r.count(60);
+  const txs: ParsedTx[] = [];
+  for (let i = 0; i < n; i++) {
+    txs.push(readTx(r));
+  }
+  r.end();
+  return { header, txs };
+}
+
 export interface CFProofOrigin {
   blockHash: Buffer;
   txIndex: number;

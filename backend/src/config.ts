@@ -60,6 +60,7 @@ interface IConfig {
     NETWORK: string;
     TIMEOUT: number;
     FILTER_DIR: string;
+    MATCH_MODE: 'block' | 'range';
     RANGE_PREFIX_BITS: number;
     MAX_HISTORY_TXS: number;
   };
@@ -208,7 +209,8 @@ const defaults: IConfig = {
     NETWORK: '', // '' = EXPLORER.NETWORK; also 'regtest', 'testnet3' or 'simnet'
     TIMEOUT: 30000,
     FILTER_DIR: '', // '' = <CACHE_DIR>/p2p-filters/<network>
-    RANGE_PREFIX_BITS: 256,
+    MATCH_MODE: 'block', // 'block': fetch matching blocks; 'range': getcfrange/getcfproof, which show the node the address
+    RANGE_PREFIX_BITS: 256, // only for MATCH_MODE 'range'
     MAX_HISTORY_TXS: 100000,
   },
   CORE_RPC: {

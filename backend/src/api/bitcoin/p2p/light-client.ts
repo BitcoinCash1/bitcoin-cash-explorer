@@ -1,19 +1,25 @@
 import { AddressHistoryUnavailableError } from '../address-pagination';
 import { FilterSource, FilterStoreChangedError, only } from './filter-store';
-import { gcsMatch } from './gcs';
+import { gcsCount, gcsHash, gcsMatch, gcsValues } from './gcs';
 import {
   CFProof,
   CFRange,
+  MSG_BLOCK,
   SCRIPT_FILTER_TYPE,
+  decodeBlock,
   decodeCFProof,
   decodeCFRange,
+  decodeNotFoundBlocks,
   encodeGetCFProof,
   encodeGetCFRange,
+  encodeGetData,
 } from './messages';
-import { Collector } from './peer';
+import { Collector, P2PUnavailableError } from './peer';
 import {
   LeafKind,
   ProvedLeaf,
+  ScriptFilterError,
+  categoryKey,
   checkProof,
   checkRange,
   keyPrefix,
@@ -21,17 +27,26 @@ import {
   splitScriptFilter,
   splitTokenPrefix,
 } from './script-filter';
-import { toDisplay } from './wire';
+import { sha256d, toDisplay } from './wire';
 
 /**
  * The address side of the light client. For a script key it tests each
- * block's stored filter; for a block that matches it asks the node for the
- * leaves with the key (getcfrange) and checks them against the root in the
- * filter, then asks for one proof per transaction (getcfproof), which gives
- * the transaction and folds it to the block header's Merkle root. Leaves say
- * which outputs pay the script and which inputs spend from it, so history,
- * balance and unspent outputs follow without any index.
+ * block's stored filter, and for a block that matches it learns what the
+ * block does to the script in one of two ways:
+ *
+ * - 'block' (the default, as a Neutrino wallet): it downloads the whole block
+ *   (getdata), checks it against its own header's Merkle root and against the
+ *   filter, and finds the outputs that pay the script and the inputs that
+ *   spend them itself. The node learns which blocks were fetched, never the
+ *   script or the transactions. Spends are known from the outputs earlier in
+ *   the script's history, so histories are built from the first block on.
+ * - 'range' (opt-in): it asks for the leaves with the key (getcfrange), checks
+ *   them against the root in the filter, and asks one proof per transaction
+ *   (getcfproof). Far less is downloaded, but the node learns the key, or a
+ *   prefix of it, and exactly which transactions.
  */
+
+export type MatchMode = 'block' | 'range';
 
 export interface ProofPeer {
   request<T>(command: string, payload: Buffer, collect: Collector<T>, timeout?: number): Promise<T>;
@@ -69,7 +84,8 @@ export interface ScriptHistory {
 }
 
 export interface LightClientOptions {
-  /** Bits of the key a getcfrange names; fewer bits show the node a bucket of keys instead of the key. */
+  mode?: MatchMode;
+  /** In 'range' mode, bits of the key a getcfrange names; fewer show the node a bucket of keys. */
   prefixBits: number;
   maxHistoryTxs: number;
   blockCacheSize?: number;
@@ -161,15 +177,36 @@ export class LightClient {
       : undefined;
   }
 
+  get mode(): MatchMode {
+    return this.options.mode ?? 'block';
+  }
+
   /**
    * The confirmed transactions of a script in the blocks [from, to), in chain
-   * order. A cached full history answers without a scan.
+   * order. A cached full history answers without a scan. In 'block' mode
+   * spends are found by outpoint: `known` holds the script's outputs created
+   * before `from` (txid:vout to value) and gains those the scan finds. A scan
+   * from a later block without them reads the full history instead.
    */
-  async scan(key: Buffer, from: number, to: number, signal?: AbortSignal, limit?: number): Promise<ScriptTx[]> {
+  async scan(
+    key: Buffer,
+    from: number,
+    to: number,
+    signal?: AbortSignal,
+    options: { limit?: number; known?: Map<string, number> } = {}
+  ): Promise<ScriptTx[]> {
     const cached = this.cachedHistory(key);
     if (cached && to - 1 <= cached.through) {
       return cached.txs.filter((tx) => tx.height >= from && tx.height < to);
     }
+    let known = options.known;
+    if (this.mode === 'block' && !known) {
+      if (from > 0) {
+        return (await this.history(key)).txs.filter((tx) => tx.height >= from && tx.height < to);
+      }
+      known = new Map();
+    }
+    const limit = options.limit;
     const end = Math.min(to, this.store.tipHeight + 1);
     if (end <= from) {
       return [];
@@ -195,7 +232,7 @@ export class LightClient {
       if (signal?.aborted) {
         throw new FilterStoreChangedError('Request cancelled');
       }
-      txs.push(...(await this.blockTxs(key, height)));
+      txs.push(...(await this.blockTxs(key, height, known)));
     }
     if (this.hashAt(end - 1) !== tipHash) {
       throw new FilterStoreChangedError('The chain changed during the scan');
@@ -222,7 +259,13 @@ export class LightClient {
       const tipHash = this.hashAt(tip)!;
       const txs = cached ? [...cached.txs] : [];
       const limit = this.options.maxHistoryTxs - txs.length;
-      txs.push(...(await this.scan(key, cached ? cached.through + 1 : 0, tip + 1, undefined, limit)));
+      const known = new Map<string, number>();
+      for (const tx of txs) {
+        for (const output of tx.outputs) {
+          known.set(`${tx.txid}:${output.vout}`, output.value);
+        }
+      }
+      txs.push(...(await this.scan(key, cached ? cached.through + 1 : 0, tip + 1, undefined, { limit, known })));
       if (txs.length > this.options.maxHistoryTxs) {
         throw new AddressHistoryUnavailableError('Address history exceeds the supported limit');
       }
@@ -238,8 +281,110 @@ export class LightClient {
     return work;
   }
 
+  /** The transactions of one block that pay or spend the script, by the client's mode. */
+  blockTxs(key: Buffer, height: number, known: Map<string, number> = new Map()): Promise<ScriptTx[]> {
+    return this.mode === 'block' ? this.blockTxsFromBlock(key, height, known) : this.blockTxsFromRange(key, height);
+  }
+
+  /**
+   * Downloads the block and reads it here: it must hash to the stored block
+   * hash, its transactions to the stored Merkle root, and every key of the
+   * outputs it creates must be in its filter. Outputs that pay the script are
+   * added to `known`; inputs that spend an output in `known` are its spends.
+   */
+  private async blockTxsFromBlock(key: Buffer, height: number, known: Map<string, number>): Promise<ScriptTx[]> {
+    const hash = this.store.hashAt(height);
+    const merkleRoot = this.store.merkleRootAt(height);
+    if (!hash || !merkleRoot) {
+      throw new FilterStoreChangedError(`No block at height ${height}`);
+    }
+    const blockHash = Buffer.from(hash);
+    const merkle = Buffer.from(merkleRoot);
+    const filter = splitScriptFilter(await this.store.readFilter(height)).gcs;
+    let missing = false;
+    const payload = await this.peer.request<Buffer | undefined>(
+      'getdata',
+      encodeGetData([{ type: MSG_BLOCK, hash: blockHash }]),
+      (message) => {
+        if (message.command === 'block' && message.payload.length >= 80) {
+          return sha256d(message.payload.subarray(0, 80)).equals(blockHash) ? { value: message.payload } : false;
+        }
+        if (message.command === 'notfound' && decodeNotFoundBlocks(message.payload).some((h) => h.equals(blockHash))) {
+          missing = true;
+          return { value: undefined };
+        }
+        return false;
+      }
+    );
+    if (missing || !payload) {
+      throw new P2PUnavailableError(`The node does not have block ${toDisplay(blockHash)}`);
+    }
+    if (!this.store.hashAt(height)?.equals(blockHash)) {
+      throw new FilterStoreChangedError('The chain changed during the scan');
+    }
+    const block = decodeBlock(payload);
+    const txids = block.txs.map((tx) => tx.txid);
+    if (
+      !block.header.merkleRoot.equals(merkle) ||
+      !merkleRootOf(txids).equals(merkle) ||
+      new Set(txids.map((t) => t.toString('hex'))).size !== txids.length
+    ) {
+      throw new ScriptFilterError(`Block ${toDisplay(blockHash)} does not match its header`);
+    }
+
+    // The block against its filter: every key of a created output must be in it.
+    const n = gcsCount(filter);
+    const values = new Set(gcsValues(filter));
+    const created = new Set<string>();
+    for (const tx of block.txs) {
+      for (const output of tx.outputs) {
+        const { category, script } = splitTokenPrefix(output.script);
+        if (script.length && script[0] !== 0x6a) {
+          created.add(scriptKey(script).toString('hex'));
+        }
+        if (category) {
+          created.add(categoryKey(category).toString('hex'));
+        }
+      }
+    }
+    if (created.size > n || [...created].some((k) => !values.has(gcsHash(blockHash, n, Buffer.from(k, 'hex'))))) {
+      throw new ScriptFilterError(`The filter of block ${toDisplay(blockHash)} leaves out an output of the block`);
+    }
+
+    // Outputs first: under canonical ordering a transaction may spend one created later in the block.
+    const entries: ScriptTx[] = block.txs.map((tx, txIndex) => ({
+      txid: toDisplay(tx.txid),
+      height,
+      blockHash: toDisplay(blockHash),
+      txIndex,
+      outputs: [],
+      spends: [],
+    }));
+    block.txs.forEach((tx, txIndex) => {
+      tx.outputs.forEach((output, vout) => {
+        if (scriptKey(splitTokenPrefix(output.script).script).equals(key)) {
+          entries[txIndex].outputs.push({ vout, value: output.value });
+          known.set(`${entries[txIndex].txid}:${vout}`, output.value);
+        }
+      });
+    });
+    block.txs.forEach((tx, txIndex) => {
+      if (txIndex === 0) {
+        return;
+      }
+      tx.inputs.forEach((input, vin) => {
+        const txid = toDisplay(input.prevTxid);
+        const value = known.get(`${txid}:${input.prevIndex}`);
+        if (value !== undefined) {
+          entries[txIndex].spends.push({ vin, txid, vout: input.prevIndex, value });
+        }
+      });
+    });
+    return entries.filter((entry) => entry.outputs.length || entry.spends.length);
+  }
+
   /** The transactions of one block that pay or spend the script, each proved against the block. */
-  async blockTxs(key: Buffer, height: number): Promise<ScriptTx[]> {
+  private async blockTxsFromRange(key: Buffer, height: number): Promise<ScriptTx[]> {
     const hash = this.store.hashAt(height);
     const merkleRoot = this.store.merkleRootAt(height);
     if (!hash || !merkleRoot) {
@@ -333,6 +478,19 @@ export class LightClient {
     }
     return out;
   }
+}
+
+/** A block's Merkle root over its transaction hashes, an odd last node paired with itself. */
+export function merkleRootOf(txids: Buffer[]): Buffer {
+  let level = txids;
+  while (level.length > 1) {
+    const next: Buffer[] = [];
+    for (let i = 0; i < level.length; i += 2) {
+      next.push(sha256d(Buffer.concat([level[i], level[i + 1] ?? level[i]])));
+    }
+    level = next;
+  }
+  return level[0] ?? Buffer.alloc(32);
 }
 
 /** Balance and outputs of a script from its full history. */

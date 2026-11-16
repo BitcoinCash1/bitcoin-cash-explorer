@@ -199,8 +199,16 @@ export class FakeChain {
     return { raw, txid: sha256d(raw), coinbase, inputs, outputs };
   }
 
-  /** Mines a block of a coinbase and the given transactions, each spending outputs of earlier blocks. */
-  mine(specs: TxSpec[], coinbase: Output[] = [{ script: this.miner, value: 5_000_000_000 }]): FakeBlock {
+  /**
+   * Mines a block of a coinbase and the given transactions, each spending
+   * outputs of earlier blocks. `omit` lists keys a lying node leaves out of
+   * the block's filter and tree.
+   */
+  mine(
+    specs: TxSpec[],
+    coinbase: Output[] = [{ script: this.miner, value: 5_000_000_000 }],
+    omit: Buffer[] = []
+  ): FakeBlock {
     const txs = [this.buildTx([], coinbase, true)];
     for (const spec of specs) {
       const inputs = spec.spends.map((point) => {
@@ -233,7 +241,7 @@ export class FakeChain {
       header.writeUInt32LE(nonce, 76);
     }
     const hash = sha256d(header);
-    const leaves = blockLeaves(txs);
+    const leaves = blockLeaves(txs).filter((leaf) => !omit.some((key) => leaf.subarray(0, 32).equals(key)));
     const filter = Buffer.concat([
       leavesRoot(leaves),
       gcsEncode(
@@ -259,6 +267,15 @@ export class FakeChain {
       }
     }
   }
+}
+
+/** A block as a block message carries it: the header, then the transactions. */
+export function serializeBlock(block: FakeBlock): Buffer {
+  return Buffer.concat([
+    block.header,
+    new ByteWriter().varint(block.txs.length).toBuffer(),
+    ...block.txs.map((t) => t.raw),
+  ]);
 }
 
 /** The sorted leaves of a block: the scripts and token categories it creates and spends. */
@@ -405,6 +422,30 @@ export class FakeNode {
           headers.push(chain.blocks[h].filterHeader);
         }
         this.send(socket, 'cfcheckpt', new ByteWriter().u8(1).bytes(stop).hashes(headers).toBuffer());
+        break;
+      }
+      case 'getdata': {
+        const n = r.varint();
+        const missing = new ByteWriter();
+        let notFound = 0;
+        for (let i = 0; i < n; i++) {
+          const type = r.u32();
+          const hash = r.hash();
+          const block = chain.blocks[chain.heightOf(hash) ?? -1];
+          if (type === 2 && block) {
+            this.send(socket, 'block', serializeBlock(block));
+          } else {
+            missing.u32(type).bytes(hash);
+            notFound++;
+          }
+        }
+        if (notFound) {
+          this.send(
+            socket,
+            'notfound',
+            Buffer.concat([new ByteWriter().varint(notFound).toBuffer(), missing.toBuffer()])
+          );
+        }
         break;
       }
       case 'getcfrange': {

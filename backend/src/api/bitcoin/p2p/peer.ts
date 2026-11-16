@@ -25,7 +25,7 @@ export interface PeerOptions {
   host: string;
   port: number;
   magic: Buffer;
-  /** Milliseconds a request may wait between two of the messages that answer it. */
+  /** Milliseconds a request may wait with nothing of its answer arriving. */
   timeout: number;
   name?: string;
   userAgent?: string;
@@ -159,6 +159,10 @@ export class P2PPeer extends EventEmitter {
       try {
         for (const message of this.decoder!.push(chunk)) {
           this.onMessage(message);
+        }
+        // A large answer, such as a block, is still arriving: the request is not idle.
+        if (this.current && this.decoder!.pending > 0) {
+          this.arm(this.current);
         }
       } catch (e) {
         this.drop(e instanceof Error ? e : new ProtocolError(String(e)));

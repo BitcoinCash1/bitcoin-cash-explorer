@@ -67,6 +67,7 @@ __P2P_PORT__=${P2P_PORT:=0}
 __P2P_NETWORK__=${P2P_NETWORK:=""}
 __P2P_TIMEOUT__=${P2P_TIMEOUT:=30000}
 __P2P_FILTER_DIR__=${P2P_FILTER_DIR:=""}
+__P2P_MATCH_MODE__=${P2P_MATCH_MODE:=block}
 __P2P_RANGE_PREFIX_BITS__=${P2P_RANGE_PREFIX_BITS:=256}
 __P2P_MAX_HISTORY_TXS__=${P2P_MAX_HISTORY_TXS:=100000}
 
@@ -206,6 +207,7 @@ sed -i "s!__P2P_PORT__!${__P2P_PORT__}!g" explorer-config.json
 sed -i "s!__P2P_NETWORK__!${__P2P_NETWORK__}!g" explorer-config.json
 sed -i "s!__P2P_TIMEOUT__!${__P2P_TIMEOUT__}!g" explorer-config.json
 sed -i "s!__P2P_FILTER_DIR__!${__P2P_FILTER_DIR__}!g" explorer-config.json
+sed -i "s!__P2P_MATCH_MODE__!${__P2P_MATCH_MODE__}!g" explorer-config.json
 sed -i "s!__P2P_RANGE_PREFIX_BITS__!${__P2P_RANGE_PREFIX_BITS__}!g" explorer-config.json
 sed -i "s!__P2P_MAX_HISTORY_TXS__!${__P2P_MAX_HISTORY_TXS__}!g" explorer-config.json
 

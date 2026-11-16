@@ -8,8 +8,8 @@ import { createHash, randomBytes } from 'node:crypto';
 export const ZERO_HASH = Buffer.alloc(32);
 export const PROTOCOL_VERSION = 70016;
 export const HEADER_SIZE = 24;
-/** The largest payload accepted from a peer; a filter or a range is far smaller. */
-export const MAX_PAYLOAD = 64 * 1024 * 1024;
+/** The largest payload accepted from a peer: a block, which ABLA lets grow past 32 MB over the years. */
+export const MAX_PAYLOAD = 256 * 1024 * 1024;
 
 export interface NetworkParams {
   magic: Buffer;
@@ -277,6 +277,11 @@ export class MessageDecoder {
     private readonly magic: Buffer,
     private readonly maxPayload = MAX_PAYLOAD
   ) {}
+
+  /** Bytes of a message not yet complete. */
+  get pending(): number {
+    return this.length;
+  }
 
   push(chunk: Buffer): Message[] {
     this.chunks.push(chunk);

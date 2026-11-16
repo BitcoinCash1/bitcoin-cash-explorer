@@ -16,7 +16,7 @@ import * as path from 'node:path';
 import { AddressHistoryUnavailableError } from '../../api/bitcoin/address-pagination';
 import P2PBackendApi, { merkleBranch } from '../../api/bitcoin/p2p-api';
 import { FilterStore } from '../../api/bitcoin/p2p/filter-store';
-import { LightClient } from '../../api/bitcoin/p2p/light-client';
+import { LightClient, ScriptTx, summarize } from '../../api/bitcoin/p2p/light-client';
 import { P2PPeer, P2PTimeoutError } from '../../api/bitcoin/p2p/peer';
 import { ScriptFilterError, splitTokenPrefix } from '../../api/bitcoin/p2p/script-filter';
 import { sha256, toDisplay } from '../../api/bitcoin/p2p/wire';
@@ -70,6 +70,7 @@ function truth(chain: FakeChain, script: Buffer) {
   txs.sort((a, b) => b.height - a.height || b.txIndex - a.txIndex);
   return {
     txids: txs.map((t) => t.txid),
+    blocks: new Set(txs.map((t) => t.height)).size,
     funded: [...created.values()].reduce((s, v) => s + v, 0),
     fundedCount: created.size,
     spentSum,
@@ -95,6 +96,7 @@ let syncPeer: P2PPeer;
 let queryPeer: P2PPeer;
 let store: FilterStore;
 let client: LightClient;
+let rangeClient: LightClient;
 let rpc: ReturnType<typeof fakeRpc>;
 let api: P2PBackendApi;
 let coinbases: Buffer[];
@@ -181,6 +183,7 @@ beforeAll(async () => {
   store.start();
   await until(() => store.tipHeight === chain.tip.height);
   client = new LightClient(store, queryPeer, { prefixBits: 256, maxHistoryTxs: 1000 });
+  rangeClient = new LightClient(store, queryPeer, { mode: 'range', prefixBits: 256, maxHistoryTxs: 1000 });
   rpc = fakeRpc(chain, (hex) => 'bchreg:' + hex);
   api = new P2PBackendApi(rpc, { client, mempool: () => fakeMempool, started: Promise.resolve() });
 }, 60_000);
@@ -210,8 +213,11 @@ test('the store keeps every filter of the chain, checked against the checkpoints
   }
 });
 
-test('address totals, history pages and unspent outputs come from the filters and proofs alone', async () => {
+const sent = () => ({ data: node.count('getdata'), range: node.count('getcfrange'), proof: node.count('getcfproof') });
+
+test('address totals, history pages and unspent outputs come from the filters and matching blocks alone', async () => {
   const expected = truth(chain, A);
+  const before = sent();
   const address = await api.$getAddress(addressOf(A));
   expect(address).toEqual({
     address: addressOf(A),
@@ -224,9 +230,12 @@ test('address totals, history pages and unspent outputs come from the filters an
     },
     mempool_stats: { funded_txo_count: 0, funded_txo_sum: 0, spent_txo_count: 0, spent_txo_sum: 0, tx_count: 0 },
   });
-  // Only blocks whose filter matches are asked about, one range and one proof per transaction.
-  expect(node.count('getcfrange')).toBeLessThan(15);
-  expect(node.count('getcfproof')).toBe(expected.txids.length);
+  // The node is asked for the blocks whose filter matches, and nothing that names the address.
+  const after = sent();
+  expect(after.data - before.data).toBeGreaterThanOrEqual(expected.blocks);
+  expect(after.data - before.data).toBeLessThan(expected.blocks + 3);
+  expect(after.range - before.range).toBe(0);
+  expect(after.proof - before.proof).toBe(0);
 
   const first = await api.$getAddressTransactions(addressOf(A), '');
   expect(first.map((tx) => tx.txid)).toEqual(expected.txids.slice(0, 10));
@@ -333,10 +342,26 @@ test('a spend is found by scanning forward from the output, and merkle proofs co
   expect(merkleBranch(['aa'.repeat(32)], 0)).toEqual([]);
 });
 
+test('range mode gives the histories of block mode from leaves and proofs, without blocks', async () => {
+  const withoutValues = (txs: ScriptTx[]) =>
+    txs.map((tx) => ({ ...tx, spends: tx.spends.map(({ vin, txid, vout }) => ({ vin, txid, vout })) }));
+  for (const script of [A, B, C, p2pkh(0x17)]) {
+    const blocks = await client.history(sha256(script));
+    const before = sent();
+    const ranges = await rangeClient.history(sha256(script));
+    const after = sent();
+    expect(withoutValues(ranges.txs)).toEqual(withoutValues(blocks.txs));
+    expect(summarize(ranges.txs).spentSum).toBe(summarize(blocks.txs).spentSum);
+    expect(after.data).toBe(before.data);
+    expect(after.proof - before.proof).toBe(new Set(blocks.txs.map((tx) => tx.txid)).size);
+    expect(after.range - before.range).toBeGreaterThanOrEqual(truth(chain, script).blocks);
+  }
+});
+
 test('a shorter range prefix shows the node a bucket of keys and gives the same history', async () => {
-  const bucket = new LightClient(store, queryPeer, { prefixBits: 4, maxHistoryTxs: 1000 });
+  const bucket = new LightClient(store, queryPeer, { mode: 'range', prefixBits: 4, maxHistoryTxs: 1000 });
   const key = sha256(A);
-  const exact = await client.history(key);
+  const exact = await rangeClient.history(key);
   const before = node.requests.filter((m) => m.command === 'getcfrange').length;
   const coarse = await bucket.history(key);
   const asked = node.requests.filter((m) => m.command === 'getcfrange').slice(before);
@@ -351,17 +376,34 @@ test('a shorter range prefix shows the node a bucket of keys and gives the same 
   }
 });
 
-test('a history over the limit is refused before any range or proof is asked', async () => {
-  const small = new LightClient(store, queryPeer, { prefixBits: 256, maxHistoryTxs: 5 });
-  const asked = node.requests.length;
-  await expect(small.history(sha256(p2pkh(0xee)))).rejects.toThrow(AddressHistoryUnavailableError);
-  expect(node.requests.slice(asked).filter((m) => m.command === 'getcfrange' || m.command === 'getcfproof')).toEqual(
-    []
-  );
+test('a history over the limit is refused before any block, range or proof is asked', async () => {
+  for (const mode of ['block', 'range'] as const) {
+    const small = new LightClient(store, queryPeer, { mode, prefixBits: 256, maxHistoryTxs: 5 });
+    const asked = node.requests.length;
+    await expect(small.history(sha256(p2pkh(0xee)))).rejects.toThrow(AddressHistoryUnavailableError);
+    expect(node.requests.slice(asked).map((m) => m.command)).toEqual([]);
+  }
 });
 
-test('a node that hides a leaf or changes a transaction is caught', async () => {
-  const fresh = p2pkh(0x17); // paid by filler blocks 17, 217, 417 ...
+test('a block that does not match its header is refused', async () => {
+  const fresh = p2pkh(0x16); // paid by filler blocks 22, 222, 422 ...
+  node.tamper = (command, payload) => {
+    if (command === 'block') {
+      payload = Buffer.from(payload);
+      payload[payload.length - 10] ^= 1; // a byte of the last transaction
+    }
+    return payload;
+  };
+  try {
+    await expect(api.$getAddress(addressOf(fresh))).rejects.toThrow('does not match its header');
+  } finally {
+    node.tamper = undefined;
+  }
+  expect((await api.$getAddress(addressOf(fresh))).chain_stats.tx_count).toBe(truth(chain, fresh).txids.length);
+});
+
+test('in range mode a node that hides a leaf or changes a transaction is caught', async () => {
+  const fresh = p2pkh(0x18); // paid by filler blocks 24, 224, 424 ...
   node.tamper = (command, payload) => {
     if (command === 'cfrange' && payload.length > 41 + 41) {
       payload = Buffer.from(payload);
@@ -369,7 +411,7 @@ test('a node that hides a leaf or changes a transaction is caught', async () => 
     }
     return payload;
   };
-  await expect(api.$getAddress(addressOf(fresh))).rejects.toThrow(ScriptFilterError);
+  await expect(rangeClient.history(sha256(fresh))).rejects.toThrow(ScriptFilterError);
   node.tamper = (command, payload) => {
     if (command === 'cfproof') {
       payload = Buffer.from(payload);
@@ -377,18 +419,18 @@ test('a node that hides a leaf or changes a transaction is caught', async () => 
     }
     return payload;
   };
-  await expect(api.$getAddress(addressOf(fresh))).rejects.toThrow();
+  await expect(rangeClient.history(sha256(fresh))).rejects.toThrow();
   node.tamper = undefined;
-  const ok = await api.$getAddress(addressOf(fresh));
-  expect(ok.chain_stats.tx_count).toBe(truth(chain, fresh).txids.length);
+  const ok = await rangeClient.history(sha256(fresh));
+  expect(ok.txs.length).toBe(truth(chain, fresh).txids.length);
 });
 
 test('an unanswered request times out, drops the connection and the next one reconnects', async () => {
-  node.silent.add('getcfrange');
+  node.silent.add('getdata');
   try {
     await expect(client.blockTxs(sha256(p2pkh(0x31)), 0x31)).rejects.toThrow(P2PTimeoutError);
   } finally {
-    node.silent.delete('getcfrange');
+    node.silent.delete('getdata');
   }
   await until(() => queryPeer.isReady);
   expect((await client.blockTxs(sha256(p2pkh(0x33)), 0x33)).length).toBe(1);
@@ -414,6 +456,28 @@ test('a reorganization replaces the stored blocks and the cached histories', asy
     tx_count: after.txids.length,
   });
   expect(after.txids.length).toBe(before.txids.length);
+});
+
+test('a filter that leaves out an output of a block it matches is caught', async () => {
+  // A lying node builds a block's filter without D's key: D could never be found in that block.
+  const D = p2pkh(0xdd);
+  chain.mine(
+    [
+      {
+        spends: [point(chain.blocks[1209].txs[0].txid, 0)],
+        outputs: [
+          { script: D, value: 5 },
+          { script: A, value: 6 },
+        ],
+      },
+    ],
+    undefined,
+    [sha256(D)]
+  );
+  chainTip = chain.tip.height;
+  node.announce();
+  await until(() => store.hashAt(store.tipHeight)!.equals(chain.tip.hash));
+  await expect(api.$getAddress(addressOf(A))).rejects.toThrow('leaves out an output');
 });
 
 test('the store reopens from its files, and a damaged filter is downloaded again', async () => {

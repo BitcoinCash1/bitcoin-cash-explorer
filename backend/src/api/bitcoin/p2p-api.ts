@@ -20,10 +20,13 @@ import { networkParams, sha256d } from './p2p/wire';
 
 /**
  * Address data from the node as a pure P2P light client: the explorer keeps
- * the node's script filters (type 1), matches addresses against them itself
- * and proves what matches with getcfrange and getcfproof. The node serves
- * per-block filters and proofs and, over RPC, transactions by block and its
- * mempool; it needs no address or transaction index, and no Electrum server.
+ * the node's script filters (type 1) and matches addresses against them
+ * itself. For a block that matches it downloads the whole block and reads it
+ * (MATCH_MODE 'block', the default), so the node never learns the address,
+ * or, as an opt-in, asks for the leaves and proofs of the address
+ * (MATCH_MODE 'range'). The node serves filters and blocks over P2P and,
+ * over RPC, transactions by block and its mempool; it needs no address or
+ * transaction index, and no Electrum server.
  */
 
 interface MempoolTx {
@@ -423,8 +426,10 @@ class P2PBackendApi extends BitcoinApi implements AbstractBitcoinApi {
     }
     const key = scriptKey(Buffer.from(output.scriptpubkey, 'hex'));
     const tip = this.client.tipHeight;
+    // In 'block' mode the spend is found by its outpoint in the blocks the filters point to.
+    const known = new Map([[`${txId}:${vout}`, output.value]]);
     for (let from = height, width = 144; from <= tip; from += width, width = Math.min(width * 2, 100_000)) {
-      for (const spender of await this.client.scan(key, from, Math.min(from + width, tip + 1))) {
+      for (const spender of await this.client.scan(key, from, Math.min(from + width, tip + 1), undefined, { known })) {
         const spend = spender.spends.find((s) => s.txid === txId && s.vout === vout);
         if (spend) {
           return { spent: true, txid: spender.txid, vin: spend.vin };
@@ -518,9 +523,10 @@ function createLightClient(): P2PBackendDeps {
       name: `${config.P2P.HOST}:${port} (${role})`,
     });
   const syncPeer = peer('filters');
-  const queryPeer = peer('proofs');
+  const queryPeer = peer(config.P2P.MATCH_MODE === 'range' ? 'proofs' : 'blocks');
   const store = new FilterStore(dir, syncPeer, { network });
   const client = new LightClient(store, queryPeer, {
+    mode: config.P2P.MATCH_MODE === 'range' ? 'range' : 'block',
     prefixBits: config.P2P.RANGE_PREFIX_BITS,
     maxHistoryTxs: config.P2P.MAX_HISTORY_TXS,
   });

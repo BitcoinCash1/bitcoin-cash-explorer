@@ -71,6 +71,7 @@ describe('BCH Explorer Backend Config', () => {
         NETWORK: '',
         TIMEOUT: 30000,
         FILTER_DIR: '',
+        MATCH_MODE: 'block',
         RANGE_PREFIX_BITS: 256,
         MAX_HISTORY_TXS: 100000,
       });
