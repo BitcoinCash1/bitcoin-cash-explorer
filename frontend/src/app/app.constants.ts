@@ -241,11 +241,23 @@ export const specialBlocks = {
     labelEventCompleted: 'The Genesis of Bitcoin',
     networks: ['mainnet', 'testnet4', 'scalenet', 'chipnet'],
   },
+  '57043': {
+    labelEvent: 'Bitcoin Pizza Day',
+    labelEventCompleted:
+      'On 22 May 2010, Laszlo Hanyecz paid 10,000 BTC for two pizzas. This block contains the payment transaction, part of the shared history of Bitcoin and Bitcoin Cash. (https://bchexplorer.cash/tx/a1075db55d416d3ca199f55b6084e2115b9345e16c5cf302fc80e9d5fbf5d48d)',
+    networks: ['mainnet'],
+  },
   '74637': {
     labelEvent: 'Value overflow incident & rollback',
     labelEventCompleted:
       'Block 74638 contained a critical integer overflow exploit that allowed for the creation of 184 billion BTC. Satoshi Nakamoto coordinated an emergency patch, using block 74637 as the pivot point for a deliberate rollback—the only intentional intervention of its kind in Bitcoin’s history. Within 24 hours, the corrected chain overtook the exploit at block 74691, permanently orphaning the fraudulent branch.',
     networks: ['mainnet'],
+  },
+  '121957': {
+    labelEvent: 'November 2022 Chipnet Upgrade: CashTokens and P2SH32',
+    labelEventCompleted:
+      'Chipnet upgrade (2022-11-15). Activate CHIP-2022-02 CashTokens, CHIP-2022-05 P2SH32, CHIP-2021-01 Restrict Transaction Version, and CHIP-2021-01 Minimum Transaction Size. First block mined under the upgraded chipnet consensus rules, six months before mainnet activation. (https://upgradespecs.bitcoincashnode.org/2023-05-15-upgrade/)',
+    networks: ['chipnet'],
   },
   '124721': {
     labelEvent: 'First miner burn',
@@ -259,10 +271,35 @@ export const specialBlocks = {
       'This block mined a coinbase transaction of 31,353, the biggest ever (as of 2026-01-14).',
     networks: ['mainnet'],
   },
+  '174520': {
+    labelEvent: 'November 2023 Chipnet Upgrade: ABLA',
+    labelEventCompleted:
+      'Chipnet upgrade (2023-11-15). Activate CHIP-2023-04 Adaptive Blocksize Limit Algorithm (ABLA). First block mined under the upgraded chipnet consensus rules, six months before mainnet activation. (https://upgradespecs.bitcoincashnode.org/2024-05-15-upgrade/)',
+    networks: ['chipnet'],
+  },
   '210000': {
     labelEvent: "Bitcoin's 1st Halving",
     labelEventCompleted: 'Block Subsidy has halved to 25 BTC per block',
     networks: ['mainnet', 'testnet4', 'scalenet', 'chipnet'],
+  },
+  '227229': {
+    labelEvent: 'November 2024 Chipnet Upgrade: VM Limits and BigInt',
+    labelEventCompleted:
+      'Chipnet upgrade (2024-11-15). Activate CHIP-2021-05 VM Limits: Targeted Virtual Machine Limits and CHIP-2024-07 BigInt: High-Precision Arithmetic for Bitcoin Cash. First block mined under the upgraded chipnet consensus rules, six months before mainnet activation. (https://upgradespecs.bitcoincashnode.org/2025-05-15-upgrade/)',
+    networks: ['chipnet'],
+  },
+  '279792': {
+    labelEvent:
+      'November 2025 Chipnet Upgrade: P2S, Loops, Functions and Bitwise',
+    labelEventCompleted:
+      'Chipnet upgrade (2025-11-15). Activate CHIP-2024-12 P2S: Pay to Script, CHIP-2021-05 Loops: Bounded Looping Operations, CHIP-2025-05 Functions: Function Definition and Invocation Operations, and CHIP-2025-05 Bitwise: Re-Enable Bitwise Operations. First block mined under the upgraded chipnet consensus rules, six months before mainnet activation. (https://upgradespecs.bitcoincashnode.org/2026-05-15-upgrade/)',
+    networks: ['chipnet'],
+  },
+  '332451': {
+    labelEvent: 'CHIP-2025-03: Faster Blocks',
+    labelEventCompleted:
+      'Chipnet upgrade (2026-11-15). First block with a 1-minute target interval, reduced from 10 minutes. Scale the block subsidy to the shorter interval and use ticks to preserve the halving schedule. (https://gitlab.com/0353F40E/fablous/-/blob/2b15bb825adf84d82aab2100fc1cc38479d59666/readme.md)',
+    networks: ['chipnet'],
   },
   '409008': {
     labelEvent: 'Biggest fee',
