@@ -40,7 +40,7 @@ const count = (confirmedCount: number, nextCursor: string | null = null) => ({
 });
 const components: AddressComponent[] = [];
 function setup(
-  backend: 'electrum' | 'none' = 'electrum',
+  backend: 'electrum' | 'p2p' | 'none' = 'electrum',
   address = first,
   networkChanged$ = new BehaviorSubject('') as Subject<string>
 ) {
@@ -136,6 +136,13 @@ describe('bounded Electrum address loading', () => {
     expect(c.transactions).toHaveLength(1);
     expect(c.transactionError).toBeNull();
     expect(api.getAddressTransactionCount$).not.toHaveBeenCalled();
+  });
+  it('pages history with the p2p backend as with electrum', () => {
+    const { component: c, api } = setup('p2p');
+    expect(c.paginatedMode).toBe(true);
+    expect(api.getAddressBalanceSummary$).toHaveBeenCalledTimes(1);
+    expect(api.getAddressTransactionPage$).toHaveBeenCalledTimes(1);
+    expect(api.getAddress$).not.toHaveBeenCalled();
   });
   it('renders balances with unknown counts and retains them when a page fails', () => {
     const { component: c, summaries, pages } = setup();

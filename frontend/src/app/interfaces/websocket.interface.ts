@@ -15,7 +15,7 @@ export interface NetworkSettings {
 export interface WebsocketResponse {
   'network-settings'?: NetworkSettings;
   'block-capacity'?: { tipHash: string; blockSizeLimit: number };
-  backend?: 'electrum' | 'none';
+  backend?: 'electrum' | 'p2p' | 'none';
   block?: BlockExtended;
   blocks?: BlockExtended[];
   conversions?: Record<string, number>;

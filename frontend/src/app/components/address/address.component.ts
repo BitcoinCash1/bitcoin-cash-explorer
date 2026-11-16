@@ -258,7 +258,7 @@ export class AddressComponent implements OnInit, OnDestroy {
       .pipe(
         switchMap(([params, backend]) => {
           this.cancelPagedRequests();
-          this.paginatedMode = backend === 'electrum';
+          this.paginatedMode = backend !== 'none';
           this.transactionError = null;
           this.countResult = null;
           this.countCursor = null;

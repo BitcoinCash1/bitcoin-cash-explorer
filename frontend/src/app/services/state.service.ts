@@ -153,7 +153,7 @@ export class StateService {
   isBrowser: boolean;
   isofficialBCHExplorerSiteBuild = window['isOfficialSiteBuild'] ?? false;
   isProdDomain: boolean;
-  backend: 'electrum' | 'none' = 'electrum';
+  backend: 'electrum' | 'p2p' | 'none' = 'electrum';
   network = '';
   get blockSize(): number | null {
     return this.capacityService.projection;
@@ -178,7 +178,7 @@ export class StateService {
     transactions: { [txid: string]: TransactionStripped };
   };
 
-  backend$ = new BehaviorSubject<'electrum' | 'none'>('electrum');
+  backend$ = new BehaviorSubject<'electrum' | 'p2p' | 'none'>('electrum');
   networkChanged$ = new ReplaySubject<string>(1);
   signaturesMode$: BehaviorSubject<SignaturesMode>;
   blocksSubject$ = new BehaviorSubject<BlockExtended[]>([]);
