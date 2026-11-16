@@ -47,12 +47,6 @@ export class SpecialBlocksComponent implements OnInit {
   }
 
   getActiveNetworkKey(): string {
-    if (this.stateService.env.ROOT_NETWORK === 'chipnet') {
-      return 'chipnet';
-    }
-    if (this.stateService.network === 'testnet4') {
-      return 'testnet4';
-    }
-    return 'mainnet';
+    return this.stateService.network || this.stateService.env.ROOT_NETWORK || 'mainnet';
   }
 }
