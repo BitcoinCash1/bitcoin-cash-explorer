@@ -47,6 +47,10 @@ export class SpecialBlocksComponent implements OnInit {
   }
 
   getActiveNetworkKey(): string {
-    return this.stateService.network || this.stateService.env.ROOT_NETWORK || 'mainnet';
+    return (
+      this.stateService.network ||
+      this.stateService.env.ROOT_NETWORK ||
+      'mainnet'
+    );
   }
 }
