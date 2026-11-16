@@ -31,8 +31,8 @@ import { sha256d, toDisplay } from './wire';
 
 /**
  * The address side of the light client. For a script key it tests each
- * block's stored filter, and for a block that matches it learns what the
- * block does to the script in one of two ways:
+ * block's stored filter (in the native filter scan), and for a block that
+ * matches it learns what the block does to the script in one of two ways:
  *
  * - 'block' (the default, as a Neutrino wallet): it downloads the whole block
  *   (getdata), checks it against its own header's Merkle root and against the
@@ -133,6 +133,11 @@ export class LightClient {
     store.on('reorg', (fork) => this.onReorg(fork));
   }
 
+  /** Takes in the blocks a store written by another process gained since. */
+  refresh(): Promise<void> {
+    return this.store.refresh();
+  }
+
   static keyOfScript(scriptHex: string): Buffer {
     return scriptKey(Buffer.from(scriptHex, 'hex'));
   }
@@ -212,17 +217,7 @@ export class LightClient {
       return [];
     }
     const tipHash = this.hashAt(end - 1);
-    const heights: number[] = [];
-    await this.store.scan(
-      from,
-      end,
-      (height, blockHash, filter) => {
-        if (filter.length > 32 && gcsMatch(filter.subarray(32), blockHash, key)) {
-          heights.push(height);
-        }
-      },
-      signal
-    );
+    const [heights] = await this.store.match([key], from, end, signal);
     // Each matching block holds at least one transaction: refuse before asking for proofs.
     if (limit !== undefined && heights.length > limit) {
       throw new AddressHistoryUnavailableError('Address history exceeds the supported limit');

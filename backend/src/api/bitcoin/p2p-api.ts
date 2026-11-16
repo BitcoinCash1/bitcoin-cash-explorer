@@ -1,3 +1,4 @@
+import cluster from 'node:cluster';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import config from '../../config';
@@ -12,7 +13,7 @@ import { IElectrumApi } from './electrum-api.interface';
 import { compareElectrumHistoryNewestFirst } from './electrum-history';
 import { HistoryBusyError, HistoryCoordinator } from './history-coordinator';
 import { IPublicApi } from './public-api.interface';
-import { FilterStore } from './p2p/filter-store';
+import { FilterReader, FilterStore } from './p2p/filter-store';
 import { LightClient, ScriptSummary, ScriptTx, summarize } from './p2p/light-client';
 import { P2PPeer } from './p2p/peer';
 import { scriptKey } from './p2p/script-filter';
@@ -80,6 +81,7 @@ class P2PBackendApi extends BitcoinApi implements AbstractBitcoinApi {
       {
         snapshot: async () => {
           await this.started;
+          await this.client.refresh();
           const height = this.client.tipHeight;
           if (height < 0) {
             throw new HistoryBusyError('Filters are not synchronized yet');
@@ -110,6 +112,7 @@ class P2PBackendApi extends BitcoinApi implements AbstractBitcoinApi {
 
   private async target(target: string, isScripthash: boolean): Promise<Target> {
     await this.started;
+    await this.client.refresh();
     if (!this.client.synced) {
       throw new HistoryBusyError('Filters are still being downloaded from the node');
     }
@@ -489,7 +492,7 @@ function rows(txs: ScriptTx[]): IElectrumApi.ScriptHashHistory[] {
   return out;
 }
 
-/** Takes the store directory for this process, refusing one another live process holds. */
+/** Takes the store directory for this process to write, refusing one another live process writes. */
 function lockStore(dir: string): void {
   fs.mkdirSync(dir, { recursive: true });
   const lock = path.join(dir, 'lock');
@@ -497,9 +500,7 @@ function lockStore(dir: string): void {
     const holder = Number(fs.readFileSync(lock, 'utf8'));
     if (holder && holder !== process.pid) {
       process.kill(holder, 0);
-      throw new Error(
-        `P2P filter store ${dir} is in use by process ${holder}; the p2p backend runs in one process (SPAWN_CLUSTER_PROCS 0)`
-      );
+      throw new Error(`P2P filter store ${dir} is written by process ${holder}; give each explorer its own FILTER_DIR`);
     }
   } catch (e: any) {
     if (e.code !== 'ENOENT' && e.code !== 'ESRCH') {
@@ -509,6 +510,11 @@ function lockStore(dir: string): void {
   fs.writeFileSync(lock, String(process.pid));
 }
 
+/**
+ * The primary process writes the filter store and syncs it from the node;
+ * with SPAWN_CLUSTER_PROCS above 0 it serves no requests, and the workers
+ * that do read the store it writes.
+ */
 function createLightClient(): P2PBackendDeps {
   const network = config.P2P.NETWORK || config.EXPLORER.NETWORK;
   const params = networkParams(network);
@@ -522,19 +528,24 @@ function createLightClient(): P2PBackendDeps {
       timeout: config.P2P.TIMEOUT,
       name: `${config.P2P.HOST}:${port} (${role})`,
     });
-  const syncPeer = peer('filters');
+  const syncPeer = cluster.isPrimary ? peer('filters') : undefined;
+  const serves = !cluster.isPrimary || !config.EXPLORER.SPAWN_CLUSTER_PROCS;
   const queryPeer = peer(config.P2P.MATCH_MODE === 'range' ? 'proofs' : 'blocks');
-  const store = new FilterStore(dir, syncPeer, { network });
+  const store = syncPeer ? new FilterStore(dir, syncPeer, { network }) : new FilterReader(dir, { network });
   const client = new LightClient(store, queryPeer, {
     mode: config.P2P.MATCH_MODE === 'range' ? 'range' : 'block',
     prefixBits: config.P2P.RANGE_PREFIX_BITS,
     maxHistoryTxs: config.P2P.MAX_HISTORY_TXS,
   });
   const started = (async () => {
-    lockStore(dir);
+    if (syncPeer) {
+      lockStore(dir);
+    }
     await store.open();
-    syncPeer.start();
-    queryPeer.start();
+    syncPeer?.start();
+    if (serves) {
+      queryPeer.start();
+    }
     store.start();
   })();
   return { client, started };

@@ -9,13 +9,19 @@ jest.mock('../../api/mempool', () => ({
   default: { getMempool: () => fakeMempool, isInSync: () => true },
 }));
 jest.mock('../../api/bitcoin/bitcoin-api-factory', () => ({ __esModule: true, default: {}, bitcoinCoreApi: {} }));
+// The native scan itself, counted.
+jest.mock('rust-filter-scan', () => {
+  const actual = jest.requireActual('rust-filter-scan');
+  return { ...actual, scanFilters: jest.fn(actual.scanFilters) };
+});
 
 import * as fs from 'node:fs';
 import * as os from 'node:os';
 import * as path from 'node:path';
+import { scanFilters } from 'rust-filter-scan';
 import { AddressHistoryUnavailableError } from '../../api/bitcoin/address-pagination';
 import P2PBackendApi, { merkleBranch } from '../../api/bitcoin/p2p-api';
-import { FilterStore } from '../../api/bitcoin/p2p/filter-store';
+import { FilterReader, FilterStore, FilterStoreChangedError } from '../../api/bitcoin/p2p/filter-store';
 import { LightClient, ScriptTx, summarize } from '../../api/bitcoin/p2p/light-client';
 import { P2PPeer, P2PTimeoutError } from '../../api/bitcoin/p2p/peer';
 import { ScriptFilterError, splitTokenPrefix } from '../../api/bitcoin/p2p/script-filter';
@@ -97,6 +103,8 @@ let queryPeer: P2PPeer;
 let store: FilterStore;
 let client: LightClient;
 let rangeClient: LightClient;
+let reader: FilterReader;
+let readerClient: LightClient;
 let rpc: ReturnType<typeof fakeRpc>;
 let api: P2PBackendApi;
 let coinbases: Buffer[];
@@ -184,11 +192,16 @@ beforeAll(async () => {
   await until(() => store.tipHeight === chain.tip.height);
   client = new LightClient(store, queryPeer, { prefixBits: 256, maxHistoryTxs: 1000 });
   rangeClient = new LightClient(store, queryPeer, { mode: 'range', prefixBits: 256, maxHistoryTxs: 1000 });
+  // A reader of the same files, as a cluster worker has them.
+  reader = new FilterReader(dir, { network: 'regtest' });
+  await reader.open();
+  readerClient = new LightClient(reader, queryPeer, { prefixBits: 256, maxHistoryTxs: 1000 });
   rpc = fakeRpc(chain, (hex) => 'bchreg:' + hex);
   api = new P2PBackendApi(rpc, { client, mempool: () => fakeMempool, started: Promise.resolve() });
 }, 60_000);
 
 afterAll(async () => {
+  await reader.stop();
   syncPeer.stop();
   queryPeer.stop();
   await store.stop();
@@ -436,6 +449,45 @@ test('an unanswered request times out, drops the connection and the next one rec
   expect((await client.blockTxs(sha256(p2pkh(0x33)), 0x33)).length).toBe(1);
 });
 
+test('long scans that wait share one pass over the files, each with its own heights', async () => {
+  const end = chain.tip.height + 1;
+  const [a, b, c] = [A, B, C].map((script) => sha256(script));
+  const alone = [];
+  for (const key of [a, b, c]) {
+    alone.push((await store.match([key], 0, end))[0]);
+  }
+  const passes = (scanFilters as jest.Mock).mock.calls.length;
+  const together = await Promise.all([store.match([a], 0, end), store.match([b], 5, end), store.match([c, a], 0, end)]);
+  // The first starts a pass at once; the two that wait for it share the next.
+  expect((scanFilters as jest.Mock).mock.calls.length - passes).toBe(2);
+  expect(together).toEqual([[alone[0]], [alone[1].filter((h) => h >= 5)], [alone[2], alone[0]]]);
+  expect(alone[0]).toEqual(
+    [...new Set(truth(chain, A).txids.map((t) => chain.findTx(Buffer.from(t, 'hex').reverse())!.block.height))].sort(
+      (x, y) => x - y
+    )
+  );
+});
+
+test('a reader of the store sees what the writer committed and gives the same histories', async () => {
+  await reader.refresh();
+  expect(reader.tipHeight).toBe(store.tipHeight);
+  expect(reader.synced).toBe(true);
+  for (const height of [0, 1100, store.tipHeight]) {
+    expect(reader.hashAt(height)!.equals(store.hashAt(height)!)).toBe(true);
+    expect((await reader.readFilter(height)).equals(await store.readFilter(height))).toBe(true);
+  }
+  for (const script of [A, B, C]) {
+    expect((await readerClient.history(sha256(script))).txs).toEqual((await client.history(sha256(script))).txs);
+  }
+  // Before the writer made its files, a reader is an empty store that waits for them.
+  const early = new FilterReader(path.join(dir, 'not-yet'), { network: 'regtest' });
+  await early.open();
+  expect(early.tipHeight).toBe(-1);
+  expect(early.synced).toBe(false);
+  await early.stop();
+  await expect(new FilterReader(dir, { network: 'mainnet' }).open()).rejects.toThrow('belongs to');
+});
+
 test('a reorganization replaces the stored blocks and the cached histories', async () => {
   const before = truth(chain, A);
   expect((await api.$getAddress(addressOf(A))).chain_stats.tx_count).toBe(before.txids.length);
@@ -456,6 +508,16 @@ test('a reorganization replaces the stored blocks and the cached histories', asy
     tx_count: after.txids.length,
   });
   expect(after.txids.length).toBe(before.txids.length);
+
+  // A reader that has not looked since: what it reads now is refused, and its next look finds the fork.
+  await expect(reader.readFilter(chain.tip.height - 3)).rejects.toThrow(FilterStoreChangedError);
+  await expect(reader.match([sha256(A)], 0, chain.tip.height)).rejects.toThrow(FilterStoreChangedError);
+  const forks: number[] = [];
+  reader.once('reorg', (fork) => forks.push(fork));
+  await reader.refresh();
+  expect(forks).toEqual([chain.tip.height - 2]);
+  expect(reader.hashAt(reader.tipHeight)!.equals(chain.tip.hash)).toBe(true);
+  expect((await readerClient.history(sha256(A))).txs).toEqual((await client.history(sha256(A))).txs);
 });
 
 test('a filter that leaves out an output of a block it matches is caught', async () => {

@@ -1,5 +1,7 @@
 import * as fs from 'node:fs';
+import * as os from 'node:os';
 import * as path from 'node:path';
+import { scanFilters } from 'rust-filter-scan';
 import { gcsCount, gcsHash, gcsMatch, gcsValues, mulHigh64, siphash24 } from '../../api/bitcoin/p2p/gcs';
 import { merkleRootOf } from '../../api/bitcoin/p2p/light-client';
 import {
@@ -377,5 +379,101 @@ describe('script filter entry tree', () => {
     expect(
       serializeLeaf(parseLeaf(wire('cfrange_all').subarray(42, 83))).equals(wire('cfrange_all').subarray(42, 83))
     ).toBe(true);
+  });
+});
+
+describe('native filter scan', () => {
+  let dir: string;
+  beforeAll(() => {
+    dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bch-filter-scan-'));
+  });
+  afterAll(() => {
+    fs.rmSync(dir, { recursive: true, force: true });
+  });
+
+  /** A store of the given filters, each after a 32 byte root, as the filter store writes it. */
+  const writeStore = (name: string, blocks: { hash: Buffer; filter: Buffer }[]) => {
+    const records = blocks.map(({ hash, filter }) => {
+      const record = Buffer.alloc(100);
+      hash.copy(record, 0);
+      record.writeUInt32LE(32 + filter.length, 96);
+      return record;
+    });
+    const indexFile = path.join(dir, `${name}-index.dat`);
+    const filtersFile = path.join(dir, `${name}-filters.dat`);
+    fs.writeFileSync(indexFile, Buffer.concat(records));
+    fs.writeFileSync(filtersFile, Buffer.concat(blocks.flatMap(({ filter }) => [Buffer.alloc(32), filter])));
+    const offset = (height: number) => blocks.slice(0, height).reduce((sum, b) => sum + 32 + b.filter.length, 0);
+    return (keys: Buffer[], from = 0, to = blocks.length) =>
+      scanFilters({ indexFile, filtersFile, from, to, filterOffset: offset(from), keys });
+  };
+  /** What the TypeScript matcher says, filter by filter. */
+  const oneByOne = (blocks: { hash: Buffer; filter: Buffer }[], keys: Buffer[], from = 0, to = blocks.length) =>
+    keys.map((key) => {
+      const heights: number[] = [];
+      for (let h = from; h < to; h++) {
+        if (gcsMatch(blocks[h].filter, blocks[h].hash, key)) {
+          heights.push(h);
+        }
+      }
+      return heights;
+    });
+
+  test('equals the TypeScript matcher on the reference vectors', async () => {
+    const { block, items, filter } = vectors.gcs;
+    const genesis = vectors.bip158Genesis;
+    const blocks = [
+      { hash: hex(block), filter: hex(filter) },
+      { hash: fromDisplay(genesis.blockHash), filter: hex(genesis.filter) },
+      { hash: Buffer.alloc(32, 9), filter: hex('00') },
+      { hash: hex(block), filter: hex(filter) },
+    ];
+    const keys = [
+      ...items.map(hex),
+      hex(genesis.script),
+      hex('51'),
+      ...Array.from({ length: 50 }, (_, i) => sha256(Buffer.from(`absent ${i}`))),
+    ];
+    const scan = writeStore('vectors', blocks);
+    const found = await scan(keys);
+    expect(found).toEqual(oneByOne(blocks, keys));
+    expect(found.slice(0, items.length).every((heights) => heights.join() === '0,3')).toBe(true);
+    expect(found[items.length]).toEqual([1]);
+    expect(await scan(keys, 1, 3)).toEqual(oneByOne(blocks, keys, 1, 3));
+  });
+
+  test('equals the TypeScript matcher on random filters, many keys in one pass', async () => {
+    let seed = 99;
+    const rand = (n: number) => (seed = (Math.imul(seed, 1103515245) + 12345) >>> 0) % n;
+    const keys = Array.from({ length: 40 }, (_, i) => sha256(Buffer.from(`key ${i}`)));
+    const blocks = Array.from({ length: 1200 }, (_, h) => {
+      const hash = sha256(Buffer.from(`block ${h}`));
+      const items = Array.from({ length: rand(300) }, (_, i) => sha256(Buffer.from(`item ${h} ${i}`)));
+      items.push(...keys.filter(() => rand(10) === 0));
+      return { hash, filter: gcsEncode(hash, items) };
+    });
+    const scan = writeStore('random', blocks);
+    const found = await scan(keys);
+    expect(found).toEqual(oneByOne(blocks, keys));
+    expect(found.every((heights) => heights.length > 60)).toBe(true);
+    for (const [from, to] of [
+      [0, 1],
+      [17, 1199],
+      [1100, 1200],
+      [1200, 1200],
+    ]) {
+      expect(await scan(keys.slice(0, 7), from, to)).toEqual(oneByOne(blocks, keys.slice(0, 7), from, to));
+    }
+  }, 30_000);
+
+  test('refuses heights past the files and a damaged filter', async () => {
+    const hash = Buffer.alloc(32, 3);
+    const scan = writeStore('damaged', [
+      { hash, filter: gcsEncode(hash, [Buffer.from('a'), Buffer.from('b')]) },
+      { hash, filter: hex('ff' + 'ff'.repeat(8)) },
+    ]);
+    await expect(scan([Buffer.from('a')], 0, 1)).resolves.toEqual([[0]]);
+    await expect(scan([Buffer.from('a')], 0, 3)).rejects.toThrow('ended early');
+    await expect(scan([Buffer.from('a')])).rejects.toThrow('shorter than its item count (stored filter at height 1)');
   });
 });

@@ -1,6 +1,7 @@
 import { EventEmitter } from 'node:events';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { scanFilters } from 'rust-filter-scan';
 import logger from '../../../logger';
 import {
   BlockHeader,
@@ -20,7 +21,7 @@ import {
   meetsTarget,
 } from './messages';
 import { Collector } from './peer';
-import { Message, ProtocolError, ZERO_HASH, sha256d, toDisplay } from './wire';
+import { Message, ProtocolError, ZERO_HASH, sha256, sha256d, toDisplay } from './wire';
 
 /**
  * The explorer's own copy of the node's script filters, as any light wallet
@@ -30,12 +31,20 @@ import { Message, ProtocolError, ZERO_HASH, sha256d, toDisplay } from './wire';
  * zero into filter headers that match the node's checkpoints, and every filter
  * hashes to its header. Reorganizations truncate the copy at the fork.
  *
- * Two flat files hold it. filters.dat is the filters back to back; index.dat
+ * Three flat files hold it. filters.dat is the filters back to back; index.dat
  * has one 100 byte record per height: block hash, Merkle root, filter header,
- * filter length. Both only grow by blocks and are read in order when an
- * address is scanned, which suits files better than the database: nothing in
- * them is per address or per transaction, a scan is one sequential read, and
- * truncating at a fork is one call.
+ * filter length; commit.dat says how many heights are whole and a generation
+ * that changes whenever stored heights are cut off. The files only grow by
+ * blocks and a scan reads them in order, which suits files better than the
+ * database: nothing in them is per address or per transaction, a scan is one
+ * sequential read, and truncating at a fork is one call. Scans run in the
+ * native filter-scan addon, on all cores, many keys per pass.
+ *
+ * One process writes the store (FilterStore); others, such as cluster
+ * workers, read it (FilterReader) up to the heights the writer committed. The
+ * writer changes the generation in commit.dat before it cuts heights off, so a
+ * read that sees the same generation before and after read heights the cut did
+ * not touch.
  */
 
 export interface FilterPeer {
@@ -54,12 +63,10 @@ export interface FilterSource {
   merkleRootAt(height: number): Buffer | undefined;
   heightOf(hash: Buffer): number | undefined;
   readFilter(height: number): Promise<Buffer>;
-  scan(
-    from: number,
-    to: number,
-    visit: (height: number, blockHash: Buffer, filter: Buffer) => boolean | void,
-    signal?: AbortSignal
-  ): Promise<void>;
+  /** For each key, the heights in [from, to) whose filter may hold it (false positives at 1/784931 per block). */
+  match(keys: Buffer[], from: number, to: number, signal?: AbortSignal): Promise<number[][]>;
+  /** Takes in what the writer committed since; the writer itself has nothing to take in. */
+  refresh(): Promise<void>;
   on(event: 'reorg', listener: (forkHeight: number) => void): unknown;
 }
 
@@ -73,41 +80,82 @@ const HASH = 0;
 const MERKLE = 32;
 const FILTER_HEADER = 64;
 const LENGTH = 96;
-const SCAN_CHUNK = 8 * 1024 * 1024;
 const CHECKPOINT_INTERVAL = 1000;
 /** Headers fetched ahead of their filters in one round, which bounds the memory of an initial sync. */
 const MAX_PENDING = 50_000;
+/** Scans of at most this many blocks run at once; longer ones share passes over the files. */
+const DIRECT_SCAN = 1000;
+/** Records compared at a time when a reader looks for where the writer cut the chain. */
+const FORK_STEP = 1000;
+/** commit.dat: generation, height count, flags (1: synced), tip hash, 8 bytes of the SHA-256 of the rest. */
+const COMMIT_SIZE = 52;
 
-export interface FilterStoreOptions {
-  network: string;
-  /** Milliseconds between polls for new blocks besides the node's announcements. */
-  pollInterval?: number;
+interface Commit {
+  generation: number;
+  count: number;
+  synced: boolean;
+  tipHash: Buffer;
 }
 
-export class FilterStore extends EventEmitter implements FilterSource {
-  /** Records of heights [0, count), in a buffer with room for more. */
-  private index = Buffer.alloc(0);
-  private count = 0;
-  /** Where each height's filter starts in filters.dat. */
-  private offsets = new Float64Array(0);
-  private filters?: fs.promises.FileHandle;
-  private records?: fs.promises.FileHandle;
-  private generation = 0;
-  private syncing?: Promise<void>;
-  private again = false;
-  private timer?: NodeJS.Timeout;
-  private readonly onBlock = () => this.requestSync();
-  /** True once a sync found no headers past the tip. */
-  synced = false;
-  lastError?: Error;
+function encodeCommit(commit: Commit): Buffer {
+  const b = Buffer.alloc(COMMIT_SIZE);
+  b.writeUInt32LE(commit.generation, 0);
+  b.writeUInt32LE(commit.count, 4);
+  b.writeUInt32LE(commit.synced ? 1 : 0, 8);
+  commit.tipHash.copy(b, 12);
+  sha256(b.subarray(0, 44)).copy(b, 44, 0, 8);
+  return b;
+}
 
-  constructor(
-    private readonly dir: string,
-    private readonly peer: FilterPeer,
-    private readonly options: FilterStoreOptions
-  ) {
+/** A commit record, or undefined when it is not whole: a read can see the writer's write half done. */
+function decodeCommit(b: Buffer): Commit | undefined {
+  if (b.length !== COMMIT_SIZE || !sha256(b.subarray(0, 44)).subarray(0, 8).equals(b.subarray(44))) {
+    return undefined;
+  }
+  return {
+    generation: b.readUInt32LE(0),
+    count: b.readUInt32LE(4),
+    synced: (b.readUInt32LE(8) & 1) === 1,
+    tipHash: Buffer.from(b.subarray(12, 44)),
+  };
+}
+
+const metaOf = (network: string) => JSON.stringify({ network, filterType: SCRIPT_FILTER_TYPE, version: 1 });
+
+interface Scan {
+  keys: Buffer[];
+  from: number;
+  to: number;
+  resolve: (heights: number[][]) => void;
+  reject: (error: Error) => void;
+}
+
+/** The stored heights in memory and what reads them, for the writer and the readers alike. */
+abstract class StoredFilters extends EventEmitter implements FilterSource {
+  /** Records of heights [0, count), in a buffer with room for more. */
+  protected index = Buffer.alloc(0);
+  protected count = 0;
+  /** Where each height's filter starts in filters.dat. */
+  protected offsets = new Float64Array(0);
+  protected filters?: fs.promises.FileHandle;
+  /** Changes whenever stored heights are cut off; what was read at another generation is void. */
+  protected generation = 0;
+  private queued: Scan[] = [];
+  private passing = false;
+  abstract readonly synced: boolean;
+
+  constructor(protected readonly dir: string) {
     super();
   }
+
+  protected file(name: 'meta.json' | 'filters.dat' | 'index.dat' | 'commit.dat' | 'lock'): string {
+    return path.join(this.dir, name);
+  }
+
+  /** Whether heights read at `generation` are still the stored ones. */
+  protected abstract unchanged(generation: number): Promise<boolean>;
+
+  abstract refresh(): Promise<void>;
 
   get tipHeight(): number {
     return this.count - 1;
@@ -132,8 +180,13 @@ export class FilterStore extends EventEmitter implements FilterSource {
     return this.index.subarray(height * RECORD + at, height * RECORD + at + 32);
   }
 
-  private lengthAt(height: number): number {
+  protected lengthAt(height: number): number {
     return this.index.readUInt32LE(height * RECORD + LENGTH);
+  }
+
+  /** Where the filters of the heights below `height` end in filters.dat. */
+  protected endOf(height: number): number {
+    return height > 0 ? this.offsets[height - 1] + this.lengthAt(height - 1) : 0;
   }
 
   /** The height of a block of the stored chain, searched from the tip down. */
@@ -146,10 +199,190 @@ export class FilterStore extends EventEmitter implements FilterSource {
     return undefined;
   }
 
+  /** Takes the records of the heights from `base` on into memory, replacing any stored from there. */
+  protected take(base: number, records: Buffer): void {
+    const count = base + records.length / RECORD;
+    this.reserve(count);
+    records.copy(this.index, base * RECORD);
+    let offset = this.endOf(base);
+    for (let h = base; h < count; h++) {
+      this.offsets[h] = offset;
+      offset += records.readUInt32LE((h - base) * RECORD + LENGTH);
+    }
+    this.count = count;
+  }
+
+  /** Makes room for `count` records in memory. */
+  private reserve(count: number): void {
+    if (count * RECORD <= this.index.length) {
+      return;
+    }
+    const capacity = Math.max(count, Math.ceil(this.count * 1.5)) + 1024;
+    const index = Buffer.alloc(capacity * RECORD);
+    this.index.copy(index, 0, 0, this.count * RECORD);
+    const offsets = new Float64Array(capacity);
+    offsets.set(this.offsets.subarray(0, this.count));
+    this.index = index;
+    this.offsets = offsets;
+  }
+
+  /** A stored filter, checked against the filter header chain. */
+  async readFilter(height: number): Promise<Buffer> {
+    if (!this.filters || !Number.isInteger(height) || height < 0 || height >= this.count) {
+      throw new Error(`No filter at height ${height}`);
+    }
+    const generation = this.generation;
+    const prev = height > 0 ? Buffer.from(this.filterHeaderAt(height - 1)!) : ZERO_HASH;
+    const header = Buffer.from(this.filterHeaderAt(height)!);
+    const filter = Buffer.alloc(this.lengthAt(height));
+    const read = await readExact(this.filters, filter, this.offsets[height]).catch((e: Error) => e);
+    if (!(await this.unchanged(generation))) {
+      throw new FilterStoreChangedError('The chain changed during the read');
+    }
+    if (read) {
+      throw read;
+    }
+    if (!sha256d(Buffer.concat([sha256d(filter), prev])).equals(header)) {
+      throw new Error(`Stored filter at height ${height} does not match its header`);
+    }
+    return filter;
+  }
+
+  /**
+   * For each key, the heights in [from, to) whose filter may hold it. Short
+   * runs are scanned at once; longer ones wait for the running pass over the
+   * files and share the next one, with every key that waits.
+   */
+  match(keys: Buffer[], from: number, to: number, signal?: AbortSignal): Promise<number[][]> {
+    from = Math.max(0, from);
+    to = Math.min(to, this.count);
+    if (!keys.length || to <= from) {
+      return Promise.resolve(keys.map(() => []));
+    }
+    if (signal?.aborted) {
+      return Promise.reject(new FilterStoreChangedError('Request cancelled'));
+    }
+    const found = new Promise<number[][]>((resolve, reject) => {
+      const scan = { keys, from, to, resolve, reject };
+      if (to - from <= DIRECT_SCAN) {
+        void this.pass([scan]);
+      } else {
+        this.queued.push(scan);
+        this.drain();
+      }
+    });
+    return found.then((heights) => {
+      if (signal?.aborted) {
+        throw new FilterStoreChangedError('Request cancelled');
+      }
+      return heights;
+    });
+  }
+
+  private drain(): void {
+    if (this.passing || !this.queued.length) {
+      return;
+    }
+    this.passing = true;
+    void this.pass(this.queued.splice(0)).finally(() => {
+      this.passing = false;
+      this.drain();
+    });
+  }
+
+  /** One pass over the heights all the scans cover, with all their keys; each scan gets its own heights. */
+  private async pass(scans: Scan[]): Promise<void> {
+    try {
+      if (!this.filters) {
+        throw new Error('Filter store is closed');
+      }
+      const generation = this.generation;
+      const from = Math.min(...scans.map((scan) => scan.from));
+      const to = Math.min(Math.max(...scans.map((scan) => scan.to)), this.count);
+      const ids = new Map<string, number>();
+      const keys: Buffer[] = [];
+      for (const key of scans.flatMap((scan) => scan.keys)) {
+        const id = key.toString('hex');
+        if (!ids.has(id)) {
+          ids.set(id, keys.length);
+          keys.push(key);
+        }
+      }
+      let found: number[][] = keys.map(() => []);
+      let failure: Error | undefined;
+      if (from < to) {
+        try {
+          found = await scanFilters({
+            indexFile: this.file('index.dat'),
+            filtersFile: this.file('filters.dat'),
+            from,
+            to,
+            filterOffset: this.offsets[from],
+            keys,
+          });
+        } catch (e) {
+          failure = e instanceof Error ? e : new Error(String(e));
+        }
+      }
+      if (!(await this.unchanged(generation))) {
+        throw new FilterStoreChangedError('The chain changed during the scan');
+      }
+      if (failure) {
+        throw failure;
+      }
+      for (const scan of scans) {
+        scan.resolve(
+          scan.keys.map((key) =>
+            found[ids.get(key.toString('hex'))!].filter((height) => height >= scan.from && height < scan.to)
+          )
+        );
+      }
+    } catch (e) {
+      for (const scan of scans) {
+        scan.reject(e as Error);
+      }
+    }
+  }
+}
+
+export interface FilterStoreOptions {
+  network: string;
+  /** Milliseconds between polls for new blocks besides the node's announcements. */
+  pollInterval?: number;
+}
+
+/** The store's writer: it syncs the copy from the node and commits each step for readers. */
+export class FilterStore extends StoredFilters {
+  private records?: fs.promises.FileHandle;
+  private commits?: fs.promises.FileHandle;
+  private syncing?: Promise<void>;
+  private again = false;
+  private timer?: NodeJS.Timeout;
+  private readonly onBlock = () => this.requestSync();
+  /** True once a sync found no headers past the tip. */
+  synced = false;
+  lastError?: Error;
+
+  constructor(
+    dir: string,
+    private readonly peer: FilterPeer,
+    private readonly options: FilterStoreOptions
+  ) {
+    super(dir);
+  }
+
+  protected async unchanged(generation: number): Promise<boolean> {
+    return generation === this.generation;
+  }
+
+  refresh(): Promise<void> {
+    return Promise.resolve();
+  }
+
   async open(): Promise<void> {
     await fs.promises.mkdir(this.dir, { recursive: true });
-    const meta = path.join(this.dir, 'meta.json');
-    const network = JSON.stringify({ network: this.options.network, filterType: SCRIPT_FILTER_TYPE, version: 1 });
+    const meta = this.file('meta.json');
+    const network = metaOf(this.options.network);
     try {
       const existing = await fs.promises.readFile(meta, 'utf8');
       if (existing.trim() !== network) {
@@ -161,27 +394,30 @@ export class FilterStore extends EventEmitter implements FilterSource {
       }
       await fs.promises.writeFile(meta, network + '\n');
     }
-    this.filters = await openFile(path.join(this.dir, 'filters.dat'));
-    this.records = await openFile(path.join(this.dir, 'index.dat'));
+    this.filters = await openFile(this.file('filters.dat'));
+    this.records = await openFile(this.file('index.dat'));
+    this.commits = await openFile(this.file('commit.dat'));
+    const committed = decodeCommit(await readAll(this.commits));
+    this.generation = committed?.generation ?? 0;
     const index = await readAll(this.records);
     const filterBytes = (await this.filters.stat()).size;
     // Filters are written before their records: keep the records whose filters are whole.
     let count = Math.floor(index.length / RECORD);
     let total = 0;
-    const offsets = new Float64Array(count);
     for (let h = 0; h < count; h++) {
       const length = index.readUInt32LE(h * RECORD + LENGTH);
       if (total + length > filterBytes) {
         count = h;
         break;
       }
-      offsets[h] = total;
       total += length;
     }
-    this.reserve(count);
-    index.copy(this.index, 0, 0, count * RECORD);
-    this.offsets.set(offsets.subarray(0, count));
-    this.count = count;
+    if (committed && count < committed.count) {
+      // Heights a reader may hold are gone.
+      this.generation = (this.generation + 1) >>> 0;
+    }
+    this.take(0, index.subarray(0, count * RECORD));
+    await this.commit();
     await this.records.truncate(count * RECORD);
     await this.filters.truncate(total);
     // Check the newest filters against their headers; older ones are checked when a scan matches them.
@@ -214,7 +450,8 @@ export class FilterStore extends EventEmitter implements FilterSource {
     await this.syncing?.catch(() => undefined);
     await this.filters?.close();
     await this.records?.close();
-    this.filters = this.records = undefined;
+    await this.commits?.close();
+    this.filters = this.records = this.commits = undefined;
   }
 
   /** Starts a sync, or another one right after the running one. */
@@ -233,7 +470,10 @@ export class FilterStore extends EventEmitter implements FilterSource {
           while (await this.syncStep()) {
             // keep going until the node has no newer headers
           }
-          this.synced = true;
+          if (!this.synced) {
+            this.synced = true;
+            await this.commit();
+          }
           this.lastError = undefined;
         } while (this.again);
       } catch (e: any) {
@@ -403,13 +643,12 @@ export class FilterStore extends EventEmitter implements FilterSource {
     await this.append(headers, filterHeaders, filters);
   }
 
+  /** Writes filters, then their records, then the commit that lets readers see them. */
   private async append(headers: BlockHeader[], filterHeaders: Buffer[], filters: Buffer[]): Promise<void> {
     if (!this.filters || !this.records) {
       throw new Error('Filter store is closed');
     }
     const base = this.count;
-    const end = base > 0 ? this.offsets[base - 1] + this.lengthAt(base - 1) : 0;
-    const blob = Buffer.concat(filters);
     const records = Buffer.alloc(headers.length * RECORD);
     for (let i = 0; i < headers.length; i++) {
       headers[i].hash.copy(records, i * RECORD + HASH);
@@ -417,107 +656,202 @@ export class FilterStore extends EventEmitter implements FilterSource {
       filterHeaders[i].copy(records, i * RECORD + FILTER_HEADER);
       records.writeUInt32LE(filters[i].length, i * RECORD + LENGTH);
     }
-    await writeAll(this.filters, blob, end);
+    await writeAll(this.filters, Buffer.concat(filters), this.endOf(base));
     await writeAll(this.records, records, base * RECORD);
-
-    const count = base + headers.length;
-    this.reserve(count);
-    records.copy(this.index, base * RECORD);
-    let offset = end;
-    for (let i = 0; i < headers.length; i++) {
-      this.offsets[base + i] = offset;
-      offset += filters[i].length;
-    }
-    this.count = count;
+    this.take(base, records);
+    await this.commit();
   }
 
-  /** Makes room for `count` records in memory. */
-  private reserve(count: number): void {
-    if (count * RECORD <= this.index.length) {
-      return;
-    }
-    const capacity = Math.max(count, Math.ceil(this.count * 1.5)) + 1024;
-    const index = Buffer.alloc(capacity * RECORD);
-    this.index.copy(index, 0, 0, this.count * RECORD);
-    const offsets = new Float64Array(capacity);
-    offsets.set(this.offsets.subarray(0, this.count));
-    this.index = index;
-    this.offsets = offsets;
-  }
-
+  /** Cuts the heights from `height` on: readers learn of it from the new generation before the files change. */
   private async truncate(height: number): Promise<void> {
     if (!this.filters || !this.records) {
       throw new Error('Filter store is closed');
     }
-    this.generation++;
-    const end = height > 0 ? this.offsets[height - 1] + this.lengthAt(height - 1) : 0;
+    this.generation = (this.generation + 1) >>> 0;
+    const end = this.endOf(height);
     this.count = height;
+    await this.commit();
     await this.records.truncate(height * RECORD);
     await this.filters.truncate(end);
   }
 
-  /** A stored filter, checked against the filter header chain. */
-  async readFilter(height: number): Promise<Buffer> {
-    if (!this.filters || height < 0 || height >= this.count) {
-      throw new Error(`No filter at height ${height}`);
-    }
-    const generation = this.generation;
-    const filter = Buffer.alloc(this.lengthAt(height));
-    await readExact(this.filters, filter, this.offsets[height]);
-    const prev = height > 0 ? this.filterHeaderAt(height - 1)! : ZERO_HASH;
-    if (generation !== this.generation) {
-      throw new FilterStoreChangedError('The chain changed during the read');
-    }
-    if (!sha256d(Buffer.concat([sha256d(filter), prev])).equals(this.filterHeaderAt(height)!)) {
-      throw new Error(`Stored filter at height ${height} does not match its header`);
-    }
-    return filter;
-  }
-
-  /**
-   * Visits the filters of heights [from, to) in order, reading the file in
-   * large chunks. The filter passed is only valid during the call. Returning
-   * true stops the scan.
-   */
-  async scan(
-    from: number,
-    to: number,
-    visit: (height: number, blockHash: Buffer, filter: Buffer) => boolean | void,
-    signal?: AbortSignal
-  ): Promise<void> {
-    if (!this.filters) {
+  private async commit(): Promise<void> {
+    if (!this.commits) {
       throw new Error('Filter store is closed');
     }
-    const generation = this.generation;
-    const end = Math.min(to, this.count);
-    let buffer = Buffer.alloc(0);
-    for (let h = Math.max(0, from); h < end;) {
-      if (signal?.aborted) {
-        throw new FilterStoreChangedError('Request cancelled');
+    const tipHash = this.count ? this.hashAt(this.count - 1)! : ZERO_HASH;
+    const commit = encodeCommit({ generation: this.generation, count: this.count, synced: this.synced, tipHash });
+    await writeAll(this.commits, commit, 0);
+  }
+}
+
+export interface FilterReaderOptions {
+  network: string;
+  /** Milliseconds between looks at what the writer committed, besides each refresh(). */
+  pollInterval?: number;
+}
+
+/**
+ * A read-only view of a store another process writes, as cluster workers
+ * have it: it takes the heights the writer committed, and after a new
+ * generation keeps only the heights whose records still read the same,
+ * which is where the writer cut the chain.
+ */
+export class FilterReader extends StoredFilters {
+  synced = false;
+  private records?: fs.promises.FileHandle;
+  private commits?: fs.promises.FileHandle;
+  private refreshing?: Promise<void>;
+  private timer?: NodeJS.Timeout;
+
+  constructor(
+    dir: string,
+    private readonly options: FilterReaderOptions
+  ) {
+    super(dir);
+  }
+
+  /** Opens the files if the writer has made them; until then the store is empty. */
+  open(): Promise<void> {
+    return this.refresh();
+  }
+
+  start(): void {
+    const poll = () => {
+      this.timer = setTimeout(() => {
+        this.refresh()
+          .catch((e) => logger.warn(`P2P filter store ${this.dir}: ${e?.message ?? e}`))
+          .finally(poll);
+      }, this.options.pollInterval ?? 1000);
+      this.timer.unref?.();
+    };
+    poll();
+  }
+
+  async stop(): Promise<void> {
+    clearTimeout(this.timer);
+    await this.refreshing?.catch(() => undefined);
+    await this.close();
+  }
+
+  refresh(): Promise<void> {
+    this.refreshing ??= this.load().finally(() => {
+      this.refreshing = undefined;
+    });
+    return this.refreshing;
+  }
+
+  protected async unchanged(generation: number): Promise<boolean> {
+    if (generation !== this.generation) {
+      return false;
+    }
+    const commit = await this.readCommit().catch(() => undefined);
+    return commit?.generation === generation;
+  }
+
+  private async close(): Promise<void> {
+    await this.filters?.close();
+    await this.records?.close();
+    await this.commits?.close();
+    this.filters = this.records = this.commits = undefined;
+  }
+
+  private async openFiles(): Promise<boolean> {
+    if (this.commits) {
+      return true;
+    }
+    try {
+      const meta = (await fs.promises.readFile(this.file('meta.json'), 'utf8')).trim();
+      if (meta !== metaOf(this.options.network)) {
+        throw new Error(`Filter store ${this.dir} belongs to ${meta}, not ${metaOf(this.options.network)}`);
       }
-      const first = h;
-      const base = this.offsets[first];
-      let last = first;
-      while (last + 1 < end && this.offsets[last + 1] + this.lengthAt(last + 1) - base <= SCAN_CHUNK) {
-        last++;
+      // The writer makes commit.dat last.
+      this.commits = await fs.promises.open(this.file('commit.dat'), 'r');
+      this.records = await fs.promises.open(this.file('index.dat'), 'r');
+      this.filters = await fs.promises.open(this.file('filters.dat'), 'r');
+      return true;
+    } catch (e: any) {
+      await this.close();
+      if (e.code === 'ENOENT') {
+        return false;
       }
-      const size = this.offsets[last] + this.lengthAt(last) - base;
-      if (buffer.length < size) {
-        buffer = Buffer.alloc(Math.max(size, Math.min(SCAN_CHUNK, buffer.length * 2)));
+      throw e;
+    }
+  }
+
+  /** What the writer committed last, undefined before its first commit. */
+  private async readCommit(): Promise<Commit | undefined> {
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const b = Buffer.alloc(COMMIT_SIZE);
+      const { bytesRead } = await this.commits!.read(b, 0, COMMIT_SIZE, 0);
+      if (bytesRead === 0) {
+        return undefined;
       }
-      await readExact(this.filters, buffer.subarray(0, size), base);
-      if (generation !== this.generation) {
-        throw new FilterStoreChangedError('The chain changed during the scan');
+      const commit = decodeCommit(b.subarray(0, bytesRead));
+      if (commit) {
+        return commit;
       }
-      for (let height = first; height <= last; height++) {
-        const at = this.offsets[height] - base;
-        if (visit(height, this.hashAt(height)!, buffer.subarray(at, at + this.lengthAt(height))) === true) {
-          return;
+      await new Promise((resolve) => setTimeout(resolve, 5));
+    }
+    throw new FilterStoreChangedError('The filter store commit does not read whole');
+  }
+
+  private async load(): Promise<void> {
+    if (!(await this.openFiles())) {
+      return;
+    }
+    for (let attempt = 0; attempt < 10; attempt++) {
+      const commit = await this.readCommit();
+      if (!commit) {
+        return;
+      }
+      this.synced = commit.synced;
+      if (commit.generation === this.generation && commit.count === this.count) {
+        return;
+      }
+      const base =
+        commit.generation === this.generation && commit.count > this.count
+          ? this.count
+          : await this.agreeing(Math.min(this.count, commit.count));
+      const records = Buffer.alloc((commit.count - base) * RECORD);
+      const read = await readExact(this.records!, records, base * RECORD).catch((e: Error) => e);
+      // Unless the generation held, the writer cut the chain meanwhile: read again.
+      if ((await this.readCommit())?.generation !== commit.generation) {
+        continue;
+      }
+      if (read) {
+        throw read;
+      }
+      const tip = records.length ? records.subarray(records.length - RECORD) : this.index.subarray((base - 1) * RECORD);
+      if (commit.count > 0 && !tip.subarray(HASH, HASH + 32).equals(commit.tipHash)) {
+        continue;
+      }
+      const cut = base < this.count;
+      this.generation = commit.generation;
+      this.take(base, records);
+      if (cut) {
+        logger.info(`P2P filter store ${this.dir}: the writer replaced the blocks from height ${base}`);
+        this.emit('reorg', base - 1);
+      }
+      return;
+    }
+    throw new FilterStoreChangedError('The filter store kept changing while it was read');
+  }
+
+  /** How many of the first `limit` heights the file still holds as this reader does. */
+  private async agreeing(limit: number): Promise<number> {
+    for (let end = limit; end > 0; end -= FORK_STEP) {
+      const start = Math.max(0, end - FORK_STEP);
+      const stored = Buffer.alloc((end - start) * RECORD);
+      await readExact(this.records!, stored, start * RECORD);
+      for (let h = end - 1; h >= start; h--) {
+        const at = (h - start) * RECORD;
+        if (stored.compare(this.index, h * RECORD, (h + 1) * RECORD, at, at + RECORD) === 0) {
+          return h + 1;
         }
       }
-      h = last + 1;
-      await new Promise((resolve) => setImmediate(resolve));
     }
+    return 0;
   }
 }
 
