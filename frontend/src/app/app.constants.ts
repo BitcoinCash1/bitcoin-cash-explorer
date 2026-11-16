@@ -266,7 +266,7 @@ export const specialBlocks = {
     networks: ['mainnet'],
   },
   '121957': {
-    labelEvent: 'November 2022 Chipnet Upgrade: CashTokens and P2SH32',
+    labelEvent: 'CashTokens and P2SH32',
     labelEventCompleted:
       'Chipnet upgrade (2022-11-15). Activate CHIP-2022-02 CashTokens, CHIP-2022-05 P2SH32, CHIP-2021-01 Restrict Transaction Version, and CHIP-2021-01 Minimum Transaction Size. First block mined under the upgraded chipnet consensus rules, six months before mainnet activation. (https://upgradespecs.bitcoincashnode.org/2023-05-15-upgrade/)',
     networks: ['chipnet'],
@@ -290,7 +290,7 @@ export const specialBlocks = {
     networks: ['mainnet'],
   },
   '174520': {
-    labelEvent: 'November 2023 Chipnet Upgrade: ABLA',
+    labelEvent: 'Adaptive Blocksize Limit (ABLA)',
     labelEventCompleted:
       'Chipnet upgrade (2023-11-15). Activate CHIP-2023-04 Adaptive Blocksize Limit Algorithm (ABLA). First block mined under the upgraded chipnet consensus rules, six months before mainnet activation. (https://upgradespecs.bitcoincashnode.org/2024-05-15-upgrade/)',
     networks: ['chipnet'],
@@ -301,7 +301,7 @@ export const specialBlocks = {
     networks: ['mainnet', 'testnet4', 'scalenet', 'chipnet'],
   },
   '227229': {
-    labelEvent: 'November 2024 Chipnet Upgrade: VM Limits and BigInt',
+    labelEvent: 'VM Limits and BigInt',
     labelEventCompleted:
       'Chipnet upgrade (2024-11-15). Activate CHIP-2021-05 VM Limits: Targeted Virtual Machine Limits and CHIP-2024-07 BigInt: High-Precision Arithmetic for Bitcoin Cash. First block mined under the upgraded chipnet consensus rules, six months before mainnet activation. (https://upgradespecs.bitcoincashnode.org/2025-05-15-upgrade/)',
     networks: ['chipnet'],
@@ -313,8 +313,7 @@ export const specialBlocks = {
     networks: ['mainnet'],
   },
   '279792': {
-    labelEvent:
-      'November 2025 Chipnet Upgrade: P2S, Loops, Functions and Bitwise',
+    labelEvent: 'P2S, Loops, Functions and Bitwise',
     labelEventCompleted:
       'Chipnet upgrade (2025-11-15). Activate CHIP-2024-12 P2S: Pay to Script, CHIP-2021-05 Loops: Bounded Looping Operations, CHIP-2025-05 Functions: Function Definition and Invocation Operations, and CHIP-2025-05 Bitwise: Re-Enable Bitwise Operations. First block mined under the upgraded chipnet consensus rules, six months before mainnet activation. (https://upgradespecs.bitcoincashnode.org/2026-05-15-upgrade/)',
     networks: ['chipnet'],
