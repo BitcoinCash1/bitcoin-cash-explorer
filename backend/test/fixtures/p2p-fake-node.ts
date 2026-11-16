@@ -12,6 +12,7 @@ import {
   scriptKey,
   serializeLeaf,
   splitTokenPrefix,
+  txKey,
 } from '../../src/api/bitcoin/p2p/script-filter';
 import {
   ByteReader,
@@ -156,7 +157,14 @@ export class FakeChain {
   private utxos = new Map<string, Output>();
   private counter = 0;
 
-  constructor(private readonly miner: Buffer = p2pkh(0xee)) {
+  /**
+   * With `txLeaves` the filters have a transaction leaf (kind 4) for each
+   * transaction, as nodes build them since; without, as before.
+   */
+  constructor(
+    private readonly miner: Buffer = p2pkh(0xee),
+    readonly txLeaves = true
+  ) {
     this.mine([]);
   }
 
@@ -241,7 +249,9 @@ export class FakeChain {
       header.writeUInt32LE(nonce, 76);
     }
     const hash = sha256d(header);
-    const leaves = blockLeaves(txs).filter((leaf) => !omit.some((key) => leaf.subarray(0, 32).equals(key)));
+    const leaves = blockLeaves(txs, this.txLeaves).filter(
+      (leaf) => !omit.some((key) => leaf.subarray(0, 32).equals(key))
+    );
     const filter = Buffer.concat([
       leavesRoot(leaves),
       gcsEncode(
@@ -278,8 +288,8 @@ export function serializeBlock(block: FakeBlock): Buffer {
   ]);
 }
 
-/** The sorted leaves of a block: the scripts and token categories it creates and spends. */
-export function blockLeaves(txs: FakeTx[]): Buffer[] {
+/** The sorted leaves of a block: the scripts and token categories it creates and spends, and its transactions. */
+export function blockLeaves(txs: FakeTx[], txLeaves = true): Buffer[] {
   const leaves: Buffer[] = [];
   const add = (field: Buffer, txIndex: number, index: number, spent: boolean) => {
     const { category, script } = splitTokenPrefix(field);
@@ -295,6 +305,9 @@ export function blockLeaves(txs: FakeTx[]): Buffer[] {
   txs.forEach((tx, txIndex) => {
     tx.inputs.forEach((input, j) => add(input.prev.script, txIndex, j, true));
     tx.outputs.forEach((output, j) => add(output.script, txIndex, j, false));
+    if (txLeaves) {
+      leaves.push(serializeLeaf({ key: txKey(tx.txid), txIndex, index: 0, kind: LeafKind.Transaction }));
+    }
   });
   return leaves.sort(compareLeaves);
 }
@@ -531,6 +544,7 @@ export function fakeRpc(chain: FakeChain, address: (script: string) => string = 
   const verbose = (tx: FakeTx, block: FakeBlock) => ({
     txid: toDisplay(tx.txid),
     hash: toDisplay(tx.txid),
+    hex: tx.raw.toString('hex'),
     version: 2,
     size: tx.raw.length,
     locktime: 0,
@@ -566,11 +580,14 @@ export function fakeRpc(chain: FakeChain, address: (script: string) => string = 
       calls.push({ method: 'getrawtransaction', params: [txid, verbosity, blockHash] });
       const found = chain.findTx(Buffer.from(txid, 'hex').reverse());
       if (!found || (!rpc.txindex && (!blockHash || toDisplay(found.block.hash) !== blockHash))) {
-        throw new Error(
-          'No such mempool or blockchain transaction. Use -txindex to enable blockchain transaction queries.'
+        throw Object.assign(
+          new Error(
+            'No such mempool or blockchain transaction. Use -txindex to enable blockchain transaction queries.'
+          ),
+          { code: -5 }
         );
       }
-      return verbose(found.tx, found.block);
+      return verbosity ? verbose(found.tx, found.block) : found.tx.raw.toString('hex');
     },
     getBlock: async (hash: string) => {
       calls.push({ method: 'getblock', params: [hash] });

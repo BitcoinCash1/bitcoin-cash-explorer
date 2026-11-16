@@ -4,10 +4,10 @@ import { ZERO_HASH, sha256, sha256d } from './wire';
 /**
  * Script filters (filter type 1): the served filter is the root of a sorted
  * tree of leaves, then a GCS of the leaves' distinct keys. A leaf is a key
- * (the SHA-256 of a locking script, or of 0x01 and a token category), the
- * transaction index, the input or output index and the kind. A range of
- * leaves and its edge hashes rebuild the root, which proves which leaves of
- * the block have a key prefix and that no other leaf has it.
+ * (the SHA-256 of a locking script, of 0x01 and a token category, or of 0x02
+ * and a txid), the transaction index, the input or output index and the kind.
+ * A range of leaves and its edge hashes rebuild the root, which proves which
+ * leaves of the block have a key prefix and that no other leaf has it.
  */
 
 export enum LeafKind {
@@ -15,6 +15,8 @@ export enum LeafKind {
   Spent = 1,
   OutputCategory = 2,
   SpentCategory = 3,
+  /** One per transaction of the block, the coinbase included, with index 0. */
+  Transaction = 4,
 }
 
 export interface ScriptLeaf {
@@ -27,8 +29,8 @@ export interface ScriptLeaf {
 export class ScriptFilterError extends Error {}
 
 export function parseLeaf(b: Buffer): ScriptLeaf {
-  if (b.length !== LEAF_SIZE || b[40] > LeafKind.SpentCategory) {
-    throw new ScriptFilterError('A script filter leaf is 41 bytes, of kind 0 to 3');
+  if (b.length !== LEAF_SIZE || b[40] > LeafKind.Transaction) {
+    throw new ScriptFilterError('A script filter leaf is 41 bytes, of kind 0 to 4');
   }
   return { key: b.subarray(0, 32), txIndex: b.readUInt32LE(32), index: b.readUInt32LE(36), kind: b[40] };
 }
@@ -66,6 +68,11 @@ export function scriptKey(script: Buffer): Buffer {
 /** The key of a token category, given in the byte order of a token prefix. */
 export function categoryKey(category: Buffer): Buffer {
   return sha256(Buffer.concat([Buffer.from([0x01]), category]));
+}
+
+/** The key of a transaction (leaf kind 4), from its txid in internal byte order, as an outpoint has it. */
+export function txKey(txid: Buffer): Buffer {
+  return sha256(Buffer.concat([Buffer.from([0x02]), txid]));
 }
 
 export function leafHash(leaf: Buffer): Buffer {
@@ -250,7 +257,8 @@ export function merkleFold(txid: Buffer, index: number, branch: Buffer[]): Buffe
  * the same leaf at the same position folds to the filter's root, and the
  * transaction folds to the block header's Merkle root at the leaf's
  * transaction index. For a spent output's leaf, the creating transaction
- * must be the one the spending input names.
+ * must be the one the spending input names; a transaction's leaf must be the
+ * key of the transaction's own txid.
  */
 export function checkProof(
   root: Buffer,
@@ -274,6 +282,12 @@ export function checkProof(
   }
   if (!merkleFold(proof.tx.txid, leaf.txIndex, proof.txBranch).equals(merkleRoot)) {
     throw new ScriptFilterError('The transaction does not fold to the block header');
+  }
+  if (leaf.kind === LeafKind.Transaction) {
+    if (leaf.index !== 0 || !txKey(proof.tx.txid).equals(leaf.key)) {
+      throw new ScriptFilterError('The leaf is not the key of the transaction');
+    }
+    return;
   }
   const spent = leaf.kind === LeafKind.Spent || leaf.kind === LeafKind.SpentCategory;
   let field: Buffer;

@@ -468,6 +468,55 @@ test('long scans that wait share one pass over the files, each with its own heig
   );
 });
 
+test('a transaction is found by its txid alone, from its key in the filters, in both modes', async () => {
+  // A's coinbase in block 1, spent in block 5: without a transaction index the node cannot find it by its id.
+  const tx = chain.blocks[1].txs[0];
+  const txid = toDisplay(tx.txid);
+  const blockHash = toDisplay(chain.blocks[1].hash);
+  await expect(rpc.getRawTransaction(txid, 2)).rejects.toThrow('No such mempool or blockchain transaction');
+  const before = sent();
+  const shown = (await api.$getRawTransaction(txid, false, true)) as any;
+  expect(shown.txid).toBe(txid);
+  expect(shown.status).toMatchObject({ confirmed: true, block_height: 1, block_hash: blockHash });
+  // Block mode downloads the blocks the transaction's key matches, and asks for no leaves.
+  const after = sent();
+  expect(after.data - before.data).toBeGreaterThanOrEqual(1);
+  expect(after.range + after.proof).toBe(before.range + before.proof);
+  expect(rpc.calls.filter((c) => c.method === 'getrawtransaction').pop()!.params).toEqual([txid, 2, blockHash]);
+  expect(await api.$getTransactionHex(txid)).toBe(tx.raw.toString('hex'));
+  // Outspends and Merkle proofs need the transaction's block too.
+  expect(await api.$getTransactionMerkleProof(txid)).toEqual({
+    block_height: 1,
+    pos: 0,
+    merkle: merkle(chain.blocks[1].txs.map((t) => t.txid))
+      .branch(0)
+      .map(toDisplay),
+  });
+  expect(await api.$getOutspend(txid, 0)).toEqual({
+    spent: true,
+    txid: toDisplay(chain.blocks[5].txs[1].txid),
+    vin: 0,
+  });
+  expect(await api.$getOutspends(txid)).toEqual([{ spent: true }]);
+  // A block's coinbase is read by the block's hash, with no search.
+  const coinbase = await api.$getCoinbaseTx(toDisplay(chain.blocks[7].hash));
+  expect(coinbase.txid).toBe(toDisplay(chain.blocks[7].txs[0].txid));
+  // Range mode: the leaves of the full key, whose kind 4 leaf names the transaction.
+  const ranges = node.count('getcfrange');
+  const data = node.count('getdata');
+  expect(await rangeClient.locateTx(chain.blocks[9].txs[1].txid)).toEqual({
+    height: 9,
+    blockHash: toDisplay(chain.blocks[9].hash),
+    txIndex: 1,
+  });
+  const asked = node.requests.filter((m) => m.command === 'getcfrange').slice(ranges);
+  expect(asked.length).toBeGreaterThan(0);
+  expect(asked.every((m) => m.payload.readUInt16LE(33) === 256)).toBe(true);
+  expect(node.count('getdata')).toBe(data);
+  // A txid no block holds keeps the node's own error.
+  await expect(api.$getRawTransaction('ab'.repeat(32))).rejects.toThrow('No such mempool or blockchain transaction');
+});
+
 test('a reader of the store sees what the writer committed and gives the same histories', async () => {
   await reader.refresh();
   expect(reader.tipHeight).toBe(store.tipHeight);
@@ -479,6 +528,7 @@ test('a reader of the store sees what the writer committed and gives the same hi
   for (const script of [A, B, C]) {
     expect((await readerClient.history(sha256(script))).txs).toEqual((await client.history(sha256(script))).txs);
   }
+  expect(await readerClient.locateTx(chain.blocks[1].txs[0].txid)).toMatchObject({ height: 1, txIndex: 0 });
   // Before the writer made its files, a reader is an empty store that waits for them.
   const early = new FilterReader(path.join(dir, 'not-yet'), { network: 'regtest' });
   await early.open();
@@ -561,5 +611,42 @@ test('the store reopens from its files, and a damaged filter is downloaded again
     await expect(new FilterStore(copy, offline, { network: 'mainnet' }).open()).rejects.toThrow('belongs to');
   } finally {
     fs.rmSync(copy, { recursive: true, force: true });
+  }
+});
+
+test('filters without transaction leaves find no transaction by its txid, and the node error stands', async () => {
+  const old = new FakeChain(undefined, false);
+  for (let i = 0; i < 5; i++) {
+    old.mine([]);
+  }
+  const oldNode = new FakeNode(old);
+  const port = await oldNode.listen();
+  const oldDir = fs.mkdtempSync(path.join(os.tmpdir(), 'bch-p2p-old-'));
+  const peers = ['sync', 'query'].map(
+    (name) => new P2PPeer({ host: '127.0.0.1', port, magic: MAGIC, timeout: 3000, name })
+  );
+  const oldStore = new FilterStore(oldDir, peers[0], { network: 'regtest', pollInterval: 60_000 });
+  try {
+    await oldStore.open();
+    peers.forEach((p) => p.start());
+    oldStore.start();
+    await until(() => oldStore.synced && oldStore.tipHeight === old.tip.height);
+    const oldClient = new LightClient(oldStore, peers[1], { prefixBits: 256, maxHistoryTxs: 100 });
+    const oldApi = new P2PBackendApi(fakeRpc(old), {
+      client: oldClient,
+      mempool: () => ({}),
+      started: Promise.resolve(),
+    });
+    const txid = old.blocks[2].txs[0].txid;
+    expect(await oldClient.locateTx(txid)).toBeUndefined();
+    await expect(oldApi.$getRawTransaction(toDisplay(txid))).rejects.toThrow(
+      'No such mempool or blockchain transaction'
+    );
+    expect(oldNode.count('getdata')).toBe(0);
+  } finally {
+    peers.forEach((p) => p.stop());
+    await oldStore.stop();
+    await oldNode.close();
+    fs.rmSync(oldDir, { recursive: true, force: true });
   }
 });

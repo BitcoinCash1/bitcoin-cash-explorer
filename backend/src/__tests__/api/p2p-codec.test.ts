@@ -30,6 +30,7 @@ import {
   rangeRoot,
   serializeLeaf,
   splitTokenPrefix,
+  txKey,
 } from '../../api/bitcoin/p2p/script-filter';
 import {
   ByteWriter,
@@ -43,10 +44,13 @@ import {
   encodeVersion,
   fromDisplay,
   sha256,
+  sha256d,
   toDisplay,
 } from '../../api/bitcoin/p2p/wire';
 import {
   FakeChain,
+  FakeTx,
+  blockLeaves,
   gcsEncode,
   p2pkh,
   rangeHashes,
@@ -475,5 +479,151 @@ describe('native filter scan', () => {
     await expect(scan([Buffer.from('a')], 0, 1)).resolves.toEqual([[0]]);
     await expect(scan([Buffer.from('a')], 0, 3)).rejects.toThrow('ended early');
     await expect(scan([Buffer.from('a')])).rejects.toThrow('shorter than its item count (stored filter at height 1)');
+  });
+});
+
+describe('transaction leaves (kind 4)', () => {
+  test('a transaction key is the SHA-256 of 0x02 and the txid in internal byte order', () => {
+    const txid = hex('11'.repeat(31) + '22');
+    expect(txKey(txid).equals(sha256(Buffer.concat([hex('02'), txid])))).toBe(true);
+    // Tagged apart from a token category that is the same 32 bytes.
+    expect(txKey(txid).equals(categoryKey(txid))).toBe(false);
+  });
+
+  test('leaves of kind 4 parse and kinds above 4 are refused', () => {
+    const leaf = serializeLeaf({ key: txKey(Buffer.alloc(32, 5)), txIndex: 7, index: 0, kind: LeafKind.Transaction });
+    expect(parseLeaf(leaf)).toMatchObject({ txIndex: 7, index: 0, kind: LeafKind.Transaction });
+    leaf[40] = 5;
+    expect(() => parseLeaf(leaf)).toThrow('of kind 0 to 4');
+  });
+
+  test("every transaction of a block has its leaf, and a range of a txid's full key proves it", () => {
+    const chain = new FakeChain();
+    const block = chain.mine([
+      { spends: [`${toDisplay(chain.tip.txs[0].txid)}:0`], outputs: [{ script: p2pkh(3), value: 10 }] },
+    ]);
+    const kinds = block.leaves.filter((l) => l[40] === LeafKind.Transaction).map((l) => parseLeaf(l));
+    expect(kinds.map((l) => l.txIndex).sort()).toEqual([0, 1]);
+    const key = txKey(block.txs[1].txid);
+    expect(gcsMatch(block.filter.subarray(32), block.hash, key)).toBe(true);
+    const first = block.leaves.findIndex((l) => l.subarray(0, 32).equals(key));
+    const range = {
+      filterType: 1,
+      blockHash: block.hash,
+      leafCount: block.leaves.length,
+      firstIndex: first,
+      leaves: [block.leaves[first]],
+      before: first > 0 ? block.leaves[first - 1] : undefined,
+      after: first + 1 < block.leaves.length ? block.leaves[first + 1] : undefined,
+      hashes: rangeHashes(
+        block.leaves,
+        first > 0 ? first - 1 : first,
+        first + 2 <= block.leaves.length ? first + 2 : first + 1
+      ),
+    };
+    const [proved] = checkRange(block.filter.subarray(0, 32), block.hash, range, key, 256);
+    expect(proved).toMatchObject({ kind: LeafKind.Transaction, txIndex: 1, index: 0 });
+    const without = new FakeChain(undefined, false);
+    expect(without.tip.leaves.some((l) => l[40] === LeafKind.Transaction)).toBe(false);
+  });
+});
+
+describe('transaction leaves (kind 4), vectors of the Go and Python implementations', () => {
+  const tv = vectors.txLeaves;
+
+  test('the genesis coinbase key, from the txid in internal byte order', () => {
+    expect(txKey(hex(tv.genesisKey.txid)).toString('hex')).toBe(tv.genesisKey.key);
+    expect(txKey(hex(tv.genesisKey.txid).reverse()).toString('hex')).not.toBe(tv.genesisKey.key);
+  });
+
+  test("the test block's leaves, root, filter and header, as the fake node builds them", () => {
+    const { block } = tv;
+    const header = hex(block.header);
+    const parsed = decodeBlock(Buffer.concat([header, encodeVarint(block.txs.length), ...block.txs.map(hex)]));
+    expect(toDisplay(parsed.header.hash)).toBe(block.hash);
+    expect(parsed.txs.map((tx) => tx.txid.toString('hex'))).toEqual(block.txids);
+    expect(parsed.txs.map((tx) => txKey(tx.txid).toString('hex'))).toEqual(block.keys);
+    // The spent scripts in input order: transaction 1's two inputs, then transaction 2's.
+    const spent = block.spent.map(hex);
+    const txs: FakeTx[] = parsed.txs.map((tx, i) => ({
+      raw: tx.raw,
+      txid: tx.txid,
+      coinbase: i === 0,
+      inputs: i === 0 ? [] : tx.inputs.map((input) => ({ ...input, prev: { script: spent.shift()!, value: 0 } })),
+      outputs: tx.outputs,
+    }));
+    const leaves = blockLeaves(txs);
+    expect(leaves.map((l) => l.toString('hex'))).toEqual(block.leaves);
+    const keys = leaves.map((l) => l.subarray(0, 32));
+    const served = Buffer.concat([leavesRoot(leaves), gcsEncode(parsed.header.hash, keys)]);
+    expect(gcsEncode(parsed.header.hash, keys).toString('hex')).toBe(block.filter);
+    expect(served.toString('hex')).toBe(block.served);
+    expect(sha256d(served).toString('hex')).toBe(block.filterHash);
+    expect(sha256d(Buffer.concat([sha256d(served), ZERO_HASH])).toString('hex')).toBe(block.headerAfterZero);
+  });
+
+  test('the native scan finds each transaction key in its own block, as gcsMatch does', async () => {
+    const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'bch-txid-scan-'));
+    try {
+      const blocks = [
+        ...tv.bchdBlocks.map((b: any) => ({ hash: fromDisplay(b.hash), served: hex(b.served), keys: b.keys })),
+        { hash: fromDisplay(tv.block.hash), served: hex(tv.block.served), keys: tv.block.keys },
+      ];
+      const records = blocks.map(({ hash, served }) => {
+        const record = Buffer.alloc(100);
+        hash.copy(record, 0);
+        record.writeUInt32LE(served.length, 96);
+        return record;
+      });
+      const indexFile = path.join(dir, 'index.dat');
+      const filtersFile = path.join(dir, 'filters.dat');
+      fs.writeFileSync(indexFile, Buffer.concat(records));
+      fs.writeFileSync(filtersFile, Buffer.concat(blocks.map((b) => b.served)));
+      const tx1 = hex(tv.block.txids[1]);
+      const keys = [
+        ...blocks.flatMap((b) => b.keys.map(hex)),
+        tx1,
+        sha256(Buffer.concat([hex('02'), Buffer.from(tx1).reverse()])),
+      ];
+      const found = await scanFilters({ indexFile, filtersFile, from: 0, to: blocks.length, filterOffset: 0, keys });
+      const own = blocks.flatMap((b, height) => b.keys.map(() => [height]));
+      expect(found).toEqual([...own, [], []]);
+      expect(found).toEqual(
+        keys.map((key) => blocks.flatMap((b, height) => (gcsMatch(b.served.subarray(32), b.hash, key) ? [height] : [])))
+      );
+    } finally {
+      fs.rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  test('a range of a whole txid key proves its kind 4 leaf, or that the block has no such transaction', () => {
+    for (const r of tv.ranges) {
+      const reply = {
+        filterType: 1,
+        blockHash: fromDisplay(r.blockHash),
+        leafCount: r.leafCount,
+        firstIndex: r.firstIndex,
+        leaves: r.run.map(hex),
+        before: r.before ? hex(r.before) : undefined,
+        after: r.after ? hex(r.after) : undefined,
+        hashes: r.hashes.map(hex),
+      };
+      const run = checkRange(hex(r.root), reply.blockHash, reply, hex(r.prefix), 256);
+      expect(run.map((leaf) => [leaf.kind, leaf.key.toString('hex'), leaf.index])).toEqual(
+        r.run.map(() => [LeafKind.Transaction, r.prefix, 0])
+      );
+      if (run.length) {
+        // A node that hides the leaf cannot claim the transaction is absent.
+        const hidden = { ...reply, leaves: [], leafCount: r.leafCount };
+        expect(() => checkRange(hex(r.root), reply.blockHash, hidden, hex(r.prefix), 256)).toThrow(ScriptFilterError);
+      }
+    }
+    expect(tv.ranges.map((r: any) => r.run.map((l: string) => hex(l).readUInt32LE(32)))).toEqual([
+      [0],
+      [1],
+      [2],
+      [],
+      [2],
+    ]);
   });
 });

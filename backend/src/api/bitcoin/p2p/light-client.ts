@@ -2,6 +2,7 @@ import { AddressHistoryUnavailableError } from '../address-pagination';
 import { FilterSource, FilterStoreChangedError, only } from './filter-store';
 import { gcsCount, gcsHash, gcsMatch, gcsValues } from './gcs';
 import {
+  Block,
   CFProof,
   CFRange,
   MSG_BLOCK,
@@ -26,6 +27,7 @@ import {
   scriptKey,
   splitScriptFilter,
   splitTokenPrefix,
+  txKey,
 } from './script-filter';
 import { sha256d, toDisplay } from './wire';
 
@@ -44,6 +46,11 @@ import { sha256d, toDisplay } from './wire';
  *   them against the root in the filter, and asks one proof per transaction
  *   (getcfproof). Far less is downloaded, but the node learns the key, or a
  *   prefix of it, and exactly which transactions.
+ *
+ * A confirmed transaction is found by its txid alone the same way, from its
+ * key in the filters (leaf kind 4): the client downloads each matching block
+ * and looks for the txid, or in 'range' mode asks for the leaves of the full
+ * key, whose kind 4 leaf names the transaction's index in the block.
  */
 
 export type MatchMode = 'block' | 'range';
@@ -74,6 +81,13 @@ export interface ScriptTx {
   txIndex: number;
   outputs: ScriptOutput[];
   spends: ScriptSpend[];
+}
+
+/** Where a confirmed transaction is. */
+export interface TxLocation {
+  height: number;
+  blockHash: string;
+  txIndex: number;
 }
 
 export interface ScriptHistory {
@@ -121,6 +135,7 @@ class Lru<V> {
 export class LightClient {
   private readonly blocks: Lru<ScriptTx[]>;
   private readonly histories: Lru<ScriptHistory>;
+  private readonly locations = new Lru<TxLocation>(10_000);
   private readonly pending = new Map<string, Promise<ScriptHistory>>();
 
   constructor(
@@ -282,12 +297,48 @@ export class LightClient {
   }
 
   /**
-   * Downloads the block and reads it here: it must hash to the stored block
-   * hash, its transactions to the stored Merkle root, and every key of the
-   * outputs it creates must be in its filter. Outputs that pay the script are
-   * added to `known`; inputs that spend an output in `known` are its spends.
+   * The confirmed transaction with this txid (internal byte order): each
+   * block whose filter may hold its key (leaf kind 4) is read the client's
+   * way until one holds the transaction. Undefined when none does, which is
+   * also the answer of filters built without transaction leaves.
    */
-  private async blockTxsFromBlock(key: Buffer, height: number, known: Map<string, number>): Promise<ScriptTx[]> {
+  async locateTx(txid: Buffer, signal?: AbortSignal): Promise<TxLocation | undefined> {
+    const id = toDisplay(txid);
+    const cached = this.locations.get(id);
+    if (cached && this.hashAt(cached.height) === cached.blockHash) {
+      return cached;
+    }
+    const tip = this.store.tipHeight;
+    if (tip < 0) {
+      return undefined;
+    }
+    const key = txKey(txid);
+    const [heights] = await this.store.match([key], 0, tip + 1, signal);
+    for (const height of heights) {
+      if (signal?.aborted) {
+        throw new FilterStoreChangedError('Request cancelled');
+      }
+      const txIndex =
+        this.mode === 'block'
+          ? (await this.readBlock(height)).block.txs.findIndex((tx) => tx.txid.equals(txid))
+          : ((await this.rangeLeaves(key, height, 256))?.leaves.find(
+              (leaf) => leaf.kind === LeafKind.Transaction && leaf.key.equals(key)
+            )?.txIndex ?? -1);
+      if (txIndex >= 0) {
+        const location = { height, blockHash: this.hashAt(height)!, txIndex };
+        this.locations.set(id, location);
+        return location;
+      }
+    }
+    return undefined;
+  }
+
+  /**
+   * Downloads a block and checks it: it must hash to the stored block hash,
+   * its transactions to the stored Merkle root, and every key of the outputs
+   * it creates must be in its filter.
+   */
+  private async readBlock(height: number): Promise<{ blockHash: Buffer; block: Block }> {
     const hash = this.store.hashAt(height);
     const merkleRoot = this.store.merkleRootAt(height);
     if (!hash || !merkleRoot) {
@@ -345,7 +396,16 @@ export class LightClient {
     if (created.size > n || [...created].some((k) => !values.has(gcsHash(blockHash, n, Buffer.from(k, 'hex'))))) {
       throw new ScriptFilterError(`The filter of block ${toDisplay(blockHash)} leaves out an output of the block`);
     }
+    return { blockHash, block };
+  }
 
+  /**
+   * Downloads the block and reads it here (readBlock). Outputs that pay the
+   * script are added to `known`; inputs that spend an output in `known` are
+   * its spends.
+   */
+  private async blockTxsFromBlock(key: Buffer, height: number, known: Map<string, number>): Promise<ScriptTx[]> {
+    const { blockHash, block } = await this.readBlock(height);
     // Outputs first: under canonical ordering a transaction may spend one created later in the block.
     const entries: ScriptTx[] = block.txs.map((tx, txIndex) => ({
       txid: toDisplay(tx.txid),
@@ -378,8 +438,16 @@ export class LightClient {
     return entries.filter((entry) => entry.outputs.length || entry.spends.length);
   }
 
-  /** The transactions of one block that pay or spend the script, each proved against the block. */
-  private async blockTxsFromRange(key: Buffer, height: number): Promise<ScriptTx[]> {
+  /**
+   * The leaves of a block whose key has the first `bits` bits of `key`,
+   * checked against the root in front of its filter; undefined when the
+   * filter does not hold the key, which needs no request.
+   */
+  private async rangeLeaves(
+    key: Buffer,
+    height: number,
+    bits: number
+  ): Promise<{ blockHash: Buffer; root: Buffer; merkle: Buffer; range: CFRange; leaves: ProvedLeaf[] } | undefined> {
     const hash = this.store.hashAt(height);
     const merkleRoot = this.store.merkleRootAt(height);
     if (!hash || !merkleRoot) {
@@ -387,33 +455,44 @@ export class LightClient {
     }
     const blockHash = Buffer.from(hash);
     const merkle = Buffer.from(merkleRoot);
-    const id = key.toString('hex') + blockHash.toString('hex');
-    const cached = this.blocks.get(id);
-    if (cached) {
-      return cached;
-    }
     const { root, gcs } = splitScriptFilter(await this.store.readFilter(height));
     if (!this.store.hashAt(height)?.equals(blockHash)) {
       throw new FilterStoreChangedError('The chain changed during the scan');
     }
+    if (!gcsMatch(gcs, blockHash, key)) {
+      return undefined;
+    }
+    const prefix = keyPrefix(key, bits);
+    const range = await this.peer.request<CFRange>(
+      'getcfrange',
+      encodeGetCFRange(SCRIPT_FILTER_TYPE, blockHash, bits, prefix),
+      only('cfrange', decodeCFRange, (reply) => reply.blockHash.equals(blockHash))
+    );
+    return { blockHash, root, merkle, range, leaves: checkRange(root, blockHash, range, prefix, bits) };
+  }
+
+  /** The transactions of one block that pay or spend the script, each proved against the block. */
+  private async blockTxsFromRange(key: Buffer, height: number): Promise<ScriptTx[]> {
+    const hash = this.store.hashAt(height);
+    if (!hash) {
+      throw new FilterStoreChangedError(`No block at height ${height}`);
+    }
+    const id = key.toString('hex') + hash.toString('hex');
+    const cached = this.blocks.get(id);
+    if (cached) {
+      return cached;
+    }
+    const found = await this.rangeLeaves(key, height, this.options.prefixBits);
     let txs: ScriptTx[] = [];
-    if (gcsMatch(gcs, blockHash, key)) {
-      const bits = this.options.prefixBits;
-      const prefix = keyPrefix(key, bits);
-      const range = await this.peer.request<CFRange>(
-        'getcfrange',
-        encodeGetCFRange(SCRIPT_FILTER_TYPE, blockHash, bits, prefix),
-        only('cfrange', decodeCFRange, (reply) => reply.blockHash.equals(blockHash))
-      );
-      const leaves = checkRange(root, blockHash, range, prefix, bits).filter(
+    if (found) {
+      const leaves = found.leaves.filter(
         (leaf) => leaf.key.equals(key) && (leaf.kind === LeafKind.Output || leaf.kind === LeafKind.Spent)
       );
-      txs = await this.proveTxs(height, blockHash, root, merkle, range.leafCount, leaves);
+      txs = await this.proveTxs(height, found.blockHash, found.root, found.merkle, found.range.leafCount, leaves);
     }
     this.blocks.set(id, txs);
     return txs;
   }
-
   private async proveTxs(
     height: number,
     blockHash: Buffer,

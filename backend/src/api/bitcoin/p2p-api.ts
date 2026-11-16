@@ -17,7 +17,7 @@ import { FilterReader, FilterStore } from './p2p/filter-store';
 import { LightClient, ScriptSummary, ScriptTx, summarize } from './p2p/light-client';
 import { P2PPeer } from './p2p/peer';
 import { scriptKey } from './p2p/script-filter';
-import { networkParams, sha256d } from './p2p/wire';
+import { fromDisplay, networkParams, sha256d } from './p2p/wire';
 
 /**
  * Address data from the node as a pure P2P light client: the explorer keeps
@@ -27,7 +27,8 @@ import { networkParams, sha256d } from './p2p/wire';
  * or, as an opt-in, asks for the leaves and proofs of the address
  * (MATCH_MODE 'range'). The node serves filters and blocks over P2P and,
  * over RPC, transactions by block and its mempool; it needs no address or
- * transaction index, and no Electrum server.
+ * transaction index, and no Electrum server. A transaction asked for by its
+ * id alone that the node cannot find is located by its key in the filters.
  */
 
 interface MempoolTx {
@@ -207,9 +208,78 @@ class P2PBackendApi extends BitcoinApi implements AbstractBitcoinApi {
   }
 
   /** A confirmed transaction read by its block, so that the node needs no transaction index. */
-  private async $getTransactionInBlock(txid: string, blockHash: string): Promise<IPublicApi.VerboseTransaction> {
+  private async $getTransactionInBlock(
+    txid: string,
+    blockHash: string,
+    addPrevout = true
+  ): Promise<IPublicApi.VerboseTransaction> {
     const tx: IBitcoinApi.VerboseTransaction = await this.bitcoindClient.getRawTransaction(txid, 2, blockHash, true);
-    return this.$convertTransaction(tx, true);
+    return this.$convertTransaction(tx, addPrevout);
+  }
+
+  /**
+   * The block of a transaction the node did not find by its id alone (it
+   * keeps no transaction index, or the transaction is confirmed and fully
+   * spent), from the transaction's key in the filters; undefined when the
+   * error is another or the filters do not hold the transaction.
+   */
+  private async blockOfMissingTx(txId: string, error: any): Promise<string | undefined> {
+    const notFound = error?.code === -5 || /No such mempool or blockchain transaction/.test(error?.message ?? '');
+    if (!notFound || !/^[0-9a-fA-F]{64}$/.test(txId)) {
+      return undefined;
+    }
+    await this.started;
+    await this.client.refresh();
+    if (!this.client.synced) {
+      throw new HistoryBusyError('Filters are still being downloaded from the node');
+    }
+    return (await this.client.locateTx(fromDisplay(txId)))?.blockHash;
+  }
+
+  async $getRawTransaction(
+    txId: string,
+    skipConversion = false,
+    addPrevout = false,
+    lazyPrevouts = false
+  ): Promise<IPublicApi.VerboseTransaction | IBitcoinApi.VerboseTransaction> {
+    try {
+      return await super.$getRawTransaction(txId, skipConversion, addPrevout, lazyPrevouts);
+    } catch (e) {
+      const blockHash = await this.blockOfMissingTx(txId, e);
+      if (!blockHash) {
+        throw e;
+      }
+      const tx: IBitcoinApi.VerboseTransaction = await this.bitcoindClient.getRawTransaction(txId, 2, blockHash, true);
+      if (skipConversion) {
+        tx.vout.forEach((vout) => {
+          vout.value = Math.round(vout.value * 100000000);
+        });
+        return tx;
+      }
+      return this.$convertTransaction(tx, addPrevout, lazyPrevouts);
+    }
+  }
+
+  async $getTransactionHex(txId: string): Promise<string> {
+    try {
+      return await super.$getTransactionHex(txId);
+    } catch (e) {
+      const blockHash = await this.blockOfMissingTx(txId, e);
+      if (!blockHash) {
+        throw e;
+      }
+      return (await this.bitcoindClient.getRawTransaction(txId, true, blockHash)).hex;
+    }
+  }
+
+  async $getCoinbaseTx(blockhash: string): Promise<IPublicApi.VerboseTransaction> {
+    const txids = await this.$getTxIdsForBlock(blockhash);
+    try {
+      return await this.$getTransactionInBlock(txids[0], blockhash, false);
+    } catch {
+      // The genesis block's coinbase is not a transaction the node gives; the base class builds it.
+      return super.$getCoinbaseTx(blockhash);
+    }
   }
 
   private async $transactions(
