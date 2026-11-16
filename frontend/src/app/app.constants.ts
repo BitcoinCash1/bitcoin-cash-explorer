@@ -241,6 +241,18 @@ export const specialBlocks = {
     labelEventCompleted: 'The Genesis of Bitcoin',
     networks: ['mainnet', 'testnet4', 'scalenet', 'chipnet'],
   },
+  '170': {
+    labelEvent: 'First Bitcoin Payment: Satoshi to Hal Finney',
+    labelEventCompleted:
+      'On 12 January 2009, Satoshi Nakamoto sent 10 BTC to Hal Finney in the first non-coinbase transaction. This block is part of the shared history of Bitcoin and Bitcoin Cash. (https://bchexplorer.cash/tx/f4184fc596403b9d638783cf57adfe4c75c605f6356fbc91338530e9831e9e16)',
+    networks: ['mainnet'],
+  },
+  '32256': {
+    labelEvent: 'First Mining Difficulty Increase',
+    labelEventCompleted:
+      'On 30 December 2009, mining difficulty increased above 1 for the first time. Earlier retargets had kept difficulty at its minimum. This block is part of the shared history of Bitcoin and Bitcoin Cash. (https://bchexplorer.cash/block/32256)',
+    networks: ['mainnet'],
+  },
   '57043': {
     labelEvent: 'Bitcoin Pizza Day',
     labelEventCompleted:
@@ -271,6 +283,12 @@ export const specialBlocks = {
       'This block mined a coinbase transaction of 31,353, the biggest ever (as of 2026-01-14).',
     networks: ['mainnet'],
   },
+  '173805': {
+    labelEvent: 'P2SH Activation',
+    labelEventCompleted:
+      'On 1 April 2012, BIP16 Pay to Script Hash (P2SH) activated on mainnet, allowing payments to a script hash with the redeem script provided when spending. (https://github.com/bitcoin/bips/blob/master/bip-0016.mediawiki)',
+    networks: ['mainnet'],
+  },
   '174520': {
     labelEvent: 'November 2023 Chipnet Upgrade: ABLA',
     labelEventCompleted:
@@ -288,6 +306,12 @@ export const specialBlocks = {
       'Chipnet upgrade (2024-11-15). Activate CHIP-2021-05 VM Limits: Targeted Virtual Machine Limits and CHIP-2024-07 BigInt: High-Precision Arithmetic for Bitcoin Cash. First block mined under the upgraded chipnet consensus rules, six months before mainnet activation. (https://upgradespecs.bitcoincashnode.org/2025-05-15-upgrade/)',
     networks: ['chipnet'],
   },
+  '227931': {
+    labelEvent: 'BIP34: Block Height in Coinbase',
+    labelEventCompleted:
+      'On 25 March 2013, mainnet reached the BIP34 enforcement height, requiring version 2 or later blocks and the block height in the coinbase transaction. (https://github.com/bitcoin/bips/blob/master/bip-0090.mediawiki)',
+    networks: ['mainnet'],
+  },
   '279792': {
     labelEvent:
       'November 2025 Chipnet Upgrade: P2S, Loops, Functions and Bitwise',
@@ -301,10 +325,28 @@ export const specialBlocks = {
       'Chipnet upgrade (2026-11-15). First block with a 1-minute target interval, reduced from 10 minutes. Scale the block subsidy to the shorter interval and use ticks to preserve the halving schedule. (https://gitlab.com/0353F40E/fablous/-/blob/2b15bb825adf84d82aab2100fc1cc38479d59666/readme.md)',
     networks: ['chipnet'],
   },
+  '363725': {
+    labelEvent: 'BIP66: Strict DER Signatures',
+    labelEventCompleted:
+      'On 4 July 2015, mainnet reached the BIP66 enforcement height for strict DER signature encoding, making signature validation independent of OpenSSL parsing behaviour. (https://github.com/bitcoin/bips/blob/master/bip-0066.mediawiki)',
+    networks: ['mainnet'],
+  },
+  '388381': {
+    labelEvent: 'BIP65: CHECKLOCKTIMEVERIFY',
+    labelEventCompleted:
+      'On 14 December 2015, mainnet reached the BIP65 enforcement height. OP_CHECKLOCKTIMEVERIFY enables scripts to require an absolute block height or time before funds can be spent. (https://github.com/bitcoin/bips/blob/master/bip-0065.mediawiki)',
+    networks: ['mainnet'],
+  },
   '409008': {
     labelEvent: 'Biggest fee',
     labelEventCompleted:
       'This block accumulated 29,153,275,103 satoshis in fees, the most ever (as of 2026-01-14).',
+    networks: ['mainnet'],
+  },
+  '419328': {
+    labelEvent: 'Relative Timelocks: CHECKSEQUENCEVERIFY',
+    labelEventCompleted:
+      'On 4 July 2016, BIP68, BIP112, and BIP113 activated on mainnet. Introduce relative timelocks, OP_CHECKSEQUENCEVERIFY, and median-time-past evaluation for time-based transaction locktimes. (https://github.com/bitcoin/bips/blob/master/bip-0112.mediawiki)',
     networks: ['mainnet'],
   },
   '420000': {
@@ -424,7 +466,7 @@ export const specialBlocks = {
       'CHIP-2021-05 VM Limits: Targeted Virtual Machine Limits. CHIP-2024-07 BigInt: High-Precision Arithmetic for Bitcoin Cash. This marks the first block mined to satisfy upgraded consensus rules. (https://upgradespecs.bitcoincashnode.org/2025-05-15-upgrade/)',
     networks: ['mainnet'],
   },
-  '951144': {
+  '951145': {
     labelEvent: 'May 2026 Upgrade',
     labelEventCompleted:
       'CHIP-2024-12 P2S: Pay to Script. CHIP-2021-05 Loops: Bounded Looping Operations. CHIP-2025-05 Functions: Function Definition and Invocation Operations. CHIP-2025-05 Bitwise: Re-Enable Bitwise Operations. This marks the first block mined to satisfy upgraded consensus rules. (https://upgradespecs.bitcoincashnode.org/2026-05-15-upgrade/)',
