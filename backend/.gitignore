@@ -56,5 +56,6 @@ Thumbs.db
 # package folder (npm run package output)
 /package
 
-# Rust GBT folder (We build externally first)
+# Rust GBT and filter scan folders (We build externally first)
 /rust-gbt
+/rust-filter-scan

@@ -16,12 +16,13 @@ ENV PATH="/usr/local/cargo/bin:$PATH"
 COPY --chown=user:user --from=backend . .
 COPY --chown=user:user --from=rustgbt . ../rust/
 ENV FD=/build/rust-gbt
+ENV FILTER_SCAN_FD=/build/rust-filter-scan
 
-# Create the rust-gbt directory placeholder, before running pnpm preinstall, which could also trigger a pnpm install
-RUN mkdir rust-gbt
+# Create the Rust addon directory placeholders, before running pnpm preinstall, which could also trigger a pnpm install
+RUN mkdir rust-gbt rust-filter-scan
 
 RUN pnpm preinstall
-# pnpm caches install state here; deleting it forces re-linking of the freshly built rust-gbt binary.
+# pnpm caches install state here; deleting it forces re-linking of the freshly built Rust addons.
 RUN rm -rf node_modules/.pnpm-workspace-state-v1.json
 RUN pnpm install --prod
 RUN pnpm package

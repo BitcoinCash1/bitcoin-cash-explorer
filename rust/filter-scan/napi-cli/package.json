@@ -1,0 +1,8 @@
+{
+  "name": "bch-filter-scan-build-toolchain",
+  "private": true,
+  "version": "1.0.0",
+  "dependencies": {
+    "@napi-rs/cli": "3.10.9"
+  }
+}

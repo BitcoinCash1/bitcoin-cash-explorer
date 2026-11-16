@@ -28,7 +28,7 @@ validate-build-backend:
     - key:
         prefix: rust-1.98.1-node26-linux-amd64
         files: [rust/gbt/Cargo.lock, rust/gbt/napi-cli/package-lock.json]
-      paths: [.cargo/registry, .cargo/git, rust/gbt/target]
+      paths: [.cargo/registry, .cargo/git, rust/gbt/target, rust/filter-scan/target]
   script:
     - bash ci/run.sh backend
   artifacts:

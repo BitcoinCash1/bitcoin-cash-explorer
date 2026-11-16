@@ -1,0 +1,29 @@
+{
+  "name": "filter-scan",
+  "version": "1.0.0",
+  "description": "Tests keys against the BCH Explorer's stored script filters on all cores, for its p2p backend",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "artifacts": "napi-cli/node_modules/.bin/napi artifacts",
+    "build": "npm ci --prefix napi-cli --ignore-scripts --no-audit --no-fund && npm run check-cargo-version && napi-cli/node_modules/.bin/napi build --platform",
+    "build-debug": "npm run build",
+    "build-release": "npm run build -- --release --strip",
+    "check-cargo-version": "VER=$(cat rust-toolchain) ; if ! cargo version | grep \"cargo $VER\" >/dev/null ; then echo -e \"\\033[1;35m[[[[WARNING]]]]: cargo version mismatch with ./rust-toolchain version ($VER)!!!\\033[0m\" >&2; fi",
+    "clean": "rm -rf ./target/ ./node_modules/ ./napi-cli/node_modules/ *.node package-lock.json",
+    "to-backend": "FD=${FILTER_SCAN_FD:-../../backend/rust-filter-scan/} ; rm -rf $FD && mkdir $FD && cp index.js index.d.ts package.json *.node $FD",
+    "prepublishOnly": "napi-cli/node_modules/.bin/napi prepublish -t npm",
+    "test": "cargo test",
+    "test:bindings": "node --test tests/bindings.test.cjs"
+  },
+  "napi": {
+    "binaryName": "filter-scan",
+    "targets": [
+      "x86_64-unknown-linux-gnu",
+      "x86_64-unknown-freebsd"
+    ]
+  },
+  "engines": {
+    "node": ">= 12"
+  }
+}

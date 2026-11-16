@@ -28,9 +28,9 @@ docker run --rm \
   "$IMAGE" \
   bash -exc "
     cd backend
-    mkdir -p rust-gbt
+    mkdir -p rust-gbt rust-filter-scan
     pnpm preinstall
-    # pnpm v11 caches install state here; deleting it forces re-linking of the freshly built rust-gbt binary.
+    # pnpm v11 caches install state here; deleting it forces re-linking of the freshly built Rust addons.
     rm -rf node_modules/.pnpm-workspace-state-v1.json
     pnpm install --prefer-offline --prefer-frozen-lockfile
     pnpm prettier:check

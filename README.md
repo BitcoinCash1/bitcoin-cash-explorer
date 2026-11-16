@@ -31,6 +31,6 @@ We use Localazy for translation management, go to: [https://localazy.com/p/bch-e
 ## Development and CI
 
 Build and test instructions are maintained in the [backend](./backend/README.md),
-[frontend](./frontend/README.md), and [Rust addon](./rust/gbt/README.md) READMEs.
+[frontend](./frontend/README.md), and Rust addon ([GBT](./rust/gbt/README.md), [filter scan](./rust/filter-scan/README.md)) READMEs.
 [GitLab CI](./.gitlab-ci.yml) runs the configured checks and builds. Release tags
 publish backend and frontend container images to the GitLab registry and GHCR.

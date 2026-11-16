@@ -1,0 +1,20 @@
+[package]
+name = "filter-scan"
+version = "1.0.0"
+description = "Tests keys against the BCH Explorer's stored script filters on all cores, for its p2p backend"
+edition = "2021"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+napi = { version = "3.16.0", features = ["napi8"] }
+napi-derive = "3.7.0"
+
+[build-dependencies]
+napi-build = "2.6.0"
+
+[profile.release]
+lto = true
+codegen-units = 1

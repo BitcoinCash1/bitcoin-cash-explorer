@@ -24,11 +24,17 @@ case "${1:?backend or frontend required}" in
     section native_build bash -c '
       cd rust/gbt &&
       npm run build-release &&
+      npm run to-backend &&
+      cd ../filter-scan &&
+      npm run build-release &&
       npm run to-backend
     '
 
     section native_tests bash -c '
       cd rust/gbt &&
+      cargo test --locked &&
+      npm run test:bindings &&
+      cd ../filter-scan &&
       cargo test --locked &&
       npm run test:bindings
     '
@@ -48,8 +54,8 @@ case "${1:?backend or frontend required}" in
 
     section package pnpm run package
 
-    # Verify that the packaged native addon can be loaded.
-    node -e 'require("./package/node_modules/rust-gbt")'
+    # Verify that the packaged native addons can be loaded.
+    node -e 'require("./package/node_modules/rust-gbt"); require("./package/node_modules/rust-filter-scan")'
     ;;
 
   frontend)

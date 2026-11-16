@@ -3,6 +3,7 @@ Dockerfile
 coverage
 node_modules
 rust-gbt
+rust-filter-scan
 dist
 package
 scripts
