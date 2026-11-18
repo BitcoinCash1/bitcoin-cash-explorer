@@ -40,7 +40,7 @@
     "reindex-updated-pools": "pnpm run start-production --update-pools",
     "reindex-all-blocks": "pnpm run start-production --update-pools --reindex-blocks",
     "test": "jest --coverage",
-    "test:ci": "CI=true jest --coverage",
+    "test:ci": "CI=true jest --coverage --maxWorkers=2",
     "test:integration": "jest --config=jest.integration.config.ts --runInBand --forceExit",
     "test:with-db": "bash ./scripts/test-with-db.sh",
     "lint": "eslint . --ext .ts",

@@ -82,16 +82,21 @@ test.each(['SIGTERM', 'SIGINT', 'cluster', 'cluster-failure', 'orphan-queue', 'm
       Promise.race([
         new Promise<any>((resolve) => waiters.set(event, resolve)),
         exited.then(() => {
-          throw new Error(`Backend exited before ${event}: ${diagnostics}`);
+          throw new Error(
+            `Backend exited before ${event} (code=${child.exitCode}, signal=${child.signalCode}): ${diagnostics}`
+          );
         }),
       ]);
     const exited = new Promise<{ code: number | null; signal: string | null }>((resolve) => {
       child.once('exit', (code, signal) => resolve({ code, signal }));
     });
-    const deadline = setTimeout(() => child.kill('SIGKILL'), 10000);
+    // Startup has its own budget; slow imports must not consume shutdown time.
+    let deadline = setTimeout(() => child.kill('SIGKILL'), 30000);
     let ws: WebSocket | undefined;
     try {
       const { port } = await waitFor('ready');
+      clearTimeout(deadline);
+      deadline = setTimeout(() => child.kill('SIGKILL'), 10000);
       if (signal === 'mining-backlog') {
         const started = waitFor('mining-started');
         const drained = waitFor('mining-drained');
@@ -163,9 +168,12 @@ test.each(['SIGTERM', 'SIGINT', 'cluster', 'cluster-failure', 'orphan-queue', 'm
     } finally {
       clearTimeout(deadline);
       ws?.terminate();
-      if (child.exitCode === null && child.signalCode === null) child.kill('SIGKILL');
+      if (child.exitCode === null && child.signalCode === null) {
+        child.kill('SIGKILL');
+        await exited;
+      }
       fs.rmSync(directory, { recursive: true, force: true });
     }
   },
-  15000
+  45000
 );

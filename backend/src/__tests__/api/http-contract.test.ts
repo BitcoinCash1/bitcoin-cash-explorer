@@ -67,21 +67,21 @@ beforeAll(async () => {
     diagnostics = (diagnostics + data.toString()).slice(-4000);
   });
   baseUrl = await new Promise<string>((resolve, reject) => {
-    const timer = setTimeout(() => reject(new Error(`Backend startup timed out: ${diagnostics}`)), 15000);
+    const timer = setTimeout(() => reject(new Error(`Backend startup timed out: ${diagnostics}`)), 30000);
     child.once('error', (error) => {
       clearTimeout(timer);
       reject(error);
     });
-    child.once('exit', (code) => {
+    child.once('exit', (code, signal) => {
       clearTimeout(timer);
-      reject(new Error(`Backend exited (${code}): ${diagnostics}`));
+      reject(new Error(`Backend exited during startup (code=${code}, signal=${signal}): ${diagnostics}`));
     });
     child.once('message', (message: { port: number }) => {
       clearTimeout(timer);
       resolve(`http://127.0.0.1:${message.port}/api/v1`);
     });
   });
-}, 20000);
+}, 35000);
 
 afterAll(async () => {
   if (child && child.exitCode === null && child.signalCode === null) {
