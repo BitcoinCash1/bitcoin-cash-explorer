@@ -1,7 +1,7 @@
 # Build from source by default; CI selects the validated artifacts instead.
 ARG BUILD_INPUT=builder
 
-FROM registry.melroy.org/melroy/docker-images/rust:1.98.1-node-26.13.0 AS builder
+FROM registry.melroy.org/melroy/docker-images/rust:1.98.1-node-26.13.1 AS builder
 
 ARG commitHash
 ENV MEMPOOL_COMMIT_HASH=${commitHash}
@@ -31,7 +31,7 @@ COPY --from=build-artifacts / /build/package/
 
 FROM ${BUILD_INPUT} AS build-output
 
-FROM registry.melroy.org/melroy/docker-images/rust:1.98.1-node-26.13.0 AS runtime
+FROM registry.melroy.org/melroy/docker-images/rust:1.98.1-node-26.13.1 AS runtime
 
 ENV NODE_OPTIONS=--max-old-space-size=16384
 ENV NODE_ENV=production
