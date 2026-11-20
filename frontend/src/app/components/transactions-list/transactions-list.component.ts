@@ -51,6 +51,14 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { SighashFlag } from '@app/shared/transaction.utils';
 
+export interface TransactionBlockGroupHeader {
+  id: string;
+  hash?: string;
+  height?: number;
+  confirmed: boolean;
+  count: number;
+}
+
 @Component({
   selector: 'app-transactions-list',
   templateUrl: './transactions-list.component.html',
@@ -69,6 +77,8 @@ export class TransactionsListComponent implements OnInit, OnChanges, OnDestroy {
   ); // key is the category (token id)
 
   @Input() transactions: Transaction[];
+  @Input() blockGroupHeaders?: ReadonlyMap<string, TransactionBlockGroupHeader>;
+  @Input() partialBlockGroupId?: string;
   @Input() cached: boolean = false;
   @Input() showConfirmations = false;
   @Input() transactionPage = false;

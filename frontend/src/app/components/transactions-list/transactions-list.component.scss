@@ -471,3 +471,34 @@ h2 {
   z-index: 1000;
   opacity: 0.95;
 }
+
+.transaction-block-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: 0.45rem;
+  padding-block: 0.85rem 0.4rem;
+  margin: 0;
+  scroll-margin-top: 8rem;
+  font-size: 1rem;
+
+  small {
+    font-size: 0.8rem;
+    font-weight: normal;
+    margin-inline-start: 0.25rem;
+  }
+}
+
+.transaction-block-cube {
+  width: 1rem;
+  height: 1rem;
+  background: var(--secondary);
+  box-shadow:
+    -2px -2px var(--block-top),
+    inset 0 -2px var(--primary);
+  margin-inline-end: 0.2rem;
+
+  &.pending {
+    box-shadow: -2px -2px var(--block-top);
+  }
+}

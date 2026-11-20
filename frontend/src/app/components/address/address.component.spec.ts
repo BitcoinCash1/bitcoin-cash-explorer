@@ -111,6 +111,72 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 describe('bounded Electrum address loading', () => {
+  it('groups loaded pages and syncs the open strip without fetching separate history', () => {
+    const { component, pages, api } = setup();
+    const inBlock = (id: string, hash: string, height: number) => ({
+      ...tx(id),
+      status: { confirmed: true, block_hash: hash, block_height: height },
+    });
+    pages[0].next(
+      page([tx('pending', false), inBlock('a', 'block-a', 100)], 'next')
+    );
+    expect(
+      [...component.blockGroupHeaders.values()].map(({ height, count }) => [
+        height,
+        count,
+      ])
+    ).toEqual([
+      [undefined, 1],
+      [100, 1],
+    ]);
+    expect(component.blockActivity).toEqual([]);
+    component.toggleBlockActivity();
+    expect(api.getAddressTransactionPage$).toHaveBeenCalledTimes(1);
+    expect(
+      component.blockActivity.map(({ groupId, count }) => [groupId, count])
+    ).toEqual([['address-block-a', 1]]);
+    component.loadMore();
+    pages[1].next(
+      page([inBlock('b', 'block-a', 100), inBlock('c', 'block-c', 99)])
+    );
+    expect(
+      [...component.blockGroupHeaders.values()].map(({ height, count }) => [
+        height,
+        count,
+      ])
+    ).toEqual([
+      [undefined, 1],
+      [100, 2],
+      [99, 1],
+    ]);
+    expect(
+      component.blockActivity.map(({ height, count }) => [height, count])
+    ).toEqual([
+      [100, 2],
+      [99, 1],
+    ]);
+    expect(api.getAddressTransactionPage$).toHaveBeenCalledTimes(2);
+  });
+
+  it('does not load more history when jumping to a loaded group near the end of the list', () => {
+    const { component, pages, api } = setup();
+    pages[0].next(page([tx('a')], 'next'));
+    const header = { focus: vi.fn(), scrollIntoView: vi.fn() };
+    document.getElementById = vi.fn(() => header as unknown as HTMLElement);
+    vi.stubGlobal('window', { scrollY: 1200 });
+    document.body.scrollTop = 0;
+    component.jumpToBlockGroup('address-block-a');
+    component.loadMoreOnScroll();
+    expect(header.scrollIntoView).toHaveBeenCalledWith({
+      block: 'start',
+      behavior: 'instant',
+    });
+    expect(api.getAddressTransactionPage$).toHaveBeenCalledTimes(1);
+    vi.stubGlobal('window', { scrollY: 1300 });
+    component.loadMoreOnScroll();
+    expect(api.getAddressTransactionPage$).toHaveBeenCalledTimes(2);
+  });
+
   it('loads immediately before the first network ReplaySubject emission and suppresses duplicate initial network', () => {
     const network = new ReplaySubject<string>(1);
     const { component, api } = setup('electrum', first, network);
