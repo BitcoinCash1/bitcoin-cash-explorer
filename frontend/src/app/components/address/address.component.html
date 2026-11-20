@@ -285,9 +285,7 @@
                     class="activity-link"
                     [routerLink]="['/block/' + block.hash | relativeUrl]"
                   >
-                    <span class="activity-height">{{
-                      block.height | number: "1.0-0"
-                    }}</span>
+                    <span class="activity-height">{{ block.height }}</span>
                     <span class="activity-cube">
                       @if (block.net > 0) {
                         <span i18n="address.block-activity-received"

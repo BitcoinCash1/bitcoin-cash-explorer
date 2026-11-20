@@ -169,6 +169,8 @@ h1 {
 
 .activity-link {
   display: grid;
+  grid-template-rows: auto 1fr;
+  height: 100%;
   gap: 1.2rem;
   text-align: center;
   text-decoration: none;
@@ -193,7 +195,8 @@ h1 {
   font-variant-numeric: tabular-nums;
 
   strong {
-    font-size: 0.85rem;
+    font-size: 0.78rem;
+    white-space: nowrap;
   }
 
   &::before,
