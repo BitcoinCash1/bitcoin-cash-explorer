@@ -350,10 +350,18 @@ export class BlockComponent implements OnInit, OnDestroy, AfterViewInit {
         this.blockHeight = block.height;
         this.lastBlockHeight = this.blockHeight;
         this.nextBlockHeight = block.height + 1;
-        this.specialEventLabel =
-          specialBlocks[block.height]?.labelEvent ?? null;
-        this.specialEventDescription =
-          specialBlocks[block.height]?.labelEventCompleted ?? null;
+        const specialBlock = specialBlocks[block.height];
+        const activeNetwork =
+          this.stateService.network ||
+          this.stateService.env.ROOT_NETWORK ||
+          'mainnet';
+        const isSpecialBlock = specialBlock?.networks.includes(activeNetwork);
+        this.specialEventLabel = isSpecialBlock
+          ? specialBlock.labelEvent
+          : null;
+        this.specialEventDescription = isSpecialBlock
+          ? specialBlock.labelEventCompleted
+          : null;
         this.setNextAndPreviousBlockLink();
 
         this.seoService.setTitle(

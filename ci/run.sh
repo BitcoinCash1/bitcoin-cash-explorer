@@ -50,7 +50,7 @@ case "${1:?backend or frontend required}" in
       --store-dir .pnpm-store
 
     section formatting pnpm run prettier:check
-    section tests pnpm run test
+    section tests pnpm run test:ci
 
     section package pnpm run package
 

@@ -6,6 +6,9 @@ import { fork, ChildProcess } from 'child_process';
 import { once, EventEmitter } from 'events';
 import { prepareUnixSocket } from '../../utils/unix-socket';
 
+// These tests start real TypeScript processes, which can be slow on shared runners.
+jest.setTimeout(30000);
+
 const fixture = join(__dirname, '../../../test-fixtures/unix-socket.cjs');
 let directory: string;
 const children: ChildProcess[] = [];
