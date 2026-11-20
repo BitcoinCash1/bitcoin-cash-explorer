@@ -8,6 +8,7 @@ import bitcoinClient from './bitcoin/bitcoin-client';
 import { IPublicApi } from './bitcoin/public-api.interface';
 import blocks from './blocks';
 import { Common } from './common';
+import pLimit from '../utils/p-limit';
 
 export interface ChainTip {
   height: number;
@@ -19,6 +20,7 @@ export interface ChainTip {
 export interface StaleTip extends ChainTip {
   stale: BlockExtended;
   canonical: BlockExtended;
+  sharedTransactions?: number;
 }
 
 export interface OrphanedBlock {
@@ -42,6 +44,8 @@ class ChainTips {
   }[] = [];
 
   private staleTipsCacheSize = 50;
+  private overlapLimit = pLimit(4);
+  private overlaps = new Map<string, Promise<number | undefined>>();
   private maxIndexingQueueSize = 100;
 
   public async updateOrphanedBlocks(): Promise<void> {
@@ -233,6 +237,47 @@ class ChainTips {
 
   public getChainTips(): ChainTip[] {
     return this.chainTips;
+  }
+
+  public async $getStaleTipsWithOverlap(): Promise<StaleTip[]> {
+    return Promise.all(
+      this.getStaleTips().map(async (tip) => {
+        if (!tip.canonical || !tip.stale.tx_count || !tip.canonical.tx_count) {
+          return tip;
+        }
+
+        const key = tip.stale.id + ':' + tip.canonical.id;
+        let overlap = this.overlaps.get(key);
+        if (!overlap) {
+          // Bound both cached entries and outstanding work across concurrent requests.
+          if (this.overlapLimit.pendingCount >= this.staleTipsCacheSize) {
+            return tip;
+          }
+          overlap = this.overlapLimit(async () => {
+            const stale = await bitcoinApi.$getTxIdsForBlock(tip.stale.id, true);
+            const canonical = await bitcoinApi.$getTxIdsForBlock(tip.canonical.id);
+            if (!stale.length || !canonical.length) {
+              this.overlaps.delete(key);
+              return undefined;
+            }
+            // Coinbase transactions are specific to their respective blocks.
+            const canonicalTransactions = new Set(canonical.slice(1));
+            return stale.slice(1).reduce((count, txid) => count + Number(canonicalTransactions.has(txid)), 0);
+          }).catch(() => {
+            this.overlaps.delete(key);
+            return undefined;
+          });
+          if (this.overlaps.size >= this.staleTipsCacheSize * 2) {
+            const oldest = this.overlaps.keys().next();
+            if (!oldest.done) {
+              this.overlaps.delete(oldest.value);
+            }
+          }
+          this.overlaps.set(key, overlap);
+        }
+        return { ...tip, sharedTransactions: await overlap };
+      })
+    );
   }
 
   public getStaleTips(): StaleTip[] {

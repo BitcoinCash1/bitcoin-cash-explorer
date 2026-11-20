@@ -181,6 +181,12 @@
             >
           </span>
         </p>
+        @if (chainTip.sharedTransactions != null) {
+          <p class="text-secondary" i18n="chain-tips.shared-transactions">
+            {{ chainTip.sharedTransactions | number }} shared transactions
+            (excluding coinbase)
+          </p>
+        }
         <div class="stale-tip-wrapper">
           <div class="block-comparison">
             <div class="block-column stale">

@@ -2,7 +2,8 @@ import { Application, Request, Response } from 'express';
 import routes from '../../api/bitcoin/bitcoin.routes';
 import config from '../../config';
 import BlocksRepository from '../../repositories/BlocksRepository';
-import chainTips from '../../api/chain-tips';
+import chainTips, { StaleTip } from '../../api/chain-tips';
+import bitcoinApi from '../../api/bitcoin/bitcoin-api-factory';
 import { encodeStaleHistoryCursor } from '../../api/stale-history';
 
 const handlers = new Map<string, (req: Request, res: Response) => Promise<void>>();
@@ -70,6 +71,27 @@ test('empty history succeeds and supplies no-store, without changing the recent-
   jest.spyOn(chainTips, 'getStaleTips').mockReturnValue(tips as never);
   expect((await request({}, 'stale-tips')).body).toEqual(tips);
   expect((await request({}, 'stale-tips')).headers).toHaveProperty('Expires');
+});
+
+test('recent overlap is opt-in and concurrent requests share txid lookups', async () => {
+  const tips = [
+    {
+      stale: { id: 'stale-overlap-test', tx_count: 3 },
+      canonical: { id: 'canonical-overlap-test', tx_count: 3 },
+    },
+  ] as StaleTip[];
+  jest.spyOn(chainTips, 'getStaleTips').mockReturnValue(tips);
+  const lookup = jest
+    .spyOn(bitcoinApi, '$getTxIdsForBlock')
+    .mockImplementation(async (hash) => ['coinbase', 'shared', hash]);
+
+  expect((await request({}, 'stale-tips')).body).toEqual(tips);
+  expect(lookup).not.toHaveBeenCalled();
+  const replies = await Promise.all([request({ overlap: '1' }, 'stale-tips'), request({ overlap: '1' }, 'stale-tips')]);
+  for (const reply of replies) {
+    expect(reply.body).toEqual([{ ...tips[0], sharedTransactions: 1 }]);
+  }
+  expect(lookup.mock.calls).toEqual([['stale-overlap-test', true], ['canonical-overlap-test']]);
 });
 
 test('validated cursor reaches repository; malformed cursor returns 400 without querying', async () => {

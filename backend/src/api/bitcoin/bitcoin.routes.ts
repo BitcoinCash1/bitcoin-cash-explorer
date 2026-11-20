@@ -658,7 +658,7 @@ class BitcoinRoutes {
       if (['mainnet', 'testnet4', 'chipnet', 'scalenet'].includes(config.EXPLORER.NETWORK)) {
         // Bitcoin
         res.setHeader('Expires', new Date(Date.now() + 1000 * 60).toUTCString());
-        const tips = await chainTips.getStaleTips();
+        const tips = req.query.overlap === '1' ? await chainTips.$getStaleTipsWithOverlap() : chainTips.getStaleTips();
         if (tips.length > 0) {
           res.json(tips);
         } else {
