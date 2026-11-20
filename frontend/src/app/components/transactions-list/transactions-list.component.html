@@ -9,12 +9,42 @@
   <ng-container
     *ngFor="let tx of transactions; let i = index; trackBy: trackByFn"
   >
+    @if (blockGroupHeaders?.get(tx.txid); as group) {
+      <h3 class="transaction-block-header" [id]="group.id" tabindex="-1">
+        <span
+          class="transaction-block-cube"
+          [class.pending]="!group.confirmed"
+          aria-hidden="true"
+        ></span>
+        @if (group.hash) {
+          <span i18n="shared.block-title">Block</span>
+          <a [routerLink]="['/block/' | relativeUrl, group.hash]">{{
+            group.height
+          }}</a>
+        } @else if (group.confirmed) {
+          <span i18n="transaction.confirmed|Transaction confirmed state"
+            >Confirmed</span
+          >
+        } @else {
+          <span i18n="dashboard.unconfirmed|Unconfirmed count"
+            >Unconfirmed</span
+          >
+        }
+        <small i18n="address.block-activity-count">{group.count, plural,
+          one {1 transaction}
+          other {{{ group.count | number }} transactions}
+        }</small>
+        @if (group.id === partialBlockGroupId) {
+          <small i18n="address.blocks.partial">Partial activity</small>
+        }
+      </h3>
+    }
     <div *ngIf="!transactionPage" class="header-bg box tx-page-container">
       <a class="tx-link" [routerLink]="['/tx/' | relativeUrl, tx.txid]">
         <app-truncate [text]="tx.txid"></app-truncate>
       </a>
       <div>
-        <ng-template [ngIf]="tx.status.confirmed"
+        <ng-template [ngIf]="tx.status.confirmed && !blockGroupHeaders"
           ><app-timestamp
             [customFormat]="'yyyy-MM-dd HH:mm:ss'"
             [unixTime]="tx.status.block_time"

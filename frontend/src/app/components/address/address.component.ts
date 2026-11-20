@@ -51,12 +51,15 @@ import {
   tokenToCashAddr,
 } from '@app/shared/address-utils';
 
+import { TransactionBlockGroupHeader } from '@components/transactions-list/transactions-list.component';
+
 interface AddressBlockActivity {
   hash: string;
   height: number;
   count: number;
   time?: number;
   net: number;
+  groupId: string;
 }
 
 class AddressStats implements ChainStats {
@@ -169,6 +172,13 @@ export class AddressComponent implements OnInit, OnDestroy {
   showBlockActivity = false;
   blockActivity: AddressBlockActivity[] = [];
   pendingActivity = 0;
+  blockGroupHeaders = new Map<string, TransactionBlockGroupHeader>();
+  selectedBlockGroup: string | null = null;
+  lastBlockGroupId?: string;
+  private blockJumpScroll?: { windowTop: number; bodyTop: number };
+  private netByTransaction = new WeakMap<Transaction, number>();
+  private netAddress?: string;
+  private netScript?: string;
 
   get transactions(): Transaction[] {
     return this.loadedTransactions;
@@ -176,63 +186,119 @@ export class AddressComponent implements OnInit, OnDestroy {
 
   set transactions(transactions: Transaction[]) {
     this.loadedTransactions = transactions;
-    if (this.showBlockActivity) {
-      this.updateBlockActivity();
-    }
+    this.updateBlockGroups();
   }
 
   toggleBlockActivity(): void {
     this.showBlockActivity = !this.showBlockActivity;
     if (this.showBlockActivity) {
-      this.updateBlockActivity();
+      this.updateBlockGroups();
+    } else {
+      this.blockActivity = [];
     }
   }
 
-  private updateBlockActivity(): void {
-    const groups = new Map<string, AddressBlockActivity>();
+  jumpToBlockGroup(id: string): void {
+    const header = document.getElementById(id);
+    if (header) {
+      this.selectedBlockGroup = id;
+      header.focus({ preventScroll: true });
+      header.scrollIntoView({ block: 'start', behavior: 'instant' });
+      this.blockJumpScroll = {
+        windowTop: window.scrollY,
+        bodyTop: document.body.scrollTop,
+      };
+    }
+  }
+
+  private updateBlockGroups(): void {
+    const headers = new Map<string, TransactionBlockGroupHeader>();
+    const activity = new Map<string, AddressBlockActivity>();
     const address = this.address?.address || this.bchAddressString;
     const script = this.chainStats?.scriptpubkey;
+    if (this.netAddress !== address || this.netScript !== script) {
+      this.netByTransaction = new WeakMap();
+      this.netAddress = address;
+      this.netScript = script;
+      this.selectedBlockGroup = null;
+      this.blockJumpScroll = undefined;
+    }
     this.pendingActivity = 0;
+    let previousKey: string | undefined;
+    let header: TransactionBlockGroupHeader | undefined;
     for (const tx of this.transactions || []) {
-      if (!tx.status?.confirmed) {
-        this.pendingActivity++;
-      } else if (
-        tx.status.block_hash &&
-        typeof tx.status.block_height === 'number'
-      ) {
-        const hash = tx.status.block_hash;
-        const group = groups.get(hash) ?? {
+      const confirmed = !!tx.status?.confirmed;
+      const hash = tx.status?.block_hash;
+      const height = tx.status?.block_height;
+      const key = confirmed ? hash || tx.txid : 'pending';
+      if (key !== previousKey) {
+        header = {
+          id: 'address-block-' + tx.txid,
           hash,
-          height: tx.status.block_height,
+          height,
+          confirmed,
+          count: 0,
+        };
+        headers.set(tx.txid, header);
+        previousKey = key;
+      }
+      header.count++;
+      if (!this.showBlockActivity) {
+        continue;
+      }
+      if (!confirmed) {
+        this.pendingActivity++;
+      } else if (hash && typeof height === 'number') {
+        const block = activity.get(hash) ?? {
+          hash,
+          height,
           time: tx.status.block_time,
           count: 0,
           net: 0,
+          groupId: header.id,
         };
-        group.count++;
-        for (const { prevout } of tx.vin) {
-          if (
-            prevout &&
-            (prevout.scriptpubkey_address === address ||
-              (script && prevout.scriptpubkey === script))
-          ) {
-            group.net -= prevout.value;
-          }
-        }
-        for (const output of tx.vout) {
-          if (
-            output.scriptpubkey_address === address ||
-            (script && output.scriptpubkey === script)
-          ) {
-            group.net += output.value;
-          }
-        }
-        groups.set(hash, group);
+        block.count++;
+        block.net += this.getTransactionNet(tx, address, script);
+        activity.set(hash, block);
       }
     }
-    this.blockActivity = [...groups.values()].sort(
-      (a, b) => b.height - a.height
-    );
+    this.blockGroupHeaders = headers;
+    this.lastBlockGroupId = header?.confirmed ? header.id : undefined;
+    // History and live confirmations already arrive in descending block height order.
+    this.blockActivity = [...activity.values()];
   }
+
+  private getTransactionNet(
+    tx: Transaction,
+    address: string,
+    script?: string
+  ): number {
+    const cached = this.netByTransaction.get(tx);
+    if (cached !== undefined) {
+      return cached;
+    }
+    let net = 0;
+    for (const { prevout } of tx.vin) {
+      if (
+        prevout &&
+        (prevout.scriptpubkey_address === address ||
+          (script && prevout.scriptpubkey === script))
+      ) {
+        net -= prevout.value;
+      }
+    }
+    for (const output of tx.vout) {
+      if (
+        output.scriptpubkey_address === address ||
+        (script && output.scriptpubkey === script)
+      ) {
+        net += output.value;
+      }
+    }
+    this.netByTransaction.set(tx, net);
+    return net;
+  }
+
   utxos: Utxo[];
   isLoadingTransactions = true;
   retryLoadMore = false;
@@ -811,7 +877,19 @@ export class AddressComponent implements OnInit, OnDestroy {
     }
   }
 
+  loadMoreOnScroll(): void {
+    if (
+      this.blockJumpScroll &&
+      this.blockJumpScroll.windowTop === window.scrollY &&
+      this.blockJumpScroll.bodyTop === document.body.scrollTop
+    ) {
+      return;
+    }
+    this.loadMore();
+  }
+
   loadMore(): void {
+    this.blockJumpScroll = undefined;
     if (this.paginatedMode) {
       this.emptyPageContinuations = 0;
       this.loadPagedTransactions();

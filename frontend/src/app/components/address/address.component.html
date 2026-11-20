@@ -281,9 +281,12 @@
               }
               @for (block of blockActivity; track block.hash) {
                 <li class="activity-item">
-                  <a
+                  <button
                     class="activity-link"
-                    [routerLink]="['/block/' + block.hash | relativeUrl]"
+                    type="button"
+                    [attr.aria-controls]="block.groupId"
+                    [attr.aria-pressed]="selectedBlockGroup === block.groupId"
+                    (click)="jumpToBlockGroup(block.groupId)"
                   >
                     <span class="activity-height">{{ block.height }}</span>
                     <span class="activity-cube">
@@ -318,7 +321,7 @@
                         }}</time>
                       }
                     </span>
-                  </a>
+                  </button>
                 </li>
               }
             </ul>
@@ -329,9 +332,11 @@
 
     <app-transactions-list
       [transactions]="transactions"
+      [blockGroupHeaders]="blockGroupHeaders"
+      [partialBlockGroupId]="fullyLoaded ? undefined : lastBlockGroupId"
       [showConfirmations]="true"
       [addresses]="[address?.address || bchAddressString]"
-      (loadMore)="loadMore()"
+      (loadMore)="loadMoreOnScroll()"
     ></app-transactions-list>
 
     @if (paginatedMode && transactionError) {
