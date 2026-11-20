@@ -81,7 +81,7 @@ describe('StatisticsReplication pickSource', () => {
   test('picks the peer that matches and continues our data over peers that agree with each other', () => {
     expect(
       replication.pickSource(chunk, ours, peers({ a: jumping, b: jumping, c: jumping, d: continuing }), STEP)
-    ).toBe('d');
+    ).toMatchObject({ server: 'd' });
   });
 
   test('rejects a peer whose rows before the gap are off from ours', () => {
@@ -111,7 +111,9 @@ describe('StatisticsReplication pickSource', () => {
       rows(40, 100).map((row, index) => (index >= 15 && index < 45 ? { ...row, count: row.count * 1000 } : row))
     );
     expect(replication.pickSource(chunk, ours, peers({ a: spiked }), STEP)).toBeNull();
-    expect(replication.pickSource(chunk, ours, peers({ a: spiked, b: continuing, c: continuing }), STEP)).toBe('b');
+    expect(replication.pickSource(chunk, ours, peers({ a: spiked, b: continuing, c: continuing }), STEP)).toMatchObject(
+      { server: 'b' }
+    );
   });
 
   test('only measures our own variation over unbroken rows right before the gap', () => {
@@ -125,29 +127,33 @@ describe('StatisticsReplication pickSource', () => {
 
   test('prefers the continuous peer covering more of the gap, but still uses a partial one when it is the only one', () => {
     const partial = peer(1000, rows(40, 41, 1010));
-    expect(replication.pickSource(chunk, ours, peers({ x: partial, y: continuing }), STEP)).toBe('y');
-    expect(replication.pickSource(chunk, ours, peers({ x: partial }), STEP)).toBe('x');
+    expect(replication.pickSource(chunk, ours, peers({ x: partial, y: continuing }), STEP)).toMatchObject({
+      server: 'y',
+    });
+    expect(replication.pickSource(chunk, ours, peers({ x: partial }), STEP)).toMatchObject({ server: 'x' });
   });
 
   test('falls back to a peer agreed on by 3 peers when none continues our data', () => {
-    expect(replication.pickSource(chunk, ours, peers({ a: jumping, b: jumping, c: jumping }), STEP)).toBe('a');
+    expect(replication.pickSource(chunk, ours, peers({ a: jumping, b: jumping, c: jumping }), STEP)).toMatchObject({
+      server: 'a',
+    });
   });
 
   test('uses consensus when we hold no previous chunk', () => {
     expect(
       replication.pickSource(chunk, new Map(), peers({ a: rows(40, 100), b: rows(40, 100), c: rows(40, 100) }), STEP)
-    ).toBe('a');
+    ).toMatchObject({ server: 'a' });
   });
 
-  test('breaks a consensus tie by preferring the peer covering more of the gap', () => {
+  test('prefers the peer with the most corroborated slots', () => {
     expect(
       replication.pickSource(
         chunk,
         new Map(),
-        peers({ partial: rows(40, 70), full1: rows(40, 100), full2: rows(40, 100) }),
+        peers({ partial: rows(40, 70), full1: rows(40, 100), full2: rows(40, 100), full3: rows(40, 100) }),
         STEP
       )
-    ).toBe('full1');
+    ).toEqual({ server: 'full1', times: chunk });
   });
 
   test('returns null when only 2 peers agree', () => {
@@ -188,16 +194,20 @@ describe('StatisticsReplication $sync', () => {
     expect(replication.inProgress).toBe(false);
   });
 
-  test('skips an interval that synced nothing for 24 hours, then retries it', async () => {
+  test.each([
+    ['24h', 5 * 60 * 1000],
+    ['1w', 24 * 60 * 60 * 1000],
+  ])('retries %s after its cooldown when no rows were synced', async (interval, cooldown) => {
     const dateNow = jest.spyOn(Date, 'now').mockReturnValue(START * 1000);
-    jest.spyOn(replication, '$getMissingStatistics').mockResolvedValue(missing({ '24h': [60, 120] }));
+    jest.spyOn(replication, '$getMissingStatistics').mockResolvedValue(missing({ [interval]: [60, 120] }));
     const syncStatistics = jest
       .spyOn(replication, '$syncStatistics')
       .mockResolvedValue({ success: false, synced: 0, missed: 2 });
     await replication.$sync();
+    dateNow.mockReturnValue(START * 1000 + cooldown - 1);
     await replication.$sync();
     expect(syncStatistics).toHaveBeenCalledTimes(1);
-    dateNow.mockReturnValue(START * 1000 + 24 * 60 * 60 * 1000 + 1);
+    dateNow.mockReturnValue(START * 1000 + cooldown);
     await replication.$sync();
     expect(syncStatistics).toHaveBeenCalledTimes(2);
   });
@@ -246,6 +256,19 @@ describe('StatisticsReplication $syncStatistics', () => {
     expect(result).toEqual({ success: true, synced: 59, missed: 1 });
   });
 
+  test('only inserts individual slots supported by three peers in an unanchored chunk', async () => {
+    config.REPLICATION.SERVERS = ['a', 'b', 'c'];
+    const partial = rows(0, 30);
+    responses = {
+      a: rows(0, 60),
+      b: partial,
+      c: partial.map((row, i) => (i === 10 ? { ...row, count: 2000 } : row)),
+    };
+    const result = await replication.$syncStatistics('1w', new Set(times(0, 60)));
+    expect(result).toEqual({ success: true, synced: 29, missed: 31 });
+    expect(create.mock.calls.map(([row]) => row.added)).toEqual(times(0, 30).filter((_, i) => i !== 10));
+  });
+
   test('pulls in more peers until 3 agree', async () => {
     config.REPLICATION.SERVERS = ['a', 'b', 'c', 'd', 'e', 'f'];
     responses = {
@@ -274,11 +297,29 @@ describe('StatisticsReplication $syncStatistics', () => {
 
   test('fills gaps from a single configured BCH peer, including legacy byte buckets', async () => {
     config.REPLICATION.SERVERS = ['a', 'a', 'self'];
-    responses = { a: rows(0, 2, 1000, 37) };
+    // The historical SELECTs omit these fields when serialized for peers.
+    responses = {
+      a: JSON.parse(
+        JSON.stringify(
+          rows(0, 2, 1000, 37).map((row) => ({ ...row, total_fee: undefined, mempool_byte_size: undefined }))
+        )
+      ),
+    };
     const result = await replication.$syncStatistics('1w', new Set(times(0, 2)));
     expect(result).toEqual({ success: true, synced: 2, missed: 0 });
     expect(query).toHaveBeenCalledTimes(1);
-    expect(create).toHaveBeenCalledWith(expect.objectContaining({ size_0: 0, size_2000: 0 }), true);
+    expect(create).toHaveBeenCalledWith(
+      expect.objectContaining({ size_0: 0, size_2000: 0, total_fee: 0, mempool_byte_size: 0 }),
+      true
+    );
+  });
+
+  test('rejects malformed optional fields when present in historical data', async () => {
+    config.REPLICATION.SERVERS = ['a'];
+    responses = { a: rows(0, 2).map((row) => ({ ...row, total_fee: '0' })) };
+    const result = await replication.$syncStatistics('1w', new Set(times(0, 2)));
+    expect(result).toEqual({ success: false, synced: 0, missed: 2 });
+    expect(create).not.toHaveBeenCalled();
   });
 
   test('caps attempted peer requests when every peer is unavailable or incompatible', async () => {
@@ -311,11 +352,18 @@ describe('StatisticsReplication missing rows', () => {
     const stored = times(0, 100)
       .filter((time, index) => !missingIndexes.has(index))
       .map((time) => ({ added: time + 10 }));
-    jest.spyOn(DB, 'query').mockResolvedValue([stored, []] as any);
+    const query = jest.spyOn(DB, 'query').mockResolvedValue([stored, []] as any);
+    replication.pendingSlots.clear();
     const missing: Set<number> = await replication.$getMissingStatisticsInterval(
       [START, START + 100 * STEP, '1w'],
       START
     );
     expect([...missing].sort((a, b) => a - b)).toEqual([...times(10, 13), ...times(40, 46)]);
+
+    // The middle of the three-slot gap and the entire second gap were filled.
+    const newStored = [...stored, ...[...times(11, 12), ...times(40, 46)].map((time) => ({ added: time + 10 }))];
+    query.mockResolvedValue([newStored, []] as any);
+    const retry = await replication.$getMissingStatisticsInterval([START, START + 100 * STEP, '1w'], START);
+    expect([...retry]).toEqual([times(10, 11)[0], times(12, 13)[0]]);
   });
 });

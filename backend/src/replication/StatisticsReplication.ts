@@ -37,6 +37,7 @@ const listMethods: Record<string, () => Promise<OptimizedStatistic[]>> = {
   all: () => statistics.$listAll(),
 };
 
+const RECENT_RETRY_COOLDOWN = 5 * 60 * 1000;
 const RETRY_COOLDOWN = 60 * 60 * 24 * 1000;
 const SIZES_LENGTH = 39;
 const MAX_DEVIATION = 0.1;
@@ -56,6 +57,7 @@ const STEP_MARGIN = 3;
 class StatisticsReplication {
   inProgress: boolean = false;
   failedAttempts: Record<string, number> = {};
+  private pendingSlots = new Map<string, Set<number>>();
 
   /** @asyncUnsafe */
   public async $sync(): Promise<void> {
@@ -129,7 +131,8 @@ class StatisticsReplication {
 
   private isInCooldown(interval: string): boolean {
     const failedAt = this.failedAttempts[interval];
-    return failedAt !== undefined && Date.now() - failedAt <= RETRY_COOLDOWN;
+    const cooldown = interval === '24h' ? RECENT_RETRY_COOLDOWN : RETRY_COOLDOWN;
+    return failedAt !== undefined && Date.now() - failedAt < cooldown;
   }
 
   /** @asyncUnsafe */
@@ -153,7 +156,7 @@ class StatisticsReplication {
     // Bound total requests, including failures and peers serving another chain.
     const candidates = servers.slice(0, MAX_PEERS);
     const peers = new Map<string, Map<number, OptimizedStatistic>>();
-    await this.$addPeers(peers, candidates, path, step, SAMPLE_PEERS);
+    await this.$addPeers(peers, candidates, interval, step, SAMPLE_PEERS);
     if (peers.size === 0) {
       logger.warn(`An error occurred when trying to fetch ${path}`, 'Replication');
       return { success, synced, missed: missed.size };
@@ -165,9 +168,11 @@ class StatisticsReplication {
       step
     )) {
       // A deployment with one configured peer already trusts that peer for backfills.
-      let source = singlePeer ? peers.keys().next().value : this.pickSource(chunk, localSlots, peers, step);
+      let source = singlePeer
+        ? { server: peers.keys().next().value as string, times: chunk }
+        : this.pickSource(chunk, localSlots, peers, step);
       while (!source && candidates.length > 0) {
-        await this.$addPeers(peers, candidates, path, step, peers.size + 1);
+        await this.$addPeers(peers, candidates, interval, step, peers.size + 1);
         source = this.pickSource(chunk, localSlots, peers, step);
       }
       if (!source) {
@@ -179,8 +184,8 @@ class StatisticsReplication {
       }
       success = true;
 
-      for (const time of chunk) {
-        const stat = peers.get(source)?.get(time);
+      for (const time of source.times) {
+        const stat = peers.get(source.server)?.get(time);
         if (
           stat &&
           (await statistics.$create(statistics.mapOptimizedStatisticToStatistic([stat])[0], true)) !== undefined
@@ -200,15 +205,16 @@ class StatisticsReplication {
   private async $addPeers(
     peers: Map<string, Map<number, OptimizedStatistic>>,
     servers: string[],
-    path: string,
+    interval: string,
     step: number,
     target: number
   ): Promise<void> {
+    const path = `/api/v1/statistics/${interval}`;
     while (peers.size < target && servers.length > 0) {
       const server = servers.shift() as string;
       try {
         const result = (await query(`https://${server}${path}`)) as OptimizedStatistic[];
-        if (this.isValidResult(result)) {
+        if (this.isValidResult(result, interval !== '24h')) {
           peers.set(server, this.mapBySlot(result, step));
         } else {
           logger.warn(`Invalid statistics from ${server} at ${path}`, 'Replication');
@@ -240,7 +246,7 @@ class StatisticsReplication {
     localSlots: Map<number, OptimizedStatistic>,
     peers: Map<string, Map<number, OptimizedStatistic>>,
     step: number
-  ): string | null {
+  ): { server: string; times: number[] } | null {
     const candidates = Array.from(peers).filter(([, slots]) => chunk.some((time) => slots.has(time)));
 
     const previous: [number, OptimizedStatistic][] = [];
@@ -265,25 +271,24 @@ class StatisticsReplication {
         }
       }
       if (continuous) {
-        return continuous;
+        return { server: continuous, times: chunk };
       }
     }
 
-    let agreed: string | null = null;
-    let mostAgreements = CONSENSUS_PEERS - 2;
-    let agreedCoverage = 0;
+    let agreed: { server: string; times: number[] } | null = null;
     for (const [server, slots] of candidates) {
-      const agreements = candidates.filter(
-        ([other, otherSlots]) => other !== server && this.agree(chunk, slots, otherSlots)
-      ).length;
-      const covered = chunk.filter((time) => slots.has(time)).length;
-      if (
-        agreements > mostAgreements ||
-        (agreed !== null && agreements === mostAgreements && covered > agreedCoverage)
-      ) {
-        agreed = server;
-        mostAgreements = agreements;
-        agreedCoverage = covered;
+      const support = new Map<number, number>();
+      for (const [other, otherSlots] of candidates) {
+        if (other === server) {
+          continue;
+        }
+        for (const time of this.agreeingSlots(chunk, slots, otherSlots)) {
+          support.set(time, (support.get(time) ?? 0) + 1);
+        }
+      }
+      const times = chunk.filter((time) => (support.get(time) ?? 0) >= CONSENSUS_PEERS - 1);
+      if (times.length > (agreed?.times.length ?? 0)) {
+        agreed = { server, times };
       }
     }
     return agreed;
@@ -349,20 +354,23 @@ class StatisticsReplication {
     return total / stats1.length;
   }
 
-  private agree(
+  private agreeingSlots(
     chunk: number[],
     slots1: Map<number, OptimizedStatistic>,
     slots2: Map<number, OptimizedStatistic>
-  ): boolean {
+  ): number[] {
     const shared = chunk.filter((time) => slots1.has(time) && slots2.has(time));
-    const deviating = shared.filter(
+    if (shared.length < chunk.length / 2) {
+      return [];
+    }
+    const matching = shared.filter(
       (time) =>
-        this.distance(slots1.get(time) as OptimizedStatistic, slots2.get(time) as OptimizedStatistic) > MAX_DEVIATION
-    ).length;
-    return shared.length >= chunk.length / 2 && deviating <= Math.floor(shared.length * MAX_POLLUTION);
+        this.distance(slots1.get(time) as OptimizedStatistic, slots2.get(time) as OptimizedStatistic) <= MAX_DEVIATION
+    );
+    return shared.length - matching.length <= Math.floor(shared.length * MAX_POLLUTION) ? matching : [];
   }
 
-  private isValidResult(result: OptimizedStatistic[]): boolean {
+  private isValidResult(result: OptimizedStatistic[], allowOmittedFields: boolean): boolean {
     return (
       Array.isArray(result) &&
       result.length > 0 &&
@@ -374,8 +382,8 @@ class StatisticsReplication {
           Number(stat.added) > 0 &&
           Number.isFinite(Number(stat.added)) &&
           Number.isFinite(stat.bytes_per_second) &&
-          Number.isFinite(stat.mempool_byte_size) &&
-          Number.isFinite(stat.total_fee) &&
+          (Number.isFinite(stat.mempool_byte_size) || (allowOmittedFields && stat.mempool_byte_size === undefined)) &&
+          (Number.isFinite(stat.total_fee) || (allowOmittedFields && stat.total_fee === undefined)) &&
           Number.isFinite(stat.min_fee) &&
           Number.isFinite(stat.count) &&
           Array.isArray(stat.sizes) &&
@@ -484,25 +492,20 @@ class StatisticsReplication {
         timeSteps.push(time);
       }
 
-      if (timeSteps.length === 0) {
-        return new Set<number>();
-      }
-
       const roundedTimesAlreadyHere = new Set<number>(rows.map((row) => this.roundToNearestStep(row.added, step)));
+      const missingTimes = timeSteps.filter((time) => !roundedTimesAlreadyHere.has(time));
+      const gaps = missingTimes.filter((time, i, arr) => arr[i + 1] === time + step || arr[i - 1] === time - step);
+      const eligible = new Set(gaps.length >= timeSteps.length * 0.01 ? gaps : []);
 
-      const missingTimes = timeSteps
-        .filter((time) => !roundedTimesAlreadyHere.has(time))
-        .filter((time, i, arr) => {
-          // Remove outsiders
-          return arr[i + 1] === time + step || arr[i - 1] === time - step;
-        });
-
-      // Don't bother fetching if very few rows are missing
-      if (missingTimes.length < timeSteps.length * 0.01) {
-        return new Set();
+      // Keep eligible slots across scans so partial fills cannot strand the remaining rows.
+      const pending = this.pendingSlots.get(interval[2]);
+      for (const time of missingTimes) {
+        if (pending?.has(time)) {
+          eligible.add(time);
+        }
       }
-
-      return new Set(missingTimes);
+      this.pendingSlots.set(interval[2], eligible);
+      return eligible;
     } catch (e: any) {
       logger.err(
         `Cannot fetch missing statistics times from db. Reason: ` + (e instanceof Error ? e.message : e),

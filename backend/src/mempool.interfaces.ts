@@ -398,8 +398,8 @@ export interface OptimizedStatistic {
   added: string;
   count: number;
   bytes_per_second: number;
-  total_fee: number;
-  mempool_byte_size: number;
+  total_fee?: number;
+  mempool_byte_size?: number;
   min_fee: number;
   sizes: number[];
 }
