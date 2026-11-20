@@ -290,6 +290,13 @@ export interface ChainTip {
 }
 
 export interface StaleTip extends ChainTip {
+  sharedTransactions?: number;
+  resolvedBy?: {
+    id: string;
+    height: number;
+    timestamp: number;
+    pool?: { slug: string; name: string };
+  };
   stale: BlockExtended;
   canonical: BlockExtended;
 }

@@ -168,6 +168,26 @@ export class StaleList implements OnInit, OnDestroy {
     }
   }
 
+  getOverlap(tip: StaleTip):
+    | {
+        shared: number;
+        staleOnly: number;
+        winningOnly: number;
+        sharedRatio: number;
+      }
+    | undefined {
+    if (tip.sharedTransactions === undefined || !tip.canonical) {
+      return undefined;
+    }
+    const shared = tip.sharedTransactions;
+    const staleOnly = tip.stale.tx_count - 1 - shared;
+    const winningOnly = tip.canonical.tx_count - 1 - shared;
+    const total = shared + staleOnly + winningOnly;
+    return total > 0
+      ? { shared, staleOnly, winningOnly, sharedRatio: shared / total }
+      : undefined;
+  }
+
   getBlockGradient(block: BlockExtended): string {
     if (!block || !block.size) {
       return 'var(--secondary)';

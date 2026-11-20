@@ -251,7 +251,8 @@ export class ApiService {
 
   getStaleTips$(): Observable<StaleTip[]> {
     return this.httpClient.get<StaleTip[]>(
-      this.apiBaseUrl + this.apiBasePath + '/api/v1/stale-tips'
+      this.apiBaseUrl + this.apiBasePath + '/api/v1/stale-tips',
+      { params: { overlap: '1' } }
     );
   }
 

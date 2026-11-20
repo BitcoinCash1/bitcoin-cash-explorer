@@ -307,7 +307,7 @@
               </div>
             </div>
 
-            <div class="vs-label">vs</div>
+            <div class="vs-label" aria-hidden="true">vs</div>
 
             <div
               class="block-column canonical"
@@ -446,6 +446,75 @@
               </p>
             </ng-template>
           </div>
+          @if (!history) {
+            @let overlap = getOverlap(chainTip);
+            @if (overlap || chainTip.resolvedBy) {
+              <div class="stale-details">
+                @if (overlap) {
+                  <section class="comparison-detail">
+                    <h3 i18n="chain-tips.shared-transactions">
+                      Shared transactions
+                    </h3>
+                    <div
+                      class="overlap-grid"
+                      aria-hidden="true"
+                      [style.grid-template-columns]="
+                        overlap.staleOnly +
+                        'fr ' +
+                        overlap.shared +
+                        'fr ' +
+                        overlap.winningOnly +
+                        'fr'
+                      "
+                    >
+                      <span class="stale-only"></span
+                      ><span class="shared"></span
+                      ><span class="winning-only"></span>
+                      <strong>{{
+                        overlap.sharedRatio | percent: "1.1-1"
+                      }}</strong>
+                    </div>
+                    <p class="overlap-caption" i18n="chain-tips.shared-count">
+                      {{ overlap.shared | number }} shared ·
+                      {{ overlap.staleOnly | number }} stale only ·
+                      {{ overlap.winningOnly | number }} winning only
+                    </p>
+                    <span
+                      class="visually-hidden"
+                      i18n="chain-tips.shared-percent"
+                      >{{ overlap.sharedRatio | percent: "1.1-1" }} of
+                      non-coinbase transactions are shared</span
+                    >
+                  </section>
+                }
+                @if (chainTip.resolvedBy; as winner) {
+                  <section class="comparison-detail">
+                    <h3 i18n="chain-tips.resolved-by">Resolved by</h3>
+                    <div class="resolution-block">
+                      <a [routerLink]="['/block/' + winner.id | relativeUrl]">{{
+                        winner.height
+                      }}</a>
+                      @if (winner.pool; as pool) {
+                        <app-mining-pool
+                          [slug]="pool.slug"
+                          [name]="pool.name"
+                        ></app-mining-pool>
+                      }
+                    </div>
+                    @let delta =
+                      winner.timestamp - chainTip.canonical.timestamp;
+                    <div
+                      class="overlap-caption"
+                      i18n="chain-tips.timestamp-delta"
+                    >
+                      Block timestamp difference: {{ delta > 0 ? "+" : ""
+                      }}{{ delta | number }} s
+                    </div>
+                  </section>
+                }
+              </div>
+            }
+          }
         </div>
       </div>
     </div>

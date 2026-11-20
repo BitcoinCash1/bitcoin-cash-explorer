@@ -2,12 +2,14 @@ import shutdown from '../utils/shutdown';
 import config from '../config';
 import logger from '../logger';
 import { BlockExtended } from '../mempool.interfaces';
+import BlocksRepository from '../repositories/BlocksRepository';
 import BlocksSummariesRepository from '../repositories/BlocksSummariesRepository';
 import bitcoinApi, { bitcoinCoreApi } from './bitcoin/bitcoin-api-factory';
 import bitcoinClient from './bitcoin/bitcoin-client';
 import { IPublicApi } from './bitcoin/public-api.interface';
 import blocks from './blocks';
 import { Common } from './common';
+import pLimit from '../utils/p-limit';
 
 export interface ChainTip {
   height: number;
@@ -19,6 +21,8 @@ export interface ChainTip {
 export interface StaleTip extends ChainTip {
   stale: BlockExtended;
   canonical: BlockExtended;
+  sharedTransactions?: number;
+  resolvedBy?: { id: string; height: number; timestamp: number; pool?: { slug: string; name: string } };
 }
 
 export interface OrphanedBlock {
@@ -26,6 +30,11 @@ export interface OrphanedBlock {
   hash: string;
   status: 'valid-fork' | 'valid-headers' | 'headers-only';
   prevhash: string;
+}
+
+interface StaleTipDetail<T> {
+  pending: boolean;
+  value?: T;
 }
 
 class ChainTips {
@@ -42,6 +51,11 @@ class ChainTips {
   }[] = [];
 
   private staleTipsCacheSize = 50;
+  private overlapLimit = pLimit(4);
+  private successorLimit = pLimit(4);
+  private overlaps = new Map<string, StaleTipDetail<number>>();
+  private successors = new Map<string, StaleTipDetail<StaleTip['resolvedBy']>>();
+  private staleTipWaiters = new Set<() => void>();
   private maxIndexingQueueSize = 100;
 
   public async updateOrphanedBlocks(): Promise<void> {
@@ -235,11 +249,118 @@ class ChainTips {
     return this.chainTips;
   }
 
+  public async $getStaleTipsWithOverlap(): Promise<StaleTip[]> {
+    const details = this.getStaleTips().map((tip) => {
+      if (!tip.canonical || !tip.stale.tx_count || !tip.canonical.tx_count) {
+        return { tip };
+      }
+      const key = tip.stale.id + ':' + tip.canonical.id;
+      const overlap = this.getStaleTipDetail(this.overlaps, this.overlapLimit, key, () =>
+        this.$getSharedTransactions(tip)
+      );
+      const successor = config.DATABASE.ENABLED
+        ? this.getStaleTipDetail(this.successors, this.successorLimit, tip.canonical.id, () =>
+            this.$getResolvingBlock(tip)
+          )
+        : undefined;
+      return { tip, overlap, successor };
+    });
+
+    const hasPending = () => details.some(({ overlap, successor }) => overlap?.pending || successor?.pending);
+    if (hasPending()) {
+      await new Promise<void>((resolve) => {
+        const finish = () => {
+          clearTimeout(deadline);
+          this.staleTipWaiters.delete(onProgress);
+          resolve();
+        };
+        const onProgress = () => {
+          if (!hasPending()) {
+            finish();
+          }
+        };
+        const deadline = setTimeout(finish, 500);
+        this.staleTipWaiters.add(onProgress);
+      });
+    }
+
+    return details.map(({ tip, overlap, successor }) => ({
+      ...tip,
+      ...(overlap?.value !== undefined ? { sharedTransactions: overlap.value } : {}),
+      ...(successor?.value ? { resolvedBy: successor.value } : {}),
+    }));
+  }
+
+  private getStaleTipDetail<T>(
+    cache: Map<string, StaleTipDetail<T>>,
+    limit: ReturnType<typeof pLimit>,
+    key: string,
+    load: () => Promise<T | undefined>
+  ): StaleTipDetail<T> | undefined {
+    const cached = cache.get(key);
+    if (cached || limit.pendingCount >= this.staleTipsCacheSize) {
+      return cached;
+    }
+
+    if (cache.size >= this.staleTipsCacheSize * 2) {
+      // Keep in-flight entries discoverable for deduplication.
+      for (const [oldest, detail] of cache) {
+        if (!detail.pending) {
+          cache.delete(oldest);
+          break;
+        }
+      }
+    }
+    const entry: StaleTipDetail<T> = { pending: true };
+    cache.set(key, entry);
+    void limit(load)
+      .catch(() => undefined)
+      .then((value) => {
+        entry.pending = false;
+        entry.value = value;
+        if (value === undefined && cache.get(key) === entry) {
+          cache.delete(key);
+        }
+        for (const notify of this.staleTipWaiters) {
+          notify();
+        }
+      });
+    return entry;
+  }
+
+  private async $getSharedTransactions(tip: StaleTip): Promise<number | undefined> {
+    const stale = await bitcoinApi.$getTxIdsForBlock(tip.stale.id, true);
+    const canonical = await bitcoinApi.$getTxIdsForBlock(tip.canonical.id);
+    if (stale.length !== tip.stale.tx_count || canonical.length !== tip.canonical.tx_count) {
+      return undefined;
+    }
+    const canonicalTransactions = new Set(canonical.slice(1));
+    return stale.slice(1).reduce((count, txid) => count + Number(canonicalTransactions.has(txid)), 0);
+  }
+
+  private async $getResolvingBlock(tip: StaleTip): Promise<StaleTip['resolvedBy']> {
+    if (!config.DATABASE.ENABLED) {
+      return undefined;
+    }
+    const block = await BlocksRepository.$getBlockByHeight(tip.canonical.height + 1, false);
+    if (block?.previousblockhash !== tip.canonical.id) {
+      return undefined;
+    }
+    const pool = block.extras?.pool;
+    return {
+      id: block.id,
+      height: block.height,
+      timestamp: block.timestamp,
+      pool: pool ? { slug: pool.slug, name: pool.name } : undefined,
+    };
+  }
+
   public getStaleTips(): StaleTip[] {
     return Object.values(this.staleTips).sort((a, b) => b.height - a.height);
   }
 
   clearOrphanCacheAboveHeight(height: number): void {
+    this.successors.clear();
     for (const h in this.orphansByHeight) {
       if (Number(h) > height) {
         const orphans = this.orphansByHeight[h];
