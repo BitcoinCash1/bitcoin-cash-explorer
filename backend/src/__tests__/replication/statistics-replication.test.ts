@@ -1,5 +1,6 @@
 import statisticsReplication from '../../replication/StatisticsReplication';
-import { query } from '../../replication/replicator';
+import auditReplication from '../../replication/AuditReplication';
+import { $sync, query } from '../../replication/replicator';
 import statistics from '../../api/statistics/statistics-api';
 import config from '../../config';
 import { Common } from '../../api/common';
@@ -51,6 +52,25 @@ function missing(timesPerInterval: Record<string, number[]>): Record<string, Set
     ])
   );
 }
+
+test('both replicators skip database and peer work when replication is disabled', async () => {
+  const original = { ...config.REPLICATION };
+  const database = jest.spyOn(DB, 'query').mockRejectedValue(new Error('unexpected database call'));
+  config.REPLICATION.ENABLED = false;
+  config.REPLICATION.AUDIT = true;
+  config.REPLICATION.STATISTICS = true;
+  try {
+    await Promise.all([auditReplication.$sync(), statisticsReplication.$sync()]);
+    expect(database).not.toHaveBeenCalled();
+    expect(query).not.toHaveBeenCalled();
+    expect($sync).not.toHaveBeenCalled();
+    expect(auditReplication.inProgress).toBe(false);
+    expect(statisticsReplication.inProgress).toBe(false);
+  } finally {
+    Object.assign(config.REPLICATION, original);
+    database.mockRestore();
+  }
+});
 
 describe('StatisticsReplication pickSource', () => {
   const ours = replication.mapBySlot(rows(0, 40), STEP);
@@ -259,6 +279,17 @@ describe('StatisticsReplication $syncStatistics', () => {
     expect(result).toEqual({ success: true, synced: 2, missed: 0 });
     expect(query).toHaveBeenCalledTimes(1);
     expect(create).toHaveBeenCalledWith(expect.objectContaining({ size_0: 0, size_2000: 0 }), true);
+  });
+
+  test('caps attempted peer requests when every peer is unavailable or incompatible', async () => {
+    config.REPLICATION.SERVERS = Array.from({ length: 20 }, (_, i) => `s${i}`);
+    responses = { s1: { vsizes: [] } };
+    (query as unknown as jest.Mock).mockRejectedValueOnce(new Error('peer timeout'));
+    const result = await replication.$syncStatistics('1w', new Set(times(0, 60)));
+    expect(result).toEqual({ success: false, synced: 0, missed: 60 });
+    expect(query).toHaveBeenCalledTimes(8);
+    expect(statistics.$list1W).not.toHaveBeenCalled();
+    expect(create).not.toHaveBeenCalled();
   });
 
   test('ignores invalid responses and responses with the old 38 band sizes', async () => {

@@ -139,7 +139,6 @@ class StatisticsReplication {
     const missed = new Set(missingTimes);
     const step = steps[interval];
     const path = `/api/v1/statistics/${interval}`;
-    const localSlots = this.mapBySlot(await listMethods[interval](), step);
     const servers = [...new Set(config.REPLICATION.SERVERS)].filter(
       (server) => server !== backendInfo.getBackendInfo().hostname
     );
@@ -151,21 +150,24 @@ class StatisticsReplication {
       );
     }
     Common.shuffleArray(servers);
+    // Bound total requests, including failures and peers serving another chain.
+    const candidates = servers.slice(0, MAX_PEERS);
     const peers = new Map<string, Map<number, OptimizedStatistic>>();
-    await this.$addPeers(peers, servers, path, step, SAMPLE_PEERS);
+    await this.$addPeers(peers, candidates, path, step, SAMPLE_PEERS);
     if (peers.size === 0) {
       logger.warn(`An error occurred when trying to fetch ${path}`, 'Replication');
       return { success, synced, missed: missed.size };
     }
 
+    const localSlots = this.mapBySlot(await listMethods[interval](), step);
     for (const chunk of this.chunk(
       Array.from(missingTimes).sort((a, b) => a - b),
       step
     )) {
       // A deployment with one configured peer already trusts that peer for backfills.
       let source = singlePeer ? peers.keys().next().value : this.pickSource(chunk, localSlots, peers, step);
-      while (!source && peers.size < MAX_PEERS && servers.length > 0) {
-        await this.$addPeers(peers, servers, path, step, peers.size + 1);
+      while (!source && candidates.length > 0) {
+        await this.$addPeers(peers, candidates, path, step, peers.size + 1);
         source = this.pickSource(chunk, localSlots, peers, step);
       }
       if (!source) {
@@ -378,7 +380,7 @@ class StatisticsReplication {
           Number.isFinite(stat.count) &&
           Array.isArray(stat.sizes) &&
           [SIZES_LENGTH - 2, SIZES_LENGTH].includes(stat.sizes.length) &&
-          stat.sizes.every((vsize) => Number.isFinite(vsize))
+          stat.sizes.every((size) => Number.isFinite(size))
       )
     );
   }
