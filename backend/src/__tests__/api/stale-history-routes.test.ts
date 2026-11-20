@@ -104,6 +104,70 @@ test('recent overlap is opt-in and concurrent requests share txid lookups', asyn
   expect(successor.mock.calls).toEqual([[13, false]]);
 });
 
+test('slow transaction lookups do not block recent tips or completed successor data', async () => {
+  jest.useFakeTimers();
+  config.DATABASE.ENABLED = true;
+  const tip = {
+    stale: { id: 'slow-stale', tx_count: 2 },
+    canonical: { id: 'slow-canonical', height: 20, tx_count: 2 },
+  } as StaleTip;
+  jest.spyOn(chainTips, 'getStaleTips').mockReturnValue([tip]);
+  let finish!: (ids: string[]) => void;
+  const stalled = new Promise<string[]>((resolve) => {
+    finish = resolve;
+  });
+  const lookup = jest
+    .spyOn(bitcoinApi, '$getTxIdsForBlock')
+    .mockReturnValueOnce(stalled)
+    .mockResolvedValue(['canonical-coinbase', 'shared']);
+  jest.spyOn(BlocksRepository, '$getBlockByHeight').mockResolvedValue({
+    id: 'next',
+    previousblockhash: 'slow-canonical',
+    height: 21,
+    timestamp: 100,
+  } as never);
+  try {
+    const response = request({ overlap: '1' }, 'stale-tips');
+    await jest.advanceTimersByTimeAsync(500);
+    const partial = await response;
+    expect(partial.statusCode).toBe(200);
+    expect(partial.body).toEqual([{ ...tip, resolvedBy: { id: 'next', height: 21, timestamp: 100 } }]);
+    finish(['stale-coinbase', 'shared']);
+    expect((await request({ overlap: '1' }, 'stale-tips')).body).toEqual([
+      { ...tip, resolvedBy: { id: 'next', height: 21, timestamp: 100 }, sharedTransactions: 1 },
+    ]);
+    expect(partial.body).toEqual([{ ...tip, resolvedBy: { id: 'next', height: 21, timestamp: 100 } }]);
+    expect(lookup).toHaveBeenCalledTimes(2);
+  } finally {
+    finish([]);
+    jest.useRealTimers();
+  }
+});
+
+test('a missing indexed successor can be retried without repeating a successful overlap', async () => {
+  config.DATABASE.ENABLED = true;
+  const tip = {
+    stale: { id: 'gap-stale', tx_count: 1 },
+    canonical: { id: 'gap-canonical', height: 30, tx_count: 1 },
+  } as StaleTip;
+  jest.spyOn(chainTips, 'getStaleTips').mockReturnValue([tip]);
+  const lookup = jest.spyOn(bitcoinApi, '$getTxIdsForBlock').mockResolvedValue(['coinbase']);
+  const successor = jest
+    .spyOn(BlocksRepository, '$getBlockByHeight')
+    .mockResolvedValueOnce(null)
+    .mockResolvedValueOnce({ id: 'wrong-child', previousblockhash: 'another-parent' } as never)
+    .mockResolvedValue({ id: 'right-child', previousblockhash: 'gap-canonical', height: 31, timestamp: 100 } as never);
+
+  for (let i = 0; i < 2; i++) {
+    expect((await request({ overlap: '1' }, 'stale-tips')).body).toEqual([{ ...tip, sharedTransactions: 0 }]);
+  }
+  expect((await request({ overlap: '1' }, 'stale-tips')).body).toEqual([
+    { ...tip, sharedTransactions: 0, resolvedBy: { id: 'right-child', height: 31, timestamp: 100 } },
+  ]);
+  expect(lookup).toHaveBeenCalledTimes(2);
+  expect(successor).toHaveBeenCalledTimes(3);
+});
+
 test('validated cursor reaches repository; malformed cursor returns 400 without querying', async () => {
   config.DATABASE.ENABLED = true;
   const cursor = { height: 1, hash: 'a'.repeat(64) };

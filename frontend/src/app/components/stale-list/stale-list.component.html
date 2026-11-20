@@ -501,17 +501,15 @@
                         ></app-mining-pool>
                       }
                     </div>
-                    @if (winner.timestamp > chainTip.canonical.timestamp) {
-                      <div class="overlap-caption">
-                        <app-time
-                          kind="span"
-                          [time]="
-                            winner.timestamp - chainTip.canonical.timestamp
-                          "
-                          [fastRender]="true"
-                        ></app-time>
-                      </div>
-                    }
+                    @let delta =
+                      winner.timestamp - chainTip.canonical.timestamp;
+                    <div
+                      class="overlap-caption"
+                      i18n="chain-tips.timestamp-delta"
+                    >
+                      Block timestamp difference: {{ delta > 0 ? "+" : ""
+                      }}{{ delta | number }} s
+                    </div>
                   </section>
                 }
               </div>
