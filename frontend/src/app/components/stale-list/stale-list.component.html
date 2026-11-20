@@ -181,7 +181,7 @@
             >
           </span>
         </p>
-        @if (chainTip.sharedTransactions != null) {
+        @if (chainTip.sharedTransactions !== undefined) {
           <p class="text-secondary" i18n="chain-tips.shared-transactions">
             {{ chainTip.sharedTransactions | number }} shared transactions
             (excluding coinbase)
