@@ -51,6 +51,14 @@ import {
   tokenToCashAddr,
 } from '@app/shared/address-utils';
 
+interface AddressBlockActivity {
+  hash: string;
+  height: number;
+  count: number;
+  time?: number;
+  net: number;
+}
+
 class AddressStats implements ChainStats {
   address: string;
   scriptpubkey?: string;
@@ -159,7 +167,7 @@ export class AddressComponent implements OnInit, OnDestroy {
   isLoadingAddress = true;
   private loadedTransactions: Transaction[];
   showBlockActivity = false;
-  blockActivity: { hash: string; height: number; count: number }[] = [];
+  blockActivity: AddressBlockActivity[] = [];
   pendingActivity = 0;
 
   get transactions(): Transaction[] {
@@ -181,22 +189,44 @@ export class AddressComponent implements OnInit, OnDestroy {
   }
 
   private updateBlockActivity(): void {
-    const groups = new Map<
-      string,
-      { hash: string; height: number; count: number }
-    >();
+    const groups = new Map<string, AddressBlockActivity>();
+    const address = this.address?.address || this.bchAddressString;
+    const script = this.chainStats?.scriptpubkey;
     this.pendingActivity = 0;
     for (const tx of this.transactions || []) {
       if (!tx.status?.confirmed) {
         this.pendingActivity++;
-      } else if (tx.status.block_hash && tx.status.block_height != null) {
+      } else if (
+        tx.status.block_hash &&
+        typeof tx.status.block_height === 'number'
+      ) {
         const hash = tx.status.block_hash;
-        const group = groups.get(hash);
-        if (group) {
-          group.count++;
-        } else {
-          groups.set(hash, { hash, height: tx.status.block_height, count: 1 });
+        const group = groups.get(hash) ?? {
+          hash,
+          height: tx.status.block_height,
+          time: tx.status.block_time,
+          count: 0,
+          net: 0,
+        };
+        group.count++;
+        for (const { prevout } of tx.vin) {
+          if (
+            prevout &&
+            (prevout.scriptpubkey_address === address ||
+              (script && prevout.scriptpubkey === script))
+          ) {
+            group.net -= prevout.value;
+          }
         }
+        for (const output of tx.vout) {
+          if (
+            output.scriptpubkey_address === address ||
+            (script && output.scriptpubkey === script)
+          ) {
+            group.net += output.value;
+          }
+        }
+        groups.set(hash, group);
       }
     }
     this.blockActivity = [...groups.values()].sort(

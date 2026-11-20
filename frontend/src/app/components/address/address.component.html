@@ -236,43 +236,96 @@
     </div>
 
     @if (transactions?.length) {
-      <button
-        class="btn btn-sm btn-purple mb-2"
-        type="button"
-        [attr.aria-expanded]="showBlockActivity"
-        (click)="toggleBlockActivity()"
-        i18n="address.block-activity"
+      <section
+        class="address-activity"
+        aria-labelledby="address-activity-heading"
       >
-        Block activity
-      </button>
-      @if (showBlockActivity) {
-        <p class="text-secondary mb-2" i18n="address.block-activity-loaded">
-          Activity from loaded transactions
-        </p>
-        <ul class="list-unstyled d-flex gap-2 overflow-auto pb-2 mb-2">
-          @if (pendingActivity) {
-            <li
-              class="badge bg-secondary"
-              i18n="address.block-activity-pending"
+        <div class="d-flex justify-content-between align-items-center gap-2">
+          <h3
+            id="address-activity-heading"
+            class="mb-0"
+            i18n="address.block-activity"
+          >
+            Activity by block
+          </h3>
+          <button
+            class="btn btn-sm btn-purple"
+            type="button"
+            [attr.aria-expanded]="showBlockActivity"
+            (click)="toggleBlockActivity()"
+          >
+            @if (showBlockActivity) {
+              <span i18n="address.block-activity-hide">Hide blocks</span>
+            } @else {
+              <span i18n="address.block-activity-show">Show blocks</span>
+            }
+          </button>
+        </div>
+        @if (showBlockActivity) {
+          <div class="activity-panel">
+            <p
+              class="text-secondary small mb-2"
+              i18n="address.block-activity-loaded"
             >
-              Pending · {{ pendingActivity | number }}
-            </li>
-          }
-          @for (block of blockActivity; track block.hash) {
-            <li class="text-nowrap">
-              <a
-                class="btn btn-sm btn-purple"
-                [routerLink]="['/block/' + block.hash | relativeUrl]"
-              >
-                <span i18n="address.block-activity-block"
-                  >Block {{ block.height | number }} ·
-                  {{ block.count | number }} tx</span
-                >
-              </a>
-            </li>
-          }
-        </ul>
-      }
+              Activity from loaded transactions
+            </p>
+            <ul class="activity-strip list-unstyled mb-0">
+              @if (pendingActivity) {
+                <li class="activity-pending">
+                  <span
+                    class="badge bg-secondary"
+                    i18n="address.block-activity-pending"
+                    >Pending · {{ pendingActivity | number }}</span
+                  >
+                </li>
+              }
+              @for (block of blockActivity; track block.hash) {
+                <li class="activity-item">
+                  <a
+                    class="activity-link"
+                    [routerLink]="['/block/' + block.hash | relativeUrl]"
+                  >
+                    <span class="activity-height">{{
+                      block.height | number: "1.0-0"
+                    }}</span>
+                    <span class="activity-cube">
+                      @if (block.net > 0) {
+                        <span i18n="address.block-activity-received"
+                          >Received</span
+                        >
+                      } @else if (block.net < 0) {
+                        <span i18n="address.block-activity-sent">Sent</span>
+                      } @else {
+                        <span i18n="address.block-activity-net"
+                          >Net change</span
+                        >
+                      }
+                      <strong
+                        ><app-amount
+                          [satoshis]="block.net"
+                          [noFiat]="true"
+                        ></app-amount
+                      ></strong>
+                      <span
+                        i18n="address.block-activity-count"
+                        >{block.count, plural,
+                          one {1 transaction}
+                          other {{{ block.count | number }} transactions}
+                        }</span
+                      >
+                      @if (block.time) {
+                        <time>{{
+                          block.time * 1000 | date: "MMM d, HH:mm"
+                        }}</time>
+                      }
+                    </span>
+                  </a>
+                </li>
+              }
+            </ul>
+          </div>
+        }
+      </section>
     }
 
     <app-transactions-list
