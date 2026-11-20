@@ -248,6 +248,19 @@
   .missing-canonical {
     width: 100px;
   }
+
+  .fees {
+    margin-top: 7px;
+  }
+
+  .fee-span,
+  .transaction-count {
+    margin-bottom: 2px;
+  }
+
+  .time-difference {
+    font-size: 11px;
+  }
 }
 
 .stale-details {
