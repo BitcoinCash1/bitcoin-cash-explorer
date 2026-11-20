@@ -502,11 +502,7 @@
                       }
                     </div>
                     @if (winner.timestamp > chainTip.canonical.timestamp) {
-                      <div
-                        class="overlap-caption"
-                        i18n="chain-tips.resolved-after"
-                      >
-                        After
+                      <div class="overlap-caption">
                         <app-time
                           kind="span"
                           [time]="

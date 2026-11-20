@@ -163,6 +163,14 @@
   z-index: 1;
 }
 
+.fees,
+.fee-span {
+  overflow: hidden;
+  padding-inline: 0.2rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .fees {
   font-size: 12px;
   margin-top: 10px;
