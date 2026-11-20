@@ -264,7 +264,7 @@
         @if (showBlockActivity) {
           <div class="activity-panel">
             <p
-              class="text-secondary small mb-2"
+              class="activity-description small mb-2"
               i18n="address.block-activity-loaded"
             >
               Activity from loaded transactions
@@ -303,6 +303,7 @@
                       <strong
                         ><app-amount
                           [satoshis]="block.net"
+                          [addPlus]="true"
                           [noFiat]="true"
                         ></app-amount
                       ></strong>

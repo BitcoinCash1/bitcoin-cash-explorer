@@ -146,6 +146,11 @@ h1 {
   padding: 0.75rem;
 }
 
+.activity-description {
+  color: var(--fg);
+  opacity: 0.8;
+}
+
 .activity-strip {
   display: flex;
   align-items: stretch;
