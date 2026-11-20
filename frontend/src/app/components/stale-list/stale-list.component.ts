@@ -168,9 +168,7 @@ export class StaleList implements OnInit, OnDestroy {
     }
   }
 
-  getOverlap(
-    tip: StaleTip
-  ):
+  getOverlap(tip: StaleTip):
     | {
         shared: number;
         staleOnly: number;
