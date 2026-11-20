@@ -127,9 +127,17 @@ test('slow transaction lookups do not block recent tips or completed successor d
     timestamp: 100,
   } as never);
   try {
-    const response = request({ overlap: '1' }, 'stale-tips');
-    await jest.advanceTimersByTimeAsync(500);
-    const partial = await response;
+    const waiters = (chainTips as unknown as { staleTipWaiters: Set<() => void> }).staleTipWaiters;
+    const responses = Array.from({ length: 10 }, () => request({ overlap: '1' }, 'stale-tips'));
+    await jest.advanceTimersByTimeAsync(499);
+    expect(waiters.size).toBe(10);
+    await jest.advanceTimersByTimeAsync(1);
+    const partials = await Promise.all(responses);
+    expect(waiters.size).toBe(0);
+    for (const partial of partials) {
+      expect(partial.headers).toEqual({ 'Cache-Control': 'no-store', 'X-Accel-Expires': '0' });
+    }
+    const [partial] = partials;
     expect(partial.statusCode).toBe(200);
     expect(partial.body).toEqual([{ ...tip, resolvedBy: { id: 'next', height: 21, timestamp: 100 } }]);
     finish(['stale-coinbase', 'shared']);
@@ -138,6 +146,7 @@ test('slow transaction lookups do not block recent tips or completed successor d
     ]);
     expect(partial.body).toEqual([{ ...tip, resolvedBy: { id: 'next', height: 21, timestamp: 100 } }]);
     expect(lookup).toHaveBeenCalledTimes(2);
+    expect(waiters.size).toBe(0);
   } finally {
     finish([]);
     jest.useRealTimers();

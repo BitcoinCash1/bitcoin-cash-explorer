@@ -32,6 +32,11 @@ export interface OrphanedBlock {
   prevhash: string;
 }
 
+interface StaleTipDetail<T> {
+  pending: boolean;
+  value?: T;
+}
+
 class ChainTips {
   private chainTips: ChainTip[] = [];
   private staleTips: Record<number, StaleTip> = {};
@@ -48,8 +53,9 @@ class ChainTips {
   private staleTipsCacheSize = 50;
   private overlapLimit = pLimit(4);
   private successorLimit = pLimit(4);
-  private overlaps = new Map<string, Promise<number | undefined>>();
-  private successors = new Map<string, Promise<StaleTip['resolvedBy']>>();
+  private overlaps = new Map<string, StaleTipDetail<number>>();
+  private successors = new Map<string, StaleTipDetail<StaleTip['resolvedBy']>>();
+  private staleTipWaiters = new Set<() => void>();
   private maxIndexingQueueSize = 100;
 
   public async updateOrphanedBlocks(): Promise<void> {
@@ -244,85 +250,82 @@ class ChainTips {
   }
 
   public async $getStaleTipsWithOverlap(): Promise<StaleTip[]> {
-    const tips = this.getStaleTips().map((tip) => ({ ...tip }));
-    const pending: Promise<void>[] = [];
-    for (const tip of tips) {
+    const details = this.getStaleTips().map((tip) => {
       if (!tip.canonical || !tip.stale.tx_count || !tip.canonical.tx_count) {
-        continue;
+        return { tip };
       }
-      const overlapKey = tip.stale.id + ':' + tip.canonical.id;
-      const overlap = this.getStaleTipDetail(this.overlaps, this.overlapLimit, overlapKey, () =>
+      const key = tip.stale.id + ':' + tip.canonical.id;
+      const overlap = this.getStaleTipDetail(this.overlaps, this.overlapLimit, key, () =>
         this.$getSharedTransactions(tip)
       );
-      if (overlap) {
-        pending.push(
-          overlap.then((count) => {
-            if (count !== undefined) {
-              tip.sharedTransactions = count;
-            }
-          })
-        );
-      }
+      const successor = config.DATABASE.ENABLED
+        ? this.getStaleTipDetail(this.successors, this.successorLimit, tip.canonical.id, () =>
+            this.$getResolvingBlock(tip)
+          )
+        : undefined;
+      return { tip, overlap, successor };
+    });
 
-      if (config.DATABASE.ENABLED) {
-        const successor = this.getStaleTipDetail(this.successors, this.successorLimit, tip.canonical.id, () =>
-          this.$getResolvingBlock(tip)
-        );
-        if (successor) {
-          pending.push(
-            successor.then((block) => {
-              if (block) {
-                tip.resolvedBy = block;
-              }
-            })
-          );
-        }
-      }
+    const hasPending = () => details.some(({ overlap, successor }) => overlap?.pending || successor?.pending);
+    if (hasPending()) {
+      await new Promise<void>((resolve) => {
+        const finish = () => {
+          clearTimeout(deadline);
+          this.staleTipWaiters.delete(onProgress);
+          resolve();
+        };
+        const onProgress = () => {
+          if (!hasPending()) {
+            finish();
+          }
+        };
+        const deadline = setTimeout(finish, 500);
+        this.staleTipWaiters.add(onProgress);
+      });
     }
 
-    // Return the list and any available details even if the node or database stalls.
-    let deadline: ReturnType<typeof setTimeout> | undefined;
-    try {
-      await Promise.race([
-        Promise.all(pending),
-        new Promise<void>((resolve) => {
-          deadline = setTimeout(resolve, 500);
-        }),
-      ]);
-      return tips.map((tip) => ({ ...tip }));
-    } finally {
-      clearTimeout(deadline);
-    }
+    return details.map(({ tip, overlap, successor }) => ({
+      ...tip,
+      ...(overlap?.value !== undefined ? { sharedTransactions: overlap.value } : {}),
+      ...(successor?.value ? { resolvedBy: successor.value } : {}),
+    }));
   }
 
   private getStaleTipDetail<T>(
-    cache: Map<string, Promise<T | undefined>>,
+    cache: Map<string, StaleTipDetail<T>>,
     limit: ReturnType<typeof pLimit>,
     key: string,
     load: () => Promise<T | undefined>
-  ): Promise<T | undefined> | undefined {
+  ): StaleTipDetail<T> | undefined {
     const cached = cache.get(key);
     if (cached || limit.pendingCount >= this.staleTipsCacheSize) {
       return cached;
     }
 
-    const result = limit(load)
-      .catch(() => undefined)
-      .then((value) => {
-        if (value === undefined && cache.get(key) === result) {
-          cache.delete(key);
-        }
-        return value;
-      });
-
     if (cache.size >= this.staleTipsCacheSize * 2) {
-      const oldest = cache.keys().next();
-      if (!oldest.done) {
-        cache.delete(oldest.value);
+      // Keep in-flight entries discoverable for deduplication.
+      for (const [oldest, detail] of cache) {
+        if (!detail.pending) {
+          cache.delete(oldest);
+          break;
+        }
       }
     }
-    cache.set(key, result);
-    return result;
+    const entry: StaleTipDetail<T> = { pending: true };
+    cache.set(key, entry);
+    void limit(load)
+      .catch(() => undefined)
+      .then((value) => {
+        entry.pending = false;
+        entry.value = value;
+        if (value === undefined && cache.get(key) === entry) {
+          cache.delete(key);
+        }
+        for (const notify of this.staleTipWaiters) {
+          notify();
+        }
+      });
+    return entry;
   }
 
   private async $getSharedTransactions(tip: StaleTip): Promise<number | undefined> {
