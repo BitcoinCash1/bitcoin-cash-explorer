@@ -28,33 +28,38 @@ class AuditReplication {
     }
     this.inProgress = true;
 
-    const missingAudits = await this.$getMissingAuditBlocks();
+    try {
+      const missingAudits = await this.$getMissingAuditBlocks();
 
-    logger.debug(`Fetching missing audit data for ${missingAudits.length} blocks from trusted servers`, 'Replication');
+      logger.debug(
+        `Fetching missing audit data for ${missingAudits.length} blocks from trusted servers`,
+        'Replication'
+      );
 
-    let totalSynced = 0;
-    let totalMissed = 0;
-    let loggerTimer = Date.now();
-    // process missing audits in batches of BATCH_SIZE
-    for (let i = 0; i < missingAudits.length; i += BATCH_SIZE) {
-      const slice = missingAudits.slice(i, i + BATCH_SIZE);
-      const results = await Promise.all(slice.map((hash) => this.$syncAudit(hash)));
-      const synced = results.reduce((total, status) => (status ? total + 1 : total), 0);
-      totalSynced += synced;
-      totalMissed += slice.length - synced;
-      if (Date.now() - loggerTimer > 10000) {
-        loggerTimer = Date.now();
-        logger.info(
-          `Found ${totalSynced} / ${totalSynced + totalMissed} of ${missingAudits.length} missing audits`,
-          'Replication'
-        );
+      let totalSynced = 0;
+      let totalMissed = 0;
+      let loggerTimer = Date.now();
+      // process missing audits in batches of BATCH_SIZE
+      for (let i = 0; i < missingAudits.length; i += BATCH_SIZE) {
+        const slice = missingAudits.slice(i, i + BATCH_SIZE);
+        const results = await Promise.all(slice.map((hash) => this.$syncAudit(hash)));
+        const synced = results.reduce((total, status) => (status ? total + 1 : total), 0);
+        totalSynced += synced;
+        totalMissed += slice.length - synced;
+        if (Date.now() - loggerTimer > 10000) {
+          loggerTimer = Date.now();
+          logger.info(
+            `Found ${totalSynced} / ${totalSynced + totalMissed} of ${missingAudits.length} missing audits`,
+            'Replication'
+          );
+        }
+        await Common.sleep$(1000);
       }
-      await Common.sleep$(1000);
+
+      logger.debug(`Fetched ${totalSynced} audits, ${totalMissed} still missing`, 'Replication');
+    } finally {
+      this.inProgress = false;
     }
-
-    logger.debug(`Fetched ${totalSynced} audits, ${totalMissed} still missing`, 'Replication');
-
-    this.inProgress = false;
   }
 
   private async $syncAudit(hash: string): Promise<boolean> {
