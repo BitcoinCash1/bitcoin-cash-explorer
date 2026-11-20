@@ -223,7 +223,6 @@ h1 {
   background: color-mix(in srgb, var(--secondary), var(--primary) 16%);
 }
 
-.activity-link:focus-visible {
-  outline: 2px solid var(--green);
-  outline-offset: 3px;
+.activity-link:focus-visible .activity-cube {
+  box-shadow: inset 0 0 0 2px var(--green);
 }
