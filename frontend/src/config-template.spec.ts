@@ -26,6 +26,9 @@ const dockerConfig = JSON.parse(
   )
 );
 
+// Package scripts can take longer on busy CI runners.
+const CONFIG_SCRIPT_TIMEOUT = 30_000;
+
 let directory: string;
 
 function runScript(name: string) {
@@ -87,41 +90,51 @@ beforeEach(() => {
       join(directory, 'dist/explorer/browser/resources', name)
     );
   }
-});
+}, CONFIG_SCRIPT_TIMEOUT);
 
 afterEach(() => {
   rmSync(directory, { recursive: true, force: true });
 });
 
 describe('Docker artifact configuration', () => {
-  it('preserves the website configuration while supplying the full Docker runtime template', () => {
-    const websiteConfig = readArtifact('config.js');
-    expect(websiteConfig).not.toContain('window.__env.NGINX_HOSTNAME');
+  it(
+    'preserves the website configuration while supplying the full Docker runtime template',
+    { timeout: CONFIG_SCRIPT_TIMEOUT },
+    () => {
+      const websiteConfig = readArtifact('config.js');
+      expect(websiteConfig).not.toContain('window.__env.NGINX_HOSTNAME');
 
-    const result = runScript('config:docker-template');
-    expect(result.status, result.stdout + result.stderr).toBe(0);
-    expect(readArtifact('config.js')).toBe(websiteConfig);
+      const result = runScript('config:docker-template');
+      expect(result.status, result.stdout + result.stderr).toBe(0);
+      expect(readArtifact('config.js')).toBe(websiteConfig);
 
-    const template = readArtifact('config.template.js');
-    expect(template).not.toContain('MIN_BLOCK_SIZE_UNITS');
-    expect(websiteConfig).not.toContain('MIN_BLOCK_SIZE_UNITS');
-    const placeholders = [...template.matchAll(/\$\{__([A-Z0-9_]+)__\}/g)].map(
-      (match) => match[1]
-    );
-    expect(new Set(placeholders)).toEqual(new Set(Object.keys(dockerConfig)));
-    expect(template).toContain("window.__env.GIT_COMMIT_HASH = 'config-test'");
-    expect(template).toContain(
-      `window.__env.PACKAGE_JSON_VERSION = '${packageJson.version}'`
-    );
-  });
+      const template = readArtifact('config.template.js');
+      expect(template).not.toContain('MIN_BLOCK_SIZE_UNITS');
+      expect(websiteConfig).not.toContain('MIN_BLOCK_SIZE_UNITS');
+      const placeholders = [
+        ...template.matchAll(/\$\{__([A-Z0-9_]+)__\}/g),
+      ].map((match) => match[1]);
+      expect(new Set(placeholders)).toEqual(new Set(Object.keys(dockerConfig)));
+      expect(template).toContain(
+        "window.__env.GIT_COMMIT_HASH = 'config-test'"
+      );
+      expect(template).toContain(
+        `window.__env.PACKAGE_JSON_VERSION = '${packageJson.version}'`
+      );
+    }
+  );
 
-  it('fails when the full Docker configuration is unavailable', () => {
-    const websiteConfig = readArtifact('config.js');
-    rmSync(join(directory, 'explorer-frontend-config.sample.json'));
+  it(
+    'fails when the full Docker configuration is unavailable',
+    { timeout: CONFIG_SCRIPT_TIMEOUT },
+    () => {
+      const websiteConfig = readArtifact('config.js');
+      rmSync(join(directory, 'explorer-frontend-config.sample.json'));
 
-    const result = runScript('config:docker-template');
-    expect(result.status).toBe(1);
-    expect(result.stderr).toContain('explorer-frontend-config.sample.json');
-    expect(readArtifact('config.js')).toBe(websiteConfig);
-  });
+      const result = runScript('config:docker-template');
+      expect(result.status).toBe(1);
+      expect(result.stderr).toContain('explorer-frontend-config.sample.json');
+      expect(readArtifact('config.js')).toBe(websiteConfig);
+    }
+  );
 });
