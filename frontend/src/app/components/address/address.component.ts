@@ -157,7 +157,52 @@ export class AddressComponent implements OnInit, OnDestroy {
   address: Address;
   addressString: string;
   isLoadingAddress = true;
-  transactions: Transaction[];
+  private loadedTransactions: Transaction[];
+  showBlockActivity = false;
+  blockActivity: { hash: string; height: number; count: number }[] = [];
+  pendingActivity = 0;
+
+  get transactions(): Transaction[] {
+    return this.loadedTransactions;
+  }
+
+  set transactions(transactions: Transaction[]) {
+    this.loadedTransactions = transactions;
+    if (this.showBlockActivity) {
+      this.updateBlockActivity();
+    }
+  }
+
+  toggleBlockActivity(): void {
+    this.showBlockActivity = !this.showBlockActivity;
+    if (this.showBlockActivity) {
+      this.updateBlockActivity();
+    }
+  }
+
+  private updateBlockActivity(): void {
+    const groups = new Map<
+      string,
+      { hash: string; height: number; count: number }
+    >();
+    this.pendingActivity = 0;
+    for (const tx of this.transactions || []) {
+      if (!tx.status?.confirmed) {
+        this.pendingActivity++;
+      } else if (tx.status.block_hash && tx.status.block_height != null) {
+        const hash = tx.status.block_hash;
+        const group = groups.get(hash);
+        if (group) {
+          group.count++;
+        } else {
+          groups.set(hash, { hash, height: tx.status.block_height, count: 1 });
+        }
+      }
+    }
+    this.blockActivity = [...groups.values()].sort(
+      (a, b) => b.height - a.height
+    );
+  }
   utxos: Utxo[];
   isLoadingTransactions = true;
   retryLoadMore = false;
