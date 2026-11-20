@@ -249,13 +249,19 @@
     width: 100px;
   }
 
-  .fees {
-    margin-top: 7px;
+  .block-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 100%;
+    gap: 0.15rem;
+    line-height: 1.2;
   }
 
+  .fees,
   .fee-span,
   .transaction-count {
-    margin-bottom: 2px;
+    margin-block: 0;
   }
 
   .time-difference {
