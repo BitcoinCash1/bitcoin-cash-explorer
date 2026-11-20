@@ -78,7 +78,7 @@ Query OK, 0 rows affected (0.00 sec)
 
 #### Build
 
-_Use Node.js 26.13.0 or newer in the 26.x LTS series and the pinned [pnpm 12.18.0](https://pnpm.io/installation) from `package.json`. CI uses Node.js 26.13.1._
+_Use Node.js 26.13.0 or newer in the 26.x LTS series and the pinned [pnpm 12.21.0](https://pnpm.io/installation) from `package.json`. CI uses Node.js 26.13.1._
 
 Use [nvm](https://github.com/nvm-sh/nvm#installing-and-updating) for local development. From the repository root, run `nvm install` and `nvm use`; the root `.nvmrc` selects Node.js 26.13.1.
 
