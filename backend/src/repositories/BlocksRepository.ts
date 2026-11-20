@@ -663,7 +663,7 @@ class BlocksRepository {
   /**
    * Get one block by height
    */
-  public async $getBlockByHeight(height: number): Promise<BlockExtended | null> {
+  public async $getBlockByHeight(height: number, enrich = true): Promise<BlockExtended | null> {
     try {
       const [rows]: any[] = await DB.query(
         `
@@ -678,7 +678,7 @@ class BlocksRepository {
         return null;
       }
 
-      return await this.formatDbBlockIntoExtendedBlock(rows[0] as DatabaseBlock);
+      return await this.formatDbBlockIntoExtendedBlock(rows[0] as DatabaseBlock, enrich);
     } catch (e) {
       logger.err(`Cannot get indexed block ${height}. Reason: ` + (e instanceof Error ? e.message : e));
       throw e;

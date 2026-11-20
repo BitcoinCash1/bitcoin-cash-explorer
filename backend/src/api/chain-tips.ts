@@ -2,6 +2,7 @@ import shutdown from '../utils/shutdown';
 import config from '../config';
 import logger from '../logger';
 import { BlockExtended } from '../mempool.interfaces';
+import BlocksRepository from '../repositories/BlocksRepository';
 import BlocksSummariesRepository from '../repositories/BlocksSummariesRepository';
 import bitcoinApi, { bitcoinCoreApi } from './bitcoin/bitcoin-api-factory';
 import bitcoinClient from './bitcoin/bitcoin-client';
@@ -21,6 +22,7 @@ export interface StaleTip extends ChainTip {
   stale: BlockExtended;
   canonical: BlockExtended;
   sharedTransactions?: number;
+  resolvedBy?: { id: string; height: number; timestamp: number; pool?: { slug: string; name: string } };
 }
 
 export interface OrphanedBlock {
@@ -45,7 +47,7 @@ class ChainTips {
 
   private staleTipsCacheSize = 50;
   private overlapLimit = pLimit(4);
-  private overlaps = new Map<string, Promise<number | undefined>>();
+  private overlaps = new Map<string, Promise<Pick<StaleTip, 'sharedTransactions' | 'resolvedBy'>>>();
   private maxIndexingQueueSize = 100;
 
   public async updateOrphanedBlocks(): Promise<void> {
@@ -254,18 +256,17 @@ class ChainTips {
             return tip;
           }
           overlap = this.overlapLimit(async () => {
-            const stale = await bitcoinApi.$getTxIdsForBlock(tip.stale.id, true);
-            const canonical = await bitcoinApi.$getTxIdsForBlock(tip.canonical.id);
-            if (!stale.length || !canonical.length) {
+            const [sharedTransactions, resolvedBy] = await Promise.all([
+              this.$getSharedTransactions(tip).catch(() => undefined),
+              this.$getResolvingBlock(tip).catch(() => undefined),
+            ]);
+            if (
+              (sharedTransactions === undefined || (config.DATABASE.ENABLED && !resolvedBy)) &&
+              this.overlaps.get(key) === overlap
+            ) {
               this.overlaps.delete(key);
-              return undefined;
             }
-            // Coinbase transactions are specific to their respective blocks.
-            const canonicalTransactions = new Set(canonical.slice(1));
-            return stale.slice(1).reduce((count, txid) => count + Number(canonicalTransactions.has(txid)), 0);
-          }).catch(() => {
-            this.overlaps.delete(key);
-            return undefined;
+            return { sharedTransactions, ...(resolvedBy ? { resolvedBy } : {}) };
           });
           if (this.overlaps.size >= this.staleTipsCacheSize * 2) {
             const oldest = this.overlaps.keys().next();
@@ -275,9 +276,36 @@ class ChainTips {
           }
           this.overlaps.set(key, overlap);
         }
-        return { ...tip, sharedTransactions: await overlap };
+        return { ...tip, ...(await overlap) };
       })
     );
+  }
+
+  private async $getSharedTransactions(tip: StaleTip): Promise<number | undefined> {
+    const stale = await bitcoinApi.$getTxIdsForBlock(tip.stale.id, true);
+    const canonical = await bitcoinApi.$getTxIdsForBlock(tip.canonical.id);
+    if (stale.length !== tip.stale.tx_count || canonical.length !== tip.canonical.tx_count) {
+      return undefined;
+    }
+    const canonicalTransactions = new Set(canonical.slice(1));
+    return stale.slice(1).reduce((count, txid) => count + Number(canonicalTransactions.has(txid)), 0);
+  }
+
+  private async $getResolvingBlock(tip: StaleTip): Promise<StaleTip['resolvedBy']> {
+    if (!config.DATABASE.ENABLED) {
+      return undefined;
+    }
+    const block = await BlocksRepository.$getBlockByHeight(tip.canonical.height + 1, false);
+    if (block?.previousblockhash !== tip.canonical.id) {
+      return undefined;
+    }
+    const pool = block.extras?.pool;
+    return {
+      id: block.id,
+      height: block.height,
+      timestamp: block.timestamp,
+      pool: pool ? { slug: pool.slug, name: pool.name } : undefined,
+    };
   }
 
   public getStaleTips(): StaleTip[] {
@@ -285,6 +313,7 @@ class ChainTips {
   }
 
   clearOrphanCacheAboveHeight(height: number): void {
+    this.overlaps.clear();
     for (const h in this.orphansByHeight) {
       if (Number(h) > height) {
         const orphans = this.orphansByHeight[h];

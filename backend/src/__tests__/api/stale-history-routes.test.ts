@@ -77,9 +77,16 @@ test('recent overlap is opt-in and concurrent requests share txid lookups', asyn
   const tips = [
     {
       stale: { id: 'stale-overlap-test', tx_count: 3 },
-      canonical: { id: 'canonical-overlap-test', tx_count: 3 },
+      canonical: { id: 'canonical-overlap-test', height: 12, tx_count: 3 },
     },
   ] as StaleTip[];
+  config.DATABASE.ENABLED = true;
+  const successor = jest.spyOn(BlocksRepository, '$getBlockByHeight').mockResolvedValue({
+    id: 'resolved',
+    previousblockhash: 'canonical-overlap-test',
+    height: 13,
+    timestamp: 100,
+  } as never);
   jest.spyOn(chainTips, 'getStaleTips').mockReturnValue(tips);
   const lookup = jest
     .spyOn(bitcoinApi, '$getTxIdsForBlock')
@@ -89,9 +96,12 @@ test('recent overlap is opt-in and concurrent requests share txid lookups', asyn
   expect(lookup).not.toHaveBeenCalled();
   const replies = await Promise.all([request({ overlap: '1' }, 'stale-tips'), request({ overlap: '1' }, 'stale-tips')]);
   for (const reply of replies) {
-    expect(reply.body).toEqual([{ ...tips[0], sharedTransactions: 1 }]);
+    expect(reply.body).toEqual([
+      { ...tips[0], sharedTransactions: 1, resolvedBy: { id: 'resolved', height: 13, timestamp: 100 } },
+    ]);
   }
   expect(lookup.mock.calls).toEqual([['stale-overlap-test', true], ['canonical-overlap-test']]);
+  expect(successor.mock.calls).toEqual([[13, false]]);
 });
 
 test('validated cursor reaches repository; malformed cursor returns 400 without querying', async () => {

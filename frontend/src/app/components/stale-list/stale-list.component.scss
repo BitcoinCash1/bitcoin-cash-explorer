@@ -241,3 +241,89 @@
     width: 100px;
   }
 }
+
+.stale-details {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  gap: 1.25rem;
+  margin-top: 1.75rem;
+  text-align: center;
+}
+
+.comparison-detail {
+  flex: 1 1 15rem;
+  max-width: 22rem;
+  min-width: 0;
+
+  h3 {
+    color: var(--fg);
+    font-size: 1rem;
+    margin: 0 0 0.6rem;
+  }
+}
+
+.overlap-grid {
+  display: grid;
+  position: relative;
+  height: 1.45rem;
+  overflow: hidden;
+  border-radius: 0.2rem;
+
+  span {
+    min-width: 0;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      repeating-linear-gradient(
+        90deg,
+        transparent 0 6px,
+        var(--stat-box-bg) 6px 7px
+      ),
+      repeating-linear-gradient(
+        0deg,
+        transparent 0 6px,
+        var(--stat-box-bg) 6px 7px
+      );
+  }
+
+  .stale-only {
+    background: #c4579d;
+  }
+  .shared {
+    background: #20865b;
+  }
+  .winning-only {
+    background: #1879bc;
+  }
+
+  strong {
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    font-size: 0.8rem;
+    text-shadow:
+      0 1px 3px #000,
+      0 0 4px #000;
+  }
+}
+
+.overlap-caption {
+  margin: 0.4rem 0 0;
+  color: var(--fg);
+  font-size: 0.75rem;
+}
+
+.resolution-block {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
