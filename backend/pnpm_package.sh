@@ -22,6 +22,9 @@ const maintenance = Object.fromEntries(
 );
 require('node:fs').writeFileSync('package/package.json', JSON.stringify({ name, version, scripts: maintenance }, null, 2) + '\n');
 JS
+# The runtime package ships preinstalled dependencies and has no install manifest.
+# Keep pnpm from reconciling node_modules against the script-only package.json.
+printf 'verifyDepsBeforeRun: false\n' > package/pnpm-workspace.yaml
 # Remove symlink for rust-gbt and insert real folder
 rm package/node_modules/rust-gbt
 cp -R rust-gbt package/node_modules
