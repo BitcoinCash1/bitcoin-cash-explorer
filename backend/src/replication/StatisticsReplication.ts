@@ -6,6 +6,7 @@ import { Common } from '../api/common';
 import statistics from '../api/statistics/statistics-api';
 import backendInfo from '../api/backend-info';
 import { OptimizedStatistic } from '../mempool.interfaces';
+import { bucketsEnabled, historyQuery } from '../api/statistics/statistics-buckets';
 
 interface MissingStatistics {
   '24h': Set<number>;
@@ -396,7 +397,7 @@ class StatisticsReplication {
   private mapBySlot(stats: OptimizedStatistic[], step: number): Map<number, OptimizedStatistic> {
     const slots = new Map<number, OptimizedStatistic>();
     for (const stat of stats) {
-      const slot = this.roundToNearestStep(Number(stat.added), step);
+      const slot = this.replicationSlot(Number(stat.added), step);
       if (!slots.has(slot)) {
         slots.set(slot, stat.sizes.length === SIZES_LENGTH - 2 ? { ...stat, sizes: [0, ...stat.sizes, 0] } : stat);
       }
@@ -475,15 +476,16 @@ class StatisticsReplication {
       const end = interval[1];
       const step = steps[interval[2]];
 
-      const [rows]: any[] = await DB.query(
-        `
-        SELECT UNIX_TIMESTAMP(added) as added
-        FROM statistics
-        WHERE added >= FROM_UNIXTIME(?) AND added <= FROM_UNIXTIME(?)
-        GROUP BY UNIX_TIMESTAMP(added) DIV ${step} ORDER BY statistics.added DESC
-      `,
-        [start, end]
-      );
+      const query =
+        step >= 1800 && (await bucketsEnabled())
+          ? historyQuery(step, start, end, true)
+          : {
+              sql: `SELECT UNIX_TIMESTAMP(added) as added
+                    FROM statistics WHERE added >= FROM_UNIXTIME(?) AND added <= FROM_UNIXTIME(?)
+                    GROUP BY UNIX_TIMESTAMP(added) DIV ${step} ORDER BY statistics.added DESC`,
+              params: [start, end],
+            };
+      const [rows]: any[] = await DB.query(query.sql, query.params);
 
       const startingTime = Math.max(startTime, start) - (Math.max(startTime, start) % step);
 
@@ -492,7 +494,7 @@ class StatisticsReplication {
         timeSteps.push(time);
       }
 
-      const roundedTimesAlreadyHere = new Set<number>(rows.map((row) => this.roundToNearestStep(row.added, step)));
+      const roundedTimesAlreadyHere = new Set<number>(rows.map((row) => this.replicationSlot(row.added, step)));
       const missingTimes = timeSteps.filter((time) => !roundedTimesAlreadyHere.has(time));
       const gaps = missingTimes.filter((time, i, arr) => arr[i + 1] === time + step || arr[i - 1] === time - step);
       const eligible = new Set(gaps.length >= timeSteps.length * 0.01 ? gaps : []);
@@ -515,9 +517,10 @@ class StatisticsReplication {
     }
   }
 
-  private roundToNearestStep(time: number, step: number): number {
+  private replicationSlot(time: number, step: number): number {
     const remainder = time % step;
-    if (remainder < step / 2) {
+    // Long-history rows represent the containing SQL bucket, even for older peers.
+    if (step >= steps['1m'] || remainder < step / 2) {
       return time - remainder;
     } else {
       return time + (step - remainder);

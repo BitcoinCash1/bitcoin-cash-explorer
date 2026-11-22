@@ -104,6 +104,17 @@ describe('StatisticsReplication $syncStatistics', () => {
     jest.restoreAllMocks();
   });
 
+  test('fills both adjacent long-history slots from a peer with a late representative timestamp', async () => {
+    const start = START - (START % 1800);
+    const added = [start + 1500, start + 1860];
+    config.REPLICATION.SERVERS = ['a'];
+    jest.spyOn(statistics, '$list1M').mockResolvedValue([]);
+    responses = { a: rows(0, 2).map((row, i) => ({ ...row, added: added[i] })) };
+    const result = await replication.$syncStatistics('1m', new Set([start, start + 1800]));
+    expect(result.synced).toBe(2);
+    expect(create.mock.calls.map(([sample]) => sample.added)).toEqual(added);
+  });
+
   test('fills a gap from the peer that continues our data', async () => {
     config.REPLICATION.SERVERS = ['a', 'b', 'c'];
     jest.spyOn(statistics, '$list1W').mockResolvedValue(rows(0, 40));

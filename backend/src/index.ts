@@ -13,6 +13,7 @@ import blocks from './api/blocks';
 import memPool from './api/mempool';
 import diskCache from './api/disk-cache';
 import statistics from './api/statistics/statistics';
+import { checkBucketWriter } from './api/statistics/statistics-buckets';
 import websocketHandler from './api/websocket-handler';
 import logger from './logger';
 import backendInfo from './api/backend-info';
@@ -136,6 +137,7 @@ export class Server {
           await databaseMigration.$blocksReindexingTruncate();
         }
         await databaseMigration.$initializeOrMigrateDatabase();
+        await checkBucketWriter();
       } catch (e) {
         throw new Error(e instanceof Error ? e.message : 'Error');
       }

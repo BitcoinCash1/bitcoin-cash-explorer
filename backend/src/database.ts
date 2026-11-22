@@ -104,18 +104,50 @@ class DB {
     }
   }
 
-  public async $transaction<T>(work: (connection: PoolConnection) => Promise<T>): Promise<T> {
-    const connection = await (await this.getPool()).getConnection();
+  public async $transaction<T>(work: (connection: PoolConnection) => Promise<T>, timeout = 0): Promise<T> {
+    let connection: PoolConnection | undefined;
+    let expired = false;
+    let timer: NodeJS.Timeout | undefined;
+    const run = async () => {
+      connection = await (await this.getPool()).getConnection();
+      // Pool acquisition may finish after the deadline. No transaction has started.
+      if (expired) {
+        connection.release();
+        throw new Error('Transaction expired while waiting for a connection');
+      }
+      try {
+        await connection.beginTransaction();
+        const result = await work(connection);
+        if (!expired) {
+          await connection.commit();
+        }
+        return result;
+      } catch (error) {
+        if (!expired) {
+          await connection.rollback();
+        }
+        throw error;
+      } finally {
+        if (!expired) {
+          connection.release();
+        }
+      }
+    };
+    if (timeout <= 0) {
+      return run();
+    }
+    const deadline = new Promise<never>((_, reject) => {
+      timer = setTimeout(() => {
+        expired = true;
+        // Never return a connection with an outstanding statement to the pool.
+        connection?.destroy();
+        reject(new Error(`Database transaction exceeded its ${timeout} ms deadline`));
+      }, timeout);
+    });
     try {
-      await connection.beginTransaction();
-      const result = await work(connection);
-      await connection.commit();
-      return result;
-    } catch (error) {
-      await connection.rollback();
-      throw error;
+      return await Promise.race([run(), deadline]);
     } finally {
-      connection.release();
+      clearTimeout(timer);
     }
   }
 

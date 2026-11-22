@@ -1,6 +1,7 @@
 import DB from '../../database';
 import logger from '../../logger';
 import { Statistic, OptimizedStatistic } from '../../mempool.interfaces';
+import { bucketsEnabled, insertStatistic, readHistory } from './statistics-buckets';
 
 class StatisticsApi {
   protected queryTimeout = 120000;
@@ -58,8 +59,7 @@ class StatisticsApi {
             )
             VALUES (NOW(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
                0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)`;
-      const [result]: any = await DB.query(query);
-      return result.insertId;
+      return await insertStatistic(query);
     } catch (e) {
       logger.err('$createZeroedStatistic() error' + (e instanceof Error ? e.message : e));
     }
@@ -117,7 +117,7 @@ class StatisticsApi {
               size_2000
             )
             VALUES (${
-              convertToDatetime ? `FROM_UNIXTIME(${statistics.added})` : statistics.added
+              convertToDatetime ? 'FROM_UNIXTIME(?)' : statistics.added
             }, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
@@ -169,8 +169,10 @@ class StatisticsApi {
         statistics.size_1800,
         statistics.size_2000,
       ];
-      const [result]: any = await DB.query(query, params);
-      return result.insertId;
+      if (convertToDatetime) {
+        params.unshift(statistics.added);
+      }
+      return await insertStatistic(query, params);
     } catch (e) {
       logger.err('$create() error' + (e instanceof Error ? e.message : e));
     }
@@ -334,92 +336,45 @@ class StatisticsApi {
     }
   }
 
-  public async $list1M(): Promise<OptimizedStatistic[]> {
-    try {
-      const query = this.getQueryForDaysAvg(1800, '1 MONTH'); // 30m interval
-      const [rows] = await DB.query({ sql: query, timeout: this.queryTimeout });
-      return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
-    } catch (e) {
-      logger.err('$list1M() error' + (e instanceof Error ? e.message : e));
-      throw e;
+  private async $history(width: number, interval: string): Promise<OptimizedStatistic[]> {
+    if (await bucketsEnabled()) {
+      return this.mapStatisticToOptimizedStatistic((await readHistory(width, interval)) as Statistic[]);
     }
+    const sql = width < 28800 ? this.getQueryForDaysAvg(width, interval) : this.getQueryForDays(width, interval);
+    const [rows] = await DB.query({ sql, timeout: this.queryTimeout });
+    return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
+  }
+
+  public async $list1M(): Promise<OptimizedStatistic[]> {
+    return this.$history(1800, '1 MONTH');
   }
 
   public async $list3M(): Promise<OptimizedStatistic[]> {
-    try {
-      const query = this.getQueryForDaysAvg(7200, '3 MONTH'); // 2h interval
-      const [rows] = await DB.query({ sql: query, timeout: this.queryTimeout });
-      return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
-    } catch (e) {
-      logger.err('$list3M() error' + (e instanceof Error ? e.message : e));
-      throw e;
-    }
+    return this.$history(7200, '3 MONTH');
   }
 
   public async $list6M(): Promise<OptimizedStatistic[]> {
-    try {
-      const query = this.getQueryForDaysAvg(10800, '6 MONTH'); // 3h interval
-      const [rows] = await DB.query({ sql: query, timeout: this.queryTimeout });
-      return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
-    } catch (e) {
-      logger.err('$list6M() error' + (e instanceof Error ? e.message : e));
-      throw e;
-    }
+    return this.$history(10800, '6 MONTH');
   }
 
   public async $list1Y(): Promise<OptimizedStatistic[]> {
-    try {
-      const query = this.getQueryForDays(28800, '1 YEAR'); // 8h interval
-      const [rows] = await DB.query({ sql: query, timeout: this.queryTimeout });
-      return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
-    } catch (e) {
-      logger.err('$list1Y() error' + (e instanceof Error ? e.message : e));
-      throw e;
-    }
+    return this.$history(28800, '1 YEAR');
   }
 
   public async $list2Y(): Promise<OptimizedStatistic[]> {
-    try {
-      const query = this.getQueryForDays(28800, '2 YEAR'); // 8h interval
-      const [rows] = await DB.query({ sql: query, timeout: this.queryTimeout });
-      return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
-    } catch (e) {
-      logger.err('$list2Y() error' + (e instanceof Error ? e.message : e));
-      throw e;
-    }
+    return this.$history(28800, '2 YEAR');
   }
 
   public async $list3Y(): Promise<OptimizedStatistic[]> {
-    try {
-      const query = this.getQueryForDays(43200, '3 YEAR'); // 12h interval
-      const [rows] = await DB.query({ sql: query, timeout: this.queryTimeout });
-      return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
-    } catch (e) {
-      logger.err('$list3Y() error' + (e instanceof Error ? e.message : e));
-      throw e;
-    }
+    return this.$history(43200, '3 YEAR');
   }
 
   public async $list4Y(): Promise<OptimizedStatistic[]> {
-    try {
-      const query = this.getQueryForDays(43200, '4 YEAR'); // 12h interval
-      const [rows] = await DB.query({ sql: query, timeout: this.queryTimeout });
-      return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
-    } catch (e) {
-      logger.err('$list4Y() error' + (e instanceof Error ? e.message : e));
-      throw e;
-    }
+    return this.$history(43200, '4 YEAR');
   }
 
   public async $listAll(): Promise<OptimizedStatistic[]> {
-    try {
-      const query = this.getQueryForDays(43200, 'all'); // 12h interval
-      const [rows] = await DB.query({ sql: query, timeout: this.queryTimeout });
-      return this.mapStatisticToOptimizedStatistic(rows as Statistic[]);
-    } catch (e) {
-      logger.err('$listAll() error' + (e instanceof Error ? e.message : e));
-      throw e;
-    }
+    return this.$history(43200, 'all');
   }
 
   private mapStatisticToOptimizedStatistic(statistic: Statistic[]): OptimizedStatistic[] {
