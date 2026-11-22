@@ -308,14 +308,7 @@ From the built backend directory, run `pnpm statistics:buckets:activate` with th
 docker exec -w /backend/package bch-explorer-api-chipnet pnpm statistics:buckets:activate
 ```
 
-Use the corresponding backend container for Mainnet or Testnet4. The published 3.19.1 Docker image uses the original commands. Run them in order for each network:
-
-```sh
-container=bch-explorer-api-chipnet
-docker exec "$container" node /backend/package/tasks/statistics-buckets.js backfill &&
-docker exec "$container" node /backend/package/tasks/statistics-buckets.js verify &&
-docker exec "$container" node /backend/package/tasks/statistics-buckets.js enable
-```
+Use the corresponding backend container for Mainnet or Testnet4.
 
 Activation backfills in resumable batches, compares the oldest and newest occupied bucket at each resolution with raw samples, and enables bucket reads only if those checks succeed. Use `pnpm statistics:buckets:status` to check progress or `pnpm statistics:buckets:disable` to switch reads back to raw history. The `backfill`, `verify`, and `enable` steps are also available as individual scripts.
 
