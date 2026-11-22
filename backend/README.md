@@ -302,13 +302,23 @@ Use a directory owned by the backend service account, writable only by trusted a
 
 Schema 113 adds summary buckets for history ranges of one month and longer. Stop all old backend writers for the database before starting the upgraded backend. The migration records the last historical ID. The upgraded sampler and peer replication maintain summaries for new rows immediately. Direct SQL imports or edits to the raw table bypass this maintenance.
 
-Run these commands from the built backend directory, using the same configuration as the service. Repeat for each network database.
+From the built backend directory, run `pnpm statistics:buckets:activate` with the same configuration as the service. In Docker, run the command in the backend container for each network:
 
 ```sh
-node dist/tasks/statistics-buckets.js backfill
-node dist/tasks/statistics-buckets.js verify
+docker exec -w /backend/package bch-explorer-api-chipnet pnpm statistics:buckets:activate
 ```
 
-Backfill commits in batches and resumes after interruption. Reads continue using raw history. The verification command compares the oldest and newest occupied bucket at each resolution with its raw samples. After checking the results, run `node dist/tasks/statistics-buckets.js enable`. To switch reads back immediately, run `node dist/tasks/statistics-buckets.js disable`. Both commands leave sampling and raw history intact. On startup the upgraded backend compares the latest raw ID with the ID recorded by the bucket writer. If an older backend appended samples, history reads automatically switch back to raw and the old backfill checkpoint becomes invalid.
+Use the corresponding backend container for Mainnet or Testnet4. The published 3.19.1 Docker image uses the original commands. Run them in order for each network:
 
-To rebuild after a writer downgrade, stop all backends and bucket maintenance tasks using that network database. Run `node dist/tasks/statistics-buckets.js reset` with the upgraded binary. This clears the derived buckets and records a fresh historical boundary in one transaction. Restart the upgraded backend, then run `backfill`, `verify` and `enable` as above. Keep older writers stopped throughout the rebuild.
+```sh
+container=bch-explorer-api-chipnet
+docker exec "$container" node /backend/package/tasks/statistics-buckets.js backfill &&
+docker exec "$container" node /backend/package/tasks/statistics-buckets.js verify &&
+docker exec "$container" node /backend/package/tasks/statistics-buckets.js enable
+```
+
+Activation backfills in resumable batches, compares the oldest and newest occupied bucket at each resolution with raw samples, and enables bucket reads only if those checks succeed. Use `pnpm statistics:buckets:status` to check progress or `pnpm statistics:buckets:disable` to switch reads back to raw history. The `backfill`, `verify`, and `enable` steps are also available as individual scripts.
+
+On startup the upgraded backend compares the latest raw ID with the ID recorded by the bucket writer. If an older backend appended samples, history reads automatically switch back to raw and the old backfill checkpoint becomes invalid.
+
+To rebuild after a writer downgrade, stop all backends and bucket maintenance tasks using that network database. Run `pnpm statistics:buckets:reset` with the upgraded binary. This clears the derived buckets and records a fresh historical boundary in one transaction. Restart the upgraded backend, then run `pnpm statistics:buckets:activate` again. Keep older writers stopped throughout the rebuild.

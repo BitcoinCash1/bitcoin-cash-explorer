@@ -12,6 +12,16 @@ mv dist package
 cp -R node_modules package
 # Copy healthcheck.js
 cp healthcheck.js package
+# Keep the maintenance scripts available in the runtime image.
+node - <<'JS'
+const { name, version, scripts } = require('./package.json');
+const maintenance = Object.fromEntries(
+  Object.entries(scripts)
+    .filter(([name]) => name.startsWith('statistics:buckets:'))
+    .map(([name, command]) => [name, command.replace('node dist/', 'node ')])
+);
+require('node:fs').writeFileSync('package/package.json', JSON.stringify({ name, version, scripts: maintenance }, null, 2) + '\n');
+JS
 # Remove symlink for rust-gbt and insert real folder
 rm package/node_modules/rust-gbt
 cp -R rust-gbt package/node_modules
