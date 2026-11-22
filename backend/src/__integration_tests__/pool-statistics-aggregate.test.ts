@@ -44,5 +44,5 @@ test('covering index migration resumes after DDL and keeps all index columns', a
     WHERE TABLE_SCHEMA=DATABASE() AND TABLE_NAME='blocks' AND INDEX_NAME='pool_statistics' ORDER BY SEQ_IN_INDEX`);
   expect(parts.map((part) => part.COLUMN_NAME)).toEqual(['pool_id', 'stale', 'blockTimestamp', 'reward']);
   const [rows]: any[] = await DB.query("SELECT number FROM state WHERE name='schema_version'");
-  expect(rows[0].number).toBe(112);
+  expect(rows[0].number).toBe(113);
 });

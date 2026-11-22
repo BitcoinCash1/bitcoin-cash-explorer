@@ -297,3 +297,16 @@ the `EXPLORER_` prefix; see [Docker configuration](../docker/README.md).
 Set `EXPLORER.UNIX_SOCKET_PATH` to serve the backend API and WebSocket endpoint over a local Unix socket in addition to its TCP port. Leave it empty to use TCP only. This setting is separate from BCHN RPC connection pooling and the Valkey socket configuration.
 
 Use a directory owned by the backend service account, writable only by trusted administrators and that account. Before starting listeners or cluster workers, the primary process probes an existing socket for up to one second. It removes a stale socket only after connection refusal and an unchanged filesystem identity. An active listener, regular file, symlink, timeout, or permission error stops startup with a diagnostic; resolve that condition before restarting. The service does not create the parent directory or remove arbitrary files.
+
+### Monthly and yearly mempool statistics
+
+Schema 113 adds summary buckets for history ranges of one month and longer. Stop all old backend writers for the database before starting the upgraded backend. The migration records the last historical ID. The upgraded sampler and peer replication maintain summaries for new rows immediately. Direct SQL imports or edits to the raw table bypass this maintenance.
+
+Run these commands from the built backend directory, using the same configuration as the service. Repeat for each network database.
+
+```sh
+node dist/tasks/statistics-buckets.js backfill
+node dist/tasks/statistics-buckets.js verify
+```
+
+Backfill commits in batches and resumes after interruption. Reads continue using raw history. The verification command compares the oldest and newest occupied bucket at each resolution with its raw samples. After checking the results, run `node dist/tasks/statistics-buckets.js enable`. To switch reads back immediately, run `node dist/tasks/statistics-buckets.js disable`. Both commands leave sampling and raw history intact. If reverting to a backend that only writes raw rows, rebuild the summaries before enabling them again.

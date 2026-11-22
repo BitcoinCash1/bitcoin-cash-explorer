@@ -2,9 +2,10 @@ import config from '../config';
 import DB from '../database';
 import logger from '../logger';
 import { Common } from './common';
+import { bucketSchema } from './statistics/statistics-buckets';
 
 class DatabaseMigration {
-  private static currentVersion = 112;
+  private static currentVersion = 113;
   private queryTimeout = 3600_000;
   private statisticsAddedIndexed = false;
   private uniqueLogs: string[] = [];
@@ -975,6 +976,15 @@ class DatabaseMigration {
         throw new Error('Conflicting blocks index definition: pool_statistics');
       }
       await this.updateToSchemaVersion(112);
+    }
+
+    if (databaseSchemaVersion < 113) {
+      await this.$executeQuery(bucketSchema);
+      // Migration runs before sampling/replication start, with previous writers drained.
+      await this.$executeQuery(`INSERT IGNORE INTO state (name, number)
+        SELECT 'statistics_bucket_limit', COALESCE(MAX(id), 0) FROM statistics`);
+      await this.$executeQuery(`INSERT IGNORE INTO state (name, number)
+        VALUES ('statistics_bucket_cursor', 0), ('statistics_bucket_reads', 0)`);
     }
   }
 

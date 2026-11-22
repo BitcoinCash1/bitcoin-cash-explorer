@@ -6,6 +6,7 @@ import { Common } from '../api/common';
 import statistics from '../api/statistics/statistics-api';
 import backendInfo from '../api/backend-info';
 import { OptimizedStatistic } from '../mempool.interfaces';
+import { bucketsEnabled, historyQuery } from '../api/statistics/statistics-buckets';
 
 interface MissingStatistics {
   '24h': Set<number>;
@@ -475,15 +476,16 @@ class StatisticsReplication {
       const end = interval[1];
       const step = steps[interval[2]];
 
-      const [rows]: any[] = await DB.query(
-        `
-        SELECT UNIX_TIMESTAMP(added) as added
-        FROM statistics
-        WHERE added >= FROM_UNIXTIME(?) AND added <= FROM_UNIXTIME(?)
-        GROUP BY UNIX_TIMESTAMP(added) DIV ${step} ORDER BY statistics.added DESC
-      `,
-        [start, end]
-      );
+      const query =
+        step >= 1800 && (await bucketsEnabled())
+          ? historyQuery(step, start, end, true)
+          : {
+              sql: `SELECT UNIX_TIMESTAMP(added) as added
+                    FROM statistics WHERE added >= FROM_UNIXTIME(?) AND added <= FROM_UNIXTIME(?)
+                    GROUP BY UNIX_TIMESTAMP(added) DIV ${step} ORDER BY statistics.added DESC`,
+              params: [start, end],
+            };
+      const [rows]: any[] = await DB.query(query.sql, query.params);
 
       const startingTime = Math.max(startTime, start) - (Math.max(startTime, start) % step);
 

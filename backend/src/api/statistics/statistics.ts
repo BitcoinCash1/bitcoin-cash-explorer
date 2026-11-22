@@ -1,3 +1,4 @@
+import { feeBands } from './statistics-buckets';
 import shutdown from '../../utils/shutdown';
 import memPool from '../mempool';
 import logger from '../../logger';
@@ -87,21 +88,16 @@ class Statistics {
     const totalSize = memPoolArray.map((tx) => tx.size).reduce((acc, curr) => acc + curr);
     const totalFee = memPoolArray.map((tx) => tx.fee).reduce((acc, curr) => acc + curr);
 
-    const logFees = [
-      0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 15, 20, 30, 40, 50, 60, 70, 80, 90, 100, 125, 150, 175, 200, 250, 300, 350, 400,
-      500, 600, 700, 800, 900, 1000, 1200, 1400, 1600, 1800, 2000,
-    ];
-
     const sizeFees: { [feePerByte: number]: number } = {};
-    const lastItem = logFees.length - 1;
+    const lastItem = feeBands.length - 1;
 
     memPoolArray.forEach((transaction) => {
-      for (let i = 0; i < logFees.length; i++) {
-        if (i === lastItem || transaction.feePerSize < logFees[i + 1]) {
-          if (sizeFees[logFees[i]]) {
-            sizeFees[logFees[i]] += transaction.size;
+      for (let i = 0; i < feeBands.length; i++) {
+        if (i === lastItem || transaction.feePerSize < feeBands[i + 1]) {
+          if (sizeFees[feeBands[i]]) {
+            sizeFees[feeBands[i]] += transaction.size;
           } else {
-            sizeFees[logFees[i]] = transaction.size;
+            sizeFees[feeBands[i]] = transaction.size;
           }
           break;
         }
