@@ -984,6 +984,8 @@ class DatabaseMigration {
       await this.$executeQuery(`INSERT IGNORE INTO state (name, number)
         SELECT 'statistics_bucket_limit', COALESCE(MAX(id), 0) FROM statistics`);
       await this.$executeQuery(`INSERT IGNORE INTO state (name, number)
+        SELECT 'statistics_bucket_last_id', number FROM state WHERE name='statistics_bucket_limit'`);
+      await this.$executeQuery(`INSERT IGNORE INTO state (name, number)
         VALUES ('statistics_bucket_cursor', 0), ('statistics_bucket_reads', 0)`);
     }
   }

@@ -1,6 +1,5 @@
-import { ResultSetHeader } from 'mysql2/promise';
 import DB from '../database';
-import { backfillBatch, verifyBuckets } from '../api/statistics/statistics-buckets';
+import { backfillBatch, enableBuckets, resetBuckets, verifyBuckets } from '../api/statistics/statistics-buckets';
 
 async function run(command: string) {
   switch (command) {
@@ -13,25 +12,22 @@ async function run(command: string) {
     case 'verify':
       console.log(`Compared ${await verifyBuckets()} occupied buckets with raw statistics`);
       break;
-    case 'enable': {
-      const [result] = await DB.query<ResultSetHeader>(`UPDATE state SET number=1 WHERE name='statistics_bucket_reads'
-        AND (SELECT number FROM state WHERE name='statistics_bucket_cursor') =
-            (SELECT number FROM state WHERE name='statistics_bucket_limit')`);
-      if (!result.affectedRows) {
-        throw new Error('Missing migration or incomplete backfill');
-      }
+    case 'reset':
+      await resetBuckets();
       break;
-    }
+    case 'enable':
+      await enableBuckets();
+      break;
     case 'disable':
       await DB.query(`UPDATE state SET number=0 WHERE name='statistics_bucket_reads'`);
       break;
     case 'status':
       break;
     default:
-      throw new Error('Expected backfill, verify, enable, disable or status');
+      throw new Error('Expected reset, backfill, verify, enable, disable or status');
   }
   const [rows] = await DB.query(
-    `SELECT name, number FROM state WHERE name IN ('statistics_bucket_reads','statistics_bucket_cursor','statistics_bucket_limit')`
+    `SELECT name, number FROM state WHERE name IN ('statistics_bucket_reads','statistics_bucket_cursor','statistics_bucket_limit','statistics_bucket_last_id')`
   );
   console.table(rows);
 }

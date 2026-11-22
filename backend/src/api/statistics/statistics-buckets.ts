@@ -1,5 +1,7 @@
 import { ResultSetHeader, RowDataPacket } from 'mysql2/promise';
 import DB from '../../database';
+import config from '../../config';
+import logger from '../../logger';
 
 const widths = [1800, 7200, 10800, 28800, 43200];
 export const feeBands = [
@@ -59,8 +61,11 @@ export async function insertStatistic(sql: string, params: unknown[] = []): Prom
   return DB.$transaction(async (connection) => {
     const [result] = await connection.query<ResultSetHeader>(sql, params);
     await connection.query(insertSample, [result.insertId]);
+    await connection.query(`UPDATE state SET number=GREATEST(number, ?) WHERE name='statistics_bucket_last_id'`, [
+      result.insertId,
+    ]);
     return result.insertId;
-  });
+  }, config.DATABASE.TIMEOUT);
 }
 
 function batchSql(width: number): string {
@@ -87,6 +92,9 @@ export async function backfillBatch(): Promise<boolean> {
       throw new Error('Statistics bucket migration is missing');
     }
     const start = state[0].number;
+    if (start < 0) {
+      throw new Error('Statistics changed outside the bucket writer. Run the statistics-buckets reset command.');
+    }
     const [limit] = await c.query<RowDataPacket[]>(`SELECT number FROM state WHERE name='statistics_bucket_limit'`);
     const end = Math.min(start + 4096, limit[0].number);
     if (end <= start) {
@@ -98,6 +106,44 @@ export async function backfillBatch(): Promise<boolean> {
     await c.query(`UPDATE state SET number=? WHERE name='statistics_bucket_cursor'`, [end]);
     return true;
   });
+}
+
+// Called with legacy writers drained, before accepting requests or starting sampling.
+// Old binaries append to statistics without advancing our transactional watermark.
+export async function checkBucketWriter(): Promise<void> {
+  const [result] =
+    await DB.query<ResultSetHeader>(`UPDATE state SET number=CASE name WHEN 'statistics_bucket_reads' THEN 0 ELSE -1 END
+    WHERE name IN ('statistics_bucket_reads','statistics_bucket_cursor')
+    AND (SELECT COALESCE(MAX(id),0) FROM statistics) <>
+        COALESCE((SELECT number FROM state WHERE name='statistics_bucket_last_id'), -1)`);
+  if (result.affectedRows) {
+    logger.warn(
+      'Statistics history changed outside the bucket writer. Serving raw history until a bucket reset and backfill.'
+    );
+  }
+}
+
+// Offline operation: readers, writers and the backfill task must be stopped.
+// DELETE and the new boundary commit together; TRUNCATE would implicitly commit.
+export async function resetBuckets(): Promise<void> {
+  await DB.$transaction(async (c) => {
+    await c.query('DELETE FROM statistics_buckets');
+    await c.query(`UPDATE state SET number=0 WHERE name IN ('statistics_bucket_reads','statistics_bucket_cursor')`);
+    await c.query(`REPLACE INTO state (name,number)
+      SELECT labels.name, (SELECT COALESCE(MAX(id),0) FROM statistics)
+      FROM (SELECT 'statistics_bucket_limit' AS name UNION ALL SELECT 'statistics_bucket_last_id') labels`);
+  });
+}
+
+export async function enableBuckets(): Promise<void> {
+  const [result] = await DB.query<ResultSetHeader>(`UPDATE state SET number=1 WHERE name='statistics_bucket_reads'
+    AND (SELECT number FROM state WHERE name='statistics_bucket_cursor') =
+        (SELECT number FROM state WHERE name='statistics_bucket_limit')
+    AND (SELECT COALESCE(MAX(id),0) FROM statistics) =
+        (SELECT number FROM state WHERE name='statistics_bucket_last_id')`);
+  if (!result.affectedRows) {
+    throw new Error('Statistics bucket history is incomplete or requires a reset');
+  }
 }
 
 export async function bucketsEnabled(): Promise<boolean> {
@@ -120,8 +166,6 @@ function rawEdge(width: number, timesOnly: boolean) {
 
 // End is inclusive, as in the legacy BETWEEN. The UNION is one snapshot even
 // when a live or replicated sample commits while the request is running.
-// The legacy gap query walks the covering added index and observes the earliest
-// timestamp in each slot. Replication rounds that time to the nearest slot.
 export function historyQuery(width: number, start?: number, end?: number, timesOnly = false) {
   if (!widths.includes(width)) {
     throw new Error('Unsupported statistics bucket width');

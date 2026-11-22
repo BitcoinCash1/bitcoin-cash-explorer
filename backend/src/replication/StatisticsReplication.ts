@@ -397,7 +397,7 @@ class StatisticsReplication {
   private mapBySlot(stats: OptimizedStatistic[], step: number): Map<number, OptimizedStatistic> {
     const slots = new Map<number, OptimizedStatistic>();
     for (const stat of stats) {
-      const slot = this.roundToNearestStep(Number(stat.added), step);
+      const slot = this.replicationSlot(Number(stat.added), step);
       if (!slots.has(slot)) {
         slots.set(slot, stat.sizes.length === SIZES_LENGTH - 2 ? { ...stat, sizes: [0, ...stat.sizes, 0] } : stat);
       }
@@ -494,7 +494,7 @@ class StatisticsReplication {
         timeSteps.push(time);
       }
 
-      const roundedTimesAlreadyHere = new Set<number>(rows.map((row) => this.roundToNearestStep(row.added, step)));
+      const roundedTimesAlreadyHere = new Set<number>(rows.map((row) => this.replicationSlot(row.added, step)));
       const missingTimes = timeSteps.filter((time) => !roundedTimesAlreadyHere.has(time));
       const gaps = missingTimes.filter((time, i, arr) => arr[i + 1] === time + step || arr[i - 1] === time - step);
       const eligible = new Set(gaps.length >= timeSteps.length * 0.01 ? gaps : []);
@@ -517,9 +517,10 @@ class StatisticsReplication {
     }
   }
 
-  private roundToNearestStep(time: number, step: number): number {
+  private replicationSlot(time: number, step: number): number {
     const remainder = time % step;
-    if (remainder < step / 2) {
+    // Long-history rows represent the containing SQL bucket, even for older peers.
+    if (step >= steps['1m'] || remainder < step / 2) {
       return time - remainder;
     } else {
       return time + (step - remainder);

@@ -1,6 +1,16 @@
 import DB from '../database';
+import config from '../config';
 import statistics from '../api/statistics/statistics-api';
-import { backfillBatch, historyQuery, verifyBuckets } from '../api/statistics/statistics-buckets';
+import {
+  backfillBatch,
+  bucketsEnabled,
+  checkBucketWriter,
+  enableBuckets,
+  historyQuery,
+  insertStatistic,
+  resetBuckets,
+  verifyBuckets,
+} from '../api/statistics/statistics-buckets';
 import { setupTestDatabase } from './test-helpers';
 
 const base = 1728000000;
@@ -16,7 +26,7 @@ async function clearFixture() {
   await DB.query('DELETE FROM statistics_buckets');
   await DB.query('DELETE FROM statistics');
   await DB.query(
-    `UPDATE state SET number=0 WHERE name IN ('statistics_bucket_limit','statistics_bucket_cursor','statistics_bucket_reads')`
+    `UPDATE state SET number=0 WHERE name IN ('statistics_bucket_limit','statistics_bucket_cursor','statistics_bucket_reads','statistics_bucket_last_id')`
   );
 }
 beforeEach(clearFixture);
@@ -92,5 +102,53 @@ test('a bucket write failure rolls back the raw sample', async () => {
     expect(rows).toEqual([]);
   } finally {
     await DB.query('DROP TRIGGER reject_bucket');
+  }
+});
+
+test('downgraded writer invalidates enabled reads until an offline reset and complete backfill', async () => {
+  const seed = (await statistics.$createZeroedStatistic())!;
+  const [rows] = await DB.query<any[]>('SELECT * FROM statistics WHERE id=?', [seed]);
+  const sample = { ...rows[0], id: null, added: new Date(base * 1000) };
+  await insertStatistic('INSERT INTO statistics SET ?', [{ ...sample, added: new Date((base - 86400) * 1000) }]);
+  await enableBuckets();
+  // A legacy binary inserts a historical point without touching state or buckets.
+  await DB.query('INSERT INTO statistics SET ?', [sample]);
+  expect(await verifyBuckets()).toBe(10); // The missing interior sample is invisible to an edge check.
+  await expect(enableBuckets()).rejects.toThrow('requires a reset');
+  await checkBucketWriter();
+  expect(await bucketsEnabled()).toBe(false);
+  await expect(backfillBatch()).rejects.toThrow('reset');
+  await statistics.$createZeroedStatistic();
+  await checkBucketWriter();
+  await expect(enableBuckets()).rejects.toThrow('incomplete');
+  await resetBuckets();
+  await expect(enableBuckets()).rejects.toThrow('incomplete');
+  while (await backfillBatch()) {
+    // Resume until the reset boundary is covered.
+  }
+  await enableBuckets();
+  await checkBucketWriter();
+  expect(await bucketsEnabled()).toBe(true);
+  expect(await history(43200, base, base + 43199)).toHaveLength(1);
+});
+
+test('a timed-out insert discards its connection and never commits the sample', async () => {
+  const original = config.DATABASE.TIMEOUT;
+  const seed = (await statistics.$createZeroedStatistic())!;
+  const [samples] = await DB.query<any[]>('SELECT * FROM statistics WHERE id=?', [seed]);
+  const sample = { ...samples[0], id: null };
+  await DB.query('CREATE TRIGGER delay_statistics BEFORE INSERT ON statistics FOR EACH ROW DO SLEEP(0.8)');
+  try {
+    config.DATABASE.TIMEOUT = 70;
+    const started = Date.now();
+    await expect(insertStatistic('INSERT INTO statistics SET ?', [sample])).rejects.toThrow('70 ms deadline');
+    expect(Date.now() - started).toBeLessThan(500);
+    config.DATABASE.TIMEOUT = original;
+    await DB.query('DROP TRIGGER delay_statistics'); // waits for the disconnected statement to release its metadata lock
+    expect((await DB.query('SELECT id FROM statistics'))[0]).toEqual([{ id: seed }]);
+    expect(await statistics.$createZeroedStatistic()).toBeDefined();
+  } finally {
+    config.DATABASE.TIMEOUT = original;
+    await DB.query('DROP TRIGGER IF EXISTS delay_statistics');
   }
 });
