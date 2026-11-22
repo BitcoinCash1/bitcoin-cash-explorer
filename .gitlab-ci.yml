@@ -1,5 +1,5 @@
 default:
-  image: registry.melroy.org/melroy/docker-images/rust:1.98.1-node-26.13.1
+  image: registry.melroy.org/melroy/docker-images/rust:1.100.0-node-26.13.1
 
 variables:
   GHCR_USERNAME: melroy89
@@ -26,7 +26,7 @@ validate-build-backend:
         files: [backend/pnpm-lock.yaml]
       paths: [backend/.pnpm-store]
     - key:
-        prefix: rust-1.98.1-node26-linux-amd64
+        prefix: rust-1.100.0-node26-linux-amd64
         files: [rust/gbt/Cargo.lock, rust/gbt/napi-cli/package-lock.json]
       paths: [.cargo/registry, .cargo/git, rust/gbt/target]
   script:

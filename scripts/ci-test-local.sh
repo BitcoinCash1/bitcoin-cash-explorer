@@ -8,7 +8,7 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
-IMAGE="registry.melroy.org/melroy/docker-images/rust:1.95-node-24.15.0"
+IMAGE="registry.melroy.org/melroy/docker-images/rust:1.100.0-node-26.13.1"
 
 # Use a named Docker volume for node_modules so the container gets a clean,
 # writable state that is separate from the host's node_modules.
