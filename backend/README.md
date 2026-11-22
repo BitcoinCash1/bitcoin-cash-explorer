@@ -298,20 +298,23 @@ Set `EXPLORER.UNIX_SOCKET_PATH` to serve the backend API and WebSocket endpoint 
 
 Use a directory owned by the backend service account, writable only by trusted administrators and that account. Before starting listeners or cluster workers, the primary process probes an existing socket for up to one second. It removes a stale socket only after connection refusal and an unchanged filesystem identity. An active listener, regular file, symlink, timeout, or permission error stops startup with a diagnostic; resolve that condition before restarting. The service does not create the parent directory or remove arbitrary files.
 
-### Monthly and yearly mempool statistics
+### Speed up mempool history
 
-Schema 113 adds summary buckets for history ranges of one month and longer. Stop all old backend writers for the database before starting the upgraded backend. The migration records the last historical ID. The upgraded sampler and peer replication maintain summaries for new rows immediately. Direct SQL imports or edits to the raw table bypass this maintenance.
+To speed up charts from one month through all time, run this once per network from the built backend directory, using the same configuration as the running service:
 
-From the built backend directory, run `pnpm statistics:buckets:activate` with the same configuration as the service. In Docker, run the command in the backend container for each network:
+```sh
+pnpm statistics:buckets:activate
+```
+
+For Docker, run it in the backend container for that network. This example uses Chipnet:
 
 ```sh
 docker exec -w /backend/package bch-explorer-api-chipnet pnpm statistics:buckets:activate
 ```
 
-Use the corresponding backend container for Mainnet or Testnet4.
+The command builds and checks the summaries before switching charts to them. If interrupted, run it again to resume. The backend keeps summaries up to date as new samples arrive.
 
-Activation backfills in resumable batches, compares the oldest and newest occupied bucket at each resolution with raw samples, and enables bucket reads only if those checks succeed. Use `pnpm statistics:buckets:status` to check progress or `pnpm statistics:buckets:disable` to switch reads back to raw history. The `backfill`, `verify`, and `enable` steps are also available as individual scripts.
+- Check progress with `pnpm statistics:buckets:status`.
+- Switch back to raw history with `pnpm statistics:buckets:disable`.
 
-On startup the upgraded backend compares the latest raw ID with the ID recorded by the bucket writer. If an older backend appended samples, history reads automatically switch back to raw and the old backfill checkpoint becomes invalid.
-
-To rebuild after a writer downgrade, stop all backends and bucket maintenance tasks using that network database. Run `pnpm statistics:buckets:reset` with the upgraded binary. This clears the derived buckets and records a fresh historical boundary in one transaction. Restart the upgraded backend, then run `pnpm statistics:buckets:activate` again. Keep older writers stopped throughout the rebuild.
+If an older backend collected samples during a downgrade, the current backend falls back to raw history. To rebuild, stop all backend processes and statistics tasks for that database. Run `pnpm statistics:buckets:reset` using the current backend and its database configuration. Then start the current backend and run activation again.
